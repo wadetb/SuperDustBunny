@@ -1,18 +1,21 @@
 #include "win/graphics.h"
 #include "win/mouse.h"
 
-int BoxX = 0;
-int BoxY = 0;
+int BunnyX = 0;
+int BunnyY = 0;
 int DirectionX = 7;
 int DirectionY = 3;
-int BoxWidth = 100;
-int BoxHeight = 100;
+int BunnyWidth = 100;
+int BunnyHeight = 100;
+gxSprite BunnyHop01;
 
 void Init()
 {
 	gxInit(800, 600, true);
 
 	msInit();
+
+	gxLoadBmp("Data/bunny hop0001.png", &BunnyHop01, 0);
 }
 
 void Exit()
@@ -24,10 +27,9 @@ void Exit()
 
 void Display()
 {
-	gxDrawRect(0, 0, 400, 300, gxRGB32(0, 0, 255));
+	
+	gxDrawSprite( BunnyX, BunnyY, &BunnyHop01 );
 
-	gxDrawRect(BoxX, BoxY, BoxWidth, BoxHeight, gxRGB32(255, 0, 0));
-	//gxDrawRect(msX, msY, 100, 100, gxRGB32(255, 0, 0));
 }
 
 bool Update()
@@ -36,21 +38,21 @@ bool Update()
 
 	DirectionY += 1;
 	
-	BoxX = BoxX + DirectionX;
-	BoxY = BoxY + DirectionY;
+	BunnyX = BunnyX + DirectionX;
+	BunnyY = BunnyY + DirectionY;
 
-	if (BoxX + BoxWidth >= gxScreenWidth || BoxX <= 0)
+	if (BunnyX + BunnyWidth >= gxScreenWidth || BunnyX <= 0)
 	{
 		DirectionX = -DirectionX;
 	}
 
-	if (BoxY + BoxHeight >= gxScreenHeight || BoxY <= 0)
+	if (BunnyY + BunnyHeight >= gxScreenHeight || BunnyY <= 0)
 	{
 		DirectionY = -DirectionY;
 	}
 
-	if (BoxY + BoxHeight > gxScreenHeight )
-		BoxY = gxScreenHeight - BoxHeight ;
+	if (BunnyY + BunnyHeight > gxScreenHeight )
+		BunnyY = gxScreenHeight - BunnyHeight ;
 
 	if (msButton1 && !msOldButton1)
 	{
