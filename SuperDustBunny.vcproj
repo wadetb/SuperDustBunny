@@ -171,35 +171,35 @@
 			Name="Win"
 			>
 			<File
-				RelativePath="D:\Programming\2010project\SuperDustBunny2\Source\win\graphics.cpp"
+				RelativePath="win\graphics.cpp"
 				>
 			</File>
 			<File
-				RelativePath="D:\Programming\2010project\SuperDustBunny2\Source\win\graphics.h"
+				RelativePath="win\graphics.h"
 				>
 			</File>
 			<File
-				RelativePath="D:\Programming\2010project\SuperDustBunny2\Source\win\keyboard.cpp"
+				RelativePath="win\keyboard.cpp"
 				>
 			</File>
 			<File
-				RelativePath="D:\Programming\2010project\SuperDustBunny2\Source\win\keyboard.h"
+				RelativePath="win\keyboard.h"
 				>
 			</File>
 			<File
-				RelativePath="D:\Programming\2010project\SuperDustBunny2\Source\win\mouse.cpp"
+				RelativePath="win\mouse.cpp"
 				>
 			</File>
 			<File
-				RelativePath="D:\Programming\2010project\SuperDustBunny2\Source\win\mouse.h"
+				RelativePath="win\mouse.h"
 				>
 			</File>
 			<File
-				RelativePath="D:\Programming\2010project\SuperDustBunny2\Source\win\sound.cpp"
+				RelativePath="win\sound.cpp"
 				>
 			</File>
 			<File
-				RelativePath="D:\Programming\2010project\SuperDustBunny2\Source\win\sound.h"
+				RelativePath="win\sound.h"
 				>
 			</File>
 		</Filter>
