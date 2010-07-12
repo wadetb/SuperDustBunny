@@ -3,7 +3,7 @@
 #include "win/keyboard.h"
 
 int BunnyX = 350;
-int BunnyY = 500;
+int BunnyY = 490;
 int DirectionX = 7;
 int DirectionY = 7;
 int BunnyWidth = 100;
@@ -32,7 +32,7 @@ gxSprite DustyHopLeft01;
 gxSprite DustyHopLeft02;
 gxSprite DustyHopLeft03;
 gxSprite DustyHopLeft04;
-
+gxSprite DustyHopLeft05;
 
 void Init()
 {
@@ -46,12 +46,14 @@ void Init()
 	gxLoadBmp("Data/bunny hop0005.png", &BunnyHop02, 0);
 	gxLoadBmp("Data/bunny hop0006.png", &BunnyHop03, 0);
 	gxLoadBmp("Data/bunny hop0009.png", &BunnyHop04, 0);
-	gxLoadBmp("Data/bunny standing0012.png", &LeftFaceStanding01, 0);
-	gxLoadBmp("Data/bunny standing0012.png", &LeftFaceStanding02, 0);
+	gxLoadBmp("Data/bunny hop0011.png", &BunnyHop05, 0);
+	gxLoadBmp("Data/bunny hop0001.png", &LeftFaceStanding01, 0);
+	gxLoadBmp("Data/bunny hop0001.png", &LeftFaceStanding02, 0);
 	gxLoadBmp("Data/dustyhopleft0001.png",&DustyHopLeft01, 0);
-	gxLoadBmp("Data/dustyhopleft0001.png",&DustyHopLeft02, 0);
-	gxLoadBmp("Data/dustyhopleft0001.png",&DustyHopLeft03, 0);
-	gxLoadBmp("Data/dustyhopleft0001.png",&DustyHopLeft04, 0);
+	gxLoadBmp("Data/dustyhopleft0005.png",&DustyHopLeft02, 0);
+	gxLoadBmp("Data/dustyhopleft0006.png",&DustyHopLeft03, 0);
+    gxLoadBmp("Data/dustyhopleft0009.png",&DustyHopLeft04, 0);
+    gxLoadBmp("Data/dustyhopleft0011.png",&DustyHopLeft05, 0);
 }
 
 void Exit()
@@ -95,30 +97,47 @@ void Display()
 		if (SetHopRightSprite == 4)
 		{
 			gxDrawSprite( BunnyX, BunnyY, &BunnyHop04 );
-		}                 
+		}    
+        if (SetHopRightSprite == 5)
+        {
+            gxDrawSprite( BunnyX, BunnyY, &BunnyHop05 );
+        }     
+       
+        if (SetHopRightSprite == 6)
+        {
+            gxDrawSprite( BunnyX, BunnyY, &BunnyHop02 );
+        }              
 	}
 
 	if (BunnyState == 3) //Moving Left
 	{
 		if (SetHopLeftSprite == 1) 
 		{
-			gxDrawSprite( BunnyX, BunnyY, &BunnyHop01 );
+			gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft01 );
 		} 
 
 		if (SetHopLeftSprite == 2)
 		{
-			gxDrawSprite( BunnyX, BunnyY, &BunnyHop02 );
+			gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft02 );
 		} 
 
 		if (SetHopLeftSprite == 3)
 		{
-			gxDrawSprite( BunnyX, BunnyY, &BunnyHop03 );
+			gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft03 );
 		}
 
 		if (SetHopLeftSprite == 4)
 		{
-			gxDrawSprite( BunnyX, BunnyY, &BunnyHop04 );
-		}                 
+			gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft04 );
+		} 
+        if (SetHopLeftSprite == 5)
+        {
+            gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft05 );
+        }    
+        if (SetHopLeftSprite == 6)
+        {
+            gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft02 );
+        }                 
 	}
 }
 
@@ -144,7 +163,7 @@ bool Update()
 			BunnyState = 2; //Moving Right
 
 			SetHopRightSprite = 1;
-			SpriteTransition = 40;     
+			SpriteTransition = 60;     
 		}
 
 		if ( kbIsKeyDown(KB_A) )
@@ -152,7 +171,7 @@ bool Update()
 			BunnyState = 3; //Moving Left
 
 			SetHopLeftSprite = 1;
-			SpriteTransition = 40;     
+			SpriteTransition = 60;     
 		}
 	}
 
@@ -191,29 +210,39 @@ bool Update()
 			BunnyState = 0; //Standing
 		}
 
-		if (SpriteTransition == 40)
+		if (SpriteTransition == 60)
 		{
 			SetHopRightSprite = 1;
 		}  
 
-		if (SpriteTransition == 30) 
+		if (SpriteTransition == 50) 
 		{
 			SetHopRightSprite = 2;
 		} 
 
-		if (SpriteTransition == 20)
+		if (SpriteTransition == 40)
 		{
 			SetHopRightSprite = 3;
 		} 
 
-		if (SpriteTransition == 10)
+		if (SpriteTransition == 30)
 		{
 			SetHopRightSprite = 4;
 		}
+        
+        if (SpriteTransition == 20)
+        {
+            SetHopRightSprite = 5;
+        }
+
+        if (SpriteTransition == 10)
+        {
+            SetHopRightSprite = 6;
+        }
 
 		if (SpriteTransition == 0)
 		{
-			SpriteTransition = 40;
+			SpriteTransition = 60;
 		}
 	}
 
@@ -233,29 +262,39 @@ bool Update()
 			BunnyState = 0; //Standing
 		}
 
-		if (SpriteTransition == 40)
+		if (SpriteTransition == 60)
 		{
 			SetHopLeftSprite = 1;
 		}  
 
-		if (SpriteTransition == 30) 
+		if (SpriteTransition == 50) 
 		{
 			SetHopLeftSprite = 2;
 		} 
 
-		if (SpriteTransition == 20)
+		if (SpriteTransition == 40)
 		{
 			SetHopLeftSprite = 3;
 		} 
 
-		if (SpriteTransition == 10)
+		if (SpriteTransition == 30)
 		{
 			SetHopLeftSprite = 4;
 		}
-
+        
+        if (SpriteTransition == 20)
+        {
+            SetHopLeftSprite = 5;
+        }
+        
+        if (SpriteTransition == 10)
+        {
+            SetHopLeftSprite = 5;
+        }
+		
 		if (SpriteTransition == 0)
 		{
-			SpriteTransition = 40;
+			SpriteTransition = 60;
 		}
 	}
 
