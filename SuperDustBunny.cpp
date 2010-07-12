@@ -9,6 +9,7 @@ int DirectionY = 7;
 int BunnyWidth = 100;
 int BunnyHeight = 110;
 int Climb = 0;
+int Jump = 0;
 gxSprite BunnyHop01;
 gxSprite DustyHopLeft01;
 gxSprite BunnyHop02;
@@ -60,6 +61,7 @@ bool Update()
 	gxUpdateScreen();
 	
     if (BunnyY != gxScreenHeight - BunnyHeight)
+        
         if (Climb == 0)
     {
         BunnyY = BunnyY + DirectionY;
@@ -70,6 +72,15 @@ bool Update()
             BunnyY -= 10;
         }
         
+    if (BunnyY = gxScreenHeight - BunnyHeight)
+        {
+        Jump = 0;
+        }        
+        
+    if (Jump == 1)
+    {
+        //disable spacebar       
+	}
 	//DirectionY += 2;
 	
 	//BunnyX = BunnyX + DirectionX;
@@ -109,6 +120,7 @@ bool Update()
               
     if ( kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE) )
     {  
+         Jump = 1;
          Climb = 20;
          BunnyY -= 10;
     }
