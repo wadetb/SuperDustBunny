@@ -15,6 +15,7 @@ int SetHopRightSprite = 0;
 int SetHopLeftSprite = 0;
 int LastSprite = 1;
 int SpriteTransition = 0;
+int BunnyState = 0;
 gxSprite BunnyHop01;
 gxSprite BunnyHop02;
 gxSprite BunnyHop03;
@@ -113,98 +114,112 @@ bool Update()
 	kbUpdateKeys();
 	
 	gxUpdateScreen();
-		
-    if (BunnyY != gxScreenHeight - BunnyHeight)      
-        if (VerticalCounter == 0)
-        {
-            BunnyY = BunnyY + DirectionY;
-        }
-        else
-        {     
-            VerticalCounter -= 1;
-            BunnyY -= 10;
-        }
         
-	if (BunnyX + BunnyWidth >= gxScreenWidth )
-	    BunnyX = gxScreenWidth - BunnyWidth;
-	      	
-    if (BunnyX <= 0)
-        BunnyX = 0;
-   
-	if (BunnyY + BunnyHeight > gxScreenHeight )
-	{	
-        BunnyY = gxScreenHeight - BunnyHeight;
-    }        
-        if (BunnyY == gxScreenHeight - BunnyHeight)
+	if (BunnyState == 0)//Standing Still, include Space bar check.
+	{
+        if (IsJumping == true && kbIsKeyDown (KB_SPACE) && !kbWasKeyDown(KB_SPACE) )   
         {
-            IsJumping = false;
-        }
-				
-    if ( kbIsKeyDown(KB_D) )//&& !kbWasKeyDown(KB_D)
-    {
-        BunnyX = BunnyX + DirectionX;
-         
-   }
-    
-    if ( kbIsKeyDown(KB_A) )//&& !kbWasKeyDown(KB_A)
-    {
-        BunnyX = BunnyX - DirectionX;	
-    }
-  
-    if (IsJumping == true && kbIsKeyDown (KB_SPACE) && !kbWasKeyDown(KB_SPACE) )   
-    {
-        IsJumping = true;
-    }
-    else              
-       if ( IsJumping == false && kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE) )      
-        { 
-            VerticalCounter = 20;
-            BunnyY -= 10;
             IsJumping = true;
-        }   
+        }
+        else              
+            if ( IsJumping == false && kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE) )      
+            { 
+                VerticalCounter = 20;
+                BunnyY -= 10;
+                IsJumping = true;
+            }
+	}
+	
+	
+	if (BunnyState == 1)//Jumping
+    {
+        if (BunnyY != gxScreenHeight - BunnyHeight)      
+            if (VerticalCounter == 0)
+            {
+                BunnyY = BunnyY + DirectionY;
+            }
+            else
+            {     
+                VerticalCounter -= 1;
+                BunnyY -= 10;
+            }
+	
+            if (BunnyY + BunnyHeight > gxScreenHeight )
+            {	
+                BunnyY = gxScreenHeight - BunnyHeight;
+            }        
+            if (BunnyY == gxScreenHeight - BunnyHeight)
+            {
+                IsJumping = false;
+            }          
+     }   
             
-    if (kbIsKeyDown(KB_A))// && !kbWasKeyDown(KB_A))
-    {
-        LastSprite = 0;
+	if (BunnyState == 2)//Moving right
+	{				
+         if ( kbIsKeyDown(KB_D) )//&& !kbWasKeyDown(KB_D)
+         {
+               BunnyX = BunnyX + DirectionX;         
+         }
+	
+	     if (kbIsKeyDown(KB_D))// && !kbWasKeyDown(KB_D) )
+         {      
+               LastSprite = 1;
+               SetHopRightSprite = 1;
+               SpriteTransition = 300;     
+         }  
+         
+         if (SpriteTransition == 300)
+         {
+             SetHopRightSprite = 1;
+             SpriteTransition -= 1;
+         }  
+
+         if (SpriteTransition == 240) 
+         {
+             SetHopRightSprite = 2;
+             SpriteTransition -= 1;
+         } 
+
+         if (SpriteTransition == 170)
+         {
+             SetHopRightSprite = 3;
+             SpriteTransition -= 1;
+         } 
+
+         if (SpriteTransition == 110)
+         {
+             SetHopRightSprite = 4;
+             SpriteTransition -= 1;
+         }
+
+         if (SpriteTransition == 55)
+         {
+             SetHopRightSprite = 0;
+             SpriteTransition = 0;
+         }    
     }
-    
-    if (kbIsKeyDown(KB_D))// && !kbWasKeyDown(KB_D) )
-    {      
-        LastSprite = 1;
-        SetHopRightSprite = 1;
-        SpriteTransition = 300;     
-    }  
-    
-    if (SpriteTransition == 300)
-    {
-        SetHopRightSprite = 1;
-        SpriteTransition -= 1;
-    }  
 
-    if (SpriteTransition == 240) 
-    {
-        SetHopRightSprite = 2;
-        SpriteTransition -= 1;
-    } 
+	if (BunnyState == 3)//Moving left
+	{	
+		 if ( kbIsKeyDown(KB_A) )//&& !kbWasKeyDown(KB_A)
+         {
+              BunnyX = BunnyX - DirectionX;	
+         }
+                   
+         if (kbIsKeyDown(KB_A))// && !kbWasKeyDown(KB_A))
+         {
+              LastSprite = 0;
+         }
+     }
 
-    if (SpriteTransition == 170)
+    if (BunnyState == 4)// Collision
     {
-        SetHopRightSprite = 3;
-        SpriteTransition -= 1;
-    } 
+        if (BunnyX + BunnyWidth >= gxScreenWidth )
+            BunnyX = gxScreenWidth - BunnyWidth;
 
-    if (SpriteTransition == 110)
-    {
-        SetHopRightSprite = 4;
-        SpriteTransition -= 1;
-    }
-
-    if (SpriteTransition == 55)
-    {
-        SetHopRightSprite = 0;
-        SpriteTransition = 0;
-    }                 
-
+        if (BunnyX <= 0)
+            BunnyX = 0;
+    }             
     
     if (msButton2)
     {
