@@ -8,8 +8,8 @@ int DirectionX = 7;
 int DirectionY = 7;
 int BunnyWidth = 100;
 int BunnyHeight = 110;
-int Climb = 0;
-int Jump = 0;
+int VerticalCounter = 0;
+bool IsJumping = false;
 gxSprite BunnyHop01;
 gxSprite DustyHopLeft01;
 gxSprite BunnyHop02;
@@ -60,27 +60,18 @@ bool Update()
 	
 	gxUpdateScreen();
 	
-    if (BunnyY != gxScreenHeight - BunnyHeight)
-        
-        if (Climb == 0)
-    {
-        BunnyY = BunnyY + DirectionY;
-    }
+    if (BunnyY != gxScreenHeight - BunnyHeight)      
+        if (VerticalCounter == 0)
+            BunnyY = BunnyY + DirectionY;
         else
         {     
-            Climb -= 1;
+            VerticalCounter -= 1;
             BunnyY -= 10;
         }
         
-    if (BunnyY = gxScreenHeight - BunnyHeight)
-        {
-        Jump = 0;
-        }        
-        
-    if (Jump == 1)
-    {
-        //disable spacebar       
-	}
+   //if (BunnyY = gxScreenHeight - BunnyHeight)
+     //  Jump = 0;
+              
 	//DirectionY += 2;
 	
 	//BunnyX = BunnyX + DirectionX;
@@ -88,7 +79,7 @@ bool Update()
 
 	if (BunnyX + BunnyWidth >= gxScreenWidth )
 	    BunnyX = gxScreenWidth - BunnyWidth;
-		
+	      	
     if (BunnyX <= 0)
         BunnyX = 0;
    
@@ -98,7 +89,8 @@ bool Update()
 	//}
 
 	if (BunnyY + BunnyHeight > gxScreenHeight )
-		BunnyY = gxScreenHeight - BunnyHeight ;
+		BunnyY = gxScreenHeight - BunnyHeight;
+		IsJumping = false;
 		
 	//if (msButton1 && !msOldButton1)
 	//{
@@ -117,14 +109,19 @@ bool Update()
     {
         BunnyX = BunnyX - DirectionX;	
     }
-              
-    if ( kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE) )
-    {  
-         Jump = 1;
-         Climb = 20;
-         BunnyY -= 10;
-    }
     
+    if ( IsJumping == true && kbIsKeyDown (KB_SPACE) && !kbWasKeyDown(KB_SPACE) )
+    {
+       
+    }
+        else              
+            if ( IsJumping == false && kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE) )      
+            { 
+                VerticalCounter = 20;
+                BunnyY -= 10;
+                IsJumping = true;
+            }   
+          
 	if (msButton2)
 	{
 		return false;
@@ -152,12 +149,21 @@ bool Update()
         return true;
     }
 
-    if ( kbIsKeyDown(KB_SPACE) )
-    {
-        return false;
-    }
-    else
-    {
-        return true;
-    }
+    //if ( kbIsKeyDown(KB_SPACE) && Jump == 1)
+    //{
+     //   return true; 
+   // }  
+   // else
+    //{
+     //   return false;
+   // }
+  
+    //if ( kbIsKeyDown(KB_SPACE) )
+    //{
+     //   return false;
+    //}
+    //else
+    //{
+      //  return true;
+    //}
 }
