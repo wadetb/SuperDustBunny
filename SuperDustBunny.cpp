@@ -10,16 +10,28 @@ int BunnyWidth = 100;
 int BunnyHeight = 110;
 int VerticalCounter = 0;
 bool IsJumping = false;
+int SetStandingSprite = 0;
+int SetHopRightSprite = 0;
+int SetHopLeftSprite = 0;
+int LastSprite = 1;
+int SpriteTransition = 0;
 gxSprite BunnyHop01;
-gxSprite DustyHopLeft01;
 gxSprite BunnyHop02;
 gxSprite BunnyHop03;
 gxSprite BunnyHop04;
 gxSprite BunnyHop05;
-gxSprite Standing01;
-gxSprite Standing02;
-gxSprite WallJump01;
+gxSprite LeftFaceStanding01;
+gxSprite LeftFaceStanding02;
+gxSprite RightFaceStanding01;
+gxSprite RightFaceStanding02;
+gxSprite LeftFaceWallJump01;
+gxSprite RightFaceWallJump01;
 gxSprite BunnyDeath01;
+gxSprite DustyHopLeft01;
+gxSprite DustyHopLeft02;
+gxSprite DustyHopLeft03;
+gxSprite DustyHopLeft04;
+
 
 void Init()
 {
@@ -29,12 +41,16 @@ void Init()
 	
 	kbInit();
 	
-	gxLoadBmp("Data/bunny hop0001.png", &BunnyHop01, 0);
-	gxLoadBmp("Data/dustyhopleft0001.png", &DustyHopLeft01, 0);
+	gxLoadBmp("Data/bunny hop0001.png", &BunnyHop01, 0);	
 	gxLoadBmp("Data/bunny hop0005.png", &BunnyHop02, 0);
 	gxLoadBmp("Data/bunny hop0006.png", &BunnyHop03, 0);
 	gxLoadBmp("Data/bunny hop0009.png", &BunnyHop04, 0);
-	gxLoadBmp("Data/bunny standing0012.png", &Standing01, 0);
+    gxLoadBmp("Data/bunny standing0012.png", &LeftFaceStanding01, 0);
+    gxLoadBmp("Data/bunny standing0012.png", &LeftFaceStanding02, 0);
+    gxLoadBmp("Data/dustyhopleft0001.png",&DustyHopLeft01, 0);
+    gxLoadBmp("Data/dustyhopleft0001.png",&DustyHopLeft02, 0);
+    gxLoadBmp("Data/dustyhopleft0001.png",&DustyHopLeft03, 0);
+    gxLoadBmp("Data/dustyhopleft0001.png",&DustyHopLeft04, 0);
 }
 
 void Exit()
@@ -48,8 +64,62 @@ void Exit()
 
 void Display()
 {
-    gxDrawSprite( BunnyX, BunnyY, &BunnyHop01 );
-    //gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft01 );
+    
+    //gxDrawSprite( BunnyX, BunnyY, &Standing01 );
+    //gxDrawSprite( BunnyX, BunnyY, &BunnyHop01 );
+        
+    if (kbIsKeyDown(KB_D) && !kbWasKeyDown(KB_D) )
+    {
+        LastSprite = 1;
+        SetHopRightSprite = 1;
+        SpriteTransition = 10;
+    }      
+        
+    if (SetHopRightSprite != 0)
+       if (SetHopRightSprite == 1)
+           {
+                gxDrawSprite( BunnyX, BunnyY, &BunnyHop01 );
+                SetHopRightSprite += 1;
+           }
+         if (SetHopRightSprite == 2) 
+         {
+            gxDrawSprite( BunnyX, BunnyY, &BunnyHop02 );
+            SetHopRightSprite += 1;
+         } 
+        if (SetHopRightSprite == 3)
+        {
+            gxDrawSprite( BunnyX, BunnyY, &BunnyHop03 );
+            SetHopRightSprite += 1;
+        }
+        if (SetHopRightSprite == 4)
+        {
+            gxDrawSprite( BunnyX, BunnyY, &BunnyHop04 );
+            SetHopRightSprite += 1;
+        }
+        if (SetHopRightSprite == 5)
+        {
+            gxDrawSprite( BunnyX, BunnyY, &BunnyHop04 );
+            SetHopRightSprite = 0;
+        }
+
+  
+             
+    if (kbIsKeyDown(KB_A) && !kbWasKeyDown(KB_A))
+    {
+        gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft01 );
+        LastSprite = 0 ;
+    }
+    
+    if (LastSprite == 1)
+    {
+        gxDrawSprite( BunnyX, BunnyY, &BunnyHop01 );
+    }
+    else
+    {
+        gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft01 );
+    }
+   
+  
 }
 
 bool Update()
@@ -86,14 +156,15 @@ bool Update()
 				
     if ( kbIsKeyDown(KB_D) )//&& !kbWasKeyDown(KB_D)
     {
-        BunnyX = BunnyX + DirectionX;	
-    }
+        BunnyX = BunnyX + DirectionX;
+         
+   }
     
     if ( kbIsKeyDown(KB_A) )//&& !kbWasKeyDown(KB_A)
     {
         BunnyX = BunnyX - DirectionX;	
     }
-    
+  
     if (IsJumping == true && kbIsKeyDown (KB_SPACE) && !kbWasKeyDown(KB_SPACE) )   
     {
         IsJumping = true;
@@ -126,10 +197,12 @@ bool Update()
 	
     if ( kbIsKeyDown(KB_A) )
     {
+        
         return false;
     }
     else
     {
+        
         return true;
     }
     
