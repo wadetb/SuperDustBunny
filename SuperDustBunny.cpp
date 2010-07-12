@@ -69,37 +69,21 @@ bool Update()
             BunnyY -= 10;
         }
         
-   //if (BunnyY = gxScreenHeight - BunnyHeight)
-     //  Jump = 0;
-              
-	//DirectionY += 2;
-	
-	//BunnyX = BunnyX + DirectionX;
-	//BunnyY = BunnyY + DirectionY;
-
 	if (BunnyX + BunnyWidth >= gxScreenWidth )
 	    BunnyX = gxScreenWidth - BunnyWidth;
 	      	
     if (BunnyX <= 0)
         BunnyX = 0;
    
-	//if (BunnyY + BunnyHeight >= gxScreenHeight || BunnyY <= 0)
-	//{
-	//	DirectionY = -DirectionY;
-	//}
-
 	if (BunnyY + BunnyHeight > gxScreenHeight )
-		BunnyY = gxScreenHeight - BunnyHeight;
-		IsJumping = false;
-		
-	//if (msButton1 && !msOldButton1)
-	//{
-	//	DirectionY -= 100;
-		//int Temp = DirectionX;
-		//DirectionX = DirectionY;
-		//DirectionY = -Temp;
-	//}
-
+	{	
+        BunnyY = gxScreenHeight - BunnyHeight;
+    }        
+        if (BunnyY == gxScreenHeight - BunnyHeight)
+        {
+            IsJumping = false;
+        }
+				
     if ( kbIsKeyDown(KB_D) )//&& !kbWasKeyDown(KB_D)
     {
         BunnyX = BunnyX + DirectionX;	
@@ -148,13 +132,5 @@ bool Update()
     {
         return true;
     }
- 
-    //if ( kbIsKeyDown(KB_SPACE) )
-    //{
-     //   return false;
-    //}
-    //else
-    //{
-      //  return true;
-    //}
+    
 }
