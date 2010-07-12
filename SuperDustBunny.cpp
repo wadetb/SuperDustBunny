@@ -63,63 +63,54 @@ void Exit()
 }
 
 void Display()
-{
-    
-    //gxDrawSprite( BunnyX, BunnyY, &Standing01 );
-    //gxDrawSprite( BunnyX, BunnyY, &BunnyHop01 );
-        
-    if (kbIsKeyDown(KB_D) && !kbWasKeyDown(KB_D) )
-    {
-        LastSprite = 1;
-        SetHopRightSprite = 1;
-        SpriteTransition = 10;
-    }      
-        
-    if (SetHopRightSprite != 0)
-       if (SetHopRightSprite == 1)
-           {
-                gxDrawSprite( BunnyX, BunnyY, &BunnyHop01 );
-                SetHopRightSprite += 1;
-           }
-         if (SetHopRightSprite == 2) 
-         {
-            gxDrawSprite( BunnyX, BunnyY, &BunnyHop02 );
-            SetHopRightSprite += 1;
-         } 
-        if (SetHopRightSprite == 3)
-        {
-            gxDrawSprite( BunnyX, BunnyY, &BunnyHop03 );
-            SetHopRightSprite += 1;
-        }
-        if (SetHopRightSprite == 4)
-        {
-            gxDrawSprite( BunnyX, BunnyY, &BunnyHop04 );
-            SetHopRightSprite += 1;
-        }
-        if (SetHopRightSprite == 5)
-        {
-            gxDrawSprite( BunnyX, BunnyY, &BunnyHop04 );
-            SetHopRightSprite = 0;
-        }
+{      
+    kbUpdateKeys();
 
-  
-             
-    if (kbIsKeyDown(KB_A) && !kbWasKeyDown(KB_A))
-    {
-        gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft01 );
-        LastSprite = 0 ;
-    }
-    
-    if (LastSprite == 1)
+    gxUpdateScreen();
+     
+    if (kbIsKeyDown(KB_D))// && !kbWasKeyDown(KB_D) )
     {
         gxDrawSprite( BunnyX, BunnyY, &BunnyHop01 );
+    }     
+    if (SpriteTransition == 10)
+    {
+        gxDrawSprite( BunnyX, BunnyY, &BunnyHop01 );
+    }  
+            
+    if (SpriteTransition == 8) 
+    {
+        gxDrawSprite( BunnyX, BunnyY, &BunnyHop02 );
+    } 
+    
+    if (SpriteTransition == 6)
+    {
+        gxDrawSprite( BunnyX, BunnyY, &BunnyHop03 );
+    } 
+       
+    if (SpriteTransition == 4)
+    {
+        gxDrawSprite( BunnyX, BunnyY, &BunnyHop04 );
     }
-    else
+    
+    if (SpriteTransition == 2)
+    {
+        gxDrawSprite( BunnyX, BunnyY, &BunnyHop01 );
+    }                 
+             
+   if (kbIsKeyDown(KB_A))// && !kbWasKeyDown(KB_A))
     {
         gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft01 );
     }
+    
+   //if (LastSprite == 1)
+   // {
+   //     gxDrawSprite( BunnyX, BunnyY, &BunnyHop01 );
+   // }
+   // else
+   // {
+  //     gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft01 );
+   // }
    
-  
 }
 
 bool Update()
@@ -129,10 +120,12 @@ bool Update()
 	kbUpdateKeys();
 	
 	gxUpdateScreen();
-	
+		
     if (BunnyY != gxScreenHeight - BunnyHeight)      
         if (VerticalCounter == 0)
+        {
             BunnyY = BunnyY + DirectionY;
+        }
         else
         {     
             VerticalCounter -= 1;
@@ -205,5 +198,49 @@ bool Update()
         
         return true;
     }
+    
+    if (kbIsKeyDown(KB_A))// && !kbWasKeyDown(KB_A))
+    {
+        LastSprite = 0;
+    }
+    
+    if (kbIsKeyDown(KB_D))// && !kbWasKeyDown(KB_D) )
+    {      
+        LastSprite = 1;
+        SetHopRightSprite = 1;
+        SpriteTransition = 300;     
+    }  
+    
+    if (SpriteTransition == 300)
+    {
+        SetHopRightSprite = 2;
+        SpriteTransition -= 1;
+    }  
+
+    if (SpriteTransition == 240) 
+    {
+        SetHopRightSprite = 3;
+        SpriteTransition -= 1;
+    } 
+
+    if (SpriteTransition == 170)
+    {
+        SetHopRightSprite = 4;
+        SpriteTransition -= 1;
+    } 
+
+    if (SpriteTransition == 110)
+    {
+        SetHopRightSprite = 5;
+        SpriteTransition -= 1;
+    }
+
+    if (SpriteTransition == 55)
+    {
+        SetHopRightSprite = 0;
+        SpriteTransition = 0;
+    }                 
+
+
     
 }
