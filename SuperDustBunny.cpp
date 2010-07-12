@@ -72,27 +72,27 @@ void Display()
     {
         gxDrawSprite( BunnyX, BunnyY, &BunnyHop01 );
     }     
-    if (SpriteTransition == 10)
+    if (kbIsKeyDown(KB_D) && SpriteTransition == 10)
     {
         gxDrawSprite( BunnyX, BunnyY, &BunnyHop01 );
     }  
             
-    if (SpriteTransition == 8) 
+    if (kbIsKeyDown(KB_D) && SpriteTransition == 8) 
     {
         gxDrawSprite( BunnyX, BunnyY, &BunnyHop02 );
     } 
     
-    if (SpriteTransition == 6)
+    if (kbIsKeyDown(KB_D) && SpriteTransition == 6)
     {
         gxDrawSprite( BunnyX, BunnyY, &BunnyHop03 );
     } 
        
-    if (SpriteTransition == 4)
+    if (kbIsKeyDown(KB_D) && SpriteTransition == 4)
     {
         gxDrawSprite( BunnyX, BunnyY, &BunnyHop04 );
     }
     
-    if (SpriteTransition == 2)
+    if (kbIsKeyDown(KB_D) && SpriteTransition == 2)
     {
         gxDrawSprite( BunnyX, BunnyY, &BunnyHop01 );
     }                 
@@ -169,36 +169,7 @@ bool Update()
             BunnyY -= 10;
             IsJumping = true;
         }   
-          
-	if (msButton2)
-	{
-		return false;
-	}
-	else
-	{
-		return true;
-	}
-   
-	if ( kbIsKeyDown(KB_D) )
-	{
-	    return false;
-	}
-	else
-	{
-	    return true;
-	}
-	
-    if ( kbIsKeyDown(KB_A) )
-    {
-        
-        return false;
-    }
-    else
-    {
-        
-        return true;
-    }
-    
+            
     if (kbIsKeyDown(KB_A))// && !kbWasKeyDown(KB_A))
     {
         LastSprite = 0;
@@ -211,36 +182,43 @@ bool Update()
         SpriteTransition = 300;     
     }  
     
-    if (SpriteTransition == 300)
+    if (kbIsKeyDown(KB_D) && SpriteTransition == 300)
     {
         SetHopRightSprite = 2;
         SpriteTransition -= 1;
     }  
 
-    if (SpriteTransition == 240) 
+    if (kbIsKeyDown(KB_D) && SpriteTransition == 240) 
     {
         SetHopRightSprite = 3;
         SpriteTransition -= 1;
     } 
 
-    if (SpriteTransition == 170)
+    if (kbIsKeyDown(KB_D) && SpriteTransition == 170)
     {
         SetHopRightSprite = 4;
         SpriteTransition -= 1;
     } 
 
-    if (SpriteTransition == 110)
+    if (kbIsKeyDown(KB_D) && SpriteTransition == 110)
     {
         SetHopRightSprite = 5;
         SpriteTransition -= 1;
     }
 
-    if (SpriteTransition == 55)
+    if (kbIsKeyDown(KB_D) && SpriteTransition == 55)
     {
         SetHopRightSprite = 0;
         SpriteTransition = 0;
     }                 
 
-
     
+    if (msButton2)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
 }
