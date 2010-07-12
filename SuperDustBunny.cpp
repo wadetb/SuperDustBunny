@@ -64,31 +64,28 @@ void Exit()
 
 void Display()
 {      
-    kbUpdateKeys();
-
-    gxUpdateScreen();
      
     if (kbIsKeyDown(KB_D))// && !kbWasKeyDown(KB_D) )
     {
         gxDrawSprite( BunnyX, BunnyY, &BunnyHop01 );
     }     
           
-    if (kbIsKeyDown(KB_D) && SetHopRightSprite == 1) 
+    if (SetHopRightSprite == 1) 
     {
         gxDrawSprite( BunnyX, BunnyY, &BunnyHop02 );
     } 
     
-    if (kbIsKeyDown(KB_D) && SetHopRightSprite == 2)
+    if (SetHopRightSprite == 2)
     {
         gxDrawSprite( BunnyX, BunnyY, &BunnyHop03 );
     } 
        
-    if (kbIsKeyDown(KB_D) && SetHopRightSprite == 3)
+    if (SetHopRightSprite == 3)
     {
         gxDrawSprite( BunnyX, BunnyY, &BunnyHop04 );
     }
     
-    if (kbIsKeyDown(KB_D) && SetHopRightSprite == 4)
+    if (SetHopRightSprite == 4)
     {
         gxDrawSprite( BunnyX, BunnyY, &BunnyHop01 );
     }                 
@@ -98,14 +95,14 @@ void Display()
         gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft01 );
     }
     
-   //if (LastSprite == 1)
-   // {
-   //     gxDrawSprite( BunnyX, BunnyY, &BunnyHop01 );
-   // }
-   // else
-   // {
-  //     gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft01 );
-   // }
+   if (LastSprite == 1)
+    {
+        gxDrawSprite( BunnyX, BunnyY, &BunnyHop01 );
+    }
+    else
+    {
+       gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft01 );
+    }
    
 }
 
@@ -178,31 +175,31 @@ bool Update()
         SpriteTransition = 300;     
     }  
     
-    if (kbIsKeyDown(KB_D) && SpriteTransition == 300)
+    if (SpriteTransition == 300)
     {
         SetHopRightSprite = 1;
         SpriteTransition -= 1;
     }  
 
-    if (kbIsKeyDown(KB_D) && SpriteTransition == 240) 
+    if (SpriteTransition == 240) 
     {
         SetHopRightSprite = 2;
         SpriteTransition -= 1;
     } 
 
-    if (kbIsKeyDown(KB_D) && SpriteTransition == 170)
+    if (SpriteTransition == 170)
     {
         SetHopRightSprite = 3;
         SpriteTransition -= 1;
     } 
 
-    if (kbIsKeyDown(KB_D) && SpriteTransition == 110)
+    if (SpriteTransition == 110)
     {
         SetHopRightSprite = 4;
         SpriteTransition -= 1;
     }
 
-    if (kbIsKeyDown(KB_D) && SpriteTransition == 55)
+    if (SpriteTransition == 55)
     {
         SetHopRightSprite = 0;
         SpriteTransition = 0;
