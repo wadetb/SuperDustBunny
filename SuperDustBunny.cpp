@@ -163,7 +163,7 @@ bool Update()
 			BunnyState = 2; //Moving Right
 
 			SetHopRightSprite = 1;
-			SpriteTransition = 60;     
+			SpriteTransition = 55;     
 		}
 
 		if ( kbIsKeyDown(KB_A) )
@@ -171,7 +171,7 @@ bool Update()
 			BunnyState = 3; //Moving Left
 
 			SetHopLeftSprite = 1;
-			SpriteTransition = 60;     
+			SpriteTransition = 55;     
 		}
 	}
 
@@ -210,39 +210,39 @@ bool Update()
 			BunnyState = 0; //Standing
 		}
 
-		if (SpriteTransition == 60)
+		if (SpriteTransition == 55)
 		{
 			SetHopRightSprite = 1;
 		}  
 
-		if (SpriteTransition == 50) 
+		if (SpriteTransition == 45) 
 		{
 			SetHopRightSprite = 2;
 		} 
 
-		if (SpriteTransition == 40)
+		if (SpriteTransition == 35)
 		{
 			SetHopRightSprite = 3;
 		} 
 
-		if (SpriteTransition == 30)
+		if (SpriteTransition == 25)
 		{
 			SetHopRightSprite = 4;
 		}
         
-        if (SpriteTransition == 20)
+        if (SpriteTransition == 15)
         {
             SetHopRightSprite = 5;
         }
 
-        if (SpriteTransition == 10)
+        if (SpriteTransition == 5)
         {
             SetHopRightSprite = 6;
         }
 
 		if (SpriteTransition == 0)
 		{
-			SpriteTransition = 60;
+			SpriteTransition = 55;
 		}
 	}
 
@@ -262,39 +262,39 @@ bool Update()
 			BunnyState = 0; //Standing
 		}
 
-		if (SpriteTransition == 60)
+		if (SpriteTransition == 55)
 		{
 			SetHopLeftSprite = 1;
 		}  
 
-		if (SpriteTransition == 50) 
+		if (SpriteTransition == 45) 
 		{
 			SetHopLeftSprite = 2;
 		} 
 
-		if (SpriteTransition == 40)
+		if (SpriteTransition == 35)
 		{
 			SetHopLeftSprite = 3;
 		} 
 
-		if (SpriteTransition == 30)
+		if (SpriteTransition == 25)
 		{
 			SetHopLeftSprite = 4;
 		}
         
-        if (SpriteTransition == 20)
+        if (SpriteTransition == 15)
         {
             SetHopLeftSprite = 5;
         }
         
-        if (SpriteTransition == 10)
+        if (SpriteTransition == 5)
         {
             SetHopLeftSprite = 5;
         }
 		
 		if (SpriteTransition == 0)
 		{
-			SpriteTransition = 60;
+			SpriteTransition = 55;
 		}
 	}
 
