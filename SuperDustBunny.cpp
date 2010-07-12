@@ -110,17 +110,17 @@ bool Update()
         BunnyX = BunnyX - DirectionX;	
     }
     
-    if ( IsJumping == true && kbIsKeyDown (KB_SPACE) && !kbWasKeyDown(KB_SPACE) )
+    if (IsJumping == true && kbIsKeyDown (KB_SPACE) && !kbWasKeyDown(KB_SPACE) )   
     {
-       
+        IsJumping = true;
     }
-        else              
-            if ( IsJumping == false && kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE) )      
-            { 
-                VerticalCounter = 20;
-                BunnyY -= 10;
-                IsJumping = true;
-            }   
+    else              
+       if ( IsJumping == false && kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE) )      
+        { 
+            VerticalCounter = 20;
+            BunnyY -= 10;
+            IsJumping = true;
+        }   
           
 	if (msButton2)
 	{
@@ -148,16 +148,7 @@ bool Update()
     {
         return true;
     }
-
-    //if ( kbIsKeyDown(KB_SPACE) && Jump == 1)
-    //{
-     //   return true; 
-   // }  
-   // else
-    //{
-     //   return false;
-   // }
-  
+ 
     //if ( kbIsKeyDown(KB_SPACE) )
     //{
      //   return false;
