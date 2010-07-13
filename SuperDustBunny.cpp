@@ -13,7 +13,7 @@ bool IsJumping = false;
 int SetStandingSprite = 0;
 int SetHopRightSprite = 0;
 int SetHopLeftSprite = 0;
-int LastSprite = 1;
+int LastDirectionSprite = 0;
 int SpriteTransition = 0;
 int BunnyState = 0;
 gxSprite BunnyHop01;
@@ -47,8 +47,8 @@ void Init()
 	gxLoadBmp("Data/bunny hop0006.png", &BunnyHop03, 0);
 	gxLoadBmp("Data/bunny hop0009.png", &BunnyHop04, 0);
 	gxLoadBmp("Data/bunny hop0011.png", &BunnyHop05, 0);
-	gxLoadBmp("Data/bunny hop0001.png", &LeftFaceStanding01, 0);
-	gxLoadBmp("Data/bunny hop0001.png", &LeftFaceStanding02, 0);
+	gxLoadBmp("Data/dustyhopleft0001.png", &LeftFaceStanding01, 0);
+	gxLoadBmp("Data/dustyhopleft0001.png", &LeftFaceStanding02, 0);
 	gxLoadBmp("Data/dustyhopleft0001.png",&DustyHopLeft01, 0);
 	gxLoadBmp("Data/dustyhopleft0005.png",&DustyHopLeft02, 0);
 	gxLoadBmp("Data/dustyhopleft0006.png",&DustyHopLeft03, 0);
@@ -67,9 +67,14 @@ void Exit()
 
 void Display()
 {      
-	if (BunnyState == 0) //Standing
+	if (BunnyState == 0 && LastDirectionSprite == 0) //Standing
 	{
-		gxDrawSprite( BunnyX, BunnyY, &LeftFaceStanding01 );
+		gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft01 );
+	}
+	
+	if (BunnyState == 0 && LastDirectionSprite == 1)//After moving, stops to face the direction last moved.
+	{
+	    gxDrawSprite( BunnyX, BunnyY, &BunnyHop01 );
 	}
 
 	if (BunnyState == 1) //Jumping
@@ -208,6 +213,7 @@ bool Update()
 		if ( !kbIsKeyDown(KB_D) )
 		{
 			BunnyState = 0; //Standing
+			LastDirectionSprite = 1;
 		}
 
 		if (SpriteTransition == 55)
@@ -260,6 +266,7 @@ bool Update()
 		if ( !kbIsKeyDown(KB_A) )
 		{
 			BunnyState = 0; //Standing
+			LastDirectionSprite = 0;
 		}
 
 		if (SpriteTransition == 55)
