@@ -10,11 +10,16 @@ int BunnyWidth = 100;
 int BunnyHeight = 110;
 int VerticalCounter = 0;
 bool IsJumping = false;
-int SetStandingSprite = 0;
-int SetHopRightSprite = 0;
-int SetHopLeftSprite = 0;
+int SetJumpDirection = 0;
+int JumpRightSprite = 0;
+int JumpLeftSprite = 0;
+int StandingSprite = 0;
+int HopRightSprite = 0;
+int HopLeftSprite = 0;
 int LastDirectionSprite = 0;
 int SpriteTransition = 0;
+int JumpRightTrans = 20;
+int JumpLeftTrans = 20;
 int BunnyState = 0;
 gxSprite BunnyHop01;
 gxSprite BunnyHop02;
@@ -67,48 +72,58 @@ void Exit()
 
 void Display()
 {      
-	if (BunnyState == 0 && LastDirectionSprite == 0) //Standing
-	{
-		gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft01 );
-	}
-	
-	if (BunnyState == 0 && LastDirectionSprite == 1)//After moving, stops to face the direction last moved.
-	{
-	    gxDrawSprite( BunnyX, BunnyY, &BunnyHop01 );
-	}
-
 	if (BunnyState == 1) //Jumping
 	{
-		gxDrawSprite( BunnyX, BunnyY, &BunnyHop01 );
+            if (JumpRightSprite == 1)     
+            {
+                gxDrawSprite( BunnyX, BunnyY, &BunnyHop02 );
+            }
+                
+            if (JumpRightSprite == 2)
+            {
+                gxDrawSprite( BunnyX, BunnyY, &BunnyHop05 );
+            }
+
+
+            if (JumpLeftSprite == 1)
+            {
+               gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft02 );
+            }
+
+            if (JumpLeftSprite == 2)
+            {
+               gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft05 );
+            }
 	}
+
 
 	if (BunnyState == 2) //Moving Right
 	{
-		if (SetHopRightSprite == 1) 
+		if (HopRightSprite == 1) 
 		{
 			gxDrawSprite( BunnyX, BunnyY, &BunnyHop01 );
 		} 
 
-		if (SetHopRightSprite == 2)
+		if (HopRightSprite == 2)
 		{
 			gxDrawSprite( BunnyX, BunnyY, &BunnyHop02 );
 		} 
 
-		if (SetHopRightSprite == 3)
+		if (HopRightSprite == 3)
 		{
 			gxDrawSprite( BunnyX, BunnyY, &BunnyHop03 );
 		}
 
-		if (SetHopRightSprite == 4)
+		if (HopRightSprite == 4)
 		{
 			gxDrawSprite( BunnyX, BunnyY, &BunnyHop04 );
 		}    
-        if (SetHopRightSprite == 5)
+        if (HopRightSprite == 5)
         {
             gxDrawSprite( BunnyX, BunnyY, &BunnyHop05 );
         }     
        
-        if (SetHopRightSprite == 6)
+        if (HopRightSprite == 6)
         {
             gxDrawSprite( BunnyX, BunnyY, &BunnyHop02 );
         }              
@@ -116,34 +131,44 @@ void Display()
 
 	if (BunnyState == 3) //Moving Left
 	{
-		if (SetHopLeftSprite == 1) 
+		if (HopLeftSprite == 1) 
 		{
 			gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft01 );
 		} 
 
-		if (SetHopLeftSprite == 2)
+		if (HopLeftSprite == 2)
 		{
 			gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft02 );
 		} 
 
-		if (SetHopLeftSprite == 3)
+		if (HopLeftSprite == 3)
 		{
 			gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft03 );
 		}
 
-		if (SetHopLeftSprite == 4)
+		if (HopLeftSprite == 4)
 		{
 			gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft04 );
 		} 
-        if (SetHopLeftSprite == 5)
+        if (HopLeftSprite == 5)
         {
             gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft05 );
         }    
-        if (SetHopLeftSprite == 6)
+        if (HopLeftSprite == 6)
         {
             gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft02 );
         }                 
 	}
+   
+    if (BunnyState == 0 && LastDirectionSprite == 0) //Standing
+    {
+        gxDrawSprite( BunnyX, BunnyY, &DustyHopLeft01 );
+    }
+
+    if (BunnyState == 0 && LastDirectionSprite == 1)//After moving, stops to face the direction last moved.
+    {
+        gxDrawSprite( BunnyX, BunnyY, &BunnyHop01 );
+    }
 }
 
 bool Update()
@@ -157,31 +182,65 @@ bool Update()
 	if (BunnyState == 0)//Standing Still, include Space bar check.
 	{
 		if ( kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE) )      
-		{ 
+		{ 			
 			VerticalCounter = 20;
-			BunnyY -= 10;
+			BunnyY -= 10;    
 			BunnyState = 1; //Jumping
 		}
 
 		if ( kbIsKeyDown(KB_D) )
 		{
 			BunnyState = 2; //Moving Right
-
-			SetHopRightSprite = 1;
-			SpriteTransition = 55;     
+			HopRightSprite = 1;
+			SpriteTransition = 55;  
+			JumpRightTrans = 20;
 		}
 
 		if ( kbIsKeyDown(KB_A) )
 		{
 			BunnyState = 3; //Moving Left
-
-			SetHopLeftSprite = 1;
-			SpriteTransition = 55;     
+			HopLeftSprite = 1;
+			SpriteTransition = 55;
+			JumpLeftTrans = 20;   
 		}
 	}
 
 	if (BunnyState == 1)//Jumping
-	{
+	{		
+
+        if (JumpRightTrans == 20)//Arrange for one animation, use an if/else statement based on transition. keep it simple     
+        {
+            JumpRightSprite = 1;
+        }  
+
+        if (JumpRightTrans == 10) 
+        {
+            JumpRightSprite = 2;
+        }
+        
+        if (JumpRightTrans == 0)
+        {
+            JumpRightTrans = 20;
+        }
+        
+        if (JumpLeftTrans == 20)
+        {
+            JumpLeftSprite = 1;
+        }  
+
+        if (JumpLeftTrans == 10) 
+        {
+            JumpLeftSprite = 2;
+        } 
+
+        if (JumpLeftTrans == 0)
+        {
+            JumpLeftTrans = 20;
+        }
+        
+        //Update Animations
+        JumpLeftTrans -= 1;
+        JumpRightTrans -= 1;
 		if (VerticalCounter == 0)
 		{
 			BunnyY = BunnyY + DirectionY;
@@ -197,6 +256,8 @@ bool Update()
 			BunnyY = gxScreenHeight - BunnyHeight;
 			BunnyState = 0; //Standing
 		}
+
+	     
 	}   
 
 	if (BunnyState == 2)//Moving right
@@ -211,39 +272,39 @@ bool Update()
 			BunnyX = gxScreenWidth - BunnyWidth;
 
 		if ( !kbIsKeyDown(KB_D) )
-		{
-			BunnyState = 0; //Standing
-			LastDirectionSprite = 1;
+		{			
+            LastDirectionSprite = 1;                 
+			BunnyState = 0; //Standing		
 		}
 
 		if (SpriteTransition == 55)
 		{
-			SetHopRightSprite = 1;
+			HopRightSprite = 1;
 		}  
 
 		if (SpriteTransition == 45) 
 		{
-			SetHopRightSprite = 2;
+			HopRightSprite = 2;
 		} 
 
 		if (SpriteTransition == 35)
 		{
-			SetHopRightSprite = 3;
+			HopRightSprite = 3;
 		} 
 
 		if (SpriteTransition == 25)
 		{
-			SetHopRightSprite = 4;
+			HopRightSprite = 4;
 		}
         
         if (SpriteTransition == 15)
         {
-            SetHopRightSprite = 5;
+            HopRightSprite = 5;
         }
 
         if (SpriteTransition == 5)
         {
-            SetHopRightSprite = 6;
+            HopRightSprite = 6;
         }
 
 		if (SpriteTransition == 0)
@@ -265,38 +326,38 @@ bool Update()
 
 		if ( !kbIsKeyDown(KB_A) )
 		{
-			BunnyState = 0; //Standing
-			LastDirectionSprite = 0;
+            LastDirectionSprite = 0;
+			BunnyState = 0; //Standing		
 		}
 
 		if (SpriteTransition == 55)
 		{
-			SetHopLeftSprite = 1;
+			HopLeftSprite = 1;
 		}  
 
 		if (SpriteTransition == 45) 
 		{
-			SetHopLeftSprite = 2;
+			HopLeftSprite = 2;
 		} 
 
 		if (SpriteTransition == 35)
 		{
-			SetHopLeftSprite = 3;
+			HopLeftSprite = 3;
 		} 
 
 		if (SpriteTransition == 25)
 		{
-			SetHopLeftSprite = 4;
+			HopLeftSprite = 4;
 		}
         
         if (SpriteTransition == 15)
         {
-            SetHopLeftSprite = 5;
+            HopLeftSprite = 5;
         }
         
         if (SpriteTransition == 5)
         {
-            SetHopLeftSprite = 5;
+            HopLeftSprite = 5;
         }
 		
 		if (SpriteTransition == 0)
