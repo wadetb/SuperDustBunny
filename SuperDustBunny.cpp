@@ -15,9 +15,9 @@ int BunnyBottom = 55;
 int VerticalCounter = 0;
 bool IsJumping = false;
 int SetJumpDirection = 0;
-int JumpRightSprite = 1;
+int JumpRightSprite = 0;
 int JumpLeftSprite = 0;
-int FallRightSprite = 1;
+int FallRightSprite = 0;
 int FallLeftSprite = 0;
 int StandingSprite = 0;
 int HopRightSprite = 0;
@@ -75,6 +75,12 @@ void Exit()
 
 void Display()
 {      
+	
+	if (BunnyState == 0)
+	{
+	    gxLoadBmp("Data/bunny hop0001.png", &BunnyHop01, 0);
+	}
+	
 	if (BunnyState == 1) //Jumping
 	{
             if (JumpRightSprite == 1)     
@@ -223,27 +229,39 @@ bool Update()
 			BunnyState = 2; //Moving Right
 			HopRightSprite = 1;
 			SpriteTransition = 30;  
-			JumpRightSprite = 1;
 		}
 
 		if ( kbIsKeyDown(KB_A) )
 		{
 			BunnyState = 3; //Moving Left
 			HopLeftSprite = 1;
-			SpriteTransition = 30;
-			JumpLeftSprite = 1;   
+			SpriteTransition = 30;   
 		}
 	}
 
 	if (BunnyState == 1)//Jumping
-	{		   
+	{	
+	    if (LastDirectionSprite == 1)
+	    {
+	        JumpRightSprite == 1;
+	    }	   
+	    
+	    if (LastDirectionSprite == 0)
+	    {
+	        JumpLeftSprite == 1;
+	    }
+	    
 		if (VerticalCounter == 0)
 		{
 			BunnyY = BunnyY + DirectionY;
-            JumpLeftSprite = 0;
-            FallLeftSprite = 0;
-            JumpRightSprite = 0;
-            FallRightSprite = 1;
+            
+            if (LastDirectionSprite == 1)
+            {
+                JumpLeftSprite = 0;
+                FallLeftSprite = 0;
+                JumpRightSprite = 0;
+                FallRightSprite = 1;
+            }
 
             if (LastDirectionSprite == 0)
             {
@@ -272,9 +290,6 @@ bool Update()
 
 		// Update animation
 		SpriteTransition -= 1;
-		JumpLeftSprite = 0;
-		FallLeftSprite = 0;
-		JumpRightSprite = 1;
 
 		// Collision with right side of screen
 		if (BunnyX + BunnyRight >= gxScreenWidth )
@@ -283,7 +298,12 @@ bool Update()
 		if ( !kbIsKeyDown(KB_D) && SpriteTransition == 0 )
 		{			                         
 			BunnyState = 0; //Standing
-			LastDirectionSprite = 1;		
+					
+		}
+		
+		if (!kbIsKeyDown(KB_D))
+		{
+		    LastDirectionSprite = 1;
 		}
 
 		if (SpriteTransition == 30)
@@ -328,9 +348,6 @@ bool Update()
 
 		// Update animation
 		SpriteTransition -= 1;
-		JumpRightSprite = 0;
-		FallRightSprite = 0;
-		JumpLeftSprite = 1;
 
 		// Collision with left side of screen
 		if (BunnyX + BunnyLeft <= 0)
@@ -339,7 +356,12 @@ bool Update()
 		if ( !kbIsKeyDown(KB_A) && SpriteTransition == 0 )
 		{          
 			BunnyState = 0; //Standing
-			LastDirectionSprite = 0;	
+				
+		}
+		
+		if (!kbIsKeyDown(KB_A))
+		{
+		    LastDirectionSprite = 0;
 		}
 
 		if (SpriteTransition == 30)
