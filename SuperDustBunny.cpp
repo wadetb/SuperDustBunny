@@ -2,6 +2,8 @@
 #include "win/mouse.h"
 #include "win/keyboard.h"
 
+bool SlowMotionMode = false;
+
 int BunnyX = 350;
 int BunnyY = 545;
 int DirectionX = 7;
@@ -46,8 +48,6 @@ void Init()
 {
 	gxInit(800, 600, true);
 
-	msInit();
-
 	kbInit();
 
 	gxLoadBmp("Data/bunny hop0001.png", &BunnyHop01, 0);
@@ -68,8 +68,6 @@ void Init()
 
 void Exit()
 {
-	msDeinit();
-
 	kbDeinit();
 
 	gxDeinit();
@@ -176,11 +174,40 @@ void Display()
 
 bool Update()
 {
-	msUpdateMouse();
-
 	kbUpdateKeys();
 
 	gxUpdateScreen();
+
+	// Pressing escape quits the program.
+	if (kbIsKeyDown(KB_ESCAPE))
+	{
+		return false;
+	}
+
+	// Backspace toggles slow motion mode.
+	if (kbIsKeyDown(KB_BACKSLASH) && !kbWasKeyDown(KB_BACKSLASH))
+	{
+		SlowMotionMode = !SlowMotionMode;
+	}
+
+	if (SlowMotionMode)
+	{
+		bool StepOneFrame;
+		if (kbIsKeyDown(KB_RETURN) && !kbWasKeyDown(KB_RETURN))
+		{
+			StepOneFrame = true;
+		}
+		else
+		{
+			StepOneFrame = false;
+		}
+
+		// If Return was not pressed, skip Update() for this frame.
+		if (!StepOneFrame)
+		{
+			return true;
+		}
+	}
 
 	if (BunnyState == 0)//Standing Still, include Space bar check.
 	{
@@ -352,16 +379,7 @@ bool Update()
 		{
 			SpriteTransition = 55;
 		}
-		
-		
 	}
 
-	if (msButton2)
-	{
-		return false;
-	}
-	else
-	{
-		return true;
-	}
+	return true;
 }
