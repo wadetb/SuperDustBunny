@@ -24,14 +24,14 @@ int DustyBottom = 55;
 int VerticalCounter = 0;
 bool IsJumping = false;
 int SetJumpDirection = 0;
-int JumpRightSprite = 0;
-int JumpLeftSprite = 0;
-int FallRightSprite = 0;
-int FallLeftSprite = 0;
+int JumpRightSprite = 2;
+int JumpLeftSprite = 2;
+int FallRightSprite = 2;
+int FallLeftSprite = 2;
 int StandingSprite = 0;
 int HopRightSprite = 0;
 int HopLeftSprite = 0;
-int LastDirectionSprite = 0;
+int LastDirectionSprite = 1;
 int SpriteTransition = 0;
 int DustyState = 0;
 gxSprite DustyHop01;
@@ -232,7 +232,19 @@ bool Update()
 	}
 
 	if (DustyState == 0)//Standing Still, include Space bar check.
-	{
+	{	
+        if (LastDirectionSprite == 1)
+        {
+            JumpRightSprite = 1;
+            JumpLeftSprite = 0;
+        }	   
+
+        if (LastDirectionSprite == 0)
+        {
+            JumpLeftSprite = 1;
+            JumpRightSprite = 0;
+        }
+        
 		if ( kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE) )      
 		{ 			
 			VerticalCounter = 20;
@@ -244,46 +256,34 @@ bool Update()
 		{
 			DustyState = 2; //Moving Right
 			HopRightSprite = 1;
-			SpriteTransition = 30;  
+			SpriteTransition = 30;
+			LastDirectionSprite = 1;			  
 		}
 
 		if ( kbIsKeyDown(KB_A) )
 		{
 			DustyState = 3; //Moving Left
 			HopLeftSprite = 1;
-			SpriteTransition = 30;   
+			SpriteTransition = 30;
+			LastDirectionSprite = 0;   
 		}
 	}
 
 	if (DustyState == 1)//Jumping
 	{	
-		if (LastDirectionSprite == 1)
-		{
-			JumpRightSprite = 1;
-		}	   
-
-		if (LastDirectionSprite == 0)
-		{
-			JumpLeftSprite = 1;
-		}
-
 		if (VerticalCounter == 0)
 		{
 			DustyY = DustyY + DirectionY;
 
 			if (LastDirectionSprite == 1)
 			{
-				JumpLeftSprite = 0;
-				FallLeftSprite = 0;
 				JumpRightSprite = 0;
 				FallRightSprite = 1;
 			}
 
 			if (LastDirectionSprite == 0)
 			{
-				JumpRightSprite = 0;
 				JumpLeftSprite = 0;
-				FallRightSprite = 0;
 				FallLeftSprite = 1;
 			}
 		}
@@ -296,6 +296,8 @@ bool Update()
 		if (DustyY + DustyBottom > gxScreenHeight )
 		{	
 			DustyY = gxScreenHeight - DustyBottom;
+			FallRightSprite = 0;
+			FallLeftSprite = 0;
 			DustyState = 0; //Standing
 		}    
 	}   
@@ -314,11 +316,6 @@ bool Update()
 		if ( !kbIsKeyDown(KB_D) && SpriteTransition == 0 )
 		{			                         
 			DustyState = 0; //Standing
-		}
-
-		if (!kbIsKeyDown(KB_D))
-		{
-			LastDirectionSprite = 1;
 		}
 
 		if (SpriteTransition == 30)
@@ -371,11 +368,6 @@ bool Update()
 		if ( !kbIsKeyDown(KB_A) && SpriteTransition == 0 )
 		{          
 			DustyState = 0; //Standing
-		}
-
-		if (!kbIsKeyDown(KB_A))
-		{
-			LastDirectionSprite = 0;
 		}
 
 		if (SpriteTransition == 30)
