@@ -318,6 +318,13 @@ bool Update()
 			DustyState = 0; //Standing
 		}
 
+        if (kbIsKeyDown(KB_D) && kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE))
+        {
+            VerticalCounter = 20;
+            DustyY -= 10;    
+            DustyState = 1; //Jumping
+        }
+
 		if (SpriteTransition == 30)
 		{
 			HopRightSprite = 1;
@@ -369,6 +376,13 @@ bool Update()
 		{          
 			DustyState = 0; //Standing
 		}
+		
+        if (kbIsKeyDown(KB_A) && kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE))
+        {
+            VerticalCounter = 20;
+            DustyY -= 10;    
+            DustyState = 1; //Jumping
+        }
 
 		if (SpriteTransition == 30)
 		{
