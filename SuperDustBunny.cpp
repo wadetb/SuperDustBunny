@@ -1,11 +1,11 @@
-#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
-#include "win/graphics.h"
-#include "win/mouse.h"
-#include "win/keyboard.h"
-#else
+#if defined(TARGET_OS_IPHONE) || defined(TARGET_IPHONE_SIMULATOR)
 #include "iPhone/graphics.h"
 #include "iPhone/mouse.h"
 #include "iPhone/keyboard.h"
+#else
+#include "win/graphics.h"
+#include "win/mouse.h"
+#include "win/keyboard.h"
 #endif
 
 int BunnyX = 350;
