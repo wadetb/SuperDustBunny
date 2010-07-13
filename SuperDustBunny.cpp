@@ -222,16 +222,15 @@ bool Update()
 		{
 			BunnyState = 2; //Moving Right
 			HopRightSprite = 1;
-			SpriteTransition = 50;  
+			SpriteTransition = 30;  
 			JumpRightSprite = 1;
-			FallRightSprite = 1;
 		}
 
 		if ( kbIsKeyDown(KB_A) )
 		{
 			BunnyState = 3; //Moving Left
 			HopLeftSprite = 1;
-			SpriteTransition = 50;
+			SpriteTransition = 30;
 			JumpLeftSprite = 1;   
 		}
 	}
@@ -241,15 +240,15 @@ bool Update()
 		if (VerticalCounter == 0)
 		{
 			BunnyY = BunnyY + DirectionY;
-			
-            if (kbWasKeyDown(KB_D))
-            {
-                FallLeftSprite = 0;
-                FallRightSprite = 1;
-            }
+            JumpLeftSprite = 0;
+            FallLeftSprite = 0;
+            JumpRightSprite = 0;
+            FallRightSprite = 1;
 
-            if (kbWasKeyDown(KB_A))
+            if (LastDirectionSprite == 0)
             {
+                JumpRightSprite = 0;
+                JumpLeftSprite = 0;
                 FallRightSprite = 0;
                 FallLeftSprite = 1;
             }
@@ -287,27 +286,27 @@ bool Update()
 			LastDirectionSprite = 1;		
 		}
 
-		if (SpriteTransition == 55)
+		if (SpriteTransition == 30)
 		{
 			HopRightSprite = 1;
 		}  
 
-		if (SpriteTransition == 45) 
+		if (SpriteTransition == 25) 
 		{
 			HopRightSprite = 2;
 		} 
 
-		if (SpriteTransition == 35)
+		if (SpriteTransition == 20)
 		{
 			HopRightSprite = 3;
 		} 
 
-		if (SpriteTransition == 25)
+		if (SpriteTransition == 15)
 		{
 			HopRightSprite = 4;
 		}
         
-        if (SpriteTransition == 15)
+        if (SpriteTransition == 10)
         {
             HopRightSprite = 5;
         }
@@ -319,10 +318,8 @@ bool Update()
 
 		if (SpriteTransition == 0)
 		{
-			SpriteTransition = 55;
-		}
-		
-		
+			SpriteTransition = 30;
+		}	
 	}	
 
 	if (BunnyState == 3)//Moving left
@@ -345,27 +342,27 @@ bool Update()
 			LastDirectionSprite = 0;	
 		}
 
-		if (SpriteTransition == 55)
+		if (SpriteTransition == 30)
 		{
 			HopLeftSprite = 1;
 		}  
 
-		if (SpriteTransition == 45) 
+		if (SpriteTransition == 25) 
 		{
 			HopLeftSprite = 2;
 		} 
 
-		if (SpriteTransition == 35)
+		if (SpriteTransition == 20)
 		{
 			HopLeftSprite = 3;
 		} 
 
-		if (SpriteTransition == 25)
+		if (SpriteTransition == 15)
 		{
 			HopLeftSprite = 4;
 		}
         
-        if (SpriteTransition == 15)
+        if (SpriteTransition == 10)
         {
             HopLeftSprite = 5;
         }
@@ -377,7 +374,7 @@ bool Update()
 		
 		if (SpriteTransition == 0)
 		{
-			SpriteTransition = 55;
+			SpriteTransition = 40;
 		}
 	}
 
