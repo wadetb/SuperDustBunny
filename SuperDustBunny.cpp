@@ -1,6 +1,12 @@
+#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
 #include "win/graphics.h"
 #include "win/mouse.h"
 #include "win/keyboard.h"
+#else
+#include "iPhone/graphics.h"
+#include "iPhone/mouse.h"
+#include "iPhone/keyboard.h"
+#endif
 
 int BunnyX = 350;
 int BunnyY = 490;
@@ -179,16 +185,29 @@ bool Update()
 
 	gxUpdateScreen();
 
+	bool IsJumpDown, WasJumpDown, IsRightDown, IsLeftDown;
+#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
+	IsJumpDown = msButton1;
+	WasJumpDown = msOldButton1;
+	IsRightDown = msAccelX > 0.2f;
+	IsLeftDown = msAccelX < -0.2f;
+#else
+	IsJumpDown = kbIsKeyDown(KB_SPACE);
+	WasJumpDown = kbWasKeyDown(KB_SPACE);
+	IsRightDown = kbIsKeyDown(KB_RIGHT);
+	IsLeftDown = kbIsKeyDown(KB_LEFT);
+#endif
+	
 	if (BunnyState == 0)//Standing Still, include Space bar check.
 	{
-		if ( kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE) )      
+		if ( IsJumpDown && !WasJumpDown )      
 		{ 			
 			VerticalCounter = 20;
 			BunnyY -= 10;    
 			BunnyState = 1; //Jumping
 		}
 
-		if ( kbIsKeyDown(KB_D) )
+		if ( IsRightDown )
 		{
 			BunnyState = 2; //Moving Right
 			HopRightSprite = 1;
@@ -196,7 +215,7 @@ bool Update()
 			JumpRightTrans = 20;
 		}
 
-		if ( kbIsKeyDown(KB_A) )
+		if ( IsLeftDown )
 		{
 			BunnyState = 3; //Moving Left
 			HopLeftSprite = 1;
@@ -271,7 +290,7 @@ bool Update()
 		if (BunnyX + BunnyWidth >= gxScreenWidth )
 			BunnyX = gxScreenWidth - BunnyWidth;
 
-		if ( !kbIsKeyDown(KB_D) )
+		if ( !IsRightDown )
 		{			
             LastDirectionSprite = 1;                 
 			BunnyState = 0; //Standing		
@@ -324,7 +343,7 @@ bool Update()
 		if (BunnyX <= 0)
 			BunnyX = 0;
 
-		if ( !kbIsKeyDown(KB_A) )
+		if ( !IsLeftDown )
 		{
             LastDirectionSprite = 0;
 			BunnyState = 0; //Standing		
