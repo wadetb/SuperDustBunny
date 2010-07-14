@@ -36,6 +36,7 @@ int HopLeftSprite = 0;
 int LastDirectionSprite = 1;
 int SpriteTransition = 0;
 int DustyState = 0;
+
 gxSprite DustyHop01;
 gxSprite DustyHop02;
 gxSprite DustyHop03;
@@ -54,9 +55,16 @@ gxSprite DustyHopLeft03;
 gxSprite DustyHopLeft04;
 gxSprite DustyHopLeft05;
 gxSprite DustyHopLeft06;
+
 sxSound DustyToJump;
 sxSound DustyJumps;
 sxSound WallJump;
+sxSound BackgroundSong01;
+sxSound BackgroundSong02;
+sxSound BackgroundSong03;
+int SongCounter = 1;
+int SongDuration = 0;
+int BackgroundMusic = 1;
 
 void Init()
 {
@@ -85,7 +93,9 @@ void Init()
     sxLoadWav ("Data/yaahooo.wav", &DustyToJump);
     sxLoadWav ("Data/yaahooo.wav", &DustyJumps);
     sxLoadWav ("Data/cork_pop.wav", &WallJump);
-    
+    sxLoadWav ("Data/Song1.wav", &BackgroundSong01);
+    sxLoadWav ("Data/Song2.wav", &BackgroundSong02);
+    sxLoadWav ("Data/Song3.wav", &BackgroundSong03);
 }
 
 void Exit()
@@ -226,6 +236,45 @@ void Display()
 bool Update()
 {
 	kbUpdateKeys();
+	
+	//Background Music
+if (BackgroundMusic == 1)
+{	
+	if (SongCounter == 1)
+	{
+        SongDuration = 500;//2580;    
+        sxPlaySound(&BackgroundSong01);
+    }
+    
+    if (SongDuration == 0)
+    {
+        sxDestroySound(&BackgroundSong01);
+        sxDestroySound(&BackgroundSong02);
+        sxDestroySound(&BackgroundSong03);
+        SongCounter += 1;   
+    }
+    
+    if (SongDuration != 0)
+    {
+        SongDuration -= 1;     
+    }
+        
+    if (SongCounter == 2)
+    {
+         SongDuration = 500;//2580;
+         sxPlaySound(&BackgroundSong02);
+    }
+    
+    if (SongCounter == 3)
+    {
+         SongDuration = 500;//1952;
+         sxPlaySound(&BackgroundSong03);
+    }
+    if (SongCounter >= 4)
+    {
+        SongCounter = 1;
+    }    
+}
 
 	// Pressing escape quits the program.
 	if (kbIsKeyDown(KB_ESCAPE))
@@ -403,7 +452,7 @@ bool Update()
         if (kbIsKeyDown(KB_D) && kbIsKeyDown(KB_SPACE) && SpriteTransition != 0)
         {
             JumpQueue = 1;
-            sxPlaySound( &DustyToJump );
+            //sxPlaySound( &DustyToJump );
             //sxDestroySound( &DustyToJump ); 
         }
             
@@ -480,7 +529,7 @@ bool Update()
         if (kbIsKeyDown(KB_A) && kbIsKeyDown(KB_SPACE) && SpriteTransition != 0)
         {
             JumpQueue = 1;
-            sxPlaySound( &DustyToJump );
+            //sxPlaySound( &DustyToJump );
             //sxDestroySound( &DustyToJump ); 
         }
 
