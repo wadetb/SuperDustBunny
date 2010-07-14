@@ -14,7 +14,7 @@
 bool SlowMotionMode = false;
 
 int DustyX = 350;
-int DustyY = 545;
+int DustyY = 1024-55;
 int DirectionX = 7;
 int DirectionY = 7;
 int DustyLeft = -10;
@@ -57,7 +57,8 @@ gxSprite DustyHopLeft06;
 
 void Init()
 {
-	gxInit(800, 600, true);
+	// Use iPad "portrait mode" screen dimensions.
+	gxInit(768, 1024, true);
 
 	kbInit();
 
