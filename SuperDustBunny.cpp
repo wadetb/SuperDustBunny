@@ -2,7 +2,7 @@
 //
 // Super Dust Bunny
 // 
-// Authors: Thomas Perry <viperp12@gmail.com> & Wade Brainerd <wadetb@gmail.com>
+// Authors: Thomas Perry <perry.thomas.12@gmail.com> & Wade Brainerd <wadetb@gmail.com>
 // Copyright © 2010 by Thomas Perry and Wade Brainerd. All rights reserved.
 //
 //--------------------------------------------------------------------------------
@@ -508,7 +508,6 @@ bool Update()
         if (kbIsKeyDown(KB_SPACE) && LastDirectionSprite == 1)// && !kbWasKeyDown(KB_SPACE))
             {               
                 LastDirectionSprite = 0;
-               // DustyX = DustyX - DirectionX;//Move Left
                 VerticalCounter = 20;//Move upward
                 DustyY -= 10;
                 DustyState = 1;//Jumping
@@ -531,7 +530,8 @@ bool Update()
             if (kbIsKeyDown(KB_SPACE) && LastDirectionSprite == 0) //&& !kbWasKeyDown(KB_SPACE))
             {
                  LastDirectionSprite = 1;
-                 //DustyX = DustyX + DirectionX;//Move Right
+                 FallLeftSprite = 0;
+                 JumpRightSprite = 1;
                  VerticalCounter = 20;//Move upward
                  DustyY -= 10;
                  DustyState = 1;//Jumping
