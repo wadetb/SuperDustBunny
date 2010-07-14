@@ -421,7 +421,7 @@ bool Update()
            
         if (kbIsKeyDown(KB_A))
         {
-            LastDirectionSprite == 0;
+            LastDirectionSprite = 0;
             DustyState = 0;
         }
             
@@ -498,7 +498,7 @@ bool Update()
 
         if (kbIsKeyDown(KB_D))
         {
-            LastDirectionSprite == 1;
+            LastDirectionSprite = 1;
             DustyState = 0;
         }
 
