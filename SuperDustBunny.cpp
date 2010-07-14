@@ -10,6 +10,7 @@
 #include "win/graphics.h"
 #include "win/mouse.h"
 #include "win/keyboard.h"
+#include "win/sound.h"
 
 bool SlowMotionMode = false;
 
@@ -53,6 +54,9 @@ gxSprite DustyHopLeft03;
 gxSprite DustyHopLeft04;
 gxSprite DustyHopLeft05;
 gxSprite DustyHopLeft06;
+sxSound DustyToJump;
+sxSound DustyJumps;
+sxSound WallJump;
 
 void Init()
 {
@@ -60,6 +64,8 @@ void Init()
 	gxInit(768, 1024, true);
 
 	kbInit();
+	
+	sxInit();
 
 	gxLoadSprite("Data/bunny hop0001.png", &DustyHop01);
 	gxLoadSprite("Data/bunny hop0011.png", &DustyHop02);	
@@ -75,6 +81,11 @@ void Init()
 	gxLoadSprite("Data/dustyhoplefttest.png",&DustyHopLeft06);
     gxLoadSprite("Data/DustyLeftWallJump.png", &LeftFaceWallJump01);
     gxLoadSprite("Data/DustyRightWallJump.png", &RightFaceWallJump01);
+    
+    sxLoadWav ("Data/yaahooo.wav", &DustyToJump);
+    sxLoadWav ("Data/yaahooo.wav", &DustyJumps);
+    sxLoadWav ("Data/cork_pop.wav", &WallJump);
+    
 }
 
 void Exit()
@@ -82,6 +93,8 @@ void Exit()
 	kbDeinit();
 
 	gxDeinit();
+	
+	sxDeinit();
 }
 
 void Display()
@@ -268,7 +281,7 @@ bool Update()
 		if ( kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE) )      
 		{ 			
 			VerticalCounter = 20;
-			DustyY -= 10;    
+			DustyY -= 10;
 			DustyState = 1; //Jumping
 		}
 
@@ -390,16 +403,20 @@ bool Update()
         if (kbIsKeyDown(KB_D) && kbIsKeyDown(KB_SPACE) && SpriteTransition != 0)
         {
             JumpQueue = 1;
+            sxPlaySound( &DustyToJump );
+            //sxDestroySound( &DustyToJump ); 
         }
             
         if (JumpQueue == 1 && SpriteTransition == 0)
         {
-                VerticalCounter = 20;
-                DustyY -= 10;    
-                LastDirectionSprite = 1;
-                //reset JumpQueue
-                JumpQueue = 0;
-                DustyState = 1;
+            VerticalCounter = 20;
+            DustyY -= 10;    
+            LastDirectionSprite = 1;
+            //reset JumpQueue
+            JumpQueue = 0;
+            //sxPlaySound( &DustyJumps );
+            //sxDestroySound( &DustyJumps ); 
+            DustyState = 1;
         }    
            
         if (kbIsKeyDown(KB_A))
@@ -463,6 +480,8 @@ bool Update()
         if (kbIsKeyDown(KB_A) && kbIsKeyDown(KB_SPACE) && SpriteTransition != 0)
         {
             JumpQueue = 1;
+            sxPlaySound( &DustyToJump );
+            //sxDestroySound( &DustyToJump ); 
         }
 
         if (JumpQueue == 1 && SpriteTransition == 0)
@@ -472,6 +491,8 @@ bool Update()
             LastDirectionSprite = 0;
             //Reset JumpQueue
             JumpQueue = 0;
+            //sxPlaySound( &DustyJumps );
+            //sxDestroySound( &DustyJumps ); 
             DustyState = 1;
         }  
 
@@ -535,6 +556,8 @@ bool Update()
                 LastDirectionSprite = 0;
                 VerticalCounter = 20;//Move upward
                 DustyY -= 10;
+                sxPlaySound( &WallJump );
+                //sxDestroySound( &WallJump );
                 DustyState = 1;//Jumping
             }
     }   
@@ -560,6 +583,8 @@ bool Update()
                  JumpRightSprite = 1;
                  VerticalCounter = 20;//Move upward
                  DustyY -= 10;
+                 sxPlaySound( &WallJump );
+                 //sxDestroySound( &WallJump );
                  DustyState = 1;//Jumping
             }
     }
