@@ -24,13 +24,12 @@ int DustyBottom = 55;
 int VerticalCounter = 0;
 bool IsJumping = false;
 bool IsCollided = false;
-int SetJumpDirection = 0;
+int JumpQueue = 0;
 int JumpRightSprite = 2;
 int JumpLeftSprite = 2;
 int WallStickTimer = 0;
 int FallRightSprite = 2;
 int FallLeftSprite = 2;
-int StandingSprite = 0;
 int HopRightSprite = 0;
 int HopLeftSprite = 0;
 int LastDirectionSprite = 1;
@@ -301,7 +300,7 @@ bool Update()
         //Collide left side of screen check
         if (IsCollided == true && DustyX + DustyLeft <= 0)
         {
-           DustyX = -DustyX;
+           DustyX = -DustyLeft;
            //DustyX = DustyX + DirectionX;
            JumpRightSprite = 1;
            JumpLeftSprite = 0;                      
@@ -332,7 +331,7 @@ bool Update()
           //Collision with the left side of the screen    
           if (DustyX + DustyLeft <= 0 && IsCollided == false)
           {
-              DustyX = -DustyX;
+              DustyX = -DustyLeft;
               DustyState = 5;
               JumpLeftSprite = 0;
               JumpRightSprite = 0;
@@ -398,13 +397,15 @@ bool Update()
 
         if (kbIsKeyDown(KB_D) && kbIsKeyDown(KB_SPACE) && SpriteTransition != 0)
         {
-            if (SpriteTransition == 0)
-            {
+            JumpQueue = 1;
+        }
+            
+        if (JumpQueue == 1 && SpriteTransition == 0)
+        {
                 VerticalCounter = 20;
                 DustyY -= 10;    
                 LastDirectionSprite = 1;
                 DustyState = 1;
-            }
         }    
             
 		if (SpriteTransition == 30)
@@ -458,24 +459,18 @@ bool Update()
 		{          
 			DustyState = 0; //Standing
 		}
-		
-      //  if (kbIsKeyDown(KB_A) && kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE))
-      //  {
-     //       VerticalCounter = 20;
-      //      DustyY -= 10;
-      //      LastDirectionSprite = 0;    
-      //      DustyState = 1; //Jumping
-       // }
 
         if (kbIsKeyDown(KB_A) && kbIsKeyDown(KB_SPACE) && SpriteTransition != 0)
         {
-            if (SpriteTransition == 0)
-            {
-                VerticalCounter = 20;
-                DustyY -= 10;
-                LastDirectionSprite = 0;
-                DustyState = 1;
-            }
+            JumpQueue = 1;
+        }
+
+        if (JumpQueue == 1 && SpriteTransition == 0)
+        {
+            VerticalCounter = 20;
+            DustyY -= 10;    
+            LastDirectionSprite = 0;
+            DustyState = 1;
         }  
 
 		if (SpriteTransition == 30)
