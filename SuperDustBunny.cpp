@@ -271,6 +271,26 @@ bool Update()
 
 	if (DustyState == 1)//Jumping
 	{	
+        if (LastDirectionSprite == 1)
+        {
+          DustyX = DustyX + DirectionX;
+          JumpRightSprite = 1;
+          JumpLeftSprite = 0;        
+          // Collision with right side of screen
+          if (DustyX + DustyRight >= gxScreenWidth )
+              DustyX = gxScreenWidth - DustyRight;                  
+        }
+
+        if (LastDirectionSprite == 0)
+        {          
+          DustyX = DustyX - DirectionX;
+          JumpLeftSprite = 1;
+          JumpRightSprite = 0;         
+          //Collision with the left side of the screen
+          if (DustyX + DustyLeft <= 0)
+              DustyX = 0;
+        }
+        
 		if (VerticalCounter == 0)
 		{
 			DustyY = DustyY + DirectionY;
@@ -322,6 +342,7 @@ bool Update()
         {
             VerticalCounter = 20;
             DustyY -= 10;    
+            LastDirectionSprite = 1;
             DustyState = 1; //Jumping
         }
 
@@ -380,7 +401,8 @@ bool Update()
         if (kbIsKeyDown(KB_A) && kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE))
         {
             VerticalCounter = 20;
-            DustyY -= 10;    
+            DustyY -= 10;
+            LastDirectionSprite = 0;    
             DustyState = 1; //Jumping
         }
 
