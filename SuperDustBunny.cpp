@@ -301,8 +301,8 @@ bool Update()
         //Collide left side of screen check
         if (IsCollided == true && DustyX + DustyLeft <= 0)
         {
-           DustyX = 0;
-           DustyX = DustyX + DirectionX;
+           DustyX = -DustyX;
+           //DustyX = DustyX + DirectionX;
            JumpRightSprite = 1;
            JumpLeftSprite = 0;                      
         }
@@ -332,7 +332,7 @@ bool Update()
           //Collision with the left side of the screen    
           if (DustyX + DustyLeft <= 0 && IsCollided == false)
           {
-              DustyX = 0;
+              DustyX = -DustyX;
               DustyState = 5;
               JumpLeftSprite = 0;
               JumpRightSprite = 0;
@@ -388,14 +388,25 @@ bool Update()
 			DustyState = 0; //Standing
 		}
 
-        if (kbIsKeyDown(KB_D) && kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE))
-        {
-            VerticalCounter = 20;
-            DustyY -= 10;    
-            LastDirectionSprite = 1;
-            DustyState = 1; //Jumping
-        }
+      //  if (kbIsKeyDown(KB_D) && kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE))
+      //  {
+      //      VerticalCounter = 20;
+       //     DustyY -= 10;    
+       //     LastDirectionSprite = 1;
+       //     DustyState = 1; //Jumping
+       // }
 
+        if (kbIsKeyDown(KB_D) && kbIsKeyDown(KB_SPACE) && SpriteTransition != 0)
+        {
+            if (SpriteTransition == 0)
+            {
+                VerticalCounter = 20;
+                DustyY -= 10;    
+                LastDirectionSprite = 1;
+                DustyState = 1;
+            }
+        }    
+            
 		if (SpriteTransition == 30)
 		{
 			HopRightSprite = 1;
@@ -441,20 +452,31 @@ bool Update()
 
 		// Collision with left side of screen
 		if (DustyX + DustyLeft <= 0)
-			DustyX = 0;
+			DustyX = -DustyLeft;
 
 		if ( !kbIsKeyDown(KB_A) && SpriteTransition == 0 )
 		{          
 			DustyState = 0; //Standing
 		}
 		
-        if (kbIsKeyDown(KB_A) && kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE))
+      //  if (kbIsKeyDown(KB_A) && kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE))
+      //  {
+     //       VerticalCounter = 20;
+      //      DustyY -= 10;
+      //      LastDirectionSprite = 0;    
+      //      DustyState = 1; //Jumping
+       // }
+
+        if (kbIsKeyDown(KB_A) && kbIsKeyDown(KB_SPACE) && SpriteTransition != 0)
         {
-            VerticalCounter = 20;
-            DustyY -= 10;
-            LastDirectionSprite = 0;    
-            DustyState = 1; //Jumping
-        }
+            if (SpriteTransition == 0)
+            {
+                VerticalCounter = 20;
+                DustyY -= 10;
+                LastDirectionSprite = 0;
+                DustyState = 1;
+            }
+        }  
 
 		if (SpriteTransition == 30)
 		{
@@ -530,6 +552,7 @@ bool Update()
             if (kbIsKeyDown(KB_SPACE) && LastDirectionSprite == 0) //&& !kbWasKeyDown(KB_SPACE))
             {
                  LastDirectionSprite = 1;
+                 //Resetting sprites
                  FallLeftSprite = 0;
                  JumpRightSprite = 1;
                  VerticalCounter = 20;//Move upward
