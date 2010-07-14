@@ -302,8 +302,8 @@ bool Update()
           {
               DustyX = gxScreenWidth - DustyRight; 
           }              
-              JumpLeftSprite = 0;
-              JumpRightSprite = 0;
+              //JumpLeftSprite = 0;
+              //JumpRightSprite = 0;
               DustyState = 4;//Collide with Right wall.                            
         }
 
@@ -316,10 +316,10 @@ bool Update()
           if (DustyX + DustyLeft <= 0)
           {
               DustyX = 0;
-              JumpLeftSprite = 0;
-              JumpRightSprite = 0;
-              DustyState = 5;
           }
+              //JumpLeftSprite = 0;
+              //JumpRightSprite = 0;
+              DustyState = 5;          
         }
         
 		if (VerticalCounter == 0)
@@ -475,12 +475,12 @@ bool Update()
 
     if (DustyState == 4)//Collided with Right Wall
     {
-            if (DustyX + DustyRight >= gxScreenWidth )
-            {
-               DustyX = gxScreenWidth - DustyRight;
-            }  
+            //if (DustyX + DustyRight >= gxScreenWidth )
+           // {
+            //   DustyX = gxScreenWidth - DustyRight;
+           // }  
             
-            WallStickTimer = 5;
+            //WallStickTimer = 5;
             WallDirectionSprite = 0;
                         
             if (WallStickTimer == 0)
@@ -489,32 +489,32 @@ bool Update()
                 FallLeftSprite = 1;
                 FallRightSprite = 0;
                 WallDirectionSprite = 3;            
-                DustyState = 1;
+             //   DustyState = 1;
             }
             
-            if (WallStickTimer != 0)
-            {                        
-                WallStickTimer -= 1;
-            }
+           // if (WallStickTimer != 0)
+           // {                        
+           //     WallStickTimer -= 1;
+           // }
   
-        if (kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE))
+        if (kbIsKeyDown(KB_SPACE))// && !kbWasKeyDown(KB_SPACE))
             {               
                 DustyX = DustyX + DirectionX;//Move Left
                 VerticalCounter = 20;//Move upward
                 DustyY -= 10;
                 LastDirectionSprite = 0;
-                DustyState = 1;//Jumping
+             //   DustyState = 1;//Jumping
             }
     }   
 
     if (DustyState == 5)//Collided with Left Wall
     {            
-            if (DustyX + DustyLeft <= 0)
-            {
-                DustyX = 0;
-            }
+           // if (DustyX + DustyLeft <= 0)
+          //  {
+           //     DustyX = 0;
+          //  }
         
-            WallStickTimer = 5;
+            //WallStickTimer = 5;
             WallDirectionSprite = 1;
             
             if (WallStickTimer == 0)
@@ -523,21 +523,21 @@ bool Update()
                 FallRightSprite = 1;
                 FallLeftSprite = 0;
                 WallDirectionSprite = 3;
-                DustyState = 1;
+              //  DustyState = 1;
             }
             
-            if (WallStickTimer != 0)
-            {        
-                WallStickTimer -= 1;
-            }       
+           // if (WallStickTimer != 0)
+          //  {        
+           //     WallStickTimer -= 1;
+           // }       
       
-            if (kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE))
+            if (kbIsKeyDown(KB_SPACE)) //&& !kbWasKeyDown(KB_SPACE))
             {
                  DustyX = DustyX - DirectionX;//Move Right
                  VerticalCounter = 20;//Move upward
                  DustyY -= 10;
                  LastDirectionSprite = 1;
-                 DustyState = 1;//Jumping
+              //   DustyState = 1;//Jumping
             }
     }
 
