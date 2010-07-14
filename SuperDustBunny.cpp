@@ -387,14 +387,6 @@ bool Update()
 			DustyState = 0; //Standing
 		}
 
-      //  if (kbIsKeyDown(KB_D) && kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE))
-      //  {
-      //      VerticalCounter = 20;
-       //     DustyY -= 10;    
-       //     LastDirectionSprite = 1;
-       //     DustyState = 1; //Jumping
-       // }
-
         if (kbIsKeyDown(KB_D) && kbIsKeyDown(KB_SPACE) && SpriteTransition != 0)
         {
             JumpQueue = 1;
@@ -405,8 +397,16 @@ bool Update()
                 VerticalCounter = 20;
                 DustyY -= 10;    
                 LastDirectionSprite = 1;
+                //reset JumpQueue
+                JumpQueue = 0;
                 DustyState = 1;
         }    
+           
+        if (kbIsKeyDown(KB_A))
+        {
+            LastDirectionSprite == 0;
+            DustyState = 0;
+        }
             
 		if (SpriteTransition == 30)
 		{
@@ -470,8 +470,16 @@ bool Update()
             VerticalCounter = 20;
             DustyY -= 10;    
             LastDirectionSprite = 0;
+            //Reset JumpQueue
+            JumpQueue = 0;
             DustyState = 1;
         }  
+
+        if (kbIsKeyDown(KB_D))
+        {
+            LastDirectionSprite == 1;
+            DustyState = 0;
+        }
 
 		if (SpriteTransition == 30)
 		{
