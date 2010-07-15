@@ -66,17 +66,17 @@ int DustyRight = 80;
 int DustyTop = -80;
 int DustyBottom = 55;
 
-int BoxX = 550;
-int BoxY = 600;
+int BoxX = 300;
+int BoxY = 800;
 int BoxXLeft = -10;
-int BoxXRight = 100;
-int BoxYTop = -50;
-int BoxYBottom = 50;
+int BoxXRight = 170;
+int BoxYTop = -10;
+int BoxYBottom = 40;
 int BoxVisible = 1;
-bool AreBoxesIntersecting = false;
+int BackgroundX = 0;
+int BackgroundY = 0;
+int BackgroundVisible = 1;
 int VerticalCounter = 0;
-bool IsJumping = false;
-bool IsCollided = false;
 int JumpQueue = 0;
 int JumpRightSprite = 2;
 int JumpLeftSprite = 2;
@@ -87,6 +87,9 @@ int HopRightSprite = 0;
 int HopLeftSprite = 0;
 int LastDirectionSprite = 1;
 int SpriteTransition = 0;
+bool AreBoxesIntersecting = false;
+bool IsJumping = false;
+bool IsCollided = false;
 
 gxSprite DustyHop01;
 gxSprite DustyHop02;
@@ -107,6 +110,7 @@ gxSprite DustyHopLeft04;
 gxSprite DustyHopLeft05;
 gxSprite DustyHopLeft06;
 gxSprite WoodBox01;
+gxSprite Background01;
 
 sxSound DustyToJump;
 sxSound DustyJumps;
@@ -143,7 +147,8 @@ void Init()
 	gxLoadSprite("Data/dustyhoplefttest.png",&DustyHopLeft06);
     gxLoadSprite("Data/DustyLeftWallJump.png", &LeftFaceWallJump01);
     gxLoadSprite("Data/DustyRightWallJump.png", &RightFaceWallJump01);
-    gxLoadSprite("Data/WoodPlatform.png", &WoodBox01);
+    gxLoadSprite("Data/WoodPlatformThin.png", &WoodBox01);
+    gxLoadSprite("Data/LargeBackground.png", &Background01);
     
     sxLoadWav ("Data/yaahooo.wav", &DustyToJump);
     sxLoadWav ("Data/yaahooo.wav", &DustyJumps);
@@ -731,6 +736,11 @@ void UpdateBox_Stationary()
 
 void Display()
 {
+    //if (BackgroundVisible == 1)
+    //{
+    //    gxDrawSprite( BackgroundX, BackgroundY, &Background01 );
+   // }
+
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   Dusty Drawing                                                                         //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
