@@ -56,7 +56,7 @@ enum EDustyState
 	DUSTYSTATE_HOP_LEFT				= 3,
     DUSTYSTATE_WALLJUMP_RIGHT		= 4,
 	DUSTYSTATE_WALLJUMP_LEFT		= 5,
-	BOXSTATE_STATIONARY             = 6
+	BOXSTATE_STATIONARY             = 6,
 };
 
 bool SlowMotionMode = false;
@@ -72,13 +72,14 @@ int DustyRight = 80;
 int DustyTop = -80;
 int DustyBottom = 55;
 int BoxState = BOXSTATE_STATIONARY;
-int BoxX = 350;
-int BoxY = 800;
-int BoxLeft = -10;
-int BoxRight = 200;
-int BoxTop = -50;
-int BoxBottom = 50;
+int BoxX = 550;
+int BoxY = 900;
+int BoxXLeft = -10;
+int BoxXRight = 200;
+int BoxYTop = -50;
+int BoxYBottom = 50;
 int BoxVisible = 1;
+bool AreBoxesIntersecting = false;
 int VerticalCounter = 0;
 bool IsJumping = false;
 bool IsCollided = false;
@@ -111,7 +112,7 @@ gxSprite DustyHopLeft03;
 gxSprite DustyHopLeft04;
 gxSprite DustyHopLeft05;
 gxSprite DustyHopLeft06;
-gxSprite Box01;
+gxSprite WoodBox01;
 
 sxSound DustyToJump;
 sxSound DustyJumps;
@@ -148,7 +149,7 @@ void Init()
 	gxLoadSprite("Data/dustyhoplefttest.png",&DustyHopLeft06);
     gxLoadSprite("Data/DustyLeftWallJump.png", &LeftFaceWallJump01);
     gxLoadSprite("Data/DustyRightWallJump.png", &RightFaceWallJump01);
-    gxLoadSprite("Data/wood-tile.png", &Box01);
+    gxLoadSprite("Data/WoodPlatform.png", &WoodBox01);
     
     sxLoadWav ("Data/yaahooo.wav", &DustyToJump);
     sxLoadWav ("Data/yaahooo.wav", &DustyJumps);
@@ -701,7 +702,7 @@ void UpdateDusty_WallJump_Left()
 }   
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                  BOX01 Implementation                                                                   //
+//                                                  BOX_Stationary Implementation                                                                   //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
 void SetBoxState_Stationary()
@@ -709,24 +710,23 @@ void SetBoxState_Stationary()
     BoxState = BOXSTATE_STATIONARY;
 }
 
-void DisplayBox01()
+void DisplayBox_Stationary()
 {
-    if (BoxVisible == 1)
-    {
-        gxDrawSprite( BoxX, BoxY, &Box01 );
-    }
-   
+       gxDrawSprite( BoxX, BoxY, &WoodBox01 );
 }
 
 void UpdateBox_Stationary()
 {
-    if (BoxVisible == 1)
+    if (BoxYTop, BoxYBottom, BoxXLeft, BoxXRight == DustyTop, DustyBottom, DustyRight, DustyTop)  
     {
-        BoxVisible = 1;
+        AreBoxesIntersecting = true;
     }
     
+    if (AreBoxesIntersecting == true)
+    {
+        DustyY = BoxY - BoxX;//Placeholder
+    }    
     
-
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -748,7 +748,7 @@ void Display()
 	case DUSTYSTATE_HOP_LEFT:           DisplayDusty_Hop_Left(); break;
 	case DUSTYSTATE_WALLJUMP_RIGHT:     DisplayDusty_WallJump_Right(); break;
 	case DUSTYSTATE_WALLJUMP_LEFT:      DisplayDusty_WallJump_Left(); break;
-	case BOXSTATE_STATIONARY:           DisplayBox01(); break;
+	case BOXSTATE_STATIONARY:           DisplayBox_Stationary(); break;
 	default:						    break;
 }
 
@@ -851,11 +851,11 @@ if (BackgroundMusic == 1)
 		{
 			return true;
 		}
-<<<<<<< .mine
+//<<<<<<< .mine
     }
-=======
-	}
->>>>>>> .r376
+//=======
+	//}
+//>>>>>>> .r376
 #endif
 	
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
