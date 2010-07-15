@@ -16,10 +16,10 @@ enum EDustyState
 {
 	DUSTYSTATE_STAND				= 0,
 	DUSTYSTATE_JUMP					= 1,
-	DUSTYSTATE_HOP_LEFT				= 2,
-	DUSTYSTATE_HOP_RIGHT			= 3,
-	DUSTYSTATE_WALLJUMP_LEFT		= 4,
-	DUSTYSTATE_WALLJUMP_RIGHT		= 5
+	DUSTYSTATE_HOP_RIGHT			= 2,
+	DUSTYSTATE_HOP_LEFT				= 3,
+    DUSTYSTATE_WALLJUMP_RIGHT		= 4,
+	DUSTYSTATE_WALLJUMP_LEFT		= 5,
 };
 
 bool SlowMotionMode = false;
@@ -117,14 +117,16 @@ void Exit()
 	sxDeinit();
 }
 
-
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 // State switching function declarations
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 
 void SetDustyState_Stand();
 void SetDustyState_Jump( bool OffWall );
-
+void SetDustyState_Hop_Right();
+void SetDustyState_Hop_Left();
+void SetDustyState_WallJump_Right();
+void SetDustyState_WallJump_Left();
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 // DUSTYSTATE_STAND Implementation
@@ -139,7 +141,7 @@ void DisplayDusty_Stand()
 {
 	if (LastDirectionSprite == 0) //Standing
 	{
-		gxDrawSprite( DustyX-32, DustyY-59, &DustyHopLeft01 );
+ 		gxDrawSprite( DustyX-32, DustyY-59, &DustyHopLeft01 );
 	}
 
 	if (LastDirectionSprite == 1)//After moving, stops to face the direction last moved.
@@ -282,8 +284,7 @@ void UpdateDusty_Jump()
           JumpRightSprite = 0;
           WallStickTimer = 15;
           IsCollided = true;             
-      }
-                      
+      }                    
     }
     
 	if (VerticalCounter == 0)
@@ -317,6 +318,309 @@ void UpdateDusty_Jump()
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+// DUSTYSTATE_HOP_RIGHT Function
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+
+void SetDustyState_Hop_Right()
+{
+    DustyState = DUSTYSTATE_HOP_RIGHT;
+}
+
+void DisplayDusty_Hop_Right()
+{
+    if (HopRightSprite == 1) 
+    {
+        gxDrawSprite( DustyX-32, DustyY-58, &DustyHop01 );
+    } 
+
+    if (HopRightSprite == 2)
+    {
+        gxDrawSprite( DustyX-28, DustyY-62, &DustyHop02 );
+    } 
+
+    if (HopRightSprite == 3)
+    {
+        gxDrawSprite( DustyX-25, DustyY-63, &DustyHop03 );
+    }
+
+    if (HopRightSprite == 4)
+    {
+        gxDrawSprite( DustyX-37, DustyY-46, &DustyHop04 );
+    }    
+
+    if (HopRightSprite == 5)
+    {
+        gxDrawSprite( DustyX-41, DustyY-74, &DustyHop05 );
+    }     
+
+    if (HopRightSprite == 6)
+    {
+        gxDrawSprite( DustyX-32, DustyY-58, &DustyHop01 );
+    }   
+}	
+
+void UpdateDusty_Hop_Right()
+{
+    DustyX = DustyX + DirectionX;  
+
+    // Update animation
+    SpriteTransition -= 1;
+
+    // Collision with right side of screen
+    if (DustyX + DustyRight >= gxScreenWidth )
+        DustyX = gxScreenWidth - DustyRight;
+
+    if ( !kbIsKeyDown(KB_D) && SpriteTransition == 0 )
+    {			                         
+        SetDustyState_Stand();
+    }
+
+    if (kbIsKeyDown(KB_D) && kbIsKeyDown(KB_SPACE) && SpriteTransition != 0)
+    {
+        JumpQueue = 1;
+        //sxPlaySound( &DustyToJump );
+        //sxDestroySound( &DustyToJump ); 
+    }
+
+    if (JumpQueue == 1 && SpriteTransition == 0)
+    {
+        LastDirectionSprite = 1;
+        //reset JumpQueue
+        JumpQueue = 0;
+        SetDustyState_Jump( false );
+    }    
+
+    if (kbIsKeyDown(KB_A))
+    {
+        LastDirectionSprite = 0;
+        DustyState = DUSTYSTATE_HOP_LEFT;
+    }
+
+    if (SpriteTransition == 30)
+    {
+        HopRightSprite = 1;
+    }  
+
+    if (SpriteTransition == 25) 
+    {
+        HopRightSprite = 2;
+    } 
+
+    if (SpriteTransition == 20)
+    {
+        HopRightSprite = 3;
+    } 
+
+    if (SpriteTransition == 15)
+    {
+        HopRightSprite = 4;
+    }
+
+    if (SpriteTransition == 10)
+    {
+        HopRightSprite = 5;
+    }
+
+    if (SpriteTransition == 5)
+    {
+        HopRightSprite = 6;
+    }
+
+    if (SpriteTransition == 0)
+    {
+        SpriteTransition = 30;
+    }		
+}	
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+// DUSTYSTATE_HOP_LEFT Function
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+void SetDustyState_Hop_Left()
+{
+    DustyState = DUSTYSTATE_HOP_LEFT;
+}
+
+void DisplayDusty_Hop_Left()
+{
+    if (HopLeftSprite == 1) 
+    {
+        gxDrawSprite( DustyX-32, DustyY-59, &DustyHopLeft01 );
+    } 
+
+    if (HopLeftSprite == 2)
+    {
+        gxDrawSprite( DustyX-27, DustyY-60, &DustyHopLeft02 );
+    } 
+
+    if (HopLeftSprite == 3)
+    {
+        gxDrawSprite( DustyX-23, DustyY-64, &DustyHopLeft03 );
+    }
+
+    if (HopLeftSprite == 4)
+    {
+        gxDrawSprite( DustyX-34, DustyY-45, &DustyHopLeft04 );
+    } 
+    if (HopLeftSprite == 5)
+    {
+        gxDrawSprite( DustyX-41, DustyY-70, &DustyHopLeft06 );
+    }    
+    if (HopLeftSprite == 6)
+    {
+        gxDrawSprite( DustyX-32, DustyY-59, &DustyHopLeft01 );
+    }              
+}
+
+void UpdateDusty_Hop_Left()
+{
+    DustyX = DustyX - DirectionX;	
+
+    // Update animation
+    SpriteTransition -= 1;
+
+    // Collision with left side of screen
+    if (DustyX + DustyLeft <= 0)
+        DustyX = -DustyLeft;
+
+    if ( !kbIsKeyDown(KB_A) && SpriteTransition == 0 )
+    {          
+        SetDustyState_Stand();
+    }
+
+    if (kbIsKeyDown(KB_A) && kbIsKeyDown(KB_SPACE) && SpriteTransition != 0)
+    {
+        JumpQueue = 1;
+        //sxPlaySound( &DustyToJump );
+        //sxDestroySound( &DustyToJump ); 
+    }
+
+    if (JumpQueue == 1 && SpriteTransition == 0)
+    {
+        LastDirectionSprite = 0;
+        //Reset JumpQueue
+        JumpQueue = 0;
+        SetDustyState_Jump( false );
+    }  
+
+    if (kbIsKeyDown(KB_D))
+    {
+        LastDirectionSprite = 1;
+        DustyState = DUSTYSTATE_HOP_RIGHT;
+    }
+
+    if (SpriteTransition == 30)
+    {
+        HopLeftSprite = 1;
+    }  
+
+    if (SpriteTransition == 25) 
+    {
+        HopLeftSprite = 2;
+    } 
+
+    if (SpriteTransition == 20)
+    {
+        HopLeftSprite = 3;
+    } 
+
+    if (SpriteTransition == 15)
+    {
+        HopLeftSprite = 4;
+    }
+
+    if (SpriteTransition == 10)
+    {
+        HopLeftSprite = 5;
+    }
+
+    if (SpriteTransition == 5)
+    {
+        HopLeftSprite = 6;
+    }
+
+    if (SpriteTransition == 0)
+    {
+        SpriteTransition = 30;
+    }
+}
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+// DUSTYSTATE_WALLJUMP_RIGHT Function
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -	
+void SetDustyState_WallJump_Right()
+{
+    DustyState = DUSTYSTATE_WALLJUMP_RIGHT;
+}
+
+void DisplayDusty_WallJump_Right()
+{
+    if (DustyState == DUSTYSTATE_WALLJUMP_RIGHT && LastDirectionSprite == 1)//Collision with Right Wall
+    {
+        gxDrawSprite( DustyX-20, DustyY-72, &LeftFaceWallJump01 );       
+    }
+}
+
+void UpdateDusty_WallJump_Right()//Collided with Right Wall
+{                                                
+    if (WallStickTimer == 0)
+    {                   
+        VerticalCounter = 0;          
+        DustyState = DUSTYSTATE_JUMP;
+    }
+
+    if (WallStickTimer != 0)
+    {                        
+        WallStickTimer -= 1;
+    }
+
+    if (kbIsKeyDown(KB_SPACE) && LastDirectionSprite == 1)// && !kbWasKeyDown(KB_SPACE))
+    {               
+        LastDirectionSprite = 0;
+        SetDustyState_Jump( true );
+    }
+}	
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+// DUSTYSTATE_WALLJUMP_LEFT Function
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+
+void SetDustyState_WallJump_Left()
+{
+    DustyState = DUSTYSTATE_WALLJUMP_LEFT;
+} 
+
+void DisplayDusty_WallJump_Left()
+{
+    if (DustyState == DUSTYSTATE_WALLJUMP_LEFT && LastDirectionSprite == 0)//Collision with Left Wall
+    {
+        gxDrawSprite( DustyX-26, DustyY-71, &RightFaceWallJump01 ); 
+    }
+}
+
+void UpdateDusty_WallJump_Left()
+{
+
+    if (WallStickTimer == 0)
+    { 
+        VerticalCounter = 0;
+        DustyState = DUSTYSTATE_JUMP;
+    }
+
+    if (WallStickTimer != 0)
+    {        
+        WallStickTimer -= 1;
+    }       
+
+    if (kbIsKeyDown(KB_SPACE) && LastDirectionSprite == 0) //&& !kbWasKeyDown(KB_SPACE))
+    {
+        LastDirectionSprite = 1;
+        //Resetting sprites
+        FallLeftSprite = 0;
+        JumpRightSprite = 1;
+        SetDustyState_Jump( true );
+    }
+}   
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 // Central Display and Update functions
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 
@@ -329,85 +633,14 @@ void Display()
 	// New style
 	switch (DustyState)
 	{
-	case DUSTYSTATE_STAND:			DisplayDusty_Stand(); break;
-	case DUSTYSTATE_JUMP:			DisplayDusty_Jump(); break;
-	default:						break;
-	}
-
-	// Old style
-	if (DustyState == DUSTYSTATE_HOP_RIGHT) //Moving Right
-	{
-		if (HopRightSprite == 1) 
-		{
-			gxDrawSprite( DustyX-32, DustyY-58, &DustyHop01 );
-		} 
-
-		if (HopRightSprite == 2)
-		{
-			gxDrawSprite( DustyX-28, DustyY-62, &DustyHop02 );
-		} 
-
-		if (HopRightSprite == 3)
-		{
-			gxDrawSprite( DustyX-25, DustyY-63, &DustyHop03 );
-		}
-
-		if (HopRightSprite == 4)
-		{
-			gxDrawSprite( DustyX-37, DustyY-46, &DustyHop04 );
-		}    
-
-		if (HopRightSprite == 5)
-		{
-			gxDrawSprite( DustyX-41, DustyY-74, &DustyHop05 );
-		}     
-
-		if (HopRightSprite == 6)
-		{
-			gxDrawSprite( DustyX-32, DustyY-58, &DustyHop01 );
-		}               
-	}
-
-	if (DustyState == DUSTYSTATE_HOP_LEFT) //Moving Left
-	{
-		if (HopLeftSprite == 1) 
-		{
-			gxDrawSprite( DustyX-32, DustyY-59, &DustyHopLeft01 );
-		} 
-
-		if (HopLeftSprite == 2)
-		{
-			gxDrawSprite( DustyX-27, DustyY-60, &DustyHopLeft02 );
-		} 
-
-		if (HopLeftSprite == 3)
-		{
-			gxDrawSprite( DustyX-23, DustyY-64, &DustyHopLeft03 );
-		}
-
-		if (HopLeftSprite == 4)
-		{
-			gxDrawSprite( DustyX-34, DustyY-45, &DustyHopLeft04 );
-		} 
-		if (HopLeftSprite == 5)
-		{
-			gxDrawSprite( DustyX-41, DustyY-70, &DustyHopLeft06 );
-		}    
-		if (HopLeftSprite == 6)
-		{
-			gxDrawSprite( DustyX-32, DustyY-59, &DustyHopLeft01 );
-		}              
-	}
-	
-	if (DustyState == DUSTYSTATE_WALLJUMP_RIGHT && LastDirectionSprite == 1)//Collision with Right Wall
-	{
-            gxDrawSprite( DustyX-20, DustyY-72, &LeftFaceWallJump01 );       
-	}
-   
-    if (DustyState == DUSTYSTATE_WALLJUMP_LEFT && LastDirectionSprite == 0)//Collision with Left Wall
-    {
-            gxDrawSprite( DustyX-26, DustyY-71, &RightFaceWallJump01 ); 
-    }
+	case DUSTYSTATE_STAND:			    DisplayDusty_Stand(); break;
+	case DUSTYSTATE_JUMP:			    DisplayDusty_Jump(); break;
+	case DUSTYSTATE_HOP_RIGHT:          DisplayDusty_Hop_Right(); break;
+	case DUSTYSTATE_HOP_LEFT:           DisplayDusty_Hop_Left(); break;
+	case DUSTYSTATE_WALLJUMP_RIGHT:     DisplayDusty_WallJump_Right(); break;
+	case DUSTYSTATE_WALLJUMP_LEFT:      DisplayDusty_WallJump_Left(); break;
+	default:						    break;
+}
 
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 	// Debugging aids
@@ -430,6 +663,21 @@ bool Update()
 {
 	kbUpdateKeys();
 	
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+    // Dusty Update
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+
+    switch (DustyState)
+    {
+    case DUSTYSTATE_STAND:			    UpdateDusty_Stand(); break;
+    case DUSTYSTATE_JUMP:			    UpdateDusty_Jump(); break;
+    case DUSTYSTATE_HOP_RIGHT:          UpdateDusty_Hop_Right(); break;
+    case DUSTYSTATE_HOP_LEFT:           UpdateDusty_Hop_Left(); break;
+    case DUSTYSTATE_WALLJUMP_RIGHT:     UpdateDusty_WallJump_Right(); break;
+    case DUSTYSTATE_WALLJUMP_LEFT:      UpdateDusty_WallJump_Right(); break;
+    default:						    break;
+    }
+    
 	//Background Music
 if (BackgroundMusic == 1)
 {	
@@ -502,209 +750,9 @@ if (BackgroundMusic == 1)
 		{
 			return true;
 		}
-	}
+}
 
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-	// Dusty Update
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 
-	// New style
-	switch (DustyState)
-	{
-	case DUSTYSTATE_STAND:			UpdateDusty_Stand(); break;
-	case DUSTYSTATE_JUMP:			UpdateDusty_Jump(); break;
-	default:						break;
-	}
-
-	// Old style
-	if (DustyState == DUSTYSTATE_HOP_RIGHT)//Moving right
-	{
-		DustyX = DustyX + DirectionX;  
-
-		// Update animation
-		SpriteTransition -= 1;
-
-		// Collision with right side of screen
-		if (DustyX + DustyRight >= gxScreenWidth )
-			DustyX = gxScreenWidth - DustyRight;
-
-		if ( !kbIsKeyDown(KB_D) && SpriteTransition == 0 )
-		{			                         
-			SetDustyState_Stand();
-		}
-
-        if (kbIsKeyDown(KB_D) && kbIsKeyDown(KB_SPACE) && SpriteTransition != 0)
-        {
-            JumpQueue = 1;
-            //sxPlaySound( &DustyToJump );
-            //sxDestroySound( &DustyToJump ); 
-        }
-            
-        if (JumpQueue == 1 && SpriteTransition == 0)
-        {
-            LastDirectionSprite = 1;
-            //reset JumpQueue
-            JumpQueue = 0;
-			SetDustyState_Jump( false );
-        }    
-           
-        if (kbIsKeyDown(KB_A))
-        {
-            LastDirectionSprite = 0;
-            DustyState = DUSTYSTATE_HOP_LEFT;
-        }
-            
-		if (SpriteTransition == 30)
-		{
-			HopRightSprite = 1;
-		}  
-
-		if (SpriteTransition == 25) 
-		{
-			HopRightSprite = 2;
-		} 
-
-		if (SpriteTransition == 20)
-		{
-			HopRightSprite = 3;
-		} 
-
-		if (SpriteTransition == 15)
-		{
-			HopRightSprite = 4;
-		}
-
-		if (SpriteTransition == 10)
-		{
-			HopRightSprite = 5;
-		}
-
-		if (SpriteTransition == 5)
-		{
-			HopRightSprite = 6;
-		}
-
-		if (SpriteTransition == 0)
-		{
-			SpriteTransition = 30;
-		}	
-	}	
-
-	if (DustyState == DUSTYSTATE_HOP_LEFT)//Moving left
-	{	
-		DustyX = DustyX - DirectionX;	
-
-		// Update animation
-		SpriteTransition -= 1;
-
-		// Collision with left side of screen
-		if (DustyX + DustyLeft <= 0)
-			DustyX = -DustyLeft;
-
-		if ( !kbIsKeyDown(KB_A) && SpriteTransition == 0 )
-		{          
-			SetDustyState_Stand();
-		}
-
-        if (kbIsKeyDown(KB_A) && kbIsKeyDown(KB_SPACE) && SpriteTransition != 0)
-        {
-            JumpQueue = 1;
-            //sxPlaySound( &DustyToJump );
-            //sxDestroySound( &DustyToJump ); 
-        }
-
-        if (JumpQueue == 1 && SpriteTransition == 0)
-        {
-            LastDirectionSprite = 0;
-            //Reset JumpQueue
-            JumpQueue = 0;
- 			SetDustyState_Jump( false );
-        }  
-
-        if (kbIsKeyDown(KB_D))
-        {
-            LastDirectionSprite = 1;
-            DustyState = DUSTYSTATE_HOP_RIGHT;
-        }
-
-		if (SpriteTransition == 30)
-		{
-			HopLeftSprite = 1;
-		}  
-
-		if (SpriteTransition == 25) 
-		{
-			HopLeftSprite = 2;
-		} 
-
-		if (SpriteTransition == 20)
-		{
-			HopLeftSprite = 3;
-		} 
-
-		if (SpriteTransition == 15)
-		{
-			HopLeftSprite = 4;
-		}
-
-		if (SpriteTransition == 10)
-		{
-			HopLeftSprite = 5;
-		}
-
-		if (SpriteTransition == 5)
-		{
-			HopLeftSprite = 6;
-		}
-
-		if (SpriteTransition == 0)
-		{
-			SpriteTransition = 30;
-		}
-	}
-
-    if (DustyState == DUSTYSTATE_WALLJUMP_RIGHT)//Collided with Right Wall
-    {                                                  
-            if (WallStickTimer == 0)
-            {                   
-                VerticalCounter = 0;          
-                DustyState = DUSTYSTATE_JUMP;
-            }
-            
-            if (WallStickTimer != 0)
-            {                        
-                WallStickTimer -= 1;
-            }
-  
-        if (kbIsKeyDown(KB_SPACE) && LastDirectionSprite == 1)// && !kbWasKeyDown(KB_SPACE))
-            {               
-                LastDirectionSprite = 0;
-				SetDustyState_Jump( true );
-            }
-    }   
-
-    if (DustyState == DUSTYSTATE_WALLJUMP_LEFT)//Collided with Left Wall
-    {                               
-            if (WallStickTimer == 0)
-            { 
-                VerticalCounter = 0;
-                DustyState = DUSTYSTATE_JUMP;
-            }
-            
-            if (WallStickTimer != 0)
-            {        
-                WallStickTimer -= 1;
-            }       
-      
-            if (kbIsKeyDown(KB_SPACE) && LastDirectionSprite == 0) //&& !kbWasKeyDown(KB_SPACE))
-            {
-                 LastDirectionSprite = 1;
-                 //Resetting sprites
-                 FallLeftSprite = 0;
-                 JumpRightSprite = 1;
-				SetDustyState_Jump( true );
-			}
-    }
-
+	
 	return true;
 }
