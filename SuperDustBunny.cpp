@@ -1,3 +1,13 @@
+//<<<<<<< .mine
+//-----------------------------------------------------------------------------------------------------------------------------------------//
+//                                                                                                                                         // 
+//                                                          Super Dust Bunny                                                               //
+//                                                                                                                                         //
+//                               Authors: Thomas Perry <perry.thomas.12@gmail.com> & Wade Brainerd <wadetb@gmail.com>                      //
+//                                      Copyright © 2010 by Thomas Perry and Wade Brainerd. All rights reserved.                           //
+//                                                                                                                                         //
+//-----------------------------------------------------------------------------------------------------------------------------------------//
+//=======
 //--------------------------------------------------------------------------------
 //
 // Super Dust Bunny
@@ -6,6 +16,7 @@
 // Copyright ï¿½ 2010 by Thomas Perry and Wade Brainerd. All rights reserved.
 //
 //--------------------------------------------------------------------------------
+//>>>>>>> .r375
 
 #ifdef __APPLE__
 #include <TargetConditionals.h>
@@ -45,19 +56,29 @@ enum EDustyState
 	DUSTYSTATE_HOP_LEFT				= 3,
     DUSTYSTATE_WALLJUMP_RIGHT		= 4,
 	DUSTYSTATE_WALLJUMP_LEFT		= 5,
+	BOXSTATE_STATIONARY             = 6
 };
 
 bool SlowMotionMode = false;
 
 EDustyState DustyState = DUSTYSTATE_STAND;
-int DustyX = 100;
-int DustyY = 480-55;
+
+int DustyX = 350;
+int DustyY = 1024-55;
 int DirectionX = 7;
 int DirectionY = 7;
 int DustyLeft = -10;
 int DustyRight = 80;
 int DustyTop = -80;
 int DustyBottom = 55;
+int BoxState = BOXSTATE_STATIONARY;
+int BoxX = 350;
+int BoxY = 800;
+int BoxLeft = -10;
+int BoxRight = 200;
+int BoxTop = -50;
+int BoxBottom = 50;
+int BoxVisible = 1;
 int VerticalCounter = 0;
 bool IsJumping = false;
 bool IsCollided = false;
@@ -90,6 +111,7 @@ gxSprite DustyHopLeft03;
 gxSprite DustyHopLeft04;
 gxSprite DustyHopLeft05;
 gxSprite DustyHopLeft06;
+gxSprite Box01;
 
 sxSound DustyToJump;
 sxSound DustyJumps;
@@ -126,6 +148,7 @@ void Init()
 	gxLoadSprite("Data/dustyhoplefttest.png",&DustyHopLeft06);
     gxLoadSprite("Data/DustyLeftWallJump.png", &LeftFaceWallJump01);
     gxLoadSprite("Data/DustyRightWallJump.png", &RightFaceWallJump01);
+    gxLoadSprite("Data/wood-tile.png", &Box01);
     
     sxLoadWav ("Data/yaahooo.wav", &DustyToJump);
     sxLoadWav ("Data/yaahooo.wav", &DustyJumps);
@@ -157,6 +180,7 @@ void SetDustyState_Hop_Right();
 void SetDustyState_Hop_Left();
 void SetDustyState_WallJump_Right();
 void SetDustyState_WallJump_Left();
+void SetBoxState_Stationary();
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                             Input functions
@@ -677,6 +701,35 @@ void UpdateDusty_WallJump_Left()
 }   
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                  BOX01 Implementation                                                                   //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+void SetBoxState_Stationary()
+{
+    BoxState = BOXSTATE_STATIONARY;
+}
+
+void DisplayBox01()
+{
+    if (BoxVisible == 1)
+    {
+        gxDrawSprite( BoxX, BoxY, &Box01 );
+    }
+   
+}
+
+void UpdateBox_Stationary()
+{
+    if (BoxVisible == 1)
+    {
+        BoxVisible = 1;
+    }
+    
+    
+
+}
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   Central Display and Update functions                                                  //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
@@ -695,6 +748,7 @@ void Display()
 	case DUSTYSTATE_HOP_LEFT:           DisplayDusty_Hop_Left(); break;
 	case DUSTYSTATE_WALLJUMP_RIGHT:     DisplayDusty_WallJump_Right(); break;
 	case DUSTYSTATE_WALLJUMP_LEFT:      DisplayDusty_WallJump_Left(); break;
+	case BOXSTATE_STATIONARY:           DisplayBox01(); break;
 	default:						    break;
 }
 
@@ -716,9 +770,6 @@ void Display()
 	gxDrawString(DustyX-4, DustyY-4, 8, gxRGB32(255, 0, 0), "+");
 #endif
 }
-
-
-
 
 bool Update()
 {
@@ -800,7 +851,11 @@ if (BackgroundMusic == 1)
 		{
 			return true;
 		}
+<<<<<<< .mine
+    }
+=======
 	}
+>>>>>>> .r376
 #endif
 	
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -815,6 +870,7 @@ if (BackgroundMusic == 1)
 		case DUSTYSTATE_HOP_LEFT:           UpdateDusty_Hop_Left(); break;
 		case DUSTYSTATE_WALLJUMP_RIGHT:     UpdateDusty_WallJump_Right(); break;
 		case DUSTYSTATE_WALLJUMP_LEFT:      UpdateDusty_WallJump_Left(); break;
+		case BOXSTATE_STATIONARY:           UpdateBox_Stationary(); break;
 		default:						    break;
     }
     	
