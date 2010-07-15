@@ -1,4 +1,3 @@
-//<<<<<<< .mine
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 //                                                                                                                                         // 
 //                                                          Super Dust Bunny                                                               //
@@ -7,16 +6,6 @@
 //                                      Copyright © 2010 by Thomas Perry and Wade Brainerd. All rights reserved.                           //
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
-//=======
-//--------------------------------------------------------------------------------
-//
-// Super Dust Bunny
-// 
-// Authors: Thomas Perry <perry.thomas.12@gmail.com> & Wade Brainerd <wadetb@gmail.com>
-// Copyright ï¿½ 2010 by Thomas Perry and Wade Brainerd. All rights reserved.
-//
-//--------------------------------------------------------------------------------
-//>>>>>>> .r375
 
 #ifdef __APPLE__
 #include <TargetConditionals.h>
@@ -750,7 +739,7 @@ void Display()
 	case DUSTYSTATE_WALLJUMP_LEFT:      DisplayDusty_WallJump_Left(); break;
 	case BOXSTATE_STATIONARY:           DisplayBox_Stationary(); break;
 	default:						    break;
-}
+	}
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   Debugging aids                                                                        //
@@ -851,11 +840,7 @@ if (BackgroundMusic == 1)
 		{
 			return true;
 		}
-//<<<<<<< .mine
-    }
-//=======
-	//}
-//>>>>>>> .r376
+	}
 #endif
 	
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
