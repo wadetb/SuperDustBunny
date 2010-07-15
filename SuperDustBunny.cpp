@@ -67,9 +67,9 @@ int DustyTop = -80;
 int DustyBottom = 55;
 
 int BoxX = 550;
-int BoxY = 900;
+int BoxY = 600;
 int BoxXLeft = -10;
-int BoxXRight = 200;
+int BoxXRight = 100;
 int BoxYTop = -50;
 int BoxYBottom = 50;
 int BoxVisible = 1;
@@ -712,15 +712,15 @@ void DisplayBox_Stationary()
 
 void UpdateBox_Stationary()
 {
-    if (BoxYTop, BoxYBottom, BoxXLeft, BoxXRight == DustyTop, DustyBottom, DustyRight, DustyTop)  
-    {
-        AreBoxesIntersecting = true;
-    }
+    //if (BoxYTop, BoxYBottom, BoxXLeft, BoxXRight == DustyTop, DustyBottom, DustyRight, DustyTop)  
+    //{
+    //    AreBoxesIntersecting = true;
+    //}
     
-    if (AreBoxesIntersecting == true)
-    {
-        DustyY = BoxY - BoxX;//Placeholder
-    }    
+    //if (AreBoxesIntersecting == true)
+    //{
+     //   DustyY = BoxY - BoxX;//Placeholder
+   // }    
     
 }
 
@@ -744,22 +744,23 @@ void Display()
 	case DUSTYSTATE_WALLJUMP_RIGHT:     DisplayDusty_WallJump_Right(); break;
 	case DUSTYSTATE_WALLJUMP_LEFT:      DisplayDusty_WallJump_Left(); break;	
 	default:						    break;
-<<<<<<< .mine
+//<<<<<<< .mine
     }
-=======
-	}
->>>>>>> .r379
+//=======
+	
+//>>>>>>> .r379
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   Box Drawing                                                                           //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-    //switch (BoxState)
-   // {
-    //  case BOXSTATE_STATIONARY:          DisplayBox_Stationary(); break;
-   //   default:                           break;
-   // }
-    
+    switch (BoxState)
+    {
+      case BOXSTATE_STATIONARY:          DisplayBox_Stationary(); break;
+      default:                           break;
+    }
+ 
+  
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   Debugging aids                                                                        //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -878,10 +879,10 @@ if (BackgroundMusic == 1)
 		default:						    break;
     }
     	
-   // switch (BoxState)
-   // {
-   // case BOXSTATE_STATIONARY:           UpdateBox_Stationary(); break;
-   //     default:                           break;
-  //  }	
+    switch (BoxState)
+    {
+        case BOXSTATE_STATIONARY:           UpdateBox_Stationary(); break;
+        default:                           break;
+    }	
 	return true;
 }
