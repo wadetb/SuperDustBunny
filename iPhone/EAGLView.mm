@@ -10,10 +10,6 @@
 
 @implementation EAGLView
 
-@synthesize animating;
-
-@dynamic animationFrameInterval;
-
 void Init();
 void Exit();
 void Update();
@@ -26,6 +22,9 @@ extern int _msNewButton1;
 extern float _msNewAccelX;
 extern float _msNewAccelY;
 extern float _msNewAccelZ;
+
+extern int gxScreenWidth;
+extern int gxScreenHeight;
 
 // You must implement this method
 + (Class) layerClass
@@ -76,9 +75,41 @@ extern float _msNewAccelZ;
 		
 		[[UIApplication sharedApplication] setStatusBarHidden:YES animated:NO];
 		Init();
+		
+		if (displayLinkSupported)
+		{
+			// CADisplayLink is API new to iPhone SDK 3.1. Compiling against earlier versions will result in a warning, but can be dismissed
+			// if the system version runtime check for CADisplayLink exists in -initWithCoder:. The runtime check ensures this code will
+			// not be called in system versions earlier than 3.1.
+			
+			displayLink = [NSClassFromString(@"CADisplayLink") displayLinkWithTarget:self selector:@selector(drawView:)];
+			[displayLink setFrameInterval:animationFrameInterval];
+			[displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+		}
+		else
+			animationTimer = [NSTimer scheduledTimerWithTimeInterval:(NSTimeInterval)((1.0 / 60.0) * animationFrameInterval) target:self selector:@selector(drawView:) userInfo:nil repeats:TRUE];		
     }
 	
     return self;
+}
+
+- (void) layoutSubviews
+{
+	// Allocate color buffer backing based on the current layer size
+    glBindRenderbufferOES(GL_RENDERBUFFER_OES, colorRenderbuffer);
+    [context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:(CAEAGLLayer*)self.layer];
+	glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_WIDTH_OES, &backingWidth);
+    glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_HEIGHT_OES, &backingHeight);
+	
+    if (glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES) != GL_FRAMEBUFFER_COMPLETE_OES)
+	{
+		NSLog(@"Failed to make complete framebuffer object %x", glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES));
+    }
+	
+	gxScreenWidth = backingWidth;
+	gxScreenHeight = backingHeight;
+	
+    [self drawView:nil];
 }
 
 - (void) drawView:(id)sender
@@ -95,8 +126,6 @@ extern float _msNewAccelZ;
 	glOrthof(0, backingWidth*2, backingHeight*2, 0, 0, 100);
     glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glRotatef(90, 0, 0, 1);
-	glTranslatef(0, -backingWidth*2, 0);
 	
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -106,23 +135,6 @@ extern float _msNewAccelZ;
     glBindRenderbufferOES(GL_RENDERBUFFER_OES, colorRenderbuffer);
     [context presentRenderbuffer:GL_RENDERBUFFER_OES];
 }
-
-- (void) layoutSubviews
-{
-	// Allocate color buffer backing based on the current layer size
-    glBindRenderbufferOES(GL_RENDERBUFFER_OES, colorRenderbuffer);
-    [context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:(CAEAGLLayer*)self.layer];
-	glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_WIDTH_OES, &backingWidth);
-    glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_HEIGHT_OES, &backingHeight);
-	
-    if (glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES) != GL_FRAMEBUFFER_COMPLETE_OES)
-	{
-		NSLog(@"Failed to make complete framebuffer object %x", glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES));
-    }
-	
-    [self drawView:nil];
-}
-
 
 - (void)accelerometer:(UIAccelerometer*)accelerometer didAccelerate:(UIAcceleration*)acceleration
 {
@@ -159,71 +171,6 @@ extern float _msNewAccelZ;
 	_msNewX = touchPoint.y*2;
 	_msNewY = backingWidth*2 - touchPoint.x*2;
 	_msNewButton1 = 0;
-}
-
-- (NSInteger) animationFrameInterval
-{
-	return animationFrameInterval;
-}
-
-- (void) setAnimationFrameInterval:(NSInteger)frameInterval
-{
-	// Frame interval defines how many display frames must pass between each time the
-	// display link fires. The display link will only fire 30 times a second when the
-	// frame internal is two on a display that refreshes 60 times a second. The default
-	// frame interval setting of one will fire 60 times a second when the display refreshes
-	// at 60 times a second. A frame interval setting of less than one results in undefined
-	// behavior.
-	if (frameInterval >= 1)
-	{
-		animationFrameInterval = frameInterval;
-		
-		if (animating)
-		{
-			[self stopAnimation];
-			[self startAnimation];
-		}
-	}
-}
-
-- (void) startAnimation
-{
-	if (!animating)
-	{
-		if (displayLinkSupported)
-		{
-			// CADisplayLink is API new to iPhone SDK 3.1. Compiling against earlier versions will result in a warning, but can be dismissed
-			// if the system version runtime check for CADisplayLink exists in -initWithCoder:. The runtime check ensures this code will
-			// not be called in system versions earlier than 3.1.
-
-			displayLink = [NSClassFromString(@"CADisplayLink") displayLinkWithTarget:self selector:@selector(drawView:)];
-			[displayLink setFrameInterval:animationFrameInterval];
-			[displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-		}
-		else
-			animationTimer = [NSTimer scheduledTimerWithTimeInterval:(NSTimeInterval)((1.0 / 60.0) * animationFrameInterval) target:self selector:@selector(drawView:) userInfo:nil repeats:TRUE];
-		
-		animating = TRUE;
-	}
-}
-
-- (void)stopAnimation
-{
-	if (animating)
-	{
-		if (displayLinkSupported)
-		{
-			[displayLink invalidate];
-			displayLink = nil;
-		}
-		else
-		{
-			[animationTimer invalidate];
-			animationTimer = nil;
-		}
-		
-		animating = FALSE;
-	}
 }
 
 - (void) dealloc

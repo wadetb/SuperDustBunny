@@ -3,14 +3,39 @@
 // Super Dust Bunny
 // 
 // Authors: Thomas Perry <perry.thomas.12@gmail.com> & Wade Brainerd <wadetb@gmail.com>
-// Copyright © 2010 by Thomas Perry and Wade Brainerd. All rights reserved.
+// Copyright ï¿½ 2010 by Thomas Perry and Wade Brainerd. All rights reserved.
 //
 //--------------------------------------------------------------------------------
 
+#ifdef __APPLE__
+#include <TargetConditionals.h>
+#endif
+
+#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
+#define PLATFORM_IPHONE
+
+#elif TARGET_OS_MAC
+#define PLATFORM_MAC
+
+#elif defined(_MSC_VER)
+#define PLATFORM_WINDOWS
+#endif
+
+#if defined(PLATFORM_WINDOWS)
 #include "win/graphics.h"
 #include "win/mouse.h"
 #include "win/keyboard.h"
 #include "win/sound.h"
+#elif defined(PLATFORM_IPHONE)
+#include "iPhone/graphics.h"
+#include "iPhone/mouse.h"
+#include "iPhone/sound.h"
+#elif defined(PLATFORM_MAC)
+#include "Mac/graphics.h"
+#include "Mac/mouse.h"
+#include "Mac/keyboard.h"
+#include "Mac/sound.h"
+#endif
 
 enum EDustyState
 {
@@ -25,8 +50,8 @@ enum EDustyState
 bool SlowMotionMode = false;
 
 EDustyState DustyState = DUSTYSTATE_STAND;
-int DustyX = 350;
-int DustyY = 1024-55;
+int DustyX = 100;
+int DustyY = 480-55;
 int DirectionX = 7;
 int DirectionY = 7;
 int DustyLeft = -10;
@@ -81,10 +106,12 @@ void Init()
 	// Use iPad "portrait mode" screen dimensions.
 	gxInit(768, 1024, true);
 
-	kbInit();
-	
 	sxInit();
 
+#ifdef PLATFORM_WINDOWS
+	kbInit();
+#endif
+	
 	gxLoadSprite("Data/bunny hop0001.png", &DustyHop01);
 	gxLoadSprite("Data/bunny hop0011.png", &DustyHop02);	
 	gxLoadSprite("Data/bunny hop0005.png", &DustyHop03);
@@ -110,12 +137,16 @@ void Init()
 
 void Exit()
 {
+#ifdef PLATFORM_WINDOWS
 	kbDeinit();
+#endif
 
 	gxDeinit();
 	
 	sxDeinit();
 }
+
+
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                  State switching function declarations                                                  //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -126,6 +157,40 @@ void SetDustyState_Hop_Right();
 void SetDustyState_Hop_Left();
 void SetDustyState_WallJump_Right();
 void SetDustyState_WallJump_Left();
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                             Input functions
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+bool GetInput_MoveLeft()
+{
+#ifdef PLATFORM_WINDOWS
+	return kbIsKeyDown(KB_A);
+#endif
+#ifdef PLATFORM_IPHONE
+	return msAccelX < -0.25f;
+#endif
+}
+
+bool GetInput_MoveRight()
+{
+#ifdef PLATFORM_WINDOWS
+	return kbIsKeyDown(KB_D);
+#endif
+#ifdef PLATFORM_IPHONE
+	return msAccelX > 0.25f;
+#endif
+}
+
+bool GetInput_Jump()
+{
+#ifdef PLATFORM_WINDOWS
+	return kbIsKeyDown(KB_SPACE);
+#endif
+#ifdef PLATFORM_IPHONE
+	return msButton1;
+#endif	
+}
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                  DUSTYSTATE_STAND Implementation                                                        //
@@ -169,12 +234,12 @@ void UpdateDusty_Stand()
 		FallLeftSprite = 0;
 	}
 
-	if ( kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE) )      
+	if ( GetInput_Jump() )      
 	{
 		SetDustyState_Jump( false );
 	}
 
-	if ( kbIsKeyDown(KB_D) )
+	if ( GetInput_MoveRight() )
 	{
 		DustyState = DUSTYSTATE_HOP_RIGHT; //Moving Right
 		HopRightSprite = 1;
@@ -182,7 +247,7 @@ void UpdateDusty_Stand()
 		LastDirectionSprite = 1;			  
 	}
 
-	if ( kbIsKeyDown(KB_A) )
+	if ( GetInput_MoveLeft() )
 	{
 		DustyState = DUSTYSTATE_HOP_LEFT; //Moving Left
 		HopLeftSprite = 1;
@@ -367,12 +432,12 @@ void UpdateDusty_Hop_Right()
     if (DustyX + DustyRight >= gxScreenWidth )
         DustyX = gxScreenWidth - DustyRight;
 
-    if ( !kbIsKeyDown(KB_D) && SpriteTransition == 0 )
+    if ( !GetInput_MoveRight() && SpriteTransition == 0 )
     {			                         
         SetDustyState_Stand();
     }
 
-    if (kbIsKeyDown(KB_D) && kbIsKeyDown(KB_SPACE) && SpriteTransition != 0)
+    if (GetInput_Jump() && SpriteTransition != 0)
     {
         JumpQueue = 1;
         //sxPlaySound( &DustyToJump );
@@ -387,7 +452,7 @@ void UpdateDusty_Hop_Right()
         SetDustyState_Jump( false );
     }    
 
-    if (kbIsKeyDown(KB_A))
+    if (GetInput_MoveLeft())
     {
         LastDirectionSprite = 0;
         DustyState = DUSTYSTATE_HOP_LEFT;
@@ -479,12 +544,12 @@ void UpdateDusty_Hop_Left()
     if (DustyX + DustyLeft <= 0)
         DustyX = -DustyLeft;
 
-    if ( !kbIsKeyDown(KB_A) && SpriteTransition == 0 )
+    if ( !GetInput_MoveLeft() && SpriteTransition == 0 )
     {          
         SetDustyState_Stand();
     }
 
-    if (kbIsKeyDown(KB_A) && kbIsKeyDown(KB_SPACE) && SpriteTransition != 0)
+    if (GetInput_Jump() && SpriteTransition != 0)
     {
         JumpQueue = 1;
         //sxPlaySound( &DustyToJump );
@@ -499,7 +564,7 @@ void UpdateDusty_Hop_Left()
         SetDustyState_Jump( false );
     }  
 
-    if (kbIsKeyDown(KB_D))
+    if (GetInput_MoveRight())
     {
         LastDirectionSprite = 1;
         DustyState = DUSTYSTATE_HOP_RIGHT;
@@ -566,7 +631,7 @@ void UpdateDusty_WallJump_Right()//Collided with Right Wall
         WallStickTimer -= 1;
     }
 
-    if (kbIsKeyDown(KB_SPACE) && LastDirectionSprite == 1)
+    if (GetInput_Jump() && LastDirectionSprite == 1)
     {               
         LastDirectionSprite = 0;
         SetDustyState_Jump( true );
@@ -601,8 +666,8 @@ void UpdateDusty_WallJump_Left()
         WallStickTimer -= 1;
     }       
 
-    if (kbIsKeyDown(KB_SPACE) && LastDirectionSprite == 0)
-    {     
+    if (GetInput_Jump() && LastDirectionSprite == 0)
+    {
         LastDirectionSprite = 1;
         //Resetting sprites
         FallLeftSprite = 0;
@@ -637,7 +702,7 @@ void Display()
 //                                                   Debugging aids                                                                        //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-
+#ifdef PLATFORM_WINDOWS
 	// Status of common variables
 	gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %03d, %03d ) DustyState: %d", DustyX, DustyY, DustyState );
 
@@ -649,6 +714,7 @@ void Display()
 
 	// Draw a red + at Dusty's root location.
 	gxDrawString(DustyX-4, DustyY-4, 8, gxRGB32(255, 0, 0), "+");
+#endif
 }
 
 
@@ -656,23 +722,10 @@ void Display()
 
 bool Update()
 {
+#ifdef PLATFORM_WINDOWS
 	kbUpdateKeys();
-
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                   Dusty Update                                                                          //
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//	
-
-    switch (DustyState)
-    {
-    case DUSTYSTATE_STAND:			    UpdateDusty_Stand(); break;
-    case DUSTYSTATE_JUMP:			    UpdateDusty_Jump(); break;
-    case DUSTYSTATE_HOP_RIGHT:          UpdateDusty_Hop_Right(); break;
-    case DUSTYSTATE_HOP_LEFT:           UpdateDusty_Hop_Left(); break;
-    case DUSTYSTATE_WALLJUMP_RIGHT:     UpdateDusty_WallJump_Right(); break;
-    case DUSTYSTATE_WALLJUMP_LEFT:      UpdateDusty_WallJump_Left(); break;
-    default:						    break;
-    }
-    
+#endif
+	
 	//Background Music
 if (BackgroundMusic == 1)
 {	
@@ -712,12 +765,15 @@ if (BackgroundMusic == 1)
     }    
 }
 
+#ifdef PLATFORM_WINDOWS
 	// Pressing escape quits the program.
 	if (kbIsKeyDown(KB_ESCAPE))
 	{
 		return false;
 	}
+#endif
 
+#ifdef PLATFORM_WINDOWS
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   Slow Motion Update                                                                    //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -744,6 +800,22 @@ if (BackgroundMusic == 1)
 		{
 			return true;
 		}
-}	
+#endif
+	
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Dusty Update                                                                          //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//	
+	
+    switch (DustyState)
+    {
+		case DUSTYSTATE_STAND:			    UpdateDusty_Stand(); break;
+		case DUSTYSTATE_JUMP:			    UpdateDusty_Jump(); break;
+		case DUSTYSTATE_HOP_RIGHT:          UpdateDusty_Hop_Right(); break;
+		case DUSTYSTATE_HOP_LEFT:           UpdateDusty_Hop_Left(); break;
+		case DUSTYSTATE_WALLJUMP_RIGHT:     UpdateDusty_WallJump_Right(); break;
+		case DUSTYSTATE_WALLJUMP_LEFT:      UpdateDusty_WallJump_Left(); break;
+		default:						    break;
+    }
+    	
 	return true;
 }
