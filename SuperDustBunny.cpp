@@ -116,10 +116,9 @@ void Exit()
 	
 	sxDeinit();
 }
-
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-// State switching function declarations
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                  State switching function declarations                                                  //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
 void SetDustyState_Stand();
 void SetDustyState_Jump( bool OffWall );
@@ -128,9 +127,9 @@ void SetDustyState_Hop_Left();
 void SetDustyState_WallJump_Right();
 void SetDustyState_WallJump_Left();
 
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-// DUSTYSTATE_STAND Implementation
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                  DUSTYSTATE_STAND Implementation                                                        //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
 void SetDustyState_Stand()
 {
@@ -192,9 +191,9 @@ void UpdateDusty_Stand()
 	}
 }
 
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-// DUSTYSTATE_JUMP Implementation
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                  DUSTYSTATE_JUMP Implementation                                                         //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
 void SetDustyState_Jump( bool OffWall )
 {
@@ -207,9 +206,8 @@ void SetDustyState_Jump( bool OffWall )
 		//sxPlaySound( &DustyJumps );
 	}
 
-	DustyY -= 10;
 	VerticalCounter = 20;
-
+	DustyY -= 10;
 	DustyState = DUSTYSTATE_JUMP;
 }
 
@@ -247,8 +245,7 @@ void UpdateDusty_Jump()
     //Collide left side of screen check
     if (IsCollided == true && DustyX + DustyLeft < 0)
     {
-       DustyX = -DustyLeft;
-       //DustyX = DustyX + DirectionX;
+       DustyX = -DustyLeft;  
        JumpRightSprite = 1;
        JumpLeftSprite = 0;                      
     }
@@ -317,9 +314,9 @@ void UpdateDusty_Jump()
 	}    
 }
 
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-// DUSTYSTATE_HOP_RIGHT Function
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                  DUSTYSTATE_HOP_RIGHT Implementation                                                    //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
 void SetDustyState_Hop_Right()
 {
@@ -432,9 +429,9 @@ void UpdateDusty_Hop_Right()
     }		
 }	
 
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-// DUSTYSTATE_HOP_LEFT Function
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                  DUSTYSTATE_HOP_LEFT Implementation                                                     //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 void SetDustyState_Hop_Left()
 {
     DustyState = DUSTYSTATE_HOP_LEFT;
@@ -543,9 +540,9 @@ void UpdateDusty_Hop_Left()
         SpriteTransition = 30;
     }
 }
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-// DUSTYSTATE_WALLJUMP_RIGHT Function
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -	
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                  DUSTYSTATE_WALLJUMP_RIGHT Implementation                                               //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 void SetDustyState_WallJump_Right()
 {
     DustyState = DUSTYSTATE_WALLJUMP_RIGHT;
@@ -553,10 +550,7 @@ void SetDustyState_WallJump_Right()
 
 void DisplayDusty_WallJump_Right()
 {
-    if (DustyState == DUSTYSTATE_WALLJUMP_RIGHT && LastDirectionSprite == 1)//Collision with Right Wall
-    {
         gxDrawSprite( DustyX-20, DustyY-72, &LeftFaceWallJump01 );       
-    }
 }
 
 void UpdateDusty_WallJump_Right()//Collided with Right Wall
@@ -572,16 +566,16 @@ void UpdateDusty_WallJump_Right()//Collided with Right Wall
         WallStickTimer -= 1;
     }
 
-    if (kbIsKeyDown(KB_SPACE) && LastDirectionSprite == 1)// && !kbWasKeyDown(KB_SPACE))
+    if (kbIsKeyDown(KB_SPACE) && LastDirectionSprite == 1)
     {               
         LastDirectionSprite = 0;
         SetDustyState_Jump( true );
     }
 }	
 
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-// DUSTYSTATE_WALLJUMP_LEFT Function
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                  DUSTYSTATE_WALLJUMP_LEFT Implementation                                                //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -// 
 
 void SetDustyState_WallJump_Left()
 {
@@ -590,10 +584,7 @@ void SetDustyState_WallJump_Left()
 
 void DisplayDusty_WallJump_Left()
 {
-    if (DustyState == DUSTYSTATE_WALLJUMP_LEFT && LastDirectionSprite == 0)//Collision with Left Wall
-    {
         gxDrawSprite( DustyX-26, DustyY-71, &RightFaceWallJump01 ); 
-    }
 }
 
 void UpdateDusty_WallJump_Left()
@@ -610,27 +601,27 @@ void UpdateDusty_WallJump_Left()
         WallStickTimer -= 1;
     }       
 
-    if (kbIsKeyDown(KB_SPACE) && LastDirectionSprite == 0) //&& !kbWasKeyDown(KB_SPACE))
-    {
+    if (kbIsKeyDown(KB_SPACE) && LastDirectionSprite == 0)
+    {     
         LastDirectionSprite = 1;
         //Resetting sprites
         FallLeftSprite = 0;
         JumpRightSprite = 1;
-        SetDustyState_Jump( true );
+        SetDustyState_Jump( true );    
     }
 }   
 
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-// Central Display and Update functions
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                   Central Display and Update functions                                                  //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
 
 void Display()
 {
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-	// Dusty Drawing
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                   Dusty Drawing                                                                         //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-	// New style
 	switch (DustyState)
 	{
 	case DUSTYSTATE_STAND:			    DisplayDusty_Stand(); break;
@@ -642,9 +633,10 @@ void Display()
 	default:						    break;
 }
 
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-	// Debugging aids
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                   Debugging aids                                                                        //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
 
 	// Status of common variables
 	gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %03d, %03d ) DustyState: %d", DustyX, DustyY, DustyState );
@@ -662,10 +654,10 @@ void Display()
 bool Update()
 {
 	kbUpdateKeys();
-	
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-    // Dusty Update
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                   Dusty Update                                                                          //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//	
 
     switch (DustyState)
     {
@@ -723,9 +715,10 @@ if (BackgroundMusic == 1)
 		return false;
 	}
 
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-	// Slow Motion Update
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                   Slow Motion Update                                                                    //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
 
 	// Backspace toggles slow motion mode.
 	if (kbIsKeyDown(KB_BACKSLASH) && !kbWasKeyDown(KB_BACKSLASH))
@@ -750,9 +743,6 @@ if (BackgroundMusic == 1)
 		{
 			return true;
 		}
-}
-
-
-	
+}	
 	return true;
 }
