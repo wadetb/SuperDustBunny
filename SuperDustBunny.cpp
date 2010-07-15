@@ -45,12 +45,17 @@ enum EDustyState
 	DUSTYSTATE_HOP_LEFT				= 3,
     DUSTYSTATE_WALLJUMP_RIGHT		= 4,
 	DUSTYSTATE_WALLJUMP_LEFT		= 5,
-	BOXSTATE_STATIONARY             = 6,
+};
+
+enum EBoxState
+{
+    BOXSTATE_STATIONARY             = 6,
 };
 
 bool SlowMotionMode = false;
 
 EDustyState DustyState = DUSTYSTATE_STAND;
+EBoxState BoxState = BOXSTATE_STATIONARY;
 
 int DustyX = 350;
 int DustyY = 1024-55;
@@ -60,7 +65,7 @@ int DustyLeft = -10;
 int DustyRight = 80;
 int DustyTop = -80;
 int DustyBottom = 55;
-int BoxState = BOXSTATE_STATIONARY;
+
 int BoxX = 550;
 int BoxY = 900;
 int BoxXLeft = -10;
@@ -170,6 +175,7 @@ void SetDustyState_Hop_Right();
 void SetDustyState_Hop_Left();
 void SetDustyState_WallJump_Right();
 void SetDustyState_WallJump_Left();
+
 void SetBoxState_Stationary();
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -736,11 +742,24 @@ void Display()
 	case DUSTYSTATE_HOP_RIGHT:          DisplayDusty_Hop_Right(); break;
 	case DUSTYSTATE_HOP_LEFT:           DisplayDusty_Hop_Left(); break;
 	case DUSTYSTATE_WALLJUMP_RIGHT:     DisplayDusty_WallJump_Right(); break;
-	case DUSTYSTATE_WALLJUMP_LEFT:      DisplayDusty_WallJump_Left(); break;
-	case BOXSTATE_STATIONARY:           DisplayBox_Stationary(); break;
+	case DUSTYSTATE_WALLJUMP_LEFT:      DisplayDusty_WallJump_Left(); break;	
 	default:						    break;
+<<<<<<< .mine
+    }
+=======
 	}
+>>>>>>> .r379
 
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                   Box Drawing                                                                           //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+    //switch (BoxState)
+   // {
+    //  case BOXSTATE_STATIONARY:          DisplayBox_Stationary(); break;
+   //   default:                           break;
+   // }
+    
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   Debugging aids                                                                        //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -855,9 +874,14 @@ if (BackgroundMusic == 1)
 		case DUSTYSTATE_HOP_LEFT:           UpdateDusty_Hop_Left(); break;
 		case DUSTYSTATE_WALLJUMP_RIGHT:     UpdateDusty_WallJump_Right(); break;
 		case DUSTYSTATE_WALLJUMP_LEFT:      UpdateDusty_WallJump_Left(); break;
-		case BOXSTATE_STATIONARY:           UpdateBox_Stationary(); break;
+		
 		default:						    break;
     }
     	
+   // switch (BoxState)
+   // {
+   // case BOXSTATE_STATIONARY:           UpdateBox_Stationary(); break;
+   //     default:                           break;
+  //  }	
 	return true;
 }
