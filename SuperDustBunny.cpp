@@ -74,7 +74,7 @@ sxSound BackgroundSong02;
 sxSound BackgroundSong03;
 int SongCounter = 1;
 int SongDuration = 0;
-int BackgroundMusic = 1;
+int BackgroundMusic = 0;
 
 void Init()
 {
@@ -554,7 +554,7 @@ void DisplayDusty_WallJump_Right()
 }
 
 void UpdateDusty_WallJump_Right()//Collided with Right Wall
-{                                                
+  {                                                
     if (WallStickTimer == 0)
     {                   
         VerticalCounter = 0;          
@@ -651,6 +651,9 @@ void Display()
 	gxDrawString(DustyX-4, DustyY-4, 8, gxRGB32(255, 0, 0), "+");
 }
 
+
+
+
 bool Update()
 {
 	kbUpdateKeys();
@@ -666,7 +669,7 @@ bool Update()
     case DUSTYSTATE_HOP_RIGHT:          UpdateDusty_Hop_Right(); break;
     case DUSTYSTATE_HOP_LEFT:           UpdateDusty_Hop_Left(); break;
     case DUSTYSTATE_WALLJUMP_RIGHT:     UpdateDusty_WallJump_Right(); break;
-    case DUSTYSTATE_WALLJUMP_LEFT:      UpdateDusty_WallJump_Right(); break;
+    case DUSTYSTATE_WALLJUMP_LEFT:      UpdateDusty_WallJump_Left(); break;
     default:						    break;
     }
     
@@ -718,8 +721,6 @@ if (BackgroundMusic == 1)
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   Slow Motion Update                                                                    //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-
-
 	// Backspace toggles slow motion mode.
 	if (kbIsKeyDown(KB_BACKSLASH) && !kbWasKeyDown(KB_BACKSLASH))
 	{
