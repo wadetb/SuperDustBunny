@@ -58,13 +58,13 @@ EDustyState DustyState = DUSTYSTATE_STAND;
 EPlatformState PlatformState = PLATFORMSTATE_STATIONARY;
 
 int DustyX = 350;
-int DustyY = 1024-55;
+int DustyY = 1024;
 int DirectionX = 7;
 int DirectionY = 7;
-int DustyLeft = -10;
+int DustyLeft = -70;
 int DustyRight = 80;
 int DustyTop = -80;
-int DustyBottom = 55;
+int DustyBottom = 5;
 
 int PlatformX = 340;
 int PlatformY = 900;
@@ -239,12 +239,12 @@ void DisplayDusty_Stand()
 {
 	if (LastDirectionSprite == 0) //Standing
 	{
- 		gxDrawSprite( DustyX-32, DustyY-59, &DustyHopLeft01 );
+ 		gxDrawSprite( DustyX-64, DustyY-118, &DustyHopLeft01 );
 	}
 
 	if (LastDirectionSprite == 1)//After moving, stops to face the direction last moved.
 	{
-		gxDrawSprite( DustyX-32, DustyY-58, &DustyHop01 );
+		gxDrawSprite( DustyX-64, DustyY-118, &DustyHop01 );
 	}
 }
 
@@ -661,7 +661,7 @@ void SetDustyState_WallJump_Right()
 
 void DisplayDusty_WallJump_Right()
 {
-        gxDrawSprite( DustyX-40, DustyY-144, &LeftFaceWallJump01 );       
+        gxDrawSprite( DustyX+10, DustyY-144, &LeftFaceWallJump01 );       
 }
 
 void UpdateDusty_WallJump_Right()//Collided with Right Wall
@@ -695,7 +695,7 @@ void SetDustyState_WallJump_Left()
 
 void DisplayDusty_WallJump_Left()
 {
-        gxDrawSprite( DustyX-52, DustyY-142, &RightFaceWallJump01 ); 
+        gxDrawSprite( DustyX-82, DustyY-142, &RightFaceWallJump01 ); 
 }
 
 void UpdateDusty_WallJump_Left()
@@ -838,9 +838,6 @@ if (BackgroundMusic == 1)
     
     if (SongDuration == 0)
     {
-        sxDestroySound(&BackgroundSong01);
-        sxDestroySound(&BackgroundSong02);
-        sxDestroySound(&BackgroundSong03);
         SongCounter += 1;   
     }
     
