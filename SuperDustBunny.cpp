@@ -53,6 +53,8 @@ enum EPlatformState
 };
 
 bool SlowMotionMode = false;
+int Max(int a, int b);
+int Min(int a, int b);
 
 EDustyState DustyState = DUSTYSTATE_STAND;
 EPlatformState PlatformState = PLATFORMSTATE_STATIONARY;
@@ -66,8 +68,8 @@ int DustyRight = 120;
 int DustyTop = -110;
 int DustyBottom = 110;
 
-int PlatformX = 340;
-int PlatformY = 900;
+int PlatformX = 340;//Location of Platform from left to right on the X axis
+int PlatformY = 750;//Location of Platform from top to bottom on the Y axis
 int PlatformLeft = -10;
 int PlatformRight = 170;
 int PlatformTop = -10;
@@ -89,6 +91,12 @@ int HopRightSprite = 0;
 int HopLeftSprite = 0;
 int LastDirectionSprite = 1;
 int SpriteTransition = 0;
+
+bool RightSideIsInPlatform = false;
+bool LeftSideIsInPlatform = false;
+bool TopSideIsInPlatform = false;
+bool BottomSideIsInPlatform = false;
+bool AreRecsIntersecting = false;
 bool IsJumping = false;
 bool IsCollided = false;
 
@@ -249,12 +257,7 @@ void DisplayDusty_Stand()
 }
 
 void UpdateDusty_Stand()
-{
-	//if (OnPlatform == true && DustyBottom <= PlatformTop)
-	//{
-    //    DustyBottom = PlatformTop;
-	//}
-	
+{	
 	if (LastDirectionSprite == 1)
 	{
 		JumpRightSprite = 1;
@@ -339,14 +342,7 @@ void DisplayDusty_Jump()
 }
 
 void UpdateDusty_Jump()
-{
-    //Collide with the top of the platform
-    if (DustyBottom == PlatformTop)
-    {             
-        OnPlatform = true;
-        DustyState = DUSTYSTATE_STAND;
-    }
-      
+{      
     //Collide right side of screen check
     if (IsCollided == true && DustyX + DustyRight > gxScreenWidth)
     {
@@ -723,22 +719,95 @@ void UpdateDusty_WallJump_Left()
 } 
   
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                  DUSTYSTATE_BOX_COLLLISION Implementation                                               //
+//                                                  UPDATE_REC_COLLISION Implementation                                                           //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-void SetDustyState_BoxCollision()
+void UpdateRecCollision()
 {
-    PlatformState = PLATFORMSTATE_STATIONARY;
+    if ((DustyX + DustyRight >= PlatformX) && (DustyX + DustyRight <= PlatformX + PlatformRight))
+    {   
+        RightSideIsInPlatform = true;
+    }
+
+    if ((DustyX + DustyLeft >= PlatformX) && (DustyX + DustyLeft <= PlatformX + PlatformRight))
+    {    
+        LeftSideIsInPlatform = true;
+    }
+    
+    if ((DustyY + DustyTop >= PlatformY && (DustyY + DustyTop <= PlatformY + PlatformTop)))
+    {
+        TopSideIsInPlatform = true;
+    }
+    
+    if ((DustyY + DustyBottom >= PlatformY && DustyY + DustyBottom <= PlatformY + PlatformBottom))
+    {
+        BottomSideIsInPlatform = true;
+    }
+    
+    //Comparing two numbers and returning the one with greater value, and comparing two numbers and returning the one with lesser value.
+    if(Max(DustyX + DustyLeft, PlatformX) < Min(DustyX + DustyRight, PlatformX + PlatformRight))
+    {    
+        AreRecsIntersecting = true;
+    }
+
+    //The Y Axis version of the formula above.
+    if (Max(DustyY + DustyTop, PlatformY) < Min(DustyY + DustyBottom, PlatformY + PlatformTop))
+    {
+        AreRecsIntersecting = true;
+    }
+
+    if (AreRecsIntersecting == true && RightSideIsInPlatform == true)
+    {
+        
+    }
+
+    if (AreRecsIntersecting == true && LeftSideIsInPlatform == true)
+    {
+    
+    }
+    
+    if AreRecsIntersecting == true && TopSideIsInPlatform == true)
+    {
+    
+    
+    }
+    
+    if AreRecsIntersecting == true && BottomSideIsInPlatform == true)
+    {
+    
+    
+    }
+    
+    
+    
+    
+    
+    
+    
 }
 
-void DisplayDusty_BoxCollision()
+int Max(int a, int b)
 {
-
+    if (a > b)
+    {
+        return a;
+    }
+    else
+    {
+        return b;
+    }
 }
 
-void UpdateDusty_BoxCollision()
+int Min(int a, int b)
 {
-
+    if ( a < b)
+    {
+        return a;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -752,14 +821,14 @@ void SetPlatformState_Stationary()
 
 void DisplayPlatform_Stationary()
 {
-       //gxDrawSprite( PlatformX, PlatformY, &WoodBox_Platform01 );
+       gxDrawSprite( PlatformX, PlatformY, &WoodBox_Platform01 );
 }
 
-void UpdatePlatform_Stationary()
-{
-
-
-}
+ void UpdatePlatform_Stationary()
+ {
+ 
+ 
+ }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   Central Display and Update functions                                                  //
@@ -815,6 +884,13 @@ void Display()
 
 	// Draw a red + at Dusty's root location.
 	gxDrawString(DustyX-4, DustyY-4, 8, gxRGB32(255, 0, 0), "+");
+	
+	// Draw a red + at all four corners of the Platform.
+    gxDrawString(PlatformX - 10, PlatformY - 10, 8, gxRGB32(255, 0, 0), "+");//Upper Left
+    gxDrawString(PlatformX + 170, PlatformY - 10, 8, gxRGB32(255, 0, 0), "+");//Upper Right
+    gxDrawString(PlatformX - 10, PlatformY + 40, 8, gxRGB32(255, 0, 0), "+");//Lower Left
+    gxDrawString(PlatformX + 170, PlatformY + 40, 8, gxRGB32(255, 0, 0), "+");//Lower Right
+	
 }
 
 bool Update()
