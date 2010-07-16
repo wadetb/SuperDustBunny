@@ -58,13 +58,13 @@ EDustyState DustyState = DUSTYSTATE_STAND;
 EPlatformState PlatformState = PLATFORMSTATE_STATIONARY;
 
 int DustyX = 350;
-int DustyY = 1024;
+int DustyY = 1024-110;
 int DirectionX = 7;
 int DirectionY = 7;
-int DustyLeft = -70;
-int DustyRight = 80;
-int DustyTop = -80;
-int DustyBottom = 5;
+int DustyLeft = -10;
+int DustyRight = 120;
+int DustyTop = -110;
+int DustyBottom = 110;
 
 int PlatformX = 340;
 int PlatformY = 900;
@@ -319,12 +319,12 @@ void DisplayDusty_Jump()
 {
 	if (JumpRightSprite == 1)     
 	{
-		gxDrawSprite( DustyX-50, DustyY-126, &DustyHop03 );
+		gxDrawSprite( DustyX-46, DustyY-126, &DustyHop03 );
 	}
 
 	if (FallRightSprite == 1)
 	{
-		gxDrawSprite( DustyX-50, DustyY-126, &DustyHop02 );
+		gxDrawSprite( DustyX-56, DustyY-125, &DustyHop02 );
 	}  
 
 	if (JumpLeftSprite == 1)
@@ -334,7 +334,7 @@ void DisplayDusty_Jump()
 
 	if (FallLeftSprite == 1)
 	{
-		gxDrawSprite( DustyX-46, DustyY-128, &DustyHopLeft02 );
+		gxDrawSprite( DustyX-80, DustyY-128, &DustyHopLeft02 );
 	}
 }
 
@@ -458,7 +458,7 @@ void DisplayDusty_Hop_Right()
 
     if (HopRightSprite == 5)
     {
-        gxDrawSprite( DustyX-82, DustyY-148, &DustyHop05 );
+        gxDrawSprite( DustyX-102, DustyY-144, &DustyHop05 );
     }     
 
     if (HopRightSprite == 6)
@@ -571,7 +571,7 @@ void DisplayDusty_Hop_Left()
     } 
     if (HopLeftSprite == 5)
     {
-        gxDrawSprite( DustyX-82, DustyY-140, &DustyHopLeft06 );
+        gxDrawSprite( DustyX-78, DustyY-150, &DustyHopLeft06 );
     }    
     if (HopLeftSprite == 6)
     {
@@ -661,7 +661,7 @@ void SetDustyState_WallJump_Right()
 
 void DisplayDusty_WallJump_Right()
 {
-        gxDrawSprite( DustyX+10, DustyY-144, &LeftFaceWallJump01 );       
+        gxDrawSprite( DustyX-52, DustyY-142, &LeftFaceWallJump01 );       
 }
 
 void UpdateDusty_WallJump_Right()//Collided with Right Wall
@@ -695,7 +695,7 @@ void SetDustyState_WallJump_Left()
 
 void DisplayDusty_WallJump_Left()
 {
-        gxDrawSprite( DustyX-82, DustyY-142, &RightFaceWallJump01 ); 
+        gxDrawSprite( DustyX-100, DustyY-144, &RightFaceWallJump01 ); 
 }
 
 void UpdateDusty_WallJump_Left()
