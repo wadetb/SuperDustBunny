@@ -124,7 +124,7 @@ void gxInitFontSprite()
 	gxFontSprite.tex->UnlockRect(0);
 }
 
-void gxInit( gxDisplayType type )
+void gxInit( gxDisplayType disp )
 {
 	switch (disp) 
 	{
