@@ -11,7 +11,7 @@
 @implementation AppDelegate_Phone
 
 @synthesize window;
-
+@synthesize view;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
 	
@@ -19,9 +19,11 @@
 	
     [window makeKeyAndVisible];
 	
+	[[UIAccelerometer sharedAccelerometer] setUpdateInterval:(1.0f/100.0f)];
+	[[UIAccelerometer sharedAccelerometer] setDelegate:view];	
+
 	return YES;
 }
-
 
 - (void)dealloc {
     [window release];

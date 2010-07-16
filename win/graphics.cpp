@@ -124,18 +124,38 @@ void gxInitFontSprite()
 	gxFontSprite.tex->UnlockRect(0);
 }
 
-void gxInit( int xres, int yres, bool window )
+void gxInit( gxDisplayType type )
 {
+	switch (disp) 
+	{
+	case GXDISPLAY_IPHONE_PORTRAIT:
+		gxScreenWidth = 320;
+		gxScreenHeight = 480;
+		break;
+	case GXDISPLAY_IPHONE_LANDSCAPE:
+		gxScreenWidth = 480;
+		gxScreenHeight = 320;
+		break;
+	case GXDISPLAY_IPAD_PORTRAIT: 
+		gxScreenWidth = 768;
+		gxScreenHeight = 1024;
+		break;
+	case GXDISPLAY_IPAD_LANDSCAPE: 
+		gxScreenWidth = 1024;
+		gxScreenHeight = 768;
+		break;
+	}
+	
 	gxD3D = Direct3DCreate9( D3D_SDK_VERSION );
 
 	D3DPRESENT_PARAMETERS d3dpp = { 0 };
-	d3dpp.Windowed = window;
+	d3dpp.Windowed = true;
 	d3dpp.hDeviceWindow = hWnd;
 	d3dpp.SwapEffect = D3DSWAPEFFECT_COPY;
 	d3dpp.BackBufferCount = 1;
 	d3dpp.BackBufferFormat = D3DFMT_A8R8G8B8;
-	d3dpp.BackBufferWidth = xres;
-	d3dpp.BackBufferHeight = yres;
+	d3dpp.BackBufferWidth = gxScreenWidth;
+	d3dpp.BackBufferHeight = gxScreenHeight;
 	d3dpp.EnableAutoDepthStencil = TRUE;
 	d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
 	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
@@ -148,9 +168,7 @@ void gxInit( int xres, int yres, bool window )
 	gxDev->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER|D3DCLEAR_STENCIL, 0, 1.0f, 0 );
 	gxDev->SetRenderState( D3DRS_CULLMODE, D3DCULL_NONE ); 
 
-	gxScreenWidth = xres;
-	gxScreenHeight = yres;
-	MoveWindow( hWnd, 0, 0, xres, yres, TRUE );
+	MoveWindow( hWnd, 0, 0, gxScreenWidth, gxScreenHeight, TRUE );
 	ShowWindow( hWnd, SW_SHOW );
 
 	// Set up default modulation.
@@ -187,8 +205,6 @@ void gxSetClipRange( int x1, int y1, int x2, int y2 )
 	gxDev->SetScissorRect( &r );
 }
 
-// Presumes render states have been set up already.
-// Sets the texture and submits the polygon.
 void _gxDrawQuad( int x, int y, int w, int h, DWORD color = D3DCOLOR_RGBA(255,255,255,255), float u1 = 0.0f, float v1 = 0.0f, float u2 = 1.0f, float v2 = 1.0f )
 {
 	gxSpriteVertex v[4];
@@ -342,103 +358,6 @@ void gxDrawString( int x, int y, int ptsize, int color, const char* text, ... )
 		x += ptsize;
 	}
 }
-
-#if 0
-
-void gxLoadFont( char* filename, gxFont* f, int width, int height, int spacing )
-{
-	assert( gxDev && "If this assert fires, you need to call gxInit earlier." );
-
-	FILE* in = fopen( filename, "rb" );
-	if ( !in )
-		return;
-
-	// Fill in the font structure.
-	for ( int x = 0; x < 256; x++ ) 
-		f->pos[x] = 0;
-
-	f->spacing = spacing;
-
-	// Create a sprite to hold the letters.
-	f->spr.width = width;
-	f->spr.height = height;
-	D3DXCreateTexture( gxDev, width, height, 1, D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &f->spr.tex );
-
-	IDirect3DSurface9* surf;
-	f->spr.tex->GetSurfaceLevel( 0, &surf );
-
-	D3DLOCKED_RECT rect;
-	surf->LockRect( &rect, NULL, 0 );
-
-	// Read in the texture, converting from RGB to ARGB.
-	BYTE* line = (BYTE*)malloc(width*3);
-	for ( int y = 0; y < height; y++ )
-	{
-		BYTE* dest = (BYTE*)rect.pBits + y*rect.Pitch;
-		fread( line, 1, width*3, in );
-		for ( int x = 0; x < width; x++ )
-		{
-			dest[x*4+0] = line[x*3+2];
-			dest[x*4+1] = line[x*3+2];
-			dest[x*4+2] = line[x*3+2];
-			dest[x*4+3] = line[x*3+2]; // red copied to alpha for now
-		}
-	}
-	free( line );
-
-	fclose( in );
-
-	// Scan for characters in the texture.
-	BYTE* ptr = (BYTE*)rect.pBits;
-	int xpos = 0;
-	for ( int ch = 32; ch < 128; ch++ )
-	{
-		f->pos[ch] = xpos + 1;
-		while ( ptr[xpos*4+0] != 0xff )
-			xpos++;
-		f->width[ch] = xpos - f->pos[ch];
-		xpos++;
-	}
-
-	surf->UnlockRect();
-	surf->Release();
-}
-
-void gxDestroyFont( gxFont* f )
-{
-	gxDestroySprite( &f->spr );
-}
-
-void gxDrawText(int x, int y, char* text, gxFont* f, DWORD color, int type)
-{
-	gxDev->SetTexture( 0, f->spr.tex );
-	gxDev->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
-	gxDev->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
-	gxDev->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
-
-	int xpos = x;
-	for ( char* ch = text; *ch; ++ch )
-	{
-		_gxDrawQuad( 
-			xpos, y, f->width[*ch]+1, f->spr.height+1, color, 
-			(float)f->pos[*ch] / f->spr.width, 0.0f, (float)(f->pos[*ch]+f->width[*ch]) / f->spr.width, 1.0f );
-		xpos += f->width[*ch] + f->spacing;
-	}
-}
-
-void gxDrawInt(int x, int y, int txt, gxFont* f, DWORD color, int type)
-{
-	char strin[64];
-	sprintf(strin, "%d", txt);//_itoa(txt, strin, 10);
-	gxDrawText(x, y, strin, f, color, type);
-
-	/*char* strin = "QQQQQQQQQQQQQQQQQQQQQQQQQQQQ";
-	sprintf(strin, "%d", txt);//_itoa(txt, strin, 10);
-	gxDrawText(x, y, strin, f, color, type);
-	*/
-}
-
-#endif
 
 LRESULT CALLBACK WindowProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 {

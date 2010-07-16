@@ -8,11 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
+#import "EAGLView.h"
+
 @interface AppDelegate_Pad : NSObject <UIApplicationDelegate> {
     UIWindow *window;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
+@property (nonatomic, retain) IBOutlet EAGLView *view;
 
 @end
 

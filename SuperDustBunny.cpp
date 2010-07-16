@@ -3,7 +3,7 @@
 //                                                          Super Dust Bunny                                                               //
 //                                                                                                                                         //
 //                               Authors: Thomas Perry <perry.thomas.12@gmail.com> & Wade Brainerd <wadetb@gmail.com>                      //
-//                                      Copyright © 2010 by Thomas Perry and Wade Brainerd. All rights reserved.                           //
+//                                      Copyright ï¿½ 2010 by Thomas Perry and Wade Brainerd. All rights reserved.                           //
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
@@ -126,13 +126,17 @@ int BackgroundMusic = 0;
 void Init()
 {
 	// Use iPad "portrait mode" screen dimensions.
-	gxInit(768, 1024, true);
+	gxInit(GXDISPLAY_IPAD_PORTRAIT);
 
 	sxInit();
 
 #ifdef PLATFORM_WINDOWS
 	kbInit();
 #endif
+	
+#ifdef PLATFORM_IPHONE
+	msInit();
+#endif	
 	
 	gxLoadSprite("Data/Hop01Resize.png", &DustyHop01);
 	gxLoadSprite("Data/Hop11Resize.png", &DustyHop02);	
@@ -165,6 +169,10 @@ void Exit()
 	kbDeinit();
 #endif
 
+#ifdef PLATFORM_IPHONE
+	msDeinit();
+#endif	
+	
 	gxDeinit();
 	
 	sxDeinit();
@@ -778,12 +786,9 @@ void Display()
 	case DUSTYSTATE_WALLJUMP_RIGHT:     DisplayDusty_WallJump_Right(); break;
 	case DUSTYSTATE_WALLJUMP_LEFT:      DisplayDusty_WallJump_Left(); break;	
 	default:						    break;
-//<<<<<<< .mine
     }
-//=======
-	
-//>>>>>>> .r379
 
+	
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   Box Drawing                                                                           //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -799,7 +804,6 @@ void Display()
 //                                                   Debugging aids                                                                        //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-#ifdef PLATFORM_WINDOWS
 	// Status of common variables
 	gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %03d, %03d ) DustyState: %d", DustyX, DustyY, DustyState );
 
@@ -811,13 +815,16 @@ void Display()
 
 	// Draw a red + at Dusty's root location.
 	gxDrawString(DustyX-4, DustyY-4, 8, gxRGB32(255, 0, 0), "+");
-#endif
 }
 
 bool Update()
 {
 #ifdef PLATFORM_WINDOWS
 	kbUpdateKeys();
+#endif
+	
+#ifdef PLATFORM_IPHONE
+	msUpdateMouse();
 #endif
 	
 	//Background Music

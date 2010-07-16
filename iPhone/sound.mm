@@ -75,7 +75,6 @@ void sxLoadSound(const char* filename, sxSound* sound)
 	NSString* path = [[NSBundle mainBundle] pathForResource:[name stringByDeletingPathExtension] ofType:[name pathExtension]];
 	CFURLRef url = (CFURLRef)[[NSURL fileURLWithPath:path] retain];
 	
-	
 	ALenum format;
 	ALsizei size;
 	ALsizei freq;

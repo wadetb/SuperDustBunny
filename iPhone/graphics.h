@@ -4,7 +4,7 @@
 #import <OpenGLES/ES1/gl.h>
 #import <OpenGLES/ES1/glext.h>
 
-#define gxRGBA32(r,g,b,a) (((r)<<16)|((g)<<8)|((b)<<0)|((a)<<24))
+#define gxRGBA32(r,g,b,a) (((b)<<16)|((g)<<8)|((r)<<0)|((a)<<24))
 #define gxRGB32(r,g,b)    gxRGBA32(r,g,b,255)
 
 struct gxSprite
@@ -16,10 +16,19 @@ struct gxSprite
 	int texHeight;
 };
 
+enum gxDisplayType
+{
+	GXDISPLAY_IPHONE_PORTRAIT,
+	GXDISPLAY_IPHONE_LANDSCAPE,
+
+	GXDISPLAY_IPAD_PORTRAIT,
+	GXDISPLAY_IPAD_LANDSCAPE,
+};
+
 extern int gxScreenWidth;
 extern int gxScreenHeight;
 
-void gxInit(int xres, int yres, bool window);
+void gxInit(gxDisplayType disp);
 void gxDeinit();
 
 void gxLoadSprite(const char* name, gxSprite* sprite);
@@ -28,6 +37,8 @@ void gxDestroySprite(gxSprite* sprite);
 void gxDrawSprite(int x, int y, gxSprite* sprite);
 
 void gxDrawRectangleFilled(int x, int y, int width, int height, unsigned int color);
+
+void gxDrawString(int x, int y, int ptsize, int color, const char* text, ...);
 
 void gxGetFileName(const char* relativePath, char* buffer, int bufferSize);
 void gxGetResourceFileName(const char* relativePath, char* buffer, int bufferSize);

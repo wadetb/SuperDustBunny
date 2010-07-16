@@ -11,13 +11,16 @@
 @implementation AppDelegate_Pad
 
 @synthesize window;
-
+@synthesize view;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
 	
     // Override point for customization after application launch
 	
     [window makeKeyAndVisible];
+	
+	[[UIAccelerometer sharedAccelerometer] setUpdateInterval:(1.0f/100.0f)];
+	[[UIAccelerometer sharedAccelerometer] setDelegate:view];	
 	
 	return YES;
 }

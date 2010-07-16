@@ -84,21 +84,38 @@ struct gxSprite
 };
 
 /*--------------------------------------------------------------------------------------------------------
+ 
+ gxDisplayType Enumerated Type
+ 
+  Defines a display mode that is supported by the graphics library.  Use this to request a desired display
+  mode and the graphics library will do the best it can to provide something like it.
+ 
+  The display mode controls the values of gxScreenWidth and gxScreenHeight.
+ 
+ --------------------------------------------------------------------------------------------------------*/
+enum gxDisplayType
+{
+	GXDISPLAY_IPHONE_PORTRAIT,      // 320x480
+	GXDISPLAY_IPHONE_LANDSCAPE,     // 480x320
+	
+	GXDISPLAY_IPAD_PORTRAIT,        // 768x1024
+	GXDISPLAY_IPAD_LANDSCAPE,       // 1024x768
+};
+
+/*--------------------------------------------------------------------------------------------------------
 
   gxInit, gxDeinit
 
-  Call these two functions at the beginning and end of your program. xres and yres specify the 
+  Call these two functions at the beginning and end of your program. The type specifies the 
   resolution you want to run in.
-
-  If you pass true for windowed, the program will run in a window instead of full screen.
 
   Example:
 
-  // Initialize the display to 640x480.
-  gxInit( 640, 480 );
+  // Initialize the display to emulate an iPad in portrait mode.
+  gxInit( GXDISPLAY_IPAD_PORTRAIT );
 
 --------------------------------------------------------------------------------------------------------*/
-void gxInit( int xres, int yres, bool windowed );
+void gxInit( gxDisplayType type );
 void gxDeinit();
 
 /*--------------------------------------------------------------------------------------------------------

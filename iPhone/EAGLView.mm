@@ -106,9 +106,6 @@ extern int gxScreenHeight;
 		NSLog(@"Failed to make complete framebuffer object %x", glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES));
     }
 	
-	gxScreenWidth = backingWidth;
-	gxScreenHeight = backingHeight;
-	
     [self drawView:nil];
 }
 
@@ -123,11 +120,11 @@ extern int gxScreenHeight;
     
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-	glOrthof(0, backingWidth*2, backingHeight*2, 0, 0, 100);
+	glOrthof(0, gxScreenWidth, gxScreenHeight, 0, 0, 100);
     glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	
-    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     
 	Display();
