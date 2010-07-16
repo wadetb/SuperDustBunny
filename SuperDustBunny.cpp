@@ -47,15 +47,15 @@ enum EDustyState
 	DUSTYSTATE_WALLJUMP_LEFT		= 5,
 };
 
-enum EBoxState
+enum EPlatformState
 {
-    BOXSTATE_STATIONARY             = 6,
+    PLATFORMSTATE_STATIONARY        = 6,
 };
 
 bool SlowMotionMode = false;
 
 EDustyState DustyState = DUSTYSTATE_STAND;
-EBoxState BoxState = BOXSTATE_STATIONARY;
+EPlatformState PlatformState = PLATFORMSTATE_STATIONARY;
 
 int DustyX = 350;
 int DustyY = 1024-55;
@@ -66,13 +66,15 @@ int DustyRight = 80;
 int DustyTop = -80;
 int DustyBottom = 55;
 
-int BoxX = 300;
-int BoxY = 800;
-int BoxXLeft = -10;
-int BoxXRight = 170;
-int BoxYTop = -10;
-int BoxYBottom = 40;
-int BoxVisible = 1;
+int PlatformX = 340;
+int PlatformY = 900;
+int PlatformLeft = -10;
+int PlatformRight = 170;
+int PlatformTop = -10;
+int PlatformBottom = 40;
+int PlatformVisible = 1;
+int OnPlatform = false;
+
 int BackgroundX = 0;
 int BackgroundY = 0;
 int BackgroundVisible = 1;
@@ -87,7 +89,6 @@ int HopRightSprite = 0;
 int HopLeftSprite = 0;
 int LastDirectionSprite = 1;
 int SpriteTransition = 0;
-bool AreBoxesIntersecting = false;
 bool IsJumping = false;
 bool IsCollided = false;
 
@@ -109,7 +110,7 @@ gxSprite DustyHopLeft03;
 gxSprite DustyHopLeft04;
 gxSprite DustyHopLeft05;
 gxSprite DustyHopLeft06;
-gxSprite WoodBox01;
+gxSprite WoodBox_Platform01;
 gxSprite Background01;
 
 sxSound DustyToJump;
@@ -133,21 +134,21 @@ void Init()
 	kbInit();
 #endif
 	
-	gxLoadSprite("Data/bunny hop0001.png", &DustyHop01);
-	gxLoadSprite("Data/bunny hop0011.png", &DustyHop02);	
-	gxLoadSprite("Data/bunny hop0005.png", &DustyHop03);
-	gxLoadSprite("Data/bunny hop0006.png", &DustyHop04);
-	gxLoadSprite("Data/bunny hop0009.png", &DustyHop05);	
-	gxLoadSprite("Data/dustyhopleft0001.png", &LeftFaceStanding01);
-	gxLoadSprite("Data/dustyhopleft0001.png", &LeftFaceStanding02);
-	gxLoadSprite("Data/dustyhopleft0001.png",&DustyHopLeft01);
-	gxLoadSprite("Data/dustyhopleft0011.png",&DustyHopLeft02);
-	gxLoadSprite("Data/dustyhopleft0005.png",&DustyHopLeft03);
-	gxLoadSprite("Data/dustyhopleft0006.png",&DustyHopLeft04);
-	gxLoadSprite("Data/dustyhoplefttest.png",&DustyHopLeft06);
-    gxLoadSprite("Data/DustyLeftWallJump.png", &LeftFaceWallJump01);
-    gxLoadSprite("Data/DustyRightWallJump.png", &RightFaceWallJump01);
-    gxLoadSprite("Data/WoodPlatformThin.png", &WoodBox01);
+	gxLoadSprite("Data/Hop01Resize.png", &DustyHop01);
+	gxLoadSprite("Data/Hop11Resize.png", &DustyHop02);	
+	gxLoadSprite("Data/Hop05Resize.png", &DustyHop03);
+	gxLoadSprite("Data/Hop06Resize.png", &DustyHop04);
+	gxLoadSprite("Data/Hop09Resize.png", &DustyHop05);	
+	gxLoadSprite("Data/HopLeft01Resize.png", &LeftFaceStanding01);
+	gxLoadSprite("Data/HopLeft01Resize.png", &LeftFaceStanding02);
+	gxLoadSprite("Data/HopLeft01Resize.png",&DustyHopLeft01);
+	gxLoadSprite("Data/HopLeft11Resize.png",&DustyHopLeft02);
+	gxLoadSprite("Data/HopLeft05Resize.png",&DustyHopLeft03);
+	gxLoadSprite("Data/HopLeft06Resize.png",&DustyHopLeft04);
+	gxLoadSprite("Data/HopLeft09Resize.png",&DustyHopLeft06);
+    gxLoadSprite("Data/DustyLeftWallJumpResize.png", &LeftFaceWallJump01);
+    gxLoadSprite("Data/DustyRightWallJumpResize.png", &RightFaceWallJump01);
+    gxLoadSprite("Data/WoodPlatformThin.png", &WoodBox_Platform01);
     gxLoadSprite("Data/LargeBackground.png", &Background01);
     
     sxLoadWav ("Data/yaahooo.wav", &DustyToJump);
@@ -181,7 +182,7 @@ void SetDustyState_Hop_Left();
 void SetDustyState_WallJump_Right();
 void SetDustyState_WallJump_Left();
 
-void SetBoxState_Stationary();
+void SetPlatformState_Stationary();
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                             Input functions
@@ -241,6 +242,11 @@ void DisplayDusty_Stand()
 
 void UpdateDusty_Stand()
 {
+	//if (OnPlatform == true && DustyBottom <= PlatformTop)
+	//{
+    //    DustyBottom = PlatformTop;
+	//}
+	
 	if (LastDirectionSprite == 1)
 	{
 		JumpRightSprite = 1;
@@ -305,27 +311,34 @@ void DisplayDusty_Jump()
 {
 	if (JumpRightSprite == 1)     
 	{
-		gxDrawSprite( DustyX-25, DustyY-63, &DustyHop03 );
+		gxDrawSprite( DustyX-50, DustyY-126, &DustyHop03 );
 	}
 
 	if (FallRightSprite == 1)
 	{
-		gxDrawSprite( DustyX-25, DustyY-63, &DustyHop02 );
+		gxDrawSprite( DustyX-50, DustyY-126, &DustyHop02 );
 	}  
 
 	if (JumpLeftSprite == 1)
 	{
-		gxDrawSprite( DustyX-23, DustyY-64, &DustyHopLeft03 );
+		gxDrawSprite( DustyX-46, DustyY-128, &DustyHopLeft03 );
 	}
 
 	if (FallLeftSprite == 1)
 	{
-		gxDrawSprite( DustyX-23, DustyY-64, &DustyHopLeft02 );
+		gxDrawSprite( DustyX-46, DustyY-128, &DustyHopLeft02 );
 	}
 }
 
 void UpdateDusty_Jump()
 {
+    //Collide with the top of the platform
+    if (DustyBottom == PlatformTop)
+    {             
+        OnPlatform = true;
+        DustyState = DUSTYSTATE_STAND;
+    }
+      
     //Collide right side of screen check
     if (IsCollided == true && DustyX + DustyRight > gxScreenWidth)
     {
@@ -417,32 +430,32 @@ void DisplayDusty_Hop_Right()
 {
     if (HopRightSprite == 1) 
     {
-        gxDrawSprite( DustyX-32, DustyY-58, &DustyHop01 );
+        gxDrawSprite( DustyX-64, DustyY-116, &DustyHop01 );
     } 
 
     if (HopRightSprite == 2)
     {
-        gxDrawSprite( DustyX-28, DustyY-62, &DustyHop02 );
+        gxDrawSprite( DustyX-56, DustyY-124, &DustyHop02 );
     } 
 
     if (HopRightSprite == 3)
     {
-        gxDrawSprite( DustyX-25, DustyY-63, &DustyHop03 );
+        gxDrawSprite( DustyX-50, DustyY-126, &DustyHop03 );
     }
 
     if (HopRightSprite == 4)
     {
-        gxDrawSprite( DustyX-37, DustyY-46, &DustyHop04 );
+        gxDrawSprite( DustyX-74, DustyY-92, &DustyHop04 );
     }    
 
     if (HopRightSprite == 5)
     {
-        gxDrawSprite( DustyX-41, DustyY-74, &DustyHop05 );
+        gxDrawSprite( DustyX-82, DustyY-148, &DustyHop05 );
     }     
 
     if (HopRightSprite == 6)
     {
-        gxDrawSprite( DustyX-32, DustyY-58, &DustyHop01 );
+        gxDrawSprite( DustyX-64, DustyY-116, &DustyHop01 );
     }   
 }	
 
@@ -452,7 +465,7 @@ void UpdateDusty_Hop_Right()
 
     // Update animation
     SpriteTransition -= 1;
-
+    
     // Collision with right side of screen
     if (DustyX + DustyRight >= gxScreenWidth )
         DustyX = gxScreenWidth - DustyRight;
@@ -531,30 +544,30 @@ void DisplayDusty_Hop_Left()
 {
     if (HopLeftSprite == 1) 
     {
-        gxDrawSprite( DustyX-32, DustyY-59, &DustyHopLeft01 );
+        gxDrawSprite( DustyX-64, DustyY-118, &DustyHopLeft01 );
     } 
 
     if (HopLeftSprite == 2)
     {
-        gxDrawSprite( DustyX-27, DustyY-60, &DustyHopLeft02 );
+        gxDrawSprite( DustyX-54, DustyY-120, &DustyHopLeft02 );
     } 
 
     if (HopLeftSprite == 3)
     {
-        gxDrawSprite( DustyX-23, DustyY-64, &DustyHopLeft03 );
+        gxDrawSprite( DustyX-46, DustyY-128, &DustyHopLeft03 );
     }
 
     if (HopLeftSprite == 4)
     {
-        gxDrawSprite( DustyX-34, DustyY-45, &DustyHopLeft04 );
+        gxDrawSprite( DustyX-68, DustyY-90, &DustyHopLeft04 );
     } 
     if (HopLeftSprite == 5)
     {
-        gxDrawSprite( DustyX-41, DustyY-70, &DustyHopLeft06 );
+        gxDrawSprite( DustyX-82, DustyY-140, &DustyHopLeft06 );
     }    
     if (HopLeftSprite == 6)
     {
-        gxDrawSprite( DustyX-32, DustyY-59, &DustyHopLeft01 );
+        gxDrawSprite( DustyX-64, DustyY-118, &DustyHopLeft01 );
     }              
 }
 
@@ -640,7 +653,7 @@ void SetDustyState_WallJump_Right()
 
 void DisplayDusty_WallJump_Right()
 {
-        gxDrawSprite( DustyX-20, DustyY-72, &LeftFaceWallJump01 );       
+        gxDrawSprite( DustyX-40, DustyY-144, &LeftFaceWallJump01 );       
 }
 
 void UpdateDusty_WallJump_Right()//Collided with Right Wall
@@ -674,7 +687,7 @@ void SetDustyState_WallJump_Left()
 
 void DisplayDusty_WallJump_Left()
 {
-        gxDrawSprite( DustyX-26, DustyY-71, &RightFaceWallJump01 ); 
+        gxDrawSprite( DustyX-52, DustyY-142, &RightFaceWallJump01 ); 
 }
 
 void UpdateDusty_WallJump_Left()
@@ -699,34 +712,45 @@ void UpdateDusty_WallJump_Left()
         JumpRightSprite = 1;
         SetDustyState_Jump( true );    
     }
-}   
-
+} 
+  
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                  BOX_Stationary Implementation                                                                   //
+//                                                  DUSTYSTATE_BOX_COLLLISION Implementation                                               //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-void SetBoxState_Stationary()
+void SetDustyState_BoxCollision()
 {
-    BoxState = BOXSTATE_STATIONARY;
+    PlatformState = PLATFORMSTATE_STATIONARY;
 }
 
-void DisplayBox_Stationary()
+void DisplayDusty_BoxCollision()
 {
-       gxDrawSprite( BoxX, BoxY, &WoodBox01 );
+
 }
 
-void UpdateBox_Stationary()
+void UpdateDusty_BoxCollision()
 {
-    //if (BoxYTop, BoxYBottom, BoxXLeft, BoxXRight == DustyTop, DustyBottom, DustyRight, DustyTop)  
-    //{
-    //    AreBoxesIntersecting = true;
-    //}
-    
-    //if (AreBoxesIntersecting == true)
-    //{
-     //   DustyY = BoxY - BoxX;//Placeholder
-   // }    
-    
+
+}
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                  BOX_Stationary Implementation                                                          //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+void SetPlatformState_Stationary()
+{
+    PlatformState = PLATFORMSTATE_STATIONARY;
+}
+
+void DisplayPlatform_Stationary()
+{
+       //gxDrawSprite( PlatformX, PlatformY, &WoodBox_Platform01 );
+}
+
+void UpdatePlatform_Stationary()
+{
+
+
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -764,9 +788,9 @@ void Display()
 //                                                   Box Drawing                                                                           //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-    switch (BoxState)
+    switch (PlatformState)
     {
-      case BOXSTATE_STATIONARY:          DisplayBox_Stationary(); break;
+      case PLATFORMSTATE_STATIONARY:          DisplayPlatform_Stationary(); break;
       default:                           break;
     }
  
@@ -885,13 +909,12 @@ if (BackgroundMusic == 1)
 		case DUSTYSTATE_HOP_LEFT:           UpdateDusty_Hop_Left(); break;
 		case DUSTYSTATE_WALLJUMP_RIGHT:     UpdateDusty_WallJump_Right(); break;
 		case DUSTYSTATE_WALLJUMP_LEFT:      UpdateDusty_WallJump_Left(); break;
-		
 		default:						    break;
     }
     	
-    switch (BoxState)
+    switch (PlatformState)
     {
-        case BOXSTATE_STATIONARY:           UpdateBox_Stationary(); break;
+        case PLATFORMSTATE_STATIONARY:           UpdatePlatform_Stationary(); break;
         default:                           break;
     }	
 	return true;
