@@ -676,6 +676,11 @@ void UpdateDusty_WallJump_Right()//Collided with Right Wall
     if (GetInput_Jump() && LastDirectionSprite == 1)
     {               
         LastDirectionSprite = 0;
+        //Resetting sprites
+		FallRightSprite = 0;
+        FallLeftSprite = 0;
+		JumpRightSprite = 0;
+		JumpLeftSprite = 1;
         SetDustyState_Jump( true );
     }
 }	
@@ -712,6 +717,7 @@ void UpdateDusty_WallJump_Left()
     {
         LastDirectionSprite = 1;
         //Resetting sprites
+		FallRightSprite = 0;
         FallLeftSprite = 0;
         JumpRightSprite = 1;
         SetDustyState_Jump( true );    
@@ -746,11 +752,14 @@ void UpdateRecCollision()
     
     //Comparing two numbers and returning the one with greater value, and comparing two numbers and returning the one with lesser value.
     //PlatformX and PlatformX + PlatformRight as well as PlatformY and PlatformY + PlatformTop will always be the same.
-    if(Max(DustyX + DustyLeft, PlatformX) < Min(DustyX + DustyRight, PlatformX + PlatformRight) &&    
-    Max(DustyY + DustyTop, PlatformY) < Min(DustyY + DustyBottom, PlatformY + PlatformTop))//The Y Axis version of the formula above.
-    {    
-        AreRecsIntersecting = true;
-    }
+	AreRecsIntersecting = false;
+    if(Max(DustyX + DustyLeft, PlatformX + PlatformLeft) < Min(DustyX + DustyRight, PlatformX + PlatformRight))
+	{
+		if (Max(DustyY + DustyTop, PlatformY + PlatformTop) < Min(DustyY + DustyBottom, PlatformY + PlatformBottom))//The Y Axis version of the formula above.
+		{    
+ 			AreRecsIntersecting = true;
+		}
+	}
 
 
     if (AreRecsIntersecting == true && RightSideIsInPlatform == true)
@@ -881,13 +890,23 @@ void Display()
 
 	// Draw a red + at Dusty's root location.
 	gxDrawString(DustyX-4, DustyY-4, 8, gxRGB32(255, 0, 0), "+");
-	
-	// Draw a red + at all four corners of the Platform.
-    gxDrawString(PlatformX - 10, PlatformY - 10, 8, gxRGB32(255, 0, 0), "+");//Upper Left
-    gxDrawString(PlatformX + 170, PlatformY - 10, 8, gxRGB32(255, 0, 0), "+");//Upper Right
-    gxDrawString(PlatformX - 10, PlatformY + 40, 8, gxRGB32(255, 0, 0), "+");//Lower Left
-    gxDrawString(PlatformX + 170, PlatformY + 40, 8, gxRGB32(255, 0, 0), "+");//Lower Right
-	
+
+	// Draw a red + at all four corners of Dusty.
+	gxDrawString(DustyX + DustyLeft,  DustyY + DustyTop,    8, gxRGB32(255, 0, 0), "+");//Upper Left
+	gxDrawString(DustyX + DustyRight, DustyY + DustyTop,    8, gxRGB32(255, 0, 0), "+");//Upper Right
+	gxDrawString(DustyX + DustyLeft,  DustyY + DustyBottom, 8, gxRGB32(255, 0, 0), "+");//Lower Left
+	gxDrawString(DustyX + DustyRight, DustyY + DustyBottom, 8, gxRGB32(255, 0, 0), "+");//Lower Right
+
+	// Draw a + at all four corners of Platform - red if no collision, green if collusion.
+	int color;
+	if (AreRecsIntersecting)
+		color = gxRGB32(0, 255, 0);
+	else
+		color = gxRGB32(255, 0, 0);
+	gxDrawString(PlatformX + PlatformLeft,  PlatformY + PlatformTop,    8, color, "+");//Upper Left
+	gxDrawString(PlatformX + PlatformRight, PlatformY + PlatformTop,    8, color, "+");//Upper Right
+	gxDrawString(PlatformX + PlatformLeft,  PlatformY + PlatformBottom, 8, color, "+");//Lower Left
+	gxDrawString(PlatformX + PlatformRight, PlatformY + PlatformBottom, 8, color, "+");//Lower Right
 }
 
 bool Update()
@@ -978,6 +997,8 @@ if (BackgroundMusic == 1)
 	//                                                   Dusty Update                                                                          //
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//	
 	
+	UpdateRecCollision();
+
     switch (DustyState)
     {
 		case DUSTYSTATE_STAND:			    UpdateDusty_Stand(); break;
