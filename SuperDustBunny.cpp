@@ -826,8 +826,6 @@ void UpdateRecCollision()
         BottomSideIsInPlatform = true;
     }
     
-    //Comparing two numbers and returning the one with greater value, and comparing two numbers and returning the one with lesser value.
-    //PlatformX and PlatformX + PlatformRight as well as PlatformY and PlatformY + PlatformTop will always be the same.
 	AreRecsIntersecting = false;
     if(Max(DustyX + DustyLeft, PlatformX + PlatformLeft) < Min(DustyX + DustyRight, PlatformX + PlatformRight))
 	{
@@ -843,17 +841,7 @@ void UpdateRecCollision()
  //       SetDustyState_WallJump_Left();
  //   }
 
- //   if (AreRecsIntersecting == true && LeftSideIsInPlatform == true)
- //   {
-	//	DustyState = DUSTYSTATE_WALLJUMP_RIGHT;
- //   }
- //   
- //   if (AreRecsIntersecting == true && TopSideIsInPlatform == true)
- //   {  
-	//	VerticalCounter = 0;
-	//	DustyState = DUSTYSTATE_JUMP;
- //   }
-    
+
     if (AreRecsIntersecting == true && BottomSideIsInPlatform == true && DustyState == DUSTYSTATE_FALL && VerticalCounter == 0)
     {
 		OnPlatform = true;
