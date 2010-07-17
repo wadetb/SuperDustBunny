@@ -92,6 +92,10 @@ int HopRightSprite = 0;
 int HopLeftSprite = 0;
 int LastDirectionSprite = 1;
 int SpriteTransition = 0;
+int LeftSide = 0;
+int RightSide = 768;
+int TopSide = 0;
+int BottomSide = 1024;
 
 bool RightSideIsInPlatform = false;
 bool LeftSideIsInPlatform = false;
@@ -102,6 +106,10 @@ bool IsJumping = false;
 bool CanWallJump = true;
 bool OnPlatform = false;
 bool StraightFallTrigger = false;
+bool CollideWithLeftSide = false;
+bool CollideWithRightSide = false;
+bool CollideWithTopSide = false;
+bool CollideWithBottomSide = false;
 
 gxSprite DustyHop01;
 gxSprite DustyHop02;
@@ -285,16 +293,25 @@ void UpdateDusty_Stand()
 	if ( GetInput_Jump() )      
 	{
 		SetDustyState_Jump( false );
+		return;
 	}
 
 	if ( GetInput_MoveRight() )
 	{
-		SetDustyState_Hop_Right();			  
+		SetDustyState_Hop_Right();
+		return;
 	}
 
 	if ( GetInput_MoveLeft() )
 	{
 		SetDustyState_Hop_Left();
+		return;
+	}
+
+	if (CollideWithBottomSide == false)
+	{
+		SetDustyState_Fall();
+		return;
 	}
 }
 
@@ -317,7 +334,6 @@ void SetDustyState_Jump( bool OffWall )
 	VerticalCounter = 20;
 	DustyY -= 10;
 	DustyState = DUSTYSTATE_JUMP;
-
 }
 
 void DisplayDusty_Jump()
@@ -417,9 +433,8 @@ void UpdateDusty_Fall()
 		JumpRightSprite = 0;                            
 	}
 
-	if (DustyY + DustyBottom > gxScreenHeight )
+	if (CollideWithBottomSide == true )
 	{	
-		DustyY = gxScreenHeight - DustyBottom;
 		SetDustyState_Stand();
 		return;
 	} 
@@ -481,18 +496,16 @@ void UpdateDusty_Hop_Right()
     SpriteTransition -= 1;
     
 	//Walk off right side of Platform
-	if (DustyX + DustyLeft > PlatformX + PlatformRight && OnPlatform == true)
+	if (CollideWithBottomSide == false && OnPlatform == true)
 	{
 		SetDustyState_Fall();
+		return;
 	}
-
-    // Collision with right side of screen
-    if (DustyX + DustyRight >= gxScreenWidth )
-        DustyX = gxScreenWidth - DustyRight;
 
     if ( !GetInput_MoveRight() && SpriteTransition == 0 )
     {			                         
         SetDustyState_Stand();
+		return;
     }
 
     if (GetInput_Jump() && SpriteTransition != 0)
@@ -602,16 +615,12 @@ void UpdateDusty_Hop_Left()
     SpriteTransition -= 1;
 
 	//Walk off left side of Platform
-	if (DustyX + DustyRight < PlatformX + PlatformLeft && OnPlatform == true)
+	if (CollideWithBottomSide == false && OnPlatform == true)
 	{
 		SetDustyState_Fall();
 		return;
 	}
 	
-	// Collision with left side of screen
-    if (DustyX + DustyLeft <= 0)
-        DustyX = -DustyLeft;
-
     if ( !GetInput_MoveLeft() && SpriteTransition == 0 )
     {          
         SetDustyState_Stand();
@@ -631,6 +640,7 @@ void UpdateDusty_Hop_Left()
         //Reset JumpQueue
         JumpQueue = 0;
         SetDustyState_Jump( false );
+		return;
     }  
 
     if (GetInput_MoveRight())
@@ -681,30 +691,18 @@ void UpdateDusty_Hop_Left()
 
 void UpdateDusty_JumpCommon()
 {
-	//Collide right side of screen check
-	if (CanWallJump == false && DustyX + DustyRight > gxScreenWidth)
-	{
-		DustyX = gxScreenWidth - DustyRight;
-	}
-
-	//Collide left side of screen check
-	if (CanWallJump == false && DustyX + DustyLeft < 0)
-	{
-		DustyX = -DustyLeft;                   
-	}
-
 	// Collision with right side of screen
-	if (DustyX + DustyRight >= gxScreenWidth && CanWallJump == true && LastDirectionSprite == 1)
+	if (CollideWithRightSide == true && CanWallJump == true && LastDirectionSprite == 1)
 	{
-		DustyX = gxScreenWidth - DustyRight;
 		SetDustyState_WallJump_Right();
+		return;
 	} 
 
 	//Collision with the left side of the screen    
-	if (DustyX + DustyLeft <= 0 && CanWallJump == true && LastDirectionSprite == 0)
-	{
-		DustyX = -DustyLeft;
+	if (CollideWithLeftSide == true && CanWallJump == true && LastDirectionSprite == 0)
+	{	
 		SetDustyState_WallJump_Left();
+		return;
 	}
 }
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -712,8 +710,6 @@ void UpdateDusty_JumpCommon()
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 void SetDustyState_WallJump_Right()
 {   
-	DustyX = gxScreenWidth - DustyRight;
-
 	JumpLeftSprite = 0;
 	JumpRightSprite = 0;
 	WallStickTimer = 15;
@@ -734,6 +730,7 @@ void UpdateDusty_WallJump_Right()//Collided with Right Wall
         VerticalCounter = 0;          
 		CanWallJump = false;
 		SetDustyState_Fall();
+		return;
     }
 
     if (WallStickTimer != 0)
@@ -751,6 +748,7 @@ void UpdateDusty_WallJump_Right()//Collided with Right Wall
 		JumpLeftSprite = 1;
 		CanWallJump = true;
         SetDustyState_Jump( true );
+		return;
     }
 }	
 
@@ -759,9 +757,7 @@ void UpdateDusty_WallJump_Right()//Collided with Right Wall
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -// 
 
 void SetDustyState_WallJump_Left()// Collided with Left Wall
-{
-
-	DustyX = -DustyLeft;	
+{	
 	CanWallJump = true;
 	JumpLeftSprite = 0;
 	JumpRightSprite = 0;
@@ -771,7 +767,7 @@ void SetDustyState_WallJump_Left()// Collided with Left Wall
 
 void DisplayDusty_WallJump_Left()
 {
-        gxDrawSprite( DustyX-165, DustyY-200, &RightFaceWallJump01 ); 
+    gxDrawSprite( DustyX-165, DustyY-200, &RightFaceWallJump01 ); 
 }
 
 void UpdateDusty_WallJump_Left()
@@ -781,6 +777,7 @@ void UpdateDusty_WallJump_Left()
         VerticalCounter = 0;
 		CanWallJump = false;
 		SetDustyState_Fall();
+		return;
     }
 
     if (WallStickTimer != 0)
@@ -796,7 +793,8 @@ void UpdateDusty_WallJump_Left()
         FallLeftSprite = 0;
         JumpRightSprite = 1;
 		CanWallJump = true;
-        SetDustyState_Jump( true );    
+        SetDustyState_Jump( true );
+		return;
     }
 } 
   
@@ -804,49 +802,67 @@ void UpdateDusty_WallJump_Left()
 //                                                  UPDATE_REC_COLLISION Implementation                                                    //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-void UpdateRecCollision()
+void UpdateDusty_Collision()
 {
-    if ((DustyX + DustyRight >= PlatformX) && (DustyX + DustyRight <= PlatformX + PlatformRight))
-    {   
-        RightSideIsInPlatform = true;
-    }
+	CollideWithRightSide = false;
+	CollideWithLeftSide = false;
+	CollideWithBottomSide = false;
+	CollideWithTopSide = false;
 
-    if ((DustyX + DustyLeft >= PlatformX) && (DustyX + DustyLeft <= PlatformX + PlatformRight))
-    {    
-        LeftSideIsInPlatform = true;
-    }
-    
-    if ((DustyY + DustyTop >= PlatformY && (DustyY + DustyTop <= PlatformY + PlatformTop)))
-    {
-        TopSideIsInPlatform = true;
-    }
-    
-    if ((DustyY + DustyBottom >= PlatformY && DustyY + DustyBottom <= PlatformY + PlatformBottom))
-    {
-        BottomSideIsInPlatform = true;
-    }
-    
-	AreRecsIntersecting = false;
-    if(Max(DustyX + DustyLeft, PlatformX + PlatformLeft) < Min(DustyX + DustyRight, PlatformX + PlatformRight))
+	// Collision with right side of the right screen and Dusty's right Side
+	if (DustyX + DustyRight >= gxScreenWidth)
 	{
-		if (Max(DustyY + DustyTop, PlatformY + PlatformTop) < Min(DustyY + DustyBottom, PlatformY + PlatformBottom))//The Y Axis version of the formula above.
-		{    
- 			AreRecsIntersecting = true;
-		}
+		CollideWithRightSide = true;
+		DustyX = gxScreenWidth - DustyRight;	
+	} 
+
+	//Collision with the left side of the screen    
+	if (DustyX + DustyLeft <= 0)
+	{
+		CollideWithLeftSide = true;
+		DustyX = -DustyLeft;
 	}
-	
-	//if (AreRecsIntersecting == true && LeftSideIsInPlatform == true)
- //   {
-	//	StraightFallTrigger = true;
- //       SetDustyState_WallJump_Left();
- //   }
+	//Collision with the bottom side of the screen
+	if (DustyY + DustyBottom >= gxScreenHeight )
+	{	
+		CollideWithBottomSide = true;
+		DustyY = gxScreenHeight - DustyBottom;
+	} 
 
+    if(Max(DustyX + DustyLeft, PlatformX + PlatformLeft) <= Min(DustyX + DustyRight, PlatformX + PlatformRight))
+	{
+		if (Max(DustyY + DustyTop, PlatformY + PlatformTop) <= Min(DustyY + DustyBottom, PlatformY + PlatformBottom))
+		{    
+			int LeftDistance	= ( DustyX    + DustyRight     ) - ( PlatformX + PlatformLeft   );
+			int RightDistance	= ( PlatformX + PlatformRight  ) - ( DustyX    + DustyLeft      );
+			int DownDistance	= ( PlatformY + PlatformBottom ) - ( DustyY    + DustyTop       );
+			int UpDistance		= ( DustyY    + DustyBottom    ) - ( PlatformY + PlatformTop	);
 
-    if (AreRecsIntersecting == true && BottomSideIsInPlatform == true && DustyState == DUSTYSTATE_FALL && VerticalCounter == 0)
-    {
-		OnPlatform = true;
-		SetDustyState_Stand();
-    }
+ 			if (LeftDistance < RightDistance && LeftDistance < DownDistance && LeftDistance < UpDistance)
+			{
+				CollideWithRightSide = true;//Collision with Dusty's Right Side but the left side of the platform
+				DustyX -= LeftDistance;
+			}
+
+			if (RightDistance < LeftDistance && RightDistance < DownDistance && RightDistance < UpDistance)
+			{
+				CollideWithLeftSide = true;//Collision with Dusty's Left Side but the right side of the platform
+				DustyX += RightDistance;
+			}
+
+			if (DownDistance < RightDistance && DownDistance < LeftDistance && DownDistance < UpDistance)
+			{
+				CollideWithTopSide = true;//Collision with Dusty's Top Side but the Bottom side of the platform
+				DustyY += DownDistance;
+			}
+
+			if (UpDistance < RightDistance && UpDistance < DownDistance && UpDistance < LeftDistance)
+			{
+				CollideWithBottomSide = true;//Collision with Dusty's Bottom Side but the Top side of the platform
+				DustyY -= UpDistance;
+			}
+		}	
+	}
 }
 
 int Max(int a, int b)
@@ -887,11 +903,7 @@ void DisplayPlatform_Stationary()
        gxDrawSprite( PlatformX, PlatformY, &WoodBox_Platform01 );
 }
 
- void UpdatePlatform_Stationary()
- {
- 
- 
- }
+void UpdatePlatform_Stationary(){}
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   Central Display and Update functions                                                  //
@@ -938,7 +950,8 @@ void Display()
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
 	// Status of common variables
-	gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %03d, %03d ) DustyState: %d", DustyX, DustyY, DustyState );
+	gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %03d, %03d ) State: %d, Col: %d%d%d%d", DustyX, DustyY, DustyState, CollideWithLeftSide, CollideWithRightSide,
+		CollideWithTopSide, CollideWithBottomSide);
 
 	// Indicator for when slow motion is activated.
 	if (SlowMotionMode)
@@ -1056,7 +1069,7 @@ if (BackgroundMusic == 1)
 	//                                                   Dusty Update                                                                          //
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//	
 	
-	UpdateRecCollision();
+	UpdateDusty_Collision();
 
 	switch (DustyState)
     {
