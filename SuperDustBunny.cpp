@@ -967,16 +967,13 @@ if (BackgroundMusic == 1)
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   Slow Motion Update                                                                    //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	// Backspace toggles slow motion mode.
-	if (kbIsKeyDown(KB_BACKSLASH) && !kbWasKeyDown(KB_BACKSLASH))
+	// Backslash key held down causes slow motion mode.
+	if (kbIsKeyDown(KB_BACKSLASH))
 	{
-		SlowMotionMode = !SlowMotionMode;
-	}
+		SlowMotionMode = true;
 
-	if (SlowMotionMode)
-	{
 		bool StepOneFrame;
-		if (kbIsKeyDown(KB_RETURN) && !kbWasKeyDown(KB_RETURN))
+		if (kbIsKeyDown(KB_RBRACKET) && !kbWasKeyDown(KB_RBRACKET))
 		{
 			StepOneFrame = true;
 		}
@@ -990,6 +987,10 @@ if (BackgroundMusic == 1)
 		{
 			return true;
 		}
+	}
+	else
+	{
+		SlowMotionMode = false;
 	}
 #endif
 	
