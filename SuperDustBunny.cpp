@@ -766,13 +766,13 @@ void UpdateRecCollision()
     
     }
     
-    if AreRecsIntersecting == true && TopSideIsInPlatform == true)
+    if (AreRecsIntersecting == true && TopSideIsInPlatform == true)
     {
     
     
     }
     
-    if AreRecsIntersecting == true && BottomSideIsInPlatform == true)
+    if (AreRecsIntersecting == true && BottomSideIsInPlatform == true)
     {
     
     
