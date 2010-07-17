@@ -345,10 +345,18 @@ void gxDrawString( int x, int y, int ptsize, int color, const char* text, ... )
 	gxDev->SetRenderState( D3DRS_ALPHABLENDENABLE, FALSE );
 	gxDev->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
 	gxDev->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
+	
+	int OrigX = x;
 
 	for (const char* p = work; *p; p++)
 	{
 		char ch = *p;
+		if (ch == '\n')
+		{
+			y += ptsize;
+			x = OrigX;
+			continue;
+		}
 		if (ch < 32 || ch > 127)
 			continue;
 

@@ -37,6 +37,8 @@
 #include "Mac/sound.h"
 #endif
 
+#include "chapter.h"
+
 enum EDustyState
 {
 	DUSTYSTATE_STAND				,
@@ -142,6 +144,8 @@ int SongCounter = 1;
 int SongDuration = 0;
 int BackgroundMusic = 0;
 
+SChapter Chapter;
+
 void Init()
 {
 	// Use iPad "portrait mode" screen dimensions.
@@ -180,6 +184,9 @@ void Init()
     sxLoadWav ("Data/Song1.wav", &BackgroundSong01);
     sxLoadWav ("Data/Song2.wav", &BackgroundSong02);
     sxLoadWav ("Data/Song3.wav", &BackgroundSong03);
+
+
+	LoadChapter("Docs/Design.txt", &Chapter);
 }
 
 void Exit()
@@ -917,6 +924,8 @@ void Display()
     //    gxDrawSprite( BackgroundX, BackgroundY, &Background01 );
    // }
 
+	RenderChapter(&Chapter);
+
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   Dusty Drawing                                                                         //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -952,6 +961,7 @@ void Display()
 	// Status of common variables
 	gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %03d, %03d ) State: %d, Col: %d%d%d%d", DustyX, DustyY, DustyState, CollideWithLeftSide, CollideWithRightSide,
 		CollideWithTopSide, CollideWithBottomSide);
+
 
 	// Indicator for when slow motion is activated.
 	if (SlowMotionMode)

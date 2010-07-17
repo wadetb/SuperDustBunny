@@ -205,6 +205,18 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath=".\chapter.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\chapter.h"
+			>
+		</File>
+		<File
+			RelativePath=".\common.h"
+			>
+		</File>
+		<File
 			RelativePath=".\SuperDustBunny.cpp"
 			>
 		</File>
