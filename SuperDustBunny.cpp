@@ -745,7 +745,7 @@ void UpdateRecCollision()
     }
     
     //Comparing two numbers and returning the one with greater value, and comparing two numbers and returning the one with lesser value.
-    //PlatformX and PlatformX + PlatformRight will always be stationary
+    //PlatformX and PlatformX + PlatformRight will always be the same.
     if(Max(DustyX + DustyLeft, PlatformX) < Min(DustyX + DustyRight, PlatformX + PlatformRight) &&    
     Max(DustyY + DustyTop, PlatformY) < Min(DustyY + DustyBottom, PlatformY + PlatformTop))//The Y Axis version of the formula above.
     {    
@@ -803,7 +803,7 @@ int Min(int a, int b)
     }
     else
     {
-        return false;
+        return b;
     }
 }
 
