@@ -67,13 +67,15 @@ int DustyX = 350;
 int DustyY = 1024;
 int DirectionX = 7;
 int DirectionY = 7;
-int DustyLeft = -60;
-int DustyRight = 60;
+int DustyLeft = -40;
+int DustyRight = 40;
 int DustyTop = -120;
 int DustyBottom = 0;
 
 int PlatformX = 340;//Location of Platform from left to right on the X axis
 int PlatformY = 750;//Location of Platform from top to bottom on the Y axis
+int Platform2X = 340;
+int Platform2Y = 400;
 int PlatformLeft = -10;
 int PlatformRight = 170;
 int PlatformTop = -10;
@@ -412,12 +414,12 @@ void DisplayDusty_Fall()
 {
 	if (FallLeftSprite == 1)
 	{
-		gxDrawSprite( DustyX-155, DustyY-217, &DustyHopLeft02 );
+		gxDrawSprite( DustyX-130, DustyY-217, &DustyHopLeft02 );
 	}
 
 	if (FallRightSprite == 1)
 	{
-		gxDrawSprite( DustyX-96, DustyY-221, &DustyHop02 );
+		gxDrawSprite( DustyX-125, DustyY-221, &DustyHop02 );
 	} 
 
 }
@@ -528,12 +530,14 @@ void UpdateDusty_Hop_Right()
         //reset JumpQueue
         JumpQueue = 0;
         SetDustyState_Jump( false );
+		return;
     }    
 
     if (GetInput_MoveLeft())
     {
         LastDirectionSprite = 0;
-        DustyState = DUSTYSTATE_HOP_LEFT;
+        SetDustyState_Hop_Left();
+		return;
     }
 
     if (SpriteTransition == 30)
@@ -653,7 +657,8 @@ void UpdateDusty_Hop_Left()
     if (GetInput_MoveRight())
     {
         LastDirectionSprite = 1;
-        DustyState = DUSTYSTATE_HOP_RIGHT;
+        SetDustyState_Hop_Right();
+		return;
     }
 
     if (SpriteTransition == 30)
@@ -727,7 +732,7 @@ void SetDustyState_WallJump_Right()
 
 void DisplayDusty_WallJump_Right()
 {
-        gxDrawSprite( DustyX-90, DustyY-200, &LeftFaceWallJump01 );       
+        gxDrawSprite( DustyX-115, DustyY-200, &LeftFaceWallJump01 );       
 }
 
 void UpdateDusty_WallJump_Right()//Collided with Right Wall
@@ -774,7 +779,7 @@ void SetDustyState_WallJump_Left()// Collided with Left Wall
 
 void DisplayDusty_WallJump_Left()
 {
-    gxDrawSprite( DustyX-165, DustyY-200, &RightFaceWallJump01 ); 
+    gxDrawSprite( DustyX-145, DustyY-200, &RightFaceWallJump01 ); 
 }
 
 void UpdateDusty_WallJump_Left()
@@ -870,6 +875,41 @@ void UpdateDusty_Collision()
 			}
 		}	
 	}
+
+	if(Max(DustyX + DustyLeft, Platform2X + PlatformLeft) <= Min(DustyX + DustyRight, Platform2X + PlatformRight))
+	{
+		if (Max(DustyY + DustyTop, Platform2Y + PlatformTop) <= Min(DustyY + DustyBottom, Platform2Y + PlatformBottom))
+		{    
+			int LeftDistance	= ( DustyX    + DustyRight     ) - ( Platform2X + PlatformLeft   );
+			int RightDistance	= ( Platform2X + PlatformRight  ) - ( DustyX    + DustyLeft      );
+			int DownDistance	= ( Platform2Y + PlatformBottom ) - ( DustyY    + DustyTop       );
+			int UpDistance		= ( DustyY    + DustyBottom    ) - ( Platform2Y + PlatformTop	);
+
+			if (LeftDistance < RightDistance && LeftDistance < DownDistance && LeftDistance < UpDistance)
+			{
+				CollideWithRightSide = true;//Collision with Dusty's Right Side but the left side of the platform
+				DustyX -= LeftDistance;
+			}
+
+			if (RightDistance < LeftDistance && RightDistance < DownDistance && RightDistance < UpDistance)
+			{
+				CollideWithLeftSide = true;//Collision with Dusty's Left Side but the right side of the platform
+				DustyX += RightDistance;
+			}
+
+			if (DownDistance < RightDistance && DownDistance < LeftDistance && DownDistance < UpDistance)
+			{
+				CollideWithTopSide = true;//Collision with Dusty's Top Side but the Bottom side of the platform
+				DustyY += DownDistance;
+			}
+
+			if (UpDistance < RightDistance && UpDistance < DownDistance && UpDistance < LeftDistance)
+			{
+				CollideWithBottomSide = true;//Collision with Dusty's Bottom Side but the Top side of the platform
+				DustyY -= UpDistance;
+			}
+		}	
+	}
 }
 
 int Max(int a, int b)
@@ -907,7 +947,8 @@ void SetPlatformState_Stationary()
 
 void DisplayPlatform_Stationary()
 {
-       gxDrawSprite( PlatformX, PlatformY, &WoodBox_Platform01 );
+	gxDrawSprite( PlatformX, PlatformY, &WoodBox_Platform01 );
+	gxDrawSprite( Platform2X, Platform2Y, &WoodBox_Platform01 );
 }
 
 void UpdatePlatform_Stationary(){}
