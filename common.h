@@ -8,7 +8,7 @@
 #include "win\keyboard.h"
 #include "win\mouse.h"
 #include "win\sound.h"
-#include "win\chapter.h"
+#include "chapter.h"
 
 // Macros
 
