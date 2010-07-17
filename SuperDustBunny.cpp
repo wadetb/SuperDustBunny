@@ -745,16 +745,13 @@ void UpdateRecCollision()
     }
     
     //Comparing two numbers and returning the one with greater value, and comparing two numbers and returning the one with lesser value.
-    if(Max(DustyX + DustyLeft, PlatformX) < Min(DustyX + DustyRight, PlatformX + PlatformRight))
+    //PlatformX and PlatformX + PlatformRight will always be stationary
+    if(Max(DustyX + DustyLeft, PlatformX) < Min(DustyX + DustyRight, PlatformX + PlatformRight) &&    
+    Max(DustyY + DustyTop, PlatformY) < Min(DustyY + DustyBottom, PlatformY + PlatformTop))//The Y Axis version of the formula above.
     {    
         AreRecsIntersecting = true;
     }
 
-    //The Y Axis version of the formula above.
-    if (Max(DustyY + DustyTop, PlatformY) < Min(DustyY + DustyBottom, PlatformY + PlatformTop))
-    {
-        AreRecsIntersecting = true;
-    }
 
     if (AreRecsIntersecting == true && RightSideIsInPlatform == true)
     {
