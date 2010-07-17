@@ -101,6 +101,7 @@ bool AreRecsIntersecting = false;
 bool IsJumping = false;
 bool CanWallJump = true;
 bool OnPlatform = false;
+bool StraightFallTrigger = false;
 
 gxSprite DustyHop01;
 gxSprite DustyHop02;
@@ -401,11 +402,12 @@ void DisplayDusty_Fall()
 void UpdateDusty_Fall()
 {
 	DustyY = DustyY + DirectionY;
+	
 	if (LastDirectionSprite == 1)
 	{
 		DustyX = DustyX + DirectionX;
 		JumpRightSprite = 1;
-		JumpLeftSprite = 0;                                                     
+		JumpLeftSprite = 0; 	                                                  
 	}
 
 	if (LastDirectionSprite == 0)
@@ -756,16 +758,14 @@ void UpdateDusty_WallJump_Right()//Collided with Right Wall
 //                                                  DUSTYSTATE_WALLJUMP_LEFT Implementation                                                //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -// 
 
-void SetDustyState_WallJump_Left()
+void SetDustyState_WallJump_Left()// Collided with Left Wall
 {
-	DustyX = -DustyLeft;
 
+	DustyX = -DustyLeft;	
+	CanWallJump = true;
 	JumpLeftSprite = 0;
 	JumpRightSprite = 0;
-
 	WallStickTimer = 15;
- 	CanWallJump = true;             
-
 	DustyState = DUSTYSTATE_WALLJUMP_LEFT;
 } 
 
@@ -836,9 +836,11 @@ void UpdateRecCollision()
  			AreRecsIntersecting = true;
 		}
 	}
-	//if (AreRecsIntersecting == true && RightSideIsInPlatform == true)
+	
+	//if (AreRecsIntersecting == true && LeftSideIsInPlatform == true)
  //   {
- //       DustyState = DUSTYSTATE_WALLJUMP_LEFT;
+	//	StraightFallTrigger = true;
+ //       SetDustyState_WallJump_Left();
  //   }
 
  //   if (AreRecsIntersecting == true && LeftSideIsInPlatform == true)
