@@ -6,9 +6,12 @@
 
 #include <d3d9.h>
 #include <d3dx9.h>
+#include <shlwapi.h>
 
 #pragma comment(lib,"d3d9.lib")
 #pragma comment(lib,"d3dx9.lib")
+#pragma comment(lib,"shlwapi.lib")
+#pragma comment(lib,"winmm.lib")
 
 #pragma warning(disable:4244)
 
@@ -404,6 +407,12 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,  LPSTR lpCmdLi
 {
 	hInst = hInstance;
 
+	// Change directory to the path containing the exe file.
+	char buf[1024];
+	GetModuleFileName(NULL, buf, sizeof(buf));
+	PathRemoveFileSpec(buf);
+	SetCurrentDirectory(buf);
+
 	// Register the window class
 	WNDCLASSEX wc = 
 	{
@@ -431,7 +440,6 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,  LPSTR lpCmdLi
 		gxDev->Present( NULL, NULL, 0, NULL ); // Change the third input to 0 for Default, rest NULL
 
 		CheckMessages();
-
 	}
 
 	Exit();
