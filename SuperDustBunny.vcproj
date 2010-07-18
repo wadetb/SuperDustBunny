@@ -205,6 +205,14 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath=".\Barrel.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Barrel.h"
+			>
+		</File>
+		<File
 			RelativePath=".\chapter.cpp"
 			>
 		</File>
@@ -213,15 +221,19 @@
 			>
 		</File>
 		<File
-			RelativePath=".\ClassDiagram1.cd"
-			>
-		</File>
-		<File
 			RelativePath=".\common.h"
 			>
 		</File>
 		<File
 			RelativePath=".\SuperDustBunny.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Vacuum.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Vacuum.h"
 			>
 		</File>
 	</Files>

@@ -10,7 +10,7 @@
 #include "Common.h"
 
 #include "chapter.h"
-
+#include "barrel.h"
 
 enum EDustyState
 {
@@ -38,21 +38,23 @@ void UpdateDusty_JumpCommon();
 
 int DustyX = 350;
 int DustyY = 1024;
-int DirectionX = 7;
-int DirectionY = 7;
+int DirectionX = 6;
+int DirectionY = 6;
 int DustyLeft = -40;
 int DustyRight = 40;
 int DustyTop = -120;
 int DustyBottom = 0;
 
-int PlatformX = 340;//Location of Platform from left to right on the X axis
-int PlatformY = 750;//Location of Platform from top to bottom on the Y axis
-int Platform2X = 340;
-int Platform2Y = 400;
-int PlatformLeft = -10;
-int PlatformRight = 170;
-int PlatformTop = -10;
-int PlatformBottom = 40;
+int Platform1X = 0;//Location of Platform from left to right on the X axis
+int Platform1Y = 64*12;//Location of Platform from top to bottom on the Y axis
+int Platform2X = 64*8;
+int Platform2Y = 64*9;
+int Platform3X = 64*8;
+int Platform3Y = 64*3;
+int PlatformLeft = 0;
+int PlatformRight = 64*4;
+int PlatformTop = 0;
+int PlatformBottom = 64;
 int PlatformVisible = 1;
 
 int BackgroundX = 0;
@@ -109,6 +111,7 @@ gxSprite DustyHopLeft06;
 gxSprite WoodBox_Platform01;
 gxSprite Background01;
 gxSprite UnknownBlock;
+gxSprite BarrelSprite;
 
 sxSound DustyToJump;
 sxSound DustyJumps;
@@ -154,6 +157,7 @@ void Init()
     gxLoadSprite("Data/WoodPlatformThin.png", &WoodBox_Platform01);
     gxLoadSprite("Data/LargeBackground.png", &Background01);
 	gxLoadSprite("Data/wtf.png", &UnknownBlock);
+	gxLoadSprite("Data/gear.png", &BarrelSprite);
 
     sxLoadWav ("Data/yaahooo.wav", &DustyToJump);
     sxLoadWav ("Data/yaahooo.wav", &DustyJumps);
@@ -315,7 +319,7 @@ void SetDustyState_Jump( bool OffWall )
 	}
 
 	OnPlatform = false;
-	VerticalCounter = 20;
+	VerticalCounter = 27;
 	DustyY -= 10;
 	DustyState = DUSTYSTATE_JUMP;
 }
@@ -829,14 +833,14 @@ void UpdateDusty_Collision()
 		DustyY = gxScreenHeight - DustyBottom;
 	} 
 
-    if(Max(DustyX + DustyLeft, PlatformX + PlatformLeft) <= Min(DustyX + DustyRight, PlatformX + PlatformRight))
+    if(Max(DustyX + DustyLeft, Platform1X + PlatformLeft) <= Min(DustyX + DustyRight, Platform1X + PlatformRight))
 	{
-		if (Max(DustyY + DustyTop, PlatformY + PlatformTop) <= Min(DustyY + DustyBottom, PlatformY + PlatformBottom))
+		if (Max(DustyY + DustyTop, Platform1Y + PlatformTop) <= Min(DustyY + DustyBottom, Platform1Y + PlatformBottom))
 		{    
-			int LeftDistance	= ( DustyX    + DustyRight     ) - ( PlatformX + PlatformLeft   );
-			int RightDistance	= ( PlatformX + PlatformRight  ) - ( DustyX    + DustyLeft      );
-			int DownDistance	= ( PlatformY + PlatformBottom ) - ( DustyY    + DustyTop       );
-			int UpDistance		= ( DustyY    + DustyBottom    ) - ( PlatformY + PlatformTop	);
+			int LeftDistance	= ( DustyX    + DustyRight     ) - ( Platform1X + PlatformLeft   );
+			int RightDistance	= ( Platform1X + PlatformRight  ) - ( DustyX    + DustyLeft      );
+			int DownDistance	= ( Platform1Y + PlatformBottom ) - ( DustyY    + DustyTop       );
+			int UpDistance		= ( DustyY    + DustyBottom    ) - ( Platform1Y + PlatformTop	);
 
  			if (LeftDistance < RightDistance && LeftDistance < DownDistance && LeftDistance < UpDistance)
 			{
@@ -872,6 +876,41 @@ void UpdateDusty_Collision()
 			int RightDistance	= ( Platform2X + PlatformRight  ) - ( DustyX    + DustyLeft      );
 			int DownDistance	= ( Platform2Y + PlatformBottom ) - ( DustyY    + DustyTop       );
 			int UpDistance		= ( DustyY    + DustyBottom    ) - ( Platform2Y + PlatformTop	);
+
+			if (LeftDistance < RightDistance && LeftDistance < DownDistance && LeftDistance < UpDistance)
+			{
+				CollideWithRightSide = true;//Collision with Dusty's Right Side but the left side of the platform
+				DustyX -= LeftDistance;
+			}
+
+			if (RightDistance < LeftDistance && RightDistance < DownDistance && RightDistance < UpDistance)
+			{
+				CollideWithLeftSide = true;//Collision with Dusty's Left Side but the right side of the platform
+				DustyX += RightDistance;
+			}
+
+			if (DownDistance < RightDistance && DownDistance < LeftDistance && DownDistance < UpDistance)
+			{
+				CollideWithTopSide = true;//Collision with Dusty's Top Side but the Bottom side of the platform
+				DustyY += DownDistance;
+			}
+
+			if (UpDistance < RightDistance && UpDistance < DownDistance && UpDistance < LeftDistance)
+			{
+				CollideWithBottomSide = true;//Collision with Dusty's Bottom Side but the Top side of the platform
+				DustyY -= UpDistance;
+			}
+		}	
+	}
+
+	if(Max(DustyX + DustyLeft, Platform3X + PlatformLeft) <= Min(DustyX + DustyRight, Platform3X + PlatformRight))
+	{
+		if (Max(DustyY + DustyTop, Platform3Y + PlatformTop) <= Min(DustyY + DustyBottom, Platform3Y + PlatformBottom))
+		{    
+			int LeftDistance	= ( DustyX    + DustyRight     ) - ( Platform3X + PlatformLeft   );
+			int RightDistance	= ( Platform3X + PlatformRight  ) - ( DustyX    + DustyLeft      );
+			int DownDistance	= ( Platform3Y + PlatformBottom ) - ( DustyY    + DustyTop       );
+			int UpDistance		= ( DustyY    + DustyBottom    ) - ( Platform3Y + PlatformTop	);
 
 			if (LeftDistance < RightDistance && LeftDistance < DownDistance && LeftDistance < UpDistance)
 			{
@@ -935,8 +974,8 @@ void SetPlatformState_Stationary()
 
 void DisplayPlatform_Stationary()
 {
-	gxDrawSprite( PlatformX, PlatformY, &WoodBox_Platform01 );
-	gxDrawSprite( Platform2X, Platform2Y, &WoodBox_Platform01 );
+	//gxDrawSprite( Platform1X, Platform1Y, &WoodBox_Platform01 );
+	//gxDrawSprite( Platform2X, Platform2Y, &WoodBox_Platform01 );
 }
 
 void UpdatePlatform_Stationary(){}
@@ -982,7 +1021,9 @@ void Display()
       default:                           break;
     }
  
-  
+
+	DisplayBarrels();
+
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   Debugging aids                                                                        //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -1013,10 +1054,10 @@ void Display()
 		color = gxRGB32(0, 255, 0);
 	else
 		color = gxRGB32(255, 0, 0);
-	gxDrawString(PlatformX + PlatformLeft,  PlatformY + PlatformTop,    8, color, "+");//Upper Left
-	gxDrawString(PlatformX + PlatformRight, PlatformY + PlatformTop,    8, color, "+");//Upper Right
-	gxDrawString(PlatformX + PlatformLeft,  PlatformY + PlatformBottom, 8, color, "+");//Lower Left
-	gxDrawString(PlatformX + PlatformRight, PlatformY + PlatformBottom, 8, color, "+");//Lower Right
+	gxDrawString(Platform1X + PlatformLeft,  Platform1Y + PlatformTop,    8, color, "+");//Upper Left
+	gxDrawString(Platform1X + PlatformRight, Platform1Y + PlatformTop,    8, color, "+");//Upper Right
+	gxDrawString(Platform1X + PlatformLeft,  Platform1Y + PlatformBottom, 8, color, "+");//Lower Left
+	gxDrawString(Platform1X + PlatformRight, Platform1Y + PlatformBottom, 8, color, "+");//Lower Right
 }
 
 bool Update()
@@ -1127,5 +1168,8 @@ if (BackgroundMusic == 1)
         case PLATFORMSTATE_STATIONARY:           UpdatePlatform_Stationary(); break;
         default:                           break;
     }	
+
+	UpdateBarrels();
+
 	return true;
 }

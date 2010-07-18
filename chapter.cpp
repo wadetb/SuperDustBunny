@@ -1,6 +1,7 @@
 #include "Common.h"
-
 #include "chapter.h"
+
+#include "barrel.h"
 
 void GetNextLine(FILE* File, char* Line, int LineSize)
 {
@@ -58,18 +59,17 @@ void LoadChapter(const char* filename, SChapter* Chap)
 
 				SBlock* Block = &Chap->Blocks[Chap->NBlocks];
 
-				char Desc[1024];
-
-				sscanf(Line, "%c%c%c\n", &Block->Key[0][0], &Block->Key[0][1], &Block->Key[0][2] );
+				sscanf(Line, "%c%c%c", &Block->Key[0][0], &Block->Key[0][1], &Block->Key[0][2] );
 
 				fgets(Line, sizeof(Line)-1, ChapFile);
-				sscanf(Line, "%c%c%c %s\n", &Block->Key[1][0], &Block->Key[1][1], &Block->Key[1][2], Desc);
+				sscanf(Line, "%c%c%c", &Block->Key[1][0], &Block->Key[1][1], &Block->Key[1][2]);
+
+				Block->Desc = _strdup(Line + 4);
+				*strrchr(Block->Desc, '\n') = 0;
 
 				fgets(Line, sizeof(Line)-1, ChapFile);
-				sscanf(Line, "%c%c%c\n", &Block->Key[2][0], &Block->Key[2][1], &Block->Key[2][2]);
+				sscanf(Line, "%c%c%c", &Block->Key[2][0], &Block->Key[2][1], &Block->Key[2][2]);
 				
-				Block->Desc = _strdup(Desc);
-
 				if (_stricmp(Block->Desc, "blank") == 0)
 				{
 					Block->ID = SPECIALBLOCKID_BLANK;
@@ -198,6 +198,26 @@ void LoadChapter(const char* filename, SChapter* Chap)
 			// Reduce page memory to what was actually used.
 			Page->Blocks = (int*)realloc(Page->Blocks, Page->Width * Page->Height * sizeof(int));
 
+			// Process any special blocks that need to create dynamic objects.
+			for (int y = 0; y < Page->Height; y++)
+			{
+				for (int x = 0; x < Page->Width; x++)
+				{
+					int BlockID = Page->Blocks[y * Page->Width + x];
+
+					if (BlockID < SPECIALBLOCKID_FIRST)
+					{
+						SBlock* Block = &Chap->Blocks[BlockID];
+
+						if (strstr(Block->Desc, "barrel") != NULL)
+						{
+							CreateBarrel(x * 64, y * 64, Block->Desc);
+							Page->Blocks[y * Page->Width + x] = SPECIALBLOCKID_BLANK;
+						}
+					}
+				}
+			}
+
 			continue;
 		}		
 	}
@@ -206,9 +226,11 @@ void LoadChapter(const char* filename, SChapter* Chap)
 
 extern gxSprite UnknownBlock;
 
+int ScrollY;
+
 void RenderChapter(SChapter* Chap)
 {
-	int ScrollY = -(Chap->Pages[0].Height * 64 - gxScreenHeight);
+	ScrollY = -(Chap->Pages[0].Height * 64 - gxScreenHeight);
 
 	for (int y = 0; y < Chap->Pages[0].Height; y++)
 	{
