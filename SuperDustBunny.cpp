@@ -7,10 +7,13 @@
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
-#include "Common.h"
+#include "common.h"
 
 #include "chapter.h"
 #include "barrel.h"
+
+// Shows Debug Text and Rectangle Outlines
+bool DevMode = true;
 
 enum EDustyState
 {
@@ -806,6 +809,8 @@ void UpdateDusty_WallJump_Left()
 //                                                  UPDATE_REC_COLLISION Implementation                                                    //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
+extern int ScrollY;
+
 void UpdateDusty_Collision()
 {
 	CollideWithRightSide = false;
@@ -833,110 +838,61 @@ void UpdateDusty_Collision()
 		DustyY = gxScreenHeight - DustyBottom;
 	} 
 
-    if(Max(DustyX + DustyLeft, Platform1X + PlatformLeft) <= Min(DustyX + DustyRight, Platform1X + PlatformRight))
+
+	for (int y = 0; y < Chapter.Pages[0].Height; y++)
 	{
-		if (Max(DustyY + DustyTop, Platform1Y + PlatformTop) <= Min(DustyY + DustyBottom, Platform1Y + PlatformBottom))
-		{    
-			int LeftDistance	= ( DustyX    + DustyRight     ) - ( Platform1X + PlatformLeft   );
-			int RightDistance	= ( Platform1X + PlatformRight  ) - ( DustyX    + DustyLeft      );
-			int DownDistance	= ( Platform1Y + PlatformBottom ) - ( DustyY    + DustyTop       );
-			int UpDistance		= ( DustyY    + DustyBottom    ) - ( Platform1Y + PlatformTop	);
+		for (int x = 0; x < Chapter.Pages[0].Width; x++)
+		{
+			int BlockID = Chapter.Pages[0].Blocks[y * Chapter.Pages[0].Width + x];
 
- 			if (LeftDistance < RightDistance && LeftDistance < DownDistance && LeftDistance < UpDistance)
+			if (BlockID >= SPECIALBLOCKID_FIRST)
 			{
-				CollideWithRightSide = true;//Collision with Dusty's Right Side but the left side of the platform
-				DustyX -= LeftDistance;
+				continue;
 			}
+			
+			int BlockRight = x*64 + 64;
+			int BlockLeft = x*64;
+			int BlockTop = y*64 + ScrollY;
+			int BlockBottom = y*64 + 64 + ScrollY;
 
-			if (RightDistance < LeftDistance && RightDistance < DownDistance && RightDistance < UpDistance)
+			if(Max(DustyX + DustyLeft, BlockLeft) <= Min(DustyX + DustyRight, BlockRight))
 			{
-				CollideWithLeftSide = true;//Collision with Dusty's Left Side but the right side of the platform
-				DustyX += RightDistance;
-			}
+				if (Max(DustyY + DustyTop, BlockTop) <= Min(DustyY + DustyBottom, BlockBottom))
+				{    
+					int LeftDistance	= (DustyX + DustyRight)  - (BlockLeft);
+					int RightDistance	= (BlockRight) - (DustyX +  DustyLeft);
+					int DownDistance	= (BlockBottom)- (DustyY +  DustyTop );
+					int UpDistance		= (DustyY + DustyBottom) - (BlockTop );
 
-			if (DownDistance < RightDistance && DownDistance < LeftDistance && DownDistance < UpDistance)
-			{
-				CollideWithTopSide = true;//Collision with Dusty's Top Side but the Bottom side of the platform
-				DustyY += DownDistance;
-			}
+ 					if (LeftDistance < RightDistance && LeftDistance < DownDistance && LeftDistance < UpDistance)
+					{
+						CollideWithRightSide = true;//Collision with Dusty's Right Side but the left side of the platform
+						DustyX -= LeftDistance;
+					}
 
-			if (UpDistance < RightDistance && UpDistance < DownDistance && UpDistance < LeftDistance)
-			{
-				CollideWithBottomSide = true;//Collision with Dusty's Bottom Side but the Top side of the platform
-				DustyY -= UpDistance;
+					if (RightDistance < LeftDistance && RightDistance < DownDistance && RightDistance < UpDistance)
+					{
+						CollideWithLeftSide = true;//Collision with Dusty's Left Side but the right side of the platform
+						DustyX += RightDistance;
+					}
+
+					if (DownDistance < RightDistance && DownDistance < LeftDistance && DownDistance < UpDistance)
+					{
+						CollideWithTopSide = true;//Collision with Dusty's Top Side but the Bottom side of the platform
+						DustyY += DownDistance;
+					}
+
+					if (UpDistance < RightDistance && UpDistance < DownDistance && UpDistance < LeftDistance)
+					{
+						CollideWithBottomSide = true;//Collision with Dusty's Bottom Side but the Top side of the platform
+						DustyY -= UpDistance;
+					}
+				}
 			}
-		}	
+		}
 	}
 
-	if(Max(DustyX + DustyLeft, Platform2X + PlatformLeft) <= Min(DustyX + DustyRight, Platform2X + PlatformRight))
-	{
-		if (Max(DustyY + DustyTop, Platform2Y + PlatformTop) <= Min(DustyY + DustyBottom, Platform2Y + PlatformBottom))
-		{    
-			int LeftDistance	= ( DustyX    + DustyRight     ) - ( Platform2X + PlatformLeft   );
-			int RightDistance	= ( Platform2X + PlatformRight  ) - ( DustyX    + DustyLeft      );
-			int DownDistance	= ( Platform2Y + PlatformBottom ) - ( DustyY    + DustyTop       );
-			int UpDistance		= ( DustyY    + DustyBottom    ) - ( Platform2Y + PlatformTop	);
-
-			if (LeftDistance < RightDistance && LeftDistance < DownDistance && LeftDistance < UpDistance)
-			{
-				CollideWithRightSide = true;//Collision with Dusty's Right Side but the left side of the platform
-				DustyX -= LeftDistance;
-			}
-
-			if (RightDistance < LeftDistance && RightDistance < DownDistance && RightDistance < UpDistance)
-			{
-				CollideWithLeftSide = true;//Collision with Dusty's Left Side but the right side of the platform
-				DustyX += RightDistance;
-			}
-
-			if (DownDistance < RightDistance && DownDistance < LeftDistance && DownDistance < UpDistance)
-			{
-				CollideWithTopSide = true;//Collision with Dusty's Top Side but the Bottom side of the platform
-				DustyY += DownDistance;
-			}
-
-			if (UpDistance < RightDistance && UpDistance < DownDistance && UpDistance < LeftDistance)
-			{
-				CollideWithBottomSide = true;//Collision with Dusty's Bottom Side but the Top side of the platform
-				DustyY -= UpDistance;
-			}
-		}	
-	}
-
-	if(Max(DustyX + DustyLeft, Platform3X + PlatformLeft) <= Min(DustyX + DustyRight, Platform3X + PlatformRight))
-	{
-		if (Max(DustyY + DustyTop, Platform3Y + PlatformTop) <= Min(DustyY + DustyBottom, Platform3Y + PlatformBottom))
-		{    
-			int LeftDistance	= ( DustyX    + DustyRight     ) - ( Platform3X + PlatformLeft   );
-			int RightDistance	= ( Platform3X + PlatformRight  ) - ( DustyX    + DustyLeft      );
-			int DownDistance	= ( Platform3Y + PlatformBottom ) - ( DustyY    + DustyTop       );
-			int UpDistance		= ( DustyY    + DustyBottom    ) - ( Platform3Y + PlatformTop	);
-
-			if (LeftDistance < RightDistance && LeftDistance < DownDistance && LeftDistance < UpDistance)
-			{
-				CollideWithRightSide = true;//Collision with Dusty's Right Side but the left side of the platform
-				DustyX -= LeftDistance;
-			}
-
-			if (RightDistance < LeftDistance && RightDistance < DownDistance && RightDistance < UpDistance)
-			{
-				CollideWithLeftSide = true;//Collision with Dusty's Left Side but the right side of the platform
-				DustyX += RightDistance;
-			}
-
-			if (DownDistance < RightDistance && DownDistance < LeftDistance && DownDistance < UpDistance)
-			{
-				CollideWithTopSide = true;//Collision with Dusty's Top Side but the Bottom side of the platform
-				DustyY += DownDistance;
-			}
-
-			if (UpDistance < RightDistance && UpDistance < DownDistance && UpDistance < LeftDistance)
-			{
-				CollideWithBottomSide = true;//Collision with Dusty's Bottom Side but the Top side of the platform
-				DustyY -= UpDistance;
-			}
-		}	
-	}
+    
 }
 
 int Max(int a, int b)
@@ -1027,37 +983,39 @@ void Display()
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   Debugging aids                                                                        //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-
-	// Status of common variables
-	gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %03d, %03d ) State: %d, Col: %d%d%d%d", DustyX, DustyY, DustyState, CollideWithLeftSide, CollideWithRightSide,
-		CollideWithTopSide, CollideWithBottomSide);
-
-
-	// Indicator for when slow motion is activated.
-	if (SlowMotionMode)
+	if (DevMode)
 	{
-		gxDrawString(gxScreenWidth-101, 5, 16, gxRGB32(255, 255, 0), "[SLOW]");
+		// Status of common variables
+		gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %03d, %03d ) State: %d, Col: %d%d%d%d", DustyX, DustyY, DustyState, CollideWithLeftSide, CollideWithRightSide,
+			CollideWithTopSide, CollideWithBottomSide);
+
+
+		// Indicator for when slow motion is activated.
+		if (SlowMotionMode)
+		{
+			gxDrawString(gxScreenWidth-101, 5, 16, gxRGB32(255, 255, 0), "[SLOW]");
+		}
+
+		// Draw a red + at Dusty's root location.
+		gxDrawString(DustyX-4, DustyY-4, 8, gxRGB32(255, 0, 0), "+");
+
+		// Draw a red + at all four corners of Dusty.
+		gxDrawString(DustyX + DustyLeft,  DustyY + DustyTop,    8, gxRGB32(255, 0, 0), "+");//Upper Left
+		gxDrawString(DustyX + DustyRight, DustyY + DustyTop,    8, gxRGB32(255, 0, 0), "+");//Upper Right
+		gxDrawString(DustyX + DustyLeft,  DustyY + DustyBottom, 8, gxRGB32(255, 0, 0), "+");//Lower Left
+		gxDrawString(DustyX + DustyRight, DustyY + DustyBottom, 8, gxRGB32(255, 0, 0), "+");//Lower Right
+
+		// Draw a + at all four corners of Platform - red if no collision, green if collusion.
+		int color;
+		if (AreRecsIntersecting)
+			color = gxRGB32(0, 255, 0);
+		else
+			color = gxRGB32(255, 0, 0);
+		gxDrawString(Platform1X + PlatformLeft,  Platform1Y + PlatformTop,    8, color, "+");//Upper Left
+		gxDrawString(Platform1X + PlatformRight, Platform1Y + PlatformTop,    8, color, "+");//Upper Right
+		gxDrawString(Platform1X + PlatformLeft,  Platform1Y + PlatformBottom, 8, color, "+");//Lower Left
+		gxDrawString(Platform1X + PlatformRight, Platform1Y + PlatformBottom, 8, color, "+");//Lower Right
 	}
-
-	// Draw a red + at Dusty's root location.
-	gxDrawString(DustyX-4, DustyY-4, 8, gxRGB32(255, 0, 0), "+");
-
-	// Draw a red + at all four corners of Dusty.
-	gxDrawString(DustyX + DustyLeft,  DustyY + DustyTop,    8, gxRGB32(255, 0, 0), "+");//Upper Left
-	gxDrawString(DustyX + DustyRight, DustyY + DustyTop,    8, gxRGB32(255, 0, 0), "+");//Upper Right
-	gxDrawString(DustyX + DustyLeft,  DustyY + DustyBottom, 8, gxRGB32(255, 0, 0), "+");//Lower Left
-	gxDrawString(DustyX + DustyRight, DustyY + DustyBottom, 8, gxRGB32(255, 0, 0), "+");//Lower Right
-
-	// Draw a + at all four corners of Platform - red if no collision, green if collusion.
-	int color;
-	if (AreRecsIntersecting)
-		color = gxRGB32(0, 255, 0);
-	else
-		color = gxRGB32(255, 0, 0);
-	gxDrawString(Platform1X + PlatformLeft,  Platform1Y + PlatformTop,    8, color, "+");//Upper Left
-	gxDrawString(Platform1X + PlatformRight, Platform1Y + PlatformTop,    8, color, "+");//Upper Right
-	gxDrawString(Platform1X + PlatformLeft,  Platform1Y + PlatformBottom, 8, color, "+");//Lower Left
-	gxDrawString(Platform1X + PlatformRight, Platform1Y + PlatformBottom, 8, color, "+");//Lower Right
 }
 
 bool Update()

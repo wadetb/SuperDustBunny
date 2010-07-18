@@ -209,6 +209,11 @@ void LoadChapter(const char* filename, SChapter* Chap)
 					{
 						SBlock* Block = &Chap->Blocks[BlockID];
 
+						if (_stricmp(Block->Desc, "blank") == 0)
+						{
+							Page->Blocks[y * Page->Width + x] = SPECIALBLOCKID_BLANK;
+						}
+
 						if (strstr(Block->Desc, "barrel") != NULL)
 						{
 							CreateBarrel(x * 64, y * 64, Block->Desc);

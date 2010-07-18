@@ -42,6 +42,8 @@
 
 // Macros
 
+extern bool DevMode;
+
 #define White gxRGB32(255, 255, 255)
 #define Black gxRGB32(0, 0, 0)
 

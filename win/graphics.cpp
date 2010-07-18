@@ -21,6 +21,7 @@
 HINSTANCE hInst;
 HWND hWnd;
 
+
 int gxScreenWidth = 0;
 int gxScreenHeight = 0;
 
@@ -318,14 +319,18 @@ void gxDrawRectangleFilled( int x, int y, int width, int height, int col )
 void gxLoadSprite( const char* name, gxSprite* spr )
 {
 	assert( gxDev && "If this assert fires, you need to call gxInit earlier." );
-
+	HRESULT Err = NULL;
 	D3DXIMAGE_INFO info = { 0 };
 	D3DXCreateTextureFromFileEx( gxDev, name,
-		D3DX_DEFAULT_NONPOW2, D3DX_DEFAULT_NONPOW2, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT,
-		D3DX_DEFAULT, D3DX_DEFAULT, 0, &info, NULL, &spr->tex );
+		  D3DX_DEFAULT_NONPOW2, D3DX_DEFAULT_NONPOW2, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT,
+		  D3DX_DEFAULT, D3DX_DEFAULT, 0, &info, NULL, &spr->tex );
+
+
 
 	spr->width = info.Width;
 	spr->height = info.Height;
+
+
 }
 
 void gxDestroySprite( gxSprite* spr )
