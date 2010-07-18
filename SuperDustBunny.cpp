@@ -3,13 +3,14 @@
 //                                                          Super Dust Bunny                                                               //
 //                                                                                                                                         //
 //                               Authors: Thomas Perry <perry.thomas.12@gmail.com> & Wade Brainerd <wadetb@gmail.com>                      //
-//                                      Copyright � 2010 by Thomas Perry and Wade Brainerd. All rights reserved.                           //
+//                                      Copyright � 2010 by Thomas Perry and Wade Brainerd. All rights reserved.                             //
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
 #include "Common.h"
 
 #include "chapter.h"
+
 
 enum EDustyState
 {
@@ -399,7 +400,7 @@ void DisplayDusty_Fall()
 void UpdateDusty_Fall()
 {
 	DustyY = DustyY + DirectionY;
-	
+	       
 	if (LastDirectionSprite == 1)
 	{
 		DustyX = DustyX + DirectionX;
@@ -712,9 +713,15 @@ void UpdateDusty_WallJump_Right()//Collided with Right Wall
     if (WallStickTimer == 0)
     {                   
         VerticalCounter = 0;          
-		CanWallJump = false;
-		SetDustyState_Fall();
-		return;
+        if (CollideWithRightSide == true)
+        {
+            DustyY = DustyY + DirectionY;
+            if (CollideWithBottomSide == true )
+            {	
+                SetDustyState_Stand();
+                return;
+            }  
+        }
     }
 
     if (WallStickTimer != 0)
@@ -759,9 +766,15 @@ void UpdateDusty_WallJump_Left()
     if (WallStickTimer == 0)
     { 
         VerticalCounter = 0;
-		CanWallJump = false;
-		SetDustyState_Fall();
-		return;
+		if (CollideWithLeftSide == true)
+		{
+		   DustyY = DustyY + DirectionY;
+           if (CollideWithBottomSide == true )
+           {	
+               SetDustyState_Stand();
+               return;
+           }  
+		}
     }
 
     if (WallStickTimer != 0)
@@ -780,6 +793,7 @@ void UpdateDusty_WallJump_Left()
         SetDustyState_Jump( true );
 		return;
     }
+    
 } 
   
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//

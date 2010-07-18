@@ -3,6 +3,8 @@
 #include "chapter.h"
 
 
+
+
 void GetNextLine(FILE* File, char* Line, int LineSize)
 {
 	for (;;)
