@@ -1,7 +1,7 @@
 #include "Common.h"
 #include "chapter.h"
-
-#include "barrel.h"
+#include "Dusty.h"
+#include "Barrel.h"
 
 void GetNextLine(FILE* File, char* Line, int LineSize)
 {
@@ -219,6 +219,13 @@ void LoadChapter(const char* filename, SChapter* Chap)
 							CreateBarrel(x * 64, y * 64, Block->Desc);
 							Page->Blocks[y * Page->Width + x] = SPECIALBLOCKID_BLANK;
 						}
+
+						if (_stricmp(Block->Desc, "dusty") == 0)
+						{
+							Dusty.X = x * 64;
+							Dusty.Y = y * 64;
+							Page->Blocks[y * Page->Width + x] = SPECIALBLOCKID_BLANK;
+						}
 					}
 				}
 			}
@@ -235,8 +242,6 @@ int ScrollY;
 
 void RenderChapter(SChapter* Chap)
 {
-	ScrollY = -(Chap->Pages[0].Height * 64 - gxScreenHeight);
-
 	for (int y = 0; y < Chap->Pages[0].Height; y++)
 	{
 		// Skip rows of tiles that cannot be on screen.

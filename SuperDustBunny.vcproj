@@ -225,6 +225,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Dusty.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Dusty.h"
+			>
+		</File>
+		<File
 			RelativePath=".\SuperDustBunny.cpp"
 			>
 		</File>

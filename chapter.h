@@ -45,7 +45,7 @@ struct SChapter
 void LoadChapter(const char* filename, SChapter* Chap);
 void RenderChapter(SChapter* Chap);
 
-
+extern SChapter Chapter;
 
 
 
