@@ -1,6 +1,8 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
+#include <stdio.h>
+
 #import <OpenGLES/ES1/gl.h>
 #import <OpenGLES/ES1/glext.h>
 
@@ -41,6 +43,7 @@ void gxDrawRectangleFilled(int x, int y, int width, int height, unsigned int col
 void gxDrawString(int x, int y, int ptsize, int color, const char* text, ...);
 
 void gxGetFileName(const char* relativePath, char* buffer, int bufferSize);
-void gxGetResourceFileName(const char* relativePath, char* buffer, int bufferSize);
+
+FILE* gxOpenFile(const char* relativePath, const char* mode);
 
 #endif

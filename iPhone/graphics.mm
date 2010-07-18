@@ -140,7 +140,8 @@ void gxDeinit()
 
 void gxLoadSprite(const char* filename, gxSprite* sprite)
 {
-	filename = strrchr(filename, '/')+1; // Eliminate path on iPhone.
+	if (strrchr(filename, '/'))
+		filename = strrchr(filename, '/')+1; // Eliminate path on iPhone.
 	
 	NSString* nsname = [[NSString alloc] initWithCString:filename];
 	CGImageRef image = [[[UIImage imageNamed:nsname] retain] CGImage];
@@ -218,7 +219,8 @@ void gxDrawSprite(int x, int y, gxSprite* sprite)
 {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, sprite->tex);
-	glDisable(GL_BLEND);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	_gxDrawQuad(x, y, sprite->texWidth, sprite->texHeight);
 }
 
@@ -308,6 +310,8 @@ void gxDrawString( int x, int y, int ptsize, int color, const char* text, ... )
 	}
 }
 
+
+
 void gxGetResourceFileName(const char* relativePath, char* buffer, int bufferSize)
 {
 	// Get Bundle directory
@@ -326,4 +330,11 @@ void gxGetResourceFileName(const char* relativePath, char* buffer, int bufferSiz
 		fileName = relativePath;
 	
 	snprintf(buffer, bufferSize, "%s/%s", (char*)bundlePath, fileName);
+}
+
+FILE* gxOpenFile(const char* relativePath, const char* mode)
+{
+	char work[1024];
+	gxGetResourceFileName(relativePath, work, sizeof(work));
+	return fopen(work, mode);
 }

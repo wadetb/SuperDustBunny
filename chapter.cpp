@@ -1,3 +1,5 @@
+#include "Common.h"
+
 #include "chapter.h"
 
 
@@ -26,8 +28,12 @@ void GetNextLine(FILE* File, char* Line, int LineSize)
 
 void LoadChapter(const char* filename, SChapter* Chap)
 {
+#if defined(PLATFORM_IPHONE)
+	FILE* ChapFile = gxOpenFile(filename, "r");
+#else
 	FILE* ChapFile = fopen(filename, "r");
-
+#endif
+	
 	Chap->NBlocks = 0;
 	Chap->NPages = 0;
 
@@ -56,7 +62,7 @@ void LoadChapter(const char* filename, SChapter* Chap)
 				sscanf(Line, "%c%c%c\n", &Block->Key[0][0], &Block->Key[0][1], &Block->Key[0][2] );
 				
 				fgets(Line, sizeof(Line)-1, ChapFile);
-				sscanf(Line, "%c%c%c %s\n", &Block->Key[1][0], &Block->Key[1][1], &Block->Key[1][2], &Block->Desc);
+				sscanf(Line, "%c%c%c %s\n", &Block->Key[1][0], &Block->Key[1][1], &Block->Key[1][2], Block->Desc);
 
 				fgets(Line, sizeof(Line)-1, ChapFile);
 				sscanf(Line, "%c%c%c\n", &Block->Key[2][0], &Block->Key[2][1], &Block->Key[2][2]);
@@ -166,23 +172,21 @@ void LoadChapter(const char* filename, SChapter* Chap)
 			continue;
 		}		
 	}
-
 }
 
 
 void RenderChapter(SChapter* Chap)
 {
+	return;
+	
 	for (int y = 0; y < Chap->Pages[0].Height; y++)
 	{
 		for (int x = 0; x < Chap->Pages[0].Width; x++)
 		{
-
 			int CurBlockNum = Chap->Pages[0].Blocks[y * Chap->Pages[0].Width + x];
 			SBlock* Block = &Chap->Blocks[CurBlockNum];
 
 			gxDrawSprite(x*64, y*64, &Block->Sprite);
-
-			
 		}
 	}
 }
