@@ -70,6 +70,13 @@ void LoadChapter(const char* filename, SChapter* Chap)
 				sscanf(Line, "%c%c%c\n", &Block->Key[2][0], &Block->Key[2][1], &Block->Key[2][2]);
 				
 				gxLoadSprite(Block->Desc, &Block->Sprite);
+
+#ifdef PLATFORM_WINDOWS
+				if (!Block->Sprite.tex)
+				{
+					gxCreateASCIIBlockSprite(&Block->Sprite, &Block->Key[0][0]);
+				}
+#endif
 			}
 
 			continue;
@@ -179,8 +186,8 @@ void LoadChapter(const char* filename, SChapter* Chap)
 
 void RenderChapter(SChapter* Chap)
 {
-	return;
-	
+	int ScrollY = -(Chap->Pages[0].Height * 64 - gxScreenHeight);
+
 	for (int y = 0; y < Chap->Pages[0].Height; y++)
 	{
 		for (int x = 0; x < Chap->Pages[0].Width; x++)
@@ -188,7 +195,7 @@ void RenderChapter(SChapter* Chap)
 			int CurBlockNum = Chap->Pages[0].Blocks[y * Chap->Pages[0].Width + x];
 			SBlock* Block = &Chap->Blocks[CurBlockNum];
 
-			gxDrawSprite(x*64, y*64, &Block->Sprite);
+			gxDrawSprite(x*64, y*64 + ScrollY, &Block->Sprite);
 		}
 	}
 }

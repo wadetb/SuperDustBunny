@@ -354,12 +354,14 @@ void gxDrawString( int x, int y, int ptsize, int color, const char* text, ... )
 	for (const char* p = work; *p; p++)
 	{
 		char ch = *p;
+
 		if (ch == '\n')
 		{
 			y += ptsize;
 			x = OrigX;
 			continue;
 		}
+
 		if (ch < 32 || ch > 127)
 			continue;
 
@@ -445,4 +447,46 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,  LPSTR lpCmdLi
 	Exit();
 
 	return 0;
+}
+
+
+void gxCreateASCIIBlockSprite(gxSprite* Sprite, const char* Key)
+{
+	D3DXCreateTexture( gxDev, 64, 64, 1, D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &Sprite->tex );
+	Sprite->width = 64;
+	Sprite->height = 64;
+
+	D3DLOCKED_RECT lock;
+	Sprite->tex->LockRect(0, &lock, NULL, 0);
+
+	BYTE* pixels = (BYTE*)lock.pBits;
+	memset(pixels, 0, 64*64*4);
+
+	for (int i = 0; i < 9; i++)
+	{
+		char ch = Key[i];
+		if (ch < 32)
+			continue;
+
+		int keyx = 8 + (i%3) * 16;
+		int keyy = 8 + (i/3) * 16;
+
+		for (int y = 0; y < 16; y++)
+		{
+			BYTE bits = gxFontData[(ch-32)*8 + y/2];
+
+			for (int x = 0; x < 16; x++)
+			{
+				BYTE* p = pixels + (keyy+y)*lock.Pitch + (keyx+x)*4;
+
+				BYTE solid = ( bits & (0x80 >> (x/2)) ) ? 0xFF : 0x00;
+				p[0] = solid;
+				p[1] = solid;
+				p[2] = solid;
+				p[3] = solid;
+			}
+		}
+	}
+
+	gxFontSprite.tex->UnlockRect(0);
 }
