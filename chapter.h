@@ -3,15 +3,22 @@
 
 #include "common.h"
 
-#define MAX_PAGES 20
-#define MAX_BLOCKS 100
-#define MAX_DESC 256
-#define MAX_PAGE_BLOCKS (256*1024)
+#define MAX_PAGES			20
+#define MAX_BLOCKS			100
+#define MAX_PAGE_BLOCKS		(256*1024)
+
+enum ESpecialBlockID
+{
+	SPECIALBLOCKID_FIRST			= 10000,
+	SPECIALBLOCKID_UNKNOWN			= SPECIALBLOCKID_FIRST,
+	SPECIALBLOCKID_BLANK,
+};
 
 struct SBlock
 {
+	int ID;
 	char Key[3][3];
-	char Desc[MAX_DESC];
+	char* Desc;
 	gxSprite Sprite;
 };
 

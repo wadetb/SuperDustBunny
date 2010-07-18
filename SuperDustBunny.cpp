@@ -108,6 +108,7 @@ gxSprite DustyHopLeft05;
 gxSprite DustyHopLeft06;
 gxSprite WoodBox_Platform01;
 gxSprite Background01;
+gxSprite UnknownBlock;
 
 sxSound DustyToJump;
 sxSound DustyJumps;
@@ -152,7 +153,8 @@ void Init()
     gxLoadSprite("Data/DustyRightWallJumpResize.png", &RightFaceWallJump01);
     gxLoadSprite("Data/WoodPlatformThin.png", &WoodBox_Platform01);
     gxLoadSprite("Data/LargeBackground.png", &Background01);
-    
+	gxLoadSprite("Data/wtf.png", &UnknownBlock);
+
     sxLoadWav ("Data/yaahooo.wav", &DustyToJump);
     sxLoadWav ("Data/yaahooo.wav", &DustyJumps);
     sxLoadWav ("Data/cork_pop.wav", &WallJump);

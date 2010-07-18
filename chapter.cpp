@@ -2,9 +2,6 @@
 
 #include "chapter.h"
 
-
-
-
 void GetNextLine(FILE* File, char* Line, int LineSize)
 {
 	for (;;)
@@ -59,24 +56,40 @@ void LoadChapter(const char* filename, SChapter* Chap)
 				if (strstr(Line, "END OF BLOCKS") != NULL)
 					break;
 
-				SBlock* Block = &Chap->Blocks[Chap->NBlocks++];
+				SBlock* Block = &Chap->Blocks[Chap->NBlocks];
+
+				char Desc[1024];
 
 				sscanf(Line, "%c%c%c\n", &Block->Key[0][0], &Block->Key[0][1], &Block->Key[0][2] );
-				
+
 				fgets(Line, sizeof(Line)-1, ChapFile);
-				sscanf(Line, "%c%c%c %s\n", &Block->Key[1][0], &Block->Key[1][1], &Block->Key[1][2], Block->Desc);
+				sscanf(Line, "%c%c%c %s\n", &Block->Key[1][0], &Block->Key[1][1], &Block->Key[1][2], Desc);
 
 				fgets(Line, sizeof(Line)-1, ChapFile);
 				sscanf(Line, "%c%c%c\n", &Block->Key[2][0], &Block->Key[2][1], &Block->Key[2][2]);
 				
-				gxLoadSprite(Block->Desc, &Block->Sprite);
+				Block->Desc = _strdup(Desc);
+
+				if (_stricmp(Block->Desc, "blank") == 0)
+				{
+					Block->ID = SPECIALBLOCKID_BLANK;
+				}
+				else
+				{
+					Block->ID = Chap->NBlocks;
+
+					gxLoadSprite(Block->Desc, &Block->Sprite);
 
 #ifdef PLATFORM_WINDOWS
-				if (!Block->Sprite.tex)
-				{
-					gxCreateASCIIBlockSprite(&Block->Sprite, &Block->Key[0][0]);
-				}
+					// If unable to load the sprite, substitute an ASCII representation.
+					if (!Block->Sprite.tex)
+					{
+						gxCreateASCIIBlockSprite(&Block->Sprite, &Block->Key[0][0]);
+					}
 #endif
+				}
+
+				Chap->NBlocks++;
 			}
 
 			continue;
@@ -119,12 +132,15 @@ void LoadChapter(const char* filename, SChapter* Chap)
 						Col++;
 					}
 
+					// Break if any line width is exceeded.
 					if (Col >= (int)strlen(Line0) || Col >= (int)strlen(Line1) || Col >= (int)strlen(Line2)) 
 					{
 						break;
 					}
 
-					int BlockIndex = -1;
+					// Find the block which matches this ASCII pattern.
+					// (If none is found the unknown block will be used)
+					int BlockIndex = SPECIALBLOCKID_UNKNOWN;
 
 					for (int i = 0; i < Chap->NBlocks; i++)
 					{
@@ -156,6 +172,7 @@ void LoadChapter(const char* filename, SChapter* Chap)
 						break;
 				}
 				
+				// The width of the page is set by the first row.
 				if (Page->Width == 0)
 				{
 					Page->Width = NBlocks;
@@ -178,11 +195,16 @@ void LoadChapter(const char* filename, SChapter* Chap)
 					break;
 			}
 
+			// Reduce page memory to what was actually used.
+			Page->Blocks = (int*)realloc(Page->Blocks, Page->Width * Page->Height * sizeof(int));
+
 			continue;
 		}		
 	}
 }
 
+
+extern gxSprite UnknownBlock;
 
 void RenderChapter(SChapter* Chap)
 {
@@ -190,12 +212,32 @@ void RenderChapter(SChapter* Chap)
 
 	for (int y = 0; y < Chap->Pages[0].Height; y++)
 	{
+		// Skip rows of tiles that cannot be on screen.
+		if (y*64 + ScrollY > gxScreenHeight || (y+1)*64 + ScrollY < 0)
+			continue;
+
 		for (int x = 0; x < Chap->Pages[0].Width; x++)
 		{
-			int CurBlockNum = Chap->Pages[0].Blocks[y * Chap->Pages[0].Width + x];
-			SBlock* Block = &Chap->Blocks[CurBlockNum];
+			int BlockID = Chap->Pages[0].Blocks[y * Chap->Pages[0].Width + x];
 
-			gxDrawSprite(x*64, y*64 + ScrollY, &Block->Sprite);
+			if (BlockID >= SPECIALBLOCKID_FIRST)
+			{
+				switch (BlockID)
+				{
+				case SPECIALBLOCKID_BLANK: 
+					// Nothing to draw.
+					break; 
+
+				case SPECIALBLOCKID_UNKNOWN:
+					gxDrawSprite(x*64, y*64 + ScrollY, &UnknownBlock);
+					break;
+				}
+			}
+			else
+			{
+				SBlock* Block = &Chap->Blocks[BlockID];
+				gxDrawSprite(x*64, y*64 + ScrollY, &Block->Sprite);
+			}
 		}
 	}
 }
