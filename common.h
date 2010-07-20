@@ -48,6 +48,31 @@ extern int ScrollY;
 #define White gxRGB32(255, 255, 255)
 #define Black gxRGB32(0, 0, 0)
 
+inline int Max(int a, int b)
+{
+	if (a > b)
+	{
+		return a;
+	}
+	else
+	{
+		return b;
+	}
+}
+
+inline int Min(int a, int b)
+{
+	if ( a < b)
+	{
+		return a;
+	}
+	else
+	{
+		return b;
+	}
+}
+
+
 extern gxSprite DustyHop01;
 extern gxSprite DustyHop02;
 extern gxSprite DustyHop03;
