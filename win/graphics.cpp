@@ -497,14 +497,12 @@ void gxCreateASCIIBlockSprite(gxSprite* Sprite, const char* Key)
 }
 
 
-void gxDrawSpriteCenteredRotated(int x, int y, int dir, gxSprite* spr)
+void gxDrawSpriteCenteredRotated(int x, int y, float a, gxSprite* spr)
 {
 	gxDev->SetTexture( 0, spr->tex );
 	gxDev->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
 	gxDev->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
 	gxDev->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
-
-	float a = -(float)dir * 3.14159f/180.0f;
 
 	float ca = cosf(a);
 	float sa = sinf(a);

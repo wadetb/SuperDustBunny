@@ -30,7 +30,7 @@ void DisplayBarrels()
 	{
 		SBarrel* Barrel = &Barrels[i];
 
-		gxDrawSpriteCenteredRotated(Barrel->X, Barrel->Y + ScrollY, Barrel->Dir, &BarrelSprite);
+		gxDrawSpriteCenteredRotated(Barrel->X, Barrel->Y + ScrollY, Barrel->Dir * 3.14159f / 180.0f, &BarrelSprite);
 	}
 }
 
