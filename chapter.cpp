@@ -296,6 +296,17 @@ void DisplayChapter()
 	}
 }
 
+int GetBlockID(int x, int y)
+{
+	// Requests for blocks outside the map return a special value.
+	if (x < 0 || x >= Chapter.Pages[0].Width)
+		return SPECIALBLOCKID_OUTOFBOUNDS;
+	if (y < 0 || y >= Chapter.Pages[0].Height)
+		return SPECIALBLOCKID_OUTOFBOUNDS;
+
+	return Chapter.Pages[0].Blocks[y * Chapter.Pages[0].Width + x];
+}
+
 bool IsBlockEmpty(int x, int y)
 {
 	// Requests for blocks outside the map return solid.

@@ -11,6 +11,7 @@ enum ESpecialBlockID
 {
 	SPECIALBLOCKID_FIRST			= 10000,
 	SPECIALBLOCKID_UNKNOWN			= SPECIALBLOCKID_FIRST,
+	SPECIALBLOCKID_OUTOFBOUNDS,
 	SPECIALBLOCKID_BLANK,
 };
 
@@ -28,8 +29,6 @@ struct SPage
 	int Width;
 	int Height;
 };
-
-// SPage Methods
 
 struct SChapter
 {
@@ -49,6 +48,8 @@ void LoadChapter(const char* filename);
 void DisplayChapter();
 
 void CalculateScrollY();
+
+int GetBlockID(int x, int y);
 
 bool IsBlockEmpty(int x, int y);
 bool IsBlockSolid(int x, int y);
