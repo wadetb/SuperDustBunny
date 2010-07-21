@@ -38,17 +38,19 @@ struct SChapter
 	int NPages;
 	int NBlocks;
 	SBlock Blocks[MAX_BLOCKS];
-
 };
 
-// SChapter Methods
-void LoadChapter(const char* filename, SChapter* Chap);
-void RenderChapter(SChapter* Chap);
 
 extern SChapter Chapter;
 
+extern int ScrollY;
 
+void LoadChapter(const char* filename);
+void DisplayChapter();
 
+void CalculateScrollY();
 
+bool IsBlockEmpty(int x, int y);
+bool IsBlockSolid(int x, int y);
 
 #endif

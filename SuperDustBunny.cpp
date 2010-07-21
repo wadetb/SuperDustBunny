@@ -53,8 +53,6 @@ int SongCounter = 1;
 int SongDuration = 0;
 int BackgroundMusic = 0;
 
-SChapter Chapter;
-
 void Init()
 {
 	// Use iPad "portrait mode" screen dimensions.
@@ -98,10 +96,7 @@ void Init()
     sxLoadWav ("Data/Song2.wav", &BackgroundSong02);
     sxLoadWav ("Data/Song3.wav", &BackgroundSong03);
 
-
-	LoadChapter("Docs/Design.txt", &Chapter);
-
-	ScrollY = -(Chapter.Pages[0].Height * 64 - gxScreenHeight);
+	LoadChapter("Docs/Design.txt");
 }
 
 void Exit()
@@ -162,27 +157,14 @@ bool GetInput_Jump()
 
 void Display()
 {
-	if (Dusty.Y + ScrollY < 300)
-	{
-		ScrollY = 300 - Dusty.Y;
-	}
-
-	if (Dusty.Y + ScrollY > gxScreenHeight - 100)
-	{
-		ScrollY = (gxScreenHeight - 100) - Dusty.Y;
-	}
-
-	if (ScrollY < -(Chapter.Pages[0].Height * 64 - gxScreenHeight))
-	{
-		ScrollY = -(Chapter.Pages[0].Height * 64 - gxScreenHeight);
-	}
+	CalculateScrollY();
 
     //if (BackgroundVisible == 1)
     //{
     //    gxDrawSprite( BackgroundX, BackgroundY, &Background01 );
    // }
 
-	RenderChapter(&Chapter);
+	DisplayChapter();
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   Dusty Drawing                                                                         //

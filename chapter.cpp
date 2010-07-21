@@ -3,6 +3,12 @@
 #include "Dusty.h"
 #include "Barrel.h"
 
+SChapter Chapter;
+
+extern gxSprite UnknownBlock;
+
+int ScrollY;
+
 void GetNextLine(FILE* File, char* Line, int LineSize)
 {
 	for (;;)
@@ -26,7 +32,7 @@ void GetNextLine(FILE* File, char* Line, int LineSize)
 	}
 }
 
-void LoadChapter(const char* filename, SChapter* Chap)
+void LoadChapter(const char* filename)
 {
 #if defined(PLATFORM_IPHONE)
 	FILE* ChapFile = gxOpenFile(filename, "r");
@@ -34,8 +40,8 @@ void LoadChapter(const char* filename, SChapter* Chap)
 	FILE* ChapFile = fopen(filename, "r");
 #endif
 	
-	Chap->NBlocks = 0;
-	Chap->NPages = 0;
+	Chapter.NBlocks = 0;
+	Chapter.NPages = 0;
 
 	while (!feof(ChapFile))
 	{
@@ -57,7 +63,7 @@ void LoadChapter(const char* filename, SChapter* Chap)
 				if (strstr(Line, "END OF BLOCKS") != NULL)
 					break;
 
-				SBlock* Block = &Chap->Blocks[Chap->NBlocks];
+				SBlock* Block = &Chapter.Blocks[Chapter.NBlocks];
 
 				sscanf(Line, "%c%c%c", &Block->Key[0][0], &Block->Key[0][1], &Block->Key[0][2] );
 
@@ -76,7 +82,7 @@ void LoadChapter(const char* filename, SChapter* Chap)
 				}
 				else
 				{
-					Block->ID = Chap->NBlocks;
+					Block->ID = Chapter.NBlocks;
 
 					gxLoadSprite(Block->Desc, &Block->Sprite);
 
@@ -89,7 +95,7 @@ void LoadChapter(const char* filename, SChapter* Chap)
 #endif
 				}
 
-				Chap->NBlocks++;
+				Chapter.NBlocks++;
 			}
 
 			continue;
@@ -97,7 +103,7 @@ void LoadChapter(const char* filename, SChapter* Chap)
 
 		if (strstr(Line, "PAGE") != NULL)
 		{
-			SPage* Page = &Chap->Pages[Chap->NPages++];
+			SPage* Page = &Chapter.Pages[Chapter.NPages++];
 				
 			Page->Blocks = (int*)malloc(MAX_PAGE_BLOCKS * sizeof(int));
 			
@@ -142,9 +148,9 @@ void LoadChapter(const char* filename, SChapter* Chap)
 					// (If none is found the unknown block will be used)
 					int BlockIndex = SPECIALBLOCKID_UNKNOWN;
 
-					for (int i = 0; i < Chap->NBlocks; i++)
+					for (int i = 0; i < Chapter.NBlocks; i++)
 					{
-						SBlock* Block = &Chap->Blocks[i];
+						SBlock* Block = &Chapter.Blocks[i];
 
 						if (Block->Key[0][0] == Line0[Col+0] &&
 							Block->Key[0][1] == Line0[Col+1] &&
@@ -207,7 +213,7 @@ void LoadChapter(const char* filename, SChapter* Chap)
 
 					if (BlockID < SPECIALBLOCKID_FIRST)
 					{
-						SBlock* Block = &Chap->Blocks[BlockID];
+						SBlock* Block = &Chapter.Blocks[BlockID];
 
 						if (_stricmp(Block->Desc, "blank") == 0)
 						{
@@ -233,24 +239,40 @@ void LoadChapter(const char* filename, SChapter* Chap)
 			continue;
 		}		
 	}
+
+	// Set initial ScrollY.
+	ScrollY = -(Chapter.Pages[0].Height * 64 - gxScreenHeight);
 }
 
-
-extern gxSprite UnknownBlock;
-
-int ScrollY;
-
-void RenderChapter(SChapter* Chap)
+void CalculateScrollY()
 {
-	for (int y = 0; y < Chap->Pages[0].Height; y++)
+	if (Dusty.Y + ScrollY < 300)
+	{
+		ScrollY = 300 - Dusty.Y;
+	}
+
+	if (Dusty.Y + ScrollY > gxScreenHeight - 100)
+	{
+		ScrollY = (gxScreenHeight - 100) - Dusty.Y;
+	}
+
+	if (ScrollY < -(Chapter.Pages[0].Height * 64 - gxScreenHeight))
+	{
+		ScrollY = -(Chapter.Pages[0].Height * 64 - gxScreenHeight);
+	}
+}
+
+void DisplayChapter()
+{
+	for (int y = 0; y < Chapter.Pages[0].Height; y++)
 	{
 		// Skip rows of tiles that cannot be on screen.
 		if (y*64 + ScrollY > gxScreenHeight || (y+1)*64 + ScrollY < 0)
 			continue;
 
-		for (int x = 0; x < Chap->Pages[0].Width; x++)
+		for (int x = 0; x < Chapter.Pages[0].Width; x++)
 		{
-			int BlockID = Chap->Pages[0].Blocks[y * Chap->Pages[0].Width + x];
+			int BlockID = Chapter.Pages[0].Blocks[y * Chapter.Pages[0].Width + x];
 
 			if (BlockID >= SPECIALBLOCKID_FIRST)
 			{
@@ -267,9 +289,29 @@ void RenderChapter(SChapter* Chap)
 			}
 			else
 			{
-				SBlock* Block = &Chap->Blocks[BlockID];
+				SBlock* Block = &Chapter.Blocks[BlockID];
 				gxDrawSprite(x*64, y*64 + ScrollY, &Block->Sprite);
 			}
 		}
 	}
 }
+
+bool IsBlockEmpty(int x, int y)
+{
+	// Requests for blocks outside the map return solid.
+	if (x < 0 || x >= Chapter.Pages[0].Width)
+		return false;
+	if (y < 0 || y >= Chapter.Pages[0].Height)
+		return false;
+
+	if (Chapter.Pages[0].Blocks[y * Chapter.Pages[0].Width + x] == SPECIALBLOCKID_BLANK)
+		return true;
+	else
+		return false;
+}
+
+bool IsBlockSolid(int x, int y)
+{
+	return !IsBlockEmpty(x, y);
+}
+
