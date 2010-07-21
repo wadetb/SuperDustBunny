@@ -18,7 +18,6 @@ bool SlowMotionMode = false;
 
 int BackgroundX = 0;
 int BackgroundY = 0;
-int BackgroundVisible = 1;
 
 gxSprite DustyHop01;
 gxSprite DustyHop02;
@@ -159,10 +158,7 @@ void Display()
 {
 	CalculateScrollY();
 
-    //if (BackgroundVisible == 1)
-    //{
-    //    gxDrawSprite( BackgroundX, BackgroundY, &Background01 );
-   // }
+    gxDrawSprite( BackgroundX, BackgroundY, &Background01 );
 
 	DisplayChapter();
 
@@ -183,7 +179,7 @@ void Display()
 	if (DevMode)
 	{		
 		// Status of common variables
-		gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %03d, %03d ) State: %d, Col: %d%d%d%d, JumpQ: %d\n,", Dusty.X, Dusty.Y, Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide,
+		gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %03d, %03d ) State: %d, Col: %d%d%d%d, JumpQ: %d", Dusty.X, Dusty.Y, Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide,
 			Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide, Dusty.JumpQueue);
 		// Indicator for when slow motion is activated.
 
