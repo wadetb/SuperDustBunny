@@ -87,7 +87,7 @@ void Init()
     gxLoadSprite("Data/WoodPlatformThin.png", &WoodBox_Platform01);
     gxLoadSprite("Data/LargeBackground.png", &Background01);
 	gxLoadSprite("Data/wtf.png", &UnknownBlock);
-	gxLoadSprite("Data/gear.png", &BarrelSprite);
+	gxLoadSprite("Data/can.png", &BarrelSprite);
 
     sxLoadWav ("Data/yaahooo.wav", &DustyToJump);
     sxLoadWav ("Data/yaahooo.wav", &DustyJumps);

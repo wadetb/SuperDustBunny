@@ -30,12 +30,9 @@ void DisplayBarrels()
 	{
 		SBarrel* Barrel = &Barrels[i];
 
-		gxDrawSpriteCenteredRotated(Barrel->X, Barrel->Y + ScrollY, Barrel->Dir, &BarrelSprite);
+		gxDrawSpriteCenteredRotated(Barrel->X, Barrel->Y + ScrollY, Barrel->Dir+270, &BarrelSprite);
 	}
 }
-
-void SetDustyState_Fall();
-void SetDustyState_Jump(bool OffWall);
 
 void UpdateBarrels()
 {
@@ -53,7 +50,7 @@ void UpdateBarrels()
 			{
  				Dusty.X = Barrel->X;
 				Dusty.Y = (Barrel->Y) + 50;
-				SetDustyState_Fall();
+				SetDustyState_PrepareLaunch();
                 Barrel->State = BARRELSTATE_TURN;
 			}
 		}
@@ -66,8 +63,9 @@ void UpdateBarrels()
 				Barrel->Dir = (Barrel->Dir+1) % 360;
 			else
 			{
-				SetDustyState_Jump(false);
-				Dusty.VerticalCounter = 40;
+				float Angle = -(float)Barrel->Dir * 3.14159f/180.0f;
+				float Velocity = 10.0f;
+				SetDustyState_Launch(Velocity*cosf(Angle), 20*sinf(Angle));
 				Barrel->Timer = 30;
 				Barrel->State = BARRELSTATE_LAUNCH;
 			}
