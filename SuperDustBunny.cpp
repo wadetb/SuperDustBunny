@@ -13,6 +13,16 @@
 #include "barrel.h"
 #include "Dusty.h"
 
+enum EGameState
+{
+	GAMESTATE_START_SCREEN,
+	GAMESTATE_PLAYING
+};
+
+EGameState GameState = GAMESTATE_START_SCREEN;
+
+bool TitleScreenButtonPressed = false;
+
 bool DevMode = true;
 bool SlowMotionMode = false;
 
@@ -41,6 +51,9 @@ gxSprite WoodBox_Platform01;
 gxSprite Background01;
 gxSprite UnknownBlock;
 gxSprite BarrelSprite;
+
+gxSprite StartScreen0;
+gxSprite StartScreen1;
 
 sxSound DustyToJump;
 sxSound DustyJumps;
@@ -87,6 +100,8 @@ void Init()
     gxLoadSprite("Data/LargeBackground.png", &Background01);
 	gxLoadSprite("Data/wtf.png", &UnknownBlock);
 	gxLoadSprite("Data/can.png", &BarrelSprite);
+	gxLoadSprite("Data/start-screen-vert2.png", &StartScreen0);
+	gxLoadSprite("Data/start-screen-vert.png", &StartScreen1);
 
     sxLoadWav ("Data/yaahooo.wav", &DustyToJump);
     sxLoadWav ("Data/yaahooo.wav", &DustyJumps);
@@ -156,42 +171,54 @@ bool GetInput_Jump()
 
 void Display()
 {
-	CalculateScrollY();
-
-    gxDrawSprite( BackgroundX, BackgroundY, &Background01 );
-
-	DisplayChapter();
-
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                   Dusty Drawing                                                                         //
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	DisplayDusty();
-
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                   Barrel Drawing                                                                           //
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-
-	DisplayBarrels();
-
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                   Debugging aids                                                                        //
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	if (DevMode)
-	{		
-		// Status of common variables
-		gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %03d, %03d ) State: %d, Col: %d%d%d%d, JumpQ: %d", Dusty.X, Dusty.Y, Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide,
-			Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide, Dusty.JumpQueue);
-		// Indicator for when slow motion is activated.
-
-		if (SlowMotionMode)
+	if (GameState == GAMESTATE_START_SCREEN)
+	{
+		if (TitleScreenButtonPressed)
 		{
-			gxDrawString(gxScreenWidth-101, 5, 16, gxRGB32(255, 255, 0), "[SLOW]");
+			gxDrawSprite( 0, 0, &StartScreen0 );
 		}
+		else
+		{
+			gxDrawSprite( 0, 0, &StartScreen1 );
+		}
+	}
+	else if (GameState == GAMESTATE_PLAYING)
+	{
+		CalculateScrollY();
 
-		// Draw a red + at Dusty's root location.
-		gxDrawString(Dusty.X-4, Dusty.Y-4, 8, gxRGB32(255, 0, 0), "+");
+		gxDrawSprite( BackgroundX, BackgroundY, &Background01 );
 
+		DisplayChapter();
 
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Dusty Drawing                                                                         //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+		DisplayDusty();
+
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Barrel Drawing                                                                        //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+		DisplayBarrels();
+
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Debugging aids                                                                        //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+		if (DevMode)
+		{		
+			// Status of common variables
+			gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %03d, %03d ) State: %d, Col: %d%d%d%d, JumpQ: %d", Dusty.X, Dusty.Y, Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide,
+				Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide, Dusty.JumpQueue);
+			// Indicator for when slow motion is activated.
+
+			if (SlowMotionMode)
+			{
+				gxDrawString(gxScreenWidth-101, 5, 16, gxRGB32(255, 255, 0), "[SLOW]");
+			}
+
+			// Draw a red + at Dusty's root location.
+			gxDrawString(Dusty.X-4, Dusty.Y-4, 8, gxRGB32(255, 0, 0), "+");
+		}
 	}
 }
 
@@ -249,48 +276,66 @@ if (BackgroundMusic == 1)
 	}
 #endif
 
-#ifdef PLATFORM_WINDOWS
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                   Slow Motion Update                                                                    //
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	// Backslash key held down causes slow motion mode.
-	if (kbIsKeyDown(KB_BACKSLASH))
+	if (GameState == GAMESTATE_START_SCREEN)
 	{
-		SlowMotionMode = true;
+#ifdef PLATFORM_WINDOWS
+		TitleScreenButtonPressed = kbIsKeyDown(KB_RETURN);
 
-		bool StepOneFrame;
-		if (kbIsKeyDown(KB_RBRACKET) && !kbWasKeyDown(KB_RBRACKET))
+		// Advance to playing state when return key is released.
+		if (!kbIsKeyDown(KB_RETURN) && kbWasKeyDown(KB_RETURN))
 		{
-			StepOneFrame = true;
+			GameState = GAMESTATE_PLAYING;
+		}
+#endif
+#ifdef PLATFORM_IPHONE
+		// TODO: iPhone uses a finger tap on the button.
+#endif
+	}
+	else if (GameState == GAMESTATE_PLAYING)
+	{
+#ifdef PLATFORM_WINDOWS
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Slow Motion Update                                                                    //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+		// Backslash key held down causes slow motion mode.
+		if (kbIsKeyDown(KB_BACKSLASH))
+		{
+			SlowMotionMode = true;
+
+			bool StepOneFrame;
+			if (kbIsKeyDown(KB_RBRACKET) && !kbWasKeyDown(KB_RBRACKET))
+			{
+				StepOneFrame = true;
+			}
+			else
+			{
+				StepOneFrame = false;
+			}
+
+			// If Return was not pressed, skip Update() for this frame.
+			if (!StepOneFrame)
+			{
+				return true;
+			}
 		}
 		else
 		{
-			StepOneFrame = false;
+			SlowMotionMode = false;
 		}
-
-		// If Return was not pressed, skip Update() for this frame.
-		if (!StepOneFrame)
-		{
-			return true;
-		}
-	}
-	else
-	{
-		SlowMotionMode = false;
-	}
 #endif
 	
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   Dusty Update                                                                          //
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//	
-	
-	UpdateDusty();
+		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+		//                                                   Dusty Update                                                                          //
+		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//	
+		
+		UpdateDusty();
 
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   Barrel Update                                                                         //
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+		//                                                   Barrel Update                                                                         //
+		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-	UpdateBarrels();
+		UpdateBarrels();
+	}
 
 	return true;
 }
