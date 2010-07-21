@@ -53,7 +53,6 @@ gxSprite Background01;
 gxSprite UnknownBlock;
 gxSprite BarrelSprite;
 
-<<<<<<< .mine
 gxSprite Coin01;
 gxSprite Coin02;
 gxSprite Coin03;
@@ -67,11 +66,9 @@ gxSprite Coin010;
 gxSprite Coin011;
 gxSprite Coin012;
 
-=======
 gxSprite StartScreen0;
 gxSprite StartScreen1;
 
->>>>>>> .r428
 sxSound DustyToJump;
 sxSound DustyJumps;
 sxSound WallJump;
@@ -232,40 +229,25 @@ void Display()
 		DisplayBarrels();
 
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Coin Drawing                                                                          //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+		DisplayCoins();
+
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Debugging aids                                                                        //
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		if (DevMode)
 		{		
 			// Status of common variables
-			gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %03d, %03d ) State: %d, Col: %d%d%d%d, JumpQ: %d", Dusty.X, Dusty.Y, Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide,
+			gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %03d, %03d ) State: %d, Col: %d%d%d%d, JumpQ: %d\n,", Dusty.X, Dusty.Y, Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide,
 				Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide, Dusty.JumpQueue);
+
 			// Indicator for when slow motion is activated.
-	
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                   Coin Drawing                                                                          //
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-
-<<<<<<< .mine
-    DisplayCoins();
-
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                   Debugging aids                                                                        //
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	if (DevMode)
-	{		
-		// Status of common variables
-		gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %03d, %03d ) State: %d, Col: %d%d%d%d, JumpQ: %d\n,", Dusty.X, Dusty.Y, Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide,
-			Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide, Dusty.JumpQueue);
-		// Indicator for when slow motion is activated.
-=======
 			if (SlowMotionMode)
 			{
 				gxDrawString(gxScreenWidth-101, 5, 16, gxRGB32(255, 255, 0), "[SLOW]");
 			}
->>>>>>> .r428
-
-			// Draw a red + at Dusty's root location.
-			gxDrawString(Dusty.X-4, Dusty.Y-4, 8, gxRGB32(255, 0, 0), "+");
 		}
 	}
 }
