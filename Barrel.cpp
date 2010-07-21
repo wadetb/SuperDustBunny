@@ -60,7 +60,7 @@ void UpdateBarrels()
 			Dusty.Y = (Barrel->Y) + 50;
 
 			if (Barrel->Dir != Barrel->ToDir)
-				Barrel->Dir = (Barrel->Dir+1) % 360;
+				Barrel->Dir = (Barrel->Dir+5) % 360;
 			else
 			{
 				float Angle = -(float)Barrel->Dir * 3.14159f/180.0f;
@@ -81,7 +81,7 @@ void UpdateBarrels()
 		else if (Barrel->State == BARRELSTATE_RESET)
 		{
 			if (Barrel->Dir != Barrel->FromDir)
-				Barrel->Dir = (Barrel->Dir+359) % 360;
+				Barrel->Dir = (Barrel->Dir+355) % 360;
 			else
 			{
 				Barrel->State = BARRELSTATE_WAIT;
