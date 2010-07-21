@@ -221,6 +221,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Coin.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Coin.h"
+			>
+		</File>
+		<File
 			RelativePath=".\common.h"
 			>
 		</File>

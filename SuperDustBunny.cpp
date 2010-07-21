@@ -12,6 +12,7 @@
 #include "chapter.h"
 #include "barrel.h"
 #include "Dusty.h"
+#include "Coin.h"
 
 enum EGameState
 {
@@ -52,9 +53,25 @@ gxSprite Background01;
 gxSprite UnknownBlock;
 gxSprite BarrelSprite;
 
+<<<<<<< .mine
+gxSprite Coin01;
+gxSprite Coin02;
+gxSprite Coin03;
+gxSprite Coin04;
+gxSprite Coin05;
+gxSprite Coin06;
+gxSprite Coin07;
+gxSprite Coin08;
+gxSprite Coin09;
+gxSprite Coin010;
+gxSprite Coin011;
+gxSprite Coin012;
+
+=======
 gxSprite StartScreen0;
 gxSprite StartScreen1;
 
+>>>>>>> .r428
 sxSound DustyToJump;
 sxSound DustyJumps;
 sxSound WallJump;
@@ -102,6 +119,19 @@ void Init()
 	gxLoadSprite("Data/can.png", &BarrelSprite);
 	gxLoadSprite("Data/start-screen-vert2.png", &StartScreen0);
 	gxLoadSprite("Data/start-screen-vert.png", &StartScreen1);
+
+    gxLoadSprite("Data/coin0001.png", &Coin01);
+    gxLoadSprite("Data/coin0002.png", &Coin02);
+    gxLoadSprite("Data/coin0003.png", &Coin03);
+    gxLoadSprite("Data/coin0004.png", &Coin04);
+    gxLoadSprite("Data/coin0005.png", &Coin05);
+    gxLoadSprite("Data/coin0006.png", &Coin06);
+    gxLoadSprite("Data/coin0007.png", &Coin07);
+    gxLoadSprite("Data/coin0008.png", &Coin08);
+    gxLoadSprite("Data/coin0009.png", &Coin09);
+    gxLoadSprite("Data/coin00010.png", &Coin010);
+    gxLoadSprite("Data/coin00011.png", &Coin011);
+    gxLoadSprite("Data/coin00012.png", &Coin012);
 
     sxLoadWav ("Data/yaahooo.wav", &DustyToJump);
     sxLoadWav ("Data/yaahooo.wav", &DustyJumps);
@@ -210,11 +240,29 @@ void Display()
 			gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %03d, %03d ) State: %d, Col: %d%d%d%d, JumpQ: %d", Dusty.X, Dusty.Y, Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide,
 				Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide, Dusty.JumpQueue);
 			// Indicator for when slow motion is activated.
+	
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                   Coin Drawing                                                                          //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
+<<<<<<< .mine
+    DisplayCoins();
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                   Debugging aids                                                                        //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	if (DevMode)
+	{		
+		// Status of common variables
+		gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %03d, %03d ) State: %d, Col: %d%d%d%d, JumpQ: %d\n,", Dusty.X, Dusty.Y, Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide,
+			Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide, Dusty.JumpQueue);
+		// Indicator for when slow motion is activated.
+=======
 			if (SlowMotionMode)
 			{
 				gxDrawString(gxScreenWidth-101, 5, 16, gxRGB32(255, 255, 0), "[SLOW]");
 			}
+>>>>>>> .r428
 
 			// Draw a red + at Dusty's root location.
 			gxDrawString(Dusty.X-4, Dusty.Y-4, 8, gxRGB32(255, 0, 0), "+");
@@ -336,6 +384,12 @@ if (BackgroundMusic == 1)
 
 		UpdateBarrels();
 	}
+	
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Coin Update                                                                         //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+    UpdateCoins();
 
 	return true;
 }
