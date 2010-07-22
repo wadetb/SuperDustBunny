@@ -96,6 +96,19 @@ extern gxSprite Background01;
 extern gxSprite UnknownBlock;
 extern gxSprite BarrelSprite;
 
+extern gxSprite Coin01;
+extern gxSprite Coin02;
+extern gxSprite Coin03;
+extern gxSprite Coin04;
+extern gxSprite Coin05;
+extern gxSprite Coin06;
+extern gxSprite Coin07;
+extern gxSprite Coin08;
+extern gxSprite Coin09;
+extern gxSprite Coin010;
+extern gxSprite Coin011;
+extern gxSprite Coin012;
+
 extern sxSound DustyToJump;
 extern sxSound DustyJumps;
 extern sxSound WallJump;

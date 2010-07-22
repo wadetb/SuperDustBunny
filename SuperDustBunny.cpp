@@ -125,10 +125,10 @@ void Init()
     gxLoadSprite("Data/coin0006.png", &Coin06);
     gxLoadSprite("Data/coin0007.png", &Coin07);
     gxLoadSprite("Data/coin0008.png", &Coin08);
-    gxLoadSprite("Data/coin0009.png", &Coin09);
-    gxLoadSprite("Data/coin00010.png", &Coin010);
-    gxLoadSprite("Data/coin00011.png", &Coin011);
-    gxLoadSprite("Data/coin00012.png", &Coin012);
+    gxLoadSprite("Data/Coin09.png", &Coin09);
+    gxLoadSprite("Data/Coin10.png", &Coin010);
+    gxLoadSprite("Data/Coin11.png", &Coin011);
+    gxLoadSprite("Data/Coin12.png", &Coin012);
 
     sxLoadWav ("Data/yaahooo.wav", &DustyToJump);
     sxLoadWav ("Data/yaahooo.wav", &DustyJumps);
@@ -216,6 +216,7 @@ void Display()
 		gxDrawSprite( BackgroundX, BackgroundY, &Background01 );
 
 		DisplayChapter();
+	}
 
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Dusty Drawing                                                                         //
@@ -242,7 +243,8 @@ void Display()
 			// Status of common variables
 			gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %03d, %03d ) State: %d, Col: %d%d%d%d, JumpQ: %d\n,", Dusty.X, Dusty.Y, Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide,
 				Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide, Dusty.JumpQueue);
-
+        }
+        
     DisplayCoins();
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -260,8 +262,7 @@ void Display()
 			}
 			// Draw a red + at Dusty's root location.
 			gxDrawString(Dusty.X-4, Dusty.Y-4, 8, gxRGB32(255, 0, 0), "+");
-		}
-	}
+    }
 }
 
 bool Update()
@@ -318,8 +319,7 @@ bool Update()
 	}
 	
 #endif
-	if (GameState == GAMESTATE_START_SCREEN)
-	{	
+	if (GameState == GAMESTATE_START_SCREEN)	
 #ifdef PLATFORM_WINDOWS
 		TitleScreenButtonPressed = kbIsKeyDown(KB_RETURN);
 		
@@ -333,7 +333,7 @@ bool Update()
 		// TODO: iPhone uses a finger tap on the button.
 #endif
 
-	else if (GameState == GAMESTATE_PLAYING)}
+	else if (GameState == GAMESTATE_PLAYING)
     
 #ifdef PLATFORM_WINDOWS
 
@@ -384,5 +384,5 @@ bool Update()
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
         UpdateCoins();   
-	return true;
+    return true;
 }
