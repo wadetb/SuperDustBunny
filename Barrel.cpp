@@ -42,22 +42,22 @@ void UpdateBarrels()
 
 		if (Barrel->State == BARRELSTATE_WAIT)
 		{
-			float XDist = (float)(Dusty.X - Barrel->X);
-			float YDist = (float)((Dusty.Y-50) - (Barrel->Y));
+			float XDist = (float)(Dusty.FloatX - Barrel->X);
+			float YDist = (float)((Dusty.FloatY-50) - (Barrel->Y));
 			float Dist = sqrtf(XDist*XDist + YDist*YDist);
 
 			if (Dist < 70)
 			{
- 				Dusty.X = Barrel->X;
-				Dusty.Y = (Barrel->Y) + 50;
+ 				Dusty.FloatX = Barrel->X;
+				Dusty.FloatY = (Barrel->Y) + 50;
 				SetDustyState_PrepareLaunch();
                 Barrel->State = BARRELSTATE_TURN;
 			}
 		}
 		else if (Barrel->State == BARRELSTATE_TURN)
 		{
-			Dusty.X = Barrel->X;
-			Dusty.Y = (Barrel->Y) + 50;
+			Dusty.FloatX = Barrel->X;
+			Dusty.FloatY = (Barrel->Y) + 50;
 
 			if (Barrel->Dir != Barrel->ToDir)
 				Barrel->Dir = (Barrel->Dir+5) % 360;

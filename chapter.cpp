@@ -235,8 +235,8 @@ void LoadChapter(const char* filename)
 
 						if (_stricmp(Block->Desc, "dusty") == 0)
 						{
-							Dusty.X = x * 64;
-							Dusty.Y = y * 64;
+							Dusty.FloatX = x * 64;
+							Dusty.FloatY = y * 64;
 							Page->Blocks[y * Page->Width + x] = SPECIALBLOCKID_BLANK;
 						}
 					}
@@ -253,14 +253,14 @@ void LoadChapter(const char* filename)
 
 void CalculateScrollY()
 {
-	if (Dusty.Y + ScrollY < 300)
+	if (Dusty.FloatY + ScrollY < 300)
 	{
-		ScrollY = 300 - Dusty.Y;
+		ScrollY = 300 - Dusty.FloatY;
 	}
 
-	if (Dusty.Y + ScrollY > gxScreenHeight - 100)
+	if (Dusty.FloatY + ScrollY > gxScreenHeight - 100)
 	{
-		ScrollY = (gxScreenHeight - 100) - Dusty.Y;
+		ScrollY = (gxScreenHeight - 100) - Dusty.FloatY;
 	}
 
 	if (ScrollY < -(Chapter.Pages[0].Height * 64 - gxScreenHeight))
