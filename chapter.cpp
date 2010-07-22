@@ -2,6 +2,7 @@
 #include "chapter.h"
 #include "Dusty.h"
 #include "Barrel.h"
+#include "Coin.h"
 
 SChapter Chapter;
 
@@ -225,6 +226,12 @@ void LoadChapter(const char* filename)
 							CreateBarrel(x * 64, y * 64, Block->Desc);
 							Page->Blocks[y * Page->Width + x] = SPECIALBLOCKID_BLANK;
 						}
+						
+                        if (strstr(Block->Desc, "coin") != NULL)
+                        {
+                            CreateCoin(x * 64, y * 64, Block->Desc);
+                            Page->Blocks[y * Page->Width + x] = SPECIALBLOCKID_BLANK;
+                        }
 
 						if (_stricmp(Block->Desc, "dusty") == 0)
 						{

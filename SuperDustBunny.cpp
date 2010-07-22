@@ -243,17 +243,65 @@ void Display()
 			gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %03d, %03d ) State: %d, Col: %d%d%d%d, JumpQ: %d\n,", Dusty.X, Dusty.Y, Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide,
 				Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide, Dusty.JumpQueue);
 
-			// Indicator for when slow motion is activated.
+    DisplayCoins();
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                   Debugging aids                                                                        //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	if (DevMode)
+	{		
+		// Status of common variables
+		gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %03d, %03d ) State: %d, Col: %d%d%d%d, JumpQ: %d\n,", Dusty.X, Dusty.Y, Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide,
+			Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide, Dusty.JumpQueue);
+		// Indicator for when slow motion is activated.
 			if (SlowMotionMode)
 			{
 				gxDrawString(gxScreenWidth-101, 5, 16, gxRGB32(255, 255, 0), "[SLOW]");
 			}
+			// Draw a red + at Dusty's root location.
+			gxDrawString(Dusty.X-4, Dusty.Y-4, 8, gxRGB32(255, 0, 0), "+");
 		}
 	}
 }
 
 bool Update()
 {
+    //Background Music
+    if (BackgroundMusic == 1)
+    {	
+        if (SongCounter == 1)
+        {
+            SongDuration = 500;//2580;    
+            sxPlaySound(&BackgroundSong01);
+        }
+
+        if (SongDuration == 0)
+        {
+            SongCounter += 1;   
+        }
+
+        if (SongDuration != 0)
+        {
+            SongDuration -= 1;     
+        }
+
+        if (SongCounter == 2)
+        {
+            SongDuration = 500;//2580;
+            sxPlaySound(&BackgroundSong02);
+        }
+
+        if (SongCounter == 3)
+        {
+            SongDuration = 500;//1952;
+            sxPlaySound(&BackgroundSong03);
+        }
+
+        if (SongCounter >= 4)
+        {
+            SongCounter = 1;
+        }
+    } 
 #ifdef PLATFORM_WINDOWS
 	kbUpdateKeys();
 #endif
@@ -262,55 +310,19 @@ bool Update()
 	msUpdateMouse();
 #endif
 	
-	//Background Music
-if (BackgroundMusic == 1)
-{	
-	if (SongCounter == 1)
-	{
-        SongDuration = 500;//2580;    
-        sxPlaySound(&BackgroundSong01);
-    }
-    
-    if (SongDuration == 0)
-    {
-        SongCounter += 1;   
-    }
-    
-    if (SongDuration != 0)
-    {
-        SongDuration -= 1;     
-    }
-        
-    if (SongCounter == 2)
-    {
-         SongDuration = 500;//2580;
-         sxPlaySound(&BackgroundSong02);
-    }
-    
-    if (SongCounter == 3)
-    {
-         SongDuration = 500;//1952;
-         sxPlaySound(&BackgroundSong03);
-    }
-    if (SongCounter >= 4)
-    {
-        SongCounter = 1;
-    }    
-}
-
 #ifdef PLATFORM_WINDOWS
 	// Pressing escape quits the program.
 	if (kbIsKeyDown(KB_ESCAPE))
 	{
 		return false;
 	}
+	
 #endif
-
 	if (GameState == GAMESTATE_START_SCREEN)
-	{
+	{	
 #ifdef PLATFORM_WINDOWS
 		TitleScreenButtonPressed = kbIsKeyDown(KB_RETURN);
-
+		
 		// Advance to playing state when return key is released.
 		if (!kbIsKeyDown(KB_RETURN) && kbWasKeyDown(KB_RETURN))
 		{
@@ -320,10 +332,11 @@ if (BackgroundMusic == 1)
 #ifdef PLATFORM_IPHONE
 		// TODO: iPhone uses a finger tap on the button.
 #endif
-	}
-	else if (GameState == GAMESTATE_PLAYING)
-	{
+
+	else if (GameState == GAMESTATE_PLAYING)}
+    
 #ifdef PLATFORM_WINDOWS
+
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Slow Motion Update                                                                    //
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -354,24 +367,22 @@ if (BackgroundMusic == 1)
 		}
 #endif
 	
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		//                                                   Dusty Update                                                                          //
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//	
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                   Dusty Update                                                                          //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//	
 		
 		UpdateDusty();
 
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		//                                                   Barrel Update                                                                         //
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                   Barrel Update                                                                         //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
 		UpdateBarrels();
-	}
 	
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Coin Update                                                                         //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                   Coin Update                                                                           //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-    UpdateCoins();
-
+        UpdateCoins();   
 	return true;
 }
