@@ -76,8 +76,8 @@ sxSound BackgroundSong01;
 sxSound BackgroundSong02;
 sxSound BackgroundSong03;
 int SongCounter = 1;
-int SongDuration = 0;
-int BackgroundMusic = 0;
+int SongDuration = 1500;
+int BackgroundMusic = 1;
 
 void Init()
 {
@@ -126,7 +126,7 @@ void Init()
     gxLoadSprite("Data/coin0007.png", &Coin07);
     gxLoadSprite("Data/coin0008.png", &Coin08);
     gxLoadSprite("Data/Coin09.png", &Coin09);
-    gxLoadSprite("Data/Coin10.png", &Coin010);
+    gxLoadSprite("Data/Coin10 .png", &Coin010);
     gxLoadSprite("Data/Coin11.png", &Coin011);
     gxLoadSprite("Data/Coin12.png", &Coin012);
 
@@ -253,7 +253,7 @@ void Display()
 	if (DevMode)
 	{		
 		// Status of common variables
-		gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %03d, %03d ) State: %d, Col: %d%d%d%d, JumpQ: %d\n,", Dusty.X, Dusty.Y, Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide,
+		gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %03d, %03d ) State: %d, Col: %d%d%d%d, JumpQ: %d", Dusty.X, Dusty.Y, Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide,
 			Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide, Dusty.JumpQueue);
 		// Indicator for when slow motion is activated.
 			if (SlowMotionMode)
@@ -269,39 +269,34 @@ bool Update()
 {
     //Background Music
     if (BackgroundMusic == 1)
-    {	
-        if (SongCounter == 1)
+    {	        
+        if (SongDuration == 0 && SongCounter == 1)
         {
-            SongDuration = 500;//2580;    
+            SongDuration = 2000;
+            SongCounter = 2;   
+        }
+
+        if (SongDuration == 0 && SongCounter == 2)
+        {
+            SongDuration = 1500;
+            SongCounter = 1;
+        } 
+        
+        if (SongDuration == 1500 && SongCounter == 1)
+        {   
             sxPlaySound(&BackgroundSong01);
         }
-
-        if (SongDuration == 0)
+        
+        if (SongDuration == 2000 && SongCounter == 2)
         {
-            SongCounter += 1;   
+            sxPlaySound(&BackgroundSong03);
         }
-
-        if (SongDuration != 0)
+        
+        if (SongDuration >= 1)
         {
             SongDuration -= 1;     
         }
-
-        if (SongCounter == 2)
-        {
-            SongDuration = 500;//2580;
-            sxPlaySound(&BackgroundSong02);
-        }
-
-        if (SongCounter == 3)
-        {
-            SongDuration = 500;//1952;
-            sxPlaySound(&BackgroundSong03);
-        }
-
-        if (SongCounter >= 4)
-        {
-            SongCounter = 1;
-        }
+            
     } 
 #ifdef PLATFORM_WINDOWS
 	kbUpdateKeys();
