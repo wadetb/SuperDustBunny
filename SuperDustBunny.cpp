@@ -251,11 +251,32 @@ void Display()
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		//                                                   Debugging aids                                                                        //
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	}
 		if (DevMode)
 		{		
 			// Status of common variables
-			gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %03d, %03d ) State: %d, Col: %d%d%d%d, JumpQ: %d", Dusty.X, Dusty.Y, Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide,
-				Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide, Dusty.JumpQueue);
+			gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %03d, %03d ) State: %d, Col: %d%d%d%d, JumpQ: %d/n, VY:%.1f", Dusty.X, Dusty.Y, Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide,
+				Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide, Dusty.JumpQueue, Dusty.FloatVelocityY);
+        }
+        
+    DisplayCoins();
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                   Debugging aids                                                                        //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	if (DevMode)
+	{		
+		// Status of common variables
+		gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %03f, %03f ) State: %d, Col: %d%d%d%d, JumpQ: %d", Dusty.X, Dusty.Y, Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide,
+			Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide, Dusty.JumpQueue);
+		// Indicator for when slow motion is activated.
+			if (SlowMotionMode)
+			{
+				gxDrawString(gxScreenWidth-101, 5, 16, gxRGB32(255, 255, 0), "[SLOW]");
+			}
+			// Draw a red + at Dusty's root location.
+			gxDrawString(Dusty.X-4, Dusty.Y-4, 8, gxRGB32(255, 0, 0), "+");
+
 			// Indicator for when slow motion is activated.
 				if (SlowMotionMode)
 				{
@@ -263,7 +284,7 @@ void Display()
 				}
 				// Draw a red + at Dusty's root location.
 				gxDrawString(Dusty.X-4, Dusty.Y-4, 8, gxRGB32(255, 0, 0), "+");
-		}
+	
 	}
 }
 
