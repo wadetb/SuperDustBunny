@@ -134,7 +134,7 @@ void Init()
     sxLoadWav ("Data/yaahooo.wav", &DustyToJump);
     sxLoadWav ("Data/yaahooo.wav", &DustyJumps);
     sxLoadWav ("Data/cork_pop.wav", &WallJump);
-    sxLoadWav ("Data/CanLaunch.wav", &LaunchSound01);
+    sxLoadWav ("Data/cork_pop.wav", &LaunchSound01);
     sxLoadWav ("Data/Song1.wav", &BackgroundSong01);
     sxLoadWav ("Data/Song2.wav", &BackgroundSong02);
     sxLoadWav ("Data/Song3.wav", &BackgroundSong03);
