@@ -112,6 +112,7 @@ extern gxSprite Coin012;
 extern sxSound DustyToJump;
 extern sxSound DustyJumps;
 extern sxSound WallJump;
+extern sxSound LaunchSound01;
 extern sxSound BackgroundSong01;
 extern sxSound BackgroundSong02;
 extern sxSound BackgroundSong03;

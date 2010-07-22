@@ -72,12 +72,13 @@ gxSprite StartScreen1;
 sxSound DustyToJump;
 sxSound DustyJumps;
 sxSound WallJump;
+sxSound LaunchSound01;
 sxSound BackgroundSong01;
 sxSound BackgroundSong02;
 sxSound BackgroundSong03;
 int SongCounter = 1;
 int SongDuration = 1500;
-int BackgroundMusic = 1;
+int BackgroundMusic = 0;
 
 void Init()
 {
@@ -126,13 +127,14 @@ void Init()
     gxLoadSprite("Data/coin0007.png", &Coin07);
     gxLoadSprite("Data/coin0008.png", &Coin08);
     gxLoadSprite("Data/Coin09.png", &Coin09);
-    gxLoadSprite("Data/Coin10 .png", &Coin010);
+    gxLoadSprite("Data/Coin10.png", &Coin010);
     gxLoadSprite("Data/Coin11.png", &Coin011);
     gxLoadSprite("Data/Coin12.png", &Coin012);
 
     sxLoadWav ("Data/yaahooo.wav", &DustyToJump);
     sxLoadWav ("Data/yaahooo.wav", &DustyJumps);
     sxLoadWav ("Data/cork_pop.wav", &WallJump);
+    sxLoadWav ("Data/CanLaunch.wav", &LaunchSound01);
     sxLoadWav ("Data/Song1.wav", &BackgroundSong01);
     sxLoadWav ("Data/Song2.wav", &BackgroundSong02);
     sxLoadWav ("Data/Song3.wav", &BackgroundSong03);
