@@ -253,16 +253,23 @@ void LoadChapter(const char* filename)
 
 void CalculateScrollY()
 {
+	// If Dusty is dead, freeze scrolling while he falls off the screen.
+	if (Dusty.State == DUSTYSTATE_DIE)
+		return;
+
+	// Screen tracks Dusty upwards.
 	if (Dusty.FloatY + ScrollY < 300)
 	{
 		ScrollY = 300 - Dusty.FloatY;
 	}
 
+	// Screen also tracks Dusty downwards.
 	if (Dusty.FloatY + ScrollY > gxScreenHeight - 100)
 	{
 		ScrollY = (gxScreenHeight - 100) - Dusty.FloatY;
 	}
 
+	// Prevent scrolling off bottom of map.
 	if (ScrollY < -(Chapter.Pages[0].Height * 64 - gxScreenHeight))
 	{
 		ScrollY = -(Chapter.Pages[0].Height * 64 - gxScreenHeight);

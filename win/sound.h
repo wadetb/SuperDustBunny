@@ -89,6 +89,9 @@ void sxPlaySound( sxSound* snd );
 // Continuously loops the sound.  Good for background music.
 void sxPlaySoundLooping( sxSound* snd );
 
+// Sets the volume of the sound.  Can be used while playing.
+void sxSetSoundVolume( sxSound* snd, float volume );
+
 /*--------------------------------------------------------------------------------------------------------
 
 	DirectSound access

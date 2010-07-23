@@ -7,12 +7,13 @@
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
-#include "common.h"
+#include "Common.h"
 
-#include "chapter.h"
-#include "barrel.h"
+#include "Chapter.h"
+#include "Barrel.h"
 #include "Dusty.h"
 #include "Coin.h"
+#include "Vacuum.h"
 
 enum EGameState
 {
@@ -48,10 +49,14 @@ gxSprite DustyHopLeft03;
 gxSprite DustyHopLeft04;
 gxSprite DustyHopLeft05;
 gxSprite DustyHopLeft06;
+gxSprite DustyDie;
+
 gxSprite WoodBox_Platform01;
 gxSprite Background01;
 gxSprite UnknownBlock;
 gxSprite BarrelSprite;
+gxSprite VacuumSprite;
+gxSprite VacuumFrontSprite;
 
 gxSprite Coin01;
 gxSprite Coin02;
@@ -73,9 +78,14 @@ sxSound DustyToJump;
 sxSound DustyJumps;
 sxSound WallJump;
 sxSound LaunchSound01;
+
+sxSound VacuumSound;
+
 sxSound BackgroundSong01;
 sxSound BackgroundSong02;
 sxSound BackgroundSong03;
+
+
 int SongCounter = 1;
 int SongDuration = 1500;
 int BackgroundMusic = 0;
@@ -86,8 +96,6 @@ void Init()
 	gxInit(GXDISPLAY_IPAD_PORTRAIT);
 
 	sxInit();
-
-	InitDusty();
 
 #ifdef PLATFORM_WINDOWS
 	kbInit();
@@ -110,13 +118,16 @@ void Init()
 	gxLoadSprite("Data/HopLeft06Resize.png",&DustyHopLeft04);
 	gxLoadSprite("Data/HopLeft09Resize.png",&DustyHopLeft06);
     gxLoadSprite("Data/DustyLeftWallJumpResize.png", &LeftFaceWallJump01);
-    gxLoadSprite("Data/DustyRightWallJumpResize.png", &RightFaceWallJump01);
+	gxLoadSprite("Data/DustyRightWallJumpResize.png", &RightFaceWallJump01);
+	gxLoadSprite("Data/DustyDieResize.png", &DustyDie);
     gxLoadSprite("Data/WoodPlatformThin.png", &WoodBox_Platform01);
     gxLoadSprite("Data/LargeBackground.png", &Background01);
 	gxLoadSprite("Data/wtf.png", &UnknownBlock);
 	gxLoadSprite("Data/can.png", &BarrelSprite);
 	gxLoadSprite("Data/start-screen-vert2.png", &StartScreen0);
 	gxLoadSprite("Data/start-screen-vert.png", &StartScreen1);
+	gxLoadSprite("Data/vacuum.png", &VacuumSprite);
+	gxLoadSprite("Data/vacuum-front.png", &VacuumFrontSprite);
 
     gxLoadSprite("Data/coin0001.png", &Coin01);
     gxLoadSprite("Data/coin0002.png", &Coin02);
@@ -138,6 +149,11 @@ void Init()
     sxLoadWav ("Data/Song1.wav", &BackgroundSong01);
     sxLoadWav ("Data/Song2.wav", &BackgroundSong02);
     sxLoadWav ("Data/Song3.wav", &BackgroundSong03);
+	sxLoadWav ("Data/vacuum_cleaner_2.wav", &VacuumSound);
+
+	InitDusty();
+
+	InitVacuum();
 
 	LoadChapter("Docs/Design.txt");
 }
@@ -227,6 +243,11 @@ void Display()
 		DisplayChapter();
 
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+		//                                                   Vacuum Drawing                                                                        //
+		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+		DisplayVacuum_BeforeDusty();
+
+		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		//                                                   Dusty Drawing                                                                         //
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		DisplayDusty();
@@ -240,13 +261,12 @@ void Display()
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		//                                                   Coin Drawing                                                                          //
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-
 		DisplayCoins();
 
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		//                                                   Debugging aids                                                                        //
+		//                                                   Vacuum Drawing                                                                        //
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		DisplayCoins();
+		DisplayVacuum_AfterDusty();
 
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		//                                                   Debugging aids                                                                        //
@@ -297,8 +317,8 @@ bool Update()
         {
             SongDuration -= 1;     
         }
-            
     } 
+
 #ifdef PLATFORM_WINDOWS
 	kbUpdateKeys();
 #endif
@@ -313,9 +333,10 @@ bool Update()
 	{
 		return false;
 	}
-	
 #endif
+
 	if (GameState == GAMESTATE_START_SCREEN)	
+	{
 #ifdef PLATFORM_WINDOWS
 		TitleScreenButtonPressed = kbIsKeyDown(KB_RETURN);
 		
@@ -328,14 +349,13 @@ bool Update()
 #ifdef PLATFORM_IPHONE
 		// TODO: iPhone uses a finger tap on the button.
 #endif
-
+	}
 	else if (GameState == GAMESTATE_PLAYING)
-    
+	{
 #ifdef PLATFORM_WINDOWS
-
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   Slow Motion Update                                                                    //
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+		//                                                   Slow Motion Update                                                                    //
+		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		// Backslash key held down causes slow motion mode.
 		if (kbIsKeyDown(KB_BACKSLASH))
 		{
@@ -363,22 +383,29 @@ bool Update()
 		}
 #endif
 	
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                   Dusty Update                                                                          //
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//	
-		
+		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+		//                                                   Dusty Update                                                                          //
+		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//	
 		UpdateDusty();
 
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                   Barrel Update                                                                         //
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+		if (Dusty.State != DUSTYSTATE_DIE)
+		{
+			// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+			//                                                   Barrel Update                                                                         //
+			// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+			UpdateBarrels();
 
-		UpdateBarrels();
-	
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                   Coin Update                                                                           //
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+			// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+			//                                                   Coin Update                                                                           //
+			// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+			UpdateCoins();   
+		}
 
-        UpdateCoins();   
-    return true;
+		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+		//                                                   Vacuum Update                                                                         //
+		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+		UpdateVacuum();   
+	}
+
+	return true;
 }

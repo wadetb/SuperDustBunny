@@ -9,14 +9,26 @@
 #ifndef __VACUUM_H__
 #define __VACUUM_H__
 
-struct SVacuum
+enum EVacuumState
 {
-	int Distance;
-	int Y;
+	VACUUMSTATE_FAR,
+	VACUUMSTATE_NEAR,
+	VACUUMSTATE_ONSCREEN,
 };
 
-void Vacuum_Init(SVacuum* Vacuum);
-void Vacuum_Display(SVacuum* Vacuum);
-void Vacuum_Update(SVacuum* Vacuum);
+struct SVacuum
+{
+	EVacuumState State;
+
+	int Timer;
+	int Y;
+
+	float Volume;
+};
+
+void InitVacuum();
+void DisplayVacuum_BeforeDusty();
+void DisplayVacuum_AfterDusty();
+void UpdateVacuum();
 
 #endif

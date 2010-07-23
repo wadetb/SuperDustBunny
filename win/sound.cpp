@@ -1,4 +1,5 @@
 #include "sound.h"
+#include <math.h>
 
 #pragma comment(lib,"dsound.lib")
 
@@ -57,7 +58,7 @@ void sxLoadWav( const char* name, sxSound* snd )
 	DSBUFFERDESC dsbdesc; 
 	memset(&dsbdesc, 0, sizeof(DSBUFFERDESC)); 
 	dsbdesc.dwSize = sizeof(DSBUFFERDESC); 
-	dsbdesc.dwFlags = DSBCAPS_CTRLPAN | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLFREQUENCY | DSBCAPS_GLOBALFOCUS; 
+	dsbdesc.dwFlags = DSBCAPS_CTRLVOLUME; 
 	dsbdesc.dwBufferBytes = ckIn.cksize; 
 	dsbdesc.lpwfxFormat = m_pwfx; 
 
@@ -99,3 +100,14 @@ void sxPlaySoundLooping( sxSound* snd )
 	if (snd->buffer)
 		snd->buffer->Play(0, 0, DSBPLAY_LOOPING);
 }
+
+
+void sxSetSoundVolume( sxSound* snd, float volume )
+{
+	if (snd->buffer)
+	{
+//		LONG v = (LONG)(-5000 * log10f( 100.0f * (1.0f - volume) ));
+		snd->buffer->SetVolume(-2000 + (LONG)(2000*volume));
+	}
+}
+

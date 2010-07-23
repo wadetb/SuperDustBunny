@@ -48,10 +48,10 @@ void UpdateBarrels()
 
 			if (Dist < 70)
 			{
- 				Dusty.FloatX = Barrel->X;
+				Dusty.FloatX = Barrel->X;
 				Dusty.FloatY = (Barrel->Y) + 50;
 				SetDustyState_PrepareLaunch();
-                Barrel->State = BARRELSTATE_TURN;
+				Barrel->State = BARRELSTATE_TURN;
 			}
 		}
 		else if (Barrel->State == BARRELSTATE_TURN)
