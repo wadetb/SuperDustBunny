@@ -121,4 +121,6 @@ bool GetInput_MoveLeft();
 bool GetInput_MoveRight();
 bool GetInput_Jump();
 
+void SetGameState_DieScreen();
+
 #endif

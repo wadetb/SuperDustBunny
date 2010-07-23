@@ -13,7 +13,7 @@ void sxInit()
 	if (!sxDev)
 		return;
 
-	sxDev->SetCooperativeLevel(hWnd, DSSCL_PRIORITY);
+	sxDev->SetCooperativeLevel(hWnd, DSSCL_NORMAL);
 }
 
 void sxDeinit()
@@ -58,7 +58,7 @@ void sxLoadWav( const char* name, sxSound* snd )
 	DSBUFFERDESC dsbdesc; 
 	memset(&dsbdesc, 0, sizeof(DSBUFFERDESC)); 
 	dsbdesc.dwSize = sizeof(DSBUFFERDESC); 
-	dsbdesc.dwFlags = DSBCAPS_CTRLVOLUME; 
+	dsbdesc.dwFlags = DSBCAPS_CTRLVOLUME | DSBCAPS_LOCSOFTWARE; 
 	dsbdesc.dwBufferBytes = ckIn.cksize; 
 	dsbdesc.lpwfxFormat = m_pwfx; 
 

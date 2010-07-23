@@ -18,7 +18,8 @@
 enum EGameState
 {
 	GAMESTATE_START_SCREEN,
-	GAMESTATE_PLAYING
+	GAMESTATE_PLAYING,
+	GAMESTATE_DIE_SCREEN,
 };
 
 EGameState GameState = GAMESTATE_START_SCREEN;
@@ -207,82 +208,227 @@ bool GetInput_Jump()
 #endif	
 }
 
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                   GAMESTATE_START_SCREEN                                                                //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
+void SetGameState_Playing();
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                   GAMESTATE_START_SCREEN                                                                //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+void SetGameState_StartScreen()
+{
+	GameState = GAMESTATE_START_SCREEN;
+}
+
+void DisplayGame_StartScreen()
+{
+	if (TitleScreenButtonPressed)
+	{
+		gxDrawSprite( 0, 0, &StartScreen0 );
+	}
+	else
+	{
+		gxDrawSprite( 0, 0, &StartScreen1 );
+	}
+}
+
+void UpdateGame_StartScreen()
+{
+#ifdef PLATFORM_WINDOWS
+	TitleScreenButtonPressed = kbIsKeyDown(KB_RETURN);
+
+	// Advance to playing state when return key is released.
+	if (!kbIsKeyDown(KB_RETURN) && kbWasKeyDown(KB_RETURN))
+	{
+		SetGameState_Playing();
+	}
+#endif
+#ifdef PLATFORM_IPHONE
+	// TODO: iPhone uses a finger tap on the button.
+#endif
+}
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                   GAMESTATE_DIE_SCREEN                                                                  //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+void SetGameState_DieScreen()
+{
+	GameState = GAMESTATE_DIE_SCREEN;
+}
+
+void DisplayGame_DieScreen()
+{
+	if (TitleScreenButtonPressed)
+	{
+		gxDrawSprite( 0, 0, &StartScreen0 );
+	}
+	else
+	{
+		gxDrawSprite( 0, 0, &StartScreen1 );
+	}
+}
+
+void UpdateGame_DieScreen()
+{
+#ifdef PLATFORM_WINDOWS
+	TitleScreenButtonPressed = kbIsKeyDown(KB_RETURN);
+
+	// Advance to playing state when return key is released.
+	if (!kbIsKeyDown(KB_RETURN) && kbWasKeyDown(KB_RETURN))
+	{
+		GameState = GAMESTATE_PLAYING;
+	}
+#endif
+#ifdef PLATFORM_IPHONE
+	// TODO: iPhone uses a finger tap on the button.
+#endif
+}
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                   GAMESTATE_PLAYING                                                                     //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+void SetGameState_Playing()
+{
+	GameState = GAMESTATE_PLAYING;
+}
+
+void DisplayGame_Playing()
+{
+	// Calculate scrolling.
+	CalculateScrollY();
+
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Non-scrolling background Drawing                                                      //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	gxDrawSprite( BackgroundX, BackgroundY, &Background01 );
+
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Chapter Drawing                                                                       //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	DisplayChapter();
+
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Vacuum Drawing                                                                        //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	DisplayVacuum_BeforeDusty();
+
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Dusty Drawing                                                                         //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	DisplayDusty();
+
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Barrel Drawing                                                                        //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+	DisplayBarrels();
+
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Coin Drawing                                                                          //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	DisplayCoins();
+
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Vacuum Drawing                                                                        //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	DisplayVacuum_AfterDusty();
+
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Debugging aids                                                                        //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	if (DevMode)
+	{		
+		// Status of common variables
+		gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %.1f %.1f ) State: %d Col: %d%d%d%d JumpQ: %d", Dusty.FloatX, Dusty.FloatY, Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide,
+			Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide, Dusty.JumpQueue);
+
+		// Indicator for when slow motion is activated.
+		if (SlowMotionMode)
+		{
+			gxDrawString(gxScreenWidth-101, 5, 16, gxRGB32(255, 255, 0), "[SLOW]");
+		}
+	}
+}
+
+void UpdateGame_Playing()
+{
+#ifdef PLATFORM_WINDOWS
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Slow Motion Update                                                                    //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	// Backslash key held down causes slow motion mode.
+	if (kbIsKeyDown(KB_BACKSLASH))
+	{
+		SlowMotionMode = true;
+
+		bool StepOneFrame;
+		if (kbIsKeyDown(KB_RBRACKET) && !kbWasKeyDown(KB_RBRACKET))
+		{
+			StepOneFrame = true;
+		}
+		else
+		{
+			StepOneFrame = false;
+		}
+
+		// If Return was not pressed, skip Update() for this frame.
+		if (!StepOneFrame)
+		{
+			return;
+		}
+	}
+	else
+	{
+		SlowMotionMode = false;
+	}
+#endif
+
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Dusty Update                                                                          //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//	
+	UpdateDusty();
+
+	if (Dusty.State != DUSTYSTATE_DIE)
+	{
+		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+		//                                                   Barrel Update                                                                         //
+		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+		UpdateBarrels();
+
+		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+		//                                                   Coin Update                                                                           //
+		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+		UpdateCoins();   
+	}
+
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Vacuum Update                                                                         //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	UpdateVacuum();   
+}
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   Central Display and Update functions                                                  //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-
 void Display()
 {
 	if (GameState == GAMESTATE_START_SCREEN)
 	{
-		if (TitleScreenButtonPressed)
-		{
-			gxDrawSprite( 0, 0, &StartScreen0 );
-		}
-		else
-		{
-			gxDrawSprite( 0, 0, &StartScreen1 );
-		}
+		DisplayGame_StartScreen();
+	}
+	else if (GameState == GAMESTATE_DIE_SCREEN)
+	{
+		DisplayGame_DieScreen();
 	}
 	else if (GameState == GAMESTATE_PLAYING)
 	{
-		// Calculate scrolling.
-		CalculateScrollY();
-
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		//                                                   Non-scrolling background Drawing                                                      //
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		gxDrawSprite( BackgroundX, BackgroundY, &Background01 );
-
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		//                                                   Chapter Drawing                                                                       //
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		DisplayChapter();
-
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		//                                                   Vacuum Drawing                                                                        //
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		DisplayVacuum_BeforeDusty();
-
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		//                                                   Dusty Drawing                                                                         //
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		DisplayDusty();
-
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		//                                                   Barrel Drawing                                                                        //
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-
-		DisplayBarrels();
-
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		//                                                   Coin Drawing                                                                          //
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		DisplayCoins();
-
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		//                                                   Vacuum Drawing                                                                        //
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		DisplayVacuum_AfterDusty();
-
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		//                                                   Debugging aids                                                                        //
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		if (DevMode)
-		{		
-			// Status of common variables
-			gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %.1f %.1f ) State: %d Col: %d%d%d%d JumpQ: %d", Dusty.FloatX, Dusty.FloatY, Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide,
-				Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide, Dusty.JumpQueue);
-
-			// Indicator for when slow motion is activated.
-			if (SlowMotionMode)
-			{
-				gxDrawString(gxScreenWidth-101, 5, 16, gxRGB32(255, 255, 0), "[SLOW]");
-			}
-		}
+		DisplayGame_Playing();
 	}
 }
 
@@ -337,74 +483,15 @@ bool Update()
 
 	if (GameState == GAMESTATE_START_SCREEN)	
 	{
-#ifdef PLATFORM_WINDOWS
-		TitleScreenButtonPressed = kbIsKeyDown(KB_RETURN);
-		
-		// Advance to playing state when return key is released.
-		if (!kbIsKeyDown(KB_RETURN) && kbWasKeyDown(KB_RETURN))
-		{
-			GameState = GAMESTATE_PLAYING;
-		}
-#endif
-#ifdef PLATFORM_IPHONE
-		// TODO: iPhone uses a finger tap on the button.
-#endif
+		UpdateGame_StartScreen();
+	}
+	else if (GameState == GAMESTATE_DIE_SCREEN)
+	{
+		UpdateGame_DieScreen();
 	}
 	else if (GameState == GAMESTATE_PLAYING)
 	{
-#ifdef PLATFORM_WINDOWS
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		//                                                   Slow Motion Update                                                                    //
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		// Backslash key held down causes slow motion mode.
-		if (kbIsKeyDown(KB_BACKSLASH))
-		{
-			SlowMotionMode = true;
-
-			bool StepOneFrame;
-			if (kbIsKeyDown(KB_RBRACKET) && !kbWasKeyDown(KB_RBRACKET))
-			{
-				StepOneFrame = true;
-			}
-			else
-			{
-				StepOneFrame = false;
-			}
-
-			// If Return was not pressed, skip Update() for this frame.
-			if (!StepOneFrame)
-			{
-				return true;
-			}
-		}
-		else
-		{
-			SlowMotionMode = false;
-		}
-#endif
-	
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		//                                                   Dusty Update                                                                          //
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//	
-		UpdateDusty();
-
-		if (Dusty.State != DUSTYSTATE_DIE)
-		{
-			// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-			//                                                   Barrel Update                                                                         //
-			// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-			UpdateBarrels();
-
-			// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-			//                                                   Coin Update                                                                           //
-			// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-			UpdateCoins();   
-		}
-
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		//                                                   Vacuum Update                                                                         //
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		UpdateVacuum();   
+		UpdateGame_Playing();
 	}
 
 	return true;
