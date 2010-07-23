@@ -20,11 +20,14 @@ enum EGameState
 	GAMESTATE_START_SCREEN,
 	GAMESTATE_PLAYING,
 	GAMESTATE_DIE_SCREEN,
+	GAMESTATE_WIN_SCREEN,
 };
 
 EGameState GameState = GAMESTATE_START_SCREEN;
 
 bool TitleScreenButtonPressed = false;
+bool RetryScreenButtonPressed = false;
+bool NextPageButtonPressed = false;
 
 bool DevMode = true;
 bool SlowMotionMode = false;
@@ -74,6 +77,10 @@ gxSprite Coin012;
 
 gxSprite StartScreen0;
 gxSprite StartScreen1;
+gxSprite DieScreen0;
+gxSprite DieScreen1;
+gxSprite WinScreen0;
+gxSprite WinScreen1;
 
 sxSound DustyToJump;
 sxSound DustyJumps;
@@ -126,7 +133,12 @@ void Init()
 	gxLoadSprite("Data/wtf.png", &UnknownBlock);
 	gxLoadSprite("Data/can.png", &BarrelSprite);
 	gxLoadSprite("Data/start-screen-vert2.png", &StartScreen0);
-	gxLoadSprite("Data/start-screen-vert.png", &StartScreen1);
+    gxLoadSprite("Data/start-screen-vert.png", &StartScreen1);
+    gxLoadSprite("Data/DustyLose01.png", &DieScreen0);
+    gxLoadSprite("Data/DustyLose02.png", &DieScreen1);
+    gxLoadSprite("Data/DustyWin01.png", &WinScreen0);
+    gxLoadSprite("Data/DustyWin02.png", &WinScreen1);
+	
 	gxLoadSprite("Data/vacuum.png", &VacuumSprite);
 	gxLoadSprite("Data/vacuum-front.png", &VacuumFrontSprite);
 
@@ -151,12 +163,6 @@ void Init()
     sxLoadWav ("Data/Song2.wav", &BackgroundSong02);
     sxLoadWav ("Data/Song3.wav", &BackgroundSong03);
 	sxLoadWav ("Data/vacuum_cleaner_2.wav", &VacuumSound);
-
-	InitDusty();
-
-	InitVacuum();
-
-	LoadChapter("Docs/Design.txt");
 }
 
 void Exit()
@@ -244,12 +250,19 @@ void UpdateGame_StartScreen()
 	if (!kbIsKeyDown(KB_RETURN) && kbWasKeyDown(KB_RETURN))
 	{
 		SetGameState_Playing();
+		return;
 	}
 #endif
 #ifdef PLATFORM_IPHONE
 	// TODO: iPhone uses a finger tap on the button.
 #endif
 }
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                  SET GAMESTATE_DIE_SCREEN                                                                  //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+void SetGameState_DieScreen();
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   GAMESTATE_DIE_SCREEN                                                                  //
@@ -262,25 +275,26 @@ void SetGameState_DieScreen()
 
 void DisplayGame_DieScreen()
 {
-	if (TitleScreenButtonPressed)
+	if (RetryScreenButtonPressed)
 	{
-		gxDrawSprite( 0, 0, &StartScreen0 );
+		gxDrawSprite(0, 0, &DieScreen1);
 	}
 	else
 	{
-		gxDrawSprite( 0, 0, &StartScreen1 );
+		gxDrawSprite(0, 0, &DieScreen0);
 	}
 }
 
 void UpdateGame_DieScreen()
 {
 #ifdef PLATFORM_WINDOWS
-	TitleScreenButtonPressed = kbIsKeyDown(KB_RETURN);
+	RetryScreenButtonPressed = kbIsKeyDown(KB_RETURN);
 
 	// Advance to playing state when return key is released.
 	if (!kbIsKeyDown(KB_RETURN) && kbWasKeyDown(KB_RETURN))
 	{
-		GameState = GAMESTATE_PLAYING;
+		SetGameState_Playing();
+		return;
 	}
 #endif
 #ifdef PLATFORM_IPHONE
@@ -289,11 +303,55 @@ void UpdateGame_DieScreen()
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                  SET GAMESTATE_WIN_SCREEN                                                               //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+void SetGameState_WinScreen();
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                  GAMESTATE_WIN_SCREEN                                                                   //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+void SetGameState_WinScreen()
+{
+    GameState = GAMESTATE_WIN_SCREEN;
+}
+
+void DisplayGame_WinScreen()
+{
+    if (NextPageButtonPressed)
+    {
+        gxDrawSprite( 0, 0, &WinScreen1);
+    }
+    else
+    {
+        gxDrawSprite( 0, 0, &WinScreen0);
+    }
+}
+
+void UpdateGame_WinScreen()
+{
+#ifdef PLATFORM_WINDOWS
+    NextPageButtonPressed = kbIsKeyDown(KB_RETURN);
+
+    // Advance to playing state when return key is released.
+    if (!kbIsKeyDown(KB_RETURN) && kbWasKeyDown(KB_RETURN))
+    {
+        SetGameState_Playing();
+        return;
+    }
+#endif
+#ifdef PLATFORM_IPHONE
+    // TODO: iPhone uses a finger tap on the button.
+#endif
+}
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   GAMESTATE_PLAYING                                                                     //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
 void SetGameState_Playing()
 {
+    LoadChapter("Docs/Design.txt");
+    InitDusty();
+    InitVacuum();
 	GameState = GAMESTATE_PLAYING;
 }
 
@@ -409,7 +467,12 @@ void UpdateGame_Playing()
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Vacuum Update                                                                         //
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	UpdateVacuum();   
+	UpdateVacuum();  
+	
+    if (Dusty.FloatY < 300)
+    {
+        SetGameState_WinScreen();
+    } 
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -426,14 +489,19 @@ void Display()
 	{
 		DisplayGame_DieScreen();
 	}
+    else if (GameState == GAMESTATE_WIN_SCREEN)
+    {
+        DisplayGame_WinScreen();
+    }
 	else if (GameState == GAMESTATE_PLAYING)
 	{
 		DisplayGame_Playing();
 	}
+
 }
 
 bool Update()
-{
+{    
     //Background Music
     if (BackgroundMusic == 1)
     {	        
@@ -488,6 +556,10 @@ bool Update()
 	else if (GameState == GAMESTATE_DIE_SCREEN)
 	{
 		UpdateGame_DieScreen();
+	}
+	else if (GameState == GAMESTATE_WIN_SCREEN)
+	{
+	    UpdateGame_WinScreen();
 	}
 	else if (GameState == GAMESTATE_PLAYING)
 	{
