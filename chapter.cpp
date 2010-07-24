@@ -87,7 +87,10 @@ void LoadChapter(const char* filename)
 				{
 					Block->ID = Chapter.NBlocks;
 
-					gxLoadSprite(Block->Desc, &Block->Sprite);
+					char* SpriteName = strdup(Block->Desc);
+					SpriteName = strtok(SpriteName, " ");
+					gxLoadSprite(SpriteName, &Block->Sprite);
+					free(SpriteName);
 
 #ifdef PLATFORM_WINDOWS
 					// If unable to load the sprite, substitute an ASCII representation.
@@ -96,6 +99,11 @@ void LoadChapter(const char* filename)
 						gxCreateASCIIBlockSprite(&Block->Sprite, &Block->Key[0][0]);
 					}
 #endif
+
+					if (strstr(Block->Desc, "destructible"))
+					{
+						Block->Destructible = true;
+					}
 				}
 
 				Chapter.NBlocks++;

@@ -21,6 +21,7 @@ struct SBlock
 	char Key[3][3];
 	char* Desc;
 	gxSprite Sprite;
+	bool Destructible;
 };
 
 struct SPage

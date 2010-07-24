@@ -9,7 +9,7 @@
 
 #include "Common.h"
 #include "Dusty.h"
-#include "Chapter.h"
+#include "chapter.h"
 
 SDusty Dusty;
 
@@ -882,6 +882,19 @@ void UpdateDusty_Collision()
 					{
 						Dusty.CollideWithBottomSide = true;//Collision with Dusty's Bottom Side but the Top side of the platform
 						Dusty.FloatY -= UpDistance;
+					}
+
+					//int BlockID = Chapter.Pages[0].Blocks[y * Chapter.Pages[0].Width + x];
+					SBlock* Block = &Chapter.Blocks[GetBlockID(x, y)];
+
+					if (Dusty.CollideWithTopSide == true && Block->Destructible == true)
+					{
+						Chapter.Pages[0].Blocks[y * Chapter.Pages[0].Width + x] = SPECIALBLOCKID_BLANK;
+					}
+
+					if (Dusty.CollideWithBottomSide == true && Block->Destructible == true)
+					{
+						Chapter.Pages[0].Blocks[y * Chapter.Pages[0].Width + x] = SPECIALBLOCKID_BLANK;
 					}
 				}
 			}
