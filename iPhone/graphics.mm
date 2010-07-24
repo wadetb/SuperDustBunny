@@ -338,3 +338,60 @@ FILE* gxOpenFile(const char* relativePath, const char* mode)
 	gxGetResourceFileName(relativePath, work, sizeof(work));
 	return fopen(work, mode);
 }
+
+
+void gxDrawSpriteCenteredRotated(int x, int y, int dir, gxSprite* spr)
+{
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, spr->tex);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	
+	float a = -(float)dir * 3.14159f/180.0f;
+	
+	float ca = cosf(a);
+	float sa = sinf(a);
+	
+	float w = (float)spr->width * 0.5f;
+	float h = (float)spr->height * 0.5f;
+	
+	gxSpriteVertex v[4];
+	v[0].x = x + (-w * ca) - (-h * sa); 
+	v[0].y = y + (-w * sa) + (-h * ca); 
+	v[0].z = 0.0f; 
+	v[0].w = 1.0f;
+	v[0].color = 0xffffffff;
+	v[0].u = 0.0f; 
+	v[0].v = 0.0f;
+	
+	v[1].x = x + (+w * ca) - (-h * sa); 
+	v[1].y = y + (+w * sa) + (-h * ca); 
+	v[1].z = 0.0f; 
+	v[1].w = 1.0f;
+	v[1].color = 0xffffffff;
+	v[1].u = 1.0f; 
+	v[1].v = 0.0f;
+	
+	v[3].x = x + (-w * ca) - (+h * sa); 
+	v[3].y = y + (-w * sa) + (+h * ca); 
+	v[3].z = 0.0f; 
+	v[3].w = 1.0f;
+	v[3].color = 0xffffffff;
+	v[3].u = 0.0f; 
+	v[3].v = 1.0f;
+	
+	v[2].x = x + (+w * ca) - (+h * sa); 
+	v[2].y = y + (+w * sa) + (+h * ca); 
+	v[2].z = 0.0f; 
+	v[2].w = 1.0f;
+	v[2].color = 0xffffffff;
+	v[2].u = 1.0f; 
+	v[2].v = 1.0f;
+	
+	glVertexPointer(3, GL_FLOAT, sizeof(gxSpriteVertex), &v[0].x);
+	glTexCoordPointer(2, GL_FLOAT, sizeof(gxSpriteVertex), &v[0].u);
+	glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(gxSpriteVertex), &v[0].color);
+	
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+}
+

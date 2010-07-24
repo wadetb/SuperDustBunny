@@ -46,4 +46,6 @@ void gxGetFileName(const char* relativePath, char* buffer, int bufferSize);
 
 FILE* gxOpenFile(const char* relativePath, const char* mode);
 
+void gxDrawSpriteCenteredRotated(int x, int y, int dir, gxSprite* spr);
+
 #endif

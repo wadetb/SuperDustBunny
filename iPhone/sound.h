@@ -18,4 +18,6 @@ void sxDestroySound(sxSound* sound);
 void sxPlaySound(sxSound* sound);
 void sxPlaySoundLooping(sxSound* sound);
 
+void sxSetSoundVolume(sxSound* sound, float volume);
+
 #endif

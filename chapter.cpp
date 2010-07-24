@@ -71,13 +71,14 @@ void LoadChapter(const char* filename)
 				fgets(Line, sizeof(Line)-1, ChapFile);
 				sscanf(Line, "%c%c%c", &Block->Key[1][0], &Block->Key[1][1], &Block->Key[1][2]);
 
-				Block->Desc = _strdup(Line + 4);
-				*strrchr(Block->Desc, '\n') = 0;
+				Block->Desc = strdup(Line + 4);
+				if (strrchr(Block->Desc, '\r')) *strrchr(Block->Desc, '\r') = 0;
+				if (strrchr(Block->Desc, '\n')) *strrchr(Block->Desc, '\n') = 0;
 
 				fgets(Line, sizeof(Line)-1, ChapFile);
 				sscanf(Line, "%c%c%c", &Block->Key[2][0], &Block->Key[2][1], &Block->Key[2][2]);
 				
-				if (_stricmp(Block->Desc, "blank") == 0)
+				if (strcmp(Block->Desc, "blank") == 0)
 				{
 					Block->ID = SPECIALBLOCKID_BLANK;
 				}
@@ -216,7 +217,7 @@ void LoadChapter(const char* filename)
 					{
 						SBlock* Block = &Chapter.Blocks[BlockID];
 
-						if (_stricmp(Block->Desc, "blank") == 0)
+						if (strcasecmp(Block->Desc, "blank") == 0)
 						{
 							Page->Blocks[y * Page->Width + x] = SPECIALBLOCKID_BLANK;
 						}
@@ -233,7 +234,7 @@ void LoadChapter(const char* filename)
                             Page->Blocks[y * Page->Width + x] = SPECIALBLOCKID_BLANK;
                         }
 
-						if (_stricmp(Block->Desc, "dusty") == 0)
+						if (strcasecmp(Block->Desc, "dusty") == 0)
 						{
 							Dusty.FloatX = x * 64;
 							Dusty.FloatY = y * 64;

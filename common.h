@@ -39,6 +39,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <math.h>
 
 // Macros
 
@@ -72,6 +73,9 @@ inline int Min(int a, int b)
 	}
 }
 
+#ifdef PLATFORM_WINDOWS
+#define strcasecmp _stricmp
+#endif
 
 extern gxSprite DustyHop01;
 extern gxSprite DustyHop02;
