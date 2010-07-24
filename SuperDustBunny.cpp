@@ -29,7 +29,7 @@ bool TitleScreenButtonPressed = false;
 bool RetryScreenButtonPressed = false;
 bool NextPageButtonPressed = false;
 
-bool DevMode = true;
+bool DevMode = false;
 bool SlowMotionMode = false;
 
 int BackgroundX = 0;
@@ -444,16 +444,30 @@ void DisplayGame_Playing()
 	//                                                   Debugging aids                                                                        //
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	if (DevMode)
-	{		
-		// Status of common variables
-		gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %.1f %.1f ) State: %d Col: %d%d%d%d", 
-			Dusty.FloatX, Dusty.FloatY, Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide, Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide);
+	{
+		float FPS = 0;
 
-		// Indicator for when slow motion is activated.
-		if (SlowMotionMode)
-		{
-			gxDrawString(gxScreenWidth-101, 5, 16, gxRGB32(255, 255, 0), "[SLOW]");
-		}
+#ifdef PLATFORM_WINDOWS
+		static DWORD LastTime = 0;
+		DWORD Time = timeGetTime();
+		FPS = (1000.0f / ((float)Time - (float)LastTime) + 0.5f);
+		LastTime = Time;
+
+		FPS = (float)(int(FPS / 10.0f + 0.5f) * 10);
+#endif
+#ifdef PLATFORM_IPHONE
+		// iPhone TODO: Calculate FPS here.
+#endif
+
+		// Status of common variables
+		gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "FPS: %.0f ( %.1f %.1f ) State: %d Col: %d%d%d%d", 
+			FPS, Dusty.FloatX, Dusty.FloatY, Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide, Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide);
+	}
+
+	// Indicator for when slow motion is activated.
+	if (SlowMotionMode)
+	{
+		gxDrawString(gxScreenWidth-101, 5, 16, gxRGB32(255, 255, 0), "[SLOW]");
 	}
 }
 
@@ -487,6 +501,12 @@ void UpdateGame_Playing()
 	else
 	{
 		SlowMotionMode = false;
+	}
+
+	// Home key causes devmode.
+	if (kbIsKeyDown(KB_HOME) && !kbWasKeyDown(KB_HOME))
+	{
+		DevMode = !DevMode;
 	}
 #endif
 
