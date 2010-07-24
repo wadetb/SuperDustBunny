@@ -254,7 +254,15 @@ void UpdateGame_StartScreen()
 	}
 #endif
 #ifdef PLATFORM_IPHONE
-	// TODO: iPhone uses a finger tap on the button.
+	// TODO: iPhone needs a rectangle check.
+	TitleScreenButtonPressed = msButton1;
+	
+	// Advance to playing state when return key is released.
+	if (!msButton1 && !msOldButton1)
+	{
+		SetGameState_Playing();
+		return;
+	}
 #endif
 }
 
@@ -298,7 +306,15 @@ void UpdateGame_DieScreen()
 	}
 #endif
 #ifdef PLATFORM_IPHONE
-	// TODO: iPhone uses a finger tap on the button.
+	// TODO: iPhone needs a rectangle check.
+	RetryScreenButtonPressed = msButton1;
+	
+	// Advance to playing state when return key is released.
+	if (!msButton1 && !msOldButton1)
+	{
+		SetGameState_Playing();
+		return;
+	}
 #endif
 }
 
@@ -340,7 +356,15 @@ void UpdateGame_WinScreen()
     }
 #endif
 #ifdef PLATFORM_IPHONE
-    // TODO: iPhone uses a finger tap on the button.
+	// TODO: iPhone needs a rectangle check.
+	NextPageButtonPressed = msButton1;
+	
+	// Advance to playing state when return key is released.
+	if (!msButton1 && !msOldButton1)
+	{
+		SetGameState_Playing();
+		return;
+	}
 #endif
 }
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
