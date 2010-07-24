@@ -245,6 +245,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\TennisBall.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\TennisBall.h"
+			>
+		</File>
+		<File
 			RelativePath=".\Vacuum.cpp"
 			>
 		</File>

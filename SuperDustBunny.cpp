@@ -8,12 +8,12 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
 #include "Common.h"
-
 #include "Chapter.h"
 #include "Barrel.h"
 #include "Dusty.h"
 #include "Coin.h"
 #include "Vacuum.h"
+#include "TennisBall.h"
 
 enum EGameState
 {
@@ -74,6 +74,11 @@ gxSprite Coin09;
 gxSprite Coin010;
 gxSprite Coin011;
 gxSprite Coin012;
+
+gxSprite Ball01;
+gxSprite Ball02;
+gxSprite Ball03;
+gxSprite Ball04;
 
 gxSprite StartScreen0;
 gxSprite StartScreen1;
@@ -154,6 +159,11 @@ void Init()
     gxLoadSprite("Data/Coin10.png", &Coin010);
     gxLoadSprite("Data/Coin11.png", &Coin011);
     gxLoadSprite("Data/Coin12.png", &Coin012);
+
+    gxLoadSprite("Data/TennisBallRollLeft01.png", &Ball01);
+    gxLoadSprite("Data/TennisBallRollLeft02.png", &Ball02);
+    gxLoadSprite("Data/TennisBallRollLeft03.png", &Ball03);
+    gxLoadSprite("Data/TennisBallRollLeft04.png", &Ball04);
 
     sxLoadWav ("Data/yaahooo.wav", &DustyToJump);
     sxLoadWav ("Data/yaahooo.wav", &DustyJumps);
@@ -414,6 +424,12 @@ void DisplayGame_Playing()
 	//                                                   Coin Drawing                                                                          //
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	DisplayCoins();
+	
+
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Ball Drawing                                                                          //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    DisplayBall();
 
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Vacuum Drawing                                                                        //
@@ -486,6 +502,11 @@ void UpdateGame_Playing()
 		//                                                   Coin Update                                                                           //
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		UpdateCoins();   
+		
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+        //                                                   Ball Update                                                                           //
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+        UpdateBall();  
 	}
 
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//

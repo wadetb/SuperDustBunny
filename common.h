@@ -113,6 +113,11 @@ extern gxSprite Coin010;
 extern gxSprite Coin011;
 extern gxSprite Coin012;
 
+extern gxSprite Ball01;
+extern gxSprite Ball02;
+extern gxSprite Ball03;
+extern gxSprite Ball04;
+
 extern sxSound DustyToJump;
 extern sxSound DustyJumps;
 extern sxSound WallJump;
