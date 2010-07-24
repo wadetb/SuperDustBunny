@@ -26,7 +26,7 @@ void CreateCoin(int X, int Y, const char* Desc)
     Coin->Transition = 65;
     Coin->Sprite = 1;
     
-    Coin->State = COINSTATE_ACTIVE;
+    Coin->Collided = false;
 }
 
 extern int ScrollY;
@@ -111,9 +111,20 @@ void UpdateCoins()
     {
         SCoin* Coin = &Coins[i];
         
-        //float XDist = (float)(Dusty.FloatX - Coin->X);
-        //float YDist = (float)((Dusty.FloatY-50) - (Coin->Y));
-        //float Dist = sqrtf(XDist*XDist + YDist*YDist);
+        float XDist = (float)(Dusty.FloatX - Coin->X);
+        float YDist = (float)((Dusty.FloatY-50) - (Coin->Y));
+        float Dist = sqrtf(XDist*XDist + YDist*YDist);
+        
+        if (Dist < 50)
+        {
+            Coin->Collided = true;
+        }      
+        
+        if (Coin->Collided == true)
+        {
+            //sxPlaySound(&Clang01);
+            Coin->Y += 7;
+        }
         
         if (Coin->Transition == 65)
         {
@@ -187,18 +198,6 @@ void UpdateCoins()
         }  
         
         Coin->Transition -= 1;
-                 
-        //if (Dist < 50)
-        //{
-        //    //Coin gains bonus points or whatever power_ups associated with coins
-        //    Coin->State = COINSTATE_INACTIVE;
-        //    return;
-        //}      
-        //else if (Coin->State == COINSTATE_INACTIVE)
-        //{
-        //    //If(something something)
-        //    Coin->State = COINSTATE_ACTIVE;
-        //    return;
-        
+                        
     }  
 }

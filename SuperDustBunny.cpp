@@ -93,6 +93,8 @@ sxSound WallJump;
 sxSound LaunchSound01;
 
 sxSound VacuumSound;
+sxSound Clogged;
+sxSound Clang01;
 
 sxSound BackgroundSong01;
 sxSound BackgroundSong02;
@@ -173,6 +175,8 @@ void Init()
     sxLoadWav ("Data/Song2.wav", &BackgroundSong02);
     sxLoadWav ("Data/Song3.wav", &BackgroundSong03);
 	sxLoadWav ("Data/vacuum_cleaner_2.wav", &VacuumSound);
+	sxLoadWav ("Data/clogged.wav", &Clogged);
+	sxLoadWav ("Data/clang.wav", &Clang01);
 }
 
 void Exit()

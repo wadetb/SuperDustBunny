@@ -31,6 +31,7 @@ struct SCoin
         int Dist;
 
         bool IsCoinSpinning;
+        bool Collided;
 
 };
 

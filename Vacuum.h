@@ -30,5 +30,7 @@ void InitVacuum();
 void DisplayVacuum_BeforeDusty();
 void DisplayVacuum_AfterDusty();
 void UpdateVacuum();
+extern int Timer;
+extern SVacuum Vacuum;
 
 #endif

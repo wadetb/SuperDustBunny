@@ -125,6 +125,8 @@ extern sxSound LaunchSound01;
 extern sxSound BackgroundSong01;
 extern sxSound BackgroundSong02;
 extern sxSound BackgroundSong03;
+extern sxSound Clogged;
+extern sxSound Clang01;
 
 bool GetInput_MoveLeft();
 bool GetInput_MoveRight();
