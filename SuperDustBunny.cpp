@@ -14,6 +14,7 @@
 #include "Coin.h"
 #include "Vacuum.h"
 #include "TennisBall.h"
+#include "FireWorks.h"
 
 enum EGameState
 {
@@ -79,6 +80,9 @@ gxSprite Ball01;
 gxSprite Ball02;
 gxSprite Ball03;
 gxSprite Ball04;
+
+gxSprite FireWork01;
+gxSprite FireWork02;
 
 gxSprite StartScreen0;
 gxSprite StartScreen1;
@@ -165,7 +169,10 @@ void Init()
     gxLoadSprite("Data/TennisBallRollLeft01.png", &Ball01);
     gxLoadSprite("Data/TennisBallRollLeft02.png", &Ball02);
     gxLoadSprite("Data/TennisBallRollLeft03.png", &Ball03);
-    gxLoadSprite("Data/TennisBallRollLeft04.png", &Ball04);
+	gxLoadSprite("Data/TennisBallRollLeft04.png", &Ball04);
+
+	gxLoadSprite("Data/FireWork01.png", &FireWork01);
+	gxLoadSprite("Data/FireWork02.png", &FireWork02);
 
     sxLoadWav ("Data/yaahooo.wav", &DustyToJump);
     sxLoadWav ("Data/yaahooo.wav", &DustyJumps);
@@ -441,6 +448,11 @@ void DisplayGame_Playing()
 	DisplayVacuum_AfterDusty();
 
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   FireWork Drawing                                                                        //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	DisplayFireWorks();
+
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Debugging aids                                                                        //
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	if (DevMode)
@@ -531,6 +543,11 @@ void UpdateGame_Playing()
         //                                                   Ball Update                                                                           //
         // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
         UpdateBall();  
+
+		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+		//                                                   FireWork Update                                                                       //
+		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+		UpdateFireWorks();
 	}
 
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//

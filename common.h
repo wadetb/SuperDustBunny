@@ -128,6 +128,9 @@ extern gxSprite Ball02;
 extern gxSprite Ball03;
 extern gxSprite Ball04;
 
+extern gxSprite FireWork01;
+extern gxSprite FireWork02;
+
 extern sxSound DustyToJump;
 extern sxSound DustyJumps;
 extern sxSound WallJump;

@@ -13,6 +13,7 @@
 #include "Barrel.h"
 #include "Coin.h"
 #include "TennisBall.h"
+#include "FireWorks.h"
 
 SChapter Chapter;
 
@@ -257,6 +258,12 @@ void LoadChapter(const char* filename)
                             CreateBall(x * 64, y * 64, Block->Desc);
                             Page->Blocks[y * Page->Width + x] = SPECIALBLOCKID_BLANK;
                         }
+
+						if (strstr(Block->Desc, "firework") != NULL)
+						{
+							CreateFireWork(x * 64, y * 64, Block->Desc);
+							Page->Blocks[y * Page->Width + x] = SPECIALBLOCKID_BLANK;
+						}
 
 						if (strcasecmp(Block->Desc, "dusty") == 0)
 						{
