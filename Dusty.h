@@ -10,18 +10,22 @@
 #ifndef DUSTY_H
 #define DUSTY_H
 
+enum EDirection
+{
+	DIRECTION_LEFT,
+	DIRECTION_RIGHT
+};
+
 enum EDustyState
 {
-	DUSTYSTATE_STAND				,
-	DUSTYSTATE_JUMP					,
-	DUSTYSTATE_FALL					,
-	DUSTYSTATE_HOP_RIGHT			,
-	DUSTYSTATE_HOP_LEFT				,
-	DUSTYSTATE_WALLJUMP_RIGHT		,
-	DUSTYSTATE_WALLJUMP_LEFT		,
-	DUSTYSTATE_PREPARELAUNCH        ,
-	DUSTYSTATE_LAUNCH               ,
-	DUSTYSTATE_DIE                  ,
+	DUSTYSTATE_STAND,
+	DUSTYSTATE_JUMP,
+	DUSTYSTATE_FALL,
+	DUSTYSTATE_HOP,
+	DUSTYSTATE_WALLJUMP,
+	DUSTYSTATE_PREPARELAUNCH,
+	DUSTYSTATE_LAUNCH,
+	DUSTYSTATE_DIE,
 };
 
 struct SDusty
@@ -33,18 +37,13 @@ struct SDusty
 	int Top;
 	int Bottom;
 
+	EDirection Direction;
+
 	float FloatX;
 	float FloatY;
 	float FloatGravity;
 	float FloatVelocityX;
 	float FloatVelocityY;
-
-	int JumpQueue;
-
-	int HopRightSprite;
-	int HopLeftSprite;
-
-	int LastDirectionSprite;
 
 	int SpriteTransition;
 

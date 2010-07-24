@@ -260,8 +260,8 @@ void LoadChapter(const char* filename)
 
 						if (strcasecmp(Block->Desc, "dusty") == 0)
 						{
-							Dusty.FloatX = x * 64;
-							Dusty.FloatY = y * 64;
+							Dusty.FloatX = (float)x * 64;
+							Dusty.FloatY = (float)y * 64;
 							Page->Blocks[y * Page->Width + x] = SPECIALBLOCKID_BLANK;
 						}
 					}
@@ -285,13 +285,13 @@ void CalculateScrollY()
 	// Screen tracks Dusty upwards.
 	if (Dusty.FloatY + ScrollY < 300)
 	{
-		ScrollY = 300 - Dusty.FloatY;
+		ScrollY = 300 - (int)Dusty.FloatY;
 	}
 
 	// Screen also tracks Dusty downwards.
 	if (Dusty.FloatY + ScrollY > gxScreenHeight - 100)
 	{
-		ScrollY = (gxScreenHeight - 100) - Dusty.FloatY;
+		ScrollY = (gxScreenHeight - 100) - (int)Dusty.FloatY;
 	}
 
 	// Prevent scrolling off bottom of map.

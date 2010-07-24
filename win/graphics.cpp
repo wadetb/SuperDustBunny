@@ -241,6 +241,15 @@ void gxDrawSprite( int x, int y, gxSprite* p )
 	_gxDrawQuad( x, y, p->width, p->height );
 }
 
+void gxDrawSpriteScaled( int x, int y, float scalex, float scaley, gxSprite* p )
+{
+	gxDev->SetTexture( 0, p->tex );
+	gxDev->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
+	gxDev->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
+	gxDev->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
+	_gxDrawQuad( x, y, p->width*scalex, p->height*scaley );
+}
+
 void gxDrawSprite0( int x, int y, gxSprite* p )
 {
 	gxDev->SetTexture( 0, p->tex );
@@ -265,15 +274,6 @@ void gxDrawSpriteScaledFilled( int x, int y, gxSprite* p, int w, int h, DWORD co
 	gxDev->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
 	gxDev->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
 	_gxDrawQuad( x, y, w, h, col );
-}
-
-void gxDrawSpriteScaled( int x, int y, gxSprite* p, int w, int h )
-{
-	gxDev->SetTexture( 0, p->tex );
-	gxDev->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
-	gxDev->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
-	gxDev->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
-	_gxDrawQuad( x, y, w, h );
 }
 
 void gxDrawSpriteAlpha( int x, int y, gxSprite* p, int alpha )

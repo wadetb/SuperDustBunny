@@ -387,9 +387,9 @@ void UpdateGame_WinScreen()
 
 void SetGameState_Playing()
 {
+	InitDusty();
+	InitVacuum();
     LoadChapter("Docs/Design.txt");
-    InitDusty();
-    InitVacuum();
 	GameState = GAMESTATE_PLAYING;
 }
 
@@ -446,8 +446,8 @@ void DisplayGame_Playing()
 	if (DevMode)
 	{		
 		// Status of common variables
-		gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %.1f %.1f ) State: %d Col: %d%d%d%d JumpQ: %d", Dusty.FloatX, Dusty.FloatY, Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide,
-			Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide, Dusty.JumpQueue);
+		gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "( %.1f %.1f ) State: %d Col: %d%d%d%d", 
+			Dusty.FloatX, Dusty.FloatY, Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide, Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide);
 
 		// Indicator for when slow motion is activated.
 		if (SlowMotionMode)
@@ -518,7 +518,7 @@ void UpdateGame_Playing()
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	UpdateVacuum();  
 	
-    if (Dusty.FloatY < 300)
+    if (Dusty.State != DUSTYSTATE_DIE && Dusty.FloatY < 300)
     {
         SetGameState_WinScreen();
     } 
@@ -546,7 +546,6 @@ void Display()
 	{
 		DisplayGame_Playing();
 	}
-
 }
 
 bool Update()

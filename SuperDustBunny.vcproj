@@ -241,14 +241,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\FireWorks.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\FireWorks.h"
-			>
-		</File>
-		<File
 			RelativePath=".\SuperDustBunny.cpp"
 			>
 		</File>

@@ -58,7 +58,7 @@ extern int ScrollY;
 #define White gxRGB32(255, 255, 255)
 #define Black gxRGB32(0, 0, 0)
 
-inline int Max(int a, int b)
+inline float Max(float a, float b)
 {
 	if (a > b)
 	{
@@ -70,7 +70,7 @@ inline int Max(int a, int b)
 	}
 }
 
-inline int Min(int a, int b)
+inline float Min(float a, float b)
 {
 	if ( a < b)
 	{
@@ -84,6 +84,7 @@ inline int Min(int a, int b)
 
 #ifdef PLATFORM_WINDOWS
 #define strcasecmp _stricmp
+#define strdup _strdup
 #endif
 
 extern gxSprite DustyHop01;
