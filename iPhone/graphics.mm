@@ -251,13 +251,13 @@ void gxDrawSpriteScaledFilled(int x, int y, gxSprite* sprite, int width, int hei
 	_gxDrawQuad(x, y, width * sprite->texWidth/sprite->width, height * sprite->texHeight/sprite->height);
 }
 
-void gxDrawSpriteScaled(int x, int y, gxSprite* sprite, int width, int height)
+void gxDrawSpriteScaled(int x, int y, float scalex, float scaley, gxSprite* sprite)
 {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, sprite->tex);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	_gxDrawQuad(x, y, width * sprite->texWidth/sprite->width, height * sprite->texHeight/sprite->height);
+	_gxDrawQuad(x, y, scalex * sprite->texWidth, scaley * sprite->texHeight);
 }
 
 void gxDrawSpriteClipped( int x, int y, gxSprite* p, int srcx, int srcy, int srcw, int srch )

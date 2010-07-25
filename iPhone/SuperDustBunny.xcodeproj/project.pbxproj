@@ -19,6 +19,9 @@
 		08D1F8F511FA791100241F37 /* Coin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D1F8EF11FA791100241F37 /* Coin.cpp */; };
 		08D1F8F611FA791100241F37 /* Dusty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D1F8F111FA791100241F37 /* Dusty.cpp */; };
 		08D1F8F711FA791100241F37 /* Vacuum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D1F8F311FA791100241F37 /* Vacuum.cpp */; };
+		08D1F9AA11FA7DB100241F37 /* Data in Resources */ = {isa = PBXBuildFile; fileRef = 08D1F95611FA7DB100241F37 /* Data */; };
+		08D1F9CC11FBB40D00241F37 /* FireWorks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D1F9C811FBB40D00241F37 /* FireWorks.cpp */; };
+		08D1F9CD11FBB40D00241F37 /* TennisBall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D1F9CA11FBB40D00241F37 /* TennisBall.cpp */; };
 		08F7618011F27E95006C8C45 /* chapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08F7617D11F27E95006C8C45 /* chapter.cpp */; };
 		08F7622411F27FBF006C8C45 /* Design.txt in Resources */ = {isa = PBXBuildFile; fileRef = 08F7622211F27FBF006C8C45 /* Design.txt */; };
 		08F7622511F27FBF006C8C45 /* TODO.txt in Resources */ = {isa = PBXBuildFile; fileRef = 08F7622311F27FBF006C8C45 /* TODO.txt */; };
@@ -53,6 +56,11 @@
 		08D1F8F211FA791100241F37 /* Dusty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Dusty.h; path = ../Dusty.h; sourceTree = SOURCE_ROOT; };
 		08D1F8F311FA791100241F37 /* Vacuum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Vacuum.cpp; path = ../Vacuum.cpp; sourceTree = SOURCE_ROOT; };
 		08D1F8F411FA791100241F37 /* Vacuum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Vacuum.h; path = ../Vacuum.h; sourceTree = SOURCE_ROOT; };
+		08D1F95611FA7DB100241F37 /* Data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Data; path = ../../Data; sourceTree = SOURCE_ROOT; };
+		08D1F9C811FBB40D00241F37 /* FireWorks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FireWorks.cpp; path = ../FireWorks.cpp; sourceTree = SOURCE_ROOT; };
+		08D1F9C911FBB40D00241F37 /* FireWorks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FireWorks.h; path = ../FireWorks.h; sourceTree = SOURCE_ROOT; };
+		08D1F9CA11FBB40D00241F37 /* TennisBall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TennisBall.cpp; path = ../TennisBall.cpp; sourceTree = SOURCE_ROOT; };
+		08D1F9CB11FBB40D00241F37 /* TennisBall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TennisBall.h; path = ../TennisBall.h; sourceTree = SOURCE_ROOT; };
 		08F7617D11F27E95006C8C45 /* chapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = chapter.cpp; path = ../chapter.cpp; sourceTree = SOURCE_ROOT; };
 		08F7617E11F27E95006C8C45 /* chapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = chapter.h; path = ../chapter.h; sourceTree = SOURCE_ROOT; };
 		08F7617F11F27E95006C8C45 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = common.h; path = ../common.h; sourceTree = SOURCE_ROOT; };
@@ -134,6 +142,10 @@
 		28EEBF621118D79A00187D67 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				08D1F9C811FBB40D00241F37 /* FireWorks.cpp */,
+				08D1F9C911FBB40D00241F37 /* FireWorks.h */,
+				08D1F9CA11FBB40D00241F37 /* TennisBall.cpp */,
+				08D1F9CB11FBB40D00241F37 /* TennisBall.h */,
 				08D1F8EF11FA791100241F37 /* Coin.cpp */,
 				08D1F8F011FA791100241F37 /* Coin.h */,
 				08D1F8F111FA791100241F37 /* Dusty.cpp */,
@@ -162,6 +174,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				08D1F95611FA7DB100241F37 /* Data */,
 				08F7622111F27FBF006C8C45 /* Docs */,
 				2860E32A111B888700E27156 /* iPad */,
 				2860E324111B887F00E27156 /* iPhone */,
@@ -242,6 +255,7 @@
 				2860E32F111B888700E27156 /* MainWindow_Pad.xib in Resources */,
 				08F7622411F27FBF006C8C45 /* Design.txt in Resources */,
 				08F7622511F27FBF006C8C45 /* TODO.txt in Resources */,
+				08D1F9AA11FA7DB100241F37 /* Data in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -265,6 +279,8 @@
 				08D1F8F511FA791100241F37 /* Coin.cpp in Sources */,
 				08D1F8F611FA791100241F37 /* Dusty.cpp in Sources */,
 				08D1F8F711FA791100241F37 /* Vacuum.cpp in Sources */,
+				08D1F9CC11FBB40D00241F37 /* FireWorks.cpp in Sources */,
+				08D1F9CD11FBB40D00241F37 /* TennisBall.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

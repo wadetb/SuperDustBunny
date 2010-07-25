@@ -71,9 +71,7 @@ void sxGetOpenALAudioData(CFURLRef inFileURL, void** outData, ALsizei *outDataSi
 
 void sxLoadSound(const char* filename, sxSound* sound)
 {
-	NSString* name = [[[[[NSString alloc] initWithCString:filename] autorelease] pathComponents] lastObject];
-	NSString* path = [[NSBundle mainBundle] pathForResource:[name stringByDeletingPathExtension] ofType:[name pathExtension]];
-	CFURLRef url = (CFURLRef)[[NSURL fileURLWithPath:path] retain];
+	CFURLRef url = (CFURLRef)[[NSURL fileURLWithPath:[[NSString alloc] initWithCString:filename]] retain];
 	
 	ALenum format;
 	ALsizei size;
