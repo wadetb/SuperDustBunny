@@ -30,6 +30,7 @@ bool TitleScreenButtonPressed = false;
 bool RetryScreenButtonPressed = false;
 bool NextPageButtonPressed = false;
 
+bool DisplayHelp = false;
 bool DevMode = false;
 bool SlowMotionMode = false;
 
@@ -599,6 +600,37 @@ void Display()
 	{
 		DisplayGame_Playing();
 	}
+
+#ifdef PLATFORM_WINDOWS
+	if (DisplayHelp)
+	{
+		gxDrawString(20,  2*16, 16, gxRGB32(255, 255, 255), " - - - - - - - - - - - - - - - - - - - - - - ");
+		gxDrawString(20,  3*16, 16, gxRGB32(255, 255, 255), "     Super Dust Bunny Keyboard Commands      ");
+		gxDrawString(20,  4*16, 16, gxRGB32(255, 255, 255), "                                             ");
+		gxDrawString(20,  5*16, 16, gxRGB32(255, 255, 255), " Global:                                     ");
+		gxDrawString(20,  6*16, 16, gxRGB32(255, 255, 255), "                                             ");
+		gxDrawString(20,  7*16, 16, gxRGB32(255, 255, 255), " F1    - Toggle help                         ");
+		gxDrawString(20,  8*16, 16, gxRGB32(255, 255, 255), " F2    - Emulate iPhone display size         ");
+		gxDrawString(20,  9*16, 16, gxRGB32(255, 255, 255), " F3    - Emulate iPad display size           ");
+		gxDrawString(20, 10*16, 16, gxRGB32(255, 255, 255), "                                             ");
+		gxDrawString(20, 11*16, 16, gxRGB32(255, 255, 255), " While playing:                              ");
+		gxDrawString(20, 12*16, 16, gxRGB32(255, 255, 255), "                                             ");
+		gxDrawString(20, 13*16, 16, gxRGB32(255, 255, 255), " Home  - Toggle development mode             ");
+		gxDrawString(20, 14*16, 16, gxRGB32(255, 255, 255), " \\     - Hold for slow motion                ");
+		gxDrawString(20, 15*16, 16, gxRGB32(255, 255, 255), " ]     - Step one frame (in slow motion)     ");
+		gxDrawString(20, 16*16, 16, gxRGB32(255, 255, 255), "                                             ");
+		gxDrawString(20, 17*16, 16, gxRGB32(255, 255, 255), " A     - Hop left                            ");
+		gxDrawString(20, 18*16, 16, gxRGB32(255, 255, 255), " D     - Hop right                           ");
+		gxDrawString(20, 19*16, 16, gxRGB32(255, 255, 255), " Space - Jump                                ");
+		gxDrawString(20, 20*16, 16, gxRGB32(255, 255, 255), " Enter - Advance menus                       ");
+		gxDrawString(20, 21*16, 16, gxRGB32(255, 255, 255), "                                             ");
+		gxDrawString(20, 22*16, 16, gxRGB32(255, 255, 255), " - - - - - - - - - - - - - - - - - - - - - - ");
+	}
+	else
+	{
+		gxDrawString(20, gxScreenHeight - 36, 16, gxRGB32(255, 255, 255), "Press F1 for help");
+	}
+#endif
 }
 
 bool Update()
@@ -649,17 +681,25 @@ bool Update()
 		return false;
 	}
 
-	// Pressing F1-F2 emulates different screen sizes.
-	// F1 - iPhone
-	// F2 - iPad
+	// Pressing F1 triggers the help screen.
 	if (kbIsKeyDown(KB_F1) && !kbWasKeyDown(KB_F1))
+	{
+		DisplayHelp = !DisplayHelp;
+	}
+
+	// Pressing F2-F3 emulates different screen sizes.
+	// F2 - iPhone
+	// F3 - iPad
+	if (kbIsKeyDown(KB_F2) && !kbWasKeyDown(KB_F2))
 	{
 		gxEmulateDisplaySize(GXDISPLAY_IPHONE_PORTRAIT);
 	}
-	if (kbIsKeyDown(KB_F2) && !kbWasKeyDown(KB_F2))
+	if (kbIsKeyDown(KB_F3) && !kbWasKeyDown(KB_F3))
 	{
 		gxEmulateDisplaySize(GXDISPLAY_IPAD_PORTRAIT);
 	}
+
+
 #endif
 
 	if (GameState == GAMESTATE_START_SCREEN)	
