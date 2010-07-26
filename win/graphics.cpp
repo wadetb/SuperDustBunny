@@ -7,6 +7,7 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <shlwapi.h>
+#include <windowsx.h>
 
 #pragma comment(lib,"d3d9.lib")
 #pragma comment(lib,"d3dx9.lib")
@@ -128,28 +129,58 @@ void gxInitFontSprite()
 	gxFontSprite.tex->UnlockRect(0);
 }
 
-void gxInit( gxDisplayType disp )
+void gxGetDisplayResolution( gxDisplayType disp, int* w, int* h )
 {
 	switch (disp) 
 	{
 	case GXDISPLAY_IPHONE_PORTRAIT:
-		gxScreenWidth = 320;
-		gxScreenHeight = 480;
+		*w = 320;
+		*h = 480;
 		break;
 	case GXDISPLAY_IPHONE_LANDSCAPE:
-		gxScreenWidth = 480;
-		gxScreenHeight = 320;
+		*w = 480;
+		*h = 320;
 		break;
 	case GXDISPLAY_IPAD_PORTRAIT: 
-		gxScreenWidth = 768;
-		gxScreenHeight = 1024;
+		*w = 768;
+		*h = 1024;
 		break;
 	case GXDISPLAY_IPAD_LANDSCAPE: 
-		gxScreenWidth = 1024;
-		gxScreenHeight = 768;
+		*w = 1024;
+		*h = 768;
 		break;
 	}
-	
+}
+
+void gxGetDisplaySize( gxDisplayType disp, int* w, int* h )
+{
+	switch (disp) 
+	{
+	case GXDISPLAY_IPHONE_PORTRAIT:
+		*w = (int)(320/6.3f);
+		*h = (int)(480/6.3f);
+		break;
+	case GXDISPLAY_IPHONE_LANDSCAPE:
+		*w = (int)(480/6.3f);
+		*h = (int)(320/6.3f);
+		break;
+	case GXDISPLAY_IPAD_PORTRAIT: 
+		*w = (int)(768/5.2f);
+		*h = (int)(1024/5.2f);
+		break;
+	case GXDISPLAY_IPAD_LANDSCAPE: 
+		*w = (int)(1024/5.2f);
+		*h = (int)(768/5.2f);
+		break;
+	}
+}
+
+//2016mm x 3024mm
+
+void gxInit( gxDisplayType disp )
+{
+	gxGetDisplayResolution( disp, &gxScreenWidth, &gxScreenHeight );
+
 	gxD3D = Direct3DCreate9( D3D_SDK_VERSION );
 
 	D3DPRESENT_PARAMETERS d3dpp = { 0 };
@@ -172,9 +203,6 @@ void gxInit( gxDisplayType disp )
 	gxDev->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER|D3DCLEAR_STENCIL, 0, 1.0f, 0 );
 	gxDev->SetRenderState( D3DRS_CULLMODE, D3DCULL_NONE ); 
 
-	MoveWindow( hWnd, 0, 0, gxScreenWidth, gxScreenHeight, TRUE );
-	ShowWindow( hWnd, SW_SHOW );
-
 	// Set up default modulation.
 	gxDev->SetTextureStageState( 0, D3DTSS_COLOROP, D3DTOP_MODULATE );
 	gxDev->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
@@ -186,6 +214,29 @@ void gxInit( gxDisplayType disp )
 	msSetMouseRange( 0, 0, gxScreenWidth, gxScreenHeight );
 
 	gxInitFontSprite();
+
+	gxEmulateDisplaySize( disp );
+}
+
+void gxEmulateDisplaySize( gxDisplayType disp )
+{
+	int scrw, scrh;
+	gxGetDisplaySize( disp, &scrw, &scrh );
+
+	HDC dc = GetDC(hWnd);
+	int mmw = GetDeviceCaps(dc, HORZSIZE);
+	int mmh = GetDeviceCaps(dc, VERTSIZE);
+	int pxw = GetDeviceCaps(dc, HORZRES);
+	int pxh = GetDeviceCaps(dc, VERTRES);
+
+	int winw = scrw * pxw / mmw;
+	int winh = scrh * pxh / mmh;
+
+	RECT r = { 0, 0, winw, winh };
+	AdjustWindowRect( &r, GetWindowStyle( hWnd ), FALSE );
+
+	SetWindowPos( hWnd, HWND_TOP, 0, 0, r.right-r.left+1, r.bottom-r.top+1, SWP_NOMOVE );
+	ShowWindow( hWnd, SW_SHOW );
 }
 
 void gxDeinit()
@@ -425,12 +476,12 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,  LPSTR lpCmdLi
 	{
 		sizeof(WNDCLASSEX), CS_CLASSDC, WindowProc, 0L, 0L,
 		GetModuleHandle(NULL), LoadIcon(NULL, IDI_APPLICATION), LoadCursor(NULL,IDC_ARROW), NULL, NULL,
-		"Training", NULL 
+		"graphics", NULL 
 	};
 	RegisterClassEx( &wc );
 
 	// Create the application's window
-	hWnd = CreateWindow( "Training", "", WS_OVERLAPPEDWINDOW, 100, 100, 640, 480, GetDesktopWindow(), NULL, wc.hInstance, NULL );
+	hWnd = CreateWindow( "graphics", "", WS_OVERLAPPEDWINDOW, 100, 100, 640, 480, GetDesktopWindow(), NULL, wc.hInstance, NULL );
 
 	Init();
 

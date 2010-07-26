@@ -462,6 +462,7 @@ void DisplayGame_Playing()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
     DisplayScore();
+
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Debugging aids                                                                        //
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -646,6 +647,18 @@ bool Update()
 	if (kbIsKeyDown(KB_ESCAPE))
 	{
 		return false;
+	}
+
+	// Pressing F1-F2 emulates different screen sizes.
+	// F1 - iPhone
+	// F2 - iPad
+	if (kbIsKeyDown(KB_F1) && !kbWasKeyDown(KB_F1))
+	{
+		gxEmulateDisplaySize(GXDISPLAY_IPHONE_PORTRAIT);
+	}
+	if (kbIsKeyDown(KB_F2) && !kbWasKeyDown(KB_F2))
+	{
+		gxEmulateDisplaySize(GXDISPLAY_IPAD_PORTRAIT);
 	}
 #endif
 

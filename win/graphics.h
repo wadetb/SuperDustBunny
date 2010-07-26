@@ -118,6 +118,8 @@ enum gxDisplayType
 void gxInit( gxDisplayType type );
 void gxDeinit();
 
+void gxEmulateDisplaySize( gxDisplayType type );
+
 /*--------------------------------------------------------------------------------------------------------
 
   gxScreenWidth and gxScreenHeight

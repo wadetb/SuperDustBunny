@@ -20,7 +20,7 @@ enum EFireWorkState
 
 struct SFireWork
 {
-	int X, Y;
+	float X, Y;
 
 	EFireWorkState State;
 

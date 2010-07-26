@@ -21,8 +21,8 @@ void CreateFireWork(int X, int Y, const char* Desc)
 {
 	SFireWork* FireWork = &FireWorks[NFireWorks++];
 
-	FireWork->X = X + 32;
-	FireWork->Y = Y + 32;
+	FireWork->X = (float)X + 32;
+	FireWork->Y = (float)Y + 32;
 
 	sscanf(Desc, "firework dir=%d", &FireWork->Dir);
 
@@ -42,12 +42,12 @@ void DisplayFireWorks()
 		
 		if (FireWork->State == FIREWORKSTATE_WAIT || FireWork->State == FIREWORKSTATE_LAUNCH)
 		{
-			gxDrawSpriteCenteredRotated(FireWork->X, FireWork->Y + ScrollY, FireWork->Dir * 3.14159f / 180.0f, &FireWork01);
+			gxDrawSpriteCenteredRotated((int)FireWork->X, (int)FireWork->Y + ScrollY, FireWork->Dir * 3.14159f / 180.0f, &FireWork01);
 		}
 
 		if (FireWork->State == FIREWORKSTATE_EXPLODE)
 		{
-			gxDrawSpriteCenteredRotated( FireWork->X, FireWork->Y + ScrollY, 0, &FireWork02);				
+			gxDrawSpriteCenteredRotated( (int)FireWork->X, (int)FireWork->Y + ScrollY, 0, &FireWork02);				
 		}
 	}
 }
@@ -66,8 +66,6 @@ void UpdateFireWorks()
 
 			if (Dist < 70)
 			{
-				Dusty.FloatX = FireWork->X;
-				Dusty.FloatY = (FireWork->Y) + 50;
 				FireWork->Timer = 10;
 				FireWork->State = FIREWORKSTATE_LAUNCH;
 			}
