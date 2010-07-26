@@ -10,6 +10,7 @@
 #include "Common.h"
 #include "FireWorks.h"
 #include "Dusty.h"
+#include "chapter.h"
 
 #define MAX_FIREWORKS 100
 

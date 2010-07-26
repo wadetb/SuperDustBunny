@@ -16,10 +16,19 @@
 #include "FireWorks.h"
 
 SChapter Chapter;
+SScore Score;
 
 extern gxSprite UnknownBlock;
 
 int ScrollY;
+
+void InitScore()
+{
+    Score.RaiseScore = false;
+    Score.ScoreCounter = 0;
+    Score.X = 600;
+    Score.Y = 0;
+}
 
 void GetNextLine(FILE* File, char* Line, int LineSize)
 {
@@ -377,3 +386,33 @@ bool IsBlockSolid(int x, int y)
 	return !IsBlockEmpty(x, y);
 }
 
+void DisplayScore()
+{
+    gxDrawString(600, 0, 16, gxRGB32(255, 255, 255), "Score: %d", Score.ScoreCounter);
+}
+
+void UpdateScore()
+{
+    if (Dusty.State == DUSTYSTATE_JUMP || Dusty.State == DUSTYSTATE_LAUNCH)
+    {
+        Score.RaiseScore = true;
+    }
+    else
+    {   
+        Score.RaiseScore = false;
+    }
+    //
+    //if (FireWork->State == FIREWORKSTATE_EXPLODE)
+    //{
+    //    Score->ScoreCounter += 10;
+    //}
+    
+    if (Score.RaiseScore == true)
+    {
+        Score.ScoreCounter += 1;
+    }
+    else
+    {
+        Score.ScoreCounter += 0;
+    }
+}

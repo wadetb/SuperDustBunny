@@ -91,6 +91,8 @@ gxSprite DieScreen1;
 gxSprite WinScreen0;
 gxSprite WinScreen1;
 
+gxSprite Score01;
+
 sxSound DustyToJump;
 sxSound DustyJumps;
 sxSound WallJump;
@@ -173,6 +175,8 @@ void Init()
 
 	gxLoadSprite("Data/FireWork01.png", &FireWork01);
 	gxLoadSprite("Data/FireWork02.png", &FireWork02);
+	
+	gxLoadSprite("Data/Score01.png", &Score01);
 
     sxLoadWav ("Data/yaahooo.wav", &DustyToJump);
     sxLoadWav ("Data/yaahooo.wav", &DustyJumps);
@@ -372,6 +376,7 @@ void UpdateGame_WinScreen()
     // Advance to playing state when return key is released.
     if (!kbIsKeyDown(KB_RETURN) && kbWasKeyDown(KB_RETURN))
     {
+        Score.ScoreCounter = 0;
         SetGameState_Playing();
         return;
     }
@@ -404,7 +409,7 @@ void DisplayGame_Playing()
 {
 	// Calculate scrolling.
 	CalculateScrollY();
-
+	
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Non-scrolling background Drawing                                                      //
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -451,7 +456,12 @@ void DisplayGame_Playing()
 	//                                                   FireWork Drawing                                                                        //
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	DisplayFireWorks();
+	
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Score Update                                                                      //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
+    DisplayScore();
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Debugging aids                                                                        //
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -548,6 +558,11 @@ void UpdateGame_Playing()
 		//                                                   FireWork Update                                                                       //
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		UpdateFireWorks();
+		
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+        //                                                   Score Update                                                                       //
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+		UpdateScore();
 	}
 
 	    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
