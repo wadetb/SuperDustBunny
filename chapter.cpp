@@ -114,6 +114,11 @@ void LoadChapter(const char* filename)
 					{
 						Block->Destructible = true;
 					}
+					
+					if (strstr(Block->Desc, "EndOfLevel.png"))
+					{
+					    Block->EndOfLevel = true;
+					}
 				}
 
 				Chapter.NBlocks++;
@@ -264,7 +269,7 @@ void LoadChapter(const char* filename)
 							CreateFireWork(x * 64, y * 64, Block->Desc);
 							Page->Blocks[y * Page->Width + x] = SPECIALBLOCKID_BLANK;
 						}
-
+						
 						if (strcasecmp(Block->Desc, "dusty") == 0)
 						{
 							Dusty.FloatX = (float)x * 64;

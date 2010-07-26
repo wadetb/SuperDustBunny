@@ -65,5 +65,6 @@ void InitDusty();
 void SetDustyState_PrepareLaunch();
 void SetDustyState_Launch(float VelocityX, float VelocityY);
 void SetDustyState_Die();
+void CreateEndOfLevel(int X, int Y, const char* Desc);
 
 #endif

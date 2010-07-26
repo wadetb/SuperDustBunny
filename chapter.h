@@ -31,6 +31,7 @@ struct SBlock
 	char* Desc;
 	gxSprite Sprite;
 	bool Destructible;
+	bool EndOfLevel;
 };
 
 struct SPage
