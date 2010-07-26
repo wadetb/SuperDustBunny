@@ -54,6 +54,7 @@ struct SDusty
 	bool CollideWithRightSide;
 	bool CollideWithTopSide;
 	bool CollideWithBottomSide;
+	bool CanCollideWithWall;
 };
 
 extern SDusty Dusty;
