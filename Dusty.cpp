@@ -540,28 +540,24 @@ void SetDustyState_Launch(float VelocityX, float VelocityY)
 
 void DisplayDusty_Launch()
 {
-	if (Dusty.FloatVelocityY > 0) // Falling
+	float ScaleX, OffsetX;
+	if (Dusty.Direction == DIRECTION_RIGHT)
 	{
-		if (Dusty.FloatVelocityX >= 0)
-		{
-			gxDrawSprite( (int)Dusty.FloatX-125, (int)(Dusty.FloatY - 221) + ScrollY, &DustyHop02 );
-		}
-		else
-		{
-			gxDrawSprite( (int)Dusty.FloatX-130, (int)(Dusty.FloatY - 217) + ScrollY, &DustyHopLeft02 );
-		}
+		ScaleX = 1.0f;
+		OffsetX = 0.0f;
 	}
-	else // Rising
+	else
 	{
-		if (Dusty.FloatVelocityX >= 0)
-		{
-			gxDrawSprite( (int)Dusty.FloatX-107, (int)(Dusty.FloatY - 177) + ScrollY, &DustyHop03 );
-		} 
-		else
-		{
-			gxDrawSprite( (int)Dusty.FloatX-145, (int)(Dusty.FloatY - 177) + ScrollY, &DustyHopLeft03 );
-		}
+		ScaleX = -1.0f;
+		OffsetX = 256.0f;
 	}
+
+	if (Dusty.FloatVelocityY <= -5)
+		gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 160 + ScrollY), ScaleX, 1.0f, &DustyHop03 );
+	else if (Dusty.FloatVelocityY >= 5)
+		gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 160 + ScrollY), ScaleX, 1.0f, &DustyHop05 );
+	else
+		gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 160 + ScrollY), ScaleX, 1.0f, &DustyHop04 );
 }
 
 void UpdateDusty_Launch()
