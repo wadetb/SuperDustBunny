@@ -50,6 +50,10 @@
 #include <ctype.h>
 #include <math.h>
 
+// Constants
+
+static const float PI = acosf(-1.0f);
+
 // Macros
 
 extern bool DevMode;

@@ -43,6 +43,14 @@ void DisplayBarrels()
 	}
 }
 
+int GetDirDifference(int a, int b) 
+{
+	int mn = a - b;
+	while (mn < -180) mn += 360;
+	while (mn > 180) mn -= 360;
+	return mn;
+}
+
 void UpdateBarrels()
 {
 	for (int i = 0; i < NBarrels; i++)
@@ -68,10 +76,17 @@ void UpdateBarrels()
 			Dusty.FloatX = (float)Barrel->X;
 			Dusty.FloatY = (float)Barrel->Y + 50;
 
-			if (Barrel->Dir != Barrel->ToDir)
-				Barrel->Dir = (Barrel->Dir+5) % 360;
+			int Diff = GetDirDifference(Barrel->Dir, Barrel->ToDir);
+			if (Diff > 5 || Diff < -5)
+			{
+				if (Diff < 0)
+					Barrel->Dir = (Barrel->Dir+5) % 360;
+				else
+					Barrel->Dir = (Barrel->Dir+355) % 360;
+			}
 			else
 			{
+				Barrel->Dir = Barrel->ToDir;
 				float Angle = (float)((90 - Barrel->Dir)) * 3.14159f/180.0f;
 				float Velocity = 20.0f;
 				SetDustyState_Launch(Velocity*cosf(Angle), -Velocity*sinf(Angle));
@@ -89,10 +104,17 @@ void UpdateBarrels()
 		}
 		else if (Barrel->State == BARRELSTATE_RESET)
 		{
-			if (Barrel->Dir != Barrel->FromDir)
-				Barrel->Dir = (Barrel->Dir+355) % 360;
+			int Diff = GetDirDifference(Barrel->Dir, Barrel->FromDir);
+			if (Diff > 5 || Diff < -5)
+			{
+				if (Diff < 0)
+					Barrel->Dir = (Barrel->Dir+5) % 360;
+				else
+					Barrel->Dir = (Barrel->Dir+355) % 360;
+			}
 			else
 			{
+				Barrel->Dir = Barrel->FromDir;
 				Barrel->State = BARRELSTATE_WAIT;
 			}
 		}
