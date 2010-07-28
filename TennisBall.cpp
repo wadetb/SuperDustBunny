@@ -22,7 +22,7 @@ void CreateBall(int X, int Y, const char* Desc)
 {
     SBall* Ball = &Balls[NBalls++];
 
-    Ball->X = X - 128;
+    Ball->X = X + 32;
     Ball->Y = Y + 32;
     
     Ball->Transition = 40;
@@ -41,22 +41,22 @@ void DisplayBall()
 
         if (Ball->Sprite == 1) 
         {
-           gxDrawSprite( Ball->X, Ball->Y + ScrollY, &Ball01 );
+           gxDrawSpriteCenteredRotated( Ball->X, Ball->Y + ScrollY, 0, &Ball01 );
         } 
 
         if (Ball->Sprite == 2)
         {
-            gxDrawSprite( Ball->X, Ball->Y + ScrollY, &Ball02 );
+            gxDrawSpriteCenteredRotated( Ball->X, Ball->Y + ScrollY, 0, &Ball02 );
         } 
 
         if (Ball->Sprite == 3)
         {
-            gxDrawSprite( Ball->X, Ball->Y + ScrollY, &Ball03 );
+            gxDrawSpriteCenteredRotated( Ball->X, Ball->Y + ScrollY, 0, &Ball03 );
         }
 
         if (Ball->Sprite == 4)
         {
-            gxDrawSprite( Ball->X, Ball->Y + ScrollY, &Ball04 );
+            gxDrawSpriteCenteredRotated( Ball->X, Ball->Y + ScrollY, 0, &Ball04 );
         }   
     }    
 }

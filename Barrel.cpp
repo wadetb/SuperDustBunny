@@ -55,7 +55,7 @@ void UpdateBarrels()
 			float YDist = (float)((Dusty.FloatY-50) - (Barrel->Y));
 			float Dist = sqrtf(XDist*XDist + YDist*YDist);
 
-			if (Dist < 70)
+			if (Dist < 100)
 			{
 				Dusty.FloatX = (float)Barrel->X;
 				Dusty.FloatY = (float)Barrel->Y + 50;

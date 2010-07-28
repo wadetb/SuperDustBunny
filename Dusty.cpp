@@ -476,7 +476,7 @@ void UpdateDusty_WallJump()
 	// Jump off wall by pressing jump
 	if (GetInput_Jump())
 	{               
-	    Dusty.CanCollideWithWall = false;
+	    //Dusty.CanCollideWithWall = false;
 		SetDustyState_Jump( true );
 		return;
 	}
