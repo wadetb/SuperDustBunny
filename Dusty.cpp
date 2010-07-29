@@ -38,7 +38,7 @@ void InitDusty()
 
 	Dusty.SpriteTransition = 0;
 
-	Dusty.CanWallJump = true;
+	Dusty.HasWallJumped = false;
 	Dusty.WallStickTimer = 0;
 	Dusty.LastWall = DIRECTION_LEFT;
 
@@ -70,7 +70,7 @@ void UpdateDusty_JumpCommon();
 
 void SetDustyState_Stand()
 {
-	Dusty.CanWallJump = true;
+	Dusty.HasWallJumped = false;
 
 	Dusty.FloatVelocityX = 0;
 	Dusty.FloatVelocityY = 0;
@@ -152,7 +152,6 @@ void SetDustyState_Jump( bool OffWall )
 	if (Dusty.Direction == DIRECTION_LEFT)
 		Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
 
-    Dusty.CanWallJump = true;
 	Dusty.State = DUSTYSTATE_JUMP;
 }
 
@@ -390,24 +389,25 @@ void UpdateDusty_JumpCommon()
 		if (Dusty.FloatVelocityX <= 6)
 			Dusty.FloatVelocityX += 1.0f;
 	}
-
-	// Collision with either side of screen
-	if (Dusty.CanWallJump == true && Dusty.LastWall == DIRECTION_LEFT)	
+	
+    // Collision with either side of screen
+    if ( Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide && Dusty.HasWallJumped == false)	
+    {
+        SetDustyState_WallJump();
+        return;
+    }   
+    
+    
+	if (Dusty.HasWallJumped == true && Dusty.LastWall == DIRECTION_LEFT && Dusty.CollideWithLeftSide)	
 	{
-	    if (Dusty.Direction == DIRECTION_LEFT && Dusty.CollideWithLeftSide)
-	    {
             SetDustyState_WallJump();
             return;
-	    } 
 	}
-	else
-	if (Dusty.CanWallJump == true && Dusty.LastWall == DIRECTION_RIGHT)
+
+	if (Dusty.HasWallJumped == true && Dusty.LastWall == DIRECTION_RIGHT && Dusty.CollideWithRightSide)
 	{
-	    if (Dusty.Direction == DIRECTION_RIGHT && Dusty.CollideWithRightSide)
-	    {
             SetDustyState_WallJump();			
             return;
-	    }
 	}
 }
 
@@ -428,7 +428,7 @@ void SetDustyState_WallJump()
 	else
 		Dusty.Direction = DIRECTION_RIGHT;
 		
-	Dusty.CanWallJump = false;	
+	Dusty.HasWallJumped = false;	
 
 	Dusty.State = DUSTYSTATE_WALLJUMP;
 }
@@ -495,6 +495,7 @@ void UpdateDusty_WallJump()
             Dusty.LastWall = DIRECTION_RIGHT;
         }   
             
+        Dusty.HasWallJumped = true;
 		SetDustyState_Jump( true );
 		return;
 	}
@@ -514,7 +515,7 @@ void UpdateDusty_WallJump()
 
 void SetDustyState_PrepareLaunch()
 {
-    Dusty.CanWallJump = true;
+    Dusty.HasWallJumped = true;
     Dusty.State = DUSTYSTATE_PREPARELAUNCH;
 }
 
@@ -591,7 +592,7 @@ void UpdateDusty_Launch()
 		return;
 	} 
 
-	if ((Dusty.CollideWithLeftSide == true || Dusty.CollideWithRightSide == true) && Dusty.CanWallJump)
+	if ((Dusty.CollideWithLeftSide == true || Dusty.CollideWithRightSide == true) && Dusty.HasWallJumped)
 	{	    
 		SetDustyState_WallJump();
 		return;

@@ -47,7 +47,7 @@ struct SDusty
 
 	int SpriteTransition;
 
-	bool CanWallJump;
+	bool HasWallJumped;
 	int WallStickTimer;
 	int LastWall;
 
