@@ -45,7 +45,6 @@ void InitDusty()
 	Dusty.CollideWithRightSide = false;
 	Dusty.CollideWithTopSide = false;
 	Dusty.CollideWithBottomSide = false;
-	Dusty.CanCollideWithWall = true;
 };
 
 
@@ -71,7 +70,6 @@ void UpdateDusty_JumpCommon();
 void SetDustyState_Stand()
 {
 	Dusty.CanWallJump = true;
-	Dusty.CanCollideWithWall = true;
 
 	Dusty.FloatVelocityX = 0;
 	Dusty.FloatVelocityY = 0;
@@ -392,11 +390,12 @@ void UpdateDusty_JumpCommon()
 	}
 
 	// Collision with either side of screen
-	if (Dusty.CanWallJump && Dusty.CanCollideWithWall == true)
+	if (Dusty.CanWallJump == true)
 	{
 		if ( (Dusty.Direction == DIRECTION_LEFT && Dusty.CollideWithLeftSide) ||
 			 (Dusty.Direction == DIRECTION_RIGHT && Dusty.CollideWithRightSide) )
 		{
+		    Dusty.CanWallJump = false;
 			SetDustyState_WallJump();			
 			return;
 		}
@@ -410,7 +409,6 @@ void UpdateDusty_JumpCommon()
 void SetDustyState_WallJump()
 {   
 	Dusty.WallStickTimer = 15;
-	Dusty.CanWallJump = true;
 
 	Dusty.FloatVelocityX = 0;
 	Dusty.FloatVelocityY = 0;
@@ -476,7 +474,6 @@ void UpdateDusty_WallJump()
 	// Jump off wall by pressing jump
 	if (GetInput_Jump())
 	{               
-	    Dusty.CanCollideWithWall = false;
 		SetDustyState_Jump( true );
 		return;
 	}
@@ -497,7 +494,7 @@ void UpdateDusty_WallJump()
 
 void SetDustyState_PrepareLaunch()
 {
-    Dusty.CanCollideWithWall = true;
+    Dusty.CanWallJump = true;
     Dusty.State = DUSTYSTATE_PREPARELAUNCH;
 }
 
@@ -575,7 +572,7 @@ void UpdateDusty_Launch()
 	} 
 
 	if ((Dusty.CollideWithLeftSide == true || Dusty.CollideWithRightSide == true) && Dusty.CanWallJump)
-	{
+	{	    
 		SetDustyState_WallJump();
 		return;
 	}
