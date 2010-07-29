@@ -84,7 +84,7 @@ void UpdateBall()
         if (Dist >= gxScreenHeight)
         {
             sxPlaySound (&Clogged);
-            Vacuum.Timer += 500;
+            //Vacuum.Timer += 500;
         }       
                           
         if (Ball->Transition == 40)

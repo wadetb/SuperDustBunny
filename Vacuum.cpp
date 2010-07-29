@@ -74,7 +74,7 @@ void UpdateVacuum()
 		UpdateVacuum_Volume(0.8f);
 
 		// Shake the screen by adjusting ScrollY randomly.
-		ScrollY += (rand() % 5) - 2;
+		ScrollY += (rand() % 3) - 1;
 
 		Vacuum.Timer--;
 		if (Vacuum.Timer == 0)
