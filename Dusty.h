@@ -12,6 +12,7 @@
 
 enum EDirection
 {
+	DIRECTION_NONE,
 	DIRECTION_LEFT,
 	DIRECTION_RIGHT
 };
@@ -47,9 +48,8 @@ struct SDusty
 
 	int SpriteTransition;
 
-	bool HasWallJumped;
 	int WallStickTimer;
-	int LastWall;
+	EDirection LastWall;
 
 	bool CollideWithLeftSide;
 	bool CollideWithRightSide;
