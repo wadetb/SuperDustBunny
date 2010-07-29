@@ -261,5 +261,6 @@ extern IDirect3DDevice9* gxDev;
 --------------------------------------------------------------------------------------------------------*/
 void gxCreateASCIIBlockSprite(gxSprite* Sprite, const char* Key);
 void gxDrawSpriteCenteredRotated(int x, int y, float a, gxSprite* spr);
+void gxDrawSpriteCenteredScaledAlphaAdd(int x, int y, float scalex, float scaley, float alpha, gxSprite* spr);
 
 #endif

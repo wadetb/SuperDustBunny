@@ -16,6 +16,7 @@
 
 #ifdef _MSC_VER
 #define _CRT_SECURE_NO_WARNINGS
+#define _CRT_RAND_S
 #endif
 
 #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR

@@ -597,3 +597,19 @@ void gxDrawSpriteCenteredRotated(int x, int y, float a, gxSprite* spr)
 	gxDev->SetFVF( gxSpriteVertexFVF );
 	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v, sizeof(gxSpriteVertex) );
 }
+
+
+void gxDrawSpriteCenteredScaledAlphaAdd(int x, int y, float scalex, float scaley, float alpha, gxSprite* spr)
+{
+	gxDev->SetTexture( 0, spr->tex );
+	gxDev->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
+	gxDev->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
+	gxDev->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ONE );
+
+	unsigned int color = gxRGBA32(255, 255, 255, (int)(255.0f*alpha));
+
+	float w = spr->width * scalex;
+	float h = spr->height * scaley;
+
+	_gxDrawQuad( x - w/2, y - h/2, w, h, color );
+}

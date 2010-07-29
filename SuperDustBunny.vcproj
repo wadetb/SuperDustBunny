@@ -233,6 +233,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Dust.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Dust.h"
+			>
+		</File>
+		<File
 			RelativePath=".\Dusty.cpp"
 			>
 		</File>

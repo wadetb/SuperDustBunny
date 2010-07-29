@@ -15,6 +15,7 @@
 #include "Vacuum.h"
 #include "TennisBall.h"
 #include "FireWorks.h"
+#include "Dust.h"
 
 enum EGameState
 {
@@ -63,6 +64,8 @@ gxSprite UnknownBlock;
 gxSprite BarrelSprite;
 gxSprite VacuumSprite;
 gxSprite VacuumFrontSprite;
+gxSprite ArrowSprite;
+gxSprite DustMoteSprite;
 
 gxSprite Coin01;
 gxSprite Coin02;
@@ -155,6 +158,8 @@ void Init()
 	
 	gxLoadSprite("Data/vacuum.png", &VacuumSprite);
 	gxLoadSprite("Data/vacuum-front.png", &VacuumFrontSprite);
+	gxLoadSprite("Data/wind-arrow.png", &ArrowSprite);
+	gxLoadSprite("Data/dust-mote.png", &DustMoteSprite);
 
     gxLoadSprite("Data/coin0001.png", &Coin01);
     gxLoadSprite("Data/coin0002.png", &Coin02);
@@ -402,6 +407,7 @@ void SetGameState_Playing()
 {
 	InitDusty();
 	InitVacuum();
+	InitDust();
     LoadChapter("Docs/Design.txt");
 	GameState = GAMESTATE_PLAYING;
 }
@@ -442,7 +448,6 @@ void DisplayGame_Playing()
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	DisplayCoins();
 	
-
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
     //                                                   Ball Drawing                                                                          //
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -454,12 +459,17 @@ void DisplayGame_Playing()
 	DisplayVacuum_AfterDusty();
 
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   FireWork Drawing                                                                        //
+	//                                                   Dust Drawing                                                                          //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	DisplayDust();
+
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   FireWork Drawing                                                                      //
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	DisplayFireWorks();
 	
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Score Update                                                                      //
+    //                                                   Score Update                                                                          //
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
     DisplayScore();
@@ -567,6 +577,11 @@ void UpdateGame_Playing()
         // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		UpdateScore();
 	}
+
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Dust Update                                                                           //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	UpdateDust();
 
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Vacuum Update                                                                         //
