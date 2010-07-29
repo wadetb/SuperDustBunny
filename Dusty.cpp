@@ -40,6 +40,7 @@ void InitDusty()
 
 	Dusty.CanWallJump = true;
 	Dusty.WallStickTimer = 0;
+	Dusty.LastWall = DIRECTION_LEFT;
 
 	Dusty.CollideWithLeftSide = false;
 	Dusty.CollideWithRightSide = false;
@@ -151,6 +152,7 @@ void SetDustyState_Jump( bool OffWall )
 	if (Dusty.Direction == DIRECTION_LEFT)
 		Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
 
+    Dusty.CanWallJump = true;
 	Dusty.State = DUSTYSTATE_JUMP;
 }
 
@@ -180,7 +182,7 @@ void UpdateDusty_Jump()
     Dusty.FloatY += Dusty.FloatVelocityY;
       
 	Dusty.FloatVelocityY += Dusty.FloatGravity;
-
+   
 	if (Dusty.CollideWithTopSide == true)
 	{
 		SetDustyState_Fall();
@@ -390,15 +392,22 @@ void UpdateDusty_JumpCommon()
 	}
 
 	// Collision with either side of screen
-	if (Dusty.CanWallJump == true)
+	if (Dusty.CanWallJump == true && Dusty.LastWall == DIRECTION_LEFT)	
 	{
-		if ( (Dusty.Direction == DIRECTION_LEFT && Dusty.CollideWithLeftSide) ||
-			 (Dusty.Direction == DIRECTION_RIGHT && Dusty.CollideWithRightSide) )
-		{
-		    Dusty.CanWallJump = false;
-			SetDustyState_WallJump();			
-			return;
-		}
+	    if (Dusty.Direction == DIRECTION_LEFT && Dusty.CollideWithLeftSide)
+	    {
+            SetDustyState_WallJump();
+            return;
+	    } 
+	}
+	else
+	if (Dusty.CanWallJump == true && Dusty.LastWall == DIRECTION_RIGHT)
+	{
+	    if (Dusty.Direction == DIRECTION_RIGHT && Dusty.CollideWithRightSide)
+	    {
+            SetDustyState_WallJump();			
+            return;
+	    }
 	}
 }
 
@@ -418,6 +427,8 @@ void SetDustyState_WallJump()
 		Dusty.Direction = DIRECTION_LEFT;
 	else
 		Dusty.Direction = DIRECTION_RIGHT;
+		
+	Dusty.CanWallJump = false;	
 
 	Dusty.State = DUSTYSTATE_WALLJUMP;
 }
@@ -440,7 +451,7 @@ void DisplayDusty_WallJump()
 }
 
 void UpdateDusty_WallJump()
-{                                                
+{                                                   
 	if (Dusty.WallStickTimer != 0)
 	{                        
 		Dusty.WallStickTimer -= 1;
@@ -473,7 +484,17 @@ void UpdateDusty_WallJump()
 
 	// Jump off wall by pressing jump
 	if (GetInput_Jump())
-	{               
+	{ 	
+        if (Dusty.Direction == DIRECTION_LEFT)
+        {
+            Dusty.LastWall = DIRECTION_LEFT;
+        }	 
+        
+        if (Dusty.Direction == DIRECTION_RIGHT)
+        {
+            Dusty.LastWall = DIRECTION_RIGHT;
+        }   
+            
 		SetDustyState_Jump( true );
 		return;
 	}
@@ -485,7 +506,6 @@ void UpdateDusty_WallJump()
 		SetDustyState_Fall();
 		return;
 	}
-
 }	
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//

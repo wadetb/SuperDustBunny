@@ -49,6 +49,7 @@ struct SDusty
 
 	bool CanWallJump;
 	int WallStickTimer;
+	int LastWall;
 
 	bool CollideWithLeftSide;
 	bool CollideWithRightSide;
