@@ -104,11 +104,11 @@ void UpdateFireWorks()
 			
 			        SBlock* Block = &Chapter.Blocks[GetBlockID(x, y)];
 			        
-                    float XDist = (float)(Block->Destructible - FireWork->X);
-                    float YDist = (float)(Block->Destructible - (FireWork->Y));
+                    float XDist = (float)(FireWork->X - x*64);
+                    float YDist = (float)(FireWork->Y - y*64);
                     float Dist = sqrtf(XDist*XDist + YDist*YDist);
 
-                    if (Dist < 70)
+                    if (Dist < 100)
                     { 
                          if (FireWork ->Y && Block->Destructible)
                         {

@@ -809,7 +809,7 @@ void UpdateDusty_Collision()
                         Chapter.Pages[0].Blocks[y * Chapter.Pages[0].Width + x] = SPECIALBLOCKID_BLANK;
                     }
                     
-                    if ((Dusty.CollideWithBottomSide || Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide || Dusty.CollideWithTopSide)
+                    if ((Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide || Dusty.CollideWithTopSide)
                         && Block->Gum == true)
                     {
                         SetDustyState_Stuck();
