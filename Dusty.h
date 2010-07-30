@@ -27,6 +27,7 @@ enum EDustyState
 	DUSTYSTATE_PREPARELAUNCH,
 	DUSTYSTATE_LAUNCH,
 	DUSTYSTATE_DIE,
+	DUSTYSTATE_STUCK,
 };
 
 struct SDusty
@@ -49,7 +50,10 @@ struct SDusty
 	int SpriteTransition;
 
 	int WallStickTimer;
-	EDirection LastWall;
+	EDirection LastWall;	
+
+    bool HasGumExpired;
+    int GumTimer;
 
 	bool CollideWithLeftSide;
 	bool CollideWithRightSide;
@@ -65,6 +69,7 @@ void InitDusty();
 void SetDustyState_PrepareLaunch();
 void SetDustyState_Launch(float VelocityX, float VelocityY);
 void SetDustyState_Die();
+void SetDustyState_Stuck();
 void CreateEndOfLevel(int X, int Y, const char* Desc);
 
 #endif

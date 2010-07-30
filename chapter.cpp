@@ -128,6 +128,11 @@ void LoadChapter(const char* filename)
 					{
 					    Block->EndOfLevel = true;
 					}
+					
+					if (strstr(Block->Desc, "Gum.png"))
+					{
+					    Block->Gum = true;
+					}
 				}
 
 				Chapter.NBlocks++;

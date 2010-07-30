@@ -40,6 +40,9 @@ void InitDusty()
 
 	Dusty.WallStickTimer = 0;
 	Dusty.LastWall = DIRECTION_NONE;
+	
+	Dusty.HasGumExpired = false;
+	Dusty.GumTimer = 30;
 
 	Dusty.CollideWithLeftSide = false;
 	Dusty.CollideWithRightSide = false;
@@ -618,6 +621,55 @@ void UpdateDusty_Die()
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                  UpdateDusty_Stuck Implementation                                                       //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+void SetDustyState_Stuck()
+{
+    Dusty.State = DUSTYSTATE_STUCK;
+}
+
+void DisplayDusty_Stuck()
+{
+    float ScaleX, OffsetX;
+    if (Dusty.Direction == DIRECTION_RIGHT)
+    {
+        ScaleX = 1.0f;
+        OffsetX = 0.0f;
+    }
+    else
+    {
+        ScaleX = -1.0f;
+        OffsetX = 256.0f;
+    }
+
+    if (Dusty.SpriteTransition <= 4)
+        gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119 + 35*ScaleX), (int)(Dusty.FloatY - 217 + ScrollY), ScaleX, 1.0f, &DustyHop02 );
+    else
+        gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 221 + ScrollY), ScaleX, 1.0f, &DustyHop01 ); 
+}
+
+void UpdateDusty_Stuck()
+{ 
+    {        
+        if (Dusty.GumTimer <= 0 && (Dusty.CollideWithTopSide))
+        {   
+            Dusty.HasGumExpired = true;      
+            SetDustyState_Fall();
+            return;
+        }
+        
+        if (Dusty.GumTimer <= 0 && (Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide))
+        {
+            Dusty.HasGumExpired = true;
+            SetDustyState_Stand();
+            return;
+        }
+    }
+    Dusty.GumTimer--;
+}
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                  UpdateDusty_Collision Implementation                                                   //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
@@ -736,24 +788,32 @@ void UpdateDusty_Collision()
 						Dusty.CollideWithBottomSide = true;//Collision with Dusty's Bottom Side but the Top side of the platform
 						Dusty.FloatY -= UpDistance;
 					}
-					
-					
+										
 					//int BlockID = Chapter.Pages[0].Blocks[y * Chapter.Pages[0].Width + x];
 					SBlock* Block = &Chapter.Blocks[GetBlockID(x, y)];
 					
-					if (Dusty.CollideWithTopSide == true && Block->Destructible == true)
+					if ((Dusty.CollideWithTopSide || Dusty.CollideWithBottomSide) && Block->Destructible == true)
 					{
 						Chapter.Pages[0].Blocks[y * Chapter.Pages[0].Width + x] = SPECIALBLOCKID_BLANK;
 					}
 					
-					if (Dusty.CollideWithBottomSide == true && Block->Destructible == true)
-					{
-						Chapter.Pages[0].Blocks[y * Chapter.Pages[0].Width + x] = SPECIALBLOCKID_BLANK;
-					}
-					
-                    if (Dusty.CollideWithTopSide == true && Block->EndOfLevel == true)
+                    if ((Dusty.CollideWithTopSide || Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide || Dusty.CollideWithBottomSide)
+                        && Block->EndOfLevel == true)
                     {
                         SetGameState_WinScreen();
+                        return;
+                    }
+                    
+                    if (Dusty.HasGumExpired == true && Block->Gum == true)
+                    {
+                        Chapter.Pages[0].Blocks[y * Chapter.Pages[0].Width + x] = SPECIALBLOCKID_BLANK;
+                    }
+                    
+                    if ((Dusty.CollideWithBottomSide || Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide || Dusty.CollideWithTopSide)
+                        && Block->Gum == true)
+                    {
+                        SetDustyState_Stuck();
+                        return;                  
                     }						
 				}
 			}
@@ -776,7 +836,8 @@ void DisplayDusty()
 	case DUSTYSTATE_WALLJUMP:			DisplayDusty_WallJump(); break;
 	case DUSTYSTATE_PREPARELAUNCH:      DisplayDusty_PrepareLaunch(); break;
 	case DUSTYSTATE_LAUNCH:             DisplayDusty_Launch(); break;	
-	case DUSTYSTATE_DIE:				DisplayDusty_Die(); break;	
+	case DUSTYSTATE_DIE:				DisplayDusty_Die(); break;
+	case DUSTYSTATE_STUCK:              DisplayDusty_Stuck(); break;	
 	default:						    break;
 	}
 
@@ -808,6 +869,7 @@ void UpdateDusty()
 	case DUSTYSTATE_PREPARELAUNCH:      UpdateDusty_PrepareLaunch(); break;
 	case DUSTYSTATE_LAUNCH:             UpdateDusty_Launch(); break;
 	case DUSTYSTATE_DIE:				UpdateDusty_Die(); break;
+	case DUSTYSTATE_STUCK:              UpdateDusty_Stuck(); break;
 	default:						    break;
 	}
 }

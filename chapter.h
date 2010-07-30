@@ -32,6 +32,7 @@ struct SBlock
 	gxSprite Sprite;
 	bool Destructible;
 	bool EndOfLevel;
+	bool Gum;
 };
 
 struct SPage

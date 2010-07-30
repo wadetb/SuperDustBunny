@@ -94,8 +94,8 @@ gxSprite DieScreen0;
 gxSprite DieScreen1;
 gxSprite WinScreen0;
 gxSprite WinScreen1;
-
 gxSprite Score01;
+gxSprite Gum01;
 
 sxSound DustyToJump;
 sxSound DustyJumps;
@@ -105,11 +105,11 @@ sxSound LaunchSound01;
 sxSound VacuumSound;
 sxSound Clogged;
 sxSound Clang01;
+sxSound GumStick01;
 
 sxSound BackgroundSong01;
 sxSound BackgroundSong02;
 sxSound BackgroundSong03;
-
 
 int SongCounter = 1;
 int SongDuration = 1500;
@@ -183,6 +183,7 @@ void Init()
 	gxLoadSprite("Data/FireWork02.png", &FireWork02);
 	
 	gxLoadSprite("Data/Score01.png", &Score01);
+	gxLoadSprite("Data/Gum01.png", &Gum01);
 
     sxLoadWav ("Data/yaahooo.wav", &DustyToJump);
     sxLoadWav ("Data/yaahooo.wav", &DustyJumps);
@@ -194,6 +195,7 @@ void Init()
 	sxLoadWav ("Data/vacuum_cleaner_3.wav", &VacuumSound);
 	sxLoadWav ("Data/clogged.wav", &Clogged);
 	sxLoadWav ("Data/clang.wav", &Clang01);
+	sxLoadWav ("Data/GumSquish.wav", &GumStick01);
 }
 
 void Exit()
@@ -472,7 +474,7 @@ void DisplayGame_Playing()
     //                                                   Score Update                                                                          //
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-    DisplayScore();
+    DisplayScore();    
 
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Debugging aids                                                                        //
