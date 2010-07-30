@@ -191,7 +191,7 @@ void Init()
     sxLoadWav ("Data/Song1.wav", &BackgroundSong01);
     sxLoadWav ("Data/Song2.wav", &BackgroundSong02);
     sxLoadWav ("Data/Song3.wav", &BackgroundSong03);
-	sxLoadWav ("Data/vacuum_cleaner_2.wav", &VacuumSound);
+	sxLoadWav ("Data/vacuum_cleaner_3.wav", &VacuumSound);
 	sxLoadWav ("Data/clogged.wav", &Clogged);
 	sxLoadWav ("Data/clang.wav", &Clang01);
 }
