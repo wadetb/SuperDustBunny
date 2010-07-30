@@ -77,7 +77,7 @@ void UpdateFireWorks()
 			float Velocity = 20.0f;
 			FireWork->X += Velocity*cosf(Angle);
 			FireWork->Y += -Velocity*sinf(Angle);
-
+			
 			FireWork->Timer--;
 
 			if (FireWork->Timer == 0)
@@ -85,6 +85,38 @@ void UpdateFireWorks()
 				FireWork->Timer = 10;
 				FireWork->State = FIREWORKSTATE_EXPLODE;
 			}
+           
+            for (int y = 0; y < Chapter.Pages[0].Height; y++)
+            {
+                for (int x = 0; x < Chapter.Pages[0].Width; x++)
+                {
+                    // Skip empty blocks.
+                    if (IsBlockEmpty(x, y))
+                    {
+                        continue;
+                    }
+
+                    // Determine the bounds of the block.
+                    float BlockLeft   = (float)x*64;
+                    float BlockRight  = (float)x*64 + 64;
+                    float BlockTop    = (float)y*64;
+                    float BlockBottom = (float)y*64 + 64;
+			
+			        SBlock* Block = &Chapter.Blocks[GetBlockID(x, y)];
+			        
+                    float XDist = (float)(Block->Destructible - FireWork->X);
+                    float YDist = (float)(Block->Destructible - (FireWork->Y));
+                    float Dist = sqrtf(XDist*XDist + YDist*YDist);
+
+                    if (Dist < 70)
+                    { 
+                         if (FireWork ->Y && Block->Destructible)
+                        {
+                              Chapter.Pages[0].Blocks[y * Chapter.Pages[0].Width + x] = SPECIALBLOCKID_BLANK;
+                        }
+                    }
+                }
+            }
 		}
 
 		if (FireWork->State == FIREWORKSTATE_EXPLODE)
