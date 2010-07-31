@@ -12,9 +12,10 @@
 
 #include "common.h"
 
-#define MAX_PAGES			20
+#define MAX_PAGES			100
 #define MAX_BLOCKS			100
 #define MAX_PAGE_BLOCKS		(256*1024)
+#define MAX_STITCHED_PAGES	100
 
 enum ESpecialBlockID
 {
@@ -45,11 +46,20 @@ struct SPage
 
 struct SChapter
 {
-	SPage Pages[MAX_PAGES];
 	const char* Name;
+
 	int NPages;
+	SPage Pages[MAX_PAGES];
+
 	int NBlocks;
 	SBlock Blocks[MAX_BLOCKS];
+
+	int NStitchedPages;
+	int StitchedPages[MAX_STITCHED_PAGES];
+
+	int StitchedWidth;
+	int StitchedHeight;
+	int* StitchedBlocks;
 };
 
 struct SScore

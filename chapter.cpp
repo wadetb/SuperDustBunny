@@ -63,6 +63,7 @@ void LoadChapter(const char* filename)
 	
 	Chapter.NBlocks = 0;
 	Chapter.NPages = 0;
+	Chapter.NStitchedPages = 0;
 
 	while (!feof(ChapFile))
 	{
@@ -249,62 +250,125 @@ void LoadChapter(const char* filename)
 			// Reduce page memory to what was actually used.
 			Page->Blocks = (int*)realloc(Page->Blocks, Page->Width * Page->Height * sizeof(int));
 
-			// Process any special blocks that need to create dynamic objects.
-			for (int y = 0; y < Page->Height; y++)
+			continue;
+		}		
+
+		if (strstr(Line, "STITCHING") != NULL)
+		{
+			while (!feof(ChapFile))
 			{
-				for (int x = 0; x < Page->Width; x++)
+				GetNextLine(ChapFile, Line, sizeof(Line));
+
+				if (strstr(Line, "END OF STITCHING") != NULL)
+					break;
+
+				int NRandomPages = 0;
+				int RandomPages[MAX_PAGES];
+
+				char* Page = strtok(Line, " \r\n");
+				while (Page)
 				{
-					int BlockID = Page->Blocks[y * Page->Width + x];
-
-					if (BlockID < SPECIALBLOCKID_FIRST)
-					{
-						SBlock* Block = &Chapter.Blocks[BlockID];
-
-						if (strcasecmp(Block->Desc, "blank") == 0)
-						{
-							Page->Blocks[y * Page->Width + x] = SPECIALBLOCKID_BLANK;
-						}
-
-						if (strstr(Block->Desc, "barrel") != NULL)
-						{
-							CreateBarrel(x * 64, y * 64, Block->Desc);
-							Page->Blocks[y * Page->Width + x] = SPECIALBLOCKID_BLANK;
-						}
-						
-                        if (strstr(Block->Desc, "coin") != NULL)
-                        {
-                            CreateCoin(x * 64, y * 64, Block->Desc);
-                            Page->Blocks[y * Page->Width + x] = SPECIALBLOCKID_BLANK;
-                        }
-                        
-                        if (strstr(Block->Desc, "ball") != NULL)
-                        {
-                            CreateBall(x * 64, y * 64, Block->Desc);
-                            Page->Blocks[y * Page->Width + x] = SPECIALBLOCKID_BLANK;
-                        }
-
-						if (strstr(Block->Desc, "firework") != NULL)
-						{
-							CreateFireWork(x * 64, y * 64, Block->Desc);
-							Page->Blocks[y * Page->Width + x] = SPECIALBLOCKID_BLANK;
-						}
-												
-						if (strcasecmp(Block->Desc, "dusty") == 0)
-						{
-							Dusty.FloatX = (float)x * 64;
-							Dusty.FloatY = (float)y * 64;
-							Page->Blocks[y * Page->Width + x] = SPECIALBLOCKID_BLANK;
-						}
-					}
+					RandomPages[NRandomPages++] = strtol(Page, NULL, 10);
+					Page = strtok(NULL, " ");
 				}
+
+				int Choice = RandomPages[rand() % NRandomPages];
+				Chapter.StitchedPages[Chapter.NStitchedPages++] = Choice;
 			}
 
 			continue;
 		}		
 	}
 
+	if (!Chapter.NPages)
+		return;
+
+	if (!Chapter.NBlocks)
+		return;
+
+	// If no stitching was found, use the first page.
+	if (Chapter.NStitchedPages == 0)
+	{
+		Chapter.NStitchedPages = 1;
+		Chapter.StitchedPages[0] = 0;
+	}
+
+	// Stitch pages
+	Chapter.StitchedWidth = Chapter.Pages[0].Width;
+
+	Chapter.StitchedHeight = 0;
+	for (int i = 0; i < Chapter.NStitchedPages; i++)
+		Chapter.StitchedHeight += Chapter.Pages[Chapter.StitchedPages[i]].Height;
+
+	Chapter.StitchedBlocks = (int*)malloc(Chapter.StitchedWidth * Chapter.StitchedHeight * sizeof(int));
+	int PageY = 0;
+	for (int i = 0; i < Chapter.NStitchedPages; i++)
+	{
+		SPage* Page = &Chapter.Pages[Chapter.StitchedPages[i]];
+
+		for (int y = 0; y < Page->Height; y++)
+		{
+			for (int x = 0; x < Chapter.StitchedWidth; x++)
+			{
+				Chapter.StitchedBlocks[(PageY + y) * Chapter.StitchedWidth + x] = Page->Blocks[y * Page->Width + x];
+			}
+		}
+
+		PageY += Page->Height;
+	}
+
+	// Process any special blocks that need to create dynamic objects.
+	for (int y = 0; y < Chapter.StitchedHeight; y++)
+	{
+		for (int x = 0; x < Chapter.StitchedWidth; x++)
+		{
+			int BlockID = Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x];
+
+			if (BlockID < SPECIALBLOCKID_FIRST)
+			{
+				SBlock* Block = &Chapter.Blocks[BlockID];
+
+				if (strcasecmp(Block->Desc, "blank") == 0)
+				{
+					Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
+				}
+
+				if (strstr(Block->Desc, "barrel") != NULL)
+				{
+					CreateBarrel(x * 64, y * 64, Block->Desc);
+					Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
+				}
+
+				if (strstr(Block->Desc, "coin") != NULL)
+				{
+					CreateCoin(x * 64, y * 64, Block->Desc);
+					Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
+				}
+
+				if (strstr(Block->Desc, "ball") != NULL)
+				{
+					CreateBall(x * 64, y * 64, Block->Desc);
+					Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
+				}
+
+				if (strstr(Block->Desc, "firework") != NULL)
+				{
+					CreateFireWork(x * 64, y * 64, Block->Desc);
+					Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
+				}
+
+				if (strcasecmp(Block->Desc, "dusty") == 0)
+				{
+					Dusty.FloatX = (float)x * 64;
+					Dusty.FloatY = (float)y * 64;
+					Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
+				}
+			}
+		}
+	}
+
 	// Set initial ScrollY.
-	ScrollY = -(Chapter.Pages[0].Height * 64 - gxScreenHeight);
+	ScrollY = -(Chapter.StitchedHeight * 64 - gxScreenHeight);
 }
 
 void CalculateScrollY()
@@ -326,23 +390,23 @@ void CalculateScrollY()
 	}
 
 	// Prevent scrolling off bottom of map.
-	if (ScrollY < -(Chapter.Pages[0].Height * 64 - gxScreenHeight))
+	if (ScrollY < -(Chapter.StitchedHeight * 64 - gxScreenHeight))
 	{
-		ScrollY = -(Chapter.Pages[0].Height * 64 - gxScreenHeight);
+		ScrollY = -(Chapter.StitchedHeight * 64 - gxScreenHeight);
 	}
 }
 
 void DisplayChapter()
 {
-	for (int y = 0; y < Chapter.Pages[0].Height; y++)
+	for (int y = 0; y < Chapter.StitchedHeight; y++)
 	{
 		// Skip rows of tiles that cannot be on screen.
 		if (y*64 + ScrollY > gxScreenHeight || (y+1)*64 + ScrollY < 0)
 			continue;
 
-		for (int x = 0; x < Chapter.Pages[0].Width; x++)
+		for (int x = 0; x < Chapter.StitchedWidth; x++)
 		{
-			int BlockID = Chapter.Pages[0].Blocks[y * Chapter.Pages[0].Width + x];
+			int BlockID = Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x];
 
 			if (BlockID >= SPECIALBLOCKID_FIRST)
 			{
@@ -369,23 +433,23 @@ void DisplayChapter()
 int GetBlockID(int x, int y)
 {
 	// Requests for blocks outside the map return a special value.
-	if (x < 0 || x >= Chapter.Pages[0].Width)
+	if (x < 0 || x >= Chapter.StitchedWidth)
 		return SPECIALBLOCKID_OUTOFBOUNDS;
-	if (y < 0 || y >= Chapter.Pages[0].Height)
+	if (y < 0 || y >= Chapter.StitchedHeight)
 		return SPECIALBLOCKID_OUTOFBOUNDS;
 
-	return Chapter.Pages[0].Blocks[y * Chapter.Pages[0].Width + x];
+	return Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x];
 }
 
 bool IsBlockEmpty(int x, int y)
 {
 	// Requests for blocks outside the map return solid.
-	if (x < 0 || x >= Chapter.Pages[0].Width)
+	if (x < 0 || x >= Chapter.StitchedWidth)
 		return false;
-	if (y < 0 || y >= Chapter.Pages[0].Height)
+	if (y < 0 || y >= Chapter.StitchedHeight)
 		return false;
 
-	if (Chapter.Pages[0].Blocks[y * Chapter.Pages[0].Width + x] == SPECIALBLOCKID_BLANK)
+	if (Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] == SPECIALBLOCKID_BLANK)
 		return true;
 	else
 		return false;

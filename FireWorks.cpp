@@ -91,9 +91,9 @@ void UpdateFireWorks()
 				FireWork->State = FIREWORKSTATE_EXPLODE;
 			}
            
-            for (int y = 0; y < Chapter.Pages[0].Height; y++)
+            for (int y = 0; y < Chapter.StitchedHeight; y++)
             {
-                for (int x = 0; x < Chapter.Pages[0].Width; x++)
+                for (int x = 0; x < Chapter.StitchedWidth; x++)
                 {
                     // Skip empty blocks.
                     if (IsBlockEmpty(x, y))
@@ -117,7 +117,7 @@ void UpdateFireWorks()
                     { 
                          if (FireWork ->Y && Block->Destructible)
                         {
-                              Chapter.Pages[0].Blocks[y * Chapter.Pages[0].Width + x] = SPECIALBLOCKID_BLANK;
+                              Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
                         }
                     }
                 }

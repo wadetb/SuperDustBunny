@@ -539,9 +539,9 @@ void DisplayGame_Playing()
 
 void UpdateGame_Playing()
 {
-    //for (int y = 0; y < Chapter.Pages[0].Height; y++)
+    //for (int y = 0; y < Chapter.StitchedHeight; y++)
     //{
-    //    for (int x = 0; x < Chapter.Pages[0].Width; x++)
+    //    for (int x = 0; x < Chapter.StitchedWidth; x++)
     //    {
     //        // Skip empty blocks.
     //        if (IsBlockEmpty(x, y))

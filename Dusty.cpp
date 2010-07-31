@@ -583,6 +583,8 @@ void UpdateDusty_Launch()
 		SetDustyState_WallJump();
 		return;
 	}
+
+	UpdateDusty_JumpCommon();
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -698,15 +700,15 @@ void UpdateDusty_Collision()
 		Dusty.FloatX = -(float)Dusty.Left;
 	}
 	//Collision with the bottom side of the screen
-	if (Dusty.FloatY + Dusty.Bottom >= Chapter.Pages[0].Height * 64 )
+	if (Dusty.FloatY + Dusty.Bottom >= Chapter.StitchedHeight * 64 )
 	{	
 		Dusty.CollideWithBottomSide = true;
-		Dusty.FloatY = (float)Chapter.Pages[0].Height * 64 - (float)Dusty.Bottom;
+		Dusty.FloatY = (float)Chapter.StitchedHeight * 64 - (float)Dusty.Bottom;
 	} 
 
-	for (int y = 0; y < Chapter.Pages[0].Height; y++)
+	for (int y = 0; y < Chapter.StitchedHeight; y++)
 	{
-		for (int x = 0; x < Chapter.Pages[0].Width; x++)
+		for (int x = 0; x < Chapter.StitchedWidth; x++)
 		{
 			// Skip empty blocks.
 			if (IsBlockEmpty(x, y))
@@ -797,7 +799,7 @@ void UpdateDusty_Collision()
 						
 						if ((Dusty.CollideWithTopSide || Dusty.CollideWithBottomSide) && Block->Destructible == true)
 						{
-							Chapter.Pages[0].Blocks[y * Chapter.Pages[0].Width + x] = SPECIALBLOCKID_BLANK;
+							Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
 						}
 						
 						if ((Dusty.CollideWithTopSide || Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide || Dusty.CollideWithBottomSide)
@@ -809,7 +811,7 @@ void UpdateDusty_Collision()
 	                    
 						if (Dusty.HasGumExpired == true && Block->Gum == true)
 						{
-							Chapter.Pages[0].Blocks[y * Chapter.Pages[0].Width + x] = SPECIALBLOCKID_BLANK;
+							Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
 						}
 	                    
 						if ((Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide || Dusty.CollideWithTopSide)
