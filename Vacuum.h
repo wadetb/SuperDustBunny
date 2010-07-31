@@ -14,6 +14,7 @@ enum EVacuumState
 	VACUUMSTATE_FAR,
 	VACUUMSTATE_NEAR,
 	VACUUMSTATE_ONSCREEN,
+	VACUUMSTATE_RETREAT,
 };
 
 struct SVacuum
@@ -26,11 +27,14 @@ struct SVacuum
 	float Volume;
 };
 
+extern int Timer;
+extern SVacuum Vacuum;
+
 void InitVacuum();
 void DisplayVacuum_BeforeDusty();
 void DisplayVacuum_AfterDusty();
 void UpdateVacuum();
-extern int Timer;
-extern SVacuum Vacuum;
+
+void JamVacuum();
 
 #endif

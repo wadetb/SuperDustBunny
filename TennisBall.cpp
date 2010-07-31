@@ -29,6 +29,8 @@ void CreateBall(int X, int Y, const char* Desc)
     Ball->Sprite = 1;
 
     Ball->Collided = false;
+
+	Ball->State = BALLSTATE_ACTIVE;
 }
 
 void ClearBalls()
@@ -43,6 +45,9 @@ void DisplayBall()
     for (int i = 0; i < NBalls; i++)
     {
         SBall* Ball = &Balls[i];
+
+		if (Ball->State == BALLSTATE_INACTIVE)
+			continue;
 
         if (Ball->Sprite == 1) 
         {
@@ -71,7 +76,10 @@ void UpdateBall()
     for (int i = 0; i < NBalls; i++)
     {
         SBall* Ball = &Balls[i];
-        
+
+		if (Ball->State == BALLSTATE_INACTIVE)
+			continue;
+
         float XDist = (float)(Dusty.FloatX - Ball->X);
         float YDist = (float)((Dusty.FloatY-50) - (Ball->Y));
         float Dist = sqrtf(XDist*XDist + YDist*YDist);
@@ -84,14 +92,15 @@ void UpdateBall()
         if (Ball->Collided == true)
         {
             Ball->Y += 7;
+
+			if (Ball->Y + ScrollY >= gxScreenHeight)
+			{
+				Ball->State = BALLSTATE_INACTIVE;
+				sxPlaySound (&Clogged);
+				JamVacuum();
+			}       
         }
         
-        if (Dist >= gxScreenHeight)
-        {
-            sxPlaySound (&Clogged);
-            //Vacuum.Timer += 500;
-        }       
-                          
         if (Ball->Transition == 40)
         {
             Ball->Sprite = 1;

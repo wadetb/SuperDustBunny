@@ -106,4 +106,34 @@ void UpdateVacuum()
 			SetDustyState_Die();
 		}
 	}
+	else if (Vacuum.State == VACUUMSTATE_RETREAT)
+	{
+		if (Dusty.State != DUSTYSTATE_DIE)
+		{
+			// Shake the screen by adjusting ScrollY randomly.
+			int ShakeY = (rand() % 13) - 6;
+			ScrollY += ShakeY;
+			Vacuum.Y -= ShakeY;
+
+			Vacuum.Y += 2;
+			if (Vacuum.Y + ScrollY >= gxScreenHeight)
+				Vacuum.State = VACUUMSTATE_NEAR;
+		}
+	}
+}
+
+void JamVacuum()
+{
+	if (Vacuum.State == VACUUMSTATE_ONSCREEN)
+	{
+		Vacuum.State = VACUUMSTATE_RETREAT;
+	}
+	else if (Vacuum.State == VACUUMSTATE_NEAR)
+	{
+		Vacuum.State = VACUUMSTATE_FAR;
+	}
+	else
+	{
+		Vacuum.Timer = 1000;
+	}
 }
