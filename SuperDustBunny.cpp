@@ -365,7 +365,7 @@ void UpdateGame_DieScreen()
 	// Advance to playing state when return key is released.
 	if (!kbIsKeyDown(KB_RETURN) && kbWasKeyDown(KB_RETURN))
 	{
-		LoadLevel("Data/Easy.txt");
+		LoadLevel("Docs/Easy.txt");
 		SetGameState_Playing();
 		return;
 	}
