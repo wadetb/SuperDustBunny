@@ -23,8 +23,10 @@ enum EGameState
 	GAMESTATE_PLAYING,
 	GAMESTATE_DIE_SCREEN,
 	GAMESTATE_WIN_SCREEN,
+	GAMESTATE_PAUSE_SCREEN,
 };
 
+extern EGameState GameState;
 EGameState GameState = GAMESTATE_START_SCREEN;
 
 bool TitleScreenButtonPressed = false;
@@ -66,6 +68,7 @@ gxSprite VacuumSprite;
 gxSprite VacuumFrontSprite;
 gxSprite ArrowSprite;
 gxSprite DustMoteSprite;
+gxSprite ColonelCrumb;
 
 gxSprite Coin01;
 gxSprite Coin02;
@@ -155,7 +158,8 @@ void Init()
     gxLoadSprite("Data/DustyLose02.png", &DieScreen1);
     gxLoadSprite("Data/DustyWin01.png", &WinScreen0);
     gxLoadSprite("Data/DustyWin02.png", &WinScreen1);
-	
+    gxLoadSprite("Data/ColonelCrumb.png", &ColonelCrumb);
+    
 	gxLoadSprite("Data/vacuum.png", &VacuumSprite);
 	gxLoadSprite("Data/vacuum-front.png", &VacuumFrontSprite);
 	gxLoadSprite("Data/wind-arrow.png", &ArrowSprite);
@@ -246,6 +250,11 @@ bool GetInput_Jump()
 	return msButton1;
 #endif	
 }
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                   SetGameState_Pause Declaration                                                        //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+void SetGameState_Pause();
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   GAMESTATE_START_SCREEN                                                                //
@@ -415,7 +424,7 @@ void SetGameState_Playing()
 }
 
 void DisplayGame_Playing()
-{
+{	
 	// Calculate scrolling.
 	CalculateScrollY();
 	
@@ -474,7 +483,7 @@ void DisplayGame_Playing()
     //                                                   Score Update                                                                          //
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-    DisplayScore();    
+    DisplayScore();   
 
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Debugging aids                                                                        //
@@ -510,6 +519,33 @@ void DisplayGame_Playing()
 
 void UpdateGame_Playing()
 {
+    for (int y = 0; y < Chapter.Pages[0].Height; y++)
+    {
+        for (int x = 0; x < Chapter.Pages[0].Width; x++)
+        {
+            // Skip empty blocks.
+            if (IsBlockEmpty(x, y))
+            {
+                continue;
+            }
+
+            // Determine the bounds of the block.
+            float BlockLeft   = (float)x*64;
+            float BlockRight  = (float)x*64 + 64;
+            float BlockTop    = (float)y*64;
+            float BlockBottom = (float)y*64 + 64;
+                        
+             SBlock* Block = &Chapter.Blocks[GetBlockID(x, y)];
+    
+             //Set the Game State to Pause if ColonelTrigger is set to true.
+             if (Block->ColonelCrumb == true)
+             {
+                SetGameState_Pause();
+                return;
+             }
+         }
+     }
+
 #ifdef PLATFORM_WINDOWS
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Slow Motion Update                                                                    //
@@ -592,6 +628,93 @@ void UpdateGame_Playing()
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                   SetGameState_Pause Implementation                                                     //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+void SetGameState_Pause()
+{
+    GameState = GAMESTATE_PAUSE_SCREEN;
+}
+
+void DisplayGame_PauseScreen()
+{    
+    gxDrawSpriteCenteredRotated( (int)Dusty.FloatX + 50, ((int)(Dusty.FloatY - 100) + ScrollY), 0, &ColonelCrumb );
+
+	// Calculate scrolling.
+	CalculateScrollY();
+	
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Non-scrolling background Drawing                                                      //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	gxDrawSprite( BackgroundX, BackgroundY, &Background01 );
+
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Chapter Drawing                                                                       //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	DisplayChapter();
+
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Vacuum Drawing                                                                        //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	DisplayVacuum_BeforeDusty();
+
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Dusty Drawing                                                                         //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	DisplayDusty();
+
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Barrel Drawing                                                                        //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+	DisplayBarrels();
+
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Coin Drawing                                                                          //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	DisplayCoins();
+	
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Ball Drawing                                                                          //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    DisplayBall();
+
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Dust Drawing                                                                          //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	DisplayDust();
+
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   FireWork Drawing                                                                      //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	DisplayFireWorks();
+	
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Vacuum Drawing                                                                        //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	DisplayVacuum_AfterDusty();
+
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Score Update                                                                          //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+    DisplayScore();   
+}
+
+void UpdateGame_PauseScreen()
+{
+    int timer = 200;
+    timer--;
+    gxDrawString(600, -1024, 16, gxRGB32(255, 255, 255), "Test");
+    if (timer <= 0)
+    {
+        SetGameState_Playing();
+    }
+   
+    return;
+}
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   Central Display and Update functions                                                  //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
@@ -612,6 +735,10 @@ void Display()
 	else if (GameState == GAMESTATE_PLAYING)
 	{
 		DisplayGame_Playing();
+	}
+	else if (GameState == GAMESTATE_PAUSE_SCREEN)
+	{
+	    DisplayGame_PauseScreen();
 	}
 
 #ifdef PLATFORM_WINDOWS
@@ -731,6 +858,10 @@ bool Update()
 	{
 		UpdateGame_Playing();
 	}
-
+	else if (GameState == GAMESTATE_PAUSE_SCREEN)
+	{
+	    UpdateGame_PauseScreen();
+	}
+	
 	return true;
 }

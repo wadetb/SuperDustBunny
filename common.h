@@ -114,6 +114,7 @@ extern gxSprite WoodBox_Platform01;
 extern gxSprite Background01;
 extern gxSprite UnknownBlock;
 extern gxSprite BarrelSprite;
+extern gxSprite ColonelCrumb;
 
 extern gxSprite Coin01;
 extern gxSprite Coin02;
@@ -152,5 +153,6 @@ bool GetInput_Jump();
 
 void SetGameState_DieScreen();
 void SetGameState_WinScreen();
+void SetGameState_PauseScreen();
 
 #endif

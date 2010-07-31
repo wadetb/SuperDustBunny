@@ -133,6 +133,11 @@ void LoadChapter(const char* filename)
 					{
 					    Block->Gum = true;
 					}
+										
+                    if (strstr(Block->Desc, "ColonelCrumb.png"))
+                    {
+                        Block->ColonelCrumb = true;
+                    }
 				}
 
 				Chapter.NBlocks++;
@@ -283,7 +288,7 @@ void LoadChapter(const char* filename)
 							CreateFireWork(x * 64, y * 64, Block->Desc);
 							Page->Blocks[y * Page->Width + x] = SPECIALBLOCKID_BLANK;
 						}
-						
+												
 						if (strcasecmp(Block->Desc, "dusty") == 0)
 						{
 							Dusty.FloatX = (float)x * 64;

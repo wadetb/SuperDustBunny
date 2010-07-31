@@ -7,78 +7,27 @@
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
-#ifndef CHAPTER_H
-#define CHAPTER_H
+#ifndef CRUMB_H
+#define CRUMB_H
 
-#include "common.h"
-
-#define MAX_PAGES			20
-#define MAX_BLOCKS			100
-#define MAX_PAGE_BLOCKS		(256*1024)
-
-enum ESpecialBlockID
+enum ECrumbState
 {
-	SPECIALBLOCKID_FIRST			= 10000,
-	SPECIALBLOCKID_UNKNOWN			= SPECIALBLOCKID_FIRST,
-	SPECIALBLOCKID_OUTOFBOUNDS,
-	SPECIALBLOCKID_BLANK,
+    CRUMBSTATE_STAND,
+    CRUMBSTATE_SPEAK,
+    CRUMBSTATE_WAIT,
 };
 
-struct SBlock
+struct SCrumb
 {
-	int ID;
-	char Key[3][3];
-	char* Desc;
-	gxSprite Sprite;
-	bool Destructible;
-	bool EndOfLevel;
-	bool Gum;
-	bool ColonelCrumb;
+    float X, Y;
+
+    ECrumbState State;
+
+    int Timer;
 };
 
-struct SPage
-{
-	int* Blocks;
-	int Width;
-	int Height;
-};
-
-struct SChapter
-{
-	SPage Pages[MAX_PAGES];
-	const char* Name;
-	int NPages;
-	int NBlocks;
-	SBlock Blocks[MAX_BLOCKS];
-};
-
-struct SScore
-{
-    bool RaiseScore;
-    int ScoreCounter;
-    int X, Y;  
-};
-
-
-extern SChapter Chapter;
-extern SScore Score;
-
-extern int ScrollY;
-
-void LoadChapter(const char* filename);
-void DisplayChapter();
-
-void CalculateScrollY();
-
-void InitScore();
-void DisplayScore();
-void UpdateScore();
-
-void InitCrumb();
-
-int GetBlockID(int x, int y);
-
-bool IsBlockEmpty(int x, int y);
-bool IsBlockSolid(int x, int y);
+void CreateCrumb(int X, int Y, const char* Desc);
+void DisplayCrumb();
+void UpdateCrumb();
 
 #endif
