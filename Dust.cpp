@@ -121,15 +121,18 @@ void DisplayDust()
 			WindStrengthTable = HighWindStrength;
 		}
 
-		float StepX = (float)gxScreenWidth / WIND_WIDTH;
-		float StepY = (float)gxScreenHeight / WIND_HEIGHT;
-
-		for (int x = 0; x < WIND_WIDTH; x++)
+		if (WindDirTable && WindStrengthTable)
 		{
-			for (int y = 0; y < WIND_HEIGHT; y++)
+			float StepX = (float)gxScreenWidth / WIND_WIDTH;
+			float StepY = (float)gxScreenHeight / WIND_HEIGHT;
+
+			for (int x = 0; x < WIND_WIDTH; x++)
 			{
-				float Dir = (WindDirTable[y * WIND_WIDTH + x] * 45) * PI / 180.0f;
-				gxDrawSpriteCenteredRotated((int)((x+0.5f) * StepX), (int)((y+0.5f) * StepY), Dir, &ArrowSprite);
+				for (int y = 0; y < WIND_HEIGHT; y++)
+				{
+					float Dir = (WindDirTable[y * WIND_WIDTH + x] * 45) * PI / 180.0f;
+					gxDrawSpriteCenteredRotated((int)((x+0.5f) * StepX), (int)((y+0.5f) * StepY), Dir, &ArrowSprite);
+				}
 			}
 		}
 	}

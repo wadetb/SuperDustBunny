@@ -251,9 +251,30 @@ bool GetInput_Jump()
 #endif	
 }
 
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                   LoadLevel Declaration                                                                 //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+void LoadLevel(const char* Name)
+{
+	Score.ScoreCounter = 0;
+
+	ClearBarrels();
+	ClearCoins();
+	ClearFireWorks();
+	ClearBalls();
+
+	InitDusty();
+	InitVacuum();
+	InitDust();
+
+	LoadChapter(Name);
+}
+
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   SetGameState_Pause Declaration                                                        //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
 void SetGameState_Pause();
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -291,6 +312,7 @@ void UpdateGame_StartScreen()
 	// Advance to playing state when return key is released.
 	if (!kbIsKeyDown(KB_RETURN) && kbWasKeyDown(KB_RETURN))
 	{
+		LoadLevel("Docs/Easy.txt");
 		SetGameState_Playing();
 		return;
 	}
@@ -343,6 +365,7 @@ void UpdateGame_DieScreen()
 	// Advance to playing state when return key is released.
 	if (!kbIsKeyDown(KB_RETURN) && kbWasKeyDown(KB_RETURN))
 	{
+		LoadLevel("Data/Easy.txt");
 		SetGameState_Playing();
 		return;
 	}
@@ -393,7 +416,7 @@ void UpdateGame_WinScreen()
     // Advance to playing state when return key is released.
     if (!kbIsKeyDown(KB_RETURN) && kbWasKeyDown(KB_RETURN))
     {
-        Score.ScoreCounter = 0;
+		LoadLevel("Docs/Easy.txt");
         SetGameState_Playing();
         return;
     }
@@ -410,16 +433,13 @@ void UpdateGame_WinScreen()
 	}
 #endif
 }
+
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   GAMESTATE_PLAYING                                                                     //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
 void SetGameState_Playing()
 {
-	InitDusty();
-	InitVacuum();
-	InitDust();
-    LoadChapter("Docs/Design.txt");
 	GameState = GAMESTATE_PLAYING;
 }
 
@@ -519,32 +539,32 @@ void DisplayGame_Playing()
 
 void UpdateGame_Playing()
 {
-    for (int y = 0; y < Chapter.Pages[0].Height; y++)
-    {
-        for (int x = 0; x < Chapter.Pages[0].Width; x++)
-        {
-            // Skip empty blocks.
-            if (IsBlockEmpty(x, y))
-            {
-                continue;
-            }
+    //for (int y = 0; y < Chapter.Pages[0].Height; y++)
+    //{
+    //    for (int x = 0; x < Chapter.Pages[0].Width; x++)
+    //    {
+    //        // Skip empty blocks.
+    //        if (IsBlockEmpty(x, y))
+    //        {
+    //            continue;
+    //        }
 
-            // Determine the bounds of the block.
-            float BlockLeft   = (float)x*64;
-            float BlockRight  = (float)x*64 + 64;
-            float BlockTop    = (float)y*64;
-            float BlockBottom = (float)y*64 + 64;
-                        
-             SBlock* Block = &Chapter.Blocks[GetBlockID(x, y)];
-    
-             //Set the Game State to Pause if ColonelTrigger is set to true.
-             if (Block->ColonelCrumb == true)
-             {
-                SetGameState_Pause();
-                return;
-             }
-         }
-     }
+    //        // Determine the bounds of the block.
+    //        float BlockLeft   = (float)x*64;
+    //        float BlockRight  = (float)x*64 + 64;
+    //        float BlockTop    = (float)y*64;
+    //        float BlockBottom = (float)y*64 + 64;
+    //                    
+    //         SBlock* Block = &Chapter.Blocks[GetBlockID(x, y)];
+    //
+    //         //Set the Game State to Pause if ColonelTrigger is set to true.
+    //         if (Block->ColonelCrumb == true)
+    //         {
+    //            SetGameState_Pause();
+    //            return;
+    //         }
+    //     }
+    // }
 
 #ifdef PLATFORM_WINDOWS
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -744,27 +764,35 @@ void Display()
 #ifdef PLATFORM_WINDOWS
 	if (DisplayHelp)
 	{
-		gxDrawString(20,  2*16, 16, gxRGB32(255, 255, 255), " - - - - - - - - - - - - - - - - - - - - - - ");
-		gxDrawString(20,  3*16, 16, gxRGB32(255, 255, 255), "     Super Dust Bunny Keyboard Commands      ");
-		gxDrawString(20,  4*16, 16, gxRGB32(255, 255, 255), "                                             ");
-		gxDrawString(20,  5*16, 16, gxRGB32(255, 255, 255), " Global:                                     ");
-		gxDrawString(20,  6*16, 16, gxRGB32(255, 255, 255), "                                             ");
-		gxDrawString(20,  7*16, 16, gxRGB32(255, 255, 255), " F1    - Toggle help                         ");
-		gxDrawString(20,  8*16, 16, gxRGB32(255, 255, 255), " F2    - Emulate iPhone display size         ");
-		gxDrawString(20,  9*16, 16, gxRGB32(255, 255, 255), " F3    - Emulate iPad display size           ");
-		gxDrawString(20, 10*16, 16, gxRGB32(255, 255, 255), "                                             ");
-		gxDrawString(20, 11*16, 16, gxRGB32(255, 255, 255), " While playing:                              ");
-		gxDrawString(20, 12*16, 16, gxRGB32(255, 255, 255), "                                             ");
-		gxDrawString(20, 13*16, 16, gxRGB32(255, 255, 255), " Home  - Toggle development mode             ");
-		gxDrawString(20, 14*16, 16, gxRGB32(255, 255, 255), " \\     - Hold for slow motion                ");
-		gxDrawString(20, 15*16, 16, gxRGB32(255, 255, 255), " ]     - Step one frame (in slow motion)     ");
-		gxDrawString(20, 16*16, 16, gxRGB32(255, 255, 255), "                                             ");
-		gxDrawString(20, 17*16, 16, gxRGB32(255, 255, 255), " A     - Hop left                            ");
-		gxDrawString(20, 18*16, 16, gxRGB32(255, 255, 255), " D     - Hop right                           ");
-		gxDrawString(20, 19*16, 16, gxRGB32(255, 255, 255), " Space - Jump                                ");
-		gxDrawString(20, 20*16, 16, gxRGB32(255, 255, 255), " Enter - Advance menus                       ");
-		gxDrawString(20, 21*16, 16, gxRGB32(255, 255, 255), "                                             ");
-		gxDrawString(20, 22*16, 16, gxRGB32(255, 255, 255), " - - - - - - - - - - - - - - - - - - - - - - ");
+		int line = 2;
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " - - - - - - - - - - - - - - - - - - - - - - ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "     Super Dust Bunny Keyboard Commands      ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Global:                                     ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " F1    - Toggle help                         ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " F2    - Emulate iPhone display size         ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " F3    - Emulate iPad display size           ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " While playing:                              ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Home  - Toggle development mode             ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " \\     - Hold for slow motion                ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " ]     - Step one frame (in slow motion)     ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " A     - Hop left                            ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " D     - Hop right                           ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Space - Jump                                ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Enter - Advance menus                       ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Change levels:                              ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 1     - Easy level                          ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 2     - Medium level                        ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 3     - Hard level                          ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 0     - Test level                          ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " - - - - - - - - - - - - - - - - - - - - - - ");
 	}
 	else
 	{
@@ -839,7 +867,27 @@ bool Update()
 		gxEmulateDisplaySize(GXDISPLAY_IPAD_PORTRAIT);
 	}
 
-
+	// Number keys switch levels
+	if (kbIsKeyDown(KB_1) && !kbWasKeyDown(KB_1))
+	{
+		LoadLevel("Docs/Easy.txt");
+		SetGameState_Playing();
+	}
+	if (kbIsKeyDown(KB_2) && !kbWasKeyDown(KB_2))
+	{
+		LoadLevel("Docs/Medium.txt");
+		SetGameState_Playing();
+	}
+	if (kbIsKeyDown(KB_3) && !kbWasKeyDown(KB_3))
+	{
+		LoadLevel("Docs/Hard.txt");
+		SetGameState_Playing();
+	}
+	if (kbIsKeyDown(KB_0) && !kbWasKeyDown(KB_0))
+	{
+		LoadLevel("Docs/Test.txt");
+		SetGameState_Playing();
+	}
 #endif
 
 	if (GameState == GAMESTATE_START_SCREEN)	

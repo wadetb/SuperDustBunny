@@ -29,6 +29,11 @@ void CreateFireWork(int X, int Y, const char* Desc)
 	FireWork->State = FIREWORKSTATE_WAIT;
 }
 
+void ClearFireWorks()
+{
+	NFireWorks = 0;
+}
+
 extern gxSprite FireWork01;
 extern gxSprite FireWork01;
 

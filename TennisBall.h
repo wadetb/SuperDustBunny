@@ -31,6 +31,7 @@ struct SBall
 };
 
 void CreateBall(int X, int Y, const char* Desc);
+void ClearBalls();
 
 void UpdateBall();
 void DisplayBall();

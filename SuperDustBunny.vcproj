@@ -233,10 +233,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Crumb.cpp"
-			>
-		</File>
-		<File
 			RelativePath=".\Crumb.h"
 			>
 		</File>

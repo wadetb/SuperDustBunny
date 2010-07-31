@@ -19,25 +19,24 @@ enum ECoinState
 
 struct SCoin
 {
+    ECoinState State;
 
-        ECoinState State;
+    int X, Y;
+    
+    int Sprite;
+    int Transition;
+    int SpinTimer;
+    
+    int Dist;
 
-        int X, Y;
-        
-        int Sprite;
-        int Transition;
-        int SpinTimer;
-        
-        int Dist;
-
-        bool IsCoinSpinning;
-        bool Collided;
-
+    bool IsCoinSpinning;
+    bool Collided;
 };
 
-    void CreateCoin(int X, int Y, const char* Desc);
-    
-    void UpdateCoins();
-    void DisplayCoins();
+void CreateCoin(int X, int Y, const char* Desc);
+void ClearCoins();
+
+void UpdateCoins();
+void DisplayCoins();
 
 #endif

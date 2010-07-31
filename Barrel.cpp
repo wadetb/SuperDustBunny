@@ -29,6 +29,11 @@ void CreateBarrel(int X, int Y, const char* Desc)
 	Barrel->Dir = Barrel->FromDir;
 }
 
+void ClearBarrels()
+{
+	NBarrels = 0;
+}
+
 extern gxSprite BarrelSprite;
 
 extern int ScrollY;

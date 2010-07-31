@@ -29,6 +29,11 @@ void CreateCoin(int X, int Y, const char* Desc)
     Coin->Collided = false;
 }
 
+void ClearCoins()
+{
+	NCoins = 0;
+}
+
 extern int ScrollY;
 
 void DisplayCoins()

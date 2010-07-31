@@ -30,6 +30,8 @@ struct SFireWork
 };
 
 void CreateFireWork(int X, int Y, const char* Desc);
+void ClearFireWorks();
+
 void DisplayFireWorks();
 void UpdateFireWorks();
 

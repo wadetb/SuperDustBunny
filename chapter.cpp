@@ -235,7 +235,7 @@ void LoadChapter(const char* filename)
 				if (NBlocks < Page->Width * Page->Height)
 				{
 					while (NBlocks < Page->Width * Page->Height && NBlocks < MAX_PAGE_BLOCKS)
-						Page->Blocks[NBlocks++] = -1;
+						Page->Blocks[NBlocks++] = SPECIALBLOCKID_UNKNOWN;
 				}
 				else if (NBlocks > Page->Width * Page->Height)
 				{

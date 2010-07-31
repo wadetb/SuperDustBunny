@@ -790,32 +790,35 @@ void UpdateDusty_Collision()
 						Dusty.FloatY -= UpDistance;
 					}
 										
-					//int BlockID = Chapter.Pages[0].Blocks[y * Chapter.Pages[0].Width + x];
-					SBlock* Block = &Chapter.Blocks[GetBlockID(x, y)];
-					
-					if ((Dusty.CollideWithTopSide || Dusty.CollideWithBottomSide) && Block->Destructible == true)
+					int BlockID = GetBlockID(x, y);
+					if (BlockID < SPECIALBLOCKID_FIRST)
 					{
-						Chapter.Pages[0].Blocks[y * Chapter.Pages[0].Width + x] = SPECIALBLOCKID_BLANK;
+						SBlock* Block = &Chapter.Blocks[BlockID];
+						
+						if ((Dusty.CollideWithTopSide || Dusty.CollideWithBottomSide) && Block->Destructible == true)
+						{
+							Chapter.Pages[0].Blocks[y * Chapter.Pages[0].Width + x] = SPECIALBLOCKID_BLANK;
+						}
+						
+						if ((Dusty.CollideWithTopSide || Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide || Dusty.CollideWithBottomSide)
+							&& Block->EndOfLevel == true)
+						{
+							SetGameState_WinScreen();
+							return;
+						}
+	                    
+						if (Dusty.HasGumExpired == true && Block->Gum == true)
+						{
+							Chapter.Pages[0].Blocks[y * Chapter.Pages[0].Width + x] = SPECIALBLOCKID_BLANK;
+						}
+	                    
+						if ((Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide || Dusty.CollideWithTopSide)
+							&& Block->Gum == true)
+						{
+							SetDustyState_Stuck();
+							return;                  
+						}						
 					}
-					
-                    if ((Dusty.CollideWithTopSide || Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide || Dusty.CollideWithBottomSide)
-                        && Block->EndOfLevel == true)
-                    {
-                        SetGameState_WinScreen();
-                        return;
-                    }
-                    
-                    if (Dusty.HasGumExpired == true && Block->Gum == true)
-                    {
-                        Chapter.Pages[0].Blocks[y * Chapter.Pages[0].Width + x] = SPECIALBLOCKID_BLANK;
-                    }
-                    
-                    if ((Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide || Dusty.CollideWithTopSide)
-                        && Block->Gum == true)
-                    {
-                        SetDustyState_Stuck();
-                        return;                  
-                    }						
 				}
 			}
 		}

@@ -32,6 +32,7 @@ struct SBarrel
 };
 
 void CreateBarrel(int X, int Y, const char* Desc);
+void ClearBarrels();
 
 void UpdateBarrels();
 void DisplayBarrels();

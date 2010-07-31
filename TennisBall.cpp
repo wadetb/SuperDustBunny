@@ -31,6 +31,11 @@ void CreateBall(int X, int Y, const char* Desc)
     Ball->Collided = false;
 }
 
+void ClearBalls()
+{
+	NBalls = 0;
+}
+
 extern int ScrollY;
 
 void DisplayBall()
