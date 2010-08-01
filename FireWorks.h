@@ -29,6 +29,7 @@ struct SFireWork
 	int Timer;
 };
 
+extern SFireWork FireWork;
 void CreateFireWork(int X, int Y, const char* Desc);
 void ClearFireWorks();
 

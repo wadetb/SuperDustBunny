@@ -101,6 +101,14 @@ gxSprite WinScreen1;
 gxSprite Score01;
 gxSprite Gum01;
 
+gxSprite InitialTut;
+gxSprite CoinTut;
+gxSprite JumpTut;
+gxSprite WallJumpTut;
+gxSprite FireWorkTut;
+gxSprite BarrelTut;
+gxSprite BallTut;
+
 sxSound DustyToJump;
 sxSound DustyJumps;
 sxSound WallJump;
@@ -189,6 +197,14 @@ void Init()
 	
 	gxLoadSprite("Data/Score01.png", &Score01);
 	gxLoadSprite("Data/Gum01.png", &Gum01);
+	
+    gxLoadSprite("Data/InitialTutorial.png", &InitialTut);
+    gxLoadSprite("Data/CoinTutorial.png", &CoinTut);
+    gxLoadSprite("Data/JumpTutorial.png", &JumpTut);
+    gxLoadSprite("Data/WallJumpTutorial.png", &WallJumpTut);
+    gxLoadSprite("Data/FireWorkTutorial.png", &FireWorkTut);
+    gxLoadSprite("Data/BarrelTutorial.png", &BarrelTut);
+    gxLoadSprite("Data/BallTutorial.png", &BallTut);
 
     sxLoadWav ("Data/yaahooo.wav", &DustyToJump);
     sxLoadWav ("Data/yaahooo.wav", &DustyJumps);
@@ -629,20 +645,20 @@ void Display_Crumb()
 {    
     if (Dusty.InitialTutDisplayed == false && GetInput_MoveRight())
     {
-        gxDrawSpriteCenteredRotated( 300, -800, 0, &ColonelCrumb );
+        gxDrawSpriteCenteredRotated( 300, -800, 0, &InitialTut );
     }
 
-    if (Dusty.CoinTutDisplayed == false && Coin->Collided)
+    if (Dusty.CoinTutDisplayed == false && Coin.Collided)
     {
        gxDrawSpriteCenteredRotated( 300, -800, 0, &ColonelCrumb );
     }
 
-    if (Dusty.BallTutDisplayed == false && Ball->Collided)
+    if (Dusty.BallTutDisplayed == false && Ball.Collided)
     {
         gxDrawSpriteCenteredRotated( 300, -800, 0, &ColonelCrumb );
     }
 
-    if (Dusty.FireworkTutDisplayed == false && FireWork->State == FIREWORKSTATE_LAUNCH)
+    if (Dusty.FireworkTutDisplayed == false && FireWork.State == FIREWORKSTATE_LAUNCH)
     {
         gxDrawSpriteCenteredRotated( 300, -800, 0, &ColonelCrumb );
     }
@@ -725,46 +741,39 @@ void Display_Crumb()
 
 void Update_Crumb()
 {
-    if (Dusty.InitialTutDisplayed == false)
+    if (Dusty.InitialTutDisplayed == false && GetInput_MoveRight())
     {
         Dusty.InitialTutDisplayed = true;
-        gxDrawString(600, -900, 20, gxRGB32(255, 255, 255), "Dusty! Wait! I can help you!");
     }
     
-    if (Dusty.CoinTutDisplayed == false)
+    if (Dusty.CoinTutDisplayed == false && Coin.Collided)
     {
         Dusty.CoinTutDisplayed = true;
-        gxDrawString(600, -900, 20, gxRGB32(255, 255, 255), "Dusty! Wait! I can help you!");
     }
     
-    if (Dusty.BallTutDisplayed == false)
+    if (Dusty.BallTutDisplayed == false && Ball.Collided)
     {
         Dusty.BallTutDisplayed = true;
-        gxDrawString(600, -900, 20, gxRGB32(255, 255, 255), "Dusty! Wait! I can help you!");
     }
     
-    if (Dusty.FireworkTutDisplayed == false)
+     if (Dusty.FireworkTutDisplayed == false && FireWork.State == FIREWORKSTATE_LAUNCH)
     {
         Dusty.FireworkTutDisplayed = true;
-        gxDrawString(600, -900, 20, gxRGB32(255, 255, 255), "Dusty! Wait! I can help you!");
     }
     
-    if (Dusty.BarrelTutDisplayed == false)
+    if (Dusty.BarrelTutDisplayed == false && Dusty.State == DUSTYSTATE_PREPARELAUNCH)
     {
         Dusty.BarrelTutDisplayed = true;
-        gxDrawString(600, -900, 20, gxRGB32(255, 255, 255), "Dusty! Wait! I can help you!");
     }
     
-    if ( Dusty.JumpTutDisplayed == false)
+    if ( Dusty.JumpTutDisplayed == false && Dusty.State == DUSTYSTATE_JUMP)
     {
         Dusty.JumpTutDisplayed = true;
-        gxDrawString(600, -900, 20, gxRGB32(255, 255, 255), "Dusty! Wait! I can help you!");
     }
     
-    if ( Dusty.WallJumpTutDisplayed == false)
+    if ( Dusty.WallJumpTutDisplayed == false && Dusty.State == DUSTYSTATE_WALLJUMP)
     {
         Dusty.WallJumpTutDisplayed = true;
-        gxDrawString(600, -900, 20, gxRGB32(255, 255, 255), "Dusty! Wait! I can help you!");
     }
         
     if (Dusty.CrumbTimer <= 0)

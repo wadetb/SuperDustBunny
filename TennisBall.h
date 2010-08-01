@@ -30,6 +30,7 @@ struct SBall
 
 };
 
+extern SBall Ball;
 void CreateBall(int X, int Y, const char* Desc);
 void ClearBalls();
 

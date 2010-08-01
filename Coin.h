@@ -33,6 +33,7 @@ struct SCoin
     bool Collided;
 };
 
+extern SCoin Coin;
 void CreateCoin(int X, int Y, const char* Desc);
 void ClearCoins();
 
