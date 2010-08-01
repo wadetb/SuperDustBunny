@@ -63,6 +63,14 @@ struct SDusty
 	bool CollideWithRightSide;
 	bool CollideWithTopSide;
 	bool CollideWithBottomSide;
+	
+    bool CoinTutDisplayed;
+    bool FireworkTutDisplayed;
+    bool BallTutDisplayed;
+    bool BarrelTutDisplayed;
+    bool WallJumpTutDisplayed;
+    bool InitialTutDisplayed;
+    bool JumpTutDisplayed;
 };
 
 extern SDusty Dusty;

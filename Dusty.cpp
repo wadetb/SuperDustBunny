@@ -52,6 +52,14 @@ void InitDusty()
 	Dusty.CollideWithRightSide = false;
 	Dusty.CollideWithTopSide = false;
 	Dusty.CollideWithBottomSide = false;
+	
+    Dusty.CoinTutDisplayed = false;
+    Dusty.FireworkTutDisplayed = false;
+    Dusty.BallTutDisplayed = false;
+    Dusty.BarrelTutDisplayed = false;
+    Dusty.WallJumpTutDisplayed = false;
+    Dusty.InitialTutDisplayed = false;
+    Dusty.JumpTutDisplayed = false;
 };
 
 
@@ -814,11 +822,6 @@ void UpdateDusty_Collision()
 							SetGameState_WinScreen();
 							return;
 						}
-						
-                        if (Dusty.HasCrumbExpired)
-                        {
-                            Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
-                        }
 									
 						if (Dusty.HasGumExpired && Block->Gum)
 						{

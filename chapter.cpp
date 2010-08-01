@@ -15,7 +15,6 @@
 #include "TennisBall.h"
 #include "FireWorks.h"
 #include "Crumb.h"
-#include "Trigger.h"
 
 SChapter Chapter;
 SScore Score;
@@ -353,13 +352,7 @@ void LoadChapter(const char* filename)
 					CreateFireWork(x * 64, y * 64, Block->Desc);
 					Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
 				}
-				
-                if (strstr(Block->Desc, "crumbtrigger") != NULL)
-                {
-                    CreateTrigger(x * 64, y * 64, Block->Desc);
-                    Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
-                }
-				                
+								                
 				if (strcasecmp(Block->Desc, "dusty") == 0)
 				{
 					Dusty.FloatX = (float)x * 64;

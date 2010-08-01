@@ -17,7 +17,6 @@
 #include "FireWorks.h"
 #include "Dust.h"
 #include "Crumb.h"
-#include "Trigger.h"
 
 enum EGameState
 {
@@ -500,13 +499,7 @@ void DisplayGame_Playing()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
     DisplayScore();   
-    
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Update DisplayCrumbTrigger                                                            //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-
-    DisplayCrumbTriggers(); 
-    
+        
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Debugging aids                                                                        //
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -610,12 +603,6 @@ void UpdateGame_Playing()
         //                                                   Score Update                                                                       //
         // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		UpdateScore();
-		
-        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-        //                                                   Update CrumbTrigger                                                                   //
-        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-
-        UpdateCrumbTriggers(); 
 	}
 
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -640,9 +627,41 @@ void SetGameState_Crumb()
 
 void Display_Crumb()
 {    
-    gxDrawSpriteCenteredRotated( 300, -800, 0, &ColonelCrumb );  
-    gxDrawString(600, -900, 16, gxRGB32(255, 255, 255), "Dusty! Wait! I can help you!");
-    
+    if (Dusty.InitialTutDisplayed == false && GetInput_MoveRight())
+    {
+        gxDrawSpriteCenteredRotated( 300, -800, 0, &ColonelCrumb );
+    }
+
+    if (Dusty.CoinTutDisplayed == false && Coin->Collided)
+    {
+       gxDrawSpriteCenteredRotated( 300, -800, 0, &ColonelCrumb );
+    }
+
+    if (Dusty.BallTutDisplayed == false && Ball->Collided)
+    {
+        gxDrawSpriteCenteredRotated( 300, -800, 0, &ColonelCrumb );
+    }
+
+    if (Dusty.FireworkTutDisplayed == false && FireWork->State == FIREWORKSTATE_LAUNCH)
+    {
+        gxDrawSpriteCenteredRotated( 300, -800, 0, &ColonelCrumb );
+    }
+
+    if (Dusty.BarrelTutDisplayed == false && Dusty.State == DUSTYSTATE_PREPARELAUNCH)
+    {
+        gxDrawSpriteCenteredRotated( 300, -800, 0, &ColonelCrumb );
+    }
+
+    if ( Dusty.JumpTutDisplayed == false && Dusty.State == DUSTYSTATE_JUMP)
+    {
+        gxDrawSpriteCenteredRotated( 300, -800, 0, &ColonelCrumb );
+    }
+
+    if ( Dusty.WallJumpTutDisplayed == false && Dusty.State == DUSTYSTATE_WALLJUMP)
+    {
+        gxDrawSpriteCenteredRotated( 300, -800, 0, &ColonelCrumb );
+    }
+         
 	// Calculate scrolling.
 	CalculateScrollY();
 	
@@ -701,20 +720,56 @@ void Display_Crumb()
     //                                                   Score Update                                                                          //
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-    DisplayScore();  
-    
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Update DisplayCrumbTrigger                                                            //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-
-    DisplayCrumbTriggers();  
+    DisplayScore();   
 }
 
 void Update_Crumb()
 {
+    if (Dusty.InitialTutDisplayed == false)
+    {
+        Dusty.InitialTutDisplayed = true;
+        gxDrawString(600, -900, 20, gxRGB32(255, 255, 255), "Dusty! Wait! I can help you!");
+    }
+    
+    if (Dusty.CoinTutDisplayed == false)
+    {
+        Dusty.CoinTutDisplayed = true;
+        gxDrawString(600, -900, 20, gxRGB32(255, 255, 255), "Dusty! Wait! I can help you!");
+    }
+    
+    if (Dusty.BallTutDisplayed == false)
+    {
+        Dusty.BallTutDisplayed = true;
+        gxDrawString(600, -900, 20, gxRGB32(255, 255, 255), "Dusty! Wait! I can help you!");
+    }
+    
+    if (Dusty.FireworkTutDisplayed == false)
+    {
+        Dusty.FireworkTutDisplayed = true;
+        gxDrawString(600, -900, 20, gxRGB32(255, 255, 255), "Dusty! Wait! I can help you!");
+    }
+    
+    if (Dusty.BarrelTutDisplayed == false)
+    {
+        Dusty.BarrelTutDisplayed = true;
+        gxDrawString(600, -900, 20, gxRGB32(255, 255, 255), "Dusty! Wait! I can help you!");
+    }
+    
+    if ( Dusty.JumpTutDisplayed == false)
+    {
+        Dusty.JumpTutDisplayed = true;
+        gxDrawString(600, -900, 20, gxRGB32(255, 255, 255), "Dusty! Wait! I can help you!");
+    }
+    
+    if ( Dusty.WallJumpTutDisplayed == false)
+    {
+        Dusty.WallJumpTutDisplayed = true;
+        gxDrawString(600, -900, 20, gxRGB32(255, 255, 255), "Dusty! Wait! I can help you!");
+    }
+        
     if (Dusty.CrumbTimer <= 0)
     {    
-        Dusty.HasCrumbExpired = true;
+        Dusty.CrumbTimer = 200;
         SetGameState_Playing();
         return;
     }

@@ -123,6 +123,11 @@ void UpdateCoins()
         if (Dist < 50)
         {
             Coin->Collided = true;
+            if (Dusty.CoinTutDisplayed == false)
+            {
+                SetGameState_Crumb();
+                return;
+            }            
         }      
         
         if (Coin->Collided == true)
