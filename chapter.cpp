@@ -14,6 +14,8 @@
 #include "Coin.h"
 #include "TennisBall.h"
 #include "FireWorks.h"
+#include "Crumb.h"
+#include "Trigger.h"
 
 SChapter Chapter;
 SScore Score;
@@ -134,11 +136,6 @@ void LoadChapter(const char* filename)
 					{
 					    Block->Gum = true;
 					}
-										
-                    if (strstr(Block->Desc, "ColonelCrumb.png"))
-                    {
-                        Block->ColonelCrumb = true;
-                    }
 				}
 
 				Chapter.NBlocks++;
@@ -356,13 +353,19 @@ void LoadChapter(const char* filename)
 					CreateFireWork(x * 64, y * 64, Block->Desc);
 					Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
 				}
-
+				
+                if (strstr(Block->Desc, "crumbtrigger") != NULL)
+                {
+                    CreateTrigger(x * 64, y * 64, Block->Desc);
+                    Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
+                }
+				                
 				if (strcasecmp(Block->Desc, "dusty") == 0)
 				{
 					Dusty.FloatX = (float)x * 64;
 					Dusty.FloatY = (float)y * 64;
 					Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
-				}
+				}			
 			}
 		}
 	}

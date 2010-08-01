@@ -34,7 +34,7 @@ struct SBlock
 	bool Destructible;
 	bool EndOfLevel;
 	bool Gum;
-	bool ColonelCrumb;
+	bool HasCrumbTriggered;
 };
 
 struct SPage

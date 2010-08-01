@@ -16,6 +16,8 @@
 #include "TennisBall.h"
 #include "FireWorks.h"
 #include "Dust.h"
+#include "Crumb.h"
+#include "Trigger.h"
 
 enum EGameState
 {
@@ -23,7 +25,7 @@ enum EGameState
 	GAMESTATE_PLAYING,
 	GAMESTATE_DIE_SCREEN,
 	GAMESTATE_WIN_SCREEN,
-	GAMESTATE_PAUSE_SCREEN,
+	GAMESTATE_CRUMB,
 };
 
 extern EGameState GameState;
@@ -272,12 +274,6 @@ void LoadLevel(const char* Name)
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                   SetGameState_Pause Declaration                                                        //
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-
-void SetGameState_Pause();
-
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   GAMESTATE_START_SCREEN                                                                //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
@@ -504,7 +500,13 @@ void DisplayGame_Playing()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
     DisplayScore();   
+    
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Update DisplayCrumbTrigger                                                            //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
+    DisplayCrumbTriggers(); 
+    
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Debugging aids                                                                        //
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -538,34 +540,8 @@ void DisplayGame_Playing()
 }
 
 void UpdateGame_Playing()
-{
-    //for (int y = 0; y < Chapter.StitchedHeight; y++)
-    //{
-    //    for (int x = 0; x < Chapter.StitchedWidth; x++)
-    //    {
-    //        // Skip empty blocks.
-    //        if (IsBlockEmpty(x, y))
-    //        {
-    //            continue;
-    //        }
-
-    //        // Determine the bounds of the block.
-    //        float BlockLeft   = (float)x*64;
-    //        float BlockRight  = (float)x*64 + 64;
-    //        float BlockTop    = (float)y*64;
-    //        float BlockBottom = (float)y*64 + 64;
-    //                    
-    //         SBlock* Block = &Chapter.Blocks[GetBlockID(x, y)];
-    //
-    //         //Set the Game State to Pause if ColonelTrigger is set to true.
-    //         if (Block->ColonelCrumb == true)
-    //         {
-    //            SetGameState_Pause();
-    //            return;
-    //         }
-    //     }
-    // }
-
+{ 
+        
 #ifdef PLATFORM_WINDOWS
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Slow Motion Update                                                                    //
@@ -634,6 +610,12 @@ void UpdateGame_Playing()
         //                                                   Score Update                                                                       //
         // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		UpdateScore();
+		
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+        //                                                   Update CrumbTrigger                                                                   //
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+        UpdateCrumbTriggers(); 
 	}
 
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -651,15 +633,16 @@ void UpdateGame_Playing()
 //                                                   SetGameState_Pause Implementation                                                     //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-void SetGameState_Pause()
+void SetGameState_Crumb()
 {
-    GameState = GAMESTATE_PAUSE_SCREEN;
+    GameState = GAMESTATE_CRUMB;
 }
 
-void DisplayGame_PauseScreen()
+void Display_Crumb()
 {    
-    gxDrawSpriteCenteredRotated( (int)Dusty.FloatX + 50, ((int)(Dusty.FloatY - 100) + ScrollY), 0, &ColonelCrumb );
-
+    gxDrawSpriteCenteredRotated( 300, -800, 0, &ColonelCrumb );  
+    gxDrawString(600, -900, 16, gxRGB32(255, 255, 255), "Dusty! Wait! I can help you!");
+    
 	// Calculate scrolling.
 	CalculateScrollY();
 	
@@ -718,20 +701,24 @@ void DisplayGame_PauseScreen()
     //                                                   Score Update                                                                          //
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-    DisplayScore();   
+    DisplayScore();  
+    
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Update DisplayCrumbTrigger                                                            //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+    DisplayCrumbTriggers();  
 }
 
-void UpdateGame_PauseScreen()
+void Update_Crumb()
 {
-    int timer = 200;
-    timer--;
-    gxDrawString(600, -1024, 16, gxRGB32(255, 255, 255), "Test");
-    if (timer <= 0)
-    {
+    if (Dusty.CrumbTimer <= 0)
+    {    
+        Dusty.HasCrumbExpired = true;
         SetGameState_Playing();
+        return;
     }
-   
-    return;
+    Dusty.CrumbTimer--;
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -756,9 +743,9 @@ void Display()
 	{
 		DisplayGame_Playing();
 	}
-	else if (GameState == GAMESTATE_PAUSE_SCREEN)
+	else if (GameState == GAMESTATE_CRUMB)
 	{
-	    DisplayGame_PauseScreen();
+	    Display_Crumb();
 	}
 
 #ifdef PLATFORM_WINDOWS
@@ -906,9 +893,9 @@ bool Update()
 	{
 		UpdateGame_Playing();
 	}
-	else if (GameState == GAMESTATE_PAUSE_SCREEN)
+	else if (GameState == GAMESTATE_CRUMB)
 	{
-	    UpdateGame_PauseScreen();
+	    Update_Crumb();
 	}
 	
 	return true;

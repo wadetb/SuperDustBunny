@@ -273,6 +273,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Trigger.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Trigger.h"
+			>
+		</File>
+		<File
 			RelativePath=".\Vacuum.cpp"
 			>
 		</File>

@@ -54,6 +54,10 @@ struct SDusty
 
     bool HasGumExpired;
     int GumTimer;
+    
+    int CrumbTimer;
+    
+    bool HasCrumbExpired;
 
 	bool CollideWithLeftSide;
 	bool CollideWithRightSide;

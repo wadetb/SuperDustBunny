@@ -154,5 +154,6 @@ bool GetInput_Jump();
 void SetGameState_DieScreen();
 void SetGameState_WinScreen();
 void SetGameState_PauseScreen();
+void SetGameState_Crumb();
 
 #endif

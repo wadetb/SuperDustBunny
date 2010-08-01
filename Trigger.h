@@ -7,22 +7,30 @@
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
-#ifndef CRUMB_H
-#define CRUMB_H
+#ifndef TRIGGER_H
+#define TRIGGER_H
 
-enum ECrumbState
+
+enum ETriggerState
 {
-    CRUMBSTATE_SPEAK,
-    CRUMBSTATE_WAIT,
+    TRIGGERSTATE_ACTIVE 				,
+    TRIGGERSTATE_INACTIVE				,
 };
 
-struct SCrumb
+struct STrigger
 {
-    float X, Y;
+    ETriggerState State;
 
-    ECrumbState State;
+    int X, Y;
 
-    int Timer;
+    int Transition;
+    int Dist;
 };
+
+void CreateTrigger(int X, int Y, const char* Desc);
+void ClearTriggers();
+
+void UpdateCrumbTriggers();
+void DisplayCrumbTriggers();
 
 #endif

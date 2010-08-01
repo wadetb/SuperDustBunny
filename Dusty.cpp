@@ -43,6 +43,10 @@ void InitDusty()
 	
 	Dusty.HasGumExpired = false;
 	Dusty.GumTimer = 30;
+	
+	Dusty.CrumbTimer = 200;
+	
+	Dusty.HasCrumbExpired = false;
 
 	Dusty.CollideWithLeftSide = false;
 	Dusty.CollideWithRightSide = false;
@@ -400,11 +404,11 @@ void UpdateDusty_JumpCommon()
         return;
 	}
 
-	if (Dusty.CollideWithRightSide && Dusty.Direction == DIRECTION_RIGHT && Dusty.LastWall != DIRECTION_RIGHT )
-	{
-        SetDustyState_WallJump();			
+	if (Dusty.CollideWithRightSide && Dusty.Direction == DIRECTION_RIGHT && Dusty.LastWall != DIRECTION_RIGHT)
+    {
+        SetDustyState_WallJump();
         return;
-	}
+    }
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -656,7 +660,8 @@ void UpdateDusty_Stuck()
     {        
         if (Dusty.GumTimer <= 0 && (Dusty.CollideWithTopSide))
         {   
-            Dusty.HasGumExpired = true;      
+            Dusty.HasGumExpired = true;
+            Dusty.GumTimer = 30;      
             SetDustyState_Fall();
             return;
         }
@@ -664,6 +669,7 @@ void UpdateDusty_Stuck()
         if (Dusty.GumTimer <= 0 && (Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide))
         {
             Dusty.HasGumExpired = true;
+            Dusty.GumTimer = 30;
             SetDustyState_Stand();
             return;
         }
@@ -797,19 +803,24 @@ void UpdateDusty_Collision()
 					{
 						SBlock* Block = &Chapter.Blocks[BlockID];
 						
-						if ((Dusty.CollideWithTopSide || Dusty.CollideWithBottomSide) && Block->Destructible == true)
+						if ((Dusty.CollideWithTopSide || Dusty.CollideWithBottomSide) && Block->Destructible)
 						{
 							Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
 						}
 						
 						if ((Dusty.CollideWithTopSide || Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide || Dusty.CollideWithBottomSide)
-							&& Block->EndOfLevel == true)
+							&& Block->EndOfLevel)
 						{
 							SetGameState_WinScreen();
 							return;
 						}
-	                    
-						if (Dusty.HasGumExpired == true && Block->Gum == true)
+						
+                        if (Dusty.HasCrumbExpired)
+                        {
+                            Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
+                        }
+									
+						if (Dusty.HasGumExpired && Block->Gum)
 						{
 							Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
 						}
@@ -843,7 +854,7 @@ void DisplayDusty()
 	case DUSTYSTATE_PREPARELAUNCH:      DisplayDusty_PrepareLaunch(); break;
 	case DUSTYSTATE_LAUNCH:             DisplayDusty_Launch(); break;	
 	case DUSTYSTATE_DIE:				DisplayDusty_Die(); break;
-	case DUSTYSTATE_STUCK:              DisplayDusty_Stuck(); break;	
+	case DUSTYSTATE_STUCK:              DisplayDusty_Stuck(); break;
 	default:						    break;
 	}
 
