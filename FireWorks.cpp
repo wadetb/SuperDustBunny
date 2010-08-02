@@ -71,6 +71,11 @@ void UpdateFireWorks()
 
 			if (Dist < 70)
 			{
+			    if (Dusty.FireworkDisplayed == false)
+			    {
+			        SetGameState_Crumb();
+			        return;
+			    }    
 				FireWork->Timer = 10;
 				FireWork->State = FIREWORKSTATE_LAUNCH;
 			}

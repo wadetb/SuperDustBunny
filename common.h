@@ -92,6 +92,33 @@ inline float Min(float a, float b)
 #define strdup _strdup
 #endif
 
+enum ETutorialState
+{
+    TUTORIALSTATE_INITIAL,
+    TUTORIALSTATE_COIN,
+    TUTORIALSTATE_BALL,
+    TUTORIALSTATE_FIREWORK,
+    TUTORIALSTATE_BARREL,
+    TUTORIALSTATE_WALLJUMP,
+    TUTORIALSTATE_JUMP,
+};
+
+struct STutorial;
+{
+    ETutorialState State;
+    
+    bool CoinDisplayed;
+    bool FireworkDisplayed;
+    bool BallDisplayed;
+    bool BarrelDisplayed;
+    bool WallJumpDisplayed;
+    bool InitialDisplayed;
+    bool JumpDisplayed;
+}
+
+extern STutorial Tutorial;
+extern ETutorialState State;
+
 extern gxSprite DustyHop01;
 extern gxSprite DustyHop02;
 extern gxSprite DustyHop03;
@@ -154,6 +181,9 @@ bool GetInput_Jump();
 void SetGameState_DieScreen();
 void SetGameState_WinScreen();
 void SetGameState_PauseScreen();
-void SetGameState_Crumb();
+void SetGameState_Crumb(ETutorialState State);
+
+void InitTutorial();
+
 
 #endif

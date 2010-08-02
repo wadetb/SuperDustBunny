@@ -53,13 +53,6 @@ void InitDusty()
 	Dusty.CollideWithTopSide = false;
 	Dusty.CollideWithBottomSide = false;
 	
-    Dusty.CoinTutDisplayed = false;
-    Dusty.FireworkTutDisplayed = false;
-    Dusty.BallTutDisplayed = false;
-    Dusty.BarrelTutDisplayed = false;
-    Dusty.WallJumpTutDisplayed = false;
-    Dusty.InitialTutDisplayed = false;
-    Dusty.JumpTutDisplayed = false;
 };
 
 
@@ -118,6 +111,11 @@ void UpdateDusty_Stand()
 {		
 	if ( GetInput_Jump() )      
 	{
+	    if (Dusty.JumpTutDisplayed == false)
+	    {
+	        SetGameState_Crumb();
+	        return;
+	    }
 		SetDustyState_Jump( false );
 		return;
 	}
@@ -327,6 +325,11 @@ void DisplayDusty_Hop()
 
 void UpdateDusty_Hop()
 {
+	if (Dusty.InitialTutDisplayed == false)
+	{
+	    SetGameState_Crumb();
+	    return;
+	}
 	// Update animation
 	Dusty.SpriteTransition += 1;
 
@@ -424,7 +427,7 @@ void UpdateDusty_JumpCommon()
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
 void SetDustyState_WallJump()
-{   
+{   	
 	Dusty.WallStickTimer = 15;
 
 	Dusty.FloatVelocityX = 0;
@@ -460,6 +463,12 @@ void DisplayDusty_WallJump()
 
 void UpdateDusty_WallJump()
 {                                                   
+	if (Dusty.WallJumpTutDisplayed == false)
+	{
+	    SetGameState_Crumb();
+	    return;
+	}
+	
 	if (Dusty.WallStickTimer != 0)
 	{                        
 		Dusty.WallStickTimer -= 1;

@@ -70,6 +70,12 @@ void UpdateBarrels()
 
 			if (Dist < 100)
 			{
+				(if Dusty.BarrelDisplayed == false)
+				{
+				    SetGameState_Crumb();
+				    return;
+				}
+				
 				Dusty.FloatX = (float)Barrel->X;
 				Dusty.FloatY = (float)Barrel->Y + 50;
 				SetDustyState_PrepareLaunch();

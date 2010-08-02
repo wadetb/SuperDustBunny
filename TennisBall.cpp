@@ -92,7 +92,12 @@ void UpdateBall()
         if (Ball->Collided == true)
         {
             Ball->Y += 7;
-
+            if (Tutorial.BallDisplayed == false)
+            {
+                SetGameState_Crumb(TUTORIALSTATE_BALL);
+                return;
+            }
+            
 			if (Ball->Y + ScrollY >= gxScreenHeight)
 			{
 				Ball->State = BALLSTATE_INACTIVE;

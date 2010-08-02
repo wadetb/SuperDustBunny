@@ -122,18 +122,18 @@ void UpdateCoins()
         
         if (Dist < 50)
         {
-            Coin->Collided = true;
-            if (Dusty.CoinTutDisplayed == false)
-            {
-                SetGameState_Crumb();
-                return;
-            }            
+            Coin->Collided = true;        
         }      
         
         if (Coin->Collided == true)
         {
-            //sxPlaySound(&Clang01);
             Coin->Y += 7;
+            if (Dusty.CoinDisplayed == false)
+            {
+                SetGameState_Crumb();
+                return;
+            }  
+            //sxPlaySound(&Clang01);  
         }
         
         if (Coin->Transition == 65)
