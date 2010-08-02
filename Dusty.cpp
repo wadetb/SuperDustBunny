@@ -111,9 +111,9 @@ void UpdateDusty_Stand()
 {		
 	if ( GetInput_Jump() )      
 	{
-	    if (Dusty.JumpTutDisplayed == false)
+	    if (Tutorial.JumpDisplayed == false)
 	    {
-	        SetGameState_Crumb();
+	        SetGameState_Crumb(TUTORIALSTATE_JUMP);
 	        return;
 	    }
 		SetDustyState_Jump( false );
@@ -325,9 +325,9 @@ void DisplayDusty_Hop()
 
 void UpdateDusty_Hop()
 {
-	if (Dusty.InitialTutDisplayed == false)
+	if (Tutorial.InitialDisplayed == false)
 	{
-	    SetGameState_Crumb();
+	    SetGameState_Crumb(TUTORIALSTATE_INITIAL);
 	    return;
 	}
 	// Update animation
@@ -463,9 +463,9 @@ void DisplayDusty_WallJump()
 
 void UpdateDusty_WallJump()
 {                                                   
-	if (Dusty.WallJumpTutDisplayed == false)
+	if (Tutorial.WallJumpDisplayed == false)
 	{
-	    SetGameState_Crumb();
+	    SetGameState_Crumb(TUTORIALSTATE_WALLJUMP);
 	    return;
 	}
 	

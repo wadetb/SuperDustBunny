@@ -128,9 +128,9 @@ void UpdateCoins()
         if (Coin->Collided == true)
         {
             Coin->Y += 7;
-            if (Dusty.CoinDisplayed == false)
+            if (Tutorial.CoinDisplayed == false)
             {
-                SetGameState_Crumb();
+                SetGameState_Crumb(TUTORIALSTATE_COIN);
                 return;
             }  
             //sxPlaySound(&Clang01);  

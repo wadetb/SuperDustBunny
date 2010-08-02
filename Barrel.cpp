@@ -70,9 +70,9 @@ void UpdateBarrels()
 
 			if (Dist < 100)
 			{
-				(if Dusty.BarrelDisplayed == false)
+				if (Tutorial.BarrelDisplayed == false)
 				{
-				    SetGameState_Crumb();
+				    SetGameState_Crumb(TUTORIALSTATE_BARREL);
 				    return;
 				}
 				

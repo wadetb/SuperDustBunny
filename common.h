@@ -94,6 +94,7 @@ inline float Min(float a, float b)
 
 enum ETutorialState
 {
+    TUTORIALSTATE_NONE,
     TUTORIALSTATE_INITIAL,
     TUTORIALSTATE_COIN,
     TUTORIALSTATE_BALL,
@@ -103,7 +104,7 @@ enum ETutorialState
     TUTORIALSTATE_JUMP,
 };
 
-struct STutorial;
+struct STutorial
 {
     ETutorialState State;
     
@@ -114,10 +115,9 @@ struct STutorial;
     bool WallJumpDisplayed;
     bool InitialDisplayed;
     bool JumpDisplayed;
-}
+};
 
 extern STutorial Tutorial;
-extern ETutorialState State;
 
 extern gxSprite DustyHop01;
 extern gxSprite DustyHop02;
