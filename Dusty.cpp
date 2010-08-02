@@ -116,6 +116,7 @@ void UpdateDusty_Stand()
 	        SetGameState_Crumb(TUTORIALSTATE_JUMP);
 	        return;
 	    }
+        
 		SetDustyState_Jump( false );
 		return;
 	}
@@ -325,11 +326,12 @@ void DisplayDusty_Hop()
 
 void UpdateDusty_Hop()
 {
-	if (Tutorial.InitialDisplayed == false)
-	{
+    if (Tutorial.InitialDisplayed == false)
+    {    
 	    SetGameState_Crumb(TUTORIALSTATE_INITIAL);
 	    return;
-	}
+	}    
+
 	// Update animation
 	Dusty.SpriteTransition += 1;
 
@@ -468,7 +470,7 @@ void UpdateDusty_WallJump()
 	    SetGameState_Crumb(TUTORIALSTATE_WALLJUMP);
 	    return;
 	}
-	
+		
 	if (Dusty.WallStickTimer != 0)
 	{                        
 		Dusty.WallStickTimer -= 1;

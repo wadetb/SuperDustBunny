@@ -75,7 +75,8 @@ void UpdateFireWorks()
 			    {
 			        SetGameState_Crumb(TUTORIALSTATE_FIREWORK);
 			        return;
-			    }    
+			    }
+		        		        
 				FireWork->Timer = 10;
 				FireWork->State = FIREWORKSTATE_LAUNCH;
 			}

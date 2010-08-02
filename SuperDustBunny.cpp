@@ -31,6 +31,8 @@ void InitTutorial()
     Tutorial.JumpDisplayed = false;
 }
 
+STutorial Tutorial;
+
 enum EGameState
 {
 	GAMESTATE_START_SCREEN,
@@ -675,7 +677,7 @@ void Display_Crumb()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_INITIAL)
     {
-          gxDrawSpriteCenteredRotated ((int)(Dusty.FloatX), (int)(Dusty.FloatY + ScrollY), 0, &InitialTut );
+             gxDrawSpriteCenteredRotated ((int)(Dusty.FloatX), (int)(Dusty.FloatY + ScrollY), 0, &InitialTut );  
     }
     
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -683,7 +685,7 @@ void Display_Crumb()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_BALL)
     {
-
+            gxDrawSpriteCenteredRotated ((int)(Dusty.FloatX), (int)(Dusty.FloatY + ScrollY), 0, &InitialTut );
     }
     
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -691,7 +693,7 @@ void Display_Crumb()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_BARREL)
     {
- 
+            gxDrawSpriteCenteredRotated ((int)(Dusty.FloatX), (int)(Dusty.FloatY + ScrollY), 0, &InitialTut );
     }
     
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -699,7 +701,7 @@ void Display_Crumb()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_COIN)
     {
-
+            gxDrawSpriteCenteredRotated ((int)(Dusty.FloatX), (int)(Dusty.FloatY + ScrollY), 0, &InitialTut );
     }
     
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -707,7 +709,7 @@ void Display_Crumb()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_FIREWORK)
     {
-
+            gxDrawSpriteCenteredRotated ((int)(Dusty.FloatX), (int)(Dusty.FloatY + ScrollY), 0, &InitialTut );
     }
     
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -715,7 +717,7 @@ void Display_Crumb()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_JUMP)
     {
-
+            gxDrawSpriteCenteredRotated ((int)(Dusty.FloatX), (int)(Dusty.FloatY + ScrollY), 0, &InitialTut );
     }
     
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -723,7 +725,7 @@ void Display_Crumb()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_WALLJUMP)
     {
-
+            gxDrawSpriteCenteredRotated ((int)(Dusty.FloatX), (int)(Dusty.FloatY + ScrollY), 0, &InitialTut );
     }
              
 	// Calculate scrolling.
@@ -795,7 +797,7 @@ void Update_Crumb()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_INITIAL)
     {
-        
+        Tutorial.InitialDisplayed = true;
     }
 
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -803,7 +805,7 @@ void Update_Crumb()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_BALL)
     {
-
+        Tutorial.BallDisplayed = true;
     }
 
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -811,7 +813,7 @@ void Update_Crumb()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_BARREL)
     {
-
+        Tutorial.BarrelDisplayed = true;
     }
 
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -819,7 +821,7 @@ void Update_Crumb()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_COIN)
     {
-
+        Tutorial.CoinDisplayed = true;
     }
 
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -827,7 +829,7 @@ void Update_Crumb()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_FIREWORK)
     {
-
+        Tutorial.FireworkDisplayed = true;
     }
 
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -835,7 +837,7 @@ void Update_Crumb()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_JUMP)
     {
-
+        Tutorial.JumpDisplayed = true;
     }
 
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -843,7 +845,7 @@ void Update_Crumb()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_WALLJUMP)
     {
-
+        Tutorial.WallJumpDisplayed = true;
     }
         
     if (Dusty.CrumbTimer <= 0)

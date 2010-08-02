@@ -132,7 +132,8 @@ void UpdateCoins()
             {
                 SetGameState_Crumb(TUTORIALSTATE_COIN);
                 return;
-            }  
+            }
+            
             //sxPlaySound(&Clang01);  
         }
         
