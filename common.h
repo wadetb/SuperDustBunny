@@ -184,6 +184,7 @@ void SetGameState_PauseScreen();
 void SetGameState_Crumb(ETutorialState State);
 
 void InitTutorial();
+void SkipTutorials();
 
 
 #endif

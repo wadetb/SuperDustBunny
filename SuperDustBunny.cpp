@@ -86,6 +86,7 @@ gxSprite ArrowSprite;
 gxSprite DustMoteSprite;
 gxSprite ColonelCrumbLeft;
 gxSprite ColonelCrumbRight;
+gxSprite ColonelCrumbWallJumpLeft;
 
 gxSprite Coin01;
 gxSprite Coin02;
@@ -185,6 +186,8 @@ void Init()
     gxLoadSprite("Data/DustyWin02.png", &WinScreen1);
     gxLoadSprite("Data/ColonelCrumbRight.png", &ColonelCrumbRight);
     gxLoadSprite("Data/ColonelCrumb.png", &ColonelCrumbLeft);
+    gxLoadSprite("Data/ColonelCrumbWallJumpLeft.png", &ColonelCrumbWallJumpLeft);
+    
     
 	gxLoadSprite("Data/vacuum.png", &VacuumSprite);
 	gxLoadSprite("Data/vacuum-front.png", &VacuumFrontSprite);
@@ -415,6 +418,17 @@ void UpdateGame_DieScreen()
 		return;
 	}
 #endif
+}
+
+void SkipTutorials()
+{
+    Tutorial.CoinDisplayed = true;
+    Tutorial.FireworkDisplayed = true;
+    Tutorial.BallDisplayed = true;
+    Tutorial.BarrelDisplayed = true;
+    Tutorial.WallJumpDisplayed = true;
+    Tutorial.InitialDisplayed = true;
+    Tutorial.JumpDisplayed = true;
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -672,61 +686,6 @@ void SetGameState_Crumb(ETutorialState State)
 
 void Display_Crumb()
 {    
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Tutorial State Display Initial Implementation                                         //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
-    if (Tutorial.State == TUTORIALSTATE_INITIAL)
-    {
-             gxDrawSpriteCenteredRotated ((int)(Dusty.FloatX), (int)(Dusty.FloatY + ScrollY), 0, &InitialTut );  
-    }
-    
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Tutorial State Display Ball Implementation                                            //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
-    if (Tutorial.State == TUTORIALSTATE_BALL)
-    {
-            gxDrawSpriteCenteredRotated ((int)(Dusty.FloatX), (int)(Dusty.FloatY + ScrollY), 0, &InitialTut );
-    }
-    
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Tutorial State Display Barrel Implementation                                          //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
-    if (Tutorial.State == TUTORIALSTATE_BARREL)
-    {
-            gxDrawSpriteCenteredRotated ((int)(Dusty.FloatX), (int)(Dusty.FloatY + ScrollY), 0, &InitialTut );
-    }
-    
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Tutorial State Display Coin Implementation                                            //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
-    if (Tutorial.State == TUTORIALSTATE_COIN)
-    {
-            gxDrawSpriteCenteredRotated ((int)(Dusty.FloatX), (int)(Dusty.FloatY + ScrollY), 0, &InitialTut );
-    }
-    
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Tutorial State Display FireWork Implementation                                        //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
-    if (Tutorial.State == TUTORIALSTATE_FIREWORK)
-    {
-            gxDrawSpriteCenteredRotated ((int)(Dusty.FloatX), (int)(Dusty.FloatY + ScrollY), 0, &InitialTut );
-    }
-    
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Tutorial State Display Jump Implementation                                            //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
-    if (Tutorial.State == TUTORIALSTATE_JUMP)
-    {
-            gxDrawSpriteCenteredRotated ((int)(Dusty.FloatX), (int)(Dusty.FloatY + ScrollY), 0, &InitialTut );
-    }
-    
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Tutorial State Display WallJump Implementation                                        //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
-    if (Tutorial.State == TUTORIALSTATE_WALLJUMP)
-    {
-            gxDrawSpriteCenteredRotated ((int)(Dusty.FloatX), (int)(Dusty.FloatY + ScrollY), 0, &InitialTut );
-    }
              
 	// Calculate scrolling.
 	CalculateScrollY();
@@ -786,6 +745,69 @@ void Display_Crumb()
     //                                                   Score Update                                                                          //
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
     DisplayScore();
+    
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Tutorial State Display Initial Implementation                                         //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
+    if (Tutorial.State == TUTORIALSTATE_INITIAL)
+    {
+        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &InitialTut );  
+        gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &ColonelCrumbLeft );  
+    }
+
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Tutorial State Display Ball Implementation                                            //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
+    if (Tutorial.State == TUTORIALSTATE_BALL)
+    {
+        gxDrawSpriteCenteredRotated (390, (10600 + ScrollY), 0, &BallTut );  
+        gxDrawSpriteCenteredRotated (25, (10900 + ScrollY), 0, &ColonelCrumbWallJumpLeft );
+    }
+
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Tutorial State Display Barrel Implementation                                          //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
+    if (Tutorial.State == TUTORIALSTATE_BARREL)
+    {
+        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &BarrelTut );  
+        gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &ColonelCrumbLeft );
+    }
+
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Tutorial State Display Coin Implementation                                            //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
+    if (Tutorial.State == TUTORIALSTATE_COIN)
+    {
+        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &CoinTut );  
+        gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &ColonelCrumbLeft ); 
+    }
+
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Tutorial State Display FireWork Implementation                                        //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
+    if (Tutorial.State == TUTORIALSTATE_FIREWORK)
+    {
+        gxDrawSpriteCenteredRotated (390, (10500 + ScrollY), 0, &FireWorkTut );  
+        gxDrawSpriteCenteredRotated (25, (10300 + ScrollY), 0, &ColonelCrumbWallJumpLeft );
+    }
+
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Tutorial State Display Jump Implementation                                            //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
+    if (Tutorial.State == TUTORIALSTATE_JUMP)
+    {
+        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &JumpTut );  
+        gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &ColonelCrumbLeft );
+    }
+
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Tutorial State Display WallJump Implementation                                        //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
+    if (Tutorial.State == TUTORIALSTATE_WALLJUMP)
+    {
+        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &WallJumpTut );  
+        gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &ColonelCrumbLeft );\
+    }
 }
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   Tutorial State Update Crumb Implementation                                            //
@@ -850,7 +872,7 @@ void Update_Crumb()
         
     if (Dusty.CrumbTimer <= 0)
     {    
-        Dusty.CrumbTimer = 200;
+        Dusty.CrumbTimer = 300;
         SetGameState_Playing();
         return;
     }
@@ -926,7 +948,11 @@ void Display()
 
 bool Update()
 {    
-    
+    if (kbIsKeyDown(KB_S))
+    {
+         SkipTutorials();
+    }
+
     //Background Music
     if (BackgroundMusic == 1)
     {	        
