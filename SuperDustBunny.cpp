@@ -872,7 +872,7 @@ void Update_Crumb()
         
     if (Dusty.CrumbTimer <= 0)
     {    
-        Dusty.CrumbTimer = 300;
+        Dusty.CrumbTimer = 400;
         SetGameState_Playing();
         return;
     }
