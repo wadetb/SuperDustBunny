@@ -44,7 +44,7 @@ void InitDusty()
 	Dusty.HasGumExpired = false;
 	Dusty.GumTimer = 30;
 	
-	Dusty.CrumbTimer = 200;
+	Dusty.CrumbTimer = 400;
 	
 	Dusty.HasCrumbExpired = false;
 
