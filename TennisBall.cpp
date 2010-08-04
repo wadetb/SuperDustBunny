@@ -25,6 +25,9 @@ void CreateBall(int X, int Y, const char* Desc)
     Ball->X = X + 32;
     Ball->Y = Y + 32;
     
+    Ball->FloatVelocityY = 0.0f;
+    Ball->FloatGravity = 0.5f;
+    
     Ball->Transition = 40;
     Ball->Sprite = 1;
 
@@ -91,7 +94,9 @@ void UpdateBall()
         
         if (Ball->Collided == true)
         {
-            Ball->Y += 7;
+            Ball->Y += Ball->FloatVelocityY;
+            Ball->FloatVelocityY += Ball->FloatGravity;
+            
             if (Tutorial.BallDisplayed == false)
             {
                 SetGameState_Crumb(TUTORIALSTATE_BALL);

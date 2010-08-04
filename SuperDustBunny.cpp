@@ -17,6 +17,7 @@
 #include "FireWorks.h"
 #include "Dust.h"
 #include "Crumb.h"
+#include "Gear.h"
 
 void InitTutorial()
 {
@@ -29,6 +30,7 @@ void InitTutorial()
     Tutorial.WallJumpDisplayed = false;
     Tutorial.InitialDisplayed = false;
     Tutorial.JumpDisplayed = false;
+    Tutorial.GearDisplayed = false;
 }
 
 STutorial Tutorial;
@@ -106,6 +108,11 @@ gxSprite Ball02;
 gxSprite Ball03;
 gxSprite Ball04;
 
+gxSprite Gear01;
+gxSprite Gear02;
+gxSprite Gear03;
+gxSprite Gear04;
+
 gxSprite FireWork01;
 gxSprite FireWork02;
 
@@ -117,6 +124,7 @@ gxSprite WinScreen0;
 gxSprite WinScreen1;
 gxSprite Score01;
 gxSprite Gum01;
+gxSprite GumJump;
 
 gxSprite InitialTut;
 gxSprite CoinTut;
@@ -125,6 +133,7 @@ gxSprite WallJumpTut;
 gxSprite FireWorkTut;
 gxSprite BarrelTut;
 gxSprite BallTut;
+gxSprite GearTut;
 
 sxSound DustyToJump;
 sxSound DustyJumps;
@@ -207,16 +216,22 @@ void Init()
     gxLoadSprite("Data/Coin11.png", &Coin011);
     gxLoadSprite("Data/Coin12.png", &Coin012);
 
-    gxLoadSprite("Data/TennisBallRollLeft01.png", &Ball01);
-    gxLoadSprite("Data/TennisBallRollLeft02.png", &Ball02);
-    gxLoadSprite("Data/TennisBallRollLeft03.png", &Ball03);
-	gxLoadSprite("Data/TennisBallRollLeft04.png", &Ball04);
+    gxLoadSprite("Data/Ball01.png", &Ball01);
+    gxLoadSprite("Data/Ball02.png", &Ball02);
+    gxLoadSprite("Data/Ball03.png", &Ball03);
+	gxLoadSprite("Data/Ball04.png", &Ball04);
+	
+    gxLoadSprite("Data/Gear.png", &Gear01);
+    gxLoadSprite("Data/Gear2.png", &Gear02);
+    gxLoadSprite("Data/Gear3.png", &Gear03);
+    gxLoadSprite("Data/Gear4.png", &Gear04);
 
 	gxLoadSprite("Data/FireWork01.png", &FireWork01);
 	gxLoadSprite("Data/FireWork02.png", &FireWork02);
 	
 	gxLoadSprite("Data/Score01.png", &Score01);
 	gxLoadSprite("Data/Gum01.png", &Gum01);
+	gxLoadSprite("Data/GumJump.png", &GumJump);
 	
     gxLoadSprite("Data/InitialTutorial.png", &InitialTut);
     gxLoadSprite("Data/CoinTutorial.png", &CoinTut);
@@ -225,6 +240,7 @@ void Init()
     gxLoadSprite("Data/FireWorkTutorial.png", &FireWorkTut);
     gxLoadSprite("Data/BarrelTutorial.png", &BarrelTut);
     gxLoadSprite("Data/BallTutorial.png", &BallTut);
+    gxLoadSprite("Data/GearTutorial.png", &GearTut);
 
     sxLoadWav ("Data/yaahooo.wav", &DustyToJump);
     sxLoadWav ("Data/yaahooo.wav", &DustyJumps);
@@ -429,6 +445,7 @@ void SkipTutorials()
     Tutorial.WallJumpDisplayed = true;
     Tutorial.InitialDisplayed = true;
     Tutorial.JumpDisplayed = true;
+    Tutorial.GearDisplayed = true;
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -526,6 +543,11 @@ void DisplayGame_Playing()
 	//                                                   Coin Drawing                                                                          //
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	DisplayCoins();
+	
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Gear Drawing                                                                          //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    DisplayGear();
 	
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
     //                                                   Ball Drawing                                                                          //
@@ -646,6 +668,11 @@ void UpdateGame_Playing()
         //                                                   Ball Update                                                                           //
         // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
         UpdateBall();  
+        
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+        //                                                   Gear Update                                                                           //
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+        UpdateGear();  
 
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		//                                                   FireWork Update                                                                       //
@@ -725,6 +752,11 @@ void Display_Crumb()
     //                                                   Ball Drawing                                                                          //
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
     DisplayBall();
+    
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Gear Drawing                                                                          //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    DisplayGear();
 
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Dust Drawing                                                                          //
@@ -808,6 +840,15 @@ void Display_Crumb()
         gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &WallJumpTut );  
         gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &ColonelCrumbLeft );\
     }
+    
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Tutorial State Display Gear Implementation                                        //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
+    if (Tutorial.State == TUTORIALSTATE_GEAR)
+    {
+        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &BallTut );  
+        gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &ColonelCrumbLeft );\
+    }
 }
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   Tutorial State Update Crumb Implementation                                            //
@@ -868,6 +909,14 @@ void Update_Crumb()
     if (Tutorial.State == TUTORIALSTATE_WALLJUMP)
     {
         Tutorial.WallJumpDisplayed = true;
+    }
+    
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Tutorial State Update Gear Implementation                                        //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
+    if (Tutorial.State == TUTORIALSTATE_GEAR)
+    {
+        Tutorial.GearDisplayed = true;
     }
         
     if (Dusty.CrumbTimer <= 0)

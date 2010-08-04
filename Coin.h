@@ -22,6 +22,8 @@ struct SCoin
     ECoinState State;
 
     int X, Y;
+    float FloatVelocityY;
+    float FloatGravity;
     
     int Sprite;
     int Transition;

@@ -55,6 +55,9 @@ struct SDusty
     bool HasGumExpired;
     int GumTimer;
     
+    bool HasGumBlockExpired;
+    int GumJumpAttempt;
+    
     int CrumbTimer;
     
     bool HasCrumbExpired;

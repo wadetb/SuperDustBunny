@@ -261,6 +261,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Gear.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Gear.h"
+			>
+		</File>
+		<File
 			RelativePath=".\SuperDustBunny.cpp"
 			>
 		</File>

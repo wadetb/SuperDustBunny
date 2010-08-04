@@ -102,6 +102,7 @@ enum ETutorialState
     TUTORIALSTATE_BARREL,
     TUTORIALSTATE_WALLJUMP,
     TUTORIALSTATE_JUMP,
+    TUTORIALSTATE_GEAR,
 };
 
 struct STutorial
@@ -115,6 +116,7 @@ struct STutorial
     bool WallJumpDisplayed;
     bool InitialDisplayed;
     bool JumpDisplayed;
+    bool GearDisplayed;
 };
 
 extern STutorial Tutorial;
@@ -160,6 +162,11 @@ extern gxSprite Ball01;
 extern gxSprite Ball02;
 extern gxSprite Ball03;
 extern gxSprite Ball04;
+
+extern gxSprite Gear01;
+extern gxSprite Gear02;
+extern gxSprite Gear03;
+extern gxSprite Gear04;
 
 extern gxSprite FireWork01;
 extern gxSprite FireWork02;

@@ -1,4 +1,4 @@
-﻿//-----------------------------------------------------------------------------------------------------------------------------------------//
+//-----------------------------------------------------------------------------------------------------------------------------------------//
 //                                                                                                                                         // 
 //                                                          Super Dust Bunny                                                               //
 //                                                                                                                                         //
@@ -7,23 +7,23 @@
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
-#ifndef Ball_H
-#define Ball_H
+#ifndef GEAR_H
+#define GEAR_H
 
 
-enum EBallState
+enum EGearState
 {
-    BALLSTATE_ACTIVE,
-    BALLSTATE_INACTIVE,
+    GEARSTATE_ACTIVE,
+    GEARSTATE_INACTIVE,
 };
 
-struct SBall
+struct SGear
 {
-    EBallState State;
+    EGearState State;
 
     int Sprite;
     int Transition;
-    
+
     int X, Y;
     float FloatVelocityY;
     float FloatGravity;
@@ -32,11 +32,11 @@ struct SBall
 
 };
 
-extern SBall Ball;
-void CreateBall(int X, int Y, const char* Desc);
-void ClearBalls();
+extern SGear Gear;
+void CreateGear(int X, int Y, const char* Desc);
+void ClearGears();
 
-void UpdateBall();
-void DisplayBall();
+void UpdateGear();
+void DisplayGear();
 
 #endif

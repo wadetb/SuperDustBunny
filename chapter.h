@@ -34,6 +34,7 @@ struct SBlock
 	bool Destructible;
 	bool EndOfLevel;
 	bool Gum;
+	bool GumJump;
 	bool HasCrumbTriggered;
 };
 

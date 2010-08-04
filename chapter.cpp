@@ -15,6 +15,7 @@
 #include "TennisBall.h"
 #include "FireWorks.h"
 #include "Crumb.h"
+#include "Gear.h"
 
 SChapter Chapter;
 SScore Score;
@@ -135,6 +136,11 @@ void LoadChapter(const char* filename)
 					{
 					    Block->Gum = true;
 					}
+					
+                    if (strstr(Block->Desc, "GumJump.png"))
+                    {
+                        Block->GumJump = true;
+                    }
 				}
 
 				Chapter.NBlocks++;
@@ -346,6 +352,12 @@ void LoadChapter(const char* filename)
 					CreateBall(x * 64, y * 64, Block->Desc);
 					Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
 				}
+				
+                if (strstr(Block->Desc, "gear") != NULL)
+                {
+                    CreateGear(x * 64, y * 64, Block->Desc);
+                    Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
+                }
 
 				if (strstr(Block->Desc, "firework") != NULL)
 				{

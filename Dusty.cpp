@@ -44,6 +44,9 @@ void InitDusty()
 	Dusty.HasGumExpired = false;
 	Dusty.GumTimer = 30;
 	
+	Dusty.HasGumBlockExpired = false;
+	Dusty.GumJumpAttempt = 0;
+	
 	Dusty.CrumbTimer = 400;
 	
 	Dusty.HasCrumbExpired = false;
@@ -671,7 +674,7 @@ void DisplayDusty_Stuck()
     if (Dusty.SpriteTransition <= 4)
         gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119 + 35*ScaleX), (int)(Dusty.FloatY - 217 + ScrollY), ScaleX, 1.0f, &DustyHop02 );
     else
-        gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 221 + ScrollY), ScaleX, 1.0f, &DustyHop01 ); 
+        gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 221 + ScrollY), ScaleX, 1.0f, &DustyHop01 );     
 }
 
 void UpdateDusty_Stuck()
@@ -692,7 +695,21 @@ void UpdateDusty_Stuck()
             SetDustyState_Stand();
             return;
         }
+                                            
+        if (Dusty.GumJumpAttempt > 4 && (Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide))
+        {
+            Dusty.HasGumBlockExpired = true;
+            Dusty.GumJumpAttempt = 0;
+            SetDustyState_Stand();
+            return;
+        }
+    }    
+    
+    if(GetInput_Jump())
+    {              
+        Dusty.GumJumpAttempt += 1;
     }
+    
     Dusty.GumTimer--;
 }
 
@@ -844,7 +861,19 @@ void UpdateDusty_Collision()
 						{
 							SetDustyState_Stuck();
 							return;                  
-						}						
+						}	
+						
+                        if (Dusty.HasGumBlockExpired && Block->GumJump)
+                        {
+                            Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
+                        }
+
+                        if ((Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide || Dusty.CollideWithTopSide)
+                            && Block->GumJump == true)
+                        {
+                            SetDustyState_Stuck();
+                            return;                  
+                        }					
 					}
 				}
 			}

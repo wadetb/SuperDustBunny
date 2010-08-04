@@ -22,6 +22,8 @@ void CreateCoin(int X, int Y, const char* Desc)
 
     Coin->X = X + 32;
     Coin->Y = Y + 32;
+    Coin->FloatVelocityY = 0.0f;
+    Coin->FloatGravity = 0.5f;
     
     Coin->Transition = 65;
     Coin->Sprite = 1;
@@ -127,7 +129,9 @@ void UpdateCoins()
         
         if (Coin->Collided == true)
         {
-            Coin->Y += 7;
+            Coin->Y += Coin->FloatVelocityY;
+            Coin->FloatVelocityY += Coin->FloatGravity;
+            
             if (Tutorial.CoinDisplayed == false)
             {
                 SetGameState_Crumb(TUTORIALSTATE_COIN);
