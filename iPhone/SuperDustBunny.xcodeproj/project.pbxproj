@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		084D84B412026A0800EEA2E9 /* Dust.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 084D84B212026A0800EEA2E9 /* Dust.cpp */; };
 		088B035911EC74C000F7D112 /* SuperDustBunny.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 088B035811EC74C000F7D112 /* SuperDustBunny.cpp */; };
 		088B036511EC750500F7D112 /* EAGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 088B035B11EC750500F7D112 /* EAGLView.mm */; };
 		088B036611EC750500F7D112 /* graphics.mm in Sources */ = {isa = PBXBuildFile; fileRef = 088B035D11EC750500F7D112 /* graphics.mm */; };
@@ -22,6 +23,7 @@
 		08D1F9AA11FA7DB100241F37 /* Data in Resources */ = {isa = PBXBuildFile; fileRef = 08D1F95611FA7DB100241F37 /* Data */; };
 		08D1F9CC11FBB40D00241F37 /* FireWorks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D1F9C811FBB40D00241F37 /* FireWorks.cpp */; };
 		08D1F9CD11FBB40D00241F37 /* TennisBall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D1F9CA11FBB40D00241F37 /* TennisBall.cpp */; };
+		08F4A696120CE48000DB2A29 /* Gear.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08F4A694120CE48000DB2A29 /* Gear.cpp */; };
 		08F7618011F27E95006C8C45 /* chapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08F7617D11F27E95006C8C45 /* chapter.cpp */; };
 		08F7622411F27FBF006C8C45 /* Design.txt in Resources */ = {isa = PBXBuildFile; fileRef = 08F7622211F27FBF006C8C45 /* Design.txt */; };
 		08F7622511F27FBF006C8C45 /* TODO.txt in Resources */ = {isa = PBXBuildFile; fileRef = 08F7622311F27FBF006C8C45 /* TODO.txt */; };
@@ -37,6 +39,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		084D84B212026A0800EEA2E9 /* Dust.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Dust.cpp; path = ../Dust.cpp; sourceTree = SOURCE_ROOT; };
+		084D84B312026A0800EEA2E9 /* Dust.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Dust.h; path = ../Dust.h; sourceTree = SOURCE_ROOT; };
 		088B035811EC74C000F7D112 /* SuperDustBunny.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SuperDustBunny.cpp; path = ../SuperDustBunny.cpp; sourceTree = SOURCE_ROOT; };
 		088B035A11EC750500F7D112 /* EAGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EAGLView.h; sourceTree = "<group>"; };
 		088B035B11EC750500F7D112 /* EAGLView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EAGLView.mm; sourceTree = "<group>"; };
@@ -61,6 +65,9 @@
 		08D1F9C911FBB40D00241F37 /* FireWorks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FireWorks.h; path = ../FireWorks.h; sourceTree = SOURCE_ROOT; };
 		08D1F9CA11FBB40D00241F37 /* TennisBall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TennisBall.cpp; path = ../TennisBall.cpp; sourceTree = SOURCE_ROOT; };
 		08D1F9CB11FBB40D00241F37 /* TennisBall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TennisBall.h; path = ../TennisBall.h; sourceTree = SOURCE_ROOT; };
+		08F4A693120CE48000DB2A29 /* Crumb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Crumb.h; path = ../Crumb.h; sourceTree = SOURCE_ROOT; };
+		08F4A694120CE48000DB2A29 /* Gear.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Gear.cpp; path = ../Gear.cpp; sourceTree = SOURCE_ROOT; };
+		08F4A695120CE48000DB2A29 /* Gear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Gear.h; path = ../Gear.h; sourceTree = SOURCE_ROOT; };
 		08F7617D11F27E95006C8C45 /* chapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = chapter.cpp; path = ../chapter.cpp; sourceTree = SOURCE_ROOT; };
 		08F7617E11F27E95006C8C45 /* chapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = chapter.h; path = ../chapter.h; sourceTree = SOURCE_ROOT; };
 		08F7617F11F27E95006C8C45 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = common.h; path = ../common.h; sourceTree = SOURCE_ROOT; };
@@ -142,6 +149,11 @@
 		28EEBF621118D79A00187D67 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				08F4A693120CE48000DB2A29 /* Crumb.h */,
+				08F4A694120CE48000DB2A29 /* Gear.cpp */,
+				08F4A695120CE48000DB2A29 /* Gear.h */,
+				084D84B212026A0800EEA2E9 /* Dust.cpp */,
+				084D84B312026A0800EEA2E9 /* Dust.h */,
 				08D1F9C811FBB40D00241F37 /* FireWorks.cpp */,
 				08D1F9C911FBB40D00241F37 /* FireWorks.h */,
 				08D1F9CA11FBB40D00241F37 /* TennisBall.cpp */,
@@ -281,6 +293,8 @@
 				08D1F8F711FA791100241F37 /* Vacuum.cpp in Sources */,
 				08D1F9CC11FBB40D00241F37 /* FireWorks.cpp in Sources */,
 				08D1F9CD11FBB40D00241F37 /* TennisBall.cpp in Sources */,
+				084D84B412026A0800EEA2E9 /* Dust.cpp in Sources */,
+				08F4A696120CE48000DB2A29 /* Gear.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

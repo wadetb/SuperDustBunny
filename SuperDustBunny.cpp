@@ -997,11 +997,13 @@ void Display()
 
 bool Update()
 {    
+#ifdef PLATFORM_WINDOWS
     if (kbIsKeyDown(KB_S))
     {
          SkipTutorials();
     }
-
+#endif
+	
     //Background Music
     if (BackgroundMusic == 1)
     {	        

@@ -153,9 +153,15 @@ void DisplayDust()
 
 float RandomFloat(float Min, float Max)
 {
+#ifdef PLATFORM_WINDOWS
 	unsigned int i;
 	rand_s( &i );
 	return (float)( Min + ( (double)i / (double)UINT_MAX ) * (Max-Min) );
+#endif
+#ifdef PLATFORM_IPHONE
+	u_int32_t i = arc4random();
+	return (float)( Min + ( (double)i / (double)((2<<31)-1) ) * (Max-Min) );
+#endif
 }
 
 void UpdateDust()

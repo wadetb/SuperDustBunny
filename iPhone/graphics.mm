@@ -395,3 +395,13 @@ void gxDrawSpriteCenteredRotated(int x, int y, int dir, gxSprite* spr)
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 }
 
+void gxDrawSpriteCenteredScaledAlphaAdd(int x, int y, float scalex, float scaley, float alpha, gxSprite* sprite)
+{
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, sprite->tex);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	_gxDrawQuad(x, y, scalex * sprite->texWidth, scaley * sprite->texHeight, gxRGBA32(255,255,255,(int)(255*alpha)));
+}
+
+
