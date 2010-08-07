@@ -58,97 +58,6 @@ bool SlowMotionMode = false;
 int BackgroundX = 0;
 int BackgroundY = 0;
 
-gxSprite DustyHop01;
-gxSprite DustyHop02;
-gxSprite DustyHop03;
-gxSprite DustyHop04;
-gxSprite DustyHop05;
-gxSprite LeftFaceStanding01;
-gxSprite LeftFaceStanding02;
-gxSprite RightFaceStanding01;
-gxSprite RightFaceStanding02;
-gxSprite LeftFaceWallJump01;
-gxSprite RightFaceWallJump01;
-gxSprite DustyDeath01;
-gxSprite DustyHopLeft01;
-gxSprite DustyHopLeft02;
-gxSprite DustyHopLeft03;
-gxSprite DustyHopLeft04;
-gxSprite DustyHopLeft05;
-gxSprite DustyHopLeft06;
-gxSprite DustyDie;
-
-gxSprite WoodBox_Platform01;
-gxSprite Background01;
-gxSprite UnknownBlock;
-gxSprite BarrelSprite;
-gxSprite VacuumSprite;
-gxSprite VacuumFrontSprite;
-gxSprite ArrowSprite;
-gxSprite DustMoteSprite;
-gxSprite ColonelCrumbLeft;
-gxSprite ColonelCrumbRight;
-gxSprite ColonelCrumbWallJumpLeft;
-
-gxSprite Coin01;
-gxSprite Coin02;
-gxSprite Coin03;
-gxSprite Coin04;
-gxSprite Coin05;
-gxSprite Coin06;
-gxSprite Coin07;
-gxSprite Coin08;
-gxSprite Coin09;
-gxSprite Coin010;
-gxSprite Coin011;
-gxSprite Coin012;
-
-gxSprite Ball01;
-gxSprite Ball02;
-gxSprite Ball03;
-gxSprite Ball04;
-
-gxSprite Gear01;
-gxSprite Gear02;
-gxSprite Gear03;
-gxSprite Gear04;
-
-gxSprite FireWork01;
-gxSprite FireWork02;
-
-gxSprite StartScreen0;
-gxSprite StartScreen1;
-gxSprite DieScreen0;
-gxSprite DieScreen1;
-gxSprite WinScreen0;
-gxSprite WinScreen1;
-gxSprite Score01;
-gxSprite Gum01;
-gxSprite GumJump;
-
-gxSprite InitialTut;
-gxSprite CoinTut;
-gxSprite JumpTut;
-gxSprite WallJumpTut;
-gxSprite FireWorkTut;
-gxSprite BarrelTut;
-gxSprite BallTut;
-gxSprite GearTut;
-
-sxSound DustyToJump;
-sxSound DustyJumps;
-sxSound WallJump;
-sxSound LaunchSound01;
-
-sxSound VacuumSound;
-sxSound Clogged;
-sxSound Clang01;
-sxSound GumStick01;
-
-sxSound BackgroundSong01;
-sxSound BackgroundSong02;
-sxSound BackgroundSong03;
-
 int SongCounter = 1;
 int SongDuration = 1500;
 int BackgroundMusic = 0;
@@ -168,91 +77,7 @@ void Init()
 	msInit();
 #endif	
 	
-	gxLoadSprite("Data/Hop01Resize.png", &DustyHop01);
-	gxLoadSprite("Data/Hop11Resize.png", &DustyHop02);	
-	gxLoadSprite("Data/Hop05Resize.png", &DustyHop03);
-	gxLoadSprite("Data/Hop06Resize.png", &DustyHop04);
-	gxLoadSprite("Data/Hop09Resize.png", &DustyHop05);	
-	gxLoadSprite("Data/HopLeft01Resize.png", &LeftFaceStanding01);
-	gxLoadSprite("Data/HopLeft01Resize.png", &LeftFaceStanding02);
-	gxLoadSprite("Data/HopLeft01Resize.png",&DustyHopLeft01);
-	gxLoadSprite("Data/HopLeft11Resize.png",&DustyHopLeft02);
-	gxLoadSprite("Data/HopLeft05Resize.png",&DustyHopLeft03);
-	gxLoadSprite("Data/HopLeft06Resize.png",&DustyHopLeft04);
-	gxLoadSprite("Data/HopLeft09Resize.png",&DustyHopLeft06);
-    gxLoadSprite("Data/DustyLeftWallJumpResize.png", &LeftFaceWallJump01);
-	gxLoadSprite("Data/DustyRightWallJumpResize.png", &RightFaceWallJump01);
-	gxLoadSprite("Data/DustyDieResize.png", &DustyDie);
-    gxLoadSprite("Data/WoodPlatformThin.png", &WoodBox_Platform01);
-    gxLoadSprite("Data/LargeBackground.png", &Background01);
-	gxLoadSprite("Data/wtf.png", &UnknownBlock);
-	gxLoadSprite("Data/can.png", &BarrelSprite);
-	gxLoadSprite("Data/start-screen-vert2.png", &StartScreen0);
-    gxLoadSprite("Data/start-screen-vert.png", &StartScreen1);
-    gxLoadSprite("Data/DustyLose01.png", &DieScreen0);
-    gxLoadSprite("Data/DustyLose02.png", &DieScreen1);
-    gxLoadSprite("Data/DustyWin01.png", &WinScreen0);
-    gxLoadSprite("Data/DustyWin02.png", &WinScreen1);
-    gxLoadSprite("Data/ColonelCrumbRight.png", &ColonelCrumbRight);
-    gxLoadSprite("Data/ColonelCrumb.png", &ColonelCrumbLeft);
-    gxLoadSprite("Data/ColonelCrumbWallJumpLeft.png", &ColonelCrumbWallJumpLeft);
-    
-    
-	gxLoadSprite("Data/vacuum.png", &VacuumSprite);
-	gxLoadSprite("Data/vacuum-front.png", &VacuumFrontSprite);
-	gxLoadSprite("Data/wind-arrow.png", &ArrowSprite);
-	gxLoadSprite("Data/dust-mote.png", &DustMoteSprite);
-
-    gxLoadSprite("Data/coin0001.png", &Coin01);
-    gxLoadSprite("Data/coin0002.png", &Coin02);
-    gxLoadSprite("Data/coin0003.png", &Coin03);
-    gxLoadSprite("Data/coin0004.png", &Coin04);
-    gxLoadSprite("Data/coin0005.png", &Coin05);
-    gxLoadSprite("Data/coin0006.png", &Coin06);
-    gxLoadSprite("Data/coin0007.png", &Coin07);
-    gxLoadSprite("Data/coin0008.png", &Coin08);
-    gxLoadSprite("Data/Coin09.png", &Coin09);
-    gxLoadSprite("Data/Coin10.png", &Coin010);
-    gxLoadSprite("Data/Coin11.png", &Coin011);
-    gxLoadSprite("Data/Coin12.png", &Coin012);
-
-    gxLoadSprite("Data/Ball01.png", &Ball01);
-    gxLoadSprite("Data/Ball02.png", &Ball02);
-    gxLoadSprite("Data/Ball03.png", &Ball03);
-	gxLoadSprite("Data/Ball04.png", &Ball04);
-	
-    gxLoadSprite("Data/Gear.png", &Gear01);
-    gxLoadSprite("Data/Gear2.png", &Gear02);
-    gxLoadSprite("Data/Gear3.png", &Gear03);
-    gxLoadSprite("Data/Gear4.png", &Gear04);
-
-	gxLoadSprite("Data/FireWork01.png", &FireWork01);
-	gxLoadSprite("Data/FireWork02.png", &FireWork02);
-	
-	gxLoadSprite("Data/Score01.png", &Score01);
-	gxLoadSprite("Data/Gum01.png", &Gum01);
-	gxLoadSprite("Data/GumJump.png", &GumJump);
-	
-    gxLoadSprite("Data/InitialTutorial.png", &InitialTut);
-    gxLoadSprite("Data/CoinTutorial.png", &CoinTut);
-    gxLoadSprite("Data/JumpTutorial.png", &JumpTut);
-    gxLoadSprite("Data/WallJumpTutorial.png", &WallJumpTut);
-    gxLoadSprite("Data/FireWorkTutorial.png", &FireWorkTut);
-    gxLoadSprite("Data/BarrelTutorial.png", &BarrelTut);
-    gxLoadSprite("Data/BallTutorial.png", &BallTut);
-    gxLoadSprite("Data/GearTutorial.png", &GearTut);
-
-    sxLoadWav ("Data/yaahooo.wav", &DustyToJump);
-    sxLoadWav ("Data/yaahooo.wav", &DustyJumps);
-    sxLoadWav ("Data/cork_pop.wav", &WallJump);
-    sxLoadWav ("Data/cork_pop.wav", &LaunchSound01);
-    sxLoadWav ("Data/Song1.wav", &BackgroundSong01);
-    sxLoadWav ("Data/Song2.wav", &BackgroundSong02);
-    sxLoadWav ("Data/Song3.wav", &BackgroundSong03);
-	sxLoadWav ("Data/vacuum_cleaner_3.wav", &VacuumSound);
-	sxLoadWav ("Data/clogged.wav", &Clogged);
-	sxLoadWav ("Data/clang.wav", &Clang01);
-	sxLoadWav ("Data/GumSquish.wav", &GumStick01);
+	LoadAssets();
 }
 
 void Exit()
@@ -349,11 +174,11 @@ void DisplayGame_StartScreen()
 {
 	if (TitleScreenButtonPressed)
 	{
-		gxDrawSprite( 0, 0, &StartScreen0 );
+		gxDrawSprite( 0, 0, &ScreenStart1Sprite );
 	}
 	else
 	{
-		gxDrawSprite( 0, 0, &StartScreen1 );
+		gxDrawSprite( 0, 0, &ScreenStart2Sprite );
 	}
 }
 
@@ -375,8 +200,9 @@ void UpdateGame_StartScreen()
 	TitleScreenButtonPressed = msButton1;
 	
 	// Advance to playing state when return key is released.
-	if (!msButton1 && !msOldButton1)
+	if (!msButton1 && msOldButton1)
 	{
+		LoadLevel("Docs/Easy.txt");
 		SetGameState_Playing();
 		return;
 	}
@@ -402,11 +228,11 @@ void DisplayGame_DieScreen()
 {
 	if (RetryScreenButtonPressed)
 	{
-		gxDrawSprite(0, 0, &DieScreen1);
+		gxDrawSprite(0, 0, &ScreenLose1Sprite);
 	}
 	else
 	{
-		gxDrawSprite(0, 0, &DieScreen0);
+		gxDrawSprite(0, 0, &ScreenLose2Sprite);
 	}
 }
 
@@ -428,8 +254,9 @@ void UpdateGame_DieScreen()
 	RetryScreenButtonPressed = msButton1;
 	
 	// Advance to playing state when return key is released.
-	if (!msButton1 && !msOldButton1)
+	if (!msButton1 && msOldButton1)
 	{
+		LoadLevel("Docs/Easy.txt");
 		SetGameState_Playing();
 		return;
 	}
@@ -465,11 +292,11 @@ void DisplayGame_WinScreen()
 {
     if (NextPageButtonPressed)
     {
-        gxDrawSprite( 0, 0, &WinScreen1);
+        gxDrawSprite( 0, 0, &ScreenWin1Sprite);
     }
     else
     {
-        gxDrawSprite( 0, 0, &WinScreen0);
+        gxDrawSprite( 0, 0, &ScreenWin2Sprite);
     }
 }
 
@@ -491,8 +318,9 @@ void UpdateGame_WinScreen()
 	NextPageButtonPressed = msButton1;
 	
 	// Advance to playing state when return key is released.
-	if (!msButton1 && !msOldButton1)
+	if (!msButton1 && msOldButton1)
 	{
+		LoadLevel("Docs/Easy.txt");
 		SetGameState_Playing();
 		return;
 	}
@@ -516,7 +344,7 @@ void DisplayGame_Playing()
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Non-scrolling background Drawing                                                      //
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	gxDrawSprite( BackgroundX, BackgroundY, &Background01 );
+	gxDrawSprite( BackgroundX, BackgroundY, &BackgroundCardboardSprite );
 
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Chapter Drawing                                                                       //
@@ -578,27 +406,39 @@ void DisplayGame_Playing()
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Debugging aids                                                                        //
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	if (DevMode)
-	{
-		float FPS = 0;
-
+	float FPS = 0;
+	
 #ifdef PLATFORM_WINDOWS
-		static DWORD LastTime = 0;
-		DWORD Time = timeGetTime();
-		FPS = (1000.0f / ((float)Time - (float)LastTime) + 0.5f);
-		LastTime = Time;
-
-		FPS = (float)(int(FPS / 10.0f + 0.5f) * 10);
+	static DWORD LastTime = 0;
+	DWORD Time = timeGetTime();
+	FPS = (1000.0f / ((float)Time - (float)LastTime) + 0.5f);
+	LastTime = Time;
+	
+	FPS = (float)(int(FPS / 10.0f + 0.5f) * 10);
 #endif
 #ifdef PLATFORM_IPHONE
-		// iPhone TODO: Calculate FPS here.
+	// iPhone TODO: Calculate FPS here.
+	static clock_t LastTime = 0;
+	clock_t Time = clock();
+	FPS = (CLOCKS_PER_SEC / ((float)Time - (float)LastTime) + 0.5f);
+	LastTime = Time;
+	
+	FPS = (float)(int(FPS / 10.0f + 0.5f) * 10);
 #endif
-
+	
+	if (DevMode)
+	{
 		// Status of common variables
 		gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "FPS: %.0f ( %.1f %.1f ) State: %d Col: %d%d%d%d\nLastWall: %d Direction: %d", 
 			FPS, Dusty.FloatX, Dusty.FloatY, Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide, Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide,
 			Dusty.LastWall, Dusty.Direction);
 	}
+	else 
+	{
+		// FPS only
+		gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "FPS: %.0f", FPS);
+	}
+
 
 	// Indicator for when slow motion is activated.
 	if (SlowMotionMode)
@@ -720,7 +560,7 @@ void Display_Crumb()
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Non-scrolling background Drawing                                                      //
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	gxDrawSprite( BackgroundX, BackgroundY, &Background01 );
+	gxDrawSprite( BackgroundX, BackgroundY, &BackgroundCardboardSprite );
 
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Chapter Drawing                                                                       //
@@ -783,8 +623,8 @@ void Display_Crumb()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_INITIAL)
     {
-        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &InitialTut );  
-        gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &ColonelCrumbLeft );  
+        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &TutorialInitialSprite );  
+        gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &CrumbStandSprite );  
     }
 
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -792,8 +632,8 @@ void Display_Crumb()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_BALL)
     {
-        gxDrawSpriteCenteredRotated (390, (10600 + ScrollY), 0, &BallTut );  
-        gxDrawSpriteCenteredRotated (25, (10900 + ScrollY), 0, &ColonelCrumbWallJumpLeft );
+        gxDrawSpriteCenteredRotated (390, (10600 + ScrollY), 0, &TutorialBallSprite );  
+        gxDrawSpriteCenteredRotated (25, (10900 + ScrollY), 0, &CrumbStandSprite );
     }
 
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -801,8 +641,8 @@ void Display_Crumb()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_BARREL)
     {
-        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &BarrelTut );  
-        gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &ColonelCrumbLeft );
+        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &TutorialBarrelSprite );  
+        gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &CrumbStandSprite );
     }
 
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -810,8 +650,8 @@ void Display_Crumb()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_COIN)
     {
-        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &CoinTut );  
-        gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &ColonelCrumbLeft ); 
+        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &TutorialCoinSprite );  
+        gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &CrumbStandSprite ); 
     }
 
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -819,8 +659,8 @@ void Display_Crumb()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_FIREWORK)
     {
-        gxDrawSpriteCenteredRotated (390, (10500 + ScrollY), 0, &FireWorkTut );  
-        gxDrawSpriteCenteredRotated (25, (10300 + ScrollY), 0, &ColonelCrumbWallJumpLeft );
+        gxDrawSpriteCenteredRotated (390, (10500 + ScrollY), 0, &TutorialFireWorkSprite );  
+        gxDrawSpriteCenteredRotated (25, (10300 + ScrollY), 0, &CrumbStandSprite );
     }
 
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -828,8 +668,8 @@ void Display_Crumb()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_JUMP)
     {
-        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &JumpTut );  
-        gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &ColonelCrumbLeft );
+        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &TutorialJumpSprite );  
+        gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &CrumbStandSprite );
     }
 
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -837,8 +677,8 @@ void Display_Crumb()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_WALLJUMP)
     {
-        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &WallJumpTut );  
-        gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &ColonelCrumbLeft );\
+        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &TutorialWallJumpSprite );  
+        gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &CrumbStandSprite );\
     }
     
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -846,10 +686,11 @@ void Display_Crumb()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_GEAR)
     {
-        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &BallTut );  
-        gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &ColonelCrumbLeft );\
+        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &TutorialBallSprite );  
+        gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &CrumbStandSprite );\
     }
 }
+
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   Tutorial State Update Crumb Implementation                                            //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
@@ -978,6 +819,7 @@ void Display()
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " D     - Hop right                           ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Space - Jump                                ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Enter - Advance menus                       ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " S     - Skip tutorial                       ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Change levels:                              ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
@@ -1021,12 +863,12 @@ bool Update()
         
         if (SongDuration == 1500 && SongCounter == 1)
         {   
-            sxPlaySound(&BackgroundSong01);
+            sxPlaySound(&Song1Sound);
         }
         
         if (SongDuration == 2000 && SongCounter == 2)
         {
-            sxPlaySound(&BackgroundSong03);
+            sxPlaySound(&Song3Sound);
         }
         
         if (SongDuration >= 1)

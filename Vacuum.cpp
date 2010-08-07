@@ -13,25 +13,20 @@
 
 SVacuum Vacuum;
 
-extern sxSound VacuumSound;
-
 void InitVacuum()
 {
 	Vacuum.State = VACUUMSTATE_FAR;
 	Vacuum.Timer = 1000;
 
-	sxSetSoundVolume(&VacuumSound, 0.0f);
-	sxPlaySoundLooping(&VacuumSound);
+	sxSetSoundVolume(&VacuumRunSound, 0.0f);
+	sxPlaySoundLooping(&VacuumRunSound);
 }
-
-extern gxSprite VacuumSprite;
-extern gxSprite VacuumFrontSprite;
 
 void DisplayVacuum_BeforeDusty()
 {
 	if (Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
-		gxDrawSprite(0, Vacuum.Y + ScrollY, &VacuumSprite);
+		gxDrawSprite(0, Vacuum.Y + ScrollY, &VacuumBackSprite);
 	}
 }
 
@@ -52,7 +47,7 @@ void UpdateVacuum_Volume(float Target)
 		else
 			Vacuum.Volume -= 0.1f;
 
-		sxSetSoundVolume(&VacuumSound, Vacuum.Volume);
+		sxSetSoundVolume(&VacuumRunSound, Vacuum.Volume);
 	}
 }
 
@@ -94,12 +89,12 @@ void UpdateVacuum()
 			ScrollY += ShakeY;
 			Vacuum.Y -= ShakeY;
 
-			if (Vacuum.Y + ScrollY > gxScreenHeight - VacuumSprite.height + 10)
+			if (Vacuum.Y + ScrollY > gxScreenHeight - 768 + 10)
 				Vacuum.Y -= 2;
 		}
 
-		if (Vacuum.Y + ScrollY < gxScreenHeight - VacuumSprite.height)
-			Vacuum.Y = gxScreenHeight - ScrollY - VacuumSprite.height;
+		if (Vacuum.Y + ScrollY < gxScreenHeight - 768)
+			Vacuum.Y = gxScreenHeight - ScrollY - 768;
 
 		if (Dusty.State != DUSTYSTATE_DIE && (float)Vacuum.Y <= Dusty.FloatY)
 		{

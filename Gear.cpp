@@ -56,22 +56,22 @@ void DisplayGear()
 
         if (Gear->Sprite == 1) 
         {
-            gxDrawSpriteCenteredRotated( Gear->X, Gear->Y + ScrollY, 0, &Gear01 );
+            gxDrawSpriteCenteredRotated( Gear->X, Gear->Y + ScrollY, 0, &GearSprite );
         } 
 
         if (Gear->Sprite == 2)
         {
-            gxDrawSpriteCenteredRotated( Gear->X, Gear->Y + ScrollY, 0, &Gear02 );
+            gxDrawSpriteCenteredRotated( Gear->X, Gear->Y + ScrollY, 0, &GearSprite );
         } 
 
         if (Gear->Sprite == 3)
         {
-            gxDrawSpriteCenteredRotated( Gear->X, Gear->Y + ScrollY, 0, &Gear03 );
+            gxDrawSpriteCenteredRotated( Gear->X, Gear->Y + ScrollY, 0, &GearSprite );
         }
 
         if (Gear->Sprite == 4)
         {
-            gxDrawSpriteCenteredRotated( Gear->X, Gear->Y + ScrollY, 0, &Gear04 );
+            gxDrawSpriteCenteredRotated( Gear->X, Gear->Y + ScrollY, 0, &GearSprite );
         }   
     }    
 }
@@ -108,7 +108,7 @@ void UpdateGear()
             if (Gear->Y + ScrollY >= gxScreenHeight)
             {
                 Gear->State = GEARSTATE_INACTIVE;
-                sxPlaySound (&Clogged);
+                sxPlaySound (&VacuumClogSound);
                 JamVacuum();
             }       
         }

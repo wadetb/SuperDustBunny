@@ -89,9 +89,6 @@ void InitDust()
 	}
 }
 
-extern gxSprite ArrowSprite;
-extern gxSprite DustMoteSprite;
-
 float RemapFloat(float Value, float FromMin, float FromMax, float ToMin, float ToMax, bool Clamp)
 {
 	float RelativeValue = (Value - FromMin) / (FromMax - FromMin);
@@ -131,7 +128,7 @@ void DisplayDust()
 				for (int y = 0; y < WIND_HEIGHT; y++)
 				{
 					float Dir = (WindDirTable[y * WIND_WIDTH + x] * 45) * PI / 180.0f;
-					gxDrawSpriteCenteredRotated((int)((x+0.5f) * StepX), (int)((y+0.5f) * StepY), Dir, &ArrowSprite);
+					gxDrawSpriteCenteredRotated((int)((x+0.5f) * StepX), (int)((y+0.5f) * StepY), Dir, &DustArrowSprite);
 				}
 			}
 		}

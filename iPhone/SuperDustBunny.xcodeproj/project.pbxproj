@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		084D84B412026A0800EEA2E9 /* Dust.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 084D84B212026A0800EEA2E9 /* Dust.cpp */; };
+		0865F05F120DA5F60079486D /* Docs in Resources */ = {isa = PBXBuildFile; fileRef = 0865F057120DA5F60079486D /* Docs */; };
 		088B035911EC74C000F7D112 /* SuperDustBunny.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 088B035811EC74C000F7D112 /* SuperDustBunny.cpp */; };
 		088B036511EC750500F7D112 /* EAGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 088B035B11EC750500F7D112 /* EAGLView.mm */; };
 		088B036611EC750500F7D112 /* graphics.mm in Sources */ = {isa = PBXBuildFile; fileRef = 088B035D11EC750500F7D112 /* graphics.mm */; };
@@ -24,9 +25,8 @@
 		08D1F9CC11FBB40D00241F37 /* FireWorks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D1F9C811FBB40D00241F37 /* FireWorks.cpp */; };
 		08D1F9CD11FBB40D00241F37 /* TennisBall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D1F9CA11FBB40D00241F37 /* TennisBall.cpp */; };
 		08F4A696120CE48000DB2A29 /* Gear.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08F4A694120CE48000DB2A29 /* Gear.cpp */; };
+		08F4A730120CEB9D00DB2A29 /* Assets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08F4A72F120CEB9D00DB2A29 /* Assets.cpp */; };
 		08F7618011F27E95006C8C45 /* chapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08F7617D11F27E95006C8C45 /* chapter.cpp */; };
-		08F7622411F27FBF006C8C45 /* Design.txt in Resources */ = {isa = PBXBuildFile; fileRef = 08F7622211F27FBF006C8C45 /* Design.txt */; };
-		08F7622511F27FBF006C8C45 /* TODO.txt in Resources */ = {isa = PBXBuildFile; fileRef = 08F7622311F27FBF006C8C45 /* TODO.txt */; };
 		08F7630D11F2B645006C8C45 /* Barrel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08F7630B11F2B645006C8C45 /* Barrel.cpp */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -41,6 +41,7 @@
 /* Begin PBXFileReference section */
 		084D84B212026A0800EEA2E9 /* Dust.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Dust.cpp; path = ../Dust.cpp; sourceTree = SOURCE_ROOT; };
 		084D84B312026A0800EEA2E9 /* Dust.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Dust.h; path = ../Dust.h; sourceTree = SOURCE_ROOT; };
+		0865F057120DA5F60079486D /* Docs */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Docs; path = ../../Docs; sourceTree = SOURCE_ROOT; };
 		088B035811EC74C000F7D112 /* SuperDustBunny.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SuperDustBunny.cpp; path = ../SuperDustBunny.cpp; sourceTree = SOURCE_ROOT; };
 		088B035A11EC750500F7D112 /* EAGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EAGLView.h; sourceTree = "<group>"; };
 		088B035B11EC750500F7D112 /* EAGLView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EAGLView.mm; sourceTree = "<group>"; };
@@ -68,22 +69,22 @@
 		08F4A693120CE48000DB2A29 /* Crumb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Crumb.h; path = ../Crumb.h; sourceTree = SOURCE_ROOT; };
 		08F4A694120CE48000DB2A29 /* Gear.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Gear.cpp; path = ../Gear.cpp; sourceTree = SOURCE_ROOT; };
 		08F4A695120CE48000DB2A29 /* Gear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Gear.h; path = ../Gear.h; sourceTree = SOURCE_ROOT; };
+		08F4A72E120CEB8B00DB2A29 /* Assets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Assets.h; path = ../Assets.h; sourceTree = SOURCE_ROOT; };
+		08F4A72F120CEB9D00DB2A29 /* Assets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Assets.cpp; path = ../Assets.cpp; sourceTree = SOURCE_ROOT; };
 		08F7617D11F27E95006C8C45 /* chapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = chapter.cpp; path = ../chapter.cpp; sourceTree = SOURCE_ROOT; };
 		08F7617E11F27E95006C8C45 /* chapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = chapter.h; path = ../chapter.h; sourceTree = SOURCE_ROOT; };
 		08F7617F11F27E95006C8C45 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = common.h; path = ../common.h; sourceTree = SOURCE_ROOT; };
-		08F7622211F27FBF006C8C45 /* Design.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Design.txt; sourceTree = "<group>"; };
-		08F7622311F27FBF006C8C45 /* TODO.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO.txt; sourceTree = "<group>"; };
 		08F7630B11F2B645006C8C45 /* Barrel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Barrel.cpp; path = ../Barrel.cpp; sourceTree = SOURCE_ROOT; };
 		08F7630C11F2B645006C8C45 /* Barrel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Barrel.h; path = ../Barrel.h; sourceTree = SOURCE_ROOT; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D6058910D05DD3D006BFB54 /* SuperDustBunny.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SuperDustBunny.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		2860E325111B887F00E27156 /* AppDelegate_Phone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate_Phone.h; sourceTree = "<group>"; };
-		2860E326111B887F00E27156 /* AppDelegate_Phone.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate_Phone.m; sourceTree = "<group>"; };
-		2860E327111B887F00E27156 /* MainWindow_Phone.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainWindow_Phone.xib; sourceTree = "<group>"; };
-		2860E32B111B888700E27156 /* AppDelegate_Pad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate_Pad.h; sourceTree = "<group>"; };
-		2860E32C111B888700E27156 /* AppDelegate_Pad.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate_Pad.m; sourceTree = "<group>"; };
-		2860E32D111B888700E27156 /* MainWindow_Pad.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainWindow_Pad.xib; sourceTree = "<group>"; };
+		2860E325111B887F00E27156 /* AppDelegate_Phone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate_Phone.h; path = iPhone/AppDelegate_Phone.h; sourceTree = "<group>"; };
+		2860E326111B887F00E27156 /* AppDelegate_Phone.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate_Phone.m; path = iPhone/AppDelegate_Phone.m; sourceTree = "<group>"; };
+		2860E327111B887F00E27156 /* MainWindow_Phone.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainWindow_Phone.xib; path = iPhone/MainWindow_Phone.xib; sourceTree = "<group>"; };
+		2860E32B111B888700E27156 /* AppDelegate_Pad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate_Pad.h; path = iPad/AppDelegate_Pad.h; sourceTree = "<group>"; };
+		2860E32C111B888700E27156 /* AppDelegate_Pad.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate_Pad.m; path = iPad/AppDelegate_Pad.m; sourceTree = "<group>"; };
+		2860E32D111B888700E27156 /* MainWindow_Pad.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainWindow_Pad.xib; path = iPad/MainWindow_Pad.xib; sourceTree = "<group>"; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Shared/main.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* SuperDustBunny_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SuperDustBunny_Prefix.pch; sourceTree = "<group>"; };
@@ -108,15 +109,27 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		08F7622111F27FBF006C8C45 /* Docs */ = {
+		08F4A732120CEBBE00DB2A29 /* iPhone */ = {
 			isa = PBXGroup;
 			children = (
-				08F7622211F27FBF006C8C45 /* Design.txt */,
-				08F7622311F27FBF006C8C45 /* TODO.txt */,
+				8D1107310486CEB800E47090 /* SuperDustBunny-Info.plist */,
+				088B035A11EC750500F7D112 /* EAGLView.h */,
+				088B035B11EC750500F7D112 /* EAGLView.mm */,
+				088B035C11EC750500F7D112 /* graphics.h */,
+				088B035D11EC750500F7D112 /* graphics.mm */,
+				088B036111EC750500F7D112 /* mouse.h */,
+				088B036211EC750500F7D112 /* mouse.mm */,
+				088B036311EC750500F7D112 /* sound.h */,
+				088B036411EC750500F7D112 /* sound.mm */,
+				2860E325111B887F00E27156 /* AppDelegate_Phone.h */,
+				2860E326111B887F00E27156 /* AppDelegate_Phone.m */,
+				2860E327111B887F00E27156 /* MainWindow_Phone.xib */,
+				2860E32B111B888700E27156 /* AppDelegate_Pad.h */,
+				2860E32C111B888700E27156 /* AppDelegate_Pad.m */,
+				2860E32D111B888700E27156 /* MainWindow_Pad.xib */,
 			);
-			name = Docs;
-			path = ../../Docs;
-			sourceTree = SOURCE_ROOT;
+			name = iPhone;
+			sourceTree = "<group>";
 		};
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
@@ -126,29 +139,10 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		2860E324111B887F00E27156 /* iPhone */ = {
+		28EEBF621118D79A00187D67 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				2860E325111B887F00E27156 /* AppDelegate_Phone.h */,
-				2860E326111B887F00E27156 /* AppDelegate_Phone.m */,
-				2860E327111B887F00E27156 /* MainWindow_Phone.xib */,
-			);
-			path = iPhone;
-			sourceTree = "<group>";
-		};
-		2860E32A111B888700E27156 /* iPad */ = {
-			isa = PBXGroup;
-			children = (
-				2860E32B111B888700E27156 /* AppDelegate_Pad.h */,
-				2860E32C111B888700E27156 /* AppDelegate_Pad.m */,
-				2860E32D111B888700E27156 /* MainWindow_Pad.xib */,
-			);
-			path = iPad;
-			sourceTree = "<group>";
-		};
-		28EEBF621118D79A00187D67 /* Shared */ = {
-			isa = PBXGroup;
-			children = (
+				08F4A732120CEBBE00DB2A29 /* iPhone */,
 				08F4A693120CE48000DB2A29 /* Crumb.h */,
 				08F4A694120CE48000DB2A29 /* Gear.cpp */,
 				08F4A695120CE48000DB2A29 /* Gear.h */,
@@ -169,28 +163,19 @@
 				08F7617D11F27E95006C8C45 /* chapter.cpp */,
 				08F7617E11F27E95006C8C45 /* chapter.h */,
 				08F7617F11F27E95006C8C45 /* common.h */,
-				088B035A11EC750500F7D112 /* EAGLView.h */,
-				088B035B11EC750500F7D112 /* EAGLView.mm */,
-				088B035C11EC750500F7D112 /* graphics.h */,
-				088B035D11EC750500F7D112 /* graphics.mm */,
-				088B036111EC750500F7D112 /* mouse.h */,
-				088B036211EC750500F7D112 /* mouse.mm */,
-				088B036311EC750500F7D112 /* sound.h */,
-				088B036411EC750500F7D112 /* sound.mm */,
 				088B035811EC74C000F7D112 /* SuperDustBunny.cpp */,
-				8D1107310486CEB800E47090 /* SuperDustBunny-Info.plist */,
+				08F4A72E120CEB8B00DB2A29 /* Assets.h */,
+				08F4A72F120CEB9D00DB2A29 /* Assets.cpp */,
 			);
-			name = Shared;
+			name = Source;
 			sourceTree = "<group>";
 		};
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				0865F057120DA5F60079486D /* Docs */,
 				08D1F95611FA7DB100241F37 /* Data */,
-				08F7622111F27FBF006C8C45 /* Docs */,
-				2860E32A111B888700E27156 /* iPad */,
-				2860E324111B887F00E27156 /* iPhone */,
-				28EEBF621118D79A00187D67 /* Shared */,
+				28EEBF621118D79A00187D67 /* Source */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
@@ -265,9 +250,8 @@
 			files = (
 				2860E329111B887F00E27156 /* MainWindow_Phone.xib in Resources */,
 				2860E32F111B888700E27156 /* MainWindow_Pad.xib in Resources */,
-				08F7622411F27FBF006C8C45 /* Design.txt in Resources */,
-				08F7622511F27FBF006C8C45 /* TODO.txt in Resources */,
 				08D1F9AA11FA7DB100241F37 /* Data in Resources */,
+				0865F05F120DA5F60079486D /* Docs in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -295,6 +279,7 @@
 				08D1F9CD11FBB40D00241F37 /* TennisBall.cpp in Sources */,
 				084D84B412026A0800EEA2E9 /* Dust.cpp in Sources */,
 				08F4A696120CE48000DB2A29 /* Gear.cpp in Sources */,
+				08F4A730120CEB9D00DB2A29 /* Assets.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -34,8 +34,6 @@ void ClearBarrels()
 	NBarrels = 0;
 }
 
-extern gxSprite BarrelSprite;
-
 extern int ScrollY;
 
 void DisplayBarrels()

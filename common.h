@@ -50,6 +50,9 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
+#include <time.h>
+
+#include "Assets.h"
 
 // Constants
 
@@ -121,65 +124,6 @@ struct STutorial
 
 extern STutorial Tutorial;
 
-extern gxSprite DustyHop01;
-extern gxSprite DustyHop02;
-extern gxSprite DustyHop03;
-extern gxSprite DustyHop04;
-extern gxSprite DustyHop05;
-extern gxSprite LeftFaceStanding01;
-extern gxSprite LeftFaceStanding02;
-extern gxSprite RightFaceStanding01;
-extern gxSprite RightFaceStanding02;
-extern gxSprite LeftFaceWallJump01;
-extern gxSprite RightFaceWallJump01;
-extern gxSprite DustyDeath01;
-extern gxSprite DustyHopLeft01;
-extern gxSprite DustyHopLeft02;
-extern gxSprite DustyHopLeft03;
-extern gxSprite DustyHopLeft04;
-extern gxSprite DustyHopLeft05;
-extern gxSprite DustyHopLeft06;
-extern gxSprite WoodBox_Platform01;
-extern gxSprite Background01;
-extern gxSprite UnknownBlock;
-extern gxSprite BarrelSprite;
-extern gxSprite ColonelCrumb;
-
-extern gxSprite Coin01;
-extern gxSprite Coin02;
-extern gxSprite Coin03;
-extern gxSprite Coin04;
-extern gxSprite Coin05;
-extern gxSprite Coin06;
-extern gxSprite Coin07;
-extern gxSprite Coin08;
-extern gxSprite Coin09;
-extern gxSprite Coin010;
-extern gxSprite Coin011;
-extern gxSprite Coin012;
-
-extern gxSprite Ball01;
-extern gxSprite Ball02;
-extern gxSprite Ball03;
-extern gxSprite Ball04;
-
-extern gxSprite Gear01;
-extern gxSprite Gear02;
-extern gxSprite Gear03;
-extern gxSprite Gear04;
-
-extern gxSprite FireWork01;
-extern gxSprite FireWork02;
-
-extern sxSound DustyToJump;
-extern sxSound DustyJumps;
-extern sxSound WallJump;
-extern sxSound LaunchSound01;
-extern sxSound BackgroundSong01;
-extern sxSound BackgroundSong02;
-extern sxSound BackgroundSong03;
-extern sxSound Clogged;
-extern sxSound Clang01;
 
 bool GetInput_MoveLeft();
 bool GetInput_MoveRight();

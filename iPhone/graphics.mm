@@ -140,14 +140,12 @@ void gxDeinit()
 
 void gxLoadSprite(const char* filename, gxSprite* sprite)
 {
-	if (strrchr(filename, '/'))
-		filename = strrchr(filename, '/')+1; // Eliminate path on iPhone.
-	
 	NSString* nsname = [[NSString alloc] initWithCString:filename];
 	CGImageRef image = [[[UIImage imageNamed:nsname] retain] CGImage];
 	if (image == nil)
 	{
 		NSLog(@"could not find %@", nsname);
+		[nsname release];
 		return;
 	}
 	[nsname release];
@@ -156,10 +154,12 @@ void gxLoadSprite(const char* filename, gxSprite* sprite)
 	sprite->height = CGImageGetHeight(image);
 	
 	sprite->texWidth = 1;
-	while (sprite->texWidth < sprite->width) sprite->texWidth *= 2;
+	while (sprite->texWidth < sprite->width) 
+		sprite->texWidth *= 2;
 
 	sprite->texHeight = 1;
-	while (sprite->texHeight < sprite->height) sprite->texHeight *= 2;
+	while (sprite->texHeight < sprite->height) 
+		sprite->texHeight *= 2;
 	
 	void* pixels = calloc(sprite->texWidth * sprite->texHeight * 4, 1);
 	CGColorSpaceRef colorSpace = CGImageGetColorSpace(image);
@@ -314,22 +314,13 @@ void gxDrawString( int x, int y, int ptsize, int color, const char* text, ... )
 
 void gxGetResourceFileName(const char* relativePath, char* buffer, int bufferSize)
 {
-	// Get Bundle directory
 	CFBundleRef mainBundle = CFBundleGetMainBundle();
 	CFURLRef url = CFBundleCopyBundleURL(mainBundle);
 	UInt8 bundlePath[1024];
 	CFURLGetFileSystemRepresentation(url, YES, bundlePath, sizeof(bundlePath));
 	CFRelease(url);
 	
-	// Eliminate path
-	const char* slash = strrchr(relativePath, '/');
-	const char* fileName;
-	if (slash != NULL)
-		fileName = slash+1;
-	else
-		fileName = relativePath;
-	
-	snprintf(buffer, bufferSize, "%s/%s", (char*)bundlePath, fileName);
+	snprintf(buffer, bufferSize, "%s/%s", (char*)bundlePath, relativePath);
 }
 
 FILE* gxOpenFile(const char* relativePath, const char* mode)
@@ -340,15 +331,13 @@ FILE* gxOpenFile(const char* relativePath, const char* mode)
 }
 
 
-void gxDrawSpriteCenteredRotated(int x, int y, int dir, gxSprite* spr)
+void gxDrawSpriteCenteredRotated(int x, int y, float a, gxSprite* spr)
 {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, spr->tex);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	
-	float a = -(float)dir * 3.14159f/180.0f;
-	
+		
 	float ca = cosf(a);
 	float sa = sinf(a);
 	
@@ -369,7 +358,7 @@ void gxDrawSpriteCenteredRotated(int x, int y, int dir, gxSprite* spr)
 	v[1].z = 0.0f; 
 	v[1].w = 1.0f;
 	v[1].color = 0xffffffff;
-	v[1].u = 1.0f; 
+	v[1].u = float(spr->width)/spr->texWidth; 
 	v[1].v = 0.0f;
 	
 	v[3].x = x + (-w * ca) - (+h * sa); 
@@ -378,15 +367,15 @@ void gxDrawSpriteCenteredRotated(int x, int y, int dir, gxSprite* spr)
 	v[3].w = 1.0f;
 	v[3].color = 0xffffffff;
 	v[3].u = 0.0f; 
-	v[3].v = 1.0f;
+	v[3].v = float(spr->height)/spr->texHeight;
 	
 	v[2].x = x + (+w * ca) - (+h * sa); 
 	v[2].y = y + (+w * sa) + (+h * ca); 
 	v[2].z = 0.0f; 
 	v[2].w = 1.0f;
 	v[2].color = 0xffffffff;
-	v[2].u = 1.0f; 
-	v[2].v = 1.0f;
+	v[2].u = float(spr->width)/spr->texWidth; 
+	v[2].v = float(spr->height)/spr->texHeight;
 	
 	glVertexPointer(3, GL_FLOAT, sizeof(gxSpriteVertex), &v[0].x);
 	glTexCoordPointer(2, GL_FLOAT, sizeof(gxSpriteVertex), &v[0].u);

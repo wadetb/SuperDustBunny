@@ -54,22 +54,22 @@ void DisplayBall()
 
         if (Ball->Sprite == 1) 
         {
-           gxDrawSpriteCenteredRotated( Ball->X, Ball->Y + ScrollY, 0, &Ball01 );
+           gxDrawSpriteCenteredRotated( Ball->X, Ball->Y + ScrollY, 0, &TennisBallSpin1Sprite );
         } 
 
         if (Ball->Sprite == 2)
         {
-            gxDrawSpriteCenteredRotated( Ball->X, Ball->Y + ScrollY, 0, &Ball02 );
+            gxDrawSpriteCenteredRotated( Ball->X, Ball->Y + ScrollY, 0, &TennisBallSpin2Sprite );
         } 
 
         if (Ball->Sprite == 3)
         {
-            gxDrawSpriteCenteredRotated( Ball->X, Ball->Y + ScrollY, 0, &Ball03 );
+            gxDrawSpriteCenteredRotated( Ball->X, Ball->Y + ScrollY, 0, &TennisBallSpin3Sprite );
         }
 
         if (Ball->Sprite == 4)
         {
-            gxDrawSpriteCenteredRotated( Ball->X, Ball->Y + ScrollY, 0, &Ball04 );
+            gxDrawSpriteCenteredRotated( Ball->X, Ball->Y + ScrollY, 0, &TennisBallSpin4Sprite );
         }   
     }    
 }
@@ -106,7 +106,7 @@ void UpdateBall()
 			if (Ball->Y + ScrollY >= gxScreenHeight)
 			{
 				Ball->State = BALLSTATE_INACTIVE;
-				sxPlaySound (&Clogged);
+				sxPlaySound (&VacuumClogSound);
 				JamVacuum();
 			}       
         }

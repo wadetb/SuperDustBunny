@@ -46,67 +46,62 @@ void DisplayCoins()
         
         if (Coin->Sprite == 1) 
         {
-            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &Coin01 );
+            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin1Sprite );
         } 
 
         if (Coin->Sprite == 2)
         {
-            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &Coin02 );
+            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin2Sprite );
         } 
 
         if (Coin->Sprite == 3)
         {
-            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &Coin03 );
+            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin3Sprite );
         }
 
         if (Coin->Sprite == 4)
         {
-            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &Coin04 );
+            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin4Sprite );
         } 
 
         if (Coin->Sprite == 5)
         {
-            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &Coin05 );
+            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin5Sprite );
         }    
 
         if (Coin->Sprite == 6)
         {
-            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &Coin06 );
+            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin6Sprite );
         } 
 
         if (Coin->Sprite == 7) 
         {
-            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &Coin07 );
+            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin7Sprite );
         } 
 
         if (Coin->Sprite == 8)
         {
-            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &Coin08 );
+            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin8Sprite );
         } 
 
         if (Coin->Sprite == 9)
         {
-			gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &Coin09 );
+			gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin9Sprite );
         }
 
         if (Coin->Sprite == 10)
         {
-            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &Coin010 );
+            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin10Sprite );
         } 
 
         if (Coin->Sprite == 11)
         {
-            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &Coin011 );
+            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin11Sprite );
         }    
 
         if (Coin->Sprite == 12)
         {
-            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &Coin012 );
-        } 
-        
-        if (Coin->Sprite == 13)
-        {
-            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &Coin01 );
+            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin12Sprite );
         } 
     }    
 }

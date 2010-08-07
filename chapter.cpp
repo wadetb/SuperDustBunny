@@ -20,8 +20,6 @@
 SChapter Chapter;
 SScore Score;
 
-extern gxSprite UnknownBlock;
-
 int ScrollY;
 
 void InitScore()
@@ -57,9 +55,10 @@ void GetNextLine(FILE* File, char* Line, int LineSize)
 
 void LoadChapter(const char* filename)
 {
-#if defined(PLATFORM_IPHONE)
-	FILE* ChapFile = gxOpenFile(filename, "r");
-#else
+#ifdef PLATFORM_IPHONE
+	FILE* ChapFile = gxOpenFile(filename, "rb");
+#endif
+#ifdef PLATFORM_WINDOWS
 	FILE* ChapFile = fopen(filename, "r");
 #endif
 	
@@ -425,7 +424,7 @@ void DisplayChapter()
 					break; 
 
 				case SPECIALBLOCKID_UNKNOWN:
-					gxDrawSprite(x*64, y*64 + ScrollY, &UnknownBlock);
+					gxDrawSprite(x*64, y*64 + ScrollY, &TileUnknownSprite);
 					break;
 				}
 			}

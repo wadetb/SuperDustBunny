@@ -34,9 +34,6 @@ void ClearFireWorks()
 	NFireWorks = 0;
 }
 
-extern gxSprite FireWork01;
-extern gxSprite FireWork01;
-
 extern int ScrollY;
 
 void DisplayFireWorks()
@@ -47,12 +44,12 @@ void DisplayFireWorks()
 		
 		if (FireWork->State == FIREWORKSTATE_WAIT || FireWork->State == FIREWORKSTATE_LAUNCH)
 		{
-			gxDrawSpriteCenteredRotated((int)FireWork->X, (int)FireWork->Y + ScrollY, FireWork->Dir * 3.14159f / 180.0f, &FireWork01);
+			gxDrawSpriteCenteredRotated((int)FireWork->X, (int)FireWork->Y + ScrollY, FireWork->Dir * 3.14159f / 180.0f, &FireWorkRocketSprite);
 		}
 
 		if (FireWork->State == FIREWORKSTATE_EXPLODE)
 		{
-			gxDrawSpriteCenteredRotated( (int)FireWork->X, (int)FireWork->Y + ScrollY, 0, &FireWork02);				
+			gxDrawSpriteCenteredRotated((int)FireWork->X, (int)FireWork->Y + ScrollY, 0, &FireWorkBangSprite);				
 		}
 	}
 }
