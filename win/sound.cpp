@@ -26,7 +26,7 @@ void sxDeinit()
 	sxDev = NULL;
 }
 
-void sxLoadWav( const char* name, sxSound* snd )
+void sxLoadSound( const char* name, sxSound* snd )
 {
 	if (!sxDev)
 		return;

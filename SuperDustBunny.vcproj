@@ -205,6 +205,14 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath=".\Assets.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Assets.h"
+			>
+		</File>
+		<File
 			RelativePath=".\Barrel.cpp"
 			>
 		</File>

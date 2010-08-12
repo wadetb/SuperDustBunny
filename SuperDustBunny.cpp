@@ -344,7 +344,7 @@ void DisplayGame_Playing()
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Non-scrolling background Drawing                                                      //
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	gxDrawSprite( BackgroundX, BackgroundY, &BackgroundCardboardSprite );
+	//gxDrawSprite( BackgroundX, BackgroundY, &BackgroundCardboardSprite );
 
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Chapter Drawing                                                                       //
@@ -560,7 +560,7 @@ void Display_Crumb()
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Non-scrolling background Drawing                                                      //
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	gxDrawSprite( BackgroundX, BackgroundY, &BackgroundCardboardSprite );
+	//gxDrawSprite( BackgroundX, BackgroundY, &BackgroundCardboardSprite );
 
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Chapter Drawing                                                                       //

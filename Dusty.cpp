@@ -186,9 +186,9 @@ void DisplayDusty_Jump()
 	}
 
 	if (Dusty.FloatVelocityY <= -5)
-		gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 160 + ScrollY), ScaleX, 1.0f, &DustyHop3Sprite );
+		gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 160 + ScrollY), ScaleX, 1.0f, &DustyHop2Sprite );
 	else
-		gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 160 + ScrollY), ScaleX, 1.0f, &DustyHop4Sprite );
+		gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 160 + ScrollY), ScaleX, 1.0f, &DustyHop3Sprite );
 }
 
 void UpdateDusty_Jump()
@@ -239,9 +239,9 @@ void DisplayDusty_Fall()
 	}
 
 	if (Dusty.FloatVelocityY >= 5)
-		gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 160 + ScrollY), ScaleX, 1.0f, &DustyHop5Sprite );
-	else
 		gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 160 + ScrollY), ScaleX, 1.0f, &DustyHop4Sprite );
+	else
+		gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 160 + ScrollY), ScaleX, 1.0f, &DustyHop3Sprite );
 }
 
 void UpdateDusty_Fall()
@@ -300,30 +300,30 @@ void DisplayDusty_Hop()
 
 	switch (Dusty.SpriteTransition)
 	{
-	case 0:   gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 122), (int)(Dusty.FloatY - 201 + ScrollY), ScaleX, 1.0f, &DustyHop3Sprite ); break;
-	case 1:   gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 122), (int)(Dusty.FloatY - 212 + ScrollY), ScaleX, 1.0f, &DustyHop3Sprite ); break;
-	case 2:   gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 122), (int)(Dusty.FloatY - 218 + ScrollY), ScaleX, 1.0f, &DustyHop3Sprite ); break;
-	case 3:   gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 122), (int)(Dusty.FloatY - 224 + ScrollY), ScaleX, 1.0f, &DustyHop3Sprite ); break;
-	case 4:   gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 122), (int)(Dusty.FloatY - 228 + ScrollY), ScaleX, 1.0f, &DustyHop3Sprite ); break;
-	case 5:   gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 122), (int)(Dusty.FloatY - 236 + ScrollY), ScaleX, 1.0f, &DustyHop3Sprite ); break;
-	case 6:   gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 122), (int)(Dusty.FloatY - 226 + ScrollY), ScaleX, 1.0f, &DustyHop4Sprite ); break;
-	case 7:   gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 122), (int)(Dusty.FloatY - 226 + ScrollY), ScaleX, 1.0f, &DustyHop4Sprite ); break;
-	case 8:   gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 122), (int)(Dusty.FloatY - 226 + ScrollY), ScaleX, 1.0f, &DustyHop4Sprite ); break;
-	case 9:   gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 122), (int)(Dusty.FloatY - 226 + ScrollY), ScaleX, 1.0f, &DustyHop4Sprite ); break;
-	case 10:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 122), (int)(Dusty.FloatY - 226 + ScrollY), ScaleX, 1.0f, &DustyHop4Sprite ); break;
-	case 11:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 122), (int)(Dusty.FloatY - 226 + ScrollY), ScaleX, 1.0f, &DustyHop4Sprite ); break;
-	case 12:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119), (int)(Dusty.FloatY - 220 + ScrollY), ScaleX, 1.0f, &DustyHop5Sprite ); break;
-	case 13:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119), (int)(Dusty.FloatY - 215 + ScrollY), ScaleX, 1.0f, &DustyHop5Sprite ); break;
-	case 14:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119), (int)(Dusty.FloatY - 210 + ScrollY), ScaleX, 1.0f, &DustyHop5Sprite ); break;
-	case 15:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119), (int)(Dusty.FloatY - 205 + ScrollY), ScaleX, 1.0f, &DustyHop5Sprite ); break;
-	case 16:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119), (int)(Dusty.FloatY - 200 + ScrollY), ScaleX, 1.0f, &DustyHop5Sprite ); break;
-	case 17:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119), (int)(Dusty.FloatY - 195 + ScrollY), ScaleX, 1.0f, &DustyHop5Sprite ); break;
-	case 18:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119 + 35*ScaleX), (int)(Dusty.FloatY - 217 + ScrollY), ScaleX, 1.0f, &DustyHop2Sprite ); break;
-	case 19:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119 + 35*ScaleX), (int)(Dusty.FloatY - 217 + ScrollY), ScaleX, 1.0f, &DustyHop2Sprite ); break;
-	case 20:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119 + 35*ScaleX), (int)(Dusty.FloatY - 217 + ScrollY), ScaleX, 1.0f, &DustyHop2Sprite ); break;
-	case 21:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119 + 35*ScaleX), (int)(Dusty.FloatY - 217 + ScrollY), ScaleX, 1.0f, &DustyHop2Sprite ); break;
-	case 22:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119 + 35*ScaleX), (int)(Dusty.FloatY - 217 + ScrollY), ScaleX, 1.0f, &DustyHop2Sprite ); break;
-	case 23:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119 + 35*ScaleX), (int)(Dusty.FloatY - 217 + ScrollY), ScaleX, 1.0f, &DustyHop2Sprite ); break;
+	case 0:   gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 122), (int)(Dusty.FloatY - 201 + ScrollY), ScaleX, 1.0f, &DustyHop2Sprite ); break;
+	case 1:   gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 122), (int)(Dusty.FloatY - 212 + ScrollY), ScaleX, 1.0f, &DustyHop2Sprite ); break;
+	case 2:   gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 122), (int)(Dusty.FloatY - 218 + ScrollY), ScaleX, 1.0f, &DustyHop2Sprite ); break;
+	case 3:   gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 122), (int)(Dusty.FloatY - 224 + ScrollY), ScaleX, 1.0f, &DustyHop2Sprite ); break;
+	case 4:   gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 122), (int)(Dusty.FloatY - 228 + ScrollY), ScaleX, 1.0f, &DustyHop2Sprite ); break;
+	case 5:   gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 122), (int)(Dusty.FloatY - 236 + ScrollY), ScaleX, 1.0f, &DustyHop2Sprite ); break;
+	case 6:   gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 122), (int)(Dusty.FloatY - 226 + ScrollY), ScaleX, 1.0f, &DustyHop3Sprite ); break;
+	case 7:   gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 122), (int)(Dusty.FloatY - 226 + ScrollY), ScaleX, 1.0f, &DustyHop3Sprite ); break;
+	case 8:   gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 122), (int)(Dusty.FloatY - 226 + ScrollY), ScaleX, 1.0f, &DustyHop3Sprite ); break;
+	case 9:   gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 122), (int)(Dusty.FloatY - 226 + ScrollY), ScaleX, 1.0f, &DustyHop3Sprite ); break;
+	case 10:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 122), (int)(Dusty.FloatY - 226 + ScrollY), ScaleX, 1.0f, &DustyHop3Sprite ); break;
+	case 11:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 122), (int)(Dusty.FloatY - 226 + ScrollY), ScaleX, 1.0f, &DustyHop3Sprite ); break;
+	case 12:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119), (int)(Dusty.FloatY - 220 + ScrollY), ScaleX, 1.0f, &DustyHop4Sprite ); break;
+	case 13:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119), (int)(Dusty.FloatY - 215 + ScrollY), ScaleX, 1.0f, &DustyHop4Sprite ); break;
+	case 14:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119), (int)(Dusty.FloatY - 210 + ScrollY), ScaleX, 1.0f, &DustyHop4Sprite ); break;
+	case 15:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119), (int)(Dusty.FloatY - 205 + ScrollY), ScaleX, 1.0f, &DustyHop4Sprite ); break;
+	case 16:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119), (int)(Dusty.FloatY - 200 + ScrollY), ScaleX, 1.0f, &DustyHop4Sprite ); break;
+	case 17:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119), (int)(Dusty.FloatY - 195 + ScrollY), ScaleX, 1.0f, &DustyHop4Sprite ); break;
+	case 18:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119 + 35*ScaleX), (int)(Dusty.FloatY - 217 + ScrollY), ScaleX, 1.0f, &DustyHop5Sprite ); break;
+	case 19:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119 + 35*ScaleX), (int)(Dusty.FloatY - 217 + ScrollY), ScaleX, 1.0f, &DustyHop5Sprite ); break;
+	case 20:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119 + 35*ScaleX), (int)(Dusty.FloatY - 217 + ScrollY), ScaleX, 1.0f, &DustyHop5Sprite ); break;
+	case 21:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119 + 35*ScaleX), (int)(Dusty.FloatY - 217 + ScrollY), ScaleX, 1.0f, &DustyHop5Sprite ); break;
+	case 22:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119 + 35*ScaleX), (int)(Dusty.FloatY - 217 + ScrollY), ScaleX, 1.0f, &DustyHop5Sprite ); break;
+	case 23:  gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119 + 35*ScaleX), (int)(Dusty.FloatY - 217 + ScrollY), ScaleX, 1.0f, &DustyHop5Sprite ); break;
 	}
 }
 
@@ -584,11 +584,11 @@ void DisplayDusty_Launch()
 	}
 
 	if (Dusty.FloatVelocityY <= -5)
-		gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 160 + ScrollY), ScaleX, 1.0f, &DustyHop3Sprite );
+		gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 160 + ScrollY), ScaleX, 1.0f, &DustyHop2Sprite );
 	else if (Dusty.FloatVelocityY >= 5)
-		gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 160 + ScrollY), ScaleX, 1.0f, &DustyHop5Sprite );
-	else
 		gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 160 + ScrollY), ScaleX, 1.0f, &DustyHop4Sprite );
+	else
+		gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 160 + ScrollY), ScaleX, 1.0f, &DustyHop3Sprite );
 }
 
 void UpdateDusty_Launch()

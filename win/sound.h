@@ -50,7 +50,7 @@ void sxDeinit();
 
 /*--------------------------------------------------------------------------------------------------------
 
-  sxLoadWav
+  sxLoadSound
 
   Loads a *.wav file into a sound object. 
 
@@ -61,7 +61,7 @@ void sxDeinit();
   sxLoadSound( "bang.wav", &bangSound );
 
 --------------------------------------------------------------------------------------------------------*/
-void sxLoadWav( const char* name, sxSound* snd );
+void sxLoadSound( const char* name, sxSound* snd );
 
 /*--------------------------------------------------------------------------------------------------------
 
