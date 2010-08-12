@@ -926,11 +926,17 @@ bool Update()
 		LoadLevel("Docs/Hard.txt");
 		SetGameState_Playing();
 	}
+	if (kbIsKeyDown(KB_4) && !kbWasKeyDown(KB_4))
+	{
+	    LoadLevel("Docs/TBook01_Chapter01_Page01.txt");
+	    SetGameState_Playing();
+	}
 	if (kbIsKeyDown(KB_0) && !kbWasKeyDown(KB_0))
 	{
 		LoadLevel("Docs/Test.txt");
 		SetGameState_Playing();
 	}
+	
 #endif
 
 	if (GameState == GAMESTATE_START_SCREEN)	

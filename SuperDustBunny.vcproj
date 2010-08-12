@@ -261,6 +261,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\Docs\Easy.txt"
+			>
+		</File>
+		<File
 			RelativePath=".\FireWorks.cpp"
 			>
 		</File>
@@ -277,7 +281,15 @@
 			>
 		</File>
 		<File
+			RelativePath="..\Docs\Medium.txt"
+			>
+		</File>
+		<File
 			RelativePath=".\SuperDustBunny.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\Docs\TBook01_Chapter01_Page01.txt"
 			>
 		</File>
 		<File
