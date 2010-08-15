@@ -40,6 +40,7 @@ struct SBlock
 
 struct SPage
 {
+	char* Name;
 	int* Blocks;
 	int Width;
 	int Height;

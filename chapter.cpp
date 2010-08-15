@@ -32,25 +32,46 @@ void InitScore()
 
 void GetNextLine(FILE* File, char* Line, int LineSize)
 {
-	for (;;)
+	*Line = '\0';
+	
+	while (!feof(File))
 	{
 		fgets(Line, LineSize-1, File);
 
-		char* p = Line;
-
-		bool AllWhitespace = true;
-		for (; *p; p++) 
+		// Remove comments up to the end of the line.
+		char* Comment = Line;
+		while (*Comment)
 		{
-			if (!isspace(*p))
+			if (Comment[0] == '/' && Comment[1] == '/')
 			{
-				AllWhitespace = false;
+				*Comment = '\0';
 				break;
 			}
+			Comment++;
 		}
-
-		if (!AllWhitespace)
-			break;
+		
+		// Remove whitespace from the end of the line.
+		char* End = Line + strlen(Line)-1;
+		while (End > Line && isspace(*End))
+		{
+			End--;
+		}
+		End[1] = '\0';
+		
+		// Remove whitespace from the beginning of the line.
+		char* Begin = Line;
+		while (isspace(*Begin))
+		{
+			Begin++;
+		}
+		memmove(Line, Begin, strlen(Begin)+1);
+		
+		// If the resulting line is not empty, return it.
+		// Otherwise, loop around and get another one.
+		if (*Line)
+			return;
 	}
+	
 }
 
 void LoadChapter(const char* filename)
@@ -70,15 +91,10 @@ void LoadChapter(const char* filename)
 	{
 		char Line[1024];
 		
-		fgets(Line, sizeof(Line)-1, ChapFile);
-		while (strcmp(Line, "\n") == 0)
-		{
-			fgets(Line, sizeof(Line)-1, ChapFile);
-		}
+		GetNextLine(ChapFile, Line, sizeof(Line)-1);
 
 		if (strstr(Line, "BLOCKS") != NULL)
 		{
-
 			while (!feof(ChapFile))
 			{
 				GetNextLine(ChapFile, Line, sizeof(Line));
@@ -90,14 +106,12 @@ void LoadChapter(const char* filename)
 
 				sscanf(Line, "%c%c%c", &Block->Key[0][0], &Block->Key[0][1], &Block->Key[0][2] );
 
-				fgets(Line, sizeof(Line)-1, ChapFile);
+				GetNextLine(ChapFile, Line, sizeof(Line)-1);
 				sscanf(Line, "%c%c%c", &Block->Key[1][0], &Block->Key[1][1], &Block->Key[1][2]);
 
 				Block->Desc = strdup(Line + 4);
-				if (strrchr(Block->Desc, '\r')) *strrchr(Block->Desc, '\r') = 0;
-				if (strrchr(Block->Desc, '\n')) *strrchr(Block->Desc, '\n') = 0;
 
-				fgets(Line, sizeof(Line)-1, ChapFile);
+				GetNextLine(ChapFile, Line, sizeof(Line)-1);
 				sscanf(Line, "%c%c%c", &Block->Key[2][0], &Block->Key[2][1], &Block->Key[2][2]);
 				
 				if (strcmp(Block->Desc, "blank") == 0)
@@ -151,7 +165,11 @@ void LoadChapter(const char* filename)
 		if (strstr(Line, "PAGE") != NULL)
 		{
 			SPage* Page = &Chapter.Pages[Chapter.NPages++];
-				
+		
+			char Name[1024];
+			sscanf(Line, "PAGE %s", Name);
+			Page->Name = strdup(Name);
+			
 			Page->Blocks = (int*)malloc(MAX_PAGE_BLOCKS * sizeof(int));
 			
 			Page->Width = 0;
@@ -171,8 +189,8 @@ void LoadChapter(const char* filename)
 				char Line2[1024];
 
 				strcpy(Line0, Line);
-				fgets(Line1, sizeof(Line1)-1, ChapFile);
-				fgets(Line2, sizeof(Line2)-1, ChapFile);
+				GetNextLine(ChapFile, Line1, sizeof(Line1));
+				GetNextLine(ChapFile, Line2, sizeof(Line2));
 
 				int Col = 0;
 
@@ -266,10 +284,23 @@ void LoadChapter(const char* filename)
 				int NRandomPages = 0;
 				int RandomPages[MAX_PAGES];
 
-				char* Page = strtok(Line, " \r\n");
+				char* Page = strtok(Line, " ,");
 				while (Page)
 				{
-					RandomPages[NRandomPages++] = strtol(Page, NULL, 10);
+					bool Found = false;
+					for (int i = 0; i < Chapter.NPages; i++)
+					{
+						if (strcasecmp(Chapter.Pages[i].Name, Page) == 0)
+						{
+							Found = true;
+							RandomPages[NRandomPages++] = i;
+							break;
+						}
+					}
+					if (!Found)
+					{
+						// FIXME: Error message
+					}
 					Page = strtok(NULL, " ");
 				}
 

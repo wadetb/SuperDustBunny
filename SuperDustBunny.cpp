@@ -828,7 +828,7 @@ void Display()
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " D     - Hop right                           ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Space - Jump                                ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Enter - Advance menus                       ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " S     - Skip tutorial                       ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " S     - Skip tutorials                      ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Change levels:                              ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
@@ -848,13 +848,6 @@ void Display()
 
 bool Update()
 {    
-#ifdef PLATFORM_WINDOWS
-    if (kbIsKeyDown(KB_S))
-    {
-         SkipTutorials();
-    }
-#endif
-	
     //Background Music
     if (BackgroundMusic == 1)
     {	        
@@ -895,6 +888,12 @@ bool Update()
 #endif
 	
 #ifdef PLATFORM_WINDOWS
+	// Pressing S skips all tutorials.
+    if (kbIsKeyDown(KB_S))
+    {
+		SkipTutorials();
+    }
+	
 	// Pressing escape quits the program.
 	if (kbIsKeyDown(KB_ESCAPE))
 	{
