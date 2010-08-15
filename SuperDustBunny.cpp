@@ -759,7 +759,16 @@ void Update_Crumb()
     {
         Tutorial.GearDisplayed = true;
     }
-        
+    
+#ifdef PLATFORM_WINDOWS
+	if (kbIsKeyDown(KB_S) && !kbWasKeyDown(KB_S))
+		Dusty.CrumbTimer = 0;
+#endif
+#ifdef PLATFORM_IPHONE
+	if (msButton1 != 0 && msOldButton1 == 0)
+		Dusty.CrumbTimer = 0;
+#endif
+	
     if (Dusty.CrumbTimer <= 0)
     {    
         Dusty.CrumbTimer = 400;
