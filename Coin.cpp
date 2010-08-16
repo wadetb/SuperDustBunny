@@ -25,8 +25,8 @@ void CreateCoin(int X, int Y, const char* Desc)
     Coin->FloatVelocityY = 0.0f;
     Coin->FloatGravity = 0.5f;
     
-    Coin->Transition = 65;
-    Coin->Sprite = 1;
+    Coin->Transition = 5;
+	Coin->Sprite = 1;
     
     Coin->Collided = false;
 }
@@ -48,7 +48,7 @@ void DisplayCoins()
         {
             gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin1Sprite );
         } 
-
+		
         if (Coin->Sprite == 2)
         {
             gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin2Sprite );
@@ -67,42 +67,13 @@ void DisplayCoins()
         if (Coin->Sprite == 5)
         {
             gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin5Sprite );
-        }    
-
+        }
+		
         if (Coin->Sprite == 6)
         {
             gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin6Sprite );
-        } 
-
-        if (Coin->Sprite == 7) 
-        {
-            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin7Sprite );
-        } 
-
-        if (Coin->Sprite == 8)
-        {
-            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin8Sprite );
-        } 
-
-        if (Coin->Sprite == 9)
-        {
-			gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin9Sprite );
-        }
-
-        if (Coin->Sprite == 10)
-        {
-            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin10Sprite );
-        } 
-
-        if (Coin->Sprite == 11)
-        {
-            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin11Sprite );
         }    
-
-        if (Coin->Sprite == 12)
-        {
-            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin12Sprite );
-        } 
+		
     }    
 }
 
@@ -135,79 +106,18 @@ void UpdateCoins()
             
             //sxPlaySound(&Clang01);  
         }
-        
-        if (Coin->Transition == 65)
-        {
-            Coin->Sprite = 1;
-        }  
+		
+		Coin->Transition -= 1;
+		if (Coin->Transition == 0)
+		{
+			Coin->Transition = 5;
 
-        if (Coin->Transition == 60)
-        {
-            Coin->Sprite = 2;
-        }  
-
-        if (Coin->Transition == 55)
-        {
-            Coin->Sprite = 3;
-        } 
-
-        if (Coin->Transition == 50)
-        {
-            Coin->Sprite = 4;
-        }  
-
-        if (Coin->Transition == 45)
-        {
-            Coin->Sprite = 5;
-        }  
-
-        if (Coin->Transition == 40)
-        {
-            Coin->Sprite = 6;
-        }  
-
-        if (Coin->Transition == 35)
-        {
-            Coin->Sprite = 7;
-        }  
-
-        if (Coin->Transition == 30)
-        {
-            Coin->Sprite = 8;
-        }  
-
-        if (Coin->Transition == 25)
-        {
-            Coin->Sprite = 9;
-        }            
-
-        if (Coin->Transition == 20)
-        {
-            Coin->Sprite = 10;
-        }  
-
-        if (Coin->Transition == 15)
-        {
-            Coin->Sprite = 11;
-        }  
-
-        if (Coin->Transition == 10)
-        {
-            Coin->Sprite = 12;
-        }  
-        
-        if (Coin->Transition == 5)
-        {
-            Coin->Sprite = 13;
-        } 
-
-        if (Coin->Transition == 0)
-        {
-            Coin->Transition = 65;
-            Coin->Sprite = 1;
-        }  
-        
-        Coin->Transition -= 1;
-                        
+			Coin->Sprite += 1;
+			
+			if (Coin->Sprite == 7)
+			{
+				Coin->Sprite = 1;
+			}  
+		}
     }  
 }
