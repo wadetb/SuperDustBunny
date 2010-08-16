@@ -13,8 +13,9 @@
 
 enum ECoinState
 {
-    COINSTATE_ACTIVE 				,
-    COINSTATE_INACTIVE				,
+    COINSTATE_ACTIVE,
+	COINSTATE_FALLING,
+    COINSTATE_INACTIVE,
 };
 
 struct SCoin
@@ -23,19 +24,11 @@ struct SCoin
 
     int X, Y;
     float FloatVelocityY;
-    float FloatGravity;
     
     int Sprite;
     int Transition;
-    int SpinTimer;
-    
-    int Dist;
-
-    bool IsCoinSpinning;
-    bool Collided;
 };
 
-extern SCoin Coin;
 void CreateCoin(int X, int Y, const char* Desc);
 void ClearCoins();
 

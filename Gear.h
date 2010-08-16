@@ -14,6 +14,7 @@
 enum EGearState
 {
     GEARSTATE_ACTIVE,
+    GEARSTATE_FALLING,
     GEARSTATE_INACTIVE,
 };
 
@@ -21,18 +22,14 @@ struct SGear
 {
     EGearState State;
 
-    int Sprite;
-    int Transition;
-
-    int X, Y;
-    float FloatVelocityY;
+    float X, Y;
+    float FloatVelocityX, FloatVelocityY;
     float FloatGravity;
-
-    bool Collided;
-
+	
+	float AngularVelocity;
+	float Angle;
 };
 
-extern SGear Gear;
 void CreateGear(int X, int Y, const char* Desc);
 void ClearGears();
 

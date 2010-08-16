@@ -90,6 +90,23 @@ inline float Min(float a, float b)
 	}
 }
 
+inline float Length(float dx, float dy)
+{
+	return sqrtf(dx*dx + dy*dy);
+}
+
+inline float Distance(float x1, float y1, float x2, float y2)
+{
+	float dx = x2-x1;
+	float dy = y2-y1;
+	return sqrtf(dx*dx + dy*dy);
+}
+
+inline float AngleBetween(float x1, float y1, float x2, float y2)
+{
+	return atan2f(x2-x1, -(y2-y1));
+}
+
 #ifdef PLATFORM_WINDOWS
 #define strcasecmp _stricmp
 #define strdup _strdup

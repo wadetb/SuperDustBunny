@@ -533,17 +533,19 @@ void SetDustyState_PrepareLaunch()
 
 void DisplayDusty_PrepareLaunch()
 {
-	// Until we get sprites, it looks better to just hide him in the barrel.
-
-    //if (Dusty.LastDirectionSprite == 1)
-    //{
-    //    gxDrawSprite( Dusty.FloatX-125, (Dusty.FloatY - 221) + ScrollY, &DustyHop2Sprite );
-    //}  
-    //
-    //if (Dusty.LastDirectionSprite == 0)
-    //{
-    //    gxDrawSprite( Dusty.FloatX-130, (Dusty.FloatY - 217) + ScrollY, &DustyHopLeft02 );
-    //}
+	float ScaleX, OffsetX;
+	if (Dusty.Direction == DIRECTION_RIGHT)
+	{
+		ScaleX = 1.0f;
+		OffsetX = 0.0f;
+	}
+	else
+	{
+		ScaleX = -1.0f;
+		OffsetX = 256.0f;
+	}
+	
+//	gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 160 + ScrollY), ScaleX, 1.0f, &DustyHop3Sprite );
 }
 
 void UpdateDusty_PrepareLaunch()

@@ -341,68 +341,29 @@ void DisplayGame_Playing()
 	// Calculate scrolling.
 	CalculateScrollY();
 	
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   Non-scrolling background Drawing                                                      //
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	// Non-scrolling background Drawing
 	//gxDrawSprite( BackgroundX, BackgroundY, &BackgroundCardboardSprite );
-
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   Chapter Drawing                                                                       //
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	
+	// Chapter Drawing - Everything here is behind Dusty
 	DisplayChapter();
-
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   Vacuum Drawing                                                                        //
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	DisplayVacuum_BeforeDusty();
-
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   Dusty Drawing                                                                         //
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	DisplayDusty();
-
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   Barrel Drawing                                                                        //
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-
-	DisplayBarrels();
-
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   Coin Drawing                                                                          //
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	DisplayBarrels_BeforeDusty();
 	DisplayCoins();
-	
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Gear Drawing                                                                          //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
     DisplayGear();
-	
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Ball Drawing                                                                          //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
     DisplayBall();
-
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   Dust Drawing                                                                          //
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	DisplayDust();
-
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   FireWork Drawing                                                                      //
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	DisplayFireWorks();
+	DisplayFireWorks();	
 	
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   Vacuum Drawing                                                                        //
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	// Dusty Drawing
+	DisplayDusty();
+	
+	// More Chapter Drawing - Everything here is on top of Dusty
+	DisplayBarrels_AfterDusty();
+	DisplayDust();
 	DisplayVacuum_AfterDusty();
-
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Score Update                                                                          //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-
+	
+    // HUD Drawing - Score, etc.
     DisplayScore();   
-        
+    	
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Debugging aids                                                                        //
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -417,7 +378,6 @@ void DisplayGame_Playing()
 	FPS = (float)(int(FPS / 10.0f + 0.5f) * 10);
 #endif
 #ifdef PLATFORM_IPHONE
-	// iPhone TODO: Calculate FPS here.
 	static clock_t LastTime = 0;
 	clock_t Time = clock();
 	FPS = (CLOCKS_PER_SEC / ((float)Time - (float)LastTime) + 0.5f);
@@ -449,7 +409,6 @@ void DisplayGame_Playing()
 
 void UpdateGame_Playing()
 { 
-        
 #ifdef PLATFORM_WINDOWS
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Slow Motion Update                                                                    //
@@ -487,52 +446,19 @@ void UpdateGame_Playing()
 	}
 #endif
 
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   Dusty Update                                                                          //
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//	
 	UpdateDusty();
 
 	if (Dusty.State != DUSTYSTATE_DIE)
 	{
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		//                                                   Barrel Update                                                                         //
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		UpdateBarrels();
-
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		//                                                   Coin Update                                                                           //
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		UpdateCoins();   
-		
-        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-        //                                                   Ball Update                                                                           //
-        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
         UpdateBall();  
-        
-        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-        //                                                   Gear Update                                                                           //
-        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
         UpdateGear();  
-
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		//                                                   FireWork Update                                                                       //
-		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		UpdateFireWorks();
-		
-        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-        //                                                   Score Update                                                                       //
-        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		UpdateScore();
 	}
 
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   Dust Update                                                                           //
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	UpdateDust();
-
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   Vacuum Update                                                                         //
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
     UpdateVacuum();  
 }
 
@@ -553,140 +479,80 @@ void SetGameState_Crumb(ETutorialState State)
 
 void Display_Crumb()
 {    
-             
 	// Calculate scrolling.
 	CalculateScrollY();
 	
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   Non-scrolling background Drawing                                                      //
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	// Non-scrolling background Drawing
 	//gxDrawSprite( BackgroundX, BackgroundY, &BackgroundCardboardSprite );
-
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   Chapter Drawing                                                                       //
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	
+	// Chapter Drawing - Everything here is behind Dusty
 	DisplayChapter();
-
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   Vacuum Drawing                                                                        //
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	DisplayVacuum_BeforeDusty();
-
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   Dusty Drawing                                                                         //
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	DisplayDusty();
-
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   Barrel Drawing                                                                        //
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-
-	DisplayBarrels();
-
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   Coin Drawing                                                                          //
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	DisplayBarrels_BeforeDusty();
 	DisplayCoins();
-	
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Ball Drawing                                                                          //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    DisplayBall();
-    
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Gear Drawing                                                                          //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
     DisplayGear();
-
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   Dust Drawing                                                                          //
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	DisplayDust();
-
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   FireWork Drawing                                                                      //
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	DisplayFireWorks();
+    DisplayBall();
+	DisplayFireWorks();	
 	
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   Vacuum Drawing                                                                        //
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	// Dusty Drawing
+	DisplayDusty();
+	
+	// More Chapter Drawing - Everything here is on top of Dusty
+	DisplayBarrels_AfterDusty();
+	DisplayDust();
 	DisplayVacuum_AfterDusty();
-
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Score Update                                                                          //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    DisplayScore();
+	
+    // HUD Drawing - Score, etc.
+    DisplayScore();   
     
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Tutorial State Display Initial Implementation                                         //
+    //                                                   Tutorial State Display                                                                //
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_INITIAL)
     {
-        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &TutorialInitialSprite );  
-        gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &CrumbStandSprite );  
+        gxDrawSpriteCenteredRotated (380, 600, 0, &TutorialInitialSprite );  
+        gxDrawSpriteCenteredRotated (700, 910, 0, &CrumbStandSprite );  
     }
 
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Tutorial State Display Ball Implementation                                            //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_BALL)
     {
-        gxDrawSpriteCenteredRotated (390, (10600 + ScrollY), 0, &TutorialBallSprite );  
-        gxDrawSpriteCenteredRotated (25, (10900 + ScrollY), 0, &CrumbStandSprite );
+        gxDrawSpriteCenteredRotated (390, 600, 0, &TutorialBallSprite );  
+        gxDrawSpriteCenteredRotated (25, 910, 0, &CrumbStandSprite );
     }
 
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Tutorial State Display Barrel Implementation                                          //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_BARREL)
     {
-        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &TutorialBarrelSprite );  
-        gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &CrumbStandSprite );
+        gxDrawSpriteCenteredRotated (380, 600, 0, &TutorialBarrelSprite );  
+        gxDrawSpriteCenteredRotated (700, 910, 0, &CrumbStandSprite );
     }
 
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Tutorial State Display Coin Implementation                                            //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_COIN)
     {
-        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &TutorialCoinSprite );  
-        gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &CrumbStandSprite ); 
+        gxDrawSpriteCenteredRotated (380, 600, 0, &TutorialCoinSprite );  
+        gxDrawSpriteCenteredRotated (700, 910, 0, &CrumbStandSprite ); 
     }
 
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Tutorial State Display FireWork Implementation                                        //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_FIREWORK)
     {
-        gxDrawSpriteCenteredRotated (390, (10500 + ScrollY), 0, &TutorialFireWorkSprite );  
-        gxDrawSpriteCenteredRotated (25, (10300 + ScrollY), 0, &CrumbStandSprite );
+        gxDrawSpriteCenteredRotated (390, 600, 0, &TutorialFireWorkSprite );  
+        gxDrawSpriteCenteredRotated (25, 910, 0, &CrumbStandSprite );
     }
 
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Tutorial State Display Jump Implementation                                            //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_JUMP)
     {
-        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &TutorialJumpSprite );  
-        gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &CrumbStandSprite );
+        gxDrawSpriteCenteredRotated (380, 600, 0, &TutorialJumpSprite );  
+        gxDrawSpriteCenteredRotated (700, 910, 0, &CrumbStandSprite );
     }
 
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Tutorial State Display WallJump Implementation                                        //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_WALLJUMP)
     {
-        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &TutorialWallJumpSprite );  
-        gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &CrumbStandSprite );\
+        gxDrawSpriteCenteredRotated (380, 600, 0, &TutorialWallJumpSprite );  
+        gxDrawSpriteCenteredRotated (700, 910, 0, &CrumbStandSprite );\
     }
     
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Tutorial State Display Gear Implementation                                        //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_GEAR)
     {
-        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &TutorialBallSprite );  
+        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &TutorialGearSprite );  
         gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &CrumbStandSprite );\
     }
 }
@@ -696,70 +562,47 @@ void Display_Crumb()
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
 void Update_Crumb()
 {   
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Tutorial State Update Initial Implementation                                         //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_INITIAL)
     {
         Tutorial.InitialDisplayed = true;
     }
 
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Tutorial State Update Ball Implementation                                            //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_BALL)
     {
         Tutorial.BallDisplayed = true;
     }
 
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Tutorial State Update Barrel Implementation                                          //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_BARREL)
     {
         Tutorial.BarrelDisplayed = true;
     }
 
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Tutorial State Update Coin Implementation                                            //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_COIN)
     {
         Tutorial.CoinDisplayed = true;
     }
 
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Tutorial State Update FireWork Implementation                                        //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_FIREWORK)
     {
         Tutorial.FireworkDisplayed = true;
     }
 
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Tutorial State Update Jump Implementation                                            //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_JUMP)
     {
         Tutorial.JumpDisplayed = true;
     }
 
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Tutorial State Update WallJump Implementation                                        //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_WALLJUMP)
     {
         Tutorial.WallJumpDisplayed = true;
     }
     
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Tutorial State Update Gear Implementation                                        //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_GEAR)
     {
         Tutorial.GearDisplayed = true;
     }
     
+	// Provide for skipping tutorials.  Tap on iPhone, or S on Windows.
 #ifdef PLATFORM_WINDOWS
 	if (kbIsKeyDown(KB_S) && !kbWasKeyDown(KB_S))
 		Dusty.CrumbTimer = 0;
@@ -769,6 +612,7 @@ void Update_Crumb()
 		Dusty.CrumbTimer = 0;
 #endif
 	
+	// Countdown for reading timer.
     if (Dusty.CrumbTimer <= 0)
     {    
         Dusty.CrumbTimer = 400;

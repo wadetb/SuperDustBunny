@@ -26,7 +26,7 @@ struct SBarrel
 
 	int FromDir;
 	int ToDir;
-	int Dir;
+	float Dir;
 
 	int Timer;
 };
@@ -35,6 +35,7 @@ void CreateBarrel(int X, int Y, const char* Desc);
 void ClearBarrels();
 
 void UpdateBarrels();
-void DisplayBarrels();
+void DisplayBarrels_BeforeDusty();
+void DisplayBarrels_AfterDusty();
 
 #endif

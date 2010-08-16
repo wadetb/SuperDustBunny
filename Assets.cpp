@@ -28,7 +28,8 @@ gxSprite BackgroundCardboardSprite;
 
 gxSprite TileUnknownSprite;
 
-gxSprite BarrelSprite;
+gxSprite BarrelBackSprite;
+gxSprite BarrelFrontSprite;
 
 gxSprite CrumbStandSprite;
 
@@ -38,12 +39,6 @@ gxSprite CoinSpin3Sprite;
 gxSprite CoinSpin4Sprite;
 gxSprite CoinSpin5Sprite;
 gxSprite CoinSpin6Sprite;
-gxSprite CoinSpin7Sprite;
-gxSprite CoinSpin8Sprite;
-gxSprite CoinSpin9Sprite;
-gxSprite CoinSpin10Sprite;
-gxSprite CoinSpin11Sprite;
-gxSprite CoinSpin12Sprite;
 
 gxSprite TennisBallSpin1Sprite;
 gxSprite TennisBallSpin2Sprite;
@@ -121,7 +116,8 @@ void LoadAssets()
 
 	gxLoadSprite("Data/tile-unknown.png", &TileUnknownSprite);
 
-	gxLoadSprite("Data/barrel.png", &BarrelSprite);
+	gxLoadSprite("Data/barrel-back.png", &BarrelBackSprite);
+	gxLoadSprite("Data/barrel-front.png", &BarrelFrontSprite);
 
 	gxLoadSprite("Data/crumb-stand.png", &CrumbStandSprite);
 
@@ -131,12 +127,6 @@ void LoadAssets()
 	gxLoadSprite("Data/coin-spin-4.png", &CoinSpin4Sprite);
 	gxLoadSprite("Data/coin-spin-5.png", &CoinSpin5Sprite);
 	gxLoadSprite("Data/coin-spin-6.png", &CoinSpin6Sprite);
-	gxLoadSprite("Data/coin-spin-7.png", &CoinSpin7Sprite);
-	gxLoadSprite("Data/coin-spin-8.png", &CoinSpin8Sprite);
-	gxLoadSprite("Data/coin-spin-9.png", &CoinSpin9Sprite);
-	gxLoadSprite("Data/coin-spin-10.png", &CoinSpin10Sprite);
-	gxLoadSprite("Data/coin-spin-11.png", &CoinSpin11Sprite);
-	gxLoadSprite("Data/coin-spin-12.png", &CoinSpin12Sprite);
 
 	gxLoadSprite("Data/tennisball-spin-1.png", &TennisBallSpin1Sprite);
 	gxLoadSprite("Data/tennisball-spin-2.png", &TennisBallSpin2Sprite);

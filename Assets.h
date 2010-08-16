@@ -28,7 +28,8 @@ extern gxSprite BackgroundCardboardSprite;
 
 extern gxSprite TileUnknownSprite;
 
-extern gxSprite BarrelSprite;
+extern gxSprite BarrelBackSprite;
+extern gxSprite BarrelFrontSprite;
 
 extern gxSprite CrumbStandSprite;
 

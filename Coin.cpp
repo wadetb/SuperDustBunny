@@ -23,20 +23,15 @@ void CreateCoin(int X, int Y, const char* Desc)
     Coin->X = X + 32;
     Coin->Y = Y + 32;
     Coin->FloatVelocityY = 0.0f;
-    Coin->FloatGravity = 0.5f;
     
     Coin->Transition = 5;
 	Coin->Sprite = 1;
-    
-    Coin->Collided = false;
 }
 
 void ClearCoins()
 {
 	NCoins = 0;
 }
-
-extern int ScrollY;
 
 void DisplayCoins()
 {
@@ -79,33 +74,32 @@ void DisplayCoins()
 
 void UpdateCoins()
 {
-    
     for (int i = 0; i < NCoins; i++)
     {
         SCoin* Coin = &Coins[i];
         
-        float XDist = (float)(Dusty.FloatX - Coin->X);
-        float YDist = (float)((Dusty.FloatY-50) - (Coin->Y));
-        float Dist = sqrtf(XDist*XDist + YDist*YDist);
-        
-        if (Dist < 50)
-        {
-            Coin->Collided = true;        
-        }      
-        
-        if (Coin->Collided == true)
-        {
+		if (Coin->State == COINSTATE_ACTIVE)
+		{
+			float Dist = Distance(Dusty.FloatX, Dusty.FloatY-50, Coin->X, Coin->Y);
+			
+			if (Dist < 100)
+			{
+				Coin->State = COINSTATE_FALLING;        
+
+				//sxPlaySound(&Clang01);  
+
+				if (Tutorial.CoinDisplayed == false)
+				{
+					SetGameState_Crumb(TUTORIALSTATE_COIN);
+					return;
+				}
+			}      
+		}
+		else if (Coin->State == COINSTATE_FALLING)
+		{
             Coin->Y += Coin->FloatVelocityY;
-            Coin->FloatVelocityY += Coin->FloatGravity;
-            
-            if (Tutorial.CoinDisplayed == false)
-            {
-                SetGameState_Crumb(TUTORIALSTATE_COIN);
-                return;
-            }
-            
-            //sxPlaySound(&Clang01);  
-        }
+            Coin->FloatVelocityY += 1.0f;
+		}
 		
 		Coin->Transition -= 1;
 		if (Coin->Transition == 0)
@@ -113,7 +107,6 @@ void UpdateCoins()
 			Coin->Transition = 5;
 
 			Coin->Sprite += 1;
-			
 			if (Coin->Sprite == 7)
 			{
 				Coin->Sprite = 1;

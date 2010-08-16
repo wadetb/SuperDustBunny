@@ -15,9 +15,6 @@
 #define MAX_GEARS 100
 
 int NGears = 0;
-
-SGear Gear;
-
 SGear Gears[MAX_GEARS];
 
 void CreateGear(int X, int Y, const char* Desc)
@@ -27,13 +24,11 @@ void CreateGear(int X, int Y, const char* Desc)
     Gear->X = X + 32;
     Gear->Y = Y + 32;
 
-    Gear->FloatVelocityY = 0.0f;
-    Gear->FloatGravity = 0.5f;
+	Gear->FloatVelocityX = 0;
+    Gear->FloatVelocityY = 0;
 
-    Gear->Transition = 40;
-    Gear->Sprite = 1;
-
-    Gear->Collided = false;
+	Gear->Angle = 0;
+	Gear->AngularVelocity = 0;
 
     Gear->State = GEARSTATE_ACTIVE;
 }
@@ -42,8 +37,6 @@ void ClearGears()
 {
     NGears = 0;
 }
-
-extern int ScrollY;
 
 void DisplayGear()
 {
@@ -54,25 +47,7 @@ void DisplayGear()
         if (Gear->State == GEARSTATE_INACTIVE)
             continue;
 
-        if (Gear->Sprite == 1) 
-        {
-            gxDrawSpriteCenteredRotated( Gear->X, Gear->Y + ScrollY, 0, &GearSprite );
-        } 
-
-        if (Gear->Sprite == 2)
-        {
-            gxDrawSpriteCenteredRotated( Gear->X, Gear->Y + ScrollY, 0, &GearSprite );
-        } 
-
-        if (Gear->Sprite == 3)
-        {
-            gxDrawSpriteCenteredRotated( Gear->X, Gear->Y + ScrollY, 0, &GearSprite );
-        }
-
-        if (Gear->Sprite == 4)
-        {
-            gxDrawSpriteCenteredRotated( Gear->X, Gear->Y + ScrollY, 0, &GearSprite );
-        }   
+		gxDrawSpriteCenteredRotated( Gear->X, Gear->Y + ScrollY, Gear->Angle, &GearSprite );
     }    
 }
 
@@ -82,62 +57,60 @@ void UpdateGear()
     {
         SGear* Gear = &Gears[i];
 
-        if (Gear->State == GEARSTATE_INACTIVE)
-            continue;
+        if (Gear->State == GEARSTATE_ACTIVE)
+		{
+			float Dist = Distance(Dusty.FloatX, Dusty.FloatY-50, Gear->X, Gear->Y);
 
-        float XDist = (float)(Dusty.FloatX - Gear->X);
-        float YDist = (float)((Dusty.FloatY-50) - (Gear->Y));
-        float Dist = sqrtf(XDist*XDist + YDist*YDist);
+			if (Dist < 100)
+			{
+				Gear->State = GEARSTATE_FALLING;
+				
+				if (Dusty.FloatVelocityX < 0)
+				{
+					Gear->AngularVelocity = -5 * PI / 180.0f;
+					Gear->FloatVelocityX = -3;
+				}
+				else
+				{
+					Gear->AngularVelocity = 5 * PI / 180.0f;
+					Gear->FloatVelocityX = 3;
+				}
+				
+				Gear->FloatVelocityY = -2;
 
-        if (Dist < 100)
+				if (Tutorial.GearDisplayed == false)
+				{
+					SetGameState_Crumb(TUTORIALSTATE_GEAR);
+					return;
+				}
+			}
+		}
+		else if (Gear->State == GEARSTATE_FALLING)
         {
-            Gear->Collided = true;
-        }
-
-        if (Gear->Collided == true)
-        {
+            Gear->X += Gear->FloatVelocityX;
             Gear->Y += Gear->FloatVelocityY;
-            Gear->FloatVelocityY += Gear->FloatGravity;
+			
+            Gear->FloatVelocityY += 1.0f;
 
-            if (Tutorial.GearDisplayed == false)
-            {
-                SetGameState_Crumb(TUTORIALSTATE_GEAR);
-                return;
-            }
-
-            if (Gear->Y + ScrollY >= gxScreenHeight)
+			Gear->Angle += Gear->AngularVelocity;
+			
+			if (Gear->X + 50 > gxScreenWidth)
+			{
+				Gear->X = gxScreenWidth - 50;
+				Gear->FloatVelocityX = -Gear->FloatVelocityX;
+			}
+			if (Gear->X - 50 < 0)
+			{
+				Gear->X = 50;
+				Gear->FloatVelocityX = -Gear->FloatVelocityX;
+			}
+			
+            if (Gear->Y + ScrollY >= gxScreenHeight + 200)
             {
                 Gear->State = GEARSTATE_INACTIVE;
                 sxPlaySound (&VacuumClogSound);
                 JamVacuum();
             }       
         }
-
-        if (Gear->Transition == 40)
-        {
-            Gear->Sprite = 1;
-        }  
-
-        if (Gear->Transition == 30)
-        {
-            Gear->Sprite = 2;
-        }  
-
-        if (Gear->Transition == 20)
-        {
-            Gear->Sprite = 3;
-        } 
-
-        if (Gear->Transition == 10)
-        {
-            Gear->Sprite = 4;
-        }  
-
-        if (Gear->Transition <= 0)
-        {
-            Gear->Transition = 40;
-        }  
-
-        Gear->Transition -= 1;          
     }    
 }
