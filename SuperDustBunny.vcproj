@@ -293,6 +293,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\Docs\TBook01_Chapter01_Page02.txt"
+			>
+		</File>
+		<File
 			RelativePath=".\TennisBall.cpp"
 			>
 		</File>
