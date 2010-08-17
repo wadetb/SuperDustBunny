@@ -22,7 +22,7 @@ struct SCoin
 {
     ECoinState State;
 
-    int X, Y;
+    float X, Y;
     float FloatVelocityY;
     
     int Sprite;

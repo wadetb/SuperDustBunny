@@ -20,8 +20,8 @@ void CreateCoin(int X, int Y, const char* Desc)
 {
     SCoin* Coin = &Coins[NCoins++];
 
-    Coin->X = X + 32;
-    Coin->Y = Y + 32;
+    Coin->X = (float)X + 32;
+    Coin->Y = (float)Y + 32;
     Coin->FloatVelocityY = 0.0f;
     
     Coin->Transition = 5;
@@ -41,32 +41,32 @@ void DisplayCoins()
         
         if (Coin->Sprite == 1) 
         {
-            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin1Sprite );
+            gxDrawSpriteCenteredRotated( (int)Coin->X, (int)(Coin->Y + ScrollY), 0, &CoinSpin1Sprite );
         } 
 		
         if (Coin->Sprite == 2)
         {
-            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin2Sprite );
+            gxDrawSpriteCenteredRotated( (int)Coin->X, (int)(Coin->Y + ScrollY), 0, &CoinSpin2Sprite );
         } 
 
         if (Coin->Sprite == 3)
         {
-            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin3Sprite );
+            gxDrawSpriteCenteredRotated( (int)Coin->X, (int)(Coin->Y + ScrollY), 0, &CoinSpin3Sprite );
         }
 
         if (Coin->Sprite == 4)
         {
-            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin4Sprite );
+            gxDrawSpriteCenteredRotated( (int)Coin->X, (int)(Coin->Y + ScrollY), 0, &CoinSpin4Sprite );
         } 
 
         if (Coin->Sprite == 5)
         {
-            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin5Sprite );
+            gxDrawSpriteCenteredRotated( (int)Coin->X, (int)(Coin->Y + ScrollY), 0, &CoinSpin5Sprite );
         }
 		
         if (Coin->Sprite == 6)
         {
-            gxDrawSpriteCenteredRotated( Coin->X, Coin->Y + ScrollY, 0, &CoinSpin6Sprite );
+            gxDrawSpriteCenteredRotated( (int)Coin->X, (int)(Coin->Y + ScrollY), 0, &CoinSpin6Sprite );
         }    
 		
     }    
