@@ -20,13 +20,17 @@ void CreateBarrel(int X, int Y, const char* Desc)
 {
 	SBarrel* Barrel = &Barrels[NBarrels++];
 
-	Barrel->X = X + 32;
-	Barrel->Y = Y + 32;
+	Barrel->X = (float)X + 32;
+	Barrel->Y = (float)Y + 32;
 
-	sscanf(Desc, "barrel from=%d to=%d", &Barrel->FromDir, &Barrel->ToDir);//
+	int FromDir, ToDir;
+	sscanf(Desc, "barrel from=%d to=%d", &FromDir, &ToDir);
 
 	Barrel->State = BARRELSTATE_WAIT;
+	Barrel->FromDir = (float)FromDir;
+	Barrel->ToDir = (float)ToDir;
 	Barrel->Dir = Barrel->FromDir;
+
 }
 
 void ClearBarrels()
@@ -40,7 +44,7 @@ void DisplayBarrels_BeforeDusty()
 	{
 		SBarrel* Barrel = &Barrels[i];
 		
-		gxDrawSpriteCenteredRotated(Barrel->X, Barrel->Y + ScrollY, Barrel->Dir * 3.14159f / 180.0f, &BarrelBackSprite);
+		gxDrawSpriteCenteredRotated((int)Barrel->X, (int)(Barrel->Y + ScrollY), Barrel->Dir * 3.14159f / 180.0f, &BarrelBackSprite);
 	}
 }
 
@@ -50,7 +54,7 @@ void DisplayBarrels_AfterDusty()
 	{
 		SBarrel* Barrel = &Barrels[i];
 		
-		gxDrawSpriteCenteredRotated(Barrel->X, Barrel->Y + ScrollY, Barrel->Dir * 3.14159f / 180.0f, &BarrelFrontSprite);
+		gxDrawSpriteCenteredRotated((int)Barrel->X, (int)(Barrel->Y + ScrollY), Barrel->Dir * 3.14159f / 180.0f, &BarrelFrontSprite);
 	}
 }
 
@@ -109,7 +113,7 @@ void UpdateBarrels()
 			Dusty.FloatX = (float)Barrel->X;
 			Dusty.FloatY = (float)Barrel->Y + 50;
 
-			int Diff = GetDirDifference(Barrel->Dir, Barrel->ToDir);
+			float Diff = GetDirDifference(Barrel->Dir, Barrel->ToDir);
 			if (Diff > 5 || Diff < -5)
 			{
 				if (Diff < 0)
@@ -137,7 +141,7 @@ void UpdateBarrels()
 		}
 		else if (Barrel->State == BARRELSTATE_RESET)
 		{
-			int Diff = GetDirDifference(Barrel->Dir, Barrel->FromDir);
+			float Diff = GetDirDifference(Barrel->Dir, Barrel->FromDir);
 			if (Diff > 5 || Diff < -5)
 			{
 				if (Diff < 0)

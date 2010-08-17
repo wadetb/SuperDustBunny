@@ -20,12 +20,12 @@ enum EBarrelState
 
 struct SBarrel
 {
-	int X, Y;
+	float X, Y;
 
 	EBarrelState State;
 
-	int FromDir;
-	int ToDir;
+	float FromDir;
+	float ToDir;
 	float Dir;
 
 	int Timer;
