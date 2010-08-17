@@ -36,6 +36,7 @@ struct SBlock
 	bool Gum;
 	bool GumJump;
 	bool HasCrumbTriggered;
+	bool Jello;
 };
 
 struct SPage

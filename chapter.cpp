@@ -154,6 +154,11 @@ void LoadChapter(const char* filename)
                     {
                         Block->GumJump = true;
                     }
+                    
+                    if (strstr(Block->Desc, "Jello.png"))
+                    {
+                        Block->Jello = true;
+                    }
 				}
 
 				Chapter.NBlocks++;

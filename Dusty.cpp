@@ -873,7 +873,14 @@ void UpdateDusty_Collision()
                         {
                             SetDustyState_Stuck();
                             return;                  
-                        }					
+                        }
+                        
+                        if ((Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide || Dusty.CollideWithTopSide)
+							&& Block->Jello)
+						{
+							SetDustyState_Fall();
+							return;                
+						}	          					
 					}
 				}
 			}
