@@ -839,7 +839,7 @@ void UpdateDusty_Collision()
 					{
 						SBlock* Block = &Chapter.Blocks[BlockID];
 						
-						if ((Dusty.CollideWithTopSide || Dusty.CollideWithBottomSide) && Block->Destructible)
+						if (Dusty.CollideWithTopSide && Block->Destructible)
 						{
 							Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
 						}

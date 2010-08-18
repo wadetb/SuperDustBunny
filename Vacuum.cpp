@@ -24,7 +24,7 @@ void InitVacuum()
 
 void DisplayVacuum_BeforeDusty()
 {
-	if (Vacuum.State == VACUUMSTATE_ONSCREEN)
+	if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.State == VACUUMSTATE_NEAR || Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
 		gxDrawSprite(0, Vacuum.Y + ScrollY, &VacuumBackSprite);
 	}
@@ -32,7 +32,7 @@ void DisplayVacuum_BeforeDusty()
 
 void DisplayVacuum_AfterDusty()
 {
-	if (Vacuum.State == VACUUMSTATE_ONSCREEN)
+	if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.State == VACUUMSTATE_NEAR || Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
 		gxDrawSprite(0, Vacuum.Y + ScrollY, &VacuumFrontSprite);
 	}
@@ -53,14 +53,21 @@ void UpdateVacuum_Volume(float Target)
 
 void UpdateVacuum()
 {
+#ifdef PLATFORM_WINDOWS
+	// V key to summon the vacuum.
+	if (kbIsKeyDown(KB_V) && !kbWasKeyDown(KB_V))
+		Vacuum.Timer = 0;
+#endif
+
 	if (Vacuum.State == VACUUMSTATE_FAR)
 	{
 		UpdateVacuum_Volume(0.5f);
 
 		Vacuum.Timer--;
-		if (Vacuum.Timer == 0)
+		if (Vacuum.Timer <= 0)
 		{
 			Vacuum.State = VACUUMSTATE_NEAR;
+			Vacuum.Y = gxScreenHeight - ScrollY;
 			Vacuum.Timer = 500;
 		}
 	}
@@ -68,14 +75,27 @@ void UpdateVacuum()
 	{
 		UpdateVacuum_Volume(0.8f);
 
-		// Shake the screen by adjusting ScrollY randomly.
-		ScrollY += (rand() % 3) - 1;
+		if (Dusty.State != DUSTYSTATE_DIE)
+		{
+			// Shake the screen by adjusting ScrollY randomly.
+			int ShakeY = (rand() % 3) - 1;
+			ScrollY += ShakeY;
+			Vacuum.Y -= ShakeY;
+
+			// Move the vacuum gradually up the screen.
+			if (Vacuum.Y + ScrollY > gxScreenHeight - 200)
+				Vacuum.Y -= 10;
+
+			if ((float)Vacuum.Y + 150 <= Dusty.FloatY)
+			{
+				SetDustyState_Die();
+			}
+		}
 
 		Vacuum.Timer--;
-		if (Vacuum.Timer == 0)
+		if (Vacuum.Timer <= 0)
 		{
 			Vacuum.State = VACUUMSTATE_ONSCREEN;
-			Vacuum.Y = gxScreenHeight - ScrollY;
 		}
 	}
 	else if (Vacuum.State == VACUUMSTATE_ONSCREEN)
@@ -89,16 +109,21 @@ void UpdateVacuum()
 			ScrollY += ShakeY;
 			Vacuum.Y -= ShakeY;
 
-			if (Vacuum.Y + ScrollY > gxScreenHeight - 768 + 10)
-				Vacuum.Y -= 2;
-		}
+			float VacuumSpeed;
+			if (Vacuum.Y - Dusty.FloatY >= 1000)
+				VacuumSpeed = 10;
+			else if (Vacuum.Y - Dusty.FloatY >= 500)
+				VacuumSpeed = 8;
+			else
+				VacuumSpeed = 4;
 
-		if (Vacuum.Y + ScrollY < gxScreenHeight - 768)
-			Vacuum.Y = gxScreenHeight - ScrollY - 768;
+			// Move the vacuum gradually up the screen.
+			Vacuum.Y -= VacuumSpeed;
 
-		if (Dusty.State != DUSTYSTATE_DIE && (float)Vacuum.Y <= Dusty.FloatY)
-		{
-			SetDustyState_Die();
+			if ((float)Vacuum.Y + 150 <= Dusty.FloatY)
+			{
+				SetDustyState_Die();
+			}
 		}
 	}
 	else if (Vacuum.State == VACUUMSTATE_RETREAT)
@@ -106,29 +131,29 @@ void UpdateVacuum()
 		if (Dusty.State != DUSTYSTATE_DIE)
 		{
 			// Shake the screen by adjusting ScrollY randomly.
-			int ShakeY = (rand() % 13) - 6;
+			int ShakeY = (rand() % 3) - 1;
 			ScrollY += ShakeY;
 			Vacuum.Y -= ShakeY;
 
-			Vacuum.Y += 2;
+			// Move the vacuum back down the screen.
+			Vacuum.Y += 5;
 			if (Vacuum.Y + ScrollY >= gxScreenHeight)
-				Vacuum.State = VACUUMSTATE_NEAR;
+			{
+				Vacuum.State = VACUUMSTATE_FAR;
+				Vacuum.Timer = 3*60;
+			}
 		}
 	}
 }
 
 void JamVacuum()
 {
-	if (Vacuum.State == VACUUMSTATE_ONSCREEN)
+	if (Vacuum.State == VACUUMSTATE_NEAR || Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
 		Vacuum.State = VACUUMSTATE_RETREAT;
 	}
-	else if (Vacuum.State == VACUUMSTATE_NEAR)
-	{
-		Vacuum.State = VACUUMSTATE_FAR;
-	}
 	else
 	{
-		Vacuum.Timer = 1000;
+		Vacuum.Timer = 5*60;
 	}
 }

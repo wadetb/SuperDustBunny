@@ -15,6 +15,7 @@ struct SDustMote
 	float X, Y;
 	float VX, VY;
 	float Size;
+	float Depth;
 	float Life;
 	float Time;
 };
