@@ -107,6 +107,17 @@ inline float AngleBetween(float x1, float y1, float x2, float y2)
 	return atan2f(x2-x1, -(y2-y1));
 }
 
+inline float Remap(float Value, float FromMin, float FromMax, float ToMin, float ToMax, bool Clamp)
+{
+	float RelativeValue = (Value - FromMin) / (FromMax - FromMin);
+	if (Clamp)
+	{
+		if (RelativeValue < 0.0f) RelativeValue = 0.0f;
+		if (RelativeValue > 1.0f) RelativeValue = 1.0f;
+	}
+	return ToMin + RelativeValue * (ToMax - ToMin);
+}
+
 #ifdef PLATFORM_WINDOWS
 #define strcasecmp _stricmp
 #define strdup _strdup

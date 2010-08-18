@@ -89,17 +89,6 @@ void InitDust()
 	}
 }
 
-float RemapFloat(float Value, float FromMin, float FromMax, float ToMin, float ToMax, bool Clamp)
-{
-	float RelativeValue = (Value - FromMin) / (FromMax - FromMin);
-	if (Clamp)
-	{
-		if (RelativeValue < 0.0f) RelativeValue = 0.0f;
-		if (RelativeValue > 1.0f) RelativeValue = 1.0f;
-	}
-	return ToMin + RelativeValue * (ToMax - ToMin);
-}
-
 void DisplayDust()
 {
 	if (DevMode)
@@ -140,9 +129,9 @@ void DisplayDust()
 
 		float Alpha = 1.0f;
 		if (Mote->Time < 1.0f)
-			Alpha = RemapFloat(Mote->Time, 0.0f, 1.0, 0.0f, 1.0f, true);
+			Alpha = Remap(Mote->Time, 0.0f, 1.0, 0.0f, 1.0f, true);
 		if (Mote->Time > Mote->Life - 1.0f)
-			Alpha = RemapFloat(Mote->Time, Mote->Life-1.0f, Mote->Life, 1.0f, 0.0f, true);
+			Alpha = Remap(Mote->Time, Mote->Life-1.0f, Mote->Life, 1.0f, 0.0f, true);
 
 		gxDrawSpriteCenteredScaledAlphaAdd((int)(Mote->X), (int)(Mote->Y + ScrollY*Mote->Size), Mote->Size*1.5f, Mote->Size*1.5f, Alpha, &DustMoteSprite);
 	}
@@ -182,8 +171,8 @@ void UpdateDust()
 
 		if (Dist < 150)
 		{
-			Mote->VX -= XDist/Dist * RemapFloat(Dist, 0, 150, 0.1f, 0.0f, true);
-			Mote->VY -= YDist/Dist * RemapFloat(Dist, 0, 150, 0.1f, 0.0f, true);
+			Mote->VX -= XDist/Dist * Remap(Dist, 0, 150, 0.1f, 0.0f, true);
+			Mote->VY -= YDist/Dist * Remap(Dist, 0, 150, 0.1f, 0.0f, true);
 		}
 
 		// Apply terminal velocity.

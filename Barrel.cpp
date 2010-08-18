@@ -74,35 +74,34 @@ void UpdateBarrels()
 
 		if (Barrel->State == BARRELSTATE_WAIT)
 		{
-			float Dist = Distance(Dusty.FloatX, Dusty.FloatY-50, Barrel->X, Barrel->Y);
+			float Dist = Distance(Dusty.FloatX, Dusty.FloatY, Barrel->X, Barrel->Y+60);
 
-			if (Dist < 200)
+			if (Dist < 300)
 			{
-				float NewDir = AngleBetween(Barrel->X, Barrel->Y, Dusty.FloatX, Dusty.FloatY+50) * 180 / PI;
-				Barrel->Dir += GetDirDifference(NewDir, Barrel->Dir) * 0.3f;
+				float NewDir = AngleBetween(Barrel->X, Barrel->Y, Dusty.FloatX, Dusty.FloatY-60) * 180 / PI;
+				float DirDelta = GetDirDifference(NewDir, Barrel->FromDir);
+				Barrel->Dir = Barrel->FromDir + Remap(Dist, 300, 100, 0, DirDelta, true);
 				
-//				if (Dist < 100)
-//				{
-//					Dusty.FloatX = Dusty.FloatX * 0.9f + Barrel->X * 0.1f;
-//					Dusty.FloatY = Dusty.FloatY * 0.9f + (Barrel->Y+50) * 0.1f;
-//					SetDustyState_PrepareLaunch();
-//				}
-			}
-			else 
-			{
-				Barrel->Dir += GetDirDifference(Barrel->FromDir, Barrel->Dir) * 0.2f;
+				if (Dist < 100)
+				{
+					Dusty.FloatX = Dusty.FloatX * 0.8f + Barrel->X * 0.2f;
+					Dusty.FloatY = Dusty.FloatY * 0.8f + (Barrel->Y+60) * 0.2f;
+					Dusty.FloatVelocityX = 0;
+					Dusty.FloatVelocityY = 0;
+					//SetDustyState_PrepareLaunch();
+				}
 			}
 			
-			if (Dist < 100)
+			if (Dist < 25)
 			{
 			    if (Tutorial.BarrelDisplayed == false)
 			    {
 			        SetGameState_Crumb(TUTORIALSTATE_BARREL);
 			        return;
 			    }
-			    			    				
+			    
 				Dusty.FloatX = (float)Barrel->X;
-				Dusty.FloatY = (float)Barrel->Y + 50;
+				Dusty.FloatY = (float)Barrel->Y + 60;
 				SetDustyState_PrepareLaunch();
 				
 				Barrel->State = BARRELSTATE_TURN;
@@ -111,7 +110,7 @@ void UpdateBarrels()
 		else if (Barrel->State == BARRELSTATE_TURN)
 		{
 			Dusty.FloatX = (float)Barrel->X;
-			Dusty.FloatY = (float)Barrel->Y + 50;
+			Dusty.FloatY = (float)Barrel->Y + 60;
 
 			float Diff = GetDirDifference(Barrel->Dir, Barrel->ToDir);
 			if (Diff > 5 || Diff < -5)
