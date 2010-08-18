@@ -86,7 +86,7 @@ void UpdateCoins()
 			{
 				Coin->State = COINSTATE_FALLING;        
 
-				//sxPlaySound(&Clang01);  
+				sxPlaySound( &CoinVacuumedUpSound ); 
 
 				if (Tutorial.CoinDisplayed == false)
 				{
@@ -97,6 +97,7 @@ void UpdateCoins()
 		}
 		else if (Coin->State == COINSTATE_FALLING)
 		{
+            
             Coin->Y += Coin->FloatVelocityY;
             Coin->FloatVelocityY += 1.0f;
 		}

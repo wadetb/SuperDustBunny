@@ -844,33 +844,52 @@ void UpdateDusty_Collision()
 							Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
 						}
 						
+						if ((Dusty.CollideWithBottomSide || Dusty.CollideWithTopSide || Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide)
+						 && Block->DelayDestructible)
+						{
+							for (int i = 50; i < 1; i++)
+							{	    
+							    if (i == 0)
+							    {
+							        sxPlaySound( &BlockBreakSound );
+							        Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
+							        
+							    }    
+							}							
+						}
+						
 						if ((Dusty.CollideWithTopSide || Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide || Dusty.CollideWithBottomSide)
 							&& Block->EndOfLevel)
 						{
+						    sxPlaySound( &DustyWinSound );
 							SetGameState_WinScreen();
 							return;
 						}
 									
 						if (Dusty.HasGumExpired && Block->Gum)
 						{
+						    sxPlaySound( &BlockBreakSound );
 							Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
 						}
 	                    
 						if ((Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide || Dusty.CollideWithTopSide)
 							&& Block->Gum == true)
 						{
+						    sxPlaySound( &BlockBreakSound );
 							SetDustyState_Stuck();
 							return;                  
 						}	
 						
                         if (Dusty.HasGumBlockExpired && Block->GumJump)
                         {
+                            sxPlaySound( &BlockBreakSound );
                             Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
                         }
 
                         if ((Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide || Dusty.CollideWithTopSide)
                             && Block->GumJump == true)
                         {
+                            sxPlaySound( &BlockBreakSound );
                             SetDustyState_Stuck();
                             return;                  
                         }
@@ -878,6 +897,7 @@ void UpdateDusty_Collision()
                         if ((Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide || Dusty.CollideWithTopSide)
 							&& Block->Jello)
 						{
+						    sxPlaySound( &JelloSound );
 							SetDustyState_Fall();
 							return;                
 						}	          					

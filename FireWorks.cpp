@@ -120,7 +120,8 @@ void UpdateFireWorks()
                     { 
                          if (FireWork ->Y && Block->Destructible)
                         {
-                              Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
+                            sxPlaySound( &BlockBreakSound );
+                            Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
                         }
                     }
                 }

@@ -32,6 +32,7 @@ struct SBlock
 	char* Desc;
 	gxSprite Sprite;
 	bool Destructible;
+	bool DelayDestructible;
 	bool EndOfLevel;
 	bool Gum;
 	bool GumJump;

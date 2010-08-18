@@ -92,6 +92,13 @@ sxSound VacuumClogSound;
 sxSound VacuumClangSound;
 sxSound VacuumRunSound;
 
+sxSound BlockBreakSound;
+sxSound JelloSound;
+sxSound CoinVacuumedUpSound;
+sxSound GearGrindSound;
+sxSound TennisBallVacuumedUpSound;
+
+
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 //                                                    Asset Function Definition                                                            //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
@@ -179,5 +186,11 @@ void LoadAssets()
 	sxLoadSound("Data/vacuum-clog.wav", &VacuumClogSound);
 	sxLoadSound("Data/vacuum-clang.wav", &VacuumClangSound);
 	sxLoadSound("Data/vacuum-run.wav", &VacuumRunSound);
+	
+	sxLoadSound("Data/BlockBreak.wav", &BlockBreakSound);
+	sxLoadSound("Data/Jello.wav", &JelloSound);
+	sxLoadSound("Data/CoinVacuumedUp.wav", &CoinVacuumedUpSound);
+	sxLoadSound("Data/GearGrind.wav", &GearGrindSound);
+	sxLoadSound("Data/TennisBallVacuumedUp.wav", &TennisBallVacuumedUpSound);
 }
 

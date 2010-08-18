@@ -94,6 +94,7 @@ void UpdateBall()
         
         if (Ball->Collided == true)
         {
+            sxPlaySound( &TennisBallVacuumedUpSound );
             Ball->Y += Ball->FloatVelocityY;
             Ball->FloatVelocityY += Ball->FloatGravity;
             

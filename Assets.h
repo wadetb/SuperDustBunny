@@ -98,6 +98,12 @@ extern sxSound VacuumClogSound;
 extern sxSound VacuumClangSound;
 extern sxSound VacuumRunSound;
 
+extern sxSound BlockBreakSound;
+extern sxSound JelloSound;
+extern sxSound CoinVacuumedUpSound;
+extern sxSound GearGrindSound;
+extern sxSound TennisBallVacuumedUpSound;
+
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 //                                                    Asset Function Declarations                                                          //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
