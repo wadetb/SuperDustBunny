@@ -813,25 +813,32 @@ void UpdateDusty_Collision()
 					{
 						Dusty.CollideWithRightSide = true;//Collision with Dusty's Right Side but the left side of the platform
 						Dusty.FloatX -= LeftDistance;
+						if (Dusty.FloatVelocityX > 0)
+							Dusty.FloatVelocityX = 0;
 					}
 
 					if (RightBlockIsEmpty && RightDistance < LeftDistance && RightDistance < DownDistance && RightDistance < UpDistance)
 					{
 						Dusty.CollideWithLeftSide = true;//Collision with Dusty's Left Side but the right side of the platform
 						Dusty.FloatX += RightDistance;
+						if (Dusty.FloatVelocityX < 0)
+							Dusty.FloatVelocityX = 0;
 					}
-
 
 					if (BottomBlockIsEmpty && DownDistance < RightDistance && DownDistance < LeftDistance && DownDistance < UpDistance)
 					{
 						Dusty.CollideWithTopSide = true;//Collision with Dusty's Top Side but the Bottom side of the platform
 						Dusty.FloatY += DownDistance;
+						if (Dusty.FloatVelocityY < 0)
+							Dusty.FloatVelocityY = 0;
 					}
 
 					if (TopBlockIsEmpty && UpDistance < RightDistance && UpDistance < DownDistance && UpDistance < LeftDistance)
 					{
 						Dusty.CollideWithBottomSide = true;//Collision with Dusty's Bottom Side but the Top side of the platform
 						Dusty.FloatY -= UpDistance;
+						if (Dusty.FloatVelocityY > 0)
+							Dusty.FloatVelocityY = 0;
 					}
 										
 					int BlockID = GetBlockID(x, y);
@@ -842,6 +849,7 @@ void UpdateDusty_Collision()
 						if (Dusty.CollideWithTopSide && Block->Destructible)
 						{
 							Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
+							SetDustyState_Fall();
 						}
 						
 						if ((Dusty.CollideWithBottomSide || Dusty.CollideWithTopSide || Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide)
