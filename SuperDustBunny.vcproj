@@ -221,6 +221,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\Docs\Blank_Level_Template.txt"
+			>
+		</File>
+		<File
 			RelativePath=".\chapter.cpp"
 			>
 		</File>
@@ -294,6 +298,38 @@
 		</File>
 		<File
 			RelativePath="..\Docs\TBook01_Chapter01_Page02.txt"
+			>
+		</File>
+		<File
+			RelativePath="..\Docs\TBook01_Chapter01_Page03.txt"
+			>
+		</File>
+		<File
+			RelativePath="..\Docs\TBook01_Chapter01_Page04.txt"
+			>
+		</File>
+		<File
+			RelativePath="..\Docs\TBook01_Chapter01_Page05.txt"
+			>
+		</File>
+		<File
+			RelativePath="..\Docs\TBook01_Chapter01_Page06.txt"
+			>
+		</File>
+		<File
+			RelativePath="..\Docs\TBook01_Chapter01_Page07.txt"
+			>
+		</File>
+		<File
+			RelativePath="..\Docs\TBook01_Chapter01_Page08.txt"
+			>
+		</File>
+		<File
+			RelativePath="..\Docs\TBook01_Chapter01_Page09.txt"
+			>
+		</File>
+		<File
+			RelativePath="..\Docs\TBook01_Chapter01_Page10.txt"
 			>
 		</File>
 		<File
