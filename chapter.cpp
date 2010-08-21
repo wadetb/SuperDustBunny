@@ -140,9 +140,9 @@ void LoadChapter(const char* filename)
 						Block->Destructible = true;
 					}
 					
-					if (strstr(Block->Desc, "delaydestructible"))
+					if (strstr(Block->Desc, "delaydest"))
 					{
-						Block->DelayDestructible = true;
+						Block->DelayDest = true;
 					}
 					
 					if (strstr(Block->Desc, "EndOfLevel.png"))

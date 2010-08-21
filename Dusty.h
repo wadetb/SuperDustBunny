@@ -59,8 +59,10 @@ struct SDusty
     int GumJumpAttempt;
     
     int CrumbTimer;
+    int Delay;
     
     bool HasCrumbExpired;
+    bool BreakBlock;
 
 	bool CollideWithLeftSide;
 	bool CollideWithRightSide;

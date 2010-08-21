@@ -48,8 +48,10 @@ void InitDusty()
 	Dusty.GumJumpAttempt = 0;
 	
 	Dusty.CrumbTimer = 400;
+	Dusty.Delay = 50;
 	
 	Dusty.HasCrumbExpired = false;
+	Dusty.BreakBlock = false;
 
 	Dusty.CollideWithLeftSide = false;
 	Dusty.CollideWithRightSide = false;
@@ -844,7 +846,7 @@ void UpdateDusty_Collision()
 					int BlockID = GetBlockID(x, y);
 					if (BlockID < SPECIALBLOCKID_FIRST)
 					{
-						SBlock* Block = &Chapter.Blocks[BlockID];
+						SBlock* Block = &Chapter.Blocks[BlockID];						
 						
 						if (Dusty.CollideWithTopSide && Block->Destructible)
 						{
@@ -852,19 +854,22 @@ void UpdateDusty_Collision()
 							SetDustyState_Fall();
 						}
 						
-						if ((Dusty.CollideWithBottomSide || Dusty.CollideWithTopSide || Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide)
-						 && Block->DelayDestructible)
+						if ((Dusty.CollideWithBottomSide || Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide)
+						 && Block->DelayDest)
 						{
-							for (int i = 50; i < 1; i++)
-							{	    
-							    if (i == 0)
-							    {
-							        sxPlaySound( &BlockBreakSound );
-							        Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
-							        
-							    }    
-							}							
-						}
+					        Dusty.BreakBlock = true;
+					        if (Dusty.BreakBlock)
+                            {
+                                if (Dusty.Delay == 0)
+                                {
+                                    Dusty.Delay = 50;
+                                    Dusty.BreakBlock = false;
+                                    sxPlaySound( &BlockBreakSound );
+                                    Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
+                                }
+                                Dusty.Delay -= 1;
+                            }			        							        							
+						}										
 						
 						if ((Dusty.CollideWithTopSide || Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide || Dusty.CollideWithBottomSide)
 							&& Block->EndOfLevel)

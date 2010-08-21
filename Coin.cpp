@@ -86,7 +86,7 @@ void UpdateCoins()
 			{
 				Coin->State = COINSTATE_FALLING;        
 
-				sxPlaySound( &CoinVacuumedUpSound ); 
+				sxPlaySound( &CoinVacuumedUpSound );  
 
 				if (Tutorial.CoinDisplayed == false)
 				{
