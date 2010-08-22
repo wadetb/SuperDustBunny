@@ -82,6 +82,7 @@ void UpdateGear()
 				if (Tutorial.GearDisplayed == false)
 				{
 					SetGameState_Crumb(TUTORIALSTATE_GEAR);
+					JamVacuum();
 					return;
 				}
 			}

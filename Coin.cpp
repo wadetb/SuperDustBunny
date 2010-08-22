@@ -10,6 +10,7 @@
 #include "Coin.h"
 #include "Common.h"
 #include "Dusty.h"
+#include "Vacuum.h"
 
 #define MAX_COINS 100
 
@@ -91,6 +92,7 @@ void UpdateCoins()
 				if (Tutorial.CoinDisplayed == false)
 				{
 					SetGameState_Crumb(TUTORIALSTATE_COIN);
+					JamVacuum();
 					return;
 				}
 			}      
