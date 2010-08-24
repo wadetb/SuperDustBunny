@@ -36,7 +36,7 @@ void InitDusty()
 	
 	Dusty.FloatGravity = 0.5f;
 
-	Dusty.SpriteTransition = 0;
+	Dusty.SpriteTransition = 5;
 
 	Dusty.WallStickTimer = 0;
 	Dusty.LastWall = DIRECTION_NONE;
@@ -116,12 +116,6 @@ void UpdateDusty_Stand()
 {		
 	if ( GetInput_Jump() )      
 	{
-	    if (Tutorial.JumpDisplayed == false)
-	    {
-	        SetGameState_Crumb(TUTORIALSTATE_JUMP);
-	        return;
-	    }
-        
 		SetDustyState_Jump( false );
 		return;
 	}
@@ -153,6 +147,12 @@ void UpdateDusty_Stand()
 
 void SetDustyState_Jump( bool OffWall )
 {
+	// Jump tutorial is kind of distracting right now.
+	//if (Tutorial.JumpDisplayed == false)
+	//{
+	//	SetGameState_Crumb(TUTORIALSTATE_JUMP);
+	//}
+
 	if ( OffWall )
 	{
 		sxPlaySound( &DustyWallJumpSound );
@@ -331,12 +331,6 @@ void DisplayDusty_Hop()
 
 void UpdateDusty_Hop()
 {
-    if (Tutorial.InitialDisplayed == false)
-    {    
-	    SetGameState_Crumb(TUTORIALSTATE_INITIAL);
-	    return;
-	}    
-
 	// Update animation
 	Dusty.SpriteTransition += 1;
 
@@ -416,13 +410,13 @@ void UpdateDusty_JumpCommon()
 	
     // Collision with either side of screen translates to a possible wall jump.
 	// Dusty is not allowed to collide with the same side twice in a row, unless he stands once in between.
-	if (Dusty.CollideWithLeftSide && Dusty.Direction == DIRECTION_LEFT && Dusty.LastWall != DIRECTION_LEFT)
+	if (Dusty.CollideWithLeftSide && Dusty.Direction == DIRECTION_LEFT/* && Dusty.LastWall != DIRECTION_LEFT*/)
 	{
         SetDustyState_WallJump();
         return;
 	}
 
-	if (Dusty.CollideWithRightSide && Dusty.Direction == DIRECTION_RIGHT && Dusty.LastWall != DIRECTION_RIGHT)
+	if (Dusty.CollideWithRightSide && Dusty.Direction == DIRECTION_RIGHT/* && Dusty.LastWall != DIRECTION_RIGHT*/)
     {
         SetDustyState_WallJump();
         return;
@@ -435,6 +429,11 @@ void UpdateDusty_JumpCommon()
 
 void SetDustyState_WallJump()
 {   	
+	if (Tutorial.WallJumpDisplayed == false)
+	{
+		SetGameState_Crumb(TUTORIALSTATE_WALLJUMP);
+	}
+
 	Dusty.WallStickTimer = 15;
 
 	Dusty.FloatVelocityX = 0;
@@ -470,12 +469,6 @@ void DisplayDusty_WallJump()
 
 void UpdateDusty_WallJump()
 {                                                   
-	if (Tutorial.WallJumpDisplayed == false)
-	{
-	    SetGameState_Crumb(TUTORIALSTATE_WALLJUMP);
-	    return;
-	}
-		
 	if (Dusty.WallStickTimer != 0)
 	{                        
 		Dusty.WallStickTimer -= 1;
@@ -723,6 +716,19 @@ extern int ScrollY;
 
 void UpdateDusty_Collision()
 {
+	// Adjust Dusty's bottom collision rectangle while jumping to help him clear platforms more easily.  
+	// This will almost certainly cause issues and have to be taken out and replaced by a "mantle" action.
+	if (Dusty.State == DUSTYSTATE_JUMP || Dusty.State == DUSTYSTATE_LAUNCH )
+	{
+		Dusty.Bottom = -30;
+		Dusty.Top = -90;
+	}
+	else
+	{
+		Dusty.Bottom = 0;
+		Dusty.Top = -120;
+	}
+
 	// Initialize all collision variables to false.  One or more of these will be set to true in this function.
 	// This function also corrects Dusty's position to not intersect anything.
 	Dusty.CollideWithRightSide = false;

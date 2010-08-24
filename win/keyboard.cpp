@@ -88,3 +88,9 @@ bool kbWasKeyDown(int key)
 {
 	return kbOldKeyStatus[key] != 0;
 }
+
+void kbClearKey(int key)
+{
+	kbKeyStatus[key] = 0;
+	kbOldKeyStatus[key] = 0;
+}

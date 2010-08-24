@@ -31,6 +31,8 @@ void InitTutorial()
     Tutorial.InitialDisplayed = false;
     Tutorial.JumpDisplayed = false;
     Tutorial.GearDisplayed = false;
+
+	Tutorial.JumpInhibit = false;
 }
 
 STutorial Tutorial;
@@ -121,6 +123,21 @@ bool GetInput_MoveRight()
 
 bool GetInput_Jump()
 {
+	// Jump inhibitor is used to make the game ignore the jump key until it's released.
+	if (Tutorial.JumpInhibit)
+	{
+#ifdef PLATFORM_WINDOWS
+		if (!kbIsKeyDown(KB_SPACE))
+			Tutorial.JumpInhibit = false;
+#endif
+#ifdef PLATFORM_IPHONE
+		if (!msButton1)
+			Tutorial.JumpInhibit = false;
+#endif
+	}
+	if (Tutorial.JumpInhibit)
+		return false;
+
 #ifdef PLATFORM_WINDOWS
 	return kbIsKeyDown(KB_SPACE);
 #endif
@@ -334,6 +351,11 @@ void UpdateGame_WinScreen()
 void SetGameState_Playing()
 {
 	GameState = GAMESTATE_PLAYING;
+
+	if (Tutorial.InitialDisplayed == false)
+	{    
+		SetGameState_Crumb(TUTORIALSTATE_INITIAL);
+	}    
 }
 
 void DisplayGame_Playing()
@@ -502,9 +524,6 @@ void Display_Crumb()
 	DisplayDust();
 	DisplayVacuum_AfterDusty();
 	
-    // HUD Drawing - Score, etc.
-    DisplayScore();   
-    
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
     //                                                   Tutorial State Display                                                                //
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
@@ -516,8 +535,8 @@ void Display_Crumb()
 
     if (Tutorial.State == TUTORIALSTATE_BALL)
     {
-        gxDrawSpriteCenteredRotated (390, 600, 0, &TutorialBallSprite );  
-        gxDrawSpriteCenteredRotated (25, 910, 0, &CrumbStandSprite );
+        gxDrawSpriteCenteredRotated (380, 600, 0, &TutorialBallSprite );  
+        gxDrawSpriteCenteredRotated (700, 910, 0, &CrumbStandSprite );
     }
 
     if (Tutorial.State == TUTORIALSTATE_BARREL)
@@ -534,8 +553,8 @@ void Display_Crumb()
 
     if (Tutorial.State == TUTORIALSTATE_FIREWORK)
     {
-        gxDrawSpriteCenteredRotated (390, 600, 0, &TutorialFireWorkSprite );  
-        gxDrawSpriteCenteredRotated (25, 910, 0, &CrumbStandSprite );
+        gxDrawSpriteCenteredRotated (380, 600, 0, &TutorialFireWorkSprite );  
+        gxDrawSpriteCenteredRotated (700, 910, 0, &CrumbStandSprite );
     }
 
     if (Tutorial.State == TUTORIALSTATE_JUMP)
@@ -552,15 +571,22 @@ void Display_Crumb()
     
     if (Tutorial.State == TUTORIALSTATE_GEAR)
     {
-        gxDrawSpriteCenteredRotated (380, (10890 + ScrollY), 0, &TutorialGearSprite );  
-        gxDrawSpriteCenteredRotated (700, (11200 + ScrollY), 0, &CrumbStandSprite );\
+        gxDrawSpriteCenteredRotated (380, 600, 0, &TutorialGearSprite );  
+        gxDrawSpriteCenteredRotated (700, 910, 0, &CrumbStandSprite );\
     }
+
+#ifdef PLATFORM_WINDOWS
+	gxDrawString(0, 0, 32, gxRGB32(255, 255, 255), "Press SPACE to continue ");
+#endif
+#ifdef PLATFORM_IPHONE
+	gxDrawString(0, 0, 32, gxRGB32(255, 255, 255),  "    Tap to continue     ");
+#endif
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   Tutorial State Update Crumb Implementation                                            //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
-void Update_Crumb()
+void UpdateGame_Crumb()
 {   
     if (Tutorial.State == TUTORIALSTATE_INITIAL)
     {
@@ -601,22 +627,23 @@ void Update_Crumb()
     {
         Tutorial.GearDisplayed = true;
     }
-    
-	// Provide for skipping tutorials.  Tap on iPhone, or S on Windows.
+
+	// Use the jump key to skip the tutorial.  Note that GetInput_Jump is not used here because
+	// I need to wait for the key to be released and pressed again.  GetInput_Jump continues to
+	// return true as long as the button is held down, which would be bad.
+	bool JumpPressed = false;
 #ifdef PLATFORM_WINDOWS
-	if (kbIsKeyDown(KB_S) && !kbWasKeyDown(KB_S))
-		Dusty.CrumbTimer = 0;
+	JumpPressed = kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE);
 #endif
 #ifdef PLATFORM_IPHONE
-	if (msButton1 != 0 && msOldButton1 == 0)
-		Dusty.CrumbTimer = 0;
+	JumpPressed = msButton1 && !msOldButton1;
 #endif
-	
-	// Countdown for reading timer.
-    if (Dusty.CrumbTimer <= 0)
-    {    
-        Dusty.CrumbTimer = 400;
-        SetGameState_Playing();
+	if (JumpPressed)
+	{
+		// Prevent this from being read by the game as a jump command until the key is released.
+		Tutorial.JumpInhibit = true;
+
+		SetGameState_Playing();
         return;
     }
     Dusty.CrumbTimer--;
@@ -656,13 +683,12 @@ void Display()
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " - - - - - - - - - - - - - - - - - - - - - - ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "     Super Dust Bunny Keyboard Commands      ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Global:                                     ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Enter - Dismiss start / win / lose screen   ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " S     - Skip all tutorials                  ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " F1    - Toggle help                         ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " F2    - Emulate iPhone display size         ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " F3    - Emulate iPad display size           ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " While playing:                              ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Home  - Toggle development mode             ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " \\     - Hold for slow motion                ");
@@ -671,21 +697,22 @@ void Display()
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " A     - Hop left                            ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " D     - Hop right                           ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Space - Jump                                ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Enter - Advance menus                       ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " S     - Skip tutorials                      ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Change levels:                              ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Levels:                                     ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 1     - Easy level                          ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 2     - Medium level                        ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 3     - Hard level                          ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 0     - Test level                          ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 1     - Easy                                ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 2     - Medium                              ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 3     - Hard                                ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 4     - TBook01_Chapter01_Page01            ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 5     - TBook01_Chapter01_Page02            ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 6     - TBook01_Chapter01_Page03            ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 0     - Test                                ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " - - - - - - - - - - - - - - - - - - - - - - ");
 	}
 	else
 	{
-		gxDrawString(20, gxScreenHeight - 36, 16, gxRGB32(255, 255, 255), "Press F1 for help");
+		gxDrawString(20, gxScreenHeight - 52, 16, gxRGB32(255, 255, 255), "Press F1 for help");
 	}
 #endif
 }
@@ -788,7 +815,7 @@ bool Update()
 	    LoadLevel("Docs/TBook01_Chapter01_Page02.txt");
 	    SetGameState_Playing();
 	}
-	    if (kbIsKeyDown(KB_6) && !kbWasKeyDown(KB_6))
+	if (kbIsKeyDown(KB_6) && !kbWasKeyDown(KB_6))
 	{
 	    LoadLevel("Docs/TBook01_Chapter01_Page03.txt");
 	    SetGameState_Playing();
@@ -819,7 +846,7 @@ bool Update()
 	}
 	else if (GameState == GAMESTATE_CRUMB)
 	{
-	    Update_Crumb();
+	    UpdateGame_Crumb();
 	}
 	
 	return true;

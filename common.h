@@ -161,6 +161,9 @@ struct STutorial
     bool InitialDisplayed;
     bool JumpDisplayed;
     bool GearDisplayed;
+
+	// Causes the game to ignore the jump key until it's released.
+	bool JumpInhibit;
 };
 
 extern STutorial Tutorial;

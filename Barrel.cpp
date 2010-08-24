@@ -76,11 +76,11 @@ void UpdateBarrels()
 		{
 			float Dist = Distance(Dusty.FloatX, Dusty.FloatY, Barrel->X, Barrel->Y+60);
 
-			if (Dist < 300)
+			if (Dist < 200)
 			{
 				float NewDir = AngleBetween(Barrel->X, Barrel->Y, Dusty.FloatX, Dusty.FloatY-60) * 180 / PI;
 				float DirDelta = GetDirDifference(NewDir, Barrel->FromDir);
-				Barrel->Dir = Barrel->FromDir + Remap(Dist, 300, 100, 0, DirDelta, true);
+				Barrel->Dir = Barrel->FromDir + Remap(Dist, 200, 100, 0, DirDelta, true);
 				
 				if (Dist < 100)
 				{

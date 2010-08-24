@@ -165,7 +165,7 @@ void LoadAssets()
 	gxLoadSprite("Data/tutorial-coin.png", &TutorialCoinSprite);
 	gxLoadSprite("Data/tutorial-firework.png", &TutorialFireWorkSprite);
 	gxLoadSprite("Data/tutorial-gear.png", &TutorialGearSprite);
-	gxLoadSprite("Data/tutorial-ball.png", &TutorialBallSprite);
+	gxLoadSprite("Data/tutorial-tennisball.png", &TutorialBallSprite);
 	gxLoadSprite("Data/tutorial-jump.png", &TutorialJumpSprite);
 	gxLoadSprite("Data/tutorial-walljump.png", &TutorialWallJumpSprite);
 

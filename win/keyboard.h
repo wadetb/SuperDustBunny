@@ -236,4 +236,6 @@ bool kbIsKeyDown(int key);
 --------------------------------------------------------------------------------------------------------*/
 bool kbWasKeyDown(int key);
 
+void kbClearKey(int key);
+
 #endif
