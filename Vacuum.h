@@ -22,7 +22,7 @@ struct SVacuum
 	EVacuumState State;
 
 	int Timer;
-	int Y;
+	float Y;
 
 	float Volume;
 };

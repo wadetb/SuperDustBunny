@@ -104,7 +104,7 @@ void UpdateBall()
                 return;
             }
             
-			if (Ball->Y + ScrollY >= gxScreenHeight)
+			if (Ball->Y + ScrollY >= Vacuum.Y)
 			{
 				Ball->State = BALLSTATE_INACTIVE;
 				sxPlaySound (&VacuumClogSound);

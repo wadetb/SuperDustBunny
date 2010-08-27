@@ -21,8 +21,8 @@ void CreateGear(int X, int Y, const char* Desc)
 {
     SGear* Gear = &Gears[NGears++];
 
-    Gear->X = X + 32;
-    Gear->Y = Y + 32;
+    Gear->X = (float)X + 32;
+    Gear->Y = (float)Y + 32;
 
 	Gear->FloatVelocityX = 0;
     Gear->FloatVelocityY = 0;
@@ -47,7 +47,7 @@ void DisplayGear()
         if (Gear->State == GEARSTATE_INACTIVE)
             continue;
 
-		gxDrawSpriteCenteredRotated( Gear->X, Gear->Y + ScrollY, Gear->Angle, &GearSprite );
+		gxDrawSpriteCenteredRotated( (int)Gear->X, (int)(Gear->Y + ScrollY), Gear->Angle, &GearSprite );
     }    
 }
 
@@ -98,7 +98,7 @@ void UpdateGear()
 			
 			if (Gear->X + 50 > gxScreenWidth)
 			{
-				Gear->X = gxScreenWidth - 50;
+				Gear->X = (float)gxScreenWidth - 50;
 				Gear->FloatVelocityX = -Gear->FloatVelocityX;
 			}
 			if (Gear->X - 50 < 0)
@@ -107,7 +107,7 @@ void UpdateGear()
 				Gear->FloatVelocityX = -Gear->FloatVelocityX;
 			}
 			
-            if (Gear->Y + ScrollY >= gxScreenHeight + 200)
+            if (Gear->Y + ScrollY >= Vacuum.Y)
             {
                 Gear->State = GEARSTATE_INACTIVE;
                 sxPlaySound (&VacuumClogSound);
