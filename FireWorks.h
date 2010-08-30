@@ -13,6 +13,7 @@
 enum EFireWorkState
 {
 	FIREWORKSTATE_WAIT,
+	FIREWORKSTATE_FUSE,
 	FIREWORKSTATE_LAUNCH,
 	FIREWORKSTATE_EXPLODE,
 	FIREWORKSTATE_DONE,
@@ -21,12 +22,14 @@ enum EFireWorkState
 struct SFireWork
 {
 	float X, Y;
+	float VelocityX, VelocityY;
 
 	EFireWorkState State;
 
 	int Dir;
 
-	int Timer;
+	int FuseTimer;
+	int FlightTimer;
 };
 
 extern SFireWork FireWork;

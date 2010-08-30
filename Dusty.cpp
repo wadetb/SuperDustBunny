@@ -815,10 +815,16 @@ void UpdateDusty_Collision()
 					float DownDistance	= (BlockBottom)- (Dusty.FloatY +  Dusty.Top );
 					float UpDistance	= (Dusty.FloatY + Dusty.Bottom) - (BlockTop );
 
+					bool BlockCollideWithLeftSide = false;
+					bool BlockCollideWithRightSide = false;
+					bool BlockCollideWithTopSide = false;
+					bool BlockCollideWithBottomSide = false;
+
 					// Prefer to collide with the side of the block that would push Dusty out the least distance.
 					// (Only consider sides that are not adjacent to another solid block).
 					if (LeftBlockIsEmpty && LeftDistance < RightDistance && LeftDistance < DownDistance && LeftDistance < UpDistance)
 					{
+						BlockCollideWithRightSide = true;
 						Dusty.CollideWithRightSide = true;//Collision with Dusty's Right Side but the left side of the platform
 						Dusty.FloatX -= LeftDistance;
 						if (Dusty.FloatVelocityX > 0)
@@ -827,6 +833,7 @@ void UpdateDusty_Collision()
 
 					if (RightBlockIsEmpty && RightDistance < LeftDistance && RightDistance < DownDistance && RightDistance < UpDistance)
 					{
+						BlockCollideWithLeftSide = true;
 						Dusty.CollideWithLeftSide = true;//Collision with Dusty's Left Side but the right side of the platform
 						Dusty.FloatX += RightDistance;
 						if (Dusty.FloatVelocityX < 0)
@@ -835,6 +842,7 @@ void UpdateDusty_Collision()
 
 					if (BottomBlockIsEmpty && DownDistance < RightDistance && DownDistance < LeftDistance && DownDistance < UpDistance)
 					{
+						BlockCollideWithTopSide = true;
 						Dusty.CollideWithTopSide = true;//Collision with Dusty's Top Side but the Bottom side of the platform
 						Dusty.FloatY += DownDistance;
 						if (Dusty.FloatVelocityY < 0)
@@ -843,6 +851,7 @@ void UpdateDusty_Collision()
 
 					if (TopBlockIsEmpty && UpDistance < RightDistance && UpDistance < DownDistance && UpDistance < LeftDistance)
 					{
+						BlockCollideWithBottomSide = true;
 						Dusty.CollideWithBottomSide = true;//Collision with Dusty's Bottom Side but the Top side of the platform
 						Dusty.FloatY -= UpDistance;
 						if (Dusty.FloatVelocityY > 0)
@@ -854,13 +863,14 @@ void UpdateDusty_Collision()
 					{
 						SBlock* Block = &Chapter.Blocks[BlockID];						
 						
-						if (Dusty.CollideWithTopSide && Block->Destructible)
+						if (BlockCollideWithTopSide && Block->Destructible)
 						{
 							Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
+							Dusty.FloatVelocityY = 0;
 							SetDustyState_Fall();
 						}
 						
-						if ((Dusty.CollideWithBottomSide || Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide)
+						if ((BlockCollideWithBottomSide || BlockCollideWithLeftSide || BlockCollideWithRightSide)
 						 && Block->DelayDest)
 						{
 					        Dusty.BreakBlock = true;
@@ -877,8 +887,7 @@ void UpdateDusty_Collision()
                             }			        							        							
 						}										
 						
-						if ((Dusty.CollideWithTopSide || Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide || Dusty.CollideWithBottomSide)
-							&& Block->EndOfLevel)
+						if (Block->EndOfLevel)
 						{
 						    sxPlaySound( &DustyWinSound );
 							SetGameState_WinScreen();
