@@ -207,7 +207,7 @@ void UpdateGame_StartScreen()
 	// Advance to playing state when return key is released.
 	if (!kbIsKeyDown(KB_RETURN) && kbWasKeyDown(KB_RETURN))
 	{
-		LoadLevel("Docs/Easy.txt");
+		LoadLevel("Docs/TBook01_Chapter01_Page01.txt");
 		SetGameState_Playing();
 		return;
 	}
@@ -261,7 +261,7 @@ void UpdateGame_DieScreen()
 	// Advance to playing state when return key is released.
 	if (!kbIsKeyDown(KB_RETURN) && kbWasKeyDown(KB_RETURN))
 	{
-		LoadLevel("Docs/Easy.txt");
+		LoadLevel("Docs/TBook01_Chapter01_Page01.txt");
 		SetGameState_Playing();
 		return;
 	}
@@ -325,7 +325,7 @@ void UpdateGame_WinScreen()
     // Advance to playing state when return key is released.
     if (!kbIsKeyDown(KB_RETURN) && kbWasKeyDown(KB_RETURN))
     {
-		LoadLevel("Docs/Easy.txt");
+		LoadLevel("Docs/TBook01_Chapter01_Page01.txt");
         SetGameState_Playing();
         return;
     }
@@ -337,7 +337,7 @@ void UpdateGame_WinScreen()
 	// Advance to playing state when return key is released.
 	if (!msButton1 && msOldButton1)
 	{
-		LoadLevel("Docs/Easy.txt");
+		LoadLevel("Docs/TBook01_Chapter01_Page01.txt");
 		SetGameState_Playing();
 		return;
 	}
@@ -400,12 +400,18 @@ void DisplayGame_Playing()
 	FPS = (float)(int(FPS / 10.0f + 0.5f) * 10);
 #endif
 #ifdef PLATFORM_IPHONE
-	static clock_t LastTime = 0;
-	clock_t Time = clock();
-	FPS = (CLOCKS_PER_SEC / ((float)Time - (float)LastTime) + 0.5f);
+	//Get the resolution of the iPhone timer.
+	mach_timebase_info_data_t timerInfo;
+	mach_timebase_info(&timerInfo);
+	
+	const double TIMER_RATIO = 1e-9 * ((float)timerInfo.numer / (float)timerInfo.denom);
+	
+	static double LastTime = mach_absolute_time() * TIMER_RATIO - 1.0f / 60.0f;
+	double Time = mach_absolute_time() * TIMER_RATIO;
+	FPS = 1.0f / (Time - LastTime);
 	LastTime = Time;
 	
-	FPS = (float)(int(FPS / 10.0f + 0.5f) * 10);
+	FPS = (double)(int(FPS / 10.0f + 0.5f) * 10);
 #endif
 	
 	if (DevMode)

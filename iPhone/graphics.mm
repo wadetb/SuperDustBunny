@@ -390,7 +390,12 @@ void gxDrawSpriteCenteredScaledAlphaAdd(int x, int y, float scalex, float scaley
 	glBindTexture(GL_TEXTURE_2D, sprite->tex);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-	_gxDrawQuad(x, y, scalex * sprite->texWidth, scaley * sprite->texHeight, gxRGBA32(255,255,255,(int)(255*alpha)));
+	float w = scalex * sprite->width;
+	float h = scaley * sprite->height;
+	_gxDrawQuad((float)x - w/2, (float)y - h/2, 
+				w * sprite->texWidth / sprite->width, 
+				h * sprite->texHeight / sprite->height, 
+				gxRGBA32(255,255,255,(int)(255*alpha)));
 }
 
 

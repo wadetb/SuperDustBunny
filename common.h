@@ -38,6 +38,8 @@
 #include "iPhone/graphics.h"
 #include "iPhone/mouse.h"
 #include "iPhone/sound.h"
+#include <mach/mach.h>
+#include <mach/mach_time.h>
 #elif defined(PLATFORM_MAC)
 #include "Mac/graphics.h"
 #include "Mac/mouse.h"
@@ -127,7 +129,7 @@ inline float Random(float Min, float Max)
 #endif
 #ifdef PLATFORM_IPHONE
 	u_int32_t i = arc4random();
-	return (float)( Min + ( (double)i / (double)((2<<31)-1) ) * (Max-Min) );
+	return (float)( Min + ( (double)i / (double)((2ULL<<31)-1) ) * (Max-Min) );
 #endif
 }
 

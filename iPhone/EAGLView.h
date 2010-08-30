@@ -32,7 +32,9 @@
 	
 	// Use of the CADisplayLink class is the preferred method for controlling your animation timing.
 	// CADisplayLink will link to the main display and fire every vsync when added to a given run-loop.
-	id displayLink;	
+	//id displayLink;	
+	
+	NSTimer* timer;
 }
 
 - (void) drawView:(id)sender;

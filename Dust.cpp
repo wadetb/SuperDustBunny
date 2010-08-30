@@ -78,9 +78,6 @@ void DisplayDust()
 {
 	if (DevMode)
 	{
-		EWindDirection* WindDirTable = NULL;
-		int* WindStrengthTable = NULL;
-
 		float StepX = (float)gxScreenWidth / WIND_WIDTH;
 		float StepY = (float)gxScreenHeight / WIND_HEIGHT;
 

@@ -8,6 +8,9 @@
 
 #import "EAGLView.h"
 
+#include <mach/mach.h>
+#include <mach/mach_time.h>
+
 @implementation EAGLView
 
 void Init();
@@ -63,9 +66,11 @@ extern int gxScreenHeight;
 		[[UIApplication sharedApplication] setStatusBarHidden:YES animated:NO];
 		Init();
 	
-		displayLink = [NSClassFromString(@"CADisplayLink") displayLinkWithTarget:self selector:@selector(drawView:)];
-		[displayLink setFrameInterval:2];
-		[displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+		//displayLink = [NSClassFromString(@"CADisplayLink") displayLinkWithTarget:self selector:@selector(drawView:)];
+		//[displayLink setFrameInterval:1];
+		//[displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+		
+		timer = [NSTimer scheduledTimerWithTimeInterval:(NSTimeInterval)(1 / 60.0f) target:self selector:@selector(mainLoop:) userInfo:nil repeats:NO];
     }
 	
     return self;
@@ -89,8 +94,6 @@ extern int gxScreenHeight;
 
 - (void) drawView:(id)sender
 {
-	Update();
-
     [EAGLContext setCurrentContext:context];
     
     glBindFramebufferOES(GL_FRAMEBUFFER_OES, defaultFramebuffer);
@@ -173,6 +176,74 @@ extern int gxScreenHeight;
 	context = nil;
 	
     [super dealloc];
+}
+
+// Runs the main loop. This will keep going as long as running is YES.
+// Fires as fast as it possibly can, giving a delta that is based upon the
+// fraction of the target FPS we're getting.
+- (void) mainLoop:(id)sender
+{
+	//Get the resolution of the iPhone timer.
+	mach_timebase_info_data_t timerInfo;
+	mach_timebase_info(&timerInfo);
+	
+	//Store the ratio between the numberator and the denominator.
+	const float TIMER_RATIO = ((float)timerInfo.numer / (float)timerInfo.denom);
+	
+	//The resolution of the iPhone is in nanoseconds.
+	const uint64_t RESOLUTION = 1000000000;
+	
+	//Create a target time variable based upon the iPhone timer resolution and our FPS.
+	const float TARGET_TIME = (float)RESOLUTION / 60.0f;
+	
+	//Start the frame average at the target time for a frame.
+	float frameAverage = TARGET_TIME;
+	
+	//Create an artificial last update time that matches our target delta.
+	float lastUpdateTime = mach_absolute_time() * TIMER_RATIO - TARGET_TIME;
+	
+	//It will act this many times before it draws.
+	const unsigned int DRAW_FREQUENCY = 1;
+	unsigned int timesUpdated = 0;
+	
+	//Start the game loop.
+	bool running = YES;
+	while (running)
+	{
+		//Create the autorelease pool.
+		NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+		
+		//Get the current time and convert it to a useable standard value (ns).
+		uint64_t now = mach_absolute_time() * TIMER_RATIO;
+		
+		//Adjust the frame average based upon how long this last update took us.
+		frameAverage = (frameAverage * 10 + (now - lastUpdateTime)) / 11;
+		
+		//Create a delta out of the value for the current frame average.
+		//float delta = frameAverage / TARGET_TIME;
+		
+		//Set the last delta so we can access it elsewhere.
+		//[Globals setLastDelta:delta];
+		
+		//Refresh the last update time.
+		lastUpdateTime = now;
+		
+		//Yield to system calls (touches, etc.) for one ms.
+		while( CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0.002, FALSE) == kCFRunLoopRunHandledSource);
+		
+		//Update the game logic.
+		Update();
+		
+		//Draw the game.
+		timesUpdated++;
+		if (timesUpdated >= DRAW_FREQUENCY)
+		{
+			[self drawView:nil];
+			timesUpdated = 0;
+		}
+		
+		[pool release];
+	}
 }
 
 @end
