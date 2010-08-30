@@ -25,7 +25,7 @@ void CreateFireWork(int X, int Y, const char* Desc)
 	FireWork->Y = (float)Y + 32;
 
 	FireWork->Dir = 0;
-	FireWork->FlightTimer = 10;
+	FireWork->FlightTimer = 15;
 	FireWork->FuseTimer = 0;
 
 	sscanf(Desc, "firework dir=%d flight=%d fuse=%d", &FireWork->Dir, &FireWork->FlightTimer, &FireWork->FuseTimer);
