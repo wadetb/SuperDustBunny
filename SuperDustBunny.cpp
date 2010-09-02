@@ -139,10 +139,10 @@ bool GetInput_Jump()
 		return false;
 
 #ifdef PLATFORM_WINDOWS
-	return kbIsKeyDown(KB_SPACE);
+	return kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE);
 #endif
 #ifdef PLATFORM_IPHONE
-	return msButton1;
+	return msButton1 && !msOldButton1;
 #endif	
 }
 
@@ -158,6 +158,7 @@ void LoadLevel(const char* Name)
 	ClearCoins();
 	ClearFireWorks();
 	ClearBalls();
+	ClearGears();
 
 	InitDusty();
 	InitVacuum();

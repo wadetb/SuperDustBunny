@@ -51,10 +51,10 @@ EWindDirection WindDir[WIND_HEIGHT * WIND_WIDTH] =
 
 int WindStrength[WIND_HEIGHT * WIND_WIDTH] =
 {
-	1,     1,     1,     1,     1,    
-	1,     5,     5,     5,     1,    
-	1,     5,     5,     5,     1,    
-	5,     7,     10,     7,     5,    
+	3,     3,     3,     3,     3,    
+	3,     5,     5,     5,     1,    
+	3,     5,     5,     5,     1,    
+	5,     7,     7,     7,     5,    
 	5,     7,     10,     7,     5,    
 	5,     7,     10,     7,     5,    
 	5,     7,     10,     7,     5,    
@@ -144,14 +144,14 @@ void UpdateDust()
 		switch (Vacuum.State)
 		{
 		case VACUUMSTATE_FAR: VacuumStrength = 0.1f; break;
-		case VACUUMSTATE_NEAR: VacuumStrength = 1.0f; break;
-		case VACUUMSTATE_ONSCREEN: VacuumStrength = 1.5f; break;
+		case VACUUMSTATE_NEAR: VacuumStrength = 5.0f; break;
+		case VACUUMSTATE_ONSCREEN: VacuumStrength = 10.0f; break;
 		case VACUUMSTATE_RETREAT: VacuumStrength = 0.0f; break;
 		}
 
 		// Map mote position onto wind grid.
 		int WindX = (int)(Mote->X / gxScreenWidth * WIND_WIDTH);
-		int WindY = (int)((Mote->Y + ScrollY*Mote->Size) / gxScreenHeight * WIND_HEIGHT);
+		int WindY = (int)((Mote->Y + ScrollY*Mote->Depth) / gxScreenHeight * WIND_HEIGHT);
 
 		if (WindX < 0) WindX = 0;
 		if (WindX >= WIND_WIDTH) WindX = WIND_WIDTH-1;

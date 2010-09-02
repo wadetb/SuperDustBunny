@@ -24,6 +24,11 @@ void CreateFireWork(int X, int Y, const char* Desc)
 	FireWork->X = (float)X + 32;
 	FireWork->Y = (float)Y + 32;
 
+	FireWork->VelocityX = 0;
+	FireWork->VelocityY = 0;
+
+	FireWork->State = FIREWORKSTATE_WAIT;
+
 	FireWork->Dir = 0;
 	FireWork->FlightTimer = 15;
 	FireWork->FuseTimer = 0;

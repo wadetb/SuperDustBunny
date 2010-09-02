@@ -40,6 +40,7 @@ void InitDusty()
 
 	Dusty.WallStickTimer = 0;
 	Dusty.LastWall = DIRECTION_NONE;
+	Dusty.WallJumpTimer = 0;
 	
 	Dusty.HasGumExpired = false;
 	Dusty.GumTimer = 30;
@@ -408,15 +409,18 @@ void UpdateDusty_JumpCommon()
 			Dusty.FloatVelocityX += 1.0f;
 	}
 	
+	Dusty.WallJumpTimer++;
+
     // Collision with either side of screen translates to a possible wall jump.
 	// Dusty is not allowed to collide with the same side twice in a row, unless he stands once in between.
-	if (Dusty.CollideWithLeftSide && Dusty.Direction == DIRECTION_LEFT/* && Dusty.LastWall != DIRECTION_LEFT*/)
+	// Wade: Currently this stuff is tweaked around as an experiment- he can only walljump again after a delay; direction is not used.
+	if (Dusty.WallJumpTimer >= 30 && Dusty.CollideWithLeftSide && Dusty.Direction == DIRECTION_LEFT/* && Dusty.LastWall != DIRECTION_LEFT*/)
 	{
         SetDustyState_WallJump();
         return;
 	}
 
-	if (Dusty.CollideWithRightSide && Dusty.Direction == DIRECTION_RIGHT/* && Dusty.LastWall != DIRECTION_RIGHT*/)
+	if (Dusty.WallJumpTimer >= 30 && Dusty.CollideWithRightSide && Dusty.Direction == DIRECTION_RIGHT/* && Dusty.LastWall != DIRECTION_RIGHT*/)
     {
         SetDustyState_WallJump();
         return;
@@ -440,6 +444,8 @@ void SetDustyState_WallJump()
 	Dusty.FloatVelocityY = 0;
 
 	Dusty.LastWall = Dusty.Direction;
+
+	Dusty.WallJumpTimer = 0;
 
 	// Switch directions when entering a wall jump.
 	if (Dusty.Direction == DIRECTION_RIGHT)

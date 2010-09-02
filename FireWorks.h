@@ -21,10 +21,10 @@ enum EFireWorkState
 
 struct SFireWork
 {
+	EFireWorkState State;
+
 	float X, Y;
 	float VelocityX, VelocityY;
-
-	EFireWorkState State;
 
 	int Dir;
 

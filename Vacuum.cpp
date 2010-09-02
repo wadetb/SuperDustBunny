@@ -17,6 +17,8 @@ void InitVacuum()
 {
 	Vacuum.State = VACUUMSTATE_FAR;
 	Vacuum.Timer = 1000;
+	Vacuum.Y = (float)gxScreenHeight;
+	Vacuum.Volume = 0.0f;
 
 	sxSetSoundVolume(&VacuumRunSound, 0.0f);
 	sxPlaySoundLooping(&VacuumRunSound);
@@ -82,7 +84,7 @@ void UpdateVacuum()
 			ScrollY += ShakeY;
 
 			// Move the vacuum gradually up the screen.
-			if (Vacuum.Y > gxScreenHeight - 200)
+			if (Vacuum.Y  > gxScreenHeight - 200)
 				Vacuum.Y -= 5;
 
 			if ((float)Vacuum.Y + 150 <= Dusty.FloatY + ScrollY)

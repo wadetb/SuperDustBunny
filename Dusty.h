@@ -61,6 +61,8 @@ struct SDusty
     int CrumbTimer;
     int Delay;
     
+	int WallJumpTimer;
+
     bool HasCrumbExpired;
     bool BreakBlock;
 

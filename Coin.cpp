@@ -21,6 +21,8 @@ void CreateCoin(int X, int Y, const char* Desc)
 {
     SCoin* Coin = &Coins[NCoins++];
 
+	Coin->State = COINSTATE_ACTIVE;
+
     Coin->X = (float)X + 32;
     Coin->Y = (float)Y + 32;
     Coin->FloatVelocityY = 0.0f;
@@ -40,6 +42,9 @@ void DisplayCoins()
     {
         SCoin* Coin = &Coins[i];
         
+		if (Coin->State == COINSTATE_INACTIVE)
+			continue;
+
         if (Coin->Sprite == 1) 
         {
             gxDrawSpriteCenteredRotated( (int)Coin->X, (int)(Coin->Y + ScrollY), 0, &CoinSpin1Sprite );
@@ -99,9 +104,15 @@ void UpdateCoins()
 		}
 		else if (Coin->State == COINSTATE_FALLING)
 		{
-            
             Coin->Y += Coin->FloatVelocityY;
             Coin->FloatVelocityY += 1.0f;
+
+			if (Coin->Y + ScrollY >= Vacuum.Y)
+			{
+				Coin->State = COINSTATE_INACTIVE;
+				sxPlaySound (&VacuumClogSound);
+				JamVacuum();
+			}       
 		}
 		
 		Coin->Transition -= 1;
