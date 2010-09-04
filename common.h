@@ -136,6 +136,7 @@ inline float Random(float Min, float Max)
 #ifdef PLATFORM_WINDOWS
 #define strcasecmp _stricmp
 #define strdup _strdup
+#define snprintf _snprintf
 #endif
 
 enum ETutorialState

@@ -24,12 +24,14 @@ struct SFireWork
 	EFireWorkState State;
 
 	float X, Y;
+	float OriginalX, OriginalY;
 	float VelocityX, VelocityY;
 
-	int Dir;
+	int FlightDistance;
+	int FlightDir;
+	int ExplosionSize;
 
-	int FuseTimer;
-	int FlightTimer;
+	int Timer;
 };
 
 extern SFireWork FireWork;

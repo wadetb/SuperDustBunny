@@ -73,213 +73,266 @@ void GetNextLine(FILE* File, char* Line, int LineSize)
 	}
 }
 
-void LoadChapter(const char* filename)
+bool LoadBlocks(const char* FileName)
 {
 #ifdef PLATFORM_IPHONE
-	FILE* ChapFile = gxOpenFile(filename, "rb");
+	FILE* BlocksFile = gxOpenFile(FileName, "r");
 #endif
 #ifdef PLATFORM_WINDOWS
-	FILE* ChapFile = fopen(filename, "r");
+	FILE* BlocksFile = fopen(FileName, "r");
 #endif
-	
+
+	if (!BlocksFile)
+		return false;
+
+	while (!feof(BlocksFile))
+	{
+		char Line[1024];
+		GetNextLine(BlocksFile, Line, sizeof(Line));
+
+		SBlock* Block = &Chapter.Blocks[Chapter.NBlocks];
+
+		sscanf(Line, "%c%c%c", &Block->Key[0][0], &Block->Key[0][1], &Block->Key[0][2] );
+
+		GetNextLine(BlocksFile, Line, sizeof(Line)-1);
+		sscanf(Line, "%c%c%c", &Block->Key[1][0], &Block->Key[1][1], &Block->Key[1][2]);
+
+		Block->Desc = strdup(Line + 4);
+
+		GetNextLine(BlocksFile, Line, sizeof(Line)-1);
+		sscanf(Line, "%c%c%c", &Block->Key[2][0], &Block->Key[2][1], &Block->Key[2][2]);
+
+		if (strcmp(Block->Desc, "blank") == 0)
+		{
+			Block->ID = SPECIALBLOCKID_BLANK;
+		}
+		else
+		{
+			Block->ID = Chapter.NBlocks;
+
+			char* SpriteName = strdup(Block->Desc);
+			SpriteName = strtok(SpriteName, " ");
+			gxLoadSprite(SpriteName, &Block->Sprite);
+			free(SpriteName);
+
+#ifdef PLATFORM_WINDOWS
+			// If unable to load the sprite, substitute an ASCII representation.
+			if (!Block->Sprite.tex)
+			{
+				gxCreateASCIIBlockSprite(&Block->Sprite, &Block->Key[0][0]);
+			}
+#endif
+
+			if (strstr(Block->Desc, "destructible"))
+			{
+				Block->Destructible = true;
+			}
+
+			if (strstr(Block->Desc, "delaydest"))
+			{
+				Block->DelayDest = true;
+			}
+
+			if (strstr(Block->Desc, "EndOfLevel.png"))
+			{
+				Block->EndOfLevel = true;
+			}
+
+			if (strstr(Block->Desc, "Gum.png"))
+			{
+				Block->Gum = true;
+			}
+
+			if (strstr(Block->Desc, "GumJump.png"))
+			{
+				Block->GumJump = true;
+			}
+
+			if (strstr(Block->Desc, "Jello.png"))
+			{
+				Block->Jello = true;
+			}
+		}
+
+		Chapter.NBlocks++;
+	}
+
+	return true;
+}
+
+bool LoadPage(const char* FileName)
+{
+#ifdef PLATFORM_IPHONE
+	FILE* PageFile = gxOpenFile(FileName, "r");
+#endif
+#ifdef PLATFORM_WINDOWS
+	FILE* PageFile = fopen(FileName, "r");
+#endif
+
+	if (!PageFile)
+		return false;
+
+	// TODO: Check MAX_PAGES
+	SPage* Page = &Chapter.Pages[Chapter.NPages++];
+
+	// Determine page name from the file name (no extension, no path).
+	char Name[1024];
+	snprintf(Name, sizeof(Name), FileName);
+
+	char* Dot = strchr(Name, '.');
+	if (Dot) *Dot = '\0';
+
+	char* Slash = strrchr(Name, '/');
+	if (!Slash) Slash = strrchr(Name, '\\');
+	if (!Slash) Slash = Name;
+
+	Page->Name = strdup(Slash);
+
+	// Allocate largest possible block array (will be adjusted later).
+	Page->Blocks = (int*)malloc(MAX_PAGE_BLOCKS * sizeof(int));
+
+	Page->Width = 0;
+	Page->Height = 0;
+
+	int NBlocks = 0;
+
+	while (!feof(PageFile))
+	{
+		char Line0[1024];
+		char Line1[1024];
+		char Line2[1024];
+
+		GetNextLine(PageFile, Line0, sizeof(Line0));
+		GetNextLine(PageFile, Line1, sizeof(Line1));
+		GetNextLine(PageFile, Line2, sizeof(Line2));
+
+		if (feof(PageFile))
+			break;
+
+		int Col = 0;
+
+		for (;;)
+		{
+			// Skip column if all spaces or ruler					
+			while (Col < (int)strlen(Line0) && Col < (int)strlen(Line1) && Col < (int)strlen(Line2) &&
+				   isspace(Line0[Col]) && isspace(Line1[Col]) && isspace(Line2[Col]))
+			{
+				Col++;
+			}
+
+			// Break if any line width is exceeded.
+			if (Col >= (int)strlen(Line0) || Col >= (int)strlen(Line1) || Col >= (int)strlen(Line2)) 
+			{
+				break;
+			}
+
+			// Find the block which matches this ASCII pattern.
+			// (If none is found the unknown block will be used)
+			int BlockIndex = SPECIALBLOCKID_UNKNOWN;
+
+			for (int i = 0; i < Chapter.NBlocks; i++)
+			{
+				SBlock* Block = &Chapter.Blocks[i];
+
+				if (Block->Key[0][0] == Line0[Col+0] &&
+					Block->Key[0][1] == Line0[Col+1] &&
+					Block->Key[0][2] == Line0[Col+2])
+				{
+					if (Block->Key[1][0] == Line1[Col+0] &&
+						Block->Key[1][1] == Line1[Col+1] &&
+						Block->Key[1][2] == Line1[Col+2])
+					{
+						if (Block->Key[2][0] == Line2[Col+0] &&
+							Block->Key[2][1] == Line2[Col+1] &&
+							Block->Key[2][2] == Line2[Col+2])
+						{
+							BlockIndex = i;
+							break;
+						}
+					}
+				}
+			}
+
+			Page->Blocks[NBlocks++] = BlockIndex;
+			Col -= -3;
+
+			if (NBlocks >= MAX_PAGE_BLOCKS)
+				break;
+		}
+
+		// The width of the page is set by the first row.
+		if (Page->Width == 0)
+		{
+			Page->Width = NBlocks;
+		}
+
+		Page->Height++;
+
+		// Fix missing or extra blocks.
+		if (NBlocks < Page->Width * Page->Height)
+		{
+			while (NBlocks < Page->Width * Page->Height && NBlocks < MAX_PAGE_BLOCKS)
+				Page->Blocks[NBlocks++] = SPECIALBLOCKID_UNKNOWN;
+		}
+		else if (NBlocks > Page->Width * Page->Height)
+		{
+			NBlocks = Page->Width * Page->Height;
+		}
+
+		if (NBlocks >= MAX_PAGE_BLOCKS)
+			break;
+	}
+
+	// If no valid blocks were found, this page file is invalid.
+	if (Page->Width == 0 && Page->Height == 0)
+	{
+		free(Page->Blocks);
+
+		Chapter.NPages--;
+
+		return false;
+	}
+
+	// Reduce page memory to what was actually used.
+	Page->Blocks = (int*)realloc(Page->Blocks, Page->Width * Page->Height * sizeof(int));
+
+	return true;
+}
+
+void LoadChapter(const char* ChapterDir)
+{
 	Chapter.NBlocks = 0;
 	Chapter.NPages = 0;
 	Chapter.NStitchedPages = 0;
+
+	char FileName[1024];
+	snprintf(FileName, sizeof(FileName), "%s/Blocks.txt", ChapterDir);
+	if (!LoadBlocks(FileName))
+	{
+		// TODO: Display error message here.
+		return;
+	}
+
+	snprintf(FileName, sizeof(FileName), "%s/Chapter.txt", ChapterDir);
+
+#ifdef PLATFORM_IPHONE
+	FILE* ChapFile = gxOpenFile(FileName, "r");
+#endif
+#ifdef PLATFORM_WINDOWS
+	FILE* ChapFile = fopen(FileName, "r");
+#endif
+
+	if (!ChapFile)
+	{
+		// TODO: Display error message here.
+		return;
+	}
 
 	while (!feof(ChapFile))
 	{
 		char Line[1024];
 		
 		GetNextLine(ChapFile, Line, sizeof(Line)-1);
-
-		if (strstr(Line, "BLOCKS") != NULL)
-		{
-			while (!feof(ChapFile))
-			{
-				GetNextLine(ChapFile, Line, sizeof(Line));
-
-				if (strstr(Line, "END OF BLOCKS") != NULL)
-					break;
-
-				SBlock* Block = &Chapter.Blocks[Chapter.NBlocks];
-
-				sscanf(Line, "%c%c%c", &Block->Key[0][0], &Block->Key[0][1], &Block->Key[0][2] );
-
-				GetNextLine(ChapFile, Line, sizeof(Line)-1);
-				sscanf(Line, "%c%c%c", &Block->Key[1][0], &Block->Key[1][1], &Block->Key[1][2]);
-
-				Block->Desc = strdup(Line + 4);
-
-				GetNextLine(ChapFile, Line, sizeof(Line)-1);
-				sscanf(Line, "%c%c%c", &Block->Key[2][0], &Block->Key[2][1], &Block->Key[2][2]);
-				
-				if (strcmp(Block->Desc, "blank") == 0)
-				{
-					Block->ID = SPECIALBLOCKID_BLANK;
-				}
-				else
-				{
-					Block->ID = Chapter.NBlocks;
-
-					char* SpriteName = strdup(Block->Desc);
-					SpriteName = strtok(SpriteName, " ");
-					gxLoadSprite(SpriteName, &Block->Sprite);
-					free(SpriteName);
-
-#ifdef PLATFORM_WINDOWS
-					// If unable to load the sprite, substitute an ASCII representation.
-					if (!Block->Sprite.tex)
-					{
-						gxCreateASCIIBlockSprite(&Block->Sprite, &Block->Key[0][0]);
-					}
-#endif
-
-					if (strstr(Block->Desc, "destructible"))
-					{
-						Block->Destructible = true;
-					}
-					
-					if (strstr(Block->Desc, "delaydest"))
-					{
-						Block->DelayDest = true;
-					}
-					
-					if (strstr(Block->Desc, "EndOfLevel.png"))
-					{
-					    Block->EndOfLevel = true;
-					}
-					
-					if (strstr(Block->Desc, "Gum.png"))
-					{
-					    Block->Gum = true;
-					}
-					
-                    if (strstr(Block->Desc, "GumJump.png"))
-                    {
-                        Block->GumJump = true;
-                    }
-                    
-                    if (strstr(Block->Desc, "Jello.png"))
-                    {
-                        Block->Jello = true;
-                    }
-				}
-
-				Chapter.NBlocks++;
-			}
-
-			continue;
-		}
-
-		if (strstr(Line, "PAGE") != NULL)
-		{
-			SPage* Page = &Chapter.Pages[Chapter.NPages++];
-		
-			char Name[1024];
-			sscanf(Line, "PAGE %s", Name);
-			Page->Name = strdup(Name);
-			
-			Page->Blocks = (int*)malloc(MAX_PAGE_BLOCKS * sizeof(int));
-			
-			Page->Width = 0;
-			Page->Height = 0;
-
-			int NBlocks = 0;
-
-			while (!feof(ChapFile))
-			{
-				GetNextLine(ChapFile, Line, sizeof(Line));
-
-				if (strstr(Line, "END OF PAGE") != NULL)
-					break;
-
-				char Line0[1024];
-				char Line1[1024];
-				char Line2[1024];
-
-				strcpy(Line0, Line);
-				GetNextLine(ChapFile, Line1, sizeof(Line1));
-				GetNextLine(ChapFile, Line2, sizeof(Line2));
-
-				int Col = 0;
-
-				for (;;)
-				{
-					// Skip column if all spaces or ruler					
-					while (Col < (int)strlen(Line0) && Col < (int)strlen(Line1) && Col < (int)strlen(Line2) &&
-						   isspace(Line0[Col]) && isspace(Line1[Col]) && isspace(Line2[Col]))
-					{
-						Col++;
-					}
-
-					// Break if any line width is exceeded.
-					if (Col >= (int)strlen(Line0) || Col >= (int)strlen(Line1) || Col >= (int)strlen(Line2)) 
-					{
-						break;
-					}
-
-					// Find the block which matches this ASCII pattern.
-					// (If none is found the unknown block will be used)
-					int BlockIndex = SPECIALBLOCKID_UNKNOWN;
-
-					for (int i = 0; i < Chapter.NBlocks; i++)
-					{
-						SBlock* Block = &Chapter.Blocks[i];
-
-						if (Block->Key[0][0] == Line0[Col+0] &&
-							Block->Key[0][1] == Line0[Col+1] &&
-							Block->Key[0][2] == Line0[Col+2])
-						{
-							if (Block->Key[1][0] == Line1[Col+0] &&
-								Block->Key[1][1] == Line1[Col+1] &&
-								Block->Key[1][2] == Line1[Col+2])
-							{
-								if (Block->Key[2][0] == Line2[Col+0] &&
-									Block->Key[2][1] == Line2[Col+1] &&
-									Block->Key[2][2] == Line2[Col+2])
-								{
-									BlockIndex = i;
-									break;
-								}
-							}
-						}
-					}
-
-					Page->Blocks[NBlocks++] = BlockIndex;
-					Col -= -3;
-
-					if (NBlocks >= MAX_PAGE_BLOCKS)
-						break;
-				}
-				
-				// The width of the page is set by the first row.
-				if (Page->Width == 0)
-				{
-					Page->Width = NBlocks;
-				}
-
-				Page->Height++;
-
-				// Fix missing or extra blocks.
-				if (NBlocks < Page->Width * Page->Height)
-				{
-					while (NBlocks < Page->Width * Page->Height && NBlocks < MAX_PAGE_BLOCKS)
-						Page->Blocks[NBlocks++] = SPECIALBLOCKID_UNKNOWN;
-				}
-				else if (NBlocks > Page->Width * Page->Height)
-				{
-					NBlocks = Page->Width * Page->Height;
-				}
-
-				if (NBlocks >= MAX_PAGE_BLOCKS)
-					break;
-			}
-
-			// Reduce page memory to what was actually used.
-			Page->Blocks = (int*)realloc(Page->Blocks, Page->Width * Page->Height * sizeof(int));
-
-			continue;
-		}		
 
 		if (strstr(Line, "STITCHING") != NULL)
 		{
@@ -293,13 +346,13 @@ void LoadChapter(const char* filename)
 				int NRandomPages = 0;
 				int RandomPages[MAX_PAGES];
 
-				char* Page = strtok(Line, " ,");
-				while (Page)
+				char* PageName = strtok(Line, " ,");
+				while (PageName)
 				{
 					bool Found = false;
 					for (int i = 0; i < Chapter.NPages; i++)
 					{
-						if (strcasecmp(Chapter.Pages[i].Name, Page) == 0)
+						if (strcasecmp(Chapter.Pages[i].Name, PageName) == 0)
 						{
 							Found = true;
 							RandomPages[NRandomPages++] = i;
@@ -308,18 +361,31 @@ void LoadChapter(const char* filename)
 					}
 					if (!Found)
 					{
-						// FIXME: Error message
+						// Page not already loaded, attempt to load it.
+						char FileName[1024];
+						snprintf(FileName, sizeof(FileName), "%s/Pages/%s.txt", ChapterDir, PageName);
+						
+						if (LoadPage(FileName))
+						{
+							RandomPages[NRandomPages++] = Chapter.NPages-1;
+						}
 					}
-					Page = strtok(NULL, " ");
+
+					PageName = strtok(NULL, " ");
 				}
 
-				int Choice = RandomPages[rand() % NRandomPages];
-				Chapter.StitchedPages[Chapter.NStitchedPages++] = Choice;
+				if (NRandomPages > 0)
+				{
+					int Choice = RandomPages[rand() % NRandomPages];
+					Chapter.StitchedPages[Chapter.NStitchedPages++] = Choice;
+				}
 			}
 
 			continue;
 		}		
 	}
+
+	fclose(ChapFile);
 
 	if (!Chapter.NPages)
 		return;
@@ -440,6 +506,9 @@ void ClearChapter()
 	Chapter.NStitchedPages = 0;
 	free(Chapter.StitchedBlocks);
 	Chapter.StitchedBlocks = NULL;
+
+	Chapter.StitchedWidth = 0;
+	Chapter.StitchedHeight = 0;
 }
 
 void CalculateScrollY()

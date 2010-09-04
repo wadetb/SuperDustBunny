@@ -121,7 +121,7 @@ void LoadAssets()
 
 	gxLoadSprite("Data/background-cardboard.png", &BackgroundCardboardSprite);
 
-	gxLoadSprite("Data/tile-unknown.png", &TileUnknownSprite);
+	gxLoadSprite("Data/tile-wtf.png", &TileUnknownSprite);
 
 	gxLoadSprite("Data/barrel-back.png", &BarrelBackSprite);
 	gxLoadSprite("Data/barrel-front.png", &BarrelFrontSprite);

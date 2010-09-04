@@ -24,16 +24,20 @@ void CreateFireWork(int X, int Y, const char* Desc)
 	FireWork->X = (float)X + 32;
 	FireWork->Y = (float)Y + 32;
 
+	FireWork->OriginalX = FireWork->X;
+	FireWork->OriginalY = FireWork->Y;
+
 	FireWork->VelocityX = 0;
 	FireWork->VelocityY = 0;
 
 	FireWork->State = FIREWORKSTATE_WAIT;
 
-	FireWork->Dir = 0;
-	FireWork->FlightTimer = 15;
-	FireWork->FuseTimer = 0;
+	FireWork->FlightDir = 0;
+	FireWork->FlightDistance = 5;
+	FireWork->Timer = 0;
+	FireWork->ExplosionSize = 10;
 
-	sscanf(Desc, "firework dir=%d flight=%d fuse=%d", &FireWork->Dir, &FireWork->FlightTimer, &FireWork->FuseTimer);
+	sscanf(Desc, "firework dir=%d dist=%d fuse=%d size=%d", &FireWork->FlightDir, &FireWork->FlightDistance, &FireWork->Timer, &FireWork->ExplosionSize);
 
 	FireWork->State = FIREWORKSTATE_WAIT;
 }
@@ -53,7 +57,7 @@ void DisplayFireWorks()
 		
 		if (FireWork->State == FIREWORKSTATE_WAIT || FireWork->State == FIREWORKSTATE_FUSE || FireWork->State == FIREWORKSTATE_LAUNCH)
 		{
-			gxDrawSpriteCenteredRotated((int)FireWork->X, (int)FireWork->Y + ScrollY, FireWork->Dir * 3.14159f / 180.0f, &FireWorkRocketSprite);
+			gxDrawSpriteCenteredRotated((int)FireWork->X, (int)FireWork->Y + ScrollY, FireWork->FlightDir * 3.14159f / 180.0f, &FireWorkRocketSprite);
 		}
 		else if (FireWork->State == FIREWORKSTATE_EXPLODE)
 		{
@@ -74,7 +78,7 @@ void UpdateFireWorks()
 			float YDist = (float)((Dusty.FloatY-50) - (FireWork->Y));
 			float Dist = sqrtf(XDist*XDist + YDist*YDist);
 
-			if (Dist < 70)
+			if (Dist < 100)
 			{
 			    if (Tutorial.FireworkDisplayed == false)
 			    {
@@ -87,15 +91,15 @@ void UpdateFireWorks()
 		}
 		else if (FireWork->State == FIREWORKSTATE_FUSE)
 		{
-			FireWork->FuseTimer--;
-			if (FireWork->FuseTimer <= 0)
+			FireWork->Timer--;
+			if (FireWork->Timer <= 0)
 			{
 				FireWork->State = FIREWORKSTATE_LAUNCH;
 			}
 		}
 		else if (FireWork->State == FIREWORKSTATE_LAUNCH)
 		{
-			float Angle = (float)((90 - FireWork->Dir)) * 3.14159f/180.0f;
+			float Angle = (float)((90 - FireWork->FlightDir)) * 3.14159f/180.0f;
 			float Velocity = 1.5f;
 
 			FireWork->VelocityX += Velocity*cosf(Angle);
@@ -104,11 +108,9 @@ void UpdateFireWorks()
 			FireWork->X += FireWork->VelocityX;
 			FireWork->Y += FireWork->VelocityY;
 
-			FireWork->FlightTimer--;
-
-			if (FireWork->FlightTimer <= 0)
+			if (Distance(FireWork->X, FireWork->Y, FireWork->OriginalX, FireWork->OriginalY) >= FireWork->FlightDistance*64)
 			{
-				FireWork->FlightTimer = 10;
+				FireWork->Timer = 10;
 				FireWork->State = FIREWORKSTATE_EXPLODE;
 
 				for (int y = 0; y < Chapter.StitchedHeight; y++)
@@ -121,11 +123,7 @@ void UpdateFireWorks()
 							SBlock* Block = &Chapter.Blocks[BlockID];						
 							if (Block->Destructible)
 							{
-								float XDist = (float)(FireWork->X - (x*64+32));
-								float YDist = (float)(FireWork->Y - (y*64+32));
-								float Dist = sqrtf(XDist*XDist + YDist*YDist);
-
-								if (Dist < 100)
+								if (Distance(FireWork->X, FireWork->Y, (float)x*64+32, (float)y*64+32) < FireWork->ExplosionSize*64)
 								{ 
 									sxPlaySound( &BlockBreakSound );
 									Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
@@ -139,8 +137,8 @@ void UpdateFireWorks()
 
 		if (FireWork->State == FIREWORKSTATE_EXPLODE)
 		{
-			FireWork->FlightTimer--;
-			if (FireWork->FlightTimer == 0)
+			FireWork->Timer--;
+			if (FireWork->Timer == 0)
 			{
 				FireWork->State = FIREWORKSTATE_DONE;
 			}

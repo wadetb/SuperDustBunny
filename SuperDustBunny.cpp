@@ -49,6 +49,24 @@ enum EGameState
 extern EGameState GameState;
 EGameState GameState = GAMESTATE_START_SCREEN;
 
+#define MAX_CHAPTERS 10
+
+const char* ChapterNames[MAX_CHAPTERS] =
+{
+	"Chapters/Wade1",
+	"Chapters/Thomas1",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	""
+};
+
+int CurrentChapter = 0;
+
 bool TitleScreenButtonPressed = false;
 bool RetryScreenButtonPressed = false;
 bool NextPageButtonPressed = false;
@@ -148,9 +166,10 @@ bool GetInput_Jump()
 
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                   LoadLevel Declaration                                                                 //
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-void LoadLevel(const char* Name)
+//                                                   LoadCurrentChapter Implementation                                                       //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  
+
+void LoadCurrentChapter()
 {
 	Score.ScoreCounter = 0;
 
@@ -165,7 +184,10 @@ void LoadLevel(const char* Name)
 	InitVacuum();
 	InitDust();
 
-	LoadChapter(Name);
+	if (CurrentChapter < 0 || CurrentChapter >= MAX_CHAPTERS)
+		CurrentChapter = 0;
+	
+	LoadChapter(ChapterNames[CurrentChapter]);
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -209,7 +231,7 @@ void UpdateGame_StartScreen()
 	// Advance to playing state when return key is released.
 	if (!kbIsKeyDown(KB_RETURN) && kbWasKeyDown(KB_RETURN))
 	{
-		LoadLevel("Docs/TBook01_Chapter01_Page01.txt");
+		LoadCurrentChapter();
 		SetGameState_Playing();
 		return;
 	}
@@ -221,7 +243,7 @@ void UpdateGame_StartScreen()
 	// Advance to playing state when return key is released.
 	if (!msButton1 && msOldButton1)
 	{
-		LoadLevel("Docs/Easy.txt");
+		LoadCurrentChapter();
 		SetGameState_Playing();
 		return;
 	}
@@ -263,7 +285,7 @@ void UpdateGame_DieScreen()
 	// Advance to playing state when return key is released.
 	if (!kbIsKeyDown(KB_RETURN) && kbWasKeyDown(KB_RETURN))
 	{
-		LoadLevel("Docs/TBook01_Chapter01_Page01.txt");
+		LoadCurrentChapter();
 		SetGameState_Playing();
 		return;
 	}
@@ -275,7 +297,7 @@ void UpdateGame_DieScreen()
 	// Advance to playing state when return key is released.
 	if (!msButton1 && msOldButton1)
 	{
-		LoadLevel("Docs/Easy.txt");
+		LoadCurrentChapter();
 		SetGameState_Playing();
 		return;
 	}
@@ -327,7 +349,7 @@ void UpdateGame_WinScreen()
     // Advance to playing state when return key is released.
     if (!kbIsKeyDown(KB_RETURN) && kbWasKeyDown(KB_RETURN))
     {
-		LoadLevel("Docs/TBook01_Chapter01_Page01.txt");
+		LoadCurrentChapter();
         SetGameState_Playing();
         return;
     }
@@ -339,7 +361,7 @@ void UpdateGame_WinScreen()
 	// Advance to playing state when return key is released.
 	if (!msButton1 && msOldButton1)
 	{
-		LoadLevel("Docs/TBook01_Chapter01_Page01.txt");
+		LoadCurrentChapter();
 		SetGameState_Playing();
 		return;
 	}
@@ -714,6 +736,9 @@ void Display()
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 4     - TBook01_Chapter01_Page01            ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 5     - TBook01_Chapter01_Page02            ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 6     - TBook01_Chapter01_Page03            ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 7     - TBook01_Chapter01_Page04            ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 8     - TBook01_Chapter01_Page05            ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 9     - TBook01_Chapter01_Page06            ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 0     - Test                                ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " - - - - - - - - - - - - - - - - - - - - - - ");
@@ -800,55 +825,64 @@ bool Update()
 	// Number keys switch levels
 	if (kbIsKeyDown(KB_1) && !kbWasKeyDown(KB_1))
 	{
-		LoadLevel("Docs/Easy.txt");
+		CurrentChapter = 0;
+		LoadCurrentChapter();
 		SetGameState_Playing();
 	}
 	if (kbIsKeyDown(KB_2) && !kbWasKeyDown(KB_2))
 	{
-		LoadLevel("Docs/Medium.txt");
+		CurrentChapter = 1;
+		LoadCurrentChapter();
 		SetGameState_Playing();
 	}
 	if (kbIsKeyDown(KB_3) && !kbWasKeyDown(KB_3))
 	{
-		LoadLevel("Docs/Hard.txt");
+		CurrentChapter = 2;
+		LoadCurrentChapter();
 		SetGameState_Playing();
 	}
 	if (kbIsKeyDown(KB_4) && !kbWasKeyDown(KB_4))
 	{
-	    LoadLevel("Docs/TBook01_Chapter01_Page01.txt");
+		CurrentChapter = 3;
+		LoadCurrentChapter();
 	    SetGameState_Playing();
 	}
     if (kbIsKeyDown(KB_5) && !kbWasKeyDown(KB_5))
 	{
-	    LoadLevel("Docs/TBook01_Chapter01_Page02.txt");
+		CurrentChapter = 4;
+		LoadCurrentChapter();
 	    SetGameState_Playing();
 	}
 	if (kbIsKeyDown(KB_6) && !kbWasKeyDown(KB_6))
 	{
-	    LoadLevel("Docs/TBook01_Chapter01_Page03.txt");
+		CurrentChapter = 5;
+		LoadCurrentChapter();
 	    SetGameState_Playing();
 	}
 	if (kbIsKeyDown(KB_7) && !kbWasKeyDown(KB_7))
 	{
-	    LoadLevel("Docs/TBook01_Chapter01_Page04.txt");
+		CurrentChapter = 6;
+		LoadCurrentChapter();
 	    SetGameState_Playing();
 	}
 	if (kbIsKeyDown(KB_8) && !kbWasKeyDown(KB_8))
 	{
-	    LoadLevel("Docs/TBook01_Chapter01_Page05.txt");
+		CurrentChapter = 7;
+		LoadCurrentChapter();
 	    SetGameState_Playing();
 	}
 	if (kbIsKeyDown(KB_9) && !kbWasKeyDown(KB_9))
 	{
-	    LoadLevel("Docs/TBook01_Chapter01_Page06.txt");
+		CurrentChapter = 8;
+		LoadCurrentChapter();
 	    SetGameState_Playing();
 	}
 	if (kbIsKeyDown(KB_0) && !kbWasKeyDown(KB_0))
 	{
-		LoadLevel("Docs/Test.txt");
+		CurrentChapter = 9;
+		LoadCurrentChapter();
 		SetGameState_Playing();
 	}
-	
 #endif
 
 	if (GameState == GAMESTATE_START_SCREEN)	
