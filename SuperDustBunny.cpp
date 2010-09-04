@@ -837,6 +837,11 @@ bool Update()
 	    LoadLevel("Docs/TBook01_Chapter01_Page05.txt");
 	    SetGameState_Playing();
 	}
+	if (kbIsKeyDown(KB_9) && !kbWasKeyDown(KB_9))
+	{
+	    LoadLevel("Docs/TBook01_Chapter01_Page06.txt");
+	    SetGameState_Playing();
+	}
 	if (kbIsKeyDown(KB_0) && !kbWasKeyDown(KB_0))
 	{
 		LoadLevel("Docs/Test.txt");
