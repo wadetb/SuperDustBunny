@@ -843,8 +843,12 @@ bool Update()
 	}
 	if (kbIsKeyDown(KB_4) && !kbWasKeyDown(KB_4))
 	{
+<<<<<<< .mine
+	    LoadLevel("Docs/TBook01_Chapter01_Page07.txt");
+=======
 		CurrentChapter = 3;
 		LoadCurrentChapter();
+>>>>>>> .r564
 	    SetGameState_Playing();
 	}
     if (kbIsKeyDown(KB_5) && !kbWasKeyDown(KB_5))
