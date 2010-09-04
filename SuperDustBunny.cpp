@@ -728,18 +728,10 @@ void Display()
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " D     - Hop right                           ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Space - Jump                                ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Levels:                                     ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Chapters:                                   ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 1     - Easy                                ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 2     - Medium                              ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 3     - Hard                                ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 4     - TBook01_Chapter01_Page01            ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 5     - TBook01_Chapter01_Page02            ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 6     - TBook01_Chapter01_Page03            ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 7     - TBook01_Chapter01_Page04            ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 8     - TBook01_Chapter01_Page05            ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 9     - TBook01_Chapter01_Page06            ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 0     - Test                                ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 1     - Wade1                               ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 2     - Thomas1                             ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " - - - - - - - - - - - - - - - - - - - - - - ");
 	}
