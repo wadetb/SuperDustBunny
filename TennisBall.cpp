@@ -22,8 +22,8 @@ void CreateBall(int X, int Y, const char* Desc)
 {
     SBall* Ball = &Balls[NBalls++];
 
-    Ball->X = X + 32;
-    Ball->Y = Y + 32;
+    Ball->X = (float)X + 32;
+    Ball->Y = (float)Y + 32;
     
     Ball->FloatVelocityY = 0.0f;
     Ball->FloatGravity = 0.5f;
@@ -54,22 +54,22 @@ void DisplayBall()
 
         if (Ball->Sprite == 1) 
         {
-           gxDrawSpriteCenteredRotated( Ball->X, Ball->Y + ScrollY, 0, &TennisBallSpin1Sprite );
+           gxDrawSpriteCenteredRotated( (int)Ball->X, (int)(Ball->Y + ScrollY), 0, &TennisBallSpin1Sprite );
         } 
 
         if (Ball->Sprite == 2)
         {
-            gxDrawSpriteCenteredRotated( Ball->X, Ball->Y + ScrollY, 0, &TennisBallSpin2Sprite );
+            gxDrawSpriteCenteredRotated( (int)Ball->X, (int)(Ball->Y + ScrollY), 0, &TennisBallSpin2Sprite );
         } 
 
         if (Ball->Sprite == 3)
         {
-            gxDrawSpriteCenteredRotated( Ball->X, Ball->Y + ScrollY, 0, &TennisBallSpin3Sprite );
+            gxDrawSpriteCenteredRotated( (int)Ball->X, (int)(Ball->Y + ScrollY), 0, &TennisBallSpin3Sprite );
         }
 
         if (Ball->Sprite == 4)
         {
-            gxDrawSpriteCenteredRotated( Ball->X, Ball->Y + ScrollY, 0, &TennisBallSpin4Sprite );
+            gxDrawSpriteCenteredRotated( (int)Ball->X, (int)(Ball->Y + ScrollY), 0, &TennisBallSpin4Sprite );
         }   
     }    
 }

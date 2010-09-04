@@ -71,7 +71,6 @@ void GetNextLine(FILE* File, char* Line, int LineSize)
 		if (*Line)
 			return;
 	}
-	
 }
 
 void LoadChapter(const char* filename)
@@ -417,6 +416,30 @@ void LoadChapter(const char* filename)
 
 	// Set initial ScrollY.
 	ScrollY = -(Chapter.StitchedHeight * 64 - gxScreenHeight);
+}
+
+void ClearChapter()
+{
+	free((void*)Chapter.Name);
+	Chapter.Name = NULL;
+
+	for (int i = 0; i < Chapter.NPages; i++)
+	{
+		free(Chapter.Pages[i].Name);
+		free(Chapter.Pages[i].Blocks);
+	}
+	Chapter.NPages = 0;
+
+	for (int i = 0; i < Chapter.NBlocks; i++)
+	{
+		free(Chapter.Blocks[i].Desc);
+		gxDestroySprite(&Chapter.Blocks[i].Sprite);
+	}
+	Chapter.NBlocks = 0;
+
+	Chapter.NStitchedPages = 0;
+	free(Chapter.StitchedBlocks);
+	Chapter.StitchedBlocks = NULL;
 }
 
 void CalculateScrollY()

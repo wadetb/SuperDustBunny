@@ -154,6 +154,7 @@ void LoadLevel(const char* Name)
 {
 	Score.ScoreCounter = 0;
 
+	ClearChapter();
 	ClearBarrels();
 	ClearCoins();
 	ClearFireWorks();

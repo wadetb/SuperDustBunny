@@ -80,6 +80,8 @@ extern SScore Score;
 extern int ScrollY;
 
 void LoadChapter(const char* filename);
+void ClearChapter();
+
 void DisplayChapter();
 
 void CalculateScrollY();

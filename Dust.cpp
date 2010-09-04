@@ -60,7 +60,7 @@ int WindStrength[WIND_HEIGHT * WIND_WIDTH] =
 	5,     7,     10,     7,     5,    
 	5,     7,     10,     7,     5,    
 	7,     7,     10,     7,     7,    
-	7,     7,     10,     7,     7,    
+	7,     7,     10,     7,     7,     
 };
 
 void InitDust()

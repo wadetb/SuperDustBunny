@@ -241,7 +241,7 @@ void gxLoadSprite( const char* name, gxSprite* spr );
   Destroys a previously loaded sprite.
 
 --------------------------------------------------------------------------------------------------------*/
-void gxDestroySprite();
+void gxDestroySprite( gxSprite* spr );
 
 /*--------------------------------------------------------------------------------------------------------
 

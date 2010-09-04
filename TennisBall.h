@@ -24,7 +24,7 @@ struct SBall
     int Sprite;
     int Transition;
     
-    int X, Y;
+    float X, Y;
     float FloatVelocityY;
     float FloatGravity;
 
