@@ -78,7 +78,7 @@ void UpdateFireWorks()
 			float YDist = (float)((Dusty.FloatY-50) - (FireWork->Y));
 			float Dist = sqrtf(XDist*XDist + YDist*YDist);
 
-			if (Dist < 100)
+			if (Dist < 125)
 			{
 			    if (Tutorial.FireworkDisplayed == false)
 			    {
