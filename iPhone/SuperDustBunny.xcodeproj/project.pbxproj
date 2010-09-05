@@ -18,6 +18,7 @@
 		088B039C11EC788E00F7D112 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 088B039B11EC788E00F7D112 /* OpenAL.framework */; };
 		088B03A711EC78CF00F7D112 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 088B03A611EC78CF00F7D112 /* QuartzCore.framework */; };
 		088B03CB11EC78F200F7D112 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 088B03CA11EC78F200F7D112 /* AudioToolbox.framework */; };
+		0892A8421233F3DE0044C5E9 /* Chapters in Resources */ = {isa = PBXBuildFile; fileRef = 0892A8201233F3DE0044C5E9 /* Chapters */; };
 		08D1F8F511FA791100241F37 /* Coin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D1F8EF11FA791100241F37 /* Coin.cpp */; };
 		08D1F8F611FA791100241F37 /* Dusty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D1F8F111FA791100241F37 /* Dusty.cpp */; };
 		08D1F8F711FA791100241F37 /* Vacuum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D1F8F311FA791100241F37 /* Vacuum.cpp */; };
@@ -55,6 +56,7 @@
 		088B039B11EC788E00F7D112 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
 		088B03A611EC78CF00F7D112 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		088B03CA11EC78F200F7D112 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		0892A8201233F3DE0044C5E9 /* Chapters */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Chapters; path = ../../Chapters; sourceTree = SOURCE_ROOT; };
 		08D1F8EF11FA791100241F37 /* Coin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = Coin.cpp; path = ../Coin.cpp; sourceTree = SOURCE_ROOT; };
 		08D1F8F011FA791100241F37 /* Coin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Coin.h; path = ../Coin.h; sourceTree = SOURCE_ROOT; };
 		08D1F8F111FA791100241F37 /* Dusty.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Dusty.cpp; path = ../Dusty.cpp; sourceTree = SOURCE_ROOT; };
@@ -173,6 +175,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				0892A8201233F3DE0044C5E9 /* Chapters */,
 				0865F057120DA5F60079486D /* Docs */,
 				08D1F95611FA7DB100241F37 /* Data */,
 				28EEBF621118D79A00187D67 /* Source */,
@@ -252,6 +255,7 @@
 				2860E32F111B888700E27156 /* MainWindow_Pad.xib in Resources */,
 				08D1F9AA11FA7DB100241F37 /* Data in Resources */,
 				0865F05F120DA5F60079486D /* Docs in Resources */,
+				0892A8421233F3DE0044C5E9 /* Chapters in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
