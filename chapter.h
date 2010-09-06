@@ -23,6 +23,9 @@ enum ESpecialBlockID
 	SPECIALBLOCKID_UNKNOWN			= SPECIALBLOCKID_FIRST,
 	SPECIALBLOCKID_OUTOFBOUNDS,
 	SPECIALBLOCKID_BLANK,
+	SPECIALBLOCKID_GREEN,
+	SPECIALBLOCKID_YELLOW,
+	SPECIALBLOCKID_RED,
 };
 
 struct SBlock
@@ -38,6 +41,7 @@ struct SBlock
 	bool GumJump;
 	bool HasCrumbTriggered;
 	bool Jello;
+	bool NoWallJump;
 };
 
 struct SPage
@@ -89,6 +93,7 @@ void CalculateScrollY();
 void InitScore();
 void DisplayScore();
 void UpdateScore();
+void BreakBlock();
 
 void InitCrumb();
 

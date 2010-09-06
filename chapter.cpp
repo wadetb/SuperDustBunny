@@ -102,6 +102,21 @@ bool LoadBlocks(const char* FileName)
 		GetNextLine(BlocksFile, Line, sizeof(Line)-1);
 		sscanf(Line, "%c%c%c", &Block->Key[2][0], &Block->Key[2][1], &Block->Key[2][2]);
 
+        if (strcmp(Block->Desc, "greendelaydest") == 0)
+		{
+			Block->ID = SPECIALBLOCKID_GREEN;
+		}
+		
+		if (strcmp(Block->Desc, "yellowdelaydest") == 0)
+		{
+			Block->ID = SPECIALBLOCKID_YELLOW;
+		}
+		
+		if (strcmp(Block->Desc, "reddelaydest") == 0)
+		{
+			Block->ID = SPECIALBLOCKID_RED;
+		}
+
 		if (strcmp(Block->Desc, "blank") == 0)
 		{
 			Block->ID = SPECIALBLOCKID_BLANK;
@@ -151,6 +166,11 @@ bool LoadBlocks(const char* FileName)
 			if (strstr(Block->Desc, "Jello.png"))
 			{
 				Block->Jello = true;
+			}
+			
+			if (strstr(Block->Desc, "nowalljump"))
+			{
+				Block->NoWallJump = true;
 			}
 		}
 
@@ -439,6 +459,21 @@ void LoadChapter(const char* ChapterDir)
 				{
 					Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
 				}
+				
+				if (strcasecmp(Block->Desc, "greendelaydest") == 0)
+				{
+				    Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_GREEN;
+				}
+				
+				if (strcasecmp(Block->Desc, "yellowdelaydest") == 0)
+				{
+				    Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_YELLOW;
+				}
+				
+				if (strcasecmp(Block->Desc, "reddelaydest") == 0)
+				{
+				    Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_RED;
+				}
 
 				if (strstr(Block->Desc, "barrel") != NULL)
 				{
@@ -554,8 +589,23 @@ void DisplayChapter()
 				{
 				case SPECIALBLOCKID_BLANK: 
 					// Nothing to draw.
-					break; 
-
+					break;
+					
+				case SPECIALBLOCKID_GREEN:
+				    //Draw Green Block
+				    gxDrawSprite(x*64, y*64 + ScrollY, &TileGreenDelayDest);
+				    break;
+				    
+				case SPECIALBLOCKID_YELLOW:
+				    //Draw Yellow Block
+				    gxDrawSprite(x*64, y*64 + ScrollY, &TileYellowDelayDest);
+				    break;
+				    
+				case SPECIALBLOCKID_RED:
+				    //Draw Red Block
+				    gxDrawSprite(x*64, y*64 + ScrollY, &TileRedDelayDest);
+				    break;
+				    
 				case SPECIALBLOCKID_UNKNOWN:
 					gxDrawSprite(x*64, y*64 + ScrollY, &TileUnknownSprite);
 					break;
@@ -629,4 +679,4 @@ void UpdateScore()
     {
         Score.ScoreCounter += 0;
     }
-}
+} 				    

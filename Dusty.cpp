@@ -41,6 +41,7 @@ void InitDusty()
 	Dusty.WallStickTimer = 0;
 	Dusty.LastWall = DIRECTION_NONE;
 	Dusty.WallJumpTimer = 0;
+	Dusty.NoWallJump = false;
 	
 	Dusty.HasGumExpired = false;
 	Dusty.GumTimer = 30;
@@ -49,10 +50,10 @@ void InitDusty()
 	Dusty.GumJumpAttempt = 0;
 	
 	Dusty.CrumbTimer = 400;
-	Dusty.Delay = 50;
+	Dusty.Delay = 30;
+	Dusty.DelayDestBlock = false;
 	
 	Dusty.HasCrumbExpired = false;
-	Dusty.BreakBlock = false;
 
 	Dusty.CollideWithLeftSide = false;
 	Dusty.CollideWithRightSide = false;
@@ -506,7 +507,7 @@ void UpdateDusty_WallJump()
 	}
 
 	// Jump off wall by pressing jump
-	if (GetInput_Jump())
+	if (GetInput_Jump() && Dusty.NoWallJump == false)
 	{
 		SetDustyState_Jump( true );
 		return;
@@ -876,23 +877,51 @@ void UpdateDusty_Collision()
 							SetDustyState_Fall();
 						}
 						
-						if ((BlockCollideWithBottomSide || BlockCollideWithLeftSide || BlockCollideWithRightSide)
-						 && Block->DelayDest)
+						if ((BlockCollideWithBottomSide || BlockCollideWithLeftSide || BlockCollideWithRightSide) && Block->DelayDest)
 						{
-					        Dusty.BreakBlock = true;
-					        if (Dusty.BreakBlock)
-                            {
-                                if (Dusty.Delay == 0)
+                            Dusty.DelayDestBlock = true;
+                        }						
+						
+						if ((BlockCollideWithBottomSide || BlockCollideWithLeftSide || BlockCollideWithRightSide) && Dusty.DelayDestBlock)
+						{
+						    if ((Block->DelayDest || SPECIALBLOCKID_GREEN || SPECIALBLOCKID_YELLOW || SPECIALBLOCKID_RED))
+						    {  
+				                if (Dusty.Delay == 30)
+				                {
+                                    //Apply Special Block Green Block
+                                    Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_GREEN;
+                                }      
+				                 
+				                if (Dusty.Delay == 20)
+				                {
+                                    //Apply Special Block Yellow Block
+                                    Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_YELLOW;
+                                }
+                                
+						        if (Dusty.Delay == 10)
                                 {
-                                    Dusty.Delay = 50;
-                                    Dusty.BreakBlock = false;
+                                    //Apply Special Block Red Block
+                                    Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_RED;
+                                }
+                                                    					    
+                                if (Dusty.Delay <= 0)
+                                {
                                     sxPlaySound( &BlockBreakSound );
+                                    Dusty.DelayDestBlock = false;
                                     Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
                                 }
-                                Dusty.Delay -= 1;
-                            }			        							        							
-						}										
-						
+                                
+                                if (Dusty.Delay >= 0)
+			                    {
+			                        Dusty.Delay -= 1;										
+			                    }
+			                    else
+			                    {
+			                        Dusty.Delay = 30;
+			                    }                        
+                           }
+                       }                                      
+                                                
 						if (Block->EndOfLevel)
 						{
 						    sxPlaySound( &DustyWinSound );
@@ -934,7 +963,16 @@ void UpdateDusty_Collision()
 						    sxPlaySound( &JelloSound );
 							SetDustyState_Fall();
 							return;                
-						}	          					
+						}
+						
+						if ((Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide) && Block->NoWallJump == true)
+                        {
+                            Dusty.NoWallJump = true;                                           
+                        }
+                        else
+                        {
+                            Dusty.NoWallJump = false;
+                        }						          					
 					}
 				}
 			}

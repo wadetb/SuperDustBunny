@@ -27,6 +27,9 @@ gxSprite DustyDeathSprite;
 gxSprite BackgroundCardboardSprite;
 
 gxSprite TileUnknownSprite;
+gxSprite TileGreenDelayDest;
+gxSprite TileYellowDelayDest;
+gxSprite TileRedDelayDest;
 
 gxSprite BarrelBackSprite;
 gxSprite BarrelFrontSprite;
@@ -122,6 +125,9 @@ void LoadAssets()
 	gxLoadSprite("Data/background-cardboard.png", &BackgroundCardboardSprite);
 
 	gxLoadSprite("Data/tile-wtf.png", &TileUnknownSprite);
+	gxLoadSprite("Data/tile-greenplatform.png", &TileGreenDelayDest);
+	gxLoadSprite("Data/tile-yellowplatform.png", &TileYellowDelayDest);
+	gxLoadSprite("Data/tile-redplatform.png", &TileRedDelayDest);
 
 	gxLoadSprite("Data/barrel-back.png", &BarrelBackSprite);
 	gxLoadSprite("Data/barrel-front.png", &BarrelFrontSprite);

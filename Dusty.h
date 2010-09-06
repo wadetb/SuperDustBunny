@@ -50,7 +50,8 @@ struct SDusty
 	int SpriteTransition;
 
 	int WallStickTimer;
-	EDirection LastWall;	
+	EDirection LastWall;
+	bool NoWallJump;	
 
     bool HasGumExpired;
     int GumTimer;
@@ -64,7 +65,7 @@ struct SDusty
 	int WallJumpTimer;
 
     bool HasCrumbExpired;
-    bool BreakBlock;
+    bool DelayDestBlock;
 
 	bool CollideWithLeftSide;
 	bool CollideWithRightSide;

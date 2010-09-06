@@ -225,11 +225,19 @@
 			>
 		</File>
 		<File
+			RelativePath="..\Chapters\Thomas1\Blocks.txt"
+			>
+		</File>
+		<File
 			RelativePath=".\chapter.cpp"
 			>
 		</File>
 		<File
 			RelativePath=".\chapter.h"
+			>
+		</File>
+		<File
+			RelativePath="..\Chapters\Thomas1\Chapter.txt"
 			>
 		</File>
 		<File
