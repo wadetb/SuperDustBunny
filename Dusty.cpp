@@ -51,7 +51,6 @@ void InitDusty()
 	
 	Dusty.CrumbTimer = 400;
 	Dusty.Delay = 30;
-	Dusty.DelayDestBlock = false;
 	
 	Dusty.HasCrumbExpired = false;
 
@@ -876,52 +875,7 @@ void UpdateDusty_Collision()
 							Dusty.FloatVelocityY = 0;
 							SetDustyState_Fall();
 						}
-						
-						if ((BlockCollideWithBottomSide || BlockCollideWithLeftSide || BlockCollideWithRightSide) && Block->DelayDest)
-						{
-                            Dusty.DelayDestBlock = true;
-                        }						
-						
-						if ((BlockCollideWithBottomSide || BlockCollideWithLeftSide || BlockCollideWithRightSide) && Dusty.DelayDestBlock)
-						{
-						    if ((Block->DelayDest || SPECIALBLOCKID_GREEN || SPECIALBLOCKID_YELLOW || SPECIALBLOCKID_RED))
-						    {  
-				                if (Dusty.Delay == 30)
-				                {
-                                    //Apply Special Block Green Block
-                                    Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_GREEN;
-                                }      
-				                 
-				                if (Dusty.Delay == 20)
-				                {
-                                    //Apply Special Block Yellow Block
-                                    Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_YELLOW;
-                                }
-                                
-						        if (Dusty.Delay == 10)
-                                {
-                                    //Apply Special Block Red Block
-                                    Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_RED;
-                                }
-                                                    					    
-                                if (Dusty.Delay <= 0)
-                                {
-                                    sxPlaySound( &BlockBreakSound );
-                                    Dusty.DelayDestBlock = false;
-                                    Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
-                                }
-                                
-                                if (Dusty.Delay >= 0)
-			                    {
-			                        Dusty.Delay -= 1;										
-			                    }
-			                    else
-			                    {
-			                        Dusty.Delay = 30;
-			                    }                        
-                           }
-                       }                                      
-                                                
+                          
 						if (Block->EndOfLevel)
 						{
 						    sxPlaySound( &DustyWinSound );

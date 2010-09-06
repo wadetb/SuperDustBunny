@@ -18,6 +18,7 @@
 #include "Dust.h"
 #include "Crumb.h"
 #include "Gear.h"
+#include "DelayDestBlocks.h"
 
 void InitTutorial()
 {
@@ -179,6 +180,7 @@ void LoadCurrentChapter()
 	ClearFireWorks();
 	ClearBalls();
 	ClearGears();
+	ClearDBlocks();
 
 	InitDusty();
 	InitVacuum();
@@ -397,7 +399,8 @@ void DisplayGame_Playing()
 	DisplayCoins();
     DisplayGear();
     DisplayBall();
-	DisplayFireWorks();	
+	DisplayFireWorks();
+	DisplayDBlocks();	
 	
 	// Dusty Drawing
 	DisplayDusty();
@@ -507,6 +510,7 @@ void UpdateGame_Playing()
         UpdateBall();  
         UpdateGear();  
 		UpdateFireWorks();
+		UpdateDBlocks();
 		UpdateScore();
 	}
 
@@ -544,7 +548,8 @@ void Display_Crumb()
 	DisplayCoins();
     DisplayGear();
     DisplayBall();
-	DisplayFireWorks();	
+	DisplayFireWorks();
+	DisplayDBlocks();	
 	
 	// Dusty Drawing
 	DisplayDusty();

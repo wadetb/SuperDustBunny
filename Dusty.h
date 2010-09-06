@@ -65,7 +65,6 @@ struct SDusty
 	int WallJumpTimer;
 
     bool HasCrumbExpired;
-    bool DelayDestBlock;
 
 	bool CollideWithLeftSide;
 	bool CollideWithRightSide;

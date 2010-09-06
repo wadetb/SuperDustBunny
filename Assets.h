@@ -27,6 +27,8 @@ extern gxSprite DustyDeathSprite;
 extern gxSprite BackgroundCardboardSprite;
 
 extern gxSprite TileUnknownSprite;
+
+extern gxSprite TileDelayDest;
 extern gxSprite TileGreenDelayDest;
 extern gxSprite TileYellowDelayDest;
 extern gxSprite TileRedDelayDest;
