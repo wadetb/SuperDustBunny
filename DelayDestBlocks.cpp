@@ -27,7 +27,7 @@ void CreateDBlock(int X, int Y, const char* Desc)
     DBlock->Y = (float)Y + 32;
     DBlock->FloatVelocityY = 0.0f;
     
-    DBlock->Transition = 30;
+    DBlock->Transition = 80;
 	DBlock->Sprite = 1;
 }
 
@@ -82,29 +82,34 @@ void UpdateDBlocks()
 		
 		if (DBlock->State == DBLOCKSTATE_ACTIVE)
 		{		    
-		    if (DBlock->Transition == 30)
+		    if (DBlock->Transition == 80)
 		    {
 		        DBlock->Sprite = 1;
 		    }    
 		    
-		    if (DBlock->Transition == 29)
+		    if (DBlock->Transition == 79)
 		    {
 		        DBlock->Sprite = 2;
 		    }
 		    
-		    if (DBlock->Transition == 20)
+		    if (DBlock->Transition == 60)
 		    {
 		        DBlock->Sprite = 3;
 		    }
 		    
-		    if (DBlock->Transition == 10)
+		    if (DBlock->Transition == 40)
 		    {
 		        DBlock->Sprite = 4;
+		    }
+		    
+		    if (DBlock->Transition == 0)
+		    {
+		        DBlock->Sprite = 5;
 		    }
 
 		    if (DBlock->Transition == 0)
 		    {
-		    	DBlock->Transition = 30;
+		    	//DBlock->Transition = 30;
 
 		        for (int y = 0; y < Chapter.StitchedHeight; y++)
 			    {
