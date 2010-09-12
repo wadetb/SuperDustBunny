@@ -16,7 +16,6 @@
 #include "FireWorks.h"
 #include "Crumb.h"
 #include "Gear.h"
-#include "DelayDestBlocks.h"
 
 SChapter Chapter;
 SScore Score;
@@ -103,6 +102,11 @@ bool LoadBlocks(const char* FileName)
 		GetNextLine(BlocksFile, Line, sizeof(Line)-1);
 		sscanf(Line, "%c%c%c", &Block->Key[2][0], &Block->Key[2][1], &Block->Key[2][2]);
 
+        if (strcmp(Block->Desc, "delaydest") == 0)
+		{
+			Block->ID = SPECIALBLOCKID_DELAYDEST;
+		}
+		
 		if (strcmp(Block->Desc, "blank") == 0)
 		{
 			Block->ID = SPECIALBLOCKID_BLANK;
@@ -133,7 +137,7 @@ bool LoadBlocks(const char* FileName)
 			{
 				Block->DelayDest = true;
 			}
-
+						
 			if (strstr(Block->Desc, "EndOfLevel.png"))
 			{
 				Block->EndOfLevel = true;
@@ -475,13 +479,7 @@ void LoadChapter(const char* ChapterDir)
 					CreateFireWork(x * 64, y * 64, Block->Desc);
 					Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
 				}
-				
-				if (strstr(Block->Desc, "delaydest") != NULL)
-				{
-					CreateDBlock(x * 64, y * 64, Block->Desc);
-					Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
-				}
-								                
+												                
 				if (strcasecmp(Block->Desc, "dusty") == 0)
 				{
 					Dusty.FloatX = (float)x * 64;
@@ -567,6 +565,18 @@ void DisplayChapter()
 				case SPECIALBLOCKID_BLANK: 
 					// Nothing to draw.
 					break;
+					
+				case SPECIALBLOCKID_GREEN:
+					gxDrawSprite(x*64, y*64 + ScrollY, &TileGreenDelayDest);
+					break;
+					
+				case SPECIALBLOCKID_YELLOW:
+					gxDrawSprite(x*64, y*64 + ScrollY, &TileYellowDelayDest);
+					break;
+					
+				case SPECIALBLOCKID_RED:
+					gxDrawSprite(x*64, y*64 + ScrollY, &TileRedDelayDest);
+					break;					
 					   
 				case SPECIALBLOCKID_UNKNOWN:
 					gxDrawSprite(x*64, y*64 + ScrollY, &TileUnknownSprite);
@@ -627,11 +637,6 @@ void UpdateScore()
     {   
         Score.RaiseScore = false;
     }
-    //
-    //if (FireWork->State == FIREWORKSTATE_EXPLODE)
-    //{
-    //    Score->ScoreCounter += 10;
-    //}
     
     if (Score.RaiseScore == true)
     {

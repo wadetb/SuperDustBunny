@@ -257,14 +257,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\DelayDestBlocks.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\DelayDestBlocks.h"
-			>
-		</File>
-		<File
 			RelativePath=".\Dust.cpp"
 			>
 		</File>

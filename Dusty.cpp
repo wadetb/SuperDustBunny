@@ -50,7 +50,7 @@ void InitDusty()
 	Dusty.GumJumpAttempt = 0;
 	
 	Dusty.CrumbTimer = 400;
-	Dusty.Delay = 30;
+	Dusty.Delay = 80;
 	
 	Dusty.HasCrumbExpired = false;
 
@@ -866,8 +866,70 @@ void UpdateDusty_Collision()
 										
 					int BlockID = GetBlockID(x, y);
 					if (BlockID < SPECIALBLOCKID_FIRST)
-					{
-						SBlock* Block = &Chapter.Blocks[BlockID];						
+					{			
+						SBlock* Block = &Chapter.Blocks[BlockID];
+						if (Dusty.Delay <= 0)
+						{
+						    Dusty.Delay = 80;
+						}
+						else
+						{
+							Dusty.Delay -= 1;
+						}
+							
+						if (strstr(Block->Desc, "greendelaydest"))
+			            {
+				            Block->GreenDelayDest = true;
+				            Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_GREEN;
+			            }
+			
+			            if (strstr(Block->Desc, "yellowdelaydest"))
+			            {
+				            Block->YellowDelayDest = true;
+				            Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_YELLOW;
+			            }
+			
+			            if (strstr(Block->Desc, "reddelaydest"))
+			            {
+				            Block->RedDelayDest = true;
+				            Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_RED;
+			            }	
+				        						
+						if (BlockCollideWithBottomSide && Block->DelayDest)
+						{
+    					    if (Dusty.Delay == 79)
+						    {
+						        Block->Desc = "greendelaydest";
+						        Block->DelayDest = false;						        
+						    }
+						}
+			
+						if (BlockCollideWithBottomSide && Block->GreenDelayDest)
+						{
+    				        if (Dusty.Delay == 60)
+						    {
+						        Block->Desc = "yellowdelaydest";
+						        Block->GreenDelayDest = false;					        
+						    }
+						}
+						
+						if (BlockCollideWithBottomSide && Block->YellowDelayDest)
+						{					   
+						    if (Dusty.Delay == 40)
+						    {
+						        Block->Desc = "reddelaydest";
+						        
+						    }
+						}
+						
+						if (BlockCollideWithBottomSide && Block->RedDelayDest)
+						{
+						    if (Dusty.Delay == 0)
+						    {
+						        Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
+						        Dusty.Delay = 80;
+						    }    
+						}
 						
 						if (BlockCollideWithTopSide && Block->Destructible)
 						{
