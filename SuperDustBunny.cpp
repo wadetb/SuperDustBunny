@@ -397,7 +397,8 @@ void DisplayGame_Playing()
 	DisplayCoins();
     DisplayGear();
     DisplayBall();
-	DisplayFireWorks();	
+	DisplayFireWorks();
+	DisplayDelayDestructible();	
 	
 	// Dusty Drawing
 	DisplayDusty();

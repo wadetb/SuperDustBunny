@@ -98,6 +98,8 @@ void InitScore();
 void DisplayScore();
 void UpdateScore();
 
+void DisplayDelayDestructible();
+
 void InitCrumb();
 
 int GetBlockID(int x, int y);

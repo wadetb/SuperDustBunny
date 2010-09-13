@@ -106,7 +106,7 @@ bool LoadBlocks(const char* FileName)
 		{
 			Block->ID = SPECIALBLOCKID_DELAYDEST;
 		}
-		
+				
 		if (strcmp(Block->Desc, "blank") == 0)
 		{
 			Block->ID = SPECIALBLOCKID_BLANK;
@@ -565,23 +565,11 @@ void DisplayChapter()
 				case SPECIALBLOCKID_BLANK: 
 					// Nothing to draw.
 					break;
-					
-				case SPECIALBLOCKID_GREEN:
-					gxDrawSprite(x*64, y*64 + ScrollY, &TileGreenDelayDest);
-					break;
-					
-				case SPECIALBLOCKID_YELLOW:
-					gxDrawSprite(x*64, y*64 + ScrollY, &TileYellowDelayDest);
-					break;
-					
-				case SPECIALBLOCKID_RED:
-					gxDrawSprite(x*64, y*64 + ScrollY, &TileRedDelayDest);
-					break;					
-					   
+												   
 				case SPECIALBLOCKID_UNKNOWN:
 					gxDrawSprite(x*64, y*64 + ScrollY, &TileUnknownSprite);
 					break;
-				}
+				}				
 			}
 			else
 			{
@@ -645,5 +633,38 @@ void UpdateScore()
     else
     {
         Score.ScoreCounter += 0;
+    }
+}
+
+void DisplayDelayDestructible()
+{
+
+	for (int y = 0; y < Chapter.StitchedHeight; y++)
+	{
+		for (int x = 0; x < Chapter.StitchedWidth; x++)
+		{
+            int BlockID = GetBlockID(x, y);
+	        if (BlockID < SPECIALBLOCKID_FIRST)
+	        {
+	            SBlock* Block = &Chapter.Blocks[BlockID];
+	            if (Dusty.CollideWithBottomSide && Block->DelayDest)
+	            {
+	                if (Dusty.BlockSprite == 1)
+		            {
+		                gxDrawSprite(x*64, y*64 + ScrollY, &TileGreenDelayDest);					        
+		            }
+			    
+		            if (Dusty.BlockSprite == 2)
+		            {
+		                gxDrawSprite(x*64, y*64 + ScrollY, &TileYellowDelayDest);	    
+		            }
+		   
+		            if (Dusty.BlockSprite == 3)
+		            {
+		                gxDrawSprite(x*64, y*64 + ScrollY, &TileRedDelayDest);
+		            }
+	            }	    			   					
+	        }
+        }
     }
 } 				    

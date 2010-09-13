@@ -61,6 +61,7 @@ struct SDusty
     
     int CrumbTimer;
     int Delay;
+    int BlockSprite;
     
 	int WallJumpTimer;
 
