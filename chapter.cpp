@@ -638,33 +638,159 @@ void UpdateScore()
 
 void DisplayDelayDestructible()
 {
+// Initialize all collision variables to false.  One or more of these will be set to true in this function.
+	// This function also corrects Dusty's position to not intersect anything.
+	Dusty.CollideWithRightSide = false;
+	Dusty.CollideWithLeftSide = false;
+	Dusty.CollideWithBottomSide = false;
+	Dusty.CollideWithTopSide = false;
+
+	// Collision with right side of the right screen and Dusty's right Side
+	if (Dusty.FloatX + Dusty.Right >= gxScreenWidth)
+	{
+		Dusty.CollideWithRightSide = true;
+		Dusty.FloatX = (float)gxScreenWidth - (float)Dusty.Right;	
+	} 
+
+	//Collision with the left side of the screen    
+	if (Dusty.FloatX + Dusty.Left <= 0)
+	{
+		Dusty.CollideWithLeftSide = true;
+		Dusty.FloatX = -(float)Dusty.Left;
+	}
+	//Collision with the bottom side of the screen
+	if (Dusty.FloatY + Dusty.Bottom >= Chapter.StitchedHeight * 64 )
+	{	
+		Dusty.CollideWithBottomSide = true;
+		Dusty.FloatY = (float)Chapter.StitchedHeight * 64 - (float)Dusty.Bottom;
+	} 
 
 	for (int y = 0; y < Chapter.StitchedHeight; y++)
 	{
 		for (int x = 0; x < Chapter.StitchedWidth; x++)
 		{
-            int BlockID = GetBlockID(x, y);
-	        if (BlockID < SPECIALBLOCKID_FIRST)
-	        {
-	            SBlock* Block = &Chapter.Blocks[BlockID];
-	            if (Dusty.CollideWithBottomSide && Block->DelayDest)
-	            {
-	                if (Dusty.BlockSprite == 1)
-		            {
-		                gxDrawSprite(x*64, y*64 + ScrollY, &TileGreenDelayDest);					        
-		            }
-			    
-		            if (Dusty.BlockSprite == 2)
-		            {
-		                gxDrawSprite(x*64, y*64 + ScrollY, &TileYellowDelayDest);	    
-		            }
-		   
-		            if (Dusty.BlockSprite == 3)
-		            {
-		                gxDrawSprite(x*64, y*64 + ScrollY, &TileRedDelayDest);
-		            }
-	            }	    			   					
-	        }
-        }
-    }
-} 				    
+			// Skip empty blocks.
+			if (IsBlockEmpty(x, y))
+			{
+				continue;
+			}
+
+			// Determine the bounds of the block.
+			float BlockLeft   = (float)x*64;
+			float BlockRight  = (float)x*64 + 64;
+			float BlockTop    = (float)y*64;
+			float BlockBottom = (float)y*64 + 64;
+
+			// Check to see if Dusty's rectangle overlaps with this block.
+			// 
+			// The general idea here is to compare the smaller of the bottom sides (Min of Maxes) against the larger of the top sides (Max of Mins).  
+			// If the min is less than the max, there is overlap.  The same calculation is also done in X.
+			//
+			// +-----------------+    +--------+   MnMx = Minimum of Maximum values (e.g. smaller of the two right edges)
+			// |                 |    |        |   MxMn = Maximum of Minimum values (e.g. larger of the two left edges)
+			// +-----------------+    +--------+        
+			//              MnMx-^    ^-MxMn            In this diagram MxMn is greater than MnMx, so there is no overlap.
+			//
+			// The Y axis is considered first because the level is larger on the Y axis, so this will reject most blocks earlier (code optimization).
+			if (Max(Dusty.FloatY + Dusty.Top, BlockTop) <= Min(Dusty.FloatY + Dusty.Bottom, BlockBottom))
+			{
+				// Check to see if Dusty's rectangle overlaps with the block in X.
+				if(Max(Dusty.FloatX + Dusty.Left, BlockLeft) <= Min(Dusty.FloatX + Dusty.Right, BlockRight))
+				{    
+					// {Left,Right,Top,Bottom}BlockIsEmpty are used to prevent collisions with internal edges (edges between blocks).  If Dusty jumps up into the bottom of a wide platform
+					// and hits a lucky spot between two blocks, the collision code can determine that it would be easier to push him left or right instead of down.
+					// This is bad and causes all kinds of potential collision problems.
+					//
+					// Helpful diagram:
+					//
+					// +---++---++---++---++---++---+ 
+					// | A || B ||   ||   ||   ||   | 
+					// +---++---++---++---++---++---+ 
+					//      ^--Dusty hits right here.  
+					//
+					// In this example Dusty might collide with the right edge of block A OR the left edge of block B, which would be terrible since we really 
+					// only want him to collide with the bottom sides of the blocks.
+					//
+					// The solution is to detect when blocks have other blocks next to them.  When they do, the internal edges between blocks are ignored for collision.
+					//
+					bool LeftBlockIsEmpty   = IsBlockEmpty(x-1, y);
+					bool RightBlockIsEmpty  = IsBlockEmpty(x+1, y);
+					bool TopBlockIsEmpty    = IsBlockEmpty(x, y-1);
+					bool BottomBlockIsEmpty = IsBlockEmpty(x, y+1);
+
+					// Calculate the distance Dusty would have to be pushed in each possible direction to get him out of intersecting the block.
+					float LeftDistance	= (Dusty.FloatX + Dusty.Right)  - (BlockLeft);
+					float RightDistance	= (BlockRight) - (Dusty.FloatX +  Dusty.Left);
+					float DownDistance	= (BlockBottom)- (Dusty.FloatY +  Dusty.Top );
+					float UpDistance	= (Dusty.FloatY + Dusty.Bottom) - (BlockTop );
+
+					bool BlockCollideWithLeftSide = false;
+					bool BlockCollideWithRightSide = false;
+					bool BlockCollideWithTopSide = false;
+					bool BlockCollideWithBottomSide = false;
+
+					// Prefer to collide with the side of the block that would push Dusty out the least distance.
+					// (Only consider sides that are not adjacent to another solid block).
+					if (LeftBlockIsEmpty && LeftDistance < RightDistance && LeftDistance < DownDistance && LeftDistance < UpDistance)
+					{
+						BlockCollideWithRightSide = true;
+						Dusty.CollideWithRightSide = true;//Collision with Dusty's Right Side but the left side of the platform
+						Dusty.FloatX -= LeftDistance;
+						if (Dusty.FloatVelocityX > 0)
+							Dusty.FloatVelocityX = 0;
+					}
+
+					if (RightBlockIsEmpty && RightDistance < LeftDistance && RightDistance < DownDistance && RightDistance < UpDistance)
+					{
+						BlockCollideWithLeftSide = true;
+						Dusty.CollideWithLeftSide = true;//Collision with Dusty's Left Side but the right side of the platform
+						Dusty.FloatX += RightDistance;
+						if (Dusty.FloatVelocityX < 0)
+							Dusty.FloatVelocityX = 0;
+					}
+
+					if (BottomBlockIsEmpty && DownDistance < RightDistance && DownDistance < LeftDistance && DownDistance < UpDistance)
+					{
+						BlockCollideWithTopSide = true;
+						Dusty.CollideWithTopSide = true;//Collision with Dusty's Top Side but the Bottom side of the platform
+						Dusty.FloatY += DownDistance;
+						if (Dusty.FloatVelocityY < 0)
+							Dusty.FloatVelocityY = 0;
+					}
+
+					if (TopBlockIsEmpty && UpDistance < RightDistance && UpDistance < DownDistance && UpDistance < LeftDistance)
+					{
+						BlockCollideWithBottomSide = true;
+						Dusty.CollideWithBottomSide = true;//Collision with Dusty's Bottom Side but the Top side of the platform
+						Dusty.FloatY -= UpDistance;
+						if (Dusty.FloatVelocityY > 0)
+							Dusty.FloatVelocityY = 0;
+					}
+										
+					int BlockID = GetBlockID(x, y);
+					if (BlockID < SPECIALBLOCKID_FIRST)
+					{			
+						SBlock* Block = &Chapter.Blocks[BlockID];
+						if (Dusty.CollideWithBottomSide && Block->DelayDest)//Need to setup a better trigger for this.
+                        {
+                            if (Dusty.BlockSprite == 1)
+                            {
+                                gxDrawSprite(x*64, y*64 + ScrollY, &TileGreenDelayDest);					        
+                            }
+	    
+                            if (Dusty.BlockSprite == 2)
+                            {
+                                gxDrawSprite(x*64, y*64 + ScrollY, &TileYellowDelayDest);	    
+                            }
+   
+                            if (Dusty.BlockSprite == 3)
+                            {
+                                gxDrawSprite(x*64, y*64 + ScrollY, &TileRedDelayDest);
+                            }
+	                    }							        															          					
+					}
+				}
+			}
+		}
+	}
+}
