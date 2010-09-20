@@ -771,7 +771,7 @@ void DisplayDelayDestructible()
 					if (BlockID < SPECIALBLOCKID_FIRST)
 					{			
 						SBlock* Block = &Chapter.Blocks[BlockID];
-						if (Dusty.CollideWithBottomSide && Block->DelayDest)//Need to setup a better trigger for this.
+						if ((Dusty.CollideWithBottomSide || Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide) && Block->DelayDest)//Need to setup a better trigger for this.
                         {
                             if (Dusty.BlockSprite == 1)
                             {

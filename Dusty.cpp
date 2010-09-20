@@ -872,7 +872,7 @@ void UpdateDusty_Collision()
 					{			
 						SBlock* Block = &Chapter.Blocks[BlockID];
 												        						
-						if (Dusty.CollideWithBottomSide && Block->DelayDest)
+						if ((Dusty.CollideWithBottomSide || Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide) && Block->DelayDest)
 						{
     					    if (Dusty.Delay == 79)
 						    {
@@ -954,7 +954,7 @@ void UpdateDusty_Collision()
 							return;                
 						}
 						
-						if ((Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide) && Block->NoWallJump == true)
+						if ((Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide) && (Block->NoWallJump || Block->Destructible))
                         {
                             Dusty.NoWallJump = true;                                           
                         }
