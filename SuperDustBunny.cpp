@@ -80,7 +80,7 @@ int BackgroundY = 0;
 
 int SongCounter = 1;
 int SongDuration = 1500;
-int BackgroundMusic = 0;
+int BackgroundMusic = 1;
 
 void Init()
 {
