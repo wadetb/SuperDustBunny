@@ -415,13 +415,15 @@ void UpdateDusty_JumpCommon()
     // Collision with either side of screen translates to a possible wall jump.
 	// Dusty is not allowed to collide with the same side twice in a row, unless he stands once in between.
 	// Wade: Currently this stuff is tweaked around as an experiment- he can only walljump again after a delay; direction is not used.
-	if (Dusty.CollideWithLeftSide && Dusty.Direction == DIRECTION_LEFT && (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_LEFT))
+	if (Dusty.CollideWithLeftSide && Dusty.Direction == DIRECTION_LEFT && (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_LEFT) &&
+	Dusty.NoWallJump == false)
 	{
         SetDustyState_WallJump();
         return;
 	}
 
-	if (Dusty.CollideWithRightSide && Dusty.Direction == DIRECTION_RIGHT && (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_RIGHT))
+	if (Dusty.CollideWithRightSide && Dusty.Direction == DIRECTION_RIGHT && (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_RIGHT) &&
+	Dusty.NoWallJump == false)
     {
         SetDustyState_WallJump();
         return;
