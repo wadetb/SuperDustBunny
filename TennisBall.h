@@ -15,6 +15,7 @@ enum EBallState
 {
     BALLSTATE_ACTIVE,
     BALLSTATE_INACTIVE,
+    BALLSTATE_FALLING,
 };
 
 struct SBall

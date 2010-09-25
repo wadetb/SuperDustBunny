@@ -29,6 +29,8 @@ struct SCoin
     int Transition;
 };
 
+extern SCoin Coin;
+
 void CreateCoin(int X, int Y, const char* Desc);
 void ClearCoins();
 

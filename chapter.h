@@ -46,6 +46,9 @@ struct SBlock
 	bool HasCrumbTriggered;
 	bool Jello;
 	bool NoWallJump;
+	bool Coin;
+	bool Gear;
+	bool Ball;
 };
 
 struct SPage

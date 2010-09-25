@@ -30,6 +30,8 @@ struct SGear
 	float Angle;
 };
 
+extern SGear Gear;
+
 void CreateGear(int X, int Y, const char* Desc);
 void ClearGears();
 

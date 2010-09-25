@@ -11,11 +11,14 @@
 #include "Common.h"
 #include "Dusty.h"
 #include "Vacuum.h"
+#include "Chapter.h"
+#include "FireWorks.h"
 
 #define MAX_COINS 100
 
 int NCoins = 0;
 SCoin Coins[MAX_COINS];
+SFireWork FireWork;
 
 void CreateCoin(int X, int Y, const char* Desc)
 {
@@ -100,7 +103,8 @@ void UpdateCoins()
 					JamVacuum();
 					return;
 				}
-			}      
+			}  
+                       	    
 		}
 		else if (Coin->State == COINSTATE_FALLING)
 		{
@@ -114,7 +118,7 @@ void UpdateCoins()
 				JamVacuum();
 			}       
 		}
-		
+				
 		Coin->Transition -= 1;
 		if (Coin->Transition == 0)
 		{

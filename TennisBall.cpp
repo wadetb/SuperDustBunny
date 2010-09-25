@@ -82,61 +82,48 @@ void UpdateBall()
 
 		if (Ball->State == BALLSTATE_INACTIVE)
 			continue;
+       
+        if (Ball->State == BALLSTATE_ACTIVE)
+        {
+            float Dist = Distance(Dusty.FloatX, Dusty.FloatY-50, Ball->X, Ball->Y);
 
-        float XDist = (float)(Dusty.FloatX - Ball->X);
-        float YDist = (float)((Dusty.FloatY-50) - (Ball->Y));
-        float Dist = sqrtf(XDist*XDist + YDist*YDist);
-        
-        if (Dist < 100)
-        {
-            Ball->Collided = true;
-        }
-        
-        if (Ball->Collided == true)
-        {
-            sxPlaySound( &TennisBallVacuumedUpSound );
-            Ball->Y += Ball->FloatVelocityY;
-            Ball->FloatVelocityY += Ball->FloatGravity;
-            
-            if (Tutorial.BallDisplayed == false)
+            if (Dist < 100)
             {
-                SetGameState_Crumb(TUTORIALSTATE_BALL);
-                return;
-            }
-            
-			if (Ball->Y + ScrollY >= Vacuum.Y)
-			{
-				Ball->State = BALLSTATE_INACTIVE;
-				sxPlaySound (&VacuumClogSound);
-				JamVacuum();
-			}       
+                Ball->State = BALLSTATE_FALLING;        
+
+                sxPlaySound( &VacuumClogSound );  
+
+                if (Tutorial.BallDisplayed == false)
+                {
+                    SetGameState_Crumb(TUTORIALSTATE_BALL);
+                    JamVacuum();
+                    return;
+                }
+            }      
+        }
+        else if (Ball->State == BALLSTATE_FALLING)
+        {
+            Ball->Y += Ball->FloatVelocityY;
+            Ball->FloatVelocityY += 1.0f;
+
+            if (Ball->Y + ScrollY >= Vacuum.Y)
+            {
+                Ball->State = BALLSTATE_INACTIVE;
+                sxPlaySound (&VacuumClogSound);
+                JamVacuum();
+            }       
         }
         
-        if (Ball->Transition == 40)
+        Ball->Transition -= 1;
+        if (Ball->Transition == 0)
         {
-            Ball->Sprite = 1;
-        }  
+            Ball->Transition = 5;
 
-        if (Ball->Transition == 30)
-        {
-            Ball->Sprite = 2;
-        }  
-
-        if (Ball->Transition == 20)
-        {
-            Ball->Sprite = 3;
-        } 
-
-        if (Ball->Transition == 10)
-        {
-            Ball->Sprite = 4;
-        }  
-
-        if (Ball->Transition <= 0)
-        {
-            Ball->Transition = 40;
-        }  
-
-        Ball->Transition -= 1;          
+            Ball->Sprite += 1;
+            if (Ball->Sprite == 5)
+            {
+                Ball->Sprite = 1;
+            }  
+        }              
     }    
 }
