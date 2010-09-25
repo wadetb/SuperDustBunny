@@ -132,12 +132,6 @@ void UpdateFireWorks()
 									Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
 								}
 							}
-							
-                            if (Distance(FireWork->X, FireWork->Y, Coin.X, Coin.Y < FireWork->ExplosionSize*64))
-                            { 
-                                Coin.State = COINSTATE_FALLING;        
-                                sxPlaySound( &CoinVacuumedUpSound ); 
-                            }
 						}
 					}
 				}
