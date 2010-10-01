@@ -101,7 +101,10 @@ extern sxSound Song3Sound;
 
 extern sxSound VacuumClogSound;
 extern sxSound VacuumClangSound;
-extern sxSound VacuumRunSound;
+extern sxSound VacuumTurnOnSound;
+extern sxSound VacuumTurnOffSound;
+extern sxSound VacuumJamSound;
+extern sxSound VacuumOnSound;
 
 extern sxSound BlockBreakSound;
 extern sxSound JelloSound;

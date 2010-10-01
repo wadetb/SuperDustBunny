@@ -96,7 +96,6 @@ void UpdateBall()
                 if (Tutorial.BallDisplayed == false)
                 {
                     SetGameState_Crumb(TUTORIALSTATE_BALL);
-                    JamVacuum();
                     return;
                 }
             }      
@@ -111,7 +110,7 @@ void UpdateBall()
                 Ball->State = BALLSTATE_INACTIVE;
                 sxPlaySound (&VacuumClogSound);
                 JamVacuum();
-            }       
+            }
         }
         
         Ball->Transition -= 1;

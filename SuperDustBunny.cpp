@@ -251,18 +251,13 @@ void UpdateGame_StartScreen()
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                  SET GAMESTATE_DIE_SCREEN                                                                  //
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-
-void SetGameState_DieScreen();
-
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   GAMESTATE_DIE_SCREEN                                                                  //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
 void SetGameState_DieScreen()
 {
 	GameState = GAMESTATE_DIE_SCREEN;
+	TurnOffVacuum();
 }
 
 void DisplayGame_DieScreen()
@@ -317,16 +312,13 @@ void SkipTutorials()
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                  SET GAMESTATE_WIN_SCREEN                                                               //
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-void SetGameState_WinScreen();
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                  GAMESTATE_WIN_SCREEN                                                                   //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
 void SetGameState_WinScreen()
 {
     GameState = GAMESTATE_WIN_SCREEN;
+	TurnOffVacuum();
 }
 
 void DisplayGame_WinScreen()
@@ -877,6 +869,9 @@ bool Update()
 		SetGameState_Playing();
 	}
 #endif
+
+	// Vacuum sounds always need to be updated no matter what state the game is in.
+	UpdateVacuumSound();
 
 	if (GameState == GAMESTATE_START_SCREEN)	
 	{

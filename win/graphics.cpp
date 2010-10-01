@@ -229,8 +229,8 @@ void gxEmulateDisplaySize( gxDisplayType disp )
 	int pxw = GetDeviceCaps(dc, HORZRES);
 	int pxh = GetDeviceCaps(dc, VERTRES);
 
-	int winw = scrw * pxw / mmw;
-	int winh = scrh * pxh / mmh;
+	int winw = 1.5f * scrw * pxw / mmw;
+	int winh = 1.5f * scrh * pxh / mmh;
 
 	RECT r = { 0, 0, winw, winh };
 	AdjustWindowRect( &r, GetWindowStyle( hWnd ), FALSE );

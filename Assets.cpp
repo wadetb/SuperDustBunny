@@ -95,7 +95,10 @@ sxSound Song3Sound;
 
 sxSound VacuumClogSound;
 sxSound VacuumClangSound;
-sxSound VacuumRunSound;
+sxSound VacuumTurnOnSound;
+sxSound VacuumTurnOffSound;
+sxSound VacuumJamSound;
+sxSound VacuumOnSound;
 
 sxSound BlockBreakSound;
 sxSound JelloSound;
@@ -195,7 +198,10 @@ void LoadAssets()
 
 	sxLoadSound("Data/vacuum-clog.wav", &VacuumClogSound);
 	sxLoadSound("Data/vacuum-clang.wav", &VacuumClangSound);
-	sxLoadSound("Data/vacuum-run.wav", &VacuumRunSound);
+	sxLoadSound("Data/vacuum-turnon.wav", &VacuumTurnOnSound);
+	sxLoadSound("Data/vacuum-turnoff.wav", &VacuumTurnOffSound);
+	sxLoadSound("Data/vacuum-jam.wav", &VacuumJamSound);
+	sxLoadSound("Data/vacuum-on.wav", &VacuumOnSound);
 	
 	sxLoadSound("Data/BlockBreak.wav", &BlockBreakSound);
 	sxLoadSound("Data/Jello.wav", &JelloSound);

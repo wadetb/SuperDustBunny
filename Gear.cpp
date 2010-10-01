@@ -82,7 +82,6 @@ void UpdateGear()
 				if (Tutorial.GearDisplayed == false)
 				{
 					SetGameState_Crumb(TUTORIALSTATE_GEAR);
-					JamVacuum();
 					return;
 				}
 			}
@@ -112,7 +111,7 @@ void UpdateGear()
                 Gear->State = GEARSTATE_INACTIVE;
                 sxPlaySound (&VacuumClogSound);
                 JamVacuum();
-            }       
+            }
         }
     }    
 }

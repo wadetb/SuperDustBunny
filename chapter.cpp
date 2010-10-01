@@ -653,6 +653,11 @@ void UpdateScore()
 
 void DisplayDelayDestructible()
 {
+/*
+	Thomas:  This code is a mix of update and display code, it needs to be separated with the display code here
+	         and the update code somewhere else.  
+	         It's causing Dusty to collide with blocks when he's supposed to be dying. 
+
 // Initialize all collision variables to false.  One or more of these will be set to true in this function.
 	// This function also corrects Dusty's position to not intersect anything.
 	Dusty.CollideWithRightSide = false;
@@ -808,4 +813,5 @@ void DisplayDelayDestructible()
 			}
 		}
 	}
+*/
 }
