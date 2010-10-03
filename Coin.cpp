@@ -12,13 +12,11 @@
 #include "Dusty.h"
 #include "Vacuum.h"
 #include "Chapter.h"
-#include "FireWorks.h"
 
 #define MAX_COINS 100
 
 int NCoins = 0;
 SCoin Coins[MAX_COINS];
-SFireWork FireWork;
 
 void CreateCoin(int X, int Y, const char* Desc)
 {
@@ -83,6 +81,7 @@ void DisplayCoins()
 
 void UpdateCoins()
 {
+
     for (int i = 0; i < NCoins; i++)
     {
         SCoin* Coin = &Coins[i];
@@ -90,8 +89,7 @@ void UpdateCoins()
 		if (Coin->State == COINSTATE_ACTIVE)
 		{
             float Dist = Distance(Dusty.FloatX, Dusty.FloatY-50, Coin->X, Coin->Y);
-            float FDist = Distance(FireWork.X, FireWork.Y-50, Coin->X, Coin->Y);
-			
+		
 			if (Dist < 100)
 			{
 				Coin->State = COINSTATE_FALLING;        
@@ -104,22 +102,7 @@ void UpdateCoins()
 					JamVacuum();
 					return;
 				}
-			} 
-			
-            if (FDist < 100)
-            {
-                Coin->State = COINSTATE_FALLING;        
-
-                sxPlaySound( &CoinVacuumedUpSound );  
-
-                if (Tutorial.CoinDisplayed == false)
-                {
-                    SetGameState_Crumb(TUTORIALSTATE_COIN);
-                    JamVacuum();
-                    return;
-                }
-            }  
-                       	    
+			} 	                       	    
 		}
 		else if (Coin->State == COINSTATE_FALLING)
 		{

@@ -15,8 +15,6 @@
 
 #define MAX_FIREWORKS 100
 
-SCoin Coin;
-
 int NFireWorks = 0;
 SFireWork FireWorks[MAX_FIREWORKS];
 
@@ -131,7 +129,7 @@ void UpdateFireWorks()
 									sxPlaySound( &BlockBreakSound );
 									Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
 								}
-							}
+							}             
 						}
 					}
 				}
