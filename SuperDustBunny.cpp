@@ -264,11 +264,11 @@ void DisplayGame_DieScreen()
 {
 	if (RetryScreenButtonPressed)
 	{
-		gxDrawSprite(0, 0, &ScreenLose1Sprite);
+		gxDrawSprite(0, 0, &ScreenLose2Sprite);
 	}
 	else
 	{
-		gxDrawSprite(0, 0, &ScreenLose2Sprite);
+		gxDrawSprite(0, 0, &ScreenLose1Sprite);
 	}
 }
 
@@ -325,11 +325,11 @@ void DisplayGame_WinScreen()
 {
     if (NextPageButtonPressed)
     {
-        gxDrawSprite( 0, 0, &ScreenWin1Sprite);
+        gxDrawSprite(0, 0, &ScreenWin2Sprite);
     }
     else
     {
-        gxDrawSprite( 0, 0, &ScreenWin2Sprite);
+        gxDrawSprite(0, 0, &ScreenWin1Sprite);
     }
 }
 
@@ -523,7 +523,7 @@ void SetGameState_Crumb(ETutorialState State)
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
 
 void Display_Crumb()
-{    
+{
 	// Calculate scrolling.
 	CalculateScrollY();
 	
@@ -552,57 +552,51 @@ void Display_Crumb()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//  
     if (Tutorial.State == TUTORIALSTATE_INITIAL)
     {
-        gxDrawSpriteCenteredRotated (380, 600, 0, &TutorialInitialSprite );  
-        gxDrawSpriteCenteredRotated (700, 910, 0, &CrumbStandSprite );  
+        gxDrawSpriteCenteredRotated (380, 400, 0, &TutorialInitialSprite );  
     }
 
     if (Tutorial.State == TUTORIALSTATE_BALL)
     {
-        gxDrawSpriteCenteredRotated (380, 600, 0, &TutorialBallSprite );  
-        gxDrawSpriteCenteredRotated (700, 910, 0, &CrumbStandSprite );
+        gxDrawSpriteCenteredRotated (380, 400, 0, &TutorialBallSprite );  
     }
 
     if (Tutorial.State == TUTORIALSTATE_BARREL)
     {
-        gxDrawSpriteCenteredRotated (380, 600, 0, &TutorialBarrelSprite );  
-        gxDrawSpriteCenteredRotated (700, 910, 0, &CrumbStandSprite );
+        gxDrawSpriteCenteredRotated (380, 400, 0, &TutorialBarrelSprite );  
     }
 
     if (Tutorial.State == TUTORIALSTATE_COIN)
     {
-        gxDrawSpriteCenteredRotated (380, 600, 0, &TutorialCoinSprite );  
-        gxDrawSpriteCenteredRotated (700, 910, 0, &CrumbStandSprite ); 
+        gxDrawSpriteCenteredRotated (380, 400, 0, &TutorialCoinSprite );  
     }
 
     if (Tutorial.State == TUTORIALSTATE_FIREWORK)
     {
-        gxDrawSpriteCenteredRotated (380, 600, 0, &TutorialFireWorkSprite );  
-        gxDrawSpriteCenteredRotated (700, 910, 0, &CrumbStandSprite );
+        gxDrawSpriteCenteredRotated (380, 400, 0, &TutorialFireWorkSprite );  
     }
 
     if (Tutorial.State == TUTORIALSTATE_JUMP)
     {
-        gxDrawSpriteCenteredRotated (380, 600, 0, &TutorialJumpSprite );  
-        gxDrawSpriteCenteredRotated (700, 910, 0, &CrumbStandSprite );
+        gxDrawSpriteCenteredRotated (380, 400, 0, &TutorialJumpSprite );  
     }
 
     if (Tutorial.State == TUTORIALSTATE_WALLJUMP)
     {
-        gxDrawSpriteCenteredRotated (380, 600, 0, &TutorialWallJumpSprite );  
-        gxDrawSpriteCenteredRotated (700, 910, 0, &CrumbStandSprite );\
+        gxDrawSpriteCenteredRotated (380, 400, 0, &TutorialWallJumpSprite );  
     }
     
     if (Tutorial.State == TUTORIALSTATE_GEAR)
     {
-        gxDrawSpriteCenteredRotated (380, 600, 0, &TutorialGearSprite );  
-        gxDrawSpriteCenteredRotated (700, 910, 0, &CrumbStandSprite );\
+        gxDrawSpriteCenteredRotated (380, 400, 0, &TutorialGearSprite );  
     }
 
+	gxDrawSprite(768-384, 1024-364, &CrumbStandSprite );
+
 #ifdef PLATFORM_WINDOWS
-	gxDrawString(0, 0, 32, gxRGB32(255, 255, 255), "Press SPACE to continue ");
+	gxDrawString(0, 1024-32, 32, gxRGB32(255, 255, 255), "Press SPACE to continue ");
 #endif
 #ifdef PLATFORM_IPHONE
-	gxDrawString(0, 0, 32, gxRGB32(255, 255, 255),  "    Tap to continue     ");
+	gxDrawString(0, 1024-32, 32, gxRGB32(255, 255, 255), "    Tap to continue     ");
 #endif
 }
 
@@ -669,7 +663,6 @@ void UpdateGame_Crumb()
 		SetGameState_Playing();
         return;
     }
-    Dusty.CrumbTimer--;
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -730,7 +723,8 @@ void Display()
 	}
 	else
 	{
-		gxDrawString(20, gxScreenHeight - 52, 16, gxRGB32(255, 255, 255), "Press F1 for help");
+		if (GameState != GAMESTATE_CRUMB)
+			gxDrawString(20, gxScreenHeight - 32, 16, gxRGB32(255, 255, 255), "Press F1 for help");
 	}
 #endif
 }

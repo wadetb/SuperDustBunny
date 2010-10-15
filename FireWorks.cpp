@@ -63,7 +63,7 @@ void DisplayFireWorks()
 		}
 		else if (FireWork->State == FIREWORKSTATE_EXPLODE)
 		{
-			gxDrawSpriteCenteredRotated((int)FireWork->X, (int)FireWork->Y + ScrollY, 0, &FireWorkBangSprite);				
+			gxDrawSpriteCenteredScaledAlphaAdd((int)FireWork->X, (int)FireWork->Y + ScrollY, 1.0f, 1.0f, 1.0f, &FireWorkBangSprite);				
 		}
 	}
 }
@@ -112,7 +112,7 @@ void UpdateFireWorks()
 
 			if (Distance(FireWork->X, FireWork->Y, FireWork->OriginalX, FireWork->OriginalY) >= FireWork->FlightDistance*64)
 			{
-				FireWork->Timer = 10;
+				FireWork->Timer = 30;
 				FireWork->State = FIREWORKSTATE_EXPLODE;
 
 				for (int y = 0; y < Chapter.StitchedHeight; y++)

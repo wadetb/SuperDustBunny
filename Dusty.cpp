@@ -49,12 +49,9 @@ void InitDusty()
 	Dusty.HasGumBlockExpired = false;
 	Dusty.GumJumpAttempt = 0;
 	
-	Dusty.CrumbTimer = 400;
 	Dusty.Delay = 80;
 	Dusty.BlockSprite = 0;
 	
-	Dusty.HasCrumbExpired = false;
-
 	Dusty.CollideWithLeftSide = false;
 	Dusty.CollideWithRightSide = false;
 	Dusty.CollideWithTopSide = false;
@@ -72,6 +69,7 @@ void SetDustyState_Jump( bool OffWall );
 void SetDustyState_Fall();
 void SetDustyState_Hop( EDirection Direction );
 void SetDustyState_WallJump();
+void SetDustyState_CornerJump();
 void SetDustyState_PrepareLaunch();
 void SetDustyState_Launch();
 
@@ -137,6 +135,22 @@ void UpdateDusty_Stand()
 	if (Dusty.CollideWithBottomSide == false)
 	{
 		SetDustyState_Fall();
+		return;
+	}
+
+	// If Dusty comes to a stand atop a corner, use the corner jump state to prevent him from floating
+	// in the air.
+	if (Dusty.CollideWithBottomLeftCorner)
+	{
+		Dusty.Direction = DIRECTION_LEFT;
+		SetDustyState_CornerJump();
+		return;
+	}
+
+	if (Dusty.CollideWithBottomRightCorner)
+	{
+		Dusty.Direction = DIRECTION_RIGHT;
+		SetDustyState_CornerJump();
 		return;
 	}
 
@@ -257,12 +271,6 @@ void UpdateDusty_Fall()
 
 	if (Dusty.FloatVelocityY > 15.0f)
 		Dusty.FloatVelocityY = 15.0f;
-
-	if (Dusty.CollideWithBottomSide == true )
-	{	
-		SetDustyState_Stand();
-		return;
-	} 
 
 	UpdateDusty_JumpCommon();
 }
@@ -412,26 +420,47 @@ void UpdateDusty_JumpCommon()
 	
 	Dusty.WallJumpTimer++;
 
-    // Collision with either side of screen translates to a possible wall jump.
+	// Collision with corners is indicated by separate collision variables being set.
+	if (Dusty.CollideWithBottomLeftCorner)
+	{
+		Dusty.Direction = DIRECTION_LEFT;
+		SetDustyState_CornerJump();
+		return;
+	}
+	if (Dusty.CollideWithBottomRightCorner)
+	{
+		Dusty.Direction = DIRECTION_RIGHT;
+		SetDustyState_CornerJump();
+		return;
+	}
+
+    // Collision with either side translates to a possible wall jump.
 	// Dusty is not allowed to collide with the same side twice in a row, unless he stands once in between.
-	// Wade: Currently this stuff is tweaked around as an experiment- he can only walljump again after a delay; direction is not used.
+	// Wade: Currently this stuff is tweaked around as an experiment- he can only walljump again after a delay.
 	if (Dusty.CollideWithLeftSide && Dusty.Direction == DIRECTION_LEFT && (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_LEFT) &&
-	Dusty.NoWallJump == false)
+		Dusty.NoWallJump == false)
 	{
         SetDustyState_WallJump();
         return;
 	}
 
 	if (Dusty.CollideWithRightSide && Dusty.Direction == DIRECTION_RIGHT && (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_RIGHT) &&
-	Dusty.NoWallJump == false)
+		Dusty.NoWallJump == false)
     {
         SetDustyState_WallJump();
         return;
     }
+
+	// When landing on something, revert to standing.
+	if (Dusty.CollideWithBottomSide == true )
+	{	
+		SetDustyState_Stand();
+		return;
+	} 
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                  DUSTYSTATE_WALLJUMP_RIGHT Implementation                                               //
+//                                                  DUSTYSTATE_WALLJUMP Implementation                                               //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
 void SetDustyState_WallJump()
@@ -520,6 +549,85 @@ void UpdateDusty_WallJump()
 		 ( Dusty.Direction == DIRECTION_RIGHT && GetInput_MoveRight() ) )
 	{
 		SetDustyState_Fall();
+		return;
+	}
+}	
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                  DUSTYSTATE_CORNERJUMP Implementation                                               //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+void SetDustyState_CornerJump()
+{   	
+	Dusty.FloatVelocityX = 0;
+	Dusty.FloatVelocityY = 0;
+
+	Dusty.LastWall = Dusty.Direction;
+
+	Dusty.WallJumpTimer = 0;
+
+	// Switch directions when entering a corner jump.
+	if (Dusty.Direction == DIRECTION_RIGHT)
+		Dusty.Direction = DIRECTION_LEFT;
+	else
+		Dusty.Direction = DIRECTION_RIGHT;
+
+	Dusty.State = DUSTYSTATE_CORNERJUMP;
+}
+
+void DisplayDusty_CornerJump()
+{
+	float ScaleX, OffsetX;
+	if (Dusty.Direction == DIRECTION_RIGHT)
+	{
+		ScaleX = 1.0f;
+		OffsetX = 0.0f;
+	}
+	else
+	{
+		ScaleX = -1.0f;
+		OffsetX = 256.0f;
+	}
+
+	gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 128 - 32*ScaleX), (int)(Dusty.FloatY - 150 + ScrollY), ScaleX, 1.0f, &DustyCornerJumpSprite );
+}
+
+void UpdateDusty_CornerJump()
+{                                                   
+	// Jump off wall by pressing jump
+	if (GetInput_Jump())
+	{
+		SetDustyState_Jump( true );
+		return;
+	}
+
+	// Let go of wall by pressing direction away from corner.
+	if ( ( Dusty.Direction == DIRECTION_LEFT  && GetInput_MoveLeft() ) ||
+		 ( Dusty.Direction == DIRECTION_RIGHT && GetInput_MoveRight() ) )
+	{
+		SetDustyState_Fall();
+		return;
+	}
+
+	// Get up and walk by pressing direction towards corner.
+	if ( ( Dusty.Direction == DIRECTION_LEFT  && GetInput_MoveRight() ) ||
+		 ( Dusty.Direction == DIRECTION_RIGHT && GetInput_MoveLeft() ) )
+	{
+		EDirection NewDirection;
+
+		// Help him along to prevent going back into corner jump.
+		if (Dusty.Direction == DIRECTION_LEFT)
+		{
+			NewDirection = DIRECTION_RIGHT;
+			Dusty.FloatX += 48;
+		}
+		else
+		{
+			NewDirection = DIRECTION_LEFT;
+			Dusty.FloatX -= 48;
+		}
+
+		SetDustyState_Hop(NewDirection);
 		return;
 	}
 }	
@@ -745,6 +853,9 @@ void UpdateDusty_Collision()
 	Dusty.CollideWithBottomSide = false;
 	Dusty.CollideWithTopSide = false;
 
+	Dusty.CollideWithBottomLeftCorner = false;
+	Dusty.CollideWithBottomRightCorner = false;
+
 	// Collision with right side of the right screen and Dusty's right Side
 	if (Dusty.FloatX + Dusty.Right >= gxScreenWidth)
 	{
@@ -758,6 +869,7 @@ void UpdateDusty_Collision()
 		Dusty.CollideWithLeftSide = true;
 		Dusty.FloatX = -(float)Dusty.Left;
 	}
+
 	//Collision with the bottom side of the screen
 	if (Dusty.FloatY + Dusty.Bottom >= Chapter.StitchedHeight * 64 )
 	{	
@@ -794,7 +906,7 @@ void UpdateDusty_Collision()
 			// The Y axis is considered first because the level is larger on the Y axis, so this will reject most blocks earlier (code optimization).
 			if (Max(Dusty.FloatY + Dusty.Top, BlockTop) <= Min(Dusty.FloatY + Dusty.Bottom, BlockBottom))
 			{
-				// Check to see if Dusty's rectangle overlaps with the block in X.
+				// Check to see if Dusty's rectangle also overlaps with the block in X.
 				if(Max(Dusty.FloatX + Dusty.Left, BlockLeft) <= Min(Dusty.FloatX + Dusty.Right, BlockRight))
 				{    
 					// {Left,Right,Top,Bottom}BlockIsEmpty are used to prevent collisions with internal edges (edges between blocks).  If Dusty jumps up into the bottom of a wide platform
@@ -829,6 +941,8 @@ void UpdateDusty_Collision()
 					bool BlockCollideWithTopSide = false;
 					bool BlockCollideWithBottomSide = false;
 
+					int CornerThreshold = 48;
+
 					// Prefer to collide with the side of the block that would push Dusty out the least distance.
 					// (Only consider sides that are not adjacent to another solid block).
 					if (LeftBlockIsEmpty && LeftDistance < RightDistance && LeftDistance < DownDistance && LeftDistance < UpDistance)
@@ -838,8 +952,13 @@ void UpdateDusty_Collision()
 						Dusty.FloatX -= LeftDistance;
 						if (Dusty.FloatVelocityX > 0)
 							Dusty.FloatVelocityX = 0;
-					}
 
+						if (TopBlockIsEmpty && abs(UpDistance - LeftDistance) < CornerThreshold)
+						{
+							Dusty.CollideWithBottomRightCorner = true;
+							Dusty.FloatY -= UpDistance;
+						}
+					}
 					if (RightBlockIsEmpty && RightDistance < LeftDistance && RightDistance < DownDistance && RightDistance < UpDistance)
 					{
 						BlockCollideWithLeftSide = true;
@@ -847,8 +966,13 @@ void UpdateDusty_Collision()
 						Dusty.FloatX += RightDistance;
 						if (Dusty.FloatVelocityX < 0)
 							Dusty.FloatVelocityX = 0;
-					}
 
+						if (TopBlockIsEmpty && abs(UpDistance - RightDistance) < CornerThreshold)
+						{
+							Dusty.CollideWithBottomLeftCorner = true;
+							Dusty.FloatY -= UpDistance;
+						}
+					}
 					if (BottomBlockIsEmpty && DownDistance < RightDistance && DownDistance < LeftDistance && DownDistance < UpDistance)
 					{
 						BlockCollideWithTopSide = true;
@@ -857,7 +981,6 @@ void UpdateDusty_Collision()
 						if (Dusty.FloatVelocityY < 0)
 							Dusty.FloatVelocityY = 0;
 					}
-
 					if (TopBlockIsEmpty && UpDistance < RightDistance && UpDistance < DownDistance && UpDistance < LeftDistance)
 					{
 						BlockCollideWithBottomSide = true;
@@ -865,8 +988,19 @@ void UpdateDusty_Collision()
 						Dusty.FloatY -= UpDistance;
 						if (Dusty.FloatVelocityY > 0)
 							Dusty.FloatVelocityY = 0;
+
+						if (LeftBlockIsEmpty && abs(LeftDistance - UpDistance) < CornerThreshold)
+						{
+							Dusty.CollideWithBottomRightCorner = true;
+							Dusty.FloatX -= LeftDistance;
+						}
+						if (RightBlockIsEmpty && abs(RightDistance - UpDistance) < CornerThreshold)
+						{
+							Dusty.CollideWithBottomLeftCorner = true;
+							Dusty.FloatX += RightDistance;
+						}
 					}
-										
+
 					int BlockID = GetBlockID(x, y);
 					if (BlockID < SPECIALBLOCKID_FIRST)
 					{			
@@ -982,11 +1116,11 @@ void DisplayDusty()
 	case DUSTYSTATE_FALL:				DisplayDusty_Fall(); break;
 	case DUSTYSTATE_HOP:			    DisplayDusty_Hop(); break;
 	case DUSTYSTATE_WALLJUMP:			DisplayDusty_WallJump(); break;
+	case DUSTYSTATE_CORNERJUMP:			DisplayDusty_CornerJump(); break;
 	case DUSTYSTATE_PREPARELAUNCH:      DisplayDusty_PrepareLaunch(); break;
 	case DUSTYSTATE_LAUNCH:             DisplayDusty_Launch(); break;	
 	case DUSTYSTATE_DIE:				DisplayDusty_Die(); break;
 	case DUSTYSTATE_STUCK:              DisplayDusty_Stuck(); break;
-	default:						    break;
 	}
 
 	if (DevMode)
@@ -1014,10 +1148,10 @@ void UpdateDusty()
 	case DUSTYSTATE_FALL:				UpdateDusty_Fall(); break;
 	case DUSTYSTATE_HOP:				UpdateDusty_Hop(); break;
 	case DUSTYSTATE_WALLJUMP:			UpdateDusty_WallJump(); break;
+	case DUSTYSTATE_CORNERJUMP:			UpdateDusty_CornerJump(); break;
 	case DUSTYSTATE_PREPARELAUNCH:      UpdateDusty_PrepareLaunch(); break;
 	case DUSTYSTATE_LAUNCH:             UpdateDusty_Launch(); break;
 	case DUSTYSTATE_DIE:				UpdateDusty_Die(); break;
 	case DUSTYSTATE_STUCK:              UpdateDusty_Stuck(); break;
-	default:						    break;
 	}
 }

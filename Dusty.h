@@ -24,6 +24,7 @@ enum EDustyState
 	DUSTYSTATE_FALL,
 	DUSTYSTATE_HOP,
 	DUSTYSTATE_WALLJUMP,
+	DUSTYSTATE_CORNERJUMP,
 	DUSTYSTATE_PREPARELAUNCH,
 	DUSTYSTATE_LAUNCH,
 	DUSTYSTATE_DIE,
@@ -59,18 +60,18 @@ struct SDusty
     bool HasGumBlockExpired;
     int GumJumpAttempt;
     
-    int CrumbTimer;
     int Delay;
     int BlockSprite;
     
 	int WallJumpTimer;
 
-    bool HasCrumbExpired;
-
 	bool CollideWithLeftSide;
 	bool CollideWithRightSide;
 	bool CollideWithTopSide;
 	bool CollideWithBottomSide;
+
+	bool CollideWithBottomLeftCorner;
+	bool CollideWithBottomRightCorner;
 };
 
 extern SDusty Dusty;
