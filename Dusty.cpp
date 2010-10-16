@@ -210,8 +210,15 @@ void DisplayDusty_Jump()
 		OffsetX = 256.0f;
 	}
 
+	gxSprite* Hop2Sprites[3] =
+	{
+		&DustyHop2Sprite,
+		&DustyHop2bSprite,
+		&DustyHop2cSprite,
+	};
+
 	if (Dusty.FloatVelocityY <= -5)
-		gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 150 + ScrollY), ScaleX, 1.0f, &DustyHop2Sprite );
+		gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 150 + ScrollY), ScaleX, 1.0f, Hop2Sprites[(Dusty.SpriteTransition/5) % 3]);
 	else
 		gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 140 + ScrollY), ScaleX, 1.0f, &DustyHop3Sprite );
 }
@@ -263,8 +270,15 @@ void DisplayDusty_Fall()
 		OffsetX = 256.0f;
 	}
 
+	gxSprite* Hop4Sprites[3] =
+	{
+		&DustyHop4Sprite,
+		&DustyHop4bSprite,
+		&DustyHop4cSprite,
+	};
+
 	if (Dusty.FloatVelocityY >= 5)
-		gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 150 + ScrollY), ScaleX, 1.0f, &DustyHop4Sprite );
+		gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 150 + ScrollY), ScaleX, 1.0f, Hop4Sprites[(Dusty.SpriteTransition/5) % 3] );
 	else
 		gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 140 + ScrollY), ScaleX, 1.0f, &DustyHop3Sprite );
 }
@@ -410,6 +424,8 @@ void UpdateDusty_Hop()
 
 void UpdateDusty_JumpCommon()
 {  
+	Dusty.SpriteTransition++;
+
 	// Air control.
 	if (GetInput_MoveLeft())
 	{
