@@ -20,6 +20,8 @@ gxSprite DustyHop3Sprite;
 gxSprite DustyHop4Sprite;
 gxSprite DustyHop5Sprite;
 
+gxSprite DustyIdle1Sprite;
+
 gxSprite DustyWallJumpSprite;
 gxSprite DustyCornerJumpSprite;
 
@@ -123,6 +125,8 @@ void LoadAssets()
 	gxLoadSprite("Data/dusty-hop-3.png", &DustyHop3Sprite);
 	gxLoadSprite("Data/dusty-hop-4.png", &DustyHop4Sprite);
 	gxLoadSprite("Data/dusty-hop-5.png", &DustyHop5Sprite);
+
+	gxLoadSprite("Data/dusty-idle-1.png", &DustyIdle1Sprite);
 
 	gxLoadSprite("Data/dusty-walljump.png", &DustyWallJumpSprite);
 	gxLoadSprite("Data/dusty-cornerjump.png", &DustyCornerJumpSprite);

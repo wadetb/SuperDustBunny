@@ -109,7 +109,12 @@ void DisplayDusty_Stand()
 	if (Dusty.SpriteTransition <= 4)
 		gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119 + 18*ScaleX), (int)(Dusty.FloatY - 218 + ScrollY), ScaleX, 1.0f, &DustyHop5Sprite );
 	else
-		gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 + 5*ScaleX), (int)(Dusty.FloatY - 221 + ScrollY), ScaleX, 1.0f, &DustyHop1Sprite );
+	{
+		if (Dusty.SpriteTransition % 100 < 20)
+			gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 + 5*ScaleX), (int)(Dusty.FloatY - 221 + ScrollY), ScaleX, 1.0f, &DustyIdle1Sprite );
+		else
+			gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 + 5*ScaleX), (int)(Dusty.FloatY - 221 + ScrollY), ScaleX, 1.0f, &DustyHop1Sprite );
+	}
 }
 
 void UpdateDusty_Stand()
