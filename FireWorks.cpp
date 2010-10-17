@@ -148,7 +148,7 @@ void UpdateFireWorks()
                 {
                     SCoin* Coin = &Coins[i];
                     float Dist =(Distance(FireWork->X, FireWork->Y, Coin->X, Coin->Y));
-                    if (Dist < FireWork->ExplosionSize*64)//This explosion is two blocks to the left and right, up and down from center.
+                    if (Dist < 100)
                     {                    
                         Coin->State = COINSTATE_FALLING;     
                     }        
@@ -158,7 +158,7 @@ void UpdateFireWorks()
                 {
                     SGear* Gear = &Gears[i];
                     float Dist = (Distance(FireWork->X, FireWork->Y, Gear->X, Gear->Y));
-                    if (Dist < FireWork->ExplosionSize*64)
+                    if (Dist < 100)
                     {
                         Gear->State = GEARSTATE_FALLING;
                     }                                       
@@ -168,7 +168,7 @@ void UpdateFireWorks()
                 {
                     SBall* Ball = &Balls[i];
                     float Dist = (Distance(FireWork->X, FireWork->Y, Ball->X, Ball->Y));
-                    if (Dist < FireWork->ExplosionSize*64)
+                    if (Dist < 100)
                     {
                         Ball->State = BALLSTATE_FALLING;
                     }              
@@ -178,11 +178,21 @@ void UpdateFireWorks()
                 {
                     SFireWork* FireWork = &FireWorks[i];
                     
-                    float Dist = (Distance(FireWork->X, FireWork->Y, FireWork->X, FireWork->Y));
-                    if (Dist < FireWork->ExplosionSize*64 && FireWork->State == FIREWORKSTATE_WAIT)
+                    float XDist, YDist, Dist;
+                    
+                    for (int y = 1; y < NFireWorks; y++)
                     {
-                        FireWork->State = FIREWORKSTATE_FUSE;
-                    }              
+                        SFireWork* FireWorkTwo = &FireWorks[y];
+                        
+                        XDist = ( (FireWork->X) - (FireWorkTwo->X) );
+                        YDist = ( (FireWork->Y) - (FireWorkTwo->Y) );
+                        Dist = sqrtf(XDist*XDist + YDist*YDist);
+                                        
+                        if (Dist < 150 && FireWork->State == FIREWORKSTATE_WAIT)
+                        {
+                            FireWork->State = FIREWORKSTATE_FUSE;
+                        }
+                   }              
                 }               
             }
             		
