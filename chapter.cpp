@@ -161,22 +161,7 @@ bool LoadBlocks(const char* FileName)
 			if (strstr(Block->Desc, "nowalljump"))
 			{
 				Block->NoWallJump = true;
-			}
-			
-			if (strstr(Block->Desc, "coin"))
-			{
-			    Block->Coin = true;
-			}
-			
-            if (strstr(Block->Desc, "ball"))
-            {
-                Block->Ball = true;
-            }
-            
-            if (strstr(Block->Desc, "gear"))
-            {
-                Block->Gear = true;
-            }
+			}		
 		}
 
 		Chapter.NBlocks++;

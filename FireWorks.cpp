@@ -17,7 +17,6 @@
 
 int NFireWorks = 0;
 SFireWork FireWorks[MAX_FIREWORKS];
-SCoin Coin;
 
 void CreateFireWork(int X, int Y, const char* Desc)
 {
@@ -130,22 +129,28 @@ void UpdateFireWorks()
 									sxPlaySound( &BlockBreakSound );
 									Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
 								}
-							} 
-							
-							if (Block->Coin)
-							{
-                                if (Distance(FireWork->X, FireWork->Y, (float)x*64+32, (float)y*64+32) < FireWork->ExplosionSize*64)
-                                { 
-                                    Coin.State = COINSTATE_FALLING;
-                                    sxPlaySound( &CoinVacuumedUpSound );
-                                }
-							}            
+							} 							           
 						}
 					}
 				}
             }
-		}
+            
+/*            for (int i = 0; i < NCoins; i++)
+            {
+                SCoin* Coin = &Coins[i];
+                float XDist = (FireWork->X - Coin->X);
+                float YDist = ((FireWork->Y-50) - (Coin->Y));
+                float Dist = sqrtf(XDist*XDist + YDist*YDist);
 
+                if (Dist < 125)
+                {
+                    Coin->State = COINSTATE_FALLING;        
+
+                    sxPlaySound( &CoinVacuumedUpSound );                    
+                }              
+            }*/      
+        }     
+        
 		if (FireWork->State == FIREWORKSTATE_EXPLODE)
 		{
 			FireWork->Timer--;
