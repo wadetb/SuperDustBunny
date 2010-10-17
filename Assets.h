@@ -45,6 +45,7 @@ extern gxSprite TileRedDelayDest;
 
 extern gxSprite BarrelBackSprite;
 extern gxSprite BarrelFrontSprite;
+extern gxSprite BarrelNailSprite;
 
 extern gxSprite CrumbStandSprite;
 

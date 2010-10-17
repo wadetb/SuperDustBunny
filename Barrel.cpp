@@ -31,7 +31,6 @@ void CreateBarrel(int X, int Y, const char* Desc)
 	Barrel->FromDir = (float)FromDir;
 	Barrel->ToDir = (float)ToDir;
 	Barrel->Dir = Barrel->FromDir;
-
 }
 
 void ClearBarrels()
@@ -56,6 +55,7 @@ void DisplayBarrels_AfterDusty()
 		SBarrel* Barrel = &Barrels[i];
 		
 		gxDrawSpriteCenteredRotated((int)Barrel->X, (int)(Barrel->Y + ScrollY), Barrel->Dir * 3.14159f / 180.0f, &BarrelFrontSprite);
+		gxDrawSpriteCenteredRotated((int)Barrel->X, (int)(Barrel->Y + ScrollY), 0.0f, &BarrelNailSprite);
 	}
 }
 

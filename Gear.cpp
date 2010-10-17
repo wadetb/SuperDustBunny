@@ -107,7 +107,7 @@ void UpdateGear()
 				Gear->FloatVelocityX = -Gear->FloatVelocityX;
 			}
 			
-            if (Gear->Y >= Vacuum.Y)
+            if (Gear->Y >= Vacuum.Y + 175)
             {
                 Gear->State = GEARSTATE_INACTIVE;
                 sxPlaySound (&VacuumClogSound);

@@ -22,7 +22,7 @@ void InitVacuum()
 {
 	Vacuum.State = VACUUMSTATE_FAR;
 	Vacuum.SoundState = VACUUMSOUNDSTATE_OFF;
-	Vacuum.Timer = 1000;
+	Vacuum.Timer = 10*60;
 	Vacuum.Volume = 0.0f;
 
 	// These two sounds loop continuously.
@@ -236,7 +236,7 @@ void UpdateVacuum()
 			if (Vacuum.Y + ScrollY >= gxScreenHeight)
 			{
 				Vacuum.State = VACUUMSTATE_FAR;
-				Vacuum.Timer = 6*60;
+				Vacuum.Timer = 3*60;
 				SetVacuumSoundState(VACUUMSOUNDSTATE_UNJAM);
 			}
 		}
@@ -253,7 +253,7 @@ void JamVacuum()
 	}
 	else
 	{
-		Vacuum.Timer = 10*60;
+		Vacuum.Timer = 6*60;
 	}
 }
 

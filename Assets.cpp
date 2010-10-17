@@ -45,6 +45,7 @@ gxSprite TileRedDelayDest;
 
 gxSprite BarrelBackSprite;
 gxSprite BarrelFrontSprite;
+gxSprite BarrelNailSprite;
 
 gxSprite CrumbStandSprite;
 
@@ -169,6 +170,7 @@ void LoadAssets()
 
 	gxLoadSprite("Data/barrel-back.png", &BarrelBackSprite);
 	gxLoadSprite("Data/barrel-front.png", &BarrelFrontSprite);
+	gxLoadSprite("Data/barrel-nail.png", &BarrelNailSprite);
 
 	gxLoadSprite("Data/crumb-stand.png", &CrumbStandSprite);
 

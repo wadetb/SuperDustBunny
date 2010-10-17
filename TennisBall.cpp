@@ -88,7 +88,7 @@ void UpdateBall()
         {
             float Dist = Distance(Dusty.FloatX, Dusty.FloatY-50, Ball->X, Ball->Y);
 
-            if (Dist < 100)
+            if (Dist < 125)
             {
                 Ball->State = BALLSTATE_FALLING;        
 
@@ -106,7 +106,7 @@ void UpdateBall()
             Ball->Y += Ball->FloatVelocityY;
             Ball->FloatVelocityY += 1.0f;
 
-            if (Ball->Y >= Vacuum.Y)
+            if (Ball->Y >= Vacuum.Y + 175)
             {
                 Ball->State = BALLSTATE_INACTIVE;
                 sxPlaySound (&VacuumClogSound);
