@@ -188,7 +188,7 @@ void UpdateFireWorks()
                         YDist = ( (FireWork->Y) - (FireWorkTwo->Y) );
                         Dist = sqrtf(XDist*XDist + YDist*YDist);
                                         
-                        if (Dist < 150 && FireWork->State == FIREWORKSTATE_WAIT)
+                        if (Dist < 150 && Dist != 0 && FireWork->State == FIREWORKSTATE_WAIT)
                         {
                             FireWork->State = FIREWORKSTATE_FUSE;
                         }
