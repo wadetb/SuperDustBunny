@@ -19,6 +19,16 @@
 #include "Crumb.h"
 #include "Gear.h"
 
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                      Game State switching function declarations                                         //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+void SetGameState_Crumb(ETutorialState State);
+void SetGameState_StartScreen();
+void SetGameState_Playing();
+
+
 void InitTutorial()
 {
     Tutorial.State = TUTORIALSTATE_NONE;
@@ -72,7 +82,7 @@ bool RetryScreenButtonPressed = false;
 bool NextPageButtonPressed = false;
 
 bool DisplayHelp = false;
-bool DevMode = false;
+bool DevMode = true;
 bool SlowMotionMode = false;
 
 int BackgroundX = 0;
@@ -98,6 +108,8 @@ void Init()
 #endif	
 	
 	LoadAssets();
+	
+	SetGameState_StartScreen();
 }
 
 void Exit()
@@ -191,85 +203,158 @@ void LoadCurrentChapter()
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                  Tutorial State switching function declarations                                         //
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-
-void SetGameState_Crumb(ETutorialState State);
-
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   GAMESTATE_START_SCREEN                                                                //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-void SetGameState_Playing();
+enum 
+{
+	STARTSCREEN_ICON_HELP,
+	STARTSCREEN_ICON_START,
+	STARTSCREEN_ICON_CREDITS,
+	STARTSCREEN_ICON_COUNT
+};
 
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                   GAMESTATE_START_SCREEN                                                                //
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+gxSprite* StartScreenIcons[STARTSCREEN_ICON_COUNT] =
+{
+	&IconHelp1Sprite,
+	&IconStart1Sprite,
+	&IconCredits1Sprite
+};
+
+gxSprite* StartScreenPressedIcons[STARTSCREEN_ICON_COUNT] =
+{
+	&IconHelp2Sprite,
+	&IconStart2Sprite,
+	&IconCredits2Sprite
+};
+
+int StartScreenIcon = STARTSCREEN_ICON_START;
+float PrevStartScreenX;
+float StartScreenX;
+float StartScreenDragX = 0;
+bool StartScreenDragging = false;
+bool StartScreenPressed = false;
 
 void SetGameState_StartScreen()
 {
 	GameState = GAMESTATE_START_SCREEN;
+
+	StartScreenX = StartScreenIcon * 600;
+	PrevStartScreenX = StartScreenX;
+}
+
+void StartScreen_Advance()
+{
+	if (StartScreenIcon == STARTSCREEN_ICON_START)
+	{
+		LoadCurrentChapter();
+		SetGameState_Playing();
+	}
+	//else if (StartScreenIcon == STARTSCREEN_ICON_HELP)
+	//	SetGameState_Help();
+	//else if (StartScreenIcon == STARTSCREEN_ICON_CREDITS)
+	//	SetGameState_Credits();
 }
 
 void DisplayGame_StartScreen()
 {
-	if (TitleScreenButtonPressed)
+	gxDrawSprite( 0, 0, &ScreenStart2Sprite );
+	
+	for (int i = 0; i < STARTSCREEN_ICON_COUNT; i++)
 	{
-		gxDrawSprite( 0, 0, &ScreenStart1Sprite );
-	}
-	else
-	{
-		gxDrawSprite( 0, 0, &ScreenStart2Sprite );
+		float Alpha = 1.0f;
+		if (i != StartScreenIcon)
+			Alpha = 0.5f;
+		
+		bool Pressed = false;
+		if (StartScreenPressed && i == StartScreenIcon)
+			Pressed = true;
+		
+		gxDrawSpriteAlpha(768/2-600/2 + i*600 - StartScreenX, 420, Alpha, (Pressed ? StartScreenPressedIcons : StartScreenIcons)[i]);
 	}
 }
 
 void UpdateGame_StartScreen()
 {
 #ifdef PLATFORM_WINDOWS
-	TitleScreenButtonPressed = kbIsKeyDown(KB_RETURN);
-
-	// Advance to playing state when return key is released.
+	// Keyboard shortcuts
 	if (!kbIsKeyDown(KB_RETURN) && kbWasKeyDown(KB_RETURN))
 	{
-		LoadCurrentChapter();
-		SetGameState_Playing();
+		StartScreen_Advance();
 		return;
 	}
 #endif
-#ifdef PLATFORM_IPHONE
-	// TODO: iPhone needs a rectangle check.
-	TitleScreenButtonPressed = msButton1;
 	
-	// Advance to playing state when return key is released.
-	if (!msButton1 && msOldButton1)
+	if (StartScreenDragging)
 	{
-		LoadCurrentChapter();
-		SetGameState_Playing();
-		return;
+		if (!msButton1)
+		{
+			if (StartScreenPressed)
+			{
+				StartScreen_Advance();
+			}
+			
+			StartScreenDragging = false;
+			StartScreenPressed = false;
+		}
+		else 
+		{
+			if (abs(msY - StartScreenDragX) > 10)
+				StartScreenPressed = false;
+			
+			StartScreenX += msY - StartScreenDragX;
+			StartScreenDragX = msY;
+		}
 	}
-#endif
+	else
+	{
+		if (msButton1)
+		{
+			StartScreenPressed = true;
+			StartScreenDragging = true;
+			StartScreenDragX = msY;
+		}
+		else 
+		{
+			StartScreenX = StartScreenX * 0.8f + StartScreenIcon * 600.0f * 0.2f;
+			StartScreenX = StartScreenX + (StartScreenX-PrevStartScreenX) * 0.25;
+		}
+	}
+		
+	if (StartScreenX < 0)
+		StartScreenX = 0;
+	if (StartScreenX >= (STARTSCREEN_ICON_COUNT-1)*600)
+		StartScreenX = (STARTSCREEN_ICON_COUNT-1)*600;
+
+	StartScreenIcon = (int)round(StartScreenX / 600.0f);
+
+	PrevStartScreenX = StartScreenX;
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   GAMESTATE_DIE_SCREEN                                                                  //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
+int DieScreenTimer = 0;
+
 void SetGameState_DieScreen()
 {
 	GameState = GAMESTATE_DIE_SCREEN;
+	
+	DieScreenTimer = 0;
 	TurnOffVacuum();
 }
 
 void DisplayGame_DieScreen()
 {
-	if (RetryScreenButtonPressed)
-	{
-		gxDrawSprite(0, 0, &ScreenLose2Sprite);
-	}
-	else
-	{
-		gxDrawSprite(0, 0, &ScreenLose1Sprite);
-	}
+	gxDrawRectangleFilled(0, 0, 768, 1024, 0xffffffff);
+	
+	float t = DieScreenTimer / 10.0f;
+	float dx = cos(t/5)*20 + cos(1+t/7)*20 + cos(1-t/9)*20;
+	float dy = sin(t/5)*20 + sin(1+t/7)*20 + sin(1-t/9)*20;
+	
+	gxDrawSprite(30, 600, &ScreenLoseGrave1Sprite);
+	gxDrawSprite(100+(int)dx, 50+(int)dy, &ScreenLoseGhostSprite);
 }
 
 void UpdateGame_DieScreen()
@@ -297,6 +382,8 @@ void UpdateGame_DieScreen()
 		return;
 	}
 #endif
+	
+	DieScreenTimer++;
 }
 
 void SkipTutorials()
@@ -434,9 +521,13 @@ void DisplayGame_Playing()
 	if (DevMode)
 	{
 		// Status of common variables
-		gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "FPS: %.0f ( %.1f %.1f ) State: %d Col: %d%d%d%d\nLastWall: %d Direction: %d", 
-			FPS, Dusty.FloatX, Dusty.FloatY, Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide, Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide,
-			Dusty.LastWall, Dusty.Direction);
+		gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "FPS: %.0f ( %.1f %.1f ) ( %.1f %.1f )\n State: %d Col: %d%d%d%d Direction: %d", 
+			FPS, Dusty.FloatX, Dusty.FloatY, Dusty.FloatVelocityX, Dusty.FloatVelocityY, 
+			Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide, Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide, Dusty.Direction);
+		
+#ifdef PLATFORM_IPHONE
+		gxDrawRectangleFilled(768/2, 1024-32, msAccelX*300, 16, 0xff00ff00);
+#endif
 	}
 	else 
 	{
@@ -726,7 +817,7 @@ void Display()
 		if (GameState != GAMESTATE_CRUMB)
 			gxDrawString(20, gxScreenHeight - 32, 16, gxRGB32(255, 255, 255), "Press F1 for help");
 	}
-#endif
+#endif	
 }
 
 bool Update()

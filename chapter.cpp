@@ -187,7 +187,7 @@ bool LoadPage(const char* FileName)
 
 	// Determine page name from the file name (no extension, no path).
 	char Name[1024];
-	snprintf(Name, sizeof(Name), FileName);
+	snprintf(Name, sizeof(Name), "%s", FileName);
 
 	char* Dot = strchr(Name, '.');
 	if (Dot) *Dot = '\0';

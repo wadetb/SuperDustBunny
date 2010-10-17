@@ -233,13 +233,13 @@ void gxDrawSprite0(int x, int y, gxSprite* sprite)
 	_gxDrawQuad(x, y, sprite->texWidth, sprite->texHeight);
 }
 
-void gxDrawSpriteAlpha(int x, int y, gxSprite *sprite, int alpha)
+void gxDrawSpriteAlpha(int x, int y, float alpha, gxSprite *sprite)
 {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, sprite->tex);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	_gxDrawQuad(x, y, sprite->texWidth, sprite->texHeight, gxRGBA32(255, 255, 255, alpha));
+	_gxDrawQuad(x, y, sprite->texWidth, sprite->texHeight, gxRGBA32(255, 255, 255, (int)(alpha*255)));
 }
 
 void gxDrawSpriteScaledFilled(int x, int y, gxSprite* sprite, int width, int height, unsigned int color)

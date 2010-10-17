@@ -74,8 +74,19 @@ gxSprite VacuumFrontSprite;
 gxSprite ScreenStart1Sprite;
 gxSprite ScreenStart2Sprite;
 
+gxSprite IconStart1Sprite;
+gxSprite IconStart2Sprite;
+gxSprite IconHelp1Sprite;
+gxSprite IconHelp2Sprite;
+gxSprite IconCredits1Sprite;
+gxSprite IconCredits2Sprite;
+
 gxSprite ScreenLose1Sprite;
 gxSprite ScreenLose2Sprite;
+
+gxSprite ScreenLoseGhostSprite;
+gxSprite ScreenLoseGrave1Sprite;
+gxSprite ScreenLoseGrave2Sprite;
 
 gxSprite ScreenWin1Sprite;
 gxSprite ScreenWin2Sprite;
@@ -187,9 +198,20 @@ void LoadAssets()
 	gxLoadSprite("Data/screen-start-1.png", &ScreenStart1Sprite);
 	gxLoadSprite("Data/screen-start-2.png", &ScreenStart2Sprite);
 
+	gxLoadSprite("Data/icon-start-1.png", &IconStart1Sprite);
+	gxLoadSprite("Data/icon-start-2.png", &IconStart2Sprite);
+	gxLoadSprite("Data/icon-help-1.png", &IconHelp1Sprite);
+	gxLoadSprite("Data/icon-help-2.png", &IconHelp2Sprite);
+	gxLoadSprite("Data/icon-credits-1.png", &IconCredits1Sprite);
+	gxLoadSprite("Data/icon-credits-2.png", &IconCredits2Sprite);
+
 	gxLoadSprite("Data/screen-lose-1.png", &ScreenLose1Sprite);
 	gxLoadSprite("Data/screen-lose-2.png", &ScreenLose2Sprite);
-
+	
+	gxLoadSprite("Data/screen-lose-ghost.png", &ScreenLoseGhostSprite);
+	gxLoadSprite("Data/screen-lose-grave-1.png", &ScreenLoseGrave1Sprite);
+	gxLoadSprite("Data/screen-lose-grave-2.png", &ScreenLoseGrave2Sprite);
+	
 	gxLoadSprite("Data/screen-win-1.png", &ScreenWin1Sprite);
 	gxLoadSprite("Data/screen-win-2.png", &ScreenWin2Sprite);
 

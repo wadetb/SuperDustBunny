@@ -80,8 +80,19 @@ extern gxSprite VacuumFrontSprite;
 extern gxSprite ScreenStart1Sprite;
 extern gxSprite ScreenStart2Sprite;
 
+extern gxSprite IconStart1Sprite;
+extern gxSprite IconStart2Sprite;
+extern gxSprite IconHelp1Sprite;
+extern gxSprite IconHelp2Sprite;
+extern gxSprite IconCredits1Sprite;
+extern gxSprite IconCredits2Sprite;
+
 extern gxSprite ScreenLose1Sprite;
 extern gxSprite ScreenLose2Sprite;
+
+extern gxSprite ScreenLoseGhostSprite;
+extern gxSprite ScreenLoseGrave1Sprite;
+extern gxSprite ScreenLoseGrave2Sprite;
 
 extern gxSprite ScreenWin1Sprite;
 extern gxSprite ScreenWin2Sprite;

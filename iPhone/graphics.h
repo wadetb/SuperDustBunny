@@ -38,6 +38,7 @@ void gxDestroySprite(gxSprite* sprite);
 
 void gxDrawSprite(int x, int y, gxSprite* sprite);
 void gxDrawSpriteScaled(int x, int y, float scalex, float scaley, gxSprite* sprite);
+void gxDrawSpriteAlpha(int x, int y, float alpha, gxSprite* sprite);
 
 void gxDrawRectangleFilled(int x, int y, int width, int height, unsigned int color);
 
