@@ -180,6 +180,7 @@ extern int gxViewY2;
 --------------------------------------------------------------------------------------------------------*/
 void gxDrawSprite( int x, int y, gxSprite* p );
 
+void gxDrawSpriteAlpha( int x, int y, float alpha, gxSprite* p );
 
 void gxDrawSpriteScaled( int x, int y, float scalex, float scaley, gxSprite* p );
 

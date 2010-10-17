@@ -10,8 +10,6 @@
 #ifndef CHAPTER_H
 #define CHAPTER_H
 
-#include "common.h"
-
 #define MAX_PAGES			100
 #define MAX_BLOCKS			100
 #define MAX_PAGE_BLOCKS		(256*1024)

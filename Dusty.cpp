@@ -9,6 +9,7 @@
 
 #include "Common.h"
 #include "Dusty.h"
+#include "Tutorial.h"
 #include "Chapter.h"
 
 SDusty Dusty;
@@ -490,7 +491,7 @@ void SetDustyState_WallJump()
 {   	
 	if (Tutorial.WallJumpDisplayed == false)
 	{
-		SetGameState_Crumb(TUTORIALSTATE_WALLJUMP);
+		SetGameState_Tutorial(TUTORIALSTATE_WALLJUMP);
 	}
 
 	Dusty.WallStickTimer = 15;

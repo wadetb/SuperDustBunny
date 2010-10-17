@@ -331,13 +331,13 @@ void gxDrawSpriteScaledFilled( int x, int y, gxSprite* p, int w, int h, DWORD co
 	_gxDrawQuad( x, y, w, h, col );
 }
 
-void gxDrawSpriteAlpha( int x, int y, gxSprite* p, int alpha )
+void gxDrawSpriteAlpha( int x, int y, float alpha, gxSprite* p )
 {
 	gxDev->SetTexture( 0, p->tex );
 	gxDev->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
 	gxDev->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
 	gxDev->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
-	_gxDrawQuad( x, y, p->width, p->height, D3DCOLOR_RGBA(255, 255, 255, alpha) );
+	_gxDrawQuad( x, y, p->width, p->height, D3DCOLOR_RGBA(255, 255, 255, int(255*alpha)) );
 }
 
 void gxDrawSpriteAdd( int x, int y, gxSprite* p )

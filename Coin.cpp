@@ -7,9 +7,10 @@
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
-#include "Coin.h"
 #include "Common.h"
+#include "Coin.h"
 #include "Dusty.h"
+#include "Tutorial.h"
 #include "Vacuum.h"
 #include "Chapter.h"
 
@@ -98,7 +99,7 @@ void UpdateCoins()
 
 				if (Tutorial.CoinDisplayed == false)
 				{
-					SetGameState_Crumb(TUTORIALSTATE_COIN);
+					SetGameState_Tutorial(TUTORIALSTATE_COIN);
 					JamVacuum();
 					return;
 				}

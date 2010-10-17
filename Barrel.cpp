@@ -10,6 +10,7 @@
 #include "Common.h"
 #include "Barrel.h"
 #include "Dusty.h"
+#include "Tutorial.h"
 
 #define MAX_BARRELS 100
 
@@ -96,7 +97,7 @@ void UpdateBarrels()
 			{
 			    if (Tutorial.BarrelDisplayed == false)
 			    {
-			        SetGameState_Crumb(TUTORIALSTATE_BARREL);
+			        SetGameState_Tutorial(TUTORIALSTATE_BARREL);
 			        return;
 			    }
 			    

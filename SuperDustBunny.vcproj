@@ -257,6 +257,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\DieScreen.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\DieScreen.h"
+			>
+		</File>
+		<File
 			RelativePath=".\Dust.cpp"
 			>
 		</File>
@@ -377,6 +385,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\StartScreen.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\StartScreen.h"
+			>
+		</File>
+		<File
 			RelativePath=".\SuperDustBunny.cpp"
 			>
 		</File>
@@ -389,11 +405,19 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Tutorial.cpp"
+			>
+		</File>
+		<File
 			RelativePath=".\Vacuum.cpp"
 			>
 		</File>
 		<File
 			RelativePath=".\Vacuum.h"
+			>
+		</File>
+		<File
+			RelativePath=".\WinScreen.cpp"
 			>
 		</File>
 	</Files>

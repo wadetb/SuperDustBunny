@@ -7,9 +7,10 @@
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
-#include "TennisBall.h"
 #include "Common.h"
+#include "TennisBall.h"
 #include "Dusty.h"
+#include "Tutorial.h"
 #include "Vacuum.h"
 
 #define MAX_BALLS 100
@@ -95,7 +96,7 @@ void UpdateBall()
 
                 if (Tutorial.BallDisplayed == false)
                 {
-                    SetGameState_Crumb(TUTORIALSTATE_BALL);
+                    SetGameState_Tutorial(TUTORIALSTATE_BALL);
                     return;
                 }
             }      

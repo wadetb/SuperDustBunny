@@ -10,6 +10,7 @@
 #include "Common.h"
 #include "FireWorks.h"
 #include "Dusty.h"
+#include "Tutorial.h"
 #include "chapter.h"
 #include "Coin.h"
 
@@ -83,7 +84,7 @@ void UpdateFireWorks()
 			{
 			    if (Tutorial.FireworkDisplayed == false)
 			    {
-			        SetGameState_Crumb(TUTORIALSTATE_FIREWORK);
+			        SetGameState_Tutorial(TUTORIALSTATE_FIREWORK);
 			        return;
 			    }
 		        		        

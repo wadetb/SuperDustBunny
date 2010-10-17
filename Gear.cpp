@@ -7,9 +7,10 @@
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
-#include "Gear.h"
 #include "Common.h"
+#include "Gear.h"
 #include "Dusty.h"
+#include "Tutorial.h"
 #include "Vacuum.h"
 
 #define MAX_GEARS 100
@@ -81,7 +82,7 @@ void UpdateGear()
 
 				if (Tutorial.GearDisplayed == false)
 				{
-					SetGameState_Crumb(TUTORIALSTATE_GEAR);
+					SetGameState_Tutorial(TUTORIALSTATE_GEAR);
 					return;
 				}
 			}

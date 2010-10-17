@@ -8,7 +8,7 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
 #include "Common.h"
-#include "chapter.h"
+#include "Chapter.h"
 #include "Dusty.h"
 #include "Barrel.h"
 #include "Coin.h"

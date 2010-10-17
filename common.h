@@ -133,56 +133,31 @@ inline float Random(float Min, float Max)
 #endif
 }
 
+inline float Round(float f)
+{
+	return (f > 0.0f) ? floor(f + 0.5f) : ceil(f - 0.5f);
+}
+
 #ifdef PLATFORM_WINDOWS
 #define strcasecmp _stricmp
 #define strdup _strdup
 #define snprintf _snprintf
 #endif
 
-enum ETutorialState
-{
-    TUTORIALSTATE_NONE,
-    TUTORIALSTATE_INITIAL,
-    TUTORIALSTATE_COIN,
-    TUTORIALSTATE_BALL,
-    TUTORIALSTATE_FIREWORK,
-    TUTORIALSTATE_BARREL,
-    TUTORIALSTATE_WALLJUMP,
-    TUTORIALSTATE_JUMP,
-    TUTORIALSTATE_GEAR,
-};
-
-struct STutorial
-{
-    ETutorialState State;
-    
-    bool CoinDisplayed;
-    bool FireworkDisplayed;
-    bool BallDisplayed;
-    bool BarrelDisplayed;
-    bool WallJumpDisplayed;
-    bool InitialDisplayed;
-    bool JumpDisplayed;
-    bool GearDisplayed;
-
-	// Causes the game to ignore the jump key until it's released.
-	bool JumpInhibit;
-};
-
-extern STutorial Tutorial;
-
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                            Temporary landing zone for global functions                                                  //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
 bool GetInput_MoveLeft();
 bool GetInput_MoveRight();
 bool GetInput_Jump();
 
+void SetGameState_StartScreen();
 void SetGameState_DieScreen();
 void SetGameState_WinScreen();
-void SetGameState_PauseScreen();
-void SetGameState_Crumb(ETutorialState State);
+void SetGameState_Tutorial(enum ETutorialState State);
+void SetGameState_Playing();
 
-void InitTutorial();
-void SkipTutorials();
-
+void LoadCurrentChapter();
 
 #endif

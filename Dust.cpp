@@ -6,6 +6,7 @@
 //                                      Copyright 2010 by Thomas Perry and Wade Brainerd. All rights reserved.                             //
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
+
 #include "Common.h"
 #include "Dust.h"
 #include "Dusty.h"
