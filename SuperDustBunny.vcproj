@@ -405,6 +405,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\Docs\TODO.txt"
+			>
+		</File>
+		<File
 			RelativePath=".\Tutorial.cpp"
 			>
 		</File>

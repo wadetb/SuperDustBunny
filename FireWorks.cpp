@@ -173,6 +173,17 @@ void UpdateFireWorks()
                         Ball->State = BALLSTATE_FALLING;
                     }              
                 }
+                
+                for (int i = 0; i < NFireWorks; i++)
+                {
+                    SFireWork* FireWork = &FireWorks[i];
+                    
+                    float Dist = (Distance(FireWork->X, FireWork->Y, FireWork->X, FireWork->Y));
+                    if (Dist < FireWork->ExplosionSize*64 && FireWork->State == FIREWORKSTATE_WAIT)
+                    {
+                        FireWork->State = FIREWORKSTATE_FUSE;
+                    }              
+                }               
             }
             		
 			FireWork->Timer--;
