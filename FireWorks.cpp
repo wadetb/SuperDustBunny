@@ -13,6 +13,8 @@
 #include "Tutorial.h"
 #include "chapter.h"
 #include "Coin.h"
+#include "Gear.h"
+#include "TennisBall.h"
 
 #define MAX_FIREWORKS 100
 
@@ -130,30 +132,49 @@ void UpdateFireWorks()
 									sxPlaySound( &BlockBreakSound );
 									Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
 								}
-							} 							           
-						}
+							}       					           
+						}	
 					}
-				}
-            }
-            
-/*            for (int i = 0; i < NCoins; i++)
-            {
-                SCoin* Coin = &Coins[i];
-                float XDist = (FireWork->X - Coin->X);
-                float YDist = ((FireWork->Y-50) - (Coin->Y));
-                float Dist = sqrtf(XDist*XDist + YDist*YDist);
-
-                if (Dist < 125)
-                {
-                    Coin->State = COINSTATE_FALLING;        
-
-                    sxPlaySound( &CoinVacuumedUpSound );                    
-                }              
-            }*/      
+				}							    
+            }    	          
         }     
         
 		if (FireWork->State == FIREWORKSTATE_EXPLODE)
-		{
+        {   
+            for (int i = 0; i < NFireWorks; i++)
+            {
+                SFireWork* FireWork = &FireWorks[i];       
+                for (int i = 0; i < NCoins; i++)//Need extern in header file to accomplish
+                {
+                    SCoin* Coin = &Coins[i];
+                    float Dist =(Distance(FireWork->X, FireWork->Y, Coin->X, Coin->Y));
+                    if (Dist < FireWork->ExplosionSize*64)//This explosion is two blocks to the left and right, up and down from center.
+                    {                    
+                        Coin->State = COINSTATE_FALLING;     
+                    }        
+                }
+
+                for (int i = 0; i < NGears; i++)
+                {
+                    SGear* Gear = &Gears[i];
+                    float Dist = (Distance(FireWork->X, FireWork->Y, Gear->X, Gear->Y));
+                    if (Dist < FireWork->ExplosionSize*64)
+                    {
+                        Gear->State = GEARSTATE_FALLING;
+                    }                                       
+                }
+
+                for (int i = 0; i < NBalls; i++)
+                {
+                    SBall* Ball = &Balls[i];
+                    float Dist = (Distance(FireWork->X, FireWork->Y, Ball->X, Ball->Y));
+                    if (Dist < FireWork->ExplosionSize*64)
+                    {
+                        Ball->State = BALLSTATE_FALLING;
+                    }              
+                }
+            }
+            		
 			FireWork->Timer--;
 			if (FireWork->Timer == 0)
 			{

@@ -161,7 +161,7 @@ bool LoadBlocks(const char* FileName)
 			if (strstr(Block->Desc, "nowalljump"))
 			{
 				Block->NoWallJump = true;
-			}		
+			}	
 		}
 
 		Chapter.NBlocks++;

@@ -38,4 +38,7 @@ void ClearGears();
 void UpdateGear();
 void DisplayGear();
 
+extern int NGears;
+extern SGear Gears[];
+
 #endif

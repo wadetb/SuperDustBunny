@@ -30,6 +30,8 @@ struct SCoin
 };
 
 extern SCoin Coin;
+extern SCoin Coins[];
+extern int NCoins;
 
 void CreateCoin(int X, int Y, const char* Desc);
 void ClearCoins();

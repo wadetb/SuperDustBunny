@@ -34,6 +34,9 @@ struct SBall
 };
 
 extern SBall Ball;
+extern int NBalls;
+extern SBall Balls[];
+
 void CreateBall(int X, int Y, const char* Desc);
 void ClearBalls();
 
