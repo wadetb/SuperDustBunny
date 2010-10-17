@@ -96,15 +96,14 @@ void UpdateStartScreen()
 		return;
 	}
 
-	if (kbIsKeyDown(KB_A) && !kbWasKeyDown(KB_A))
+	if (kbIsKeyDown(KB_A))
 	{
-		StartScreen.X -= 600;
+		StartScreen.X -= 100;
 	}
-	if (kbIsKeyDown(KB_D) && !kbWasKeyDown(KB_D))
+	if (kbIsKeyDown(KB_D))
 	{
-		StartScreen.X += 600;
+		StartScreen.X += 100;
 	}
-
 #endif
 
 	if (StartScreen.Dragging)

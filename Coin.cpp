@@ -95,12 +95,11 @@ void UpdateCoins()
 			{
 				Coin->State = COINSTATE_FALLING;        
 
-				sxPlaySound( &CoinVacuumedUpSound );  
+				sxPlaySound(&CoinVacuumedUpSound);  
 
 				if (Tutorial.CoinDisplayed == false)
 				{
 					SetGameState_Tutorial(TUTORIALSTATE_COIN);
-					JamVacuum();
 					return;
 				}
 			} 	                       	    
@@ -110,10 +109,10 @@ void UpdateCoins()
             Coin->Y += Coin->FloatVelocityY;
             Coin->FloatVelocityY += 1.0f;
 
-			if (Coin->Y + ScrollY >= Vacuum.Y)
+			if (Coin->Y >= Vacuum.Y)
 			{
 				Coin->State = COINSTATE_INACTIVE;
-				sxPlaySound (&VacuumClogSound);
+				sxPlaySound(&VacuumClogSound);
 				JamVacuum();
 			}       
 		}
