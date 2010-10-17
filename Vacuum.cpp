@@ -22,6 +22,7 @@ void InitVacuum()
 {
 	Vacuum.State = VACUUMSTATE_FAR;
 	Vacuum.SoundState = VACUUMSOUNDSTATE_OFF;
+	Vacuum.Y = 1.0e6f;
 	Vacuum.Timer = 10*60;
 	Vacuum.Volume = 0.0f;
 
