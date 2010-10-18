@@ -70,6 +70,70 @@ void DisplayFireWorks()
 	}
 }
 
+void ExplodeFireWork(int X, int Y, int Size)
+{
+	for (int y = 0; y < Chapter.StitchedHeight; y++)
+	{
+		for (int x = 0; x < Chapter.StitchedWidth; x++)
+		{
+			int BlockID = GetBlockID(x, y);
+			if (BlockID < SPECIALBLOCKID_FIRST)
+			{
+				SBlock* Block = &Chapter.Blocks[BlockID];						
+				if (Block->Destructible)
+				{
+					if (Distance(X, Y, (float)x*64+32, (float)y*64+32) < Size*64)
+					{ 
+						sxPlaySound( &BlockBreakSound );
+						Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
+					}
+				}       					           
+			}	
+		}
+	}							    
+
+	for (int i = 0; i < NCoins; i++)//Need extern in header file to accomplish
+	{
+		SCoin* Coin = &Coins[i];
+		float Dist =(Distance(X, Y, Coin->X, Coin->Y));
+		if (Dist < Size*64)
+		{                    
+			Coin->State = COINSTATE_FALLING;     
+		}        
+	}
+
+	for (int i = 0; i < NGears; i++)
+	{
+		SGear* Gear = &Gears[i];
+		float Dist = (Distance(X, Y, Gear->X, Gear->Y));
+		if (Dist < Size*64)
+		{
+			Gear->State = GEARSTATE_FALLING;
+		}                                       
+	}
+
+	for (int i = 0; i < NBalls; i++)
+	{
+		SBall* Ball = &Balls[i];
+		float Dist = (Distance(X, Y, Ball->X, Ball->Y));
+		if (Dist < Size*64)
+		{
+			Ball->State = BALLSTATE_FALLING;
+		}              
+	}
+
+	for (int i = 0; i < NFireWorks; i++)
+	{
+		SFireWork* FireWork = &FireWorks[i];
+
+		float Dist = (Distance(X, Y, FireWork->X, FireWork->Y));
+		if (Dist < Size*64 && Dist != 0 && FireWork->State == FIREWORKSTATE_WAIT)
+		{
+			FireWork->State = FIREWORKSTATE_FUSE;
+		}
+	}               
+}
+
 void UpdateFireWorks()
 {
 	for (int i = 0; i < NFireWorks; i++)
@@ -117,85 +181,11 @@ void UpdateFireWorks()
 				FireWork->Timer = 30;
 				FireWork->State = FIREWORKSTATE_EXPLODE;
 
-				for (int y = 0; y < Chapter.StitchedHeight; y++)
-				{
-					for (int x = 0; x < Chapter.StitchedWidth; x++)
-					{
-						int BlockID = GetBlockID(x, y);
-						if (BlockID < SPECIALBLOCKID_FIRST)
-						{
-							SBlock* Block = &Chapter.Blocks[BlockID];						
-							if (Block->Destructible)
-							{
-								if (Distance(FireWork->X, FireWork->Y, (float)x*64+32, (float)y*64+32) < FireWork->ExplosionSize*64)
-								{ 
-									sxPlaySound( &BlockBreakSound );
-									Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
-								}
-							}       					           
-						}	
-					}
-				}							    
+				ExplodeFireWork(FireWork->X, FireWork->Y, FireWork->ExplosionSize);
             }    	          
         }     
-        
-		if (FireWork->State == FIREWORKSTATE_EXPLODE)
+		else if (FireWork->State == FIREWORKSTATE_EXPLODE)
         {   
-            for (int i = 0; i < NFireWorks; i++)
-            {
-                SFireWork* FireWork = &FireWorks[i];       
-                for (int i = 0; i < NCoins; i++)//Need extern in header file to accomplish
-                {
-                    SCoin* Coin = &Coins[i];
-                    float Dist =(Distance(FireWork->X, FireWork->Y, Coin->X, Coin->Y));
-                    if (Dist < 100)
-                    {                    
-                        Coin->State = COINSTATE_FALLING;     
-                    }        
-                }
-
-                for (int i = 0; i < NGears; i++)
-                {
-                    SGear* Gear = &Gears[i];
-                    float Dist = (Distance(FireWork->X, FireWork->Y, Gear->X, Gear->Y));
-                    if (Dist < 100)
-                    {
-                        Gear->State = GEARSTATE_FALLING;
-                    }                                       
-                }
-
-                for (int i = 0; i < NBalls; i++)
-                {
-                    SBall* Ball = &Balls[i];
-                    float Dist = (Distance(FireWork->X, FireWork->Y, Ball->X, Ball->Y));
-                    if (Dist < 100)
-                    {
-                        Ball->State = BALLSTATE_FALLING;
-                    }              
-                }
-                
-                for (int i = 0; i < NFireWorks; i++)
-                {
-                    SFireWork* FireWork = &FireWorks[i];
-                    
-                    float XDist, YDist, Dist;
-                    
-                    for (int y = 1; y < NFireWorks; y++)
-                    {
-                        SFireWork* FireWorkTwo = &FireWorks[y];
-                        
-                        XDist = ( (FireWork->X) - (FireWorkTwo->X) );
-                        YDist = ( (FireWork->Y) - (FireWorkTwo->Y) );
-                        Dist = sqrtf(XDist*XDist + YDist*YDist);
-                                        
-                        if (Dist < 150 && Dist != 0 && FireWork->State == FIREWORKSTATE_WAIT)
-                        {
-                            FireWork->State = FIREWORKSTATE_FUSE;
-                        }
-                   }              
-                }               
-            }
-            		
 			FireWork->Timer--;
 			if (FireWork->Timer == 0)
 			{
