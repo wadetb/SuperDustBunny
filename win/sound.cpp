@@ -76,6 +76,8 @@ void sxLoadSound( const char* name, sxSound* snd )
 	snd->buffer->Unlock(write, length, NULL, 0);
 
     mmioClose(hmmio, 0);
+
+	snd->volume = 1.0f;
 }
 
 void sxDestroySound( sxSound* snd )
@@ -101,13 +103,17 @@ void sxPlaySoundLooping( sxSound* snd )
 		snd->buffer->Play(0, 0, DSBPLAY_LOOPING);
 }
 
+#define DSVOLUME_TO_DB(volume) ((DWORD)(-30*(100 - volume)))
 
 void sxSetSoundVolume( sxSound* snd, float volume )
 {
+	snd->volume = volume;
+
 	if (snd->buffer)
 	{
-//		LONG v = (LONG)(-5000 * log10f( 100.0f * (1.0f - volume) ));
-		snd->buffer->SetVolume(-2000 + (LONG)(2000*volume));
+		if (volume < 0.0f) volume = 0.0f;
+		if (volume > 100.0f) volume = 100.0f;
+		snd->buffer->SetVolume(DSVOLUME_TO_DB((int)(volume*100)));
 	}
 }
 

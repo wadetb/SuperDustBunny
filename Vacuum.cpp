@@ -10,29 +10,24 @@
 #include "Common.h"
 #include "Vacuum.h"
 #include "Dusty.h"
+#include "Chapter.h"
 
 
 SVacuum Vacuum;
 
 
-void SetVacuumSoundState(EVacuumSoundState NewSoundState);
-
-
 void InitVacuum()
 {
-	Vacuum.State = VACUUMSTATE_FAR;
-	Vacuum.SoundState = VACUUMSOUNDSTATE_OFF;
-	Vacuum.Y = 1.0e6f;
+	Vacuum.State = VACUUMSTATE_OFF;
+	Vacuum.Y = (float)Chapter.StitchedHeight;
 	Vacuum.Timer = 10*60;
-	Vacuum.Volume = 0.0f;
+	Vacuum.Volume = 0.5f;
 
 	// These two sounds loop continuously.
 	sxSetSoundVolume(&VacuumOnSound, 0);
 	sxPlaySoundLooping(&VacuumOnSound);
-	//sxSetSoundVolume(&VacuumJamSound, 0);
-	//sxPlaySoundLooping(&VacuumJamSound);
-
-	SetVacuumSoundState(VACUUMSOUNDSTATE_TURN_ON);
+	sxSetSoundVolume(&VacuumJamSound, 0);
+	sxPlaySoundLooping(&VacuumJamSound);
 }
 
 void DisplayVacuum_BeforeDusty()
@@ -49,44 +44,16 @@ void DisplayVacuum_AfterDusty()
 	{
 		gxDrawSprite(0, (int)Vacuum.Y + ScrollY, &VacuumFrontSprite);
 	}
-}
 
-void SetVacuumSoundState(EVacuumSoundState NewSoundState)
-{
-	Vacuum.TargetSoundState = NewSoundState;
+	if (DevMode)
+	{
+		gxDrawString(5, 64, 16, 0xffffffff, "Vacuum State=%d Timer=%d y=%d\n      [On%02d Jam%02d TOn%02d TOff%02d]", 
+			Vacuum.State, Vacuum.Timer, (int)Vacuum.Y, (int)(VacuumOnSound.volume*99), (int)(VacuumJamSound.volume*99), (int)(VacuumTurnOnSound.volume*99), (int)(VacuumTurnOffSound.volume*99));
+	}
 }
 
 void UpdateVacuumSound()
 {
-	if (Vacuum.SoundState == VACUUMSOUNDSTATE_OFF && Vacuum.TargetSoundState == VACUUMSOUNDSTATE_TURN_ON)
-	{
-		sxSetSoundVolume(&VacuumTurnOnSound, Vacuum.Volume);
-		sxPlaySound(&VacuumTurnOnSound);
-		Vacuum.SoundTimerUp = 0;
-		Vacuum.SoundTimerDown = (int)( 1.34f * 60 );
-		Vacuum.SoundState = VACUUMSOUNDSTATE_TURN_ON;
-	}
-	if (Vacuum.SoundState == VACUUMSOUNDSTATE_ON && Vacuum.TargetSoundState == VACUUMSOUNDSTATE_JAM)
-	{
-		Vacuum.SoundState = VACUUMSOUNDSTATE_JAM;
-		Vacuum.SoundTimerUp = 0;
-		Vacuum.SoundTimerDown = (int)( 1.0f * 60 );
-	}
-	if (Vacuum.SoundState == VACUUMSOUNDSTATE_JAM && (Vacuum.TargetSoundState == VACUUMSOUNDSTATE_UNJAM || Vacuum.TargetSoundState == VACUUMSOUNDSTATE_TURN_OFF))
-	{
-		Vacuum.SoundState = VACUUMSOUNDSTATE_UNJAM;
-		Vacuum.SoundTimerUp = 0;
-		Vacuum.SoundTimerDown = (int)( 1.0f * 60 );
-	}
-	if (Vacuum.SoundState == VACUUMSOUNDSTATE_ON && Vacuum.TargetSoundState == VACUUMSOUNDSTATE_TURN_OFF)
-	{
-		sxSetSoundVolume(&VacuumTurnOffSound, 0);
-		sxPlaySound(&VacuumTurnOffSound);
-		Vacuum.SoundState = VACUUMSOUNDSTATE_TURN_OFF;
-		Vacuum.SoundTimerUp = 0;
-		Vacuum.SoundTimerDown = (int)( 4.25f * 60 );
-	}
-
 	float TargetVolume;
 	if (Vacuum.State == VACUUMSTATE_FAR)
 	{
@@ -109,73 +76,26 @@ void UpdateVacuumSound()
 			Vacuum.Volume -= 0.01f;
 	}
 
-	if (Vacuum.SoundState == VACUUMSOUNDSTATE_TURN_ON)
+	if (Vacuum.State == VACUUMSTATE_FAR || Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
-		Vacuum.SoundTimerDown--;
-		Vacuum.SoundTimerUp++;
-
-		// Before the end of the sound, ramp down the "turn on" sound and ramp up the "on" sound.
-		if (Vacuum.SoundTimerDown <= 15)
-		{
-			sxSetSoundVolume(&VacuumTurnOnSound, Vacuum.Volume * ( (float)Vacuum.SoundTimerDown / 15.0f ));
-			sxSetSoundVolume(&VacuumOnSound, Vacuum.Volume * ( 1.0f - ( (float)Vacuum.SoundTimerDown / 15.0f ) ));
-		}
-
-		if (Vacuum.SoundTimerDown == 0)
-		{
-			Vacuum.SoundState = VACUUMSOUNDSTATE_ON;
-			return;
-		}
+		if (VacuumOnSound.volume < 1.0f)
+			sxSetSoundVolume(&VacuumOnSound, VacuumOnSound.volume + 0.1f);
+		if (VacuumJamSound.volume > 0.0f)
+			sxSetSoundVolume(&VacuumJamSound, VacuumJamSound.volume - 0.1f);
 	}
-	else if (Vacuum.SoundState == VACUUMSOUNDSTATE_TURN_OFF)
+	else if (Vacuum.State == VACUUMSTATE_RETREAT)
 	{
-		Vacuum.SoundTimerDown--;
-		Vacuum.SoundTimerUp++;
-
-		// At the beginning of the sound, ramp down the "turn on" sound and ramp up the "on" sound.
-		if (Vacuum.SoundTimerUp <= 15)
-		{
-			sxSetSoundVolume(&VacuumTurnOffSound, Vacuum.Volume * ( (float)Vacuum.SoundTimerUp / 15.0f ) );
-			sxSetSoundVolume(&VacuumOnSound, Vacuum.Volume * ( 1.0f - ( (float)Vacuum.SoundTimerUp / 15.0f ) ));
-		}
-
-		if (Vacuum.SoundTimerDown == 0)
-		{
-			Vacuum.SoundState = VACUUMSOUNDSTATE_OFF;
-			return;
-		}
+		if (VacuumJamSound.volume < 1.0f)
+			sxSetSoundVolume(&VacuumJamSound, VacuumJamSound.volume + 0.1f);
+		if (VacuumOnSound.volume > 0.0f)
+			sxSetSoundVolume(&VacuumOnSound, VacuumOnSound.volume - 0.1f);
 	}
-	else if (Vacuum.SoundState == VACUUMSOUNDSTATE_JAM)
+	else if (Vacuum.State == VACUUMSTATE_OFF)
 	{
-		Vacuum.SoundTimerUp++;
-
-		// At the beginning, ramp down the "on" sound and ramp up the "jam" sound.
-		if (Vacuum.SoundTimerUp <= 15)
-		{
-			sxSetSoundVolume(&VacuumJamSound, Vacuum.Volume * ( (float)Vacuum.SoundTimerUp / 15.0f ));
-			sxSetSoundVolume(&VacuumOnSound, Vacuum.Volume * ( 1.0f - ( (float)Vacuum.SoundTimerUp / 15.0f ) ));
-		}
-	}
-	else if (Vacuum.SoundState == VACUUMSOUNDSTATE_UNJAM)
-	{
-		Vacuum.SoundTimerDown--;
-
-		// At the end, ramp up the "on" sound and ramp down the "jam" sound.
-		if (Vacuum.SoundTimerDown <= 15)
-		{
-			sxSetSoundVolume(&VacuumJamSound, Vacuum.Volume * ( (float)Vacuum.SoundTimerDown / 15.0f ));
-			sxSetSoundVolume(&VacuumOnSound, Vacuum.Volume * ( 1.0f - ( (float)Vacuum.SoundTimerDown / 15.0f ) ));
-		}
-
-		if (Vacuum.SoundTimerDown == 0)
-		{
-			Vacuum.SoundState = VACUUMSOUNDSTATE_ON;
-			return;
-		}
-	}
-	else if (Vacuum.SoundState == VACUUMSOUNDSTATE_ON)
-	{
-		sxSetSoundVolume(&VacuumOnSound, Vacuum.Volume);
+		if (VacuumTurnOffSound.volume < 1.0f)
+			sxSetSoundVolume(&VacuumTurnOffSound, VacuumTurnOffSound.volume + 0.1f);
+		if (VacuumOnSound.volume > 0.0f)
+			sxSetSoundVolume(&VacuumOnSound, VacuumOnSound.volume - 0.1f);
 	}
 }
 
@@ -230,36 +150,41 @@ void UpdateVacuum()
 	}
 	else if (Vacuum.State == VACUUMSTATE_RETREAT)
 	{
-		if (Dusty.State != DUSTYSTATE_DIE)
+		Vacuum.Timer--;
+
+		// Move the vacuum back down the screen.
+		Vacuum.Y += 5;
+
+		if (Vacuum.Timer <= 0)
 		{
-			// Move the vacuum back down the screen.
-			Vacuum.Y += 5;
-			if (Vacuum.Y + ScrollY >= gxScreenHeight)
-			{
-				Vacuum.State = VACUUMSTATE_FAR;
-				Vacuum.Timer = 3*60;
-				SetVacuumSoundState(VACUUMSOUNDSTATE_UNJAM);
-			}
+			Vacuum.State = VACUUMSTATE_FAR;
+			Vacuum.Timer = 3*60;
 		}
 	}
 }
 
 void JamVacuum()
 {
-	SetVacuumSoundState(VACUUMSOUNDSTATE_JAM);
-
-	if (Vacuum.State == VACUUMSTATE_NEAR || Vacuum.State == VACUUMSTATE_ONSCREEN)
-	{
-		Vacuum.State = VACUUMSTATE_RETREAT;
-	}
-	else
-	{
-		Vacuum.Timer = 6*60;
-	}
+	Vacuum.State = VACUUMSTATE_RETREAT;
+	Vacuum.Timer = 6*60;
 }
 
 void TurnOffVacuum()
 {
-	if (Vacuum.SoundState != VACUUMSOUNDSTATE_OFF)
-		SetVacuumSoundState(VACUUMSOUNDSTATE_TURN_OFF);
+	if (Vacuum.State != VACUUMSTATE_OFF)
+	{
+		Vacuum.State = VACUUMSTATE_OFF;
+		sxSetSoundVolume(&VacuumTurnOffSound, 0);
+		sxPlaySound(&VacuumTurnOffSound);
+	}
+}
+
+void TurnOnVacuum()
+{
+	if (Vacuum.State == VACUUMSTATE_OFF)
+	{
+		Vacuum.State = VACUUMSTATE_FAR;
+		sxSetSoundVolume(&VacuumTurnOnSound, 0);
+		sxPlaySound(&VacuumTurnOnSound);
+	}
 }

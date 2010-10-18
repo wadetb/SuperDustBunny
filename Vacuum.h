@@ -11,20 +11,10 @@
 
 enum EVacuumState
 {
+	VACUUMSTATE_OFF,
 	VACUUMSTATE_FAR,
-	VACUUMSTATE_NEAR,
 	VACUUMSTATE_ONSCREEN,
 	VACUUMSTATE_RETREAT,
-};
-
-enum EVacuumSoundState
-{
-	VACUUMSOUNDSTATE_OFF,
-	VACUUMSOUNDSTATE_TURN_ON,
-	VACUUMSOUNDSTATE_TURN_OFF,
-	VACUUMSOUNDSTATE_ON,
-	VACUUMSOUNDSTATE_JAM,
-	VACUUMSOUNDSTATE_UNJAM,
 };
 
 struct SVacuum
@@ -33,11 +23,6 @@ struct SVacuum
 
 	int Timer;
 	float Y;
-
-	EVacuumSoundState SoundState;
-	EVacuumSoundState TargetSoundState;
-	int SoundTimerUp;
-	int SoundTimerDown;
 
 	float Volume;
 };
@@ -51,7 +36,8 @@ void DisplayVacuum_AfterDusty();
 void UpdateVacuum();
 void UpdateVacuumSound();
 
-void JamVacuum();
+void TurnOnVacuum();
 void TurnOffVacuum();
+void JamVacuum();
 
 #endif

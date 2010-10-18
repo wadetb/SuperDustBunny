@@ -145,7 +145,6 @@ void UpdateDust()
 		switch (Vacuum.State)
 		{
 		case VACUUMSTATE_FAR: VacuumStrength = 0.1f; break;
-		case VACUUMSTATE_NEAR: VacuumStrength = 5.0f; break;
 		case VACUUMSTATE_ONSCREEN: VacuumStrength = 10.0f; break;
 		case VACUUMSTATE_RETREAT: VacuumStrength = 0.0f; break;
 		}

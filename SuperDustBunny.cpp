@@ -171,6 +171,7 @@ void LoadCurrentChapter()
 	InitDusty();
 	InitVacuum();
 	InitDust();
+	TurnOnVacuum();
 
 	if (CurrentChapter < 0 || CurrentChapter >= MAX_CHAPTERS)
 		CurrentChapter = 0;
@@ -424,7 +425,8 @@ void Display()
 
 bool Update()
 {    
-    //Background Music
+/*
+	//Background Music
     if (BackgroundMusic == 1)
     {	        
         if (SongDuration == 0 && SongCounter == 1)
@@ -454,6 +456,7 @@ bool Update()
             SongDuration -= 1;     
         }
     } 
+*/
 
 #ifdef PLATFORM_WINDOWS
 	kbUpdateKeys();

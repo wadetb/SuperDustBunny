@@ -120,6 +120,17 @@ inline float Remap(float Value, float FromMin, float FromMax, float ToMin, float
 	return ToMin + RelativeValue * (ToMax - ToMin);
 }
 
+inline float Lerp(float Value, float FromMin, float FromMax, float ToMin=0.0f, float ToMax=1.0f, bool Clamp=true)
+{
+	float RelativeValue = (Value - FromMin) / (FromMax - FromMin);
+	if (Clamp)
+	{
+		if (RelativeValue < 0.0f) RelativeValue = 0.0f;
+		if (RelativeValue > 1.0f) RelativeValue = 1.0f;
+	}
+	return ToMin + RelativeValue * (ToMax - ToMin);
+}
+
 inline float Random(float Min, float Max)
 {
 #ifdef PLATFORM_WINDOWS
