@@ -413,6 +413,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Tutorial.h"
+			>
+		</File>
+		<File
 			RelativePath=".\Vacuum.cpp"
 			>
 		</File>
@@ -422,6 +426,10 @@
 		</File>
 		<File
 			RelativePath=".\WinScreen.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\WinScreen.h"
 			>
 		</File>
 	</Files>
