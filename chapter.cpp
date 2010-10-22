@@ -170,7 +170,7 @@ bool LoadBlocks(const char* FileName)
 	return true;
 }
 
-bool LoadPage(const char* FileName)
+bool LoadPageFromTXT(const char* FileName)
 {
 #ifdef PLATFORM_IPHONE
 	FILE* PageFile = gxOpenFile(FileName, "r");
@@ -309,6 +309,38 @@ bool LoadPage(const char* FileName)
 	return true;
 }
 
+bool LoadPageFromTMX(const char* FileName)
+{
+	// Open the TMX file.
+#ifdef PLATFORM_IPHONE
+	FILE* PageFile = gxOpenFile(FileName, "r");
+#endif
+#ifdef PLATFORM_WINDOWS
+	FILE* PageFile = fopen(FileName, "r");
+#endif
+
+	if (!PageFile)
+		return false;
+
+	// Read the entire XML file into a text buffer.
+	fseek(PageFile, 0, SEEK_END);
+	int FileSize = ftell(PageFile);
+	rewind(PageFile);
+
+	char* XML = (char*)malloc(FileSize + 1);
+	fread(XML, FileSize, 1, PageFile);
+	fclose(PageFile);
+	XML[FileSize] = '\0';
+
+	// Parse the XML text buffer into a Document hierarchy.
+	rapidxml::xml_document<> Document;
+	Document.parse<0>(XML);
+
+	rapidxml::xml_node<char>* TileSetNode = Document.first_node("map")->first_node("tileset");
+
+	return true;
+}
+
 void LoadChapter(const char* ChapterDir)
 {
 	Chapter.NBlocks = 0;
@@ -375,7 +407,7 @@ void LoadChapter(const char* ChapterDir)
 						char FileName[1024];
 						snprintf(FileName, sizeof(FileName), "%s/Pages/%s.txt", ChapterDir, PageName);
 						
-						if (LoadPage(FileName))
+						if (LoadPageFromTXT(FileName))
 						{
 							RandomPages[NRandomPages++] = Chapter.NPages-1;
 						}

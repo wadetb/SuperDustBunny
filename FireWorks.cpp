@@ -70,7 +70,7 @@ void DisplayFireWorks()
 	}
 }
 
-void ExplodeFireWork(int X, int Y, int Size)
+void ExplodeFireWork(float X, float Y, int Size)
 {
 	for (int y = 0; y < Chapter.StitchedHeight; y++)
 	{

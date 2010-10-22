@@ -204,6 +204,34 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="rapidxml"
+			>
+			<File
+				RelativePath=".\rapidxml\license.txt"
+				>
+			</File>
+			<File
+				RelativePath=".\rapidxml\manual.html"
+				>
+			</File>
+			<File
+				RelativePath=".\rapidxml\rapidxml.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\rapidxml\rapidxml_iterators.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\rapidxml\rapidxml_print.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\rapidxml\rapidxml_utils.hpp"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\Assets.cpp"
 			>
