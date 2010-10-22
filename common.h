@@ -54,6 +54,8 @@
 #include <math.h>
 #include <time.h>
 
+#include "rapidxml/rapidxml.hpp"
+
 #include "Assets.h"
 
 // Constants
