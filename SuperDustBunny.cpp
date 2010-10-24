@@ -324,9 +324,9 @@ void UpdateGame_Playing()
     UpdateVacuum();  
 }
 
-void SetGameState_Tutorial(ETutorialState State)
+void SetGameState_Tutorial(int State)
 {
-    Tutorial.State = State;
+    Tutorial.State = (ETutorialState)State;
     
     GameState = GAMESTATE_TUTORIAL;
 }

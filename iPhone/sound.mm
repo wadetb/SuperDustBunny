@@ -114,6 +114,7 @@ void sxPlaySoundLooping(sxSound* sound)
 
 void sxSetSoundVolume(sxSound* sound, float volume)
 {
+	sound->volume = volume;
 	alSourcef(sound->source, AL_GAIN, volume);
 }
 

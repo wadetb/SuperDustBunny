@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		080CD1A11271C99E00A866B7 /* license.txt in Resources */ = {isa = PBXBuildFile; fileRef = 080CD19B1271C99E00A866B7 /* license.txt */; };
 		080CD1A21271C99E00A866B7 /* manual.html in Resources */ = {isa = PBXBuildFile; fileRef = 080CD19C1271C99E00A866B7 /* manual.html */; };
+		080CD1CF127287B600A866B7 /* DieScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 080CD1C7127287B600A866B7 /* DieScreen.cpp */; };
+		080CD1D0127287B600A866B7 /* StartScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 080CD1C9127287B600A866B7 /* StartScreen.cpp */; };
+		080CD1D1127287B600A866B7 /* Tutorial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 080CD1CB127287B600A866B7 /* Tutorial.cpp */; };
+		080CD1D2127287B600A866B7 /* WinScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 080CD1CD127287B600A866B7 /* WinScreen.cpp */; };
 		084D84B412026A0800EEA2E9 /* Dust.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 084D84B212026A0800EEA2E9 /* Dust.cpp */; };
 		0865F05F120DA5F60079486D /* Docs in Resources */ = {isa = PBXBuildFile; fileRef = 0865F057120DA5F60079486D /* Docs */; };
 		088B035911EC74C000F7D112 /* SuperDustBunny.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 088B035811EC74C000F7D112 /* SuperDustBunny.cpp */; };
@@ -48,6 +52,14 @@
 		080CD19E1271C99E00A866B7 /* rapidxml_iterators.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = rapidxml_iterators.hpp; sourceTree = "<group>"; };
 		080CD19F1271C99E00A866B7 /* rapidxml_print.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = rapidxml_print.hpp; sourceTree = "<group>"; };
 		080CD1A01271C99E00A866B7 /* rapidxml_utils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = rapidxml_utils.hpp; sourceTree = "<group>"; };
+		080CD1C7127287B600A866B7 /* DieScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DieScreen.cpp; path = ../DieScreen.cpp; sourceTree = SOURCE_ROOT; };
+		080CD1C8127287B600A866B7 /* DieScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DieScreen.h; path = ../DieScreen.h; sourceTree = SOURCE_ROOT; };
+		080CD1C9127287B600A866B7 /* StartScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StartScreen.cpp; path = ../StartScreen.cpp; sourceTree = SOURCE_ROOT; };
+		080CD1CA127287B600A866B7 /* StartScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StartScreen.h; path = ../StartScreen.h; sourceTree = SOURCE_ROOT; };
+		080CD1CB127287B600A866B7 /* Tutorial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tutorial.cpp; path = ../Tutorial.cpp; sourceTree = SOURCE_ROOT; };
+		080CD1CC127287B600A866B7 /* Tutorial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tutorial.h; path = ../Tutorial.h; sourceTree = SOURCE_ROOT; };
+		080CD1CD127287B600A866B7 /* WinScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WinScreen.cpp; path = ../WinScreen.cpp; sourceTree = SOURCE_ROOT; };
+		080CD1CE127287B600A866B7 /* WinScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WinScreen.h; path = ../WinScreen.h; sourceTree = SOURCE_ROOT; };
 		084D84B212026A0800EEA2E9 /* Dust.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Dust.cpp; path = ../Dust.cpp; sourceTree = SOURCE_ROOT; };
 		084D84B312026A0800EEA2E9 /* Dust.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Dust.h; path = ../Dust.h; sourceTree = SOURCE_ROOT; };
 		0865F057120DA5F60079486D /* Docs */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Docs; path = ../../Docs; sourceTree = SOURCE_ROOT; };
@@ -166,6 +178,14 @@
 		28EEBF621118D79A00187D67 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				080CD1C7127287B600A866B7 /* DieScreen.cpp */,
+				080CD1C8127287B600A866B7 /* DieScreen.h */,
+				080CD1C9127287B600A866B7 /* StartScreen.cpp */,
+				080CD1CA127287B600A866B7 /* StartScreen.h */,
+				080CD1CB127287B600A866B7 /* Tutorial.cpp */,
+				080CD1CC127287B600A866B7 /* Tutorial.h */,
+				080CD1CD127287B600A866B7 /* WinScreen.cpp */,
+				080CD1CE127287B600A866B7 /* WinScreen.h */,
 				080CD19A1271C99E00A866B7 /* rapidxml */,
 				08F4A732120CEBBE00DB2A29 /* iPhone */,
 				08F4A693120CE48000DB2A29 /* Crumb.h */,
@@ -309,6 +329,10 @@
 				084D84B412026A0800EEA2E9 /* Dust.cpp in Sources */,
 				08F4A696120CE48000DB2A29 /* Gear.cpp in Sources */,
 				08F4A730120CEB9D00DB2A29 /* Assets.cpp in Sources */,
+				080CD1CF127287B600A866B7 /* DieScreen.cpp in Sources */,
+				080CD1D0127287B600A866B7 /* StartScreen.cpp in Sources */,
+				080CD1D1127287B600A866B7 /* Tutorial.cpp in Sources */,
+				080CD1D2127287B600A866B7 /* WinScreen.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -168,7 +168,7 @@ bool GetInput_Jump();
 void SetGameState_StartScreen();
 void SetGameState_DieScreen();
 void SetGameState_WinScreen();
-void SetGameState_Tutorial(enum ETutorialState State);
+void SetGameState_Tutorial(int State);
 void SetGameState_Playing();
 
 void LoadCurrentChapter();

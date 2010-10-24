@@ -309,6 +309,11 @@ bool LoadPageFromTXT(const char* FileName)
 	return true;
 }
 
+void ReportError(const char* ErrorMessage)
+{
+	printf("ERROR: %s\n", ErrorMessage);
+}
+
 bool LoadPageFromTMX(const char* FileName)
 {
 	// Open the TMX file.
@@ -336,8 +341,117 @@ bool LoadPageFromTMX(const char* FileName)
 	rapidxml::xml_document<> Document;
 	Document.parse<0>(XML);
 
-	rapidxml::xml_node<char>* TileSetNode = Document.first_node("map")->first_node("tileset");
+	// Get the <map> node and validate everything extensively :)
+	rapidxml::xml_node<char>* MapNode = Document.first_node("map");
+	if (MapNode == NULL)
+		ReportError("Missing <map> node.");
 
+	if (strcmp(MapNode->first_attribute("version")->value(), "1.0") != 0)
+		ReportError("Unsupported TMX file version.  Re-save the TMX file with the right version of Tiled.");
+	
+	if (strcmp(MapNode->first_attribute("orientation")->value(), "orthogonal") != 0)
+		ReportError("Map orientation must be orthogonal.  Fix this problem and re-save the TMX file.");
+	
+	if (atoi(MapNode->first_attribute("width")->value()) != 12)
+		ReportError("Map width must be 12.  Fix this problem and re-save the TMX file.");
+	
+	if (atoi(MapNode->first_attribute("height")->value()) < 1)
+		ReportError("Invalid map height.  Fix this problem and re-save the TMX file.");
+	
+	// Get the <tileset> node and validate.
+	rapidxml::xml_node<char>* TileSetNode = MapNode->first_node("tileset");
+	if (TileSetNode == NULL)
+		ReportError("Missing <tileset> node.");
+	
+	if (TileSetNode->next_sibling("tileset") != NULL)
+		ReportError("Cannot have more than one tileset.  Fix this problem and re-save the TMX file.");
+
+	if (strcmp(TileSetNode->first_attribute("source")->value(), "../Blocks.tsx") != 0)
+		ReportError("Expected tileset '../Blocks.tsx'.  Fix this problem and re-save the TMX file.");
+	
+	int FirstGID = atoi(TileSetNode->first_attribute("firstgid")->value());
+	if (FirstGID != 1)
+		ReportError("Expected firstgid to be 1.  Re-saving the TMX file may help.");
+
+	// Get the <layer> node and validate.
+	rapidxml::xml_node<char>* LayerNode = MapNode->first_node("layer");
+	
+	if (LayerNode == NULL)
+		ReportError("Missing <layer> node.");
+	
+	if (LayerNode->next_sibling("layer") != NULL)
+		ReportError("Cannot have more than one layer.  Fix this problem and re-save the TMX file.");
+	
+	// Get the <data> node and validate.
+	rapidxml::xml_node<char>* DataNode = LayerNode->first_node("data");
+	
+	if (DataNode == NULL)
+		ReportError("Missing <data> node.");
+
+	if (strcmp(DataNode->first_attribute("encoding")->value(), "csv") != 0)
+		ReportError("Wrong map encoding.  Set encoding to CSV in the Tiled preferences and re-save the TMX file.");
+
+	// Build the SPage structure.
+	// TODO: Check MAX_PAGES
+	SPage* Page = &Chapter.Pages[Chapter.NPages++];
+	
+	// Determine page name from the file name (no extension, no path).
+	char Name[1024];
+	snprintf(Name, sizeof(Name), "%s", FileName);
+	
+	char* Dot = strchr(Name, '.');
+	if (Dot) *Dot = '\0';
+	
+	char* Slash = strrchr(Name, '/');
+	if (!Slash) Slash = strrchr(Name, '\\');
+	if (!Slash) Slash = Name;
+	
+	Page->Name = strdup(Slash);
+	
+	Page->Width = atoi(LayerNode->first_attribute("width")->value());
+	Page->Height = atoi(LayerNode->first_attribute("height")->value());
+	
+	if (Page->Width != 12)
+		ReportError("Layer width must be 12.  Fix this problem and re-save the TMX file.");
+
+	if (Page->Height < 1)
+		ReportError("Invalid layer height.  Fix this problem and re-save the TMX file.");
+
+	// Allocate the Blocks buffer.
+	Page->Blocks = (int*)malloc(Page->Width * Page->Height * sizeof(int));
+	
+	// Parse the CSV data into the Blocks buffer.
+	char* Data = DataNode->value();
+	char* DataEnd = Data + DataNode->value_size();
+	
+	for (int y = 0; y < Page->Height; y++)
+	{
+		for (int x = 0; x < Page->Width; x++)
+		{
+			if (Data >= DataEnd)
+				ReportError("Unexpected end of tile data.  Re-saving the TMX file may help.");
+			
+			int ID = strtol(Data, &Data, 0);
+			if (ID < FirstGID)
+				ReportError("Invalid tile data.  Re-saving the TMX file may help.");
+			
+			if (*Data != ',')
+				ReportError("Tile data format is invalid.  Re-saving the TMX file may help.");
+			Data++;
+			
+			if (ID == 0)
+				ID = SPECIALBLOCKID_BLANK;
+			else
+				ID = ID - FirstGID;
+
+			Page->Blocks[y*Page->Width + x] = ID;
+		}
+		
+		if (*Data != '\n')
+			ReportError("Tile data format is invalid (but I'm being picky).  Re-saving the TMX file may help.");
+		Data++;
+	}
+	
 	return true;
 }
 
@@ -351,7 +465,7 @@ void LoadChapter(const char* ChapterDir)
 	snprintf(FileName, sizeof(FileName), "%s/Blocks.txt", ChapterDir);
 	if (!LoadBlocks(FileName))
 	{
-		// TODO: Display error message here.
+		ReportError("Blocks.txt is missing.");
 		return;
 	}
 
@@ -366,7 +480,7 @@ void LoadChapter(const char* ChapterDir)
 
 	if (!ChapFile)
 	{
-		// TODO: Display error message here.
+		ReportError("Chapter.txt is missing.");
 		return;
 	}
 
@@ -404,10 +518,22 @@ void LoadChapter(const char* ChapterDir)
 					if (!Found)
 					{
 						// Page not already loaded, attempt to load it.
+						
+						// First try loading from a TXT file.
 						char FileName[1024];
 						snprintf(FileName, sizeof(FileName), "%s/Pages/%s.txt", ChapterDir, PageName);
 						
-						if (LoadPageFromTXT(FileName))
+						bool SuccessfullyLoaded = LoadPageFromTXT(FileName);
+						
+						// If not found, attempt to load from a TMX file.
+						if (!SuccessfullyLoaded)
+						{
+							snprintf(FileName, sizeof(FileName), "%s/Pages/%s.tmx", ChapterDir, PageName);
+							
+							SuccessfullyLoaded = LoadPageFromTMX(FileName);
+						}
+						
+						if (SuccessfullyLoaded)
 						{
 							RandomPages[NRandomPages++] = Chapter.NPages-1;
 						}
@@ -475,6 +601,9 @@ void LoadChapter(const char* ChapterDir)
 
 			if (BlockID < SPECIALBLOCKID_FIRST)
 			{
+				if (BlockID < 0 || BlockID > Chapter.NBlocks)
+					ReportError("Invalid block ID encountered when stitching.");
+				
 				SBlock* Block = &Chapter.Blocks[BlockID];
 
 				if (strcasecmp(Block->Desc, "blank") == 0)

@@ -3,6 +3,7 @@
 
 struct sxSound
 {
+	float volume;
 	unsigned int buffer;
 	unsigned int source;
 };
