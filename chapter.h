@@ -11,9 +11,12 @@
 #define CHAPTER_H
 
 #define MAX_PAGES			100
-#define MAX_BLOCKS			100
+#define MAX_BLOCKS			10000
 #define MAX_PAGE_BLOCKS		(256*1024)
 #define MAX_STITCHED_PAGES	100
+#define MAX_TILESETS		100
+#define MAX_PAGE_TILESETS	10
+
 
 enum ESpecialBlockID
 {
@@ -27,12 +30,26 @@ enum ESpecialBlockID
 	SPECIALBLOCKID_RED,
 };
 
+struct STileSet
+{
+	const char* Name;
+	int FirstBlock;
+	int NBlocks;
+	gxSprite Sprite;
+};
+
+struct STileSetInfo
+{
+	STileSet* TileSet;
+	int FirstGID;
+};
+
 struct SBlock
 {
 	int ID;
-	char Key[3][3];
-	char* Desc;
-	gxSprite Sprite;
+	int TileSet;
+	int SubX, SubY;
+	
 	bool Destructible;
 	bool DelayDest;
 	bool GreenDelayDest;
@@ -60,6 +77,9 @@ struct SChapter
 
 	int NPages;
 	SPage Pages[MAX_PAGES];
+
+	int NTileSets;
+	STileSet TileSets[MAX_TILESETS];
 
 	int NBlocks;
 	SBlock Blocks[MAX_BLOCKS];

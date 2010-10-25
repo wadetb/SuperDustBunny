@@ -264,4 +264,6 @@ void gxCreateASCIIBlockSprite(gxSprite* Sprite, const char* Key);
 void gxDrawSpriteCenteredRotated(int x, int y, float a, gxSprite* spr);
 void gxDrawSpriteCenteredScaledAlphaAdd(int x, int y, float scalex, float scaley, float alpha, gxSprite* spr);
 
+void gxDrawSpriteSubRect( int x, int y, int x1, int y1, int x2, int y2, gxSprite* p );
+
 #endif

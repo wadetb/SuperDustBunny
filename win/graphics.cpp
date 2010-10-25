@@ -613,3 +613,19 @@ void gxDrawSpriteCenteredScaledAlphaAdd(int x, int y, float scalex, float scaley
 
 	_gxDrawQuad( x - w/2, y - h/2, w, h, color );
 }
+
+void gxDrawSpriteSubRect(int x, int y, int x1, int y1, int x2, int y2, gxSprite* spr)
+{
+	gxDev->SetTexture( 0, spr->tex );
+	gxDev->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
+	gxDev->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
+	gxDev->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ONE );
+
+	float u0 = (float)x1 / (float)spr->width;
+	float u1 = (float)x2 / (float)spr->width;
+	float v0 = (float)y1 / (float)spr->height;
+	float v1 = (float)y2 / (float)spr->height;
+
+	_gxDrawQuad( x, y, x2-x1, y2-y1, gxRGBA32(255, 255, 255, 255), u0, v0, u1, v1 );
+}
+

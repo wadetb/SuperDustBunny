@@ -38,9 +38,9 @@ EGameState GameState = GAMESTATE_START_SCREEN;
 
 const char* ChapterNames[MAX_CHAPTERS] =
 {
+	"Chapters/TMXTest",
 	"Chapters/Wade1",
 	"Chapters/Thomas1",
-	"",
 	"",
 	"",
 	"",
@@ -102,6 +102,20 @@ void Exit()
 	gxDeinit();
 	
 	sxDeinit();
+}
+
+void ReportError(const char* ErrorMessage)
+{
+#ifdef PLATFORM_WINDOWS
+	MessageBox(NULL, ErrorMessage, "SuperDustBunny Error", MB_OK | MB_ICONSTOP);
+	exit(1);
+#endif
+
+#ifdef PLATFORM_IPHONE
+	// TODO: Use iPhone popop dialog.
+	printf("ERROR: %s\n", ErrorMessage);
+	exit(1);
+#endif
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//

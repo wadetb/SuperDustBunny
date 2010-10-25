@@ -161,6 +161,8 @@ inline float Round(float f)
 //                                            Temporary landing zone for global functions                                                  //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
+void ReportError(const char* ErrorMessage);
+
 bool GetInput_MoveLeft();
 bool GetInput_MoveRight();
 bool GetInput_Jump();
