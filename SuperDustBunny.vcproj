@@ -249,23 +249,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\Docs\Blank_Level_Template.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Blocks.txt"
-			>
-		</File>
-		<File
 			RelativePath=".\chapter.cpp"
 			>
 		</File>
 		<File
 			RelativePath=".\chapter.h"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Chapter.txt"
 			>
 		</File>
 		<File
@@ -309,10 +297,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\Docs\Easy.txt"
-			>
-		</File>
-		<File
 			RelativePath=".\FireWorks.cpp"
 			>
 		</File>
@@ -326,90 +310,6 @@
 		</File>
 		<File
 			RelativePath=".\Gear.h"
-			>
-		</File>
-		<File
-			RelativePath="..\Docs\Medium.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page1.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page10.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page11.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page12.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page13.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page14.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page15.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page16.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page17.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page18.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page19.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page2.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page20.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page3.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page4.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page5.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page6.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page7.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page8.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page9.txt"
 			>
 		</File>
 		<File
