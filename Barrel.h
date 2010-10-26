@@ -18,6 +18,12 @@ enum EBarrelState
 	BARRELSTATE_RESET,
 };
 
+struct SBarrelProperties
+{
+	int From;
+	int To;
+};
+
 struct SBarrel
 {
 	float X, Y;
@@ -31,7 +37,9 @@ struct SBarrel
 	int Timer;
 };
 
-void CreateBarrel(int X, int Y, const char* Desc);
+void ParseBarrelProperties(struct SBlock* Block, rapidxml::xml_node<char>* PropertiesNode);
+
+void CreateBarrel(int X, int Y, SBarrelProperties* Properties);
 void ClearBarrels();
 
 void UpdateBarrels();

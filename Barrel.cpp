@@ -9,6 +9,7 @@
 
 #include "Common.h"
 #include "Barrel.h"
+#include "Chapter.h"
 #include "Dusty.h"
 #include "Tutorial.h"
 
@@ -17,20 +18,52 @@
 int NBarrels = 0;
 SBarrel Barrels[MAX_BARRELS];
 
-void CreateBarrel(int X, int Y, const char* Desc)
+void ParseBarrelProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode)
+{
+	SBarrelProperties* BarrelProperties = (SBarrelProperties*)malloc(sizeof(SBarrelProperties));
+
+	// Set default values.
+	BarrelProperties->From = 0;
+	BarrelProperties->To = 0;
+
+	// Scan properties for values.
+	rapidxml::xml_node<char>* PropertyNode = PropertiesNode->first_node("property");
+	while (PropertyNode)
+	{
+		const char* Name = PropertyNode->first_attribute("name")->value();
+		const char* Value = PropertyNode->first_attribute("value")->value();
+
+		if (strcmp(Name, "from") == 0)
+		{
+			BarrelProperties->From = atoi(Value);
+		}
+		else if (strcmp(Name, "to") == 0)
+		{
+			BarrelProperties->To = atoi(Value);
+		}
+		else if (strcmp(Name, "type") != 0)
+		{
+			ReportError("Unrecognized barrel property '%s'='%s'.", Name, Value);
+		}
+
+		PropertyNode = PropertyNode->next_sibling("property");
+	}
+
+	Block->Properties = BarrelProperties;
+}
+
+void CreateBarrel(int X, int Y, SBarrelProperties* Properties)
 {
 	SBarrel* Barrel = &Barrels[NBarrels++];
 
 	Barrel->X = (float)X + 32;
 	Barrel->Y = (float)Y + 32;
 
-	int FromDir, ToDir;
-	sscanf(Desc, "barrel from=%d to=%d", &FromDir, &ToDir);
+	Barrel->FromDir = (float)Properties->From;
+	Barrel->ToDir = (float)Properties->To;
+	Barrel->Dir = Barrel->FromDir;
 
 	Barrel->State = BARRELSTATE_WAIT;
-	Barrel->FromDir = (float)FromDir;
-	Barrel->ToDir = (float)ToDir;
-	Barrel->Dir = Barrel->FromDir;
 }
 
 void ClearBarrels()

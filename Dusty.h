@@ -75,9 +75,12 @@ struct SDusty
 };
 
 extern SDusty Dusty;
+
 void DisplayDusty();
 void UpdateDusty();
 void InitDusty();
+
+void SetDustyStart(int x, int y);
 
 void SetDustyState_PrepareLaunch();
 void SetDustyState_Launch(float VelocityX, float VelocityY);

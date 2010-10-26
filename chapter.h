@@ -30,9 +30,22 @@ enum ESpecialBlockID
 	SPECIALBLOCKID_RED,
 };
 
+enum EBlockType
+{
+	BLOCKTYPE_NORMAL,
+	BLOCKTYPE_CHAPTERSTART,
+	BLOCKTYPE_CHAPTEREND,
+	BLOCKTYPE_BARREL,
+	BLOCKTYPE_FIREWORK,
+	BLOCKTYPE_BALL,
+	BLOCKTYPE_GEAR,
+	BLOCKTYPE_COIN, 
+	BLOCKTYPE_ENDOFLEVEL, 
+};
+
 struct STileSet
 {
-	const char* Name;
+	char* Name;
 	int FirstBlock;
 	int NBlocks;
 	gxSprite Sprite;
@@ -46,10 +59,15 @@ struct STileSetInfo
 
 struct SBlock
 {
+	EBlockType Type;
+
 	int ID;
 	int TileSet;
+
 	int SubX, SubY;
-	
+
+	void* Properties;
+
 	bool Destructible;
 	bool DelayDest;
 	bool GreenDelayDest;
@@ -124,5 +142,7 @@ int GetBlockID(int x, int y);
 
 bool IsBlockEmpty(int x, int y);
 bool IsBlockSolid(int x, int y);
+
+void EraseBlock(int x, int y);
 
 #endif

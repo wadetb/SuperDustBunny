@@ -21,7 +21,51 @@
 int NFireWorks = 0;
 SFireWork FireWorks[MAX_FIREWORKS];
 
-void CreateFireWork(int X, int Y, const char* Desc)
+void ParseFireWorkProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode)
+{
+	SFireWorkProperties* FireWorkProperties = (SFireWorkProperties*)malloc(sizeof(SFireWorkProperties));
+
+	// Set default values.
+	FireWorkProperties->Dir = 0;
+	FireWorkProperties->Dist = 5;
+	FireWorkProperties->Fuse = 0;
+	FireWorkProperties->Size = 10;
+
+	// Scan properties for values.
+	rapidxml::xml_node<char>* PropertyNode = PropertiesNode->first_node("property");
+	while (PropertyNode)
+	{
+		const char* Name = PropertyNode->first_attribute("name")->value();
+		const char* Value = PropertyNode->first_attribute("value")->value();
+
+		if (strcmp(Name, "dir") == 0)
+		{
+			FireWorkProperties->Dir = atoi(Value);
+		}
+		else if (strcmp(Name, "dist") == 0)
+		{
+			FireWorkProperties->Dist = atoi(Value);
+		}
+		else if (strcmp(Name, "fuse") == 0)
+		{
+			FireWorkProperties->Fuse = atoi(Value);
+		}
+		else if (strcmp(Name, "size") == 0)
+		{
+			FireWorkProperties->Size = atoi(Value);
+		}
+		else if (strcmp(Name, "type") != 0)
+		{
+			ReportError("Unrecognized firework property '%s'='%s'.", Name, Value);
+		}
+
+		PropertyNode = PropertyNode->next_sibling("property");
+	}
+
+	Block->Properties = FireWorkProperties;
+}
+
+void CreateFireWork(int X, int Y, SFireWorkProperties* Properties)
 {
 	SFireWork* FireWork = &FireWorks[NFireWorks++];
 
@@ -34,14 +78,10 @@ void CreateFireWork(int X, int Y, const char* Desc)
 	FireWork->VelocityX = 0;
 	FireWork->VelocityY = 0;
 
-	FireWork->State = FIREWORKSTATE_WAIT;
-
-	FireWork->FlightDir = 0;
-	FireWork->FlightDistance = 5;
-	FireWork->Timer = 0;
-	FireWork->ExplosionSize = 10;
-
-	sscanf(Desc, "firework dir=%d dist=%d fuse=%d size=%d", &FireWork->FlightDir, &FireWork->FlightDistance, &FireWork->Timer, &FireWork->ExplosionSize);
+	FireWork->FlightDir = Properties->Dir;
+	FireWork->FlightDistance = Properties->Dist;
+	FireWork->Timer = Properties->Fuse;
+	FireWork->ExplosionSize = Properties->Size;
 
 	FireWork->State = FIREWORKSTATE_WAIT;
 }

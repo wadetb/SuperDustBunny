@@ -18,7 +18,7 @@
 int NGears = 0;
 SGear Gears[MAX_GEARS];
 
-void CreateGear(int X, int Y, const char* Desc)
+void CreateGear(int X, int Y)
 {
     SGear* Gear = &Gears[NGears++];
 

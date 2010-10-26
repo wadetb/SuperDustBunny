@@ -32,7 +32,7 @@ struct SGear
 
 extern SGear Gear;
 
-void CreateGear(int X, int Y, const char* Desc);
+void CreateGear(int X, int Y);
 void ClearGears();
 
 void UpdateGear();

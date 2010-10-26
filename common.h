@@ -58,17 +58,7 @@
 
 #include "Assets.h"
 
-// Constants
-
 static const float PI = acosf(-1.0f);
-
-// Macros
-
-extern bool DevMode;
-extern int ScrollY;
-
-#define White gxRGB32(255, 255, 255)
-#define Black gxRGB32(0, 0, 0)
 
 inline float Max(float a, float b)
 {
@@ -161,7 +151,12 @@ inline float Round(float f)
 //                                            Temporary landing zone for global functions                                                  //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-void ReportError(const char* ErrorMessage);
+// Stack of "error contexts" which provide extra information about the state of the program when an error occurs.
+void PushErrorContext(const char* ErrorContext, ...);
+void PopErrorContext();
+
+// Reports a fatal error and immediately exits the program.
+void ReportError(const char* ErrorMessage, ...);
 
 bool GetInput_MoveLeft();
 bool GetInput_MoveRight();
@@ -174,5 +169,8 @@ void SetGameState_Tutorial(int State);
 void SetGameState_Playing();
 
 void LoadCurrentChapter();
+
+extern bool DevMode;
+extern int ScrollY;
 
 #endif

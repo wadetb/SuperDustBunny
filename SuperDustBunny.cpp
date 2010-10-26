@@ -104,16 +104,69 @@ void Exit()
 	sxDeinit();
 }
 
-void ReportError(const char* ErrorMessage)
+#define MAX_ERROR_CONTEXT 10
+
+struct SErrorContext
 {
+	char Text[1024];
+};
+
+int NErrorContexts = 0;
+SErrorContext ErrorContexts[MAX_ERROR_CONTEXT];
+
+void PushErrorContext(const char* ErrorContext, ...)
+{
+	if (NErrorContexts >= MAX_ERROR_CONTEXT)
+		ReportError("Exceeded the maximum of %d error contexts.", MAX_ERROR_CONTEXT);
+
+	SErrorContext* Context = &ErrorContexts[NErrorContexts];
+
+	va_list args;
+	va_start(args, ErrorContext);
+	vsnprintf(Context->Text, sizeof(Context->Text), ErrorContext, args);
+	va_end(args);
+
+	NErrorContexts++;
+}
+
+void PopErrorContext()
+{
+	if (NErrorContexts <= 0)
+		ReportError("Error context underflow.");
+
+	NErrorContexts--;
+}
+
+void ReportError(const char* ErrorMessage, ...)
+{
+	char TotalMessage[8192];
+	int MessageSize = 0;
+
+	// Append the error contexts.
+	strcpy(TotalMessage, "");
+	for (int i = 0; i < NErrorContexts; i++)
+	{
+		MessageSize += snprintf(TotalMessage + MessageSize, sizeof(TotalMessage) - MessageSize, "%s", ErrorContexts[i].Text);
+	}
+
+	// Append the error message.
+	char Work[1024];
+
+	va_list args;
+	va_start(args, ErrorMessage);
+	vsnprintf(Work, sizeof(Work), ErrorMessage, args);
+	va_end(args);
+
+	snprintf(TotalMessage + MessageSize, sizeof(TotalMessage) - MessageSize, "%s", Work);
+
 #ifdef PLATFORM_WINDOWS
-	MessageBox(NULL, ErrorMessage, "SuperDustBunny Error", MB_OK | MB_ICONSTOP);
+	MessageBox(NULL, TotalMessage, "SuperDustBunny Error", MB_OK | MB_ICONSTOP);
 	exit(1);
 #endif
 
 #ifdef PLATFORM_IPHONE
 	// TODO: Use iPhone popop dialog.
-	printf("ERROR: %s\n", ErrorMessage);
+	printf("ERROR: %s\n", Work);
 	exit(1);
 #endif
 }

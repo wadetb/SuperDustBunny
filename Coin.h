@@ -33,7 +33,7 @@ extern SCoin Coin;
 extern SCoin Coins[];
 extern int NCoins;
 
-void CreateCoin(int X, int Y, const char* Desc);
+void CreateCoin(int X, int Y);
 void ClearCoins();
 
 void UpdateCoins();

@@ -19,7 +19,7 @@
 int NCoins = 0;
 SCoin Coins[MAX_COINS];
 
-void CreateCoin(int X, int Y, const char* Desc)
+void CreateCoin(int X, int Y)
 {
     SCoin* Coin = &Coins[NCoins++];
 

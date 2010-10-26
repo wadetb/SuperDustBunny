@@ -19,7 +19,7 @@ int NBalls = 0;
 
 SBall Balls[MAX_BALLS];
 
-void CreateBall(int X, int Y, const char* Desc)
+void CreateBall(int X, int Y)
 {
     SBall* Ball = &Balls[NBalls++];
 

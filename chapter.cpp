@@ -77,6 +77,7 @@ void GetNextLine(FILE* File, char* Line, int LineSize)
 	}
 }
 
+// Loads a <tileset> node from either an internal or external tileset.
 void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode)
 {
 	// Grr, Tiled doesn't currently put a TSX version number in the TSX file.
@@ -84,21 +85,21 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode)
 	//	ReportError("Unsupported TSX file version.  Re-save the TSX file with the right version of Tiled.");
 
 	if (atoi(TileSetNode->first_attribute("tilewidth")->value()) != 64)
-		ReportError("Tile width must be 64.  Fix this problem and re-save the TSX file.");
+		ReportError("Tile width must be 64.  Fix this problem and re-save the TSX or TMX file.");
 
 	if (atoi(TileSetNode->first_attribute("tileheight")->value()) != 64)
-		ReportError("Tile height must be 64.  Fix this problem and re-save the TSX file.");
+		ReportError("Tile height must be 64.  Fix this problem and re-save the TSX or TMX file.");
 
 	rapidxml::xml_node<char>* ImageNode = TileSetNode->first_node("image");
 	if (ImageNode == NULL)
 		ReportError("Missing <image> node.  Re-saving the TSX file may help.");
 
 	if (ImageNode->next_sibling("image"))
-		ReportError("Only be one image per tileset is supported.  Fix this problem and re-save the TSX file.");
+		ReportError("Only be one image per tileset is supported.  Fix this problem and re-save the TSX or TMX file.");
 
 	rapidxml::xml_attribute<char>* ImageSourceAttr = ImageNode->first_attribute("source");
 	if (ImageSourceAttr == NULL)
-		ReportError("Missing image source attribute.  Re-saving the TSX file may help.");
+		ReportError("Missing image source attribute.  Re-saving the TSX or TMX file may help.");
 
 	// Set up the tileset structure.
 	STileSet* TileSet = &Chapter.TileSets[Chapter.NTileSets];
@@ -112,29 +113,121 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode)
 	gxLoadSprite(FileName, &TileSet->Sprite);
 
 	if (TileSet->Sprite.width == 0 || TileSet->Sprite.height == 0)
-		ReportError("Invalid tileset image.  Fix this problem and re-save the TSX file.");
+		ReportError("Invalid tileset image '%s'.  Fix this problem and re-save the TSX or TMX file.", FileName);
 
 	if (TileSet->Sprite.width % 64 || TileSet->Sprite.height % 64)
-		ReportError("Tileset image width and height must be multiples of 64.  Fix this problem and re-save the TSX file.");
+		ReportError("Tileset image '%s' width and height must be multiples of 64.  Fix this problem and re-save the TSX or TMX file.", FileName);
 
 	// Slice the image up into blocks.
 	int BlocksX = TileSet->Sprite.width/64;
 	int BlocksY = TileSet->Sprite.height/64;
 
+	TileSet->NBlocks = BlocksX * BlocksY;
+
 	for (int y = 0; y < BlocksY; y++)
 	{
 		for (int x = 0; x < BlocksX; x++)
 		{
+			if (Chapter.NBlocks >= MAX_BLOCKS)
+				ReportError("Exceeded the maximum of %d total blocks.", MAX_BLOCKS);
+
 			SBlock* Block = &Chapter.Blocks[Chapter.NBlocks];
 
-			Block->ID = TileSet->FirstBlock + y * BlocksY + x;
+			Block->Type = BLOCKTYPE_NORMAL;
+
+			Block->ID = Chapter.NBlocks;
 			Block->TileSet = Chapter.NTileSets;
 
 			Block->SubX = x*64;
 			Block->SubY = y*64;
 
+			Block->Properties = NULL;
+
 			Chapter.NBlocks++;
 		}
+	}
+
+	// Scan the tileset for optional <tile> nodes (which contain block types and properties) and add them to the blocks.
+	rapidxml::xml_node<char>* TileNode = TileSetNode->first_node("tile");
+	while (TileNode)
+	{
+		int ID = atoi(TileNode->first_attribute("id")->value());
+
+		if (ID < 0 || ID >= TileSet->NBlocks)
+			ReportError("Invalid block ID.  Re-saving the TSX file may help.");
+
+		PushErrorContext("While processing tile %d:\n", ID);
+
+		SBlock* Block = &Chapter.Blocks[TileSet->FirstBlock + ID];
+
+		rapidxml::xml_node<char>* PropertiesNode = TileNode->first_node("properties");
+		if (PropertiesNode)
+		{
+			// First, scan for the 'type' property.
+			rapidxml::xml_node<char>* PropertyNode = PropertiesNode->first_node("property");
+			while (PropertyNode)
+			{
+				const char* Name = PropertyNode->first_attribute("name")->value();
+				const char* Value = PropertyNode->first_attribute("value")->value();
+
+				if (strcmp(Name, "type") == 0)
+				{
+					// This code converts "type=blah" values in the tileset into actual block types.
+					// To add a new special kind of block to the game, you need to add a check here.
+					if (strcmp(Value, "barrel") == 0)
+					{
+						Block->Type = BLOCKTYPE_BARREL;
+					}
+					else if (strcmp(Value, "firework") == 0)
+					{
+						Block->Type = BLOCKTYPE_FIREWORK;
+					}
+					else if (strcmp(Value, "ball") == 0)
+					{
+						Block->Type = BLOCKTYPE_BALL;
+					}
+					else if (strcmp(Value, "gear") == 0)
+					{
+						Block->Type = BLOCKTYPE_GEAR;
+					}
+					else if (strcmp(Value, "coin") == 0)
+					{
+						Block->Type = BLOCKTYPE_GEAR;
+					}
+					else if (strcmp(Value, "endoflevel") == 0)
+					{
+						Block->Type = BLOCKTYPE_ENDOFLEVEL;
+					}
+				}
+
+				PropertyNode = PropertyNode->next_sibling("property");
+			}
+
+			// If the block type requires additional properties, parse them here.
+			if (Block->Type == BLOCKTYPE_BARREL)
+			{
+				ParseBarrelProperties(Block, PropertiesNode);
+			}
+			else if (Block->Type == BLOCKTYPE_FIREWORK)
+			{
+				ParseFireWorkProperties(Block, PropertiesNode);
+			}
+			else
+			{
+				// Make sure there aren't any extra properties (only 'type' is allowed).
+				for (PropertyNode = PropertiesNode->first_node("property"); PropertyNode; PropertyNode = PropertyNode->next_sibling("property"))
+				{
+					const char* Name = PropertyNode->first_attribute("name")->value();
+					const char* Value = PropertyNode->first_attribute("value")->value();
+
+					if (strcmp(Name, "type") != 0)
+						ReportError("Unrecognized tile property '%s'='%s'.", Name, Value);
+				}
+			}
+
+			PopErrorContext();
+		}
+		TileNode = TileNode->next_sibling("tile");
 	}
 
 	Chapter.NTileSets++;
@@ -142,6 +235,8 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode)
 
 void LoadTileSet(const char* FileName)
 {
+	PushErrorContext("While loading tileset '%s':\n", FileName);
+
 #ifdef PLATFORM_IPHONE
 	FILE* BlocksFile = gxOpenFile(FileName, "r");
 #endif
@@ -172,10 +267,14 @@ void LoadTileSet(const char* FileName)
 		ReportError("Missing <tileset> node.  Re-saving the TSX file may help.");
 
 	LoadTileSetNode(TileSetNode);
+
+	PopErrorContext();
 }
 
-bool LoadPageFromTMX(const char* FileName)
+void LoadPageFromTMX(const char* FileName)
 {
+	PushErrorContext("While loading page '%s':\n", FileName);
+
 	// Open the TMX file.
 #ifdef PLATFORM_IPHONE
 	FILE* PageFile = gxOpenFile(FileName, "r");
@@ -185,7 +284,7 @@ bool LoadPageFromTMX(const char* FileName)
 #endif
 
 	if (!PageFile)
-		return false;
+		ReportError("Unable to open TMX file.  Check that all required files are present, and re-save the TMX file to fix.");
 
 	// Read the entire XML file into a text buffer.
 	fseek(PageFile, 0, SEEK_END);
@@ -218,7 +317,8 @@ bool LoadPageFromTMX(const char* FileName)
 	if (atoi(MapNode->first_attribute("height")->value()) < 1)
 		ReportError("Invalid map height.  Fix this problem and re-save the TMX file.");
 	
-	// Scan the tilesets.  Load each one into a local structure.
+	// Scan the tilesets.  Load the tilesets that haven't already been loaded, and record information about each one into a local structure.
+	// Specifically, we need to know which GID range in the layer data maps to each tileset.
 	rapidxml::xml_node<char>* TileSetNode = MapNode->first_node("tileset");
 	if (TileSetNode == NULL)
 		ReportError("Missing <tileset> node.  Re-saving the TMX file may help.");
@@ -229,7 +329,7 @@ bool LoadPageFromTMX(const char* FileName)
 	while (TileSetNode)
 	{
 		if (NTileSetInfos >= MAX_PAGE_TILESETS)
-			ReportError("Too many tilesets; the maximum per page is 10.  Re-saving the TMX file may help.");
+			ReportError("Too many tilesets. The maximum number of tilesets per page is 10.  Re-saving the TMX file may help.");
 
 		int TileSetIndex = -1;
 
@@ -254,7 +354,7 @@ bool LoadPageFromTMX(const char* FileName)
 
 			if (TileSetIndex == -1)
 			{
-				// Not loaded yet, load the external tileset.
+				// It hasn't been loaded previously, so load the external tileset.
 				char FileName[1024];
 				snprintf(FileName, sizeof(FileName), "%s/%s", CurrentChapterDir, TileSetSourceAttr->value());
 
@@ -368,11 +468,13 @@ bool LoadPageFromTMX(const char* FileName)
 		Data++;
 	}
 	
-	return true;
+	PopErrorContext();
 }
 
 void LoadChapter(const char* ChapterDir)
 {
+	PushErrorContext("While loading chapter '%s':\n", ChapterDir);
+
 	Chapter.NBlocks = 0;
 	Chapter.NPages = 0;
 	Chapter.NStitchedPages = 0;
@@ -380,7 +482,7 @@ void LoadChapter(const char* ChapterDir)
 	CurrentChapterDir = ChapterDir;
 
 	char FileName[1024];
-	snprintf(FileName, sizeof(FileName), "Chapter.txt", ChapterDir);
+	snprintf(FileName, sizeof(FileName), "%s/Chapter.txt", ChapterDir);
 
 #ifdef PLATFORM_IPHONE
 	FILE* ChapFile = gxOpenFile(FileName, "r");
@@ -390,10 +492,7 @@ void LoadChapter(const char* ChapterDir)
 #endif
 
 	if (!ChapFile)
-	{
 		ReportError("Chapter.txt is missing.");
-		return;
-	}
 
 	while (!feof(ChapFile))
 	{
@@ -432,10 +531,9 @@ void LoadChapter(const char* ChapterDir)
 						char FileName[1024];
 						snprintf(FileName, sizeof(FileName), "%s/%s.tmx", CurrentChapterDir, PageName);
 						
-						if (LoadPageFromTMX(FileName))
-						{
-							RandomPages[NRandomPages++] = Chapter.NPages-1;
-						}
+						LoadPageFromTMX(FileName);
+
+						RandomPages[NRandomPages++] = Chapter.NPages-1;
 					}
 
 					PageName = strtok(NULL, " ");
@@ -505,12 +603,40 @@ void LoadChapter(const char* ChapterDir)
 				
 				SBlock* Block = &Chapter.Blocks[BlockID];
 
-				/*
-				if (strcasecmp(Block->Desc, "blank") == 0)
+				switch (Block->Type)
 				{
-					Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
+				case BLOCKTYPE_CHAPTERSTART:
+					SetDustyStart(x * 64, y * 64);
+					EraseBlock(x, y);
+					break;
+				case BLOCKTYPE_CHAPTEREND:
+					//CreateGear(x * 64, y * 64);
+					EraseBlock(x, y);
+					break;
+				case BLOCKTYPE_BARREL:
+					CreateBarrel(x * 64, y * 64, (SBarrelProperties*)Block->Properties);
+					EraseBlock(x, y);
+					break;
+				case BLOCKTYPE_FIREWORK:
+					CreateFireWork(x * 64, y * 64, (SFireWorkProperties*)Block->Properties);
+					EraseBlock(x, y);
+					break;
+				case BLOCKTYPE_BALL:
+					CreateBall(x * 64, y * 64);
+					EraseBlock(x, y);
+					break;
+				case BLOCKTYPE_GEAR:
+					CreateGear(x * 64, y * 64);
+					EraseBlock(x, y);
+					break;
+				case BLOCKTYPE_COIN:
+					CreateCoin(x * 64, y * 64);
+					EraseBlock(x, y);
+					break;
+
 				}
 
+				/*
 				if (strstr(Block->Desc, "barrel") != NULL)
 				{
 					CreateBarrel(x * 64, y * 64, Block->Desc);
@@ -554,6 +680,8 @@ void LoadChapter(const char* ChapterDir)
 
 	// Set initial ScrollY.
 	ScrollY = -(Chapter.StitchedHeight * 64 - gxScreenHeight);
+
+	PopErrorContext();
 }
 
 void ClearChapter()
@@ -570,10 +698,16 @@ void ClearChapter()
 
 	for (int i = 0; i < Chapter.NTileSets; i++)
 	{
+		free(Chapter.TileSets[i].Name);
 		gxDestroySprite(&Chapter.TileSets[i].Sprite);
 	}
 	Chapter.NTileSets = 0;
 
+	for (int i = 0; i < Chapter.NBlocks; i++)
+	{
+		if (Chapter.Blocks[i].Properties)
+			free(Chapter.Blocks[i].Properties);
+	}
 	Chapter.NBlocks = 0;
 
 	Chapter.NStitchedPages = 0;
@@ -677,6 +811,16 @@ bool IsBlockEmpty(int x, int y)
 bool IsBlockSolid(int x, int y)
 {
 	return !IsBlockEmpty(x, y);
+}
+
+void EraseBlock(int x, int y)
+{
+	if (x < 0 || x >= Chapter.StitchedWidth)
+		return;
+	if (y < 0 || y >= Chapter.StitchedHeight)
+		return;
+
+	Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
 }
 
 void DisplayScore()

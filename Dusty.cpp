@@ -57,8 +57,13 @@ void InitDusty()
 	Dusty.CollideWithRightSide = false;
 	Dusty.CollideWithTopSide = false;
 	Dusty.CollideWithBottomSide = false;
-	
 };
+
+void SetDustyStart(int x, int y)
+{
+	Dusty.FloatX = (float)x;
+	Dusty.FloatY = (float)y;
+}
 
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//

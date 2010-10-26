@@ -19,6 +19,14 @@ enum EFireWorkState
 	FIREWORKSTATE_DONE,
 };
 
+struct SFireWorkProperties
+{
+	int Dir;
+	int Dist;
+	int Fuse;
+	int Size;
+};
+
 struct SFireWork
 {
 	EFireWorkState State;
@@ -34,8 +42,10 @@ struct SFireWork
 	int Timer;
 };
 
+void ParseFireWorkProperties(struct SBlock* Block, rapidxml::xml_node<char>* PropertiesNode);
+
 extern SFireWork FireWork;
-void CreateFireWork(int X, int Y, const char* Desc);
+void CreateFireWork(int X, int Y, SFireWorkProperties* Properties);
 void ClearFireWorks();
 
 void DisplayFireWorks();
