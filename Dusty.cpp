@@ -22,9 +22,6 @@ void InitDusty()
 {
 	Dusty.State = DUSTYSTATE_STAND;
 
-	Dusty.FloatX = 350;
-    Dusty.FloatY = -1024;
-
 	Dusty.Direction = DIRECTION_RIGHT;
 
 	Dusty.Left = -32;

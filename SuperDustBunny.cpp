@@ -235,15 +235,15 @@ void LoadCurrentChapter()
 	ClearBalls();
 	ClearGears();
 
-	InitDusty();
-	InitVacuum();
-	InitDust();
-	TurnOnVacuum();
-
 	if (CurrentChapter < 0 || CurrentChapter >= MAX_CHAPTERS)
 		CurrentChapter = 0;
 	
 	LoadChapter(ChapterNames[CurrentChapter]);
+
+	InitDusty();
+	InitVacuum();
+	InitDust();
+	TurnOnVacuum();
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//

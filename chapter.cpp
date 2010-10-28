@@ -78,7 +78,8 @@ void GetNextLine(FILE* File, char* Line, int LineSize)
 }
 
 // Loads a <tileset> node from either an internal or external tileset.
-void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode)
+// FileName is used to locate image files.
+void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* FileName)
 {
 	// Grr, Tiled doesn't currently put a TSX version number in the TSX file.
 	//if (strcmp(TileSetNode->first_attribute("version")->value(), "1.0") != 0)
@@ -104,13 +105,23 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode)
 	// Set up the tileset structure.
 	STileSet* TileSet = &Chapter.TileSets[Chapter.NTileSets];
 
+	TileSet->Name = strdup(FileName);
+
 	TileSet->FirstBlock = Chapter.NBlocks;
 
-	// Load the tileset image sprite.
-	char FileName[1024];
-	snprintf(FileName, sizeof(FileName), "%s/%s", CurrentChapterDir, ImageSourceAttr->value());
+	// Calculate the path to the tileset file.
+	char CurrentDirectory[1024];
+	snprintf(CurrentDirectory, sizeof(CurrentDirectory), "%s", FileName);
+	char* Slash = strrchr(CurrentDirectory, '/');
+	if (Slash == NULL) Slash = strrchr(CurrentDirectory, '\\');
+	if (Slash == NULL) Slash = CurrentDirectory;
+	*Slash = 0;
 
-	gxLoadSprite(FileName, &TileSet->Sprite);
+	// Load the tileset image sprite.
+	char ImageFileName[1024];
+	snprintf(ImageFileName, sizeof(ImageFileName), "%s/%s", CurrentDirectory, ImageSourceAttr->value());
+
+	gxLoadSprite(ImageFileName, &TileSet->Sprite);
 
 	if (TileSet->Sprite.width == 0 || TileSet->Sprite.height == 0)
 		ReportError("Invalid tileset image '%s'.  Fix this problem and re-save the TSX or TMX file.", FileName);
@@ -174,7 +185,15 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode)
 				{
 					// This code converts "type=blah" values in the tileset into actual block types.
 					// To add a new special kind of block to the game, you need to add a check here.
-					if (strcmp(Value, "barrel") == 0)
+					if (strcmp(Value, "start") == 0)
+					{
+						Block->Type = BLOCKTYPE_CHAPTERSTART;
+					}
+					else if (strcmp(Value, "end") == 0)
+					{
+						Block->Type = BLOCKTYPE_CHAPTEREND;
+					}
+					else if (strcmp(Value, "barrel") == 0)
 					{
 						Block->Type = BLOCKTYPE_BARREL;
 					}
@@ -193,10 +212,6 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode)
 					else if (strcmp(Value, "coin") == 0)
 					{
 						Block->Type = BLOCKTYPE_GEAR;
-					}
-					else if (strcmp(Value, "endoflevel") == 0)
-					{
-						Block->Type = BLOCKTYPE_ENDOFLEVEL;
 					}
 				}
 
@@ -266,7 +281,7 @@ void LoadTileSet(const char* FileName)
 	if (TileSetNode == NULL)
 		ReportError("Missing <tileset> node.  Re-saving the TSX file may help.");
 
-	LoadTileSetNode(TileSetNode);
+	LoadTileSetNode(TileSetNode, FileName);
 
 	PopErrorContext();
 }
@@ -337,7 +352,7 @@ void LoadPageFromTMX(const char* FileName)
 		if (TileSetSourceAttr == NULL)
 		{
 			// Load the internal tileset.
-			LoadTileSetNode(TileSetNode);
+			LoadTileSetNode(TileSetNode, FileName);
 			TileSetIndex = Chapter.NTileSets - 1;
 		}
 		else
@@ -355,10 +370,10 @@ void LoadPageFromTMX(const char* FileName)
 			if (TileSetIndex == -1)
 			{
 				// It hasn't been loaded previously, so load the external tileset.
-				char FileName[1024];
-				snprintf(FileName, sizeof(FileName), "%s/%s", CurrentChapterDir, TileSetSourceAttr->value());
+				char TileSetName[1024];
+				snprintf(TileSetName, sizeof(TileSetName), "%s/%s", CurrentChapterDir, TileSetSourceAttr->value());
 
-				LoadTileSet(FileName);
+				LoadTileSet(TileSetName);
 				TileSetIndex = Chapter.NTileSets - 1;
 			}
 		}
@@ -367,7 +382,7 @@ void LoadPageFromTMX(const char* FileName)
 		TileSetInfo[NTileSetInfos].FirstGID = atoi(TileSetNode->first_attribute("firstgid")->value());
 		NTileSetInfos++;
 
-		TileSetNode = MapNode->next_sibling("tileset");
+		TileSetNode = TileSetNode->next_sibling("tileset");
 	}
 
 	// Get the <layer> node and validate.
@@ -606,7 +621,7 @@ void LoadChapter(const char* ChapterDir)
 				switch (Block->Type)
 				{
 				case BLOCKTYPE_CHAPTERSTART:
-					SetDustyStart(x * 64, y * 64);
+					SetDustyStart(x * 64 + 32, y * 64 + 64);
 					EraseBlock(x, y);
 					break;
 				case BLOCKTYPE_CHAPTEREND:

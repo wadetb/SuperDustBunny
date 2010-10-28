@@ -29,7 +29,7 @@ void ParseFireWorkProperties(SBlock* Block, rapidxml::xml_node<char>* Properties
 	FireWorkProperties->Dir = 0;
 	FireWorkProperties->Dist = 5;
 	FireWorkProperties->Fuse = 0;
-	FireWorkProperties->Size = 10;
+	FireWorkProperties->Size = 3;
 
 	// Scan properties for values.
 	rapidxml::xml_node<char>* PropertyNode = PropertiesNode->first_node("property");

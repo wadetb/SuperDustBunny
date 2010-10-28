@@ -19,8 +19,6 @@ SVacuum Vacuum;
 void InitVacuum()
 {
 	Vacuum.State = VACUUMSTATE_OFF;
-	Vacuum.Y = (float)Chapter.StitchedHeight;
-	Vacuum.Timer = 10*60;
 	Vacuum.Volume = 0.5f;
 
 	// These two sounds loop continuously.
@@ -181,6 +179,9 @@ void TurnOffVacuum()
 
 void TurnOnVacuum()
 {
+	Vacuum.Y = (float)Chapter.StitchedHeight * 64;
+	Vacuum.Timer = 10*60;
+
 	if (Vacuum.State == VACUUMSTATE_OFF)
 	{
 		Vacuum.State = VACUUMSTATE_FAR;
