@@ -72,7 +72,6 @@ struct SBlock
 	bool GreenDelayDest;
 	bool YellowDelayDest;
 	bool RedDelayDest;
-	bool EndOfLevel;
 	bool Gum;
 	bool GumJump;
 	bool HasCrumbTriggered;
@@ -91,6 +90,8 @@ struct SPage
 struct SChapter
 {
 	const char* Name;
+
+	float EndX, EndY;
 
 	int NPages;
 	SPage Pages[MAX_PAGES];

@@ -1071,13 +1071,6 @@ void UpdateDusty_Collision()
 							SetDustyState_Fall();
 						}
                           
-						if (Block->EndOfLevel)
-						{
-						    sxPlaySound( &DustyWinSound );
-							SetGameState_WinScreen();
-							return;
-						}
-									
 						if (Dusty.HasGumExpired && Block->Gum)
 						{
 						    sxPlaySound( &BlockBreakSound );
@@ -1166,6 +1159,13 @@ void UpdateDusty()
 {
 	if (Dusty.State != DUSTYSTATE_DIE)
 		UpdateDusty_Collision();
+
+	if (Distance(Dusty.FloatX, Dusty.FloatY, Chapter.EndX, Chapter.EndY) < 100)
+	{
+		sxPlaySound( &DustyWinSound );
+		SetGameState_WinScreen();
+		return;
+	}
 
 	switch (Dusty.State)
 	{

@@ -625,7 +625,8 @@ void LoadChapter(const char* ChapterDir)
 					EraseBlock(x, y);
 					break;
 				case BLOCKTYPE_CHAPTEREND:
-					//CreateGear(x * 64, y * 64);
+					Chapter.EndX = (float)x * 64 + 32;
+					Chapter.EndY = (float)y * 64 + 32;
 					EraseBlock(x, y);
 					break;
 				case BLOCKTYPE_BARREL:
