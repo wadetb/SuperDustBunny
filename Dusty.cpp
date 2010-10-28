@@ -736,7 +736,7 @@ void UpdateDusty_Launch()
 	Dusty.FloatX += Dusty.FloatVelocityX;
 	Dusty.FloatY += Dusty.FloatVelocityY;
 	
-	Dusty.FloatVelocityY += Dusty.FloatGravity;
+	Dusty.FloatVelocityY += Dusty.FloatGravity * 0.75f; // Reduced gravity when launching.
 
 	if (Dusty.CollideWithBottomSide == true)
 	{	

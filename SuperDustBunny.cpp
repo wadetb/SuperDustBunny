@@ -74,6 +74,9 @@ void Init()
 	// Use iPad "portrait mode" screen dimensions.
 	gxInit(GXDISPLAY_IPAD_PORTRAIT);
 
+	// Default to iPhone size.
+	gxEmulateDisplaySize(GXDISPLAY_IPHONE_PORTRAIT);
+
 	sxInit();
 
 #ifdef PLATFORM_WINDOWS
@@ -278,6 +281,12 @@ void SetGameState_WinScreen()
 void SetGameState_Playing()
 {
 	GameState = GAMESTATE_PLAYING;
+
+	InitTutorial();
+
+	// Remove this to re-enable the tutorials when we are closer to a release.
+	// For now they just slow down development.
+	SkipTutorials();
 
 	if (Tutorial.InitialDisplayed == false)
 	{    
