@@ -41,7 +41,7 @@ void ParseBarrelProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNo
 		{
 			BarrelProperties->To = atoi(Value);
 		}
-		else if (strcmp(Name, "type") != 0)
+		else if (strcmp(Name, "type") != 0 && strcmp(Name, "material") != 0)
 		{
 			ReportError("Unrecognized barrel property '%s'='%s'.", Name, Value);
 		}

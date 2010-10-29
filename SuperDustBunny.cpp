@@ -310,7 +310,6 @@ void DisplayGame_Playing()
     DisplayGear();
     DisplayBall();
 	DisplayFireWorks();
-	DisplayDelayDestructible();	
 	
 	// Dusty Drawing
 	DisplayDusty();

@@ -214,6 +214,25 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* FileName
 						Block->Type = BLOCKTYPE_GEAR;
 					}
 				}
+				else if (strcmp(Name, "material") == 0)
+				{
+					if (strcmp(Value, "normal") == 0)
+					{
+						Block->Material = MATERIAL_NORMAL;
+					}
+					else if (strcmp(Value, "breakable") == 0)
+					{
+						Block->Material = MATERIAL_BREAKABLE;
+					}
+					else if (strcmp(Value, "ice") == 0)
+					{
+						Block->Material = MATERIAL_ICE;
+					}
+					else if (strcmp(Value, "sticky") == 0)
+					{
+						Block->Material = MATERIAL_STICKY;
+					}
+				}
 
 				PropertyNode = PropertyNode->next_sibling("property");
 			}
@@ -235,7 +254,7 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* FileName
 					const char* Name = PropertyNode->first_attribute("name")->value();
 					const char* Value = PropertyNode->first_attribute("value")->value();
 
-					if (strcmp(Name, "type") != 0)
+					if (strcmp(Name, "type") != 0 && strcmp(Name, "material") != 0)
 						ReportError("Unrecognized tile property '%s'='%s'.", Name, Value);
 				}
 			}
@@ -865,34 +884,3 @@ void UpdateScore()
     }
 }
 
-void DisplayDelayDestructible()//Sorry about that, I must have been tired when I put it in here... I'll fiddle with it... :)
-{
-	for (int y = 0; y < Chapter.StitchedHeight; y++)
-	{
-		for (int x = 0; x < Chapter.StitchedWidth; x++)
-		{  					
-			int BlockID = GetBlockID(x, y);
-			if (BlockID < SPECIALBLOCKID_FIRST)
-			{			
-				SBlock* Block = &Chapter.Blocks[BlockID];
-				if ((Dusty.CollideWithBottomSide || Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide) && Block->DelayDest)//Need to setup a better trigger for this.
-                {
-                    if (Dusty.BlockSprite == 1)
-                    {
-                        gxDrawSprite(x*64, y*64 + ScrollY, &TileGreenDelayDest);					        
-                    }
-
-                    if (Dusty.BlockSprite == 2)
-                    {
-                        gxDrawSprite(x*64, y*64 + ScrollY, &TileYellowDelayDest);	    
-                    }
-
-                    if (Dusty.BlockSprite == 3)
-                    {
-                        gxDrawSprite(x*64, y*64 + ScrollY, &TileRedDelayDest);
-                    }
-                }							        															          					
-			}			
-		}
-	}
-}

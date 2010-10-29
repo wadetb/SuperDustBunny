@@ -42,6 +42,14 @@ enum EBlockType
 	BLOCKTYPE_COIN, 
 };
 
+enum EBlockMaterial
+{
+	MATERIAL_NORMAL,
+	MATERIAL_BREAKABLE,
+	MATERIAL_ICE,
+	MATERIAL_STICKY
+};
+
 struct STileSet
 {
 	char* Name;
@@ -59,6 +67,7 @@ struct STileSetInfo
 struct SBlock
 {
 	EBlockType Type;
+	EBlockMaterial Material;
 
 	int ID;
 	int TileSet;
@@ -66,17 +75,6 @@ struct SBlock
 	int SubX, SubY;
 
 	void* Properties;
-
-	bool Destructible;
-	bool DelayDest;
-	bool GreenDelayDest;
-	bool YellowDelayDest;
-	bool RedDelayDest;
-	bool Gum;
-	bool GumJump;
-	bool HasCrumbTriggered;
-	bool Jello;
-	bool NoWallJump;
 };
 
 struct SPage
@@ -117,7 +115,6 @@ struct SScore
     int X, Y;  
 };
 
-
 extern SChapter Chapter;
 extern SScore Score;
 
@@ -133,8 +130,6 @@ void CalculateScrollY();
 void InitScore();
 void DisplayScore();
 void UpdateScore();
-
-void DisplayDelayDestructible();
 
 void InitCrumb();
 

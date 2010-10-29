@@ -51,17 +51,7 @@ struct SDusty
 
 	int WallStickTimer;
 	EDirection LastWall;
-	bool NoWallJump;	
 
-    bool HasGumExpired;
-    int GumTimer;
-    
-    bool HasGumBlockExpired;
-    int GumJumpAttempt;
-    
-    int Delay;
-    int BlockSprite;
-    
 	int WallJumpTimer;
 
 	bool CollideWithLeftSide;
@@ -71,6 +61,8 @@ struct SDusty
 
 	bool CollideWithBottomLeftCorner;
 	bool CollideWithBottomRightCorner;
+
+	int CollideMaterial;
 };
 
 extern SDusty Dusty;

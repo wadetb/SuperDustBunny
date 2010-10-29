@@ -54,7 +54,7 @@ void ParseFireWorkProperties(SBlock* Block, rapidxml::xml_node<char>* Properties
 		{
 			FireWorkProperties->Size = atoi(Value);
 		}
-		else if (strcmp(Name, "type") != 0)
+		else if (strcmp(Name, "type") != 0 && strcmp(Name, "material") != 0)
 		{
 			ReportError("Unrecognized firework property '%s'='%s'.", Name, Value);
 		}
@@ -120,7 +120,7 @@ void ExplodeFireWork(float X, float Y, int Size)
 			if (BlockID < SPECIALBLOCKID_FIRST)
 			{
 				SBlock* Block = &Chapter.Blocks[BlockID];						
-				if (Block->Destructible)
+				if (Block->Material == MATERIAL_BREAKABLE || Block->Material == MATERIAL_ICE)
 				{
 					if (Distance(X, Y, (float)x*64+32, (float)y*64+32) < Size*64)
 					{ 

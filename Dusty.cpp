@@ -39,16 +39,6 @@ void InitDusty()
 	Dusty.WallStickTimer = 0;
 	Dusty.LastWall = DIRECTION_NONE;
 	Dusty.WallJumpTimer = 0;
-	Dusty.NoWallJump = false;
-	
-	Dusty.HasGumExpired = false;
-	Dusty.GumTimer = 30;
-	
-	Dusty.HasGumBlockExpired = false;
-	Dusty.GumJumpAttempt = 0;
-	
-	Dusty.Delay = 80;
-	Dusty.BlockSprite = 0;
 	
 	Dusty.CollideWithLeftSide = false;
 	Dusty.CollideWithRightSide = false;
@@ -87,7 +77,9 @@ void SetDustyState_Stand()
 {
 	Dusty.LastWall = DIRECTION_NONE;
 
-	Dusty.FloatVelocityX = 0;
+	if (Dusty.CollideMaterial != MATERIAL_ICE)
+		Dusty.FloatVelocityX = 0;
+
 	Dusty.FloatVelocityY = 0;
 
 	Dusty.SpriteTransition = 0;
@@ -124,6 +116,12 @@ void DisplayDusty_Stand()
 
 void UpdateDusty_Stand()
 {		
+	if (Dusty.CollideMaterial == MATERIAL_ICE)
+	{
+		Dusty.FloatX += Dusty.FloatVelocityX;
+		Dusty.FloatVelocityX *= 0.9f;
+	}
+
 	if ( GetInput_Jump() )      
 	{
 		SetDustyState_Jump( false );
@@ -314,10 +312,13 @@ void DisplayDusty_Hop()
 void UpdateDusty_Hop()
 {
 	// Set Velocity.
-	if (Dusty.Direction == DIRECTION_LEFT)
-		Dusty.FloatVelocityX = -8.25f;
+	if (Dusty.CollideMaterial == MATERIAL_ICE)
+		Dusty.FloatVelocityX = 6.0f;
 	else
 		Dusty.FloatVelocityX = 8.25f;
+
+	if (Dusty.Direction == DIRECTION_LEFT)
+		Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
 
 	// Update animation
 	Dusty.SpriteTransition += 1;
@@ -417,15 +418,13 @@ void UpdateDusty_JumpCommon()
     // Collision with either side translates to a possible wall jump.
 	// Dusty is not allowed to collide with the same side twice in a row, unless he stands once in between.
 	// Wade: Currently this stuff is tweaked around as an experiment- he can only walljump again after a delay.
-	if (Dusty.CollideWithLeftSide && Dusty.Direction == DIRECTION_LEFT && (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_LEFT) &&
-		Dusty.NoWallJump == false)
+	if (Dusty.CollideWithLeftSide && Dusty.Direction == DIRECTION_LEFT && (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_LEFT))
 	{
         SetDustyState_WallJump();
         return;
 	}
 
-	if (Dusty.CollideWithRightSide && Dusty.Direction == DIRECTION_RIGHT && (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_RIGHT) &&
-		Dusty.NoWallJump == false)
+	if (Dusty.CollideWithRightSide && Dusty.Direction == DIRECTION_RIGHT && (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_RIGHT))
     {
         SetDustyState_WallJump();
         return;
@@ -450,7 +449,10 @@ void SetDustyState_WallJump()
 		SetGameState_Tutorial(TUTORIALSTATE_WALLJUMP);
 	}
 
-	Dusty.WallStickTimer = 15;
+	if (Dusty.CollideMaterial == MATERIAL_ICE)
+		Dusty.WallStickTimer = 0;
+	else
+		Dusty.WallStickTimer = 15;
 
 	Dusty.FloatVelocityX = 0;
 	Dusty.FloatVelocityY = 0;
@@ -487,12 +489,10 @@ void DisplayDusty_WallJump()
 
 void UpdateDusty_WallJump()
 {                                                   
-	if (Dusty.WallStickTimer != 0)
-	{                        
-		Dusty.WallStickTimer -= 1;
-	}
+	if (Dusty.WallStickTimer > 0)
+		Dusty.WallStickTimer--;
 
-	if (Dusty.WallStickTimer == 0)
+	if (Dusty.WallStickTimer <= 0)
 	{
 		// Sliding down the wall... If you hit the ground, switch to stand state.
 		if (Dusty.CollideWithBottomSide == true)
@@ -510,15 +510,25 @@ void UpdateDusty_WallJump()
 		{
 			Dusty.FloatY += Dusty.FloatVelocityY;
 
-			Dusty.FloatVelocityY += Dusty.FloatGravity/2;
+			if (Dusty.CollideMaterial == MATERIAL_ICE)
+			{
+				Dusty.FloatVelocityY += Dusty.FloatGravity;
 
-			if (Dusty.FloatVelocityY > 7.0f)
-				Dusty.FloatVelocityY = 7.0f;
+				if (Dusty.FloatVelocityY > 15.0f)
+					Dusty.FloatVelocityY = 15.0f;
+			}
+			else
+			{
+				Dusty.FloatVelocityY += Dusty.FloatGravity/2;
+
+				if (Dusty.FloatVelocityY > 7.0f)
+					Dusty.FloatVelocityY = 7.0f;
+			}
 		}
 	}
 
 	// Jump off wall by pressing jump
-	if (GetInput_Jump() && Dusty.NoWallJump == false)
+	if (GetInput_Jump())
 	{
 		SetDustyState_Jump( true );
 		return;
@@ -778,38 +788,38 @@ void DisplayDusty_Stuck()
 
 void UpdateDusty_Stuck()
 { 
-    {        
-        if (Dusty.GumTimer <= 0 && (Dusty.CollideWithTopSide))
-        {   
-            Dusty.HasGumExpired = true;
-            Dusty.GumTimer = 30;      
-            SetDustyState_Fall();
-            return;
-        }
-        
-        if (Dusty.GumTimer <= 0 && (Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide))
-        {
-            Dusty.HasGumExpired = true;
-            Dusty.GumTimer = 30;
-            SetDustyState_Stand();
-            return;
-        }
-                                            
-        if (Dusty.GumJumpAttempt > 4 && (Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide))
-        {
-            Dusty.HasGumBlockExpired = true;
-            Dusty.GumJumpAttempt = 0;
-            SetDustyState_Stand();
-            return;
-        }
-    }    
-    
-    if(GetInput_Jump())
-    {              
-        Dusty.GumJumpAttempt += 1;
-    }
-    
-    Dusty.GumTimer--;
+    //{        
+    //    if (Dusty.GumTimer <= 0 && (Dusty.CollideWithTopSide))
+    //    {   
+    //        Dusty.HasGumExpired = true;
+    //        Dusty.GumTimer = 30;      
+    //        SetDustyState_Fall();
+    //        return;
+    //    }
+    //    
+    //    if (Dusty.GumTimer <= 0 && (Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide))
+    //    {
+    //        Dusty.HasGumExpired = true;
+    //        Dusty.GumTimer = 30;
+    //        SetDustyState_Stand();
+    //        return;
+    //    }
+    //                                        
+    //    if (Dusty.GumJumpAttempt > 4 && (Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide))
+    //    {
+    //        Dusty.HasGumBlockExpired = true;
+    //        Dusty.GumJumpAttempt = 0;
+    //        SetDustyState_Stand();
+    //        return;
+    //    }
+    //}    
+    //
+    //if(GetInput_Jump())
+    //{              
+    //    Dusty.GumJumpAttempt += 1;
+    //}
+    //
+    //Dusty.GumTimer--;
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -841,6 +851,8 @@ void UpdateDusty_Collision()
 
 	Dusty.CollideWithBottomLeftCorner = false;
 	Dusty.CollideWithBottomRightCorner = false;
+
+	Dusty.CollideMaterial = MATERIAL_NORMAL;
 
 	// Collision with right side of the right screen and Dusty's right Side
 	if (Dusty.FloatX + Dusty.Right >= gxScreenWidth)
@@ -980,7 +992,7 @@ void UpdateDusty_Collision()
 							Dusty.FloatVelocityY = 0;
 
 						// I'm taking the ability to enter corner jump from the top out for now.  I'll put it back in after testing
-						// for while if it seems neccessary.
+						// for while if it seems important.
 						//if (LeftBlockIsEmpty && abs(LeftDistance - UpDistance) < CornerThreshold)
 						//{
 						//	Dusty.CollideWithBottomRightCorner = true;
@@ -998,89 +1010,10 @@ void UpdateDusty_Collision()
 					{			
 						SBlock* Block = &Chapter.Blocks[BlockID];
 												        						
-						if ((Dusty.CollideWithBottomSide || Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide) && Block->DelayDest)
+						if (Dusty.CollideMaterial == MATERIAL_NORMAL)
 						{
-    					    if (Dusty.Delay == 79)
-						    {
-						        Dusty.BlockSprite = 1;					        
-						    }
-						    
-						    if (Dusty.Delay == 60)
-						    {
-						        Dusty.BlockSprite = 2;	    
-						    }
-						    
-						    if (Dusty.Delay == 30)
-						    {
-						        Dusty.BlockSprite = 3;
-						    }
-						    
-						    if (Dusty.Delay == 0)
-						    {
-						        Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
-						    }
-						    
-						    if (Dusty.Delay < 0)
-						    {
-						        Dusty.Delay = 80;
-						    }
-						    else
-						    {
-							    Dusty.Delay -= 1;
-						    }
+							Dusty.CollideMaterial = Block->Material;
 						}
-						
-						if (BlockCollideWithTopSide && Block->Destructible)
-						{
-							Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
-							Dusty.FloatVelocityY = 0;
-							SetDustyState_Fall();
-						}
-                          
-						if (Dusty.HasGumExpired && Block->Gum)
-						{
-						    sxPlaySound( &BlockBreakSound );
-							Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
-						}
-	                    
-						if ((Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide || Dusty.CollideWithTopSide)
-							&& Block->Gum == true)
-						{
-						    sxPlaySound( &BlockBreakSound );
-							SetDustyState_Stuck();
-							return;                  
-						}	
-						
-                        if (Dusty.HasGumBlockExpired && Block->GumJump)
-                        {
-                            sxPlaySound( &BlockBreakSound );
-                            Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
-                        }
-
-                        if ((Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide || Dusty.CollideWithTopSide)
-                            && Block->GumJump == true)
-                        {
-                            sxPlaySound( &BlockBreakSound );
-                            SetDustyState_Stuck();
-                            return;                  
-                        }
-                        
-                        if ((Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide || Dusty.CollideWithTopSide)
-							&& Block->Jello)
-						{
-						    sxPlaySound( &JelloSound );
-							SetDustyState_Fall();
-							return;                
-						}
-						
-						if ((Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide) && (Block->NoWallJump || Block->Destructible))
-                        {
-                            Dusty.NoWallJump = true;                                           
-                        }
-                        else
-                        {
-                            Dusty.NoWallJump = false;
-                        }						          					
 					}
 				}
 			}
