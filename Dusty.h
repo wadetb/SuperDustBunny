@@ -51,8 +51,10 @@ struct SDusty
 
 	int WallStickTimer;
 	EDirection LastWall;
-
 	int WallJumpTimer;
+
+	int StuckJumpCount;
+	int StuckTimer;
 
 	bool CollideWithLeftSide;
 	bool CollideWithRightSide;

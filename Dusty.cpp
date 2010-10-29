@@ -115,7 +115,14 @@ void DisplayDusty_Stand()
 }
 
 void UpdateDusty_Stand()
-{		
+{
+	// Check for hitting something sticky.
+	if (Dusty.CollideMaterial == MATERIAL_STICKY)
+	{
+		SetDustyState_Stuck();
+		return;
+	}
+
 	if (Dusty.CollideMaterial == MATERIAL_ICE)
 	{
 		Dusty.FloatX += Dusty.FloatVelocityX;
@@ -311,6 +318,13 @@ void DisplayDusty_Hop()
 
 void UpdateDusty_Hop()
 {
+	// Check for hitting something sticky.
+	if (Dusty.CollideMaterial == MATERIAL_STICKY)
+	{
+		SetDustyState_Stuck();
+		return;
+	}
+
 	// Set Velocity.
 	if (Dusty.CollideMaterial == MATERIAL_ICE)
 		Dusty.FloatVelocityX = 6.0f;
@@ -391,7 +405,6 @@ void UpdateDusty_JumpCommon()
 		if (Dusty.FloatVelocityX >= -6)
 			Dusty.FloatVelocityX -= 1.0f;
 	}
-
 	if (GetInput_MoveRight())
 	{
 		Dusty.Direction = DIRECTION_RIGHT;
@@ -399,8 +412,6 @@ void UpdateDusty_JumpCommon()
 			Dusty.FloatVelocityX += 1.0f;
 	}
 	
-	Dusty.WallJumpTimer++;
-
 	// Collision with corners is indicated by separate collision variables being set.
 	if (Dusty.CollideWithBottomLeftCorner)
 	{
@@ -415,9 +426,11 @@ void UpdateDusty_JumpCommon()
 		return;
 	}
 
-    // Collision with either side translates to a possible wall jump.
+	// Collision with either side translates to a possible wall jump.
 	// Dusty is not allowed to collide with the same side twice in a row, unless he stands once in between.
 	// Wade: Currently this stuff is tweaked around as an experiment- he can only walljump again after a delay.
+	Dusty.WallJumpTimer++;
+
 	if (Dusty.CollideWithLeftSide && Dusty.Direction == DIRECTION_LEFT && (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_LEFT))
 	{
         SetDustyState_WallJump();
@@ -488,7 +501,14 @@ void DisplayDusty_WallJump()
 }
 
 void UpdateDusty_WallJump()
-{                                                   
+{
+	// Check for hitting something sticky.
+	if (Dusty.CollideMaterial == MATERIAL_STICKY)
+	{
+		SetDustyState_Stuck();
+		return;
+	}
+
 	if (Dusty.WallStickTimer > 0)
 		Dusty.WallStickTimer--;
 
@@ -757,69 +777,56 @@ void UpdateDusty_Die()
 	} 
 }
 
+
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                  UpdateDusty_Stuck Implementation                                                       //
+//                                                  DUSTYSTATE_STUCK Implementation                                                        //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
 void SetDustyState_Stuck()
 {
-    Dusty.State = DUSTYSTATE_STUCK;
+	Dusty.StuckTimer = 30;
+	Dusty.StuckJumpCount = 0;
+
+	Dusty.State = DUSTYSTATE_STUCK;
 }
 
 void DisplayDusty_Stuck()
 {
-    float ScaleX, OffsetX;
-    if (Dusty.Direction == DIRECTION_RIGHT)
-    {
-        ScaleX = 1.0f;
-        OffsetX = 0.0f;
-    }
-    else
-    {
-        ScaleX = -1.0f;
-        OffsetX = 256.0f;
-    }
+	float ScaleX, OffsetX;
+	if (Dusty.Direction == DIRECTION_RIGHT)
+	{
+		ScaleX = 1.0f;
+		OffsetX = 0.0f;
+	}
+	else
+	{
+		ScaleX = -1.0f;
+		OffsetX = 256.0f;
+	}
 
-    if (Dusty.SpriteTransition <= 4)
-        gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 119 + 35*ScaleX), (int)(Dusty.FloatY - 217 + ScrollY), ScaleX, 1.0f, &DustyHop2Sprite );
-    else
-        gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 - 18*ScaleX), (int)(Dusty.FloatY - 221 + ScrollY), ScaleX, 1.0f, &DustyHop1Sprite );     
+	gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 + 5*ScaleX), (int)(Dusty.FloatY - 221 + ScrollY), ScaleX, 1.0f, &DustyIdle1Sprite );
 }
 
 void UpdateDusty_Stuck()
-{ 
-    //{        
-    //    if (Dusty.GumTimer <= 0 && (Dusty.CollideWithTopSide))
-    //    {   
-    //        Dusty.HasGumExpired = true;
-    //        Dusty.GumTimer = 30;      
-    //        SetDustyState_Fall();
-    //        return;
-    //    }
-    //    
-    //    if (Dusty.GumTimer <= 0 && (Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide))
-    //    {
-    //        Dusty.HasGumExpired = true;
-    //        Dusty.GumTimer = 30;
-    //        SetDustyState_Stand();
-    //        return;
-    //    }
-    //                                        
-    //    if (Dusty.GumJumpAttempt > 4 && (Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide))
-    //    {
-    //        Dusty.HasGumBlockExpired = true;
-    //        Dusty.GumJumpAttempt = 0;
-    //        SetDustyState_Stand();
-    //        return;
-    //    }
-    //}    
-    //
-    //if(GetInput_Jump())
-    //{              
-    //    Dusty.GumJumpAttempt += 1;
-    //}
-    //
-    //Dusty.GumTimer--;
+{
+	if (Dusty.StuckTimer > 0)
+	{
+		Dusty.StuckTimer--;
+		return;
+	}
+
+	if (GetInput_Jump())
+	{
+		Dusty.StuckJumpCount++;
+
+		if (Dusty.StuckJumpCount == 2)
+		{
+			SetDustyState_Jump(false);
+			return;
+		}
+
+		Dusty.StuckTimer = 30;
+	}
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -1037,7 +1044,7 @@ void DisplayDusty()
 	case DUSTYSTATE_PREPARELAUNCH:      DisplayDusty_PrepareLaunch(); break;
 	case DUSTYSTATE_LAUNCH:             DisplayDusty_Launch(); break;	
 	case DUSTYSTATE_DIE:				DisplayDusty_Die(); break;
-	case DUSTYSTATE_STUCK:              DisplayDusty_Stuck(); break;
+	case DUSTYSTATE_STUCK:				DisplayDusty_Stuck(); break;
 	}
 
 	if (DevMode)
@@ -1075,6 +1082,6 @@ void UpdateDusty()
 	case DUSTYSTATE_PREPARELAUNCH:      UpdateDusty_PrepareLaunch(); break;
 	case DUSTYSTATE_LAUNCH:             UpdateDusty_Launch(); break;
 	case DUSTYSTATE_DIE:				UpdateDusty_Die(); break;
-	case DUSTYSTATE_STUCK:              UpdateDusty_Stuck(); break;
+	case DUSTYSTATE_STUCK:				UpdateDusty_Stuck(); break;
 	}
 }

@@ -328,9 +328,9 @@ void DisplayGame_Playing()
 	if (DevMode)
 	{
 		// Status of common variables
-		gxDrawString(5, 5+16, 16, gxRGB32(255, 255, 255), "( %.1f %.1f ) ( %.1f %.1f )\n State: %d Col: %d%d%d%d Direction: %d", 
+		gxDrawString(5, 5+16, 16, gxRGB32(255, 255, 255), "( %.1f %.1f ) ( %.1f %.1f )\n State: %d Col: %d%d%d%d Direction: %d Material: %d", 
 			Dusty.FloatX, Dusty.FloatY, Dusty.FloatVelocityX, Dusty.FloatVelocityY, 
-			Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide, Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide, Dusty.Direction);
+			Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide, Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide, Dusty.Direction, Dusty.CollideMaterial);
 		
 #ifdef PLATFORM_IPHONE
 		// Draw the accelerometer data directly.
