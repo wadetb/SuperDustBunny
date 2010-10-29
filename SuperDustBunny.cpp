@@ -334,6 +334,7 @@ void DisplayGame_Playing()
 			Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide, Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide, Dusty.Direction);
 		
 #ifdef PLATFORM_IPHONE
+		// Draw the accelerometer data directly.
 		gxDrawRectangleFilled(768/2, 1024-32, msAccelX*300, 16, 0xff00ff00);
 #endif
 	}
