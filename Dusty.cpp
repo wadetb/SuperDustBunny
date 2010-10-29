@@ -804,7 +804,14 @@ void DisplayDusty_Stuck()
 		OffsetX = 256.0f;
 	}
 
-	gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 + 5*ScaleX), (int)(Dusty.FloatY - 221 + ScrollY), ScaleX, 1.0f, &DustyIdle1Sprite );
+	if (Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide)
+	{
+		gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 128 - 8*ScaleX), (int)(Dusty.FloatY - 200 + ScrollY), ScaleX, 1.0f, &DustyWallJumpSprite );
+	}
+	else
+	{
+		gxDrawSpriteScaled( (int)(Dusty.FloatX + OffsetX - 124 + 5*ScaleX), (int)(Dusty.FloatY - 221 + ScrollY), ScaleX, 1.0f, &DustyIdle1Sprite );
+	}
 }
 
 void UpdateDusty_Stuck()
