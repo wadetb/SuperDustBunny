@@ -29,6 +29,8 @@ enum EGameState
 	GAMESTATE_PLAYING,
 	GAMESTATE_DIE_SCREEN,
 	GAMESTATE_WIN_SCREEN,
+	GAMESTATE_HELP_SCREEN,
+	GAMESTATE_CREDITS_SCREEN,
 	GAMESTATE_TUTORIAL,
 };
 
@@ -260,6 +262,20 @@ void SetGameState_StartScreen()
 	InitStartScreen();
 }
 
+void SetGameState_Help()
+{
+    GameState = GAMESTATE_HELP_SCREEN;
+
+    InitHelpScreen();
+}
+
+void SetGameState_Credits()
+{
+    GameState = GAMESTATE_CREDITS_SCREEN;
+
+    InitCreditsScreen();
+}
+
 void SetGameState_DieScreen()
 {
 	GameState = GAMESTATE_DIE_SCREEN;
@@ -416,6 +432,14 @@ void Display()
 	if (GameState == GAMESTATE_START_SCREEN)
 	{
 		DisplayStartScreen();
+	}
+	else if (GameState == GAMESTATE_HELP_SCREEN)
+	{
+	    DisplayHelpScreen();
+	}
+	else if (GameState == GAMESTATE_CREDITS_SCREEN)
+	{
+	    DisplayCreditsScreen();
 	}
 	else if (GameState == GAMESTATE_DIE_SCREEN)
 	{
@@ -643,6 +667,14 @@ bool Update()
 	{
 		UpdateStartScreen();
 	}
+	else if (GameState == GAMESTATE_HELP_SCREEN)
+	{
+	    UpdateHelpScreen();
+	}
+	else if (GameState == GAMESTATE_CREDITS_SCREEN)
+	{
+	    UpdateCreditsScreen();
+	}    
 	else if (GameState == GAMESTATE_DIE_SCREEN)
 	{
 		UpdateDieScreen();

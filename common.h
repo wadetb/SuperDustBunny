@@ -167,6 +167,8 @@ void SetGameState_DieScreen();
 void SetGameState_WinScreen();
 void SetGameState_Tutorial(int State);
 void SetGameState_Playing();
+void SetGameState_Help();
+void SetGameState_Credits();
 
 void LoadCurrentChapter();
 

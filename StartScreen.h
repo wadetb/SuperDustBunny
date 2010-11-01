@@ -14,4 +14,12 @@ void InitStartScreen();
 void UpdateStartScreen();
 void DisplayStartScreen();
 
+void InitHelpScreen();
+void UpdateHelpScreen();
+void DisplayHelpScreen();
+
+void InitCreditsScreen();
+void UpdateCreditsScreen();
+void DisplayCreditsScreen();
+
 #endif
