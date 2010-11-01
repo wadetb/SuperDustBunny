@@ -7,11 +7,11 @@
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
-#ifndef STARTSCREEN_H
-#define STARTSCREEN_H
+#ifndef CREDITSSCREEN_H
+#define CREDITSSCREEN_H
 
-void InitStartScreen();
-void UpdateStartScreen();
-void DisplayStartScreen();
+void InitCreditsScreen();
+void UpdateCreditsScreen();
+void DisplayCreditsScreen();
 
 #endif

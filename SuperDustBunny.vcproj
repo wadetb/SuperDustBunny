@@ -269,6 +269,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\CreditsScreen.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\CreditsScreen.h"
+			>
+		</File>
+		<File
 			RelativePath=".\Crumb.h"
 			>
 		</File>
@@ -310,6 +318,14 @@
 		</File>
 		<File
 			RelativePath=".\Gear.h"
+			>
+		</File>
+		<File
+			RelativePath=".\HelpScreen.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\HelpScreen.h"
 			>
 		</File>
 		<File

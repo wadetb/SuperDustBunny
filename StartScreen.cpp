@@ -46,19 +46,9 @@ struct SStartScreen
 
 SStartScreen StartScreen;
 
-struct SHelpScreen
-{
-    bool HelpPressed;
-};
 
-SHelpScreen HelpScreen;
 
-struct SCreditsScreen
-{
-    bool CreditsPressed;
-};
 
-SCreditsScreen CreditsScreen;
 
 void InitStartScreen()
 {
@@ -168,85 +158,4 @@ void UpdateStartScreen()
 	StartScreen.CurItem = (int)Round(StartScreen.X / 600.0f);
 
 	StartScreen.PrevX = StartScreen.X;
-}
-
-void InitHelpScreen()
-{
-    StartScreen.CurItem = STARTSCREEN_ITEM_HELP;
-    StartScreen.X = StartScreen.CurItem * 600.0f;
-    StartScreen.PrevX = StartScreen.X;
-    
-    HelpScreen.HelpPressed = false;
-
-}
-
-void DisplayHelpScreen()
-{
-    if (HelpScreen.HelpPressed)
-    {
-        gxDrawSprite( 0, 0, &ScreenHelp2Sprite );
-    }
-    else
-    {
-        gxDrawSprite( 0, 0, &ScreenHelp1Sprite );
-    }
-}
-
-void UpdateHelpScreen()
-{
-#ifdef PLATFORM_WINDOWS
-    bool HelpPressed = kbIsKeyDown(KB_RETURN) || msButton1;
-#endif
-#ifdef PLATFORM_IPHONE
-    bool HelpPressed = msButton1;
-#endif
-
-    // Advance to playing state when button is released.
-    if (!HelpPressed && HelpScreen.HelpPressed)
-    {
-        SetGameState_StartScreen();
-        return;
-    }
-
-    HelpScreen.HelpPressed = HelpPressed;
-}
-
-void InitCreditsScreen()
-{
-    StartScreen.CurItem = STARTSCREEN_ITEM_CREDITS;
-    StartScreen.X = StartScreen.CurItem * 600.0f;
-    StartScreen.PrevX = StartScreen.X;
-    
-    CreditsScreen.CreditsPressed = false;
-}
-
-void DisplayCreditsScreen()
-{
-    if (CreditsScreen.CreditsPressed)
-    {
-        gxDrawSprite( 0, 0, &ScreenCredits2Sprite );
-    }
-    else
-    {
-        gxDrawSprite( 0, 0, &ScreenCredits1Sprite );
-    }   
-}
-
-void UpdateCreditsScreen()
-{   
-#ifdef PLATFORM_WINDOWS
-    bool CreditsPressed = kbIsKeyDown(KB_RETURN) || msButton1;
-#endif
-#ifdef PLATFORM_IPHONE
-    bool CreditsPressed = msButton1;
-#endif
-
-    // Advance to playing state when button is released.
-    if (!CreditsPressed && CreditsScreen.CreditsPressed)
-    {
-        SetGameState_StartScreen();;
-        return;
-    }
-
-    CreditsScreen.CreditsPressed = CreditsPressed;
 }

@@ -20,8 +20,11 @@
 #include "Gear.h"
 #include "Tutorial.h"
 #include "StartScreen.h"
+#include "HelpScreen.h"
+#include "CreditsScreen.h"
 #include "DieScreen.h"
 #include "WinScreen.h"
+
 
 enum EGameState
 {

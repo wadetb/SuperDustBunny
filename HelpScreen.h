@@ -7,11 +7,11 @@
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
-#ifndef STARTSCREEN_H
-#define STARTSCREEN_H
+#ifndef HELPSCREEN_H
+#define HELPSCREEN_H
 
-void InitStartScreen();
-void UpdateStartScreen();
-void DisplayStartScreen();
+void InitHelpScreen();
+void UpdateHelpScreen();
+void DisplayHelpScreen();
 
 #endif

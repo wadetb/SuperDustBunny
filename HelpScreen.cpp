@@ -7,11 +7,49 @@
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
-#ifndef STARTSCREEN_H
-#define STARTSCREEN_H
+#include "Common.h"
+#include "StartScreen.h"
 
-void InitStartScreen();
-void UpdateStartScreen();
-void DisplayStartScreen();
+struct SHelpScreen
+{
+    bool HelpPressed;
+};
 
+SHelpScreen HelpScreen;
+
+
+void InitHelpScreen()
+{
+    HelpScreen.HelpPressed = false;
+}
+
+void DisplayHelpScreen()
+{
+    if (HelpScreen.HelpPressed)
+    {
+        gxDrawSprite( 0, 0, &ScreenHelp2Sprite );
+    }
+    else
+    {
+        gxDrawSprite( 0, 0, &ScreenHelp1Sprite );
+    }
+}
+
+void UpdateHelpScreen()
+{
+#ifdef PLATFORM_WINDOWS
+    bool HelpPressed = kbIsKeyDown(KB_RETURN) || msButton1;
 #endif
+#ifdef PLATFORM_IPHONE
+    bool HelpPressed = msButton1;
+#endif
+
+    // Advance to playing state when button is released.
+    if (!HelpPressed && HelpScreen.HelpPressed)
+    {
+        SetGameState_StartScreen();
+        return;
+    }
+
+    HelpScreen.HelpPressed = HelpPressed;
+}
