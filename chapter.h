@@ -100,12 +100,10 @@ struct SChapter
 	int NBlocks;
 	SBlock Blocks[MAX_BLOCKS];
 
-	int NStitchedPages;
-	int StitchedPages[MAX_STITCHED_PAGES];
-
-	int StitchedWidth;
-	int StitchedHeight;
-	int* StitchedBlocks;
+	int PageNum;
+	int* PageBlocks;
+	int PageWidth;
+	int PageHeight;
 };
 
 struct SScore
@@ -122,6 +120,8 @@ extern int ScrollY;
 
 void LoadChapter(const char* filename);
 void ClearChapter();
+
+void SetCurrentPage(int PageNum);
 
 void DisplayChapter();
 

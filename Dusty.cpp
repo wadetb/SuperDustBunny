@@ -729,17 +729,8 @@ void UpdateDusty_Launch()
 	
 	Dusty.FloatVelocityY += Dusty.FloatGravity * 0.75f; // Reduced gravity when launching.
 
-	if (Dusty.CollideWithBottomSide == true)
-	{	
-		SetDustyState_Stand();
-		return;
-	} 
-
-	if (Dusty.CollideWithLeftSide == true || Dusty.CollideWithRightSide == true)
-	{	    
-		SetDustyState_WallJump();
-		return;
-	}
+	if (Dusty.FloatVelocityY > 15.0f)
+		Dusty.FloatVelocityY = 15.0f;
 
 	UpdateDusty_JumpCommon();
 }
@@ -883,15 +874,15 @@ void UpdateDusty_Collision()
 	}
 
 	//Collision with the bottom side of the screen
-	if (Dusty.FloatY + Dusty.Bottom >= Chapter.StitchedHeight * 64 )
+	if (Dusty.FloatY + Dusty.Bottom >= Chapter.PageHeight * 64 )
 	{	
 		Dusty.CollideWithBottomSide = true;
-		Dusty.FloatY = (float)Chapter.StitchedHeight * 64 - (float)Dusty.Bottom;
+		Dusty.FloatY = (float)Chapter.PageHeight * 64 - (float)Dusty.Bottom;
 	} 
 
-	for (int y = 0; y < Chapter.StitchedHeight; y++)
+	for (int y = 0; y < Chapter.PageHeight; y++)
 	{
-		for (int x = 0; x < Chapter.StitchedWidth; x++)
+		for (int x = 0; x < Chapter.PageWidth; x++)
 		{
 			// Skip empty blocks.
 			if (IsBlockEmpty(x, y))
@@ -953,7 +944,7 @@ void UpdateDusty_Collision()
 					bool BlockCollideWithTopSide = false;
 					bool BlockCollideWithBottomSide = false;
 
-					int CornerThreshold = 48;
+					int CornerThreshold = 32;
 
 					// Prefer to collide with the side of the block that would push Dusty out the least distance.
 					// (Only consider sides that are not adjacent to another solid block).
@@ -1075,7 +1066,7 @@ void UpdateDusty()
 	if (Distance(Dusty.FloatX, Dusty.FloatY, Chapter.EndX, Chapter.EndY) < 100)
 	{
 		sxPlaySound( &DustyWinSound );
-		SetGameState_WinScreen();
+		AdvanceToNextPage();
 		return;
 	}
 

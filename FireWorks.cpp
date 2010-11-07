@@ -112,9 +112,9 @@ void DisplayFireWorks()
 
 void ExplodeFireWork(float X, float Y, int Size)
 {
-	for (int y = 0; y < Chapter.StitchedHeight; y++)
+	for (int y = 0; y < Chapter.PageHeight; y++)
 	{
-		for (int x = 0; x < Chapter.StitchedWidth; x++)
+		for (int x = 0; x < Chapter.PageWidth; x++)
 		{
 			int BlockID = GetBlockID(x, y);
 			if (BlockID < SPECIALBLOCKID_FIRST)
@@ -125,7 +125,7 @@ void ExplodeFireWork(float X, float Y, int Size)
 					if (Distance(X, Y, (float)x*64+32, (float)y*64+32) < Size*64)
 					{ 
 						sxPlaySound( &BlockBreakSound );
-						Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
+						Chapter.PageBlocks[y * Chapter.PageWidth + x] = SPECIALBLOCKID_BLANK;
 					}
 				}       					           
 			}	

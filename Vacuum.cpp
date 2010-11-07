@@ -129,11 +129,11 @@ void UpdateVacuum()
 			// The vacuum gets faster the longer it stays unclogged.
 			float VacuumSpeed;
 			if (Vacuum.Timer < 4*60)
-				VacuumSpeed = 4;
+				VacuumSpeed = 3;
 			else if (Vacuum.Timer < 8*60)
-				VacuumSpeed = 6;
+				VacuumSpeed = 3.5;
 			else
-				VacuumSpeed = 8;
+				VacuumSpeed = 6;
 
 			Vacuum.Timer++;
 
@@ -163,8 +163,13 @@ void UpdateVacuum()
 
 void JamVacuum()
 {
-	Vacuum.State = VACUUMSTATE_RETREAT;
-	Vacuum.Timer = 6*60;
+	if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.State == VACUUMSTATE_ONSCREEN)
+	{
+		Vacuum.State = VACUUMSTATE_RETREAT;
+		Vacuum.Timer = 6*60;
+	}
+	else
+		Vacuum.Timer += 6*60;
 }
 
 void TurnOffVacuum()
@@ -179,7 +184,7 @@ void TurnOffVacuum()
 
 void TurnOnVacuum()
 {
-	Vacuum.Y = (float)Chapter.StitchedHeight * 64;
+	Vacuum.Y = (float)Chapter.PageHeight * 64;
 	Vacuum.Timer = 10*60;
 
 	if (Vacuum.State == VACUUMSTATE_OFF)

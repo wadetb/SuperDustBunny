@@ -16,6 +16,8 @@
 #include "FireWorks.h"
 #include "Crumb.h"
 #include "Gear.h"
+#include "Dust.h"
+#include "Vacuum.h"
 
 #include <direct.h>
 
@@ -511,7 +513,6 @@ void LoadChapter(const char* ChapterDir)
 
 	Chapter.NBlocks = 0;
 	Chapter.NPages = 0;
-	Chapter.NStitchedPages = 0;
 
 	CurrentChapterDir = ChapterDir;
 
@@ -534,50 +535,19 @@ void LoadChapter(const char* ChapterDir)
 		
 		GetNextLine(ChapFile, Line, sizeof(Line)-1);
 
-		if (strstr(Line, "STITCHING") != NULL)
+		if (strstr(Line, "PAGES") != NULL)
 		{
 			while (!feof(ChapFile))
 			{
 				GetNextLine(ChapFile, Line, sizeof(Line));
 
-				if (strstr(Line, "END OF STITCHING") != NULL)
+				if (strstr(Line, "END OF PAGES") != NULL)
 					break;
 
-				int NRandomPages = 0;
-				int RandomPages[MAX_PAGES];
-
-				char* PageName = strtok(Line, " ,");
-				while (PageName)
-				{
-					bool Found = false;
-					for (int i = 0; i < Chapter.NPages; i++)
-					{
-						if (strcasecmp(Chapter.Pages[i].Name, PageName) == 0)
-						{
-							Found = true;
-							RandomPages[NRandomPages++] = i;
-							break;
-						}
-					}
-					if (!Found)
-					{
-						// Page not already loaded, attempt to load it.
-						char FileName[1024];
-						snprintf(FileName, sizeof(FileName), "%s/%s.tmx", CurrentChapterDir, PageName);
-						
-						LoadPageFromTMX(FileName);
-
-						RandomPages[NRandomPages++] = Chapter.NPages-1;
-					}
-
-					PageName = strtok(NULL, " ");
-				}
-
-				if (NRandomPages > 0)
-				{
-					int Choice = RandomPages[rand() % NRandomPages];
-					Chapter.StitchedPages[Chapter.NStitchedPages++] = Choice;
-				}
+				char FileName[1024];
+				snprintf(FileName, sizeof(FileName), "%s/%s.tmx", CurrentChapterDir, Line);
+				
+				LoadPageFromTMX(FileName);
 			}
 
 			continue;
@@ -587,48 +557,60 @@ void LoadChapter(const char* ChapterDir)
 	fclose(ChapFile);
 
 	if (!Chapter.NPages)
-		return;
+		ReportError("Chapter contains no pages.");
 
 	if (!Chapter.NBlocks)
-		return;
+		ReportError("Chapter contains no blocks.");
 
-	// If no stitching was found, use the first page.
-	if (Chapter.NStitchedPages == 0)
+	SetCurrentPage(0);
+
+	PopErrorContext();
+}
+
+void ClearChapter()
+{
+	free((void*)Chapter.Name);
+	Chapter.Name = NULL;
+
+	for (int i = 0; i < Chapter.NPages; i++)
 	{
-		Chapter.NStitchedPages = 1;
-		Chapter.StitchedPages[0] = 0;
+		free(Chapter.Pages[i].Name);
+		free(Chapter.Pages[i].Blocks);
 	}
+	Chapter.NPages = 0;
 
-	// Stitch pages
-	Chapter.StitchedWidth = Chapter.Pages[0].Width;
-
-	Chapter.StitchedHeight = 0;
-	for (int i = 0; i < Chapter.NStitchedPages; i++)
-		Chapter.StitchedHeight += Chapter.Pages[Chapter.StitchedPages[i]].Height;
-
-	Chapter.StitchedBlocks = (int*)malloc(Chapter.StitchedWidth * Chapter.StitchedHeight * sizeof(int));
-	int PageY = 0;
-	for (int i = 0; i < Chapter.NStitchedPages; i++)
+	for (int i = 0; i < Chapter.NTileSets; i++)
 	{
-		SPage* Page = &Chapter.Pages[Chapter.StitchedPages[i]];
-
-		for (int y = 0; y < Page->Height; y++)
-		{
-			for (int x = 0; x < Chapter.StitchedWidth; x++)
-			{
-				Chapter.StitchedBlocks[(PageY + y) * Chapter.StitchedWidth + x] = Page->Blocks[y * Page->Width + x];
-			}
-		}
-
-		PageY += Page->Height;
+		free(Chapter.TileSets[i].Name);
+		gxDestroySprite(&Chapter.TileSets[i].Sprite);
 	}
+	Chapter.NTileSets = 0;
 
+	for (int i = 0; i < Chapter.NBlocks; i++)
+	{
+		if (Chapter.Blocks[i].Properties)
+			free(Chapter.Blocks[i].Properties);
+	}
+	Chapter.NBlocks = 0;
+}
+
+void ClearPageObjects()
+{
+	ClearBarrels();
+	ClearCoins();
+	ClearFireWorks();
+	ClearBalls();
+	ClearGears();
+}
+
+void CreatePageObjects()
+{
 	// Process any special blocks that need to create dynamic objects.
-	for (int y = 0; y < Chapter.StitchedHeight; y++)
+	for (int y = 0; y < Chapter.PageHeight; y++)
 	{
-		for (int x = 0; x < Chapter.StitchedWidth; x++)
+		for (int x = 0; x < Chapter.PageWidth; x++)
 		{
-			int BlockID = Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x];
+			int BlockID = Chapter.PageBlocks[y * Chapter.PageWidth + x];
 
 			if (BlockID < SPECIALBLOCKID_FIRST)
 			{
@@ -668,89 +650,38 @@ void LoadChapter(const char* ChapterDir)
 					CreateCoin(x * 64, y * 64);
 					EraseBlock(x, y);
 					break;
-
 				}
-
-				/*
-				if (strstr(Block->Desc, "barrel") != NULL)
-				{
-					CreateBarrel(x * 64, y * 64, Block->Desc);
-					Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
-				}
-
-				if (strstr(Block->Desc, "coin") != NULL)
-				{
-					CreateCoin(x * 64, y * 64, Block->Desc);
-					Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
-				}
-
-				if (strstr(Block->Desc, "ball") != NULL)
-				{
-					CreateBall(x * 64, y * 64, Block->Desc);
-					Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
-				}
-				
-                if (strstr(Block->Desc, "gear") != NULL)
-                {
-                    CreateGear(x * 64, y * 64, Block->Desc);
-                    Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
-                }
-
-				if (strstr(Block->Desc, "firework") != NULL)
-				{
-					CreateFireWork(x * 64, y * 64, Block->Desc);
-					Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
-				}
-												                
-				if (strcasecmp(Block->Desc, "dusty") == 0)
-				{
-					Dusty.FloatX = (float)x * 64;
-					Dusty.FloatY = (float)y * 64 + 64;
-					Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
-				}
-				*/
 			}
 		}
 	}
 
 	// Set initial ScrollY.
-	ScrollY = -(Chapter.StitchedHeight * 64 - gxScreenHeight);
+	ScrollY = -(Chapter.PageHeight * 64 - gxScreenHeight);
 
-	PopErrorContext();
+	// Initialize global stuff for the page.
+	InitDusty();
+	InitDust();
+	InitVacuum();
 }
 
-void ClearChapter()
+void SetCurrentPage(int PageNum)
 {
-	free((void*)Chapter.Name);
-	Chapter.Name = NULL;
+	if (PageNum < 0 || PageNum >= Chapter.NPages)
+		ReportError("%d is not a valid page number.", PageNum);
 
-	for (int i = 0; i < Chapter.NPages; i++)
-	{
-		free(Chapter.Pages[i].Name);
-		free(Chapter.Pages[i].Blocks);
-	}
-	Chapter.NPages = 0;
+	// Clear out objects from previous page.
+	ClearPageObjects();
 
-	for (int i = 0; i < Chapter.NTileSets; i++)
-	{
-		free(Chapter.TileSets[i].Name);
-		gxDestroySprite(&Chapter.TileSets[i].Sprite);
-	}
-	Chapter.NTileSets = 0;
+	PushErrorContext("While setting the current page to '%s':\n", Chapter.Pages[PageNum].Name);
 
-	for (int i = 0; i < Chapter.NBlocks; i++)
-	{
-		if (Chapter.Blocks[i].Properties)
-			free(Chapter.Blocks[i].Properties);
-	}
-	Chapter.NBlocks = 0;
+	Chapter.PageNum = PageNum;
+	Chapter.PageBlocks = Chapter.Pages[PageNum].Blocks;
+	Chapter.PageWidth = Chapter.Pages[PageNum].Width;
+	Chapter.PageHeight = Chapter.Pages[PageNum].Height;
 
-	Chapter.NStitchedPages = 0;
-	free(Chapter.StitchedBlocks);
-	Chapter.StitchedBlocks = NULL;
+	CreatePageObjects();
 
-	Chapter.StitchedWidth = 0;
-	Chapter.StitchedHeight = 0;
+	PopErrorContext();
 }
 
 void CalculateScrollY()
@@ -772,23 +703,23 @@ void CalculateScrollY()
 	}
 
 	// Prevent scrolling off bottom of map.
-	if (ScrollY < -(Chapter.StitchedHeight * 64 - gxScreenHeight))
+	if (ScrollY < -(Chapter.PageHeight * 64 - gxScreenHeight))
 	{
-		ScrollY = -(Chapter.StitchedHeight * 64 - gxScreenHeight);
+		ScrollY = -(Chapter.PageHeight * 64 - gxScreenHeight);
 	}
 }
 
 void DisplayChapter()
 {
-	for (int y = 0; y < Chapter.StitchedHeight; y++)
+	for (int y = 0; y < Chapter.PageHeight; y++)
 	{
 		// Skip rows of tiles that cannot be on screen.
 		if (y*64 + ScrollY > gxScreenHeight || (y+1)*64 + ScrollY < 0)
 			continue;
 
-		for (int x = 0; x < Chapter.StitchedWidth; x++)
+		for (int x = 0; x < Chapter.PageWidth; x++)
 		{
-			int BlockID = Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x];
+			int BlockID = Chapter.PageBlocks[y * Chapter.PageWidth + x];
 
 			if (BlockID >= SPECIALBLOCKID_FIRST)
 			{
@@ -821,23 +752,23 @@ void DisplayChapter()
 int GetBlockID(int x, int y)
 {
 	// Requests for blocks outside the map return a special value.
-	if (x < 0 || x >= Chapter.StitchedWidth)
+	if (x < 0 || x >= Chapter.PageWidth)
 		return SPECIALBLOCKID_OUTOFBOUNDS;
-	if (y < 0 || y >= Chapter.StitchedHeight)
+	if (y < 0 || y >= Chapter.PageHeight)
 		return SPECIALBLOCKID_OUTOFBOUNDS;
 
-	return Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x];
+	return Chapter.PageBlocks[y * Chapter.PageWidth + x];
 }
 
 bool IsBlockEmpty(int x, int y)
 {
 	// Requests for blocks outside the map return solid.
-	if (x < 0 || x >= Chapter.StitchedWidth)
+	if (x < 0 || x >= Chapter.PageWidth)
 		return false;
-	if (y < 0 || y >= Chapter.StitchedHeight)
+	if (y < 0 || y >= Chapter.PageHeight)
 		return false;
 
-	if (Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] == SPECIALBLOCKID_BLANK)
+	if (Chapter.PageBlocks[y * Chapter.PageWidth + x] == SPECIALBLOCKID_BLANK)
 		return true;
 	else
 		return false;
@@ -850,12 +781,12 @@ bool IsBlockSolid(int x, int y)
 
 void EraseBlock(int x, int y)
 {
-	if (x < 0 || x >= Chapter.StitchedWidth)
+	if (x < 0 || x >= Chapter.PageWidth)
 		return;
-	if (y < 0 || y >= Chapter.StitchedHeight)
+	if (y < 0 || y >= Chapter.PageHeight)
 		return;
 
-	Chapter.StitchedBlocks[y * Chapter.StitchedWidth + x] = SPECIALBLOCKID_BLANK;
+	Chapter.PageBlocks[y * Chapter.PageWidth + x] = SPECIALBLOCKID_BLANK;
 }
 
 void DisplayScore()

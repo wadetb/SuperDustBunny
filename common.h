@@ -171,6 +171,7 @@ void SetGameState_Help();
 void SetGameState_Credits();
 
 void LoadCurrentChapter();
+void AdvanceToNextPage();
 
 extern bool DevMode;
 extern int ScrollY;

@@ -236,22 +236,20 @@ void LoadCurrentChapter()
 {
 	Score.ScoreCounter = 0;
 
-	ClearChapter();
-	ClearBarrels();
-	ClearCoins();
-	ClearFireWorks();
-	ClearBalls();
-	ClearGears();
-
 	if (CurrentChapter < 0 || CurrentChapter >= MAX_CHAPTERS)
 		CurrentChapter = 0;
 	
 	LoadChapter(ChapterNames[CurrentChapter]);
 
-	InitDusty();
-	InitVacuum();
-	InitDust();
 	TurnOnVacuum();
+}
+
+void AdvanceToNextPage()
+{
+	if (Chapter.PageNum < Chapter.NPages-1)
+		SetCurrentPage(Chapter.PageNum+1);
+	else
+		SetGameState_WinScreen();
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
