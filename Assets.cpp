@@ -47,6 +47,8 @@ gxSprite BarrelBackSprite;
 gxSprite BarrelFrontSprite;
 gxSprite BarrelNailSprite;
 
+gxSprite FanSprite;
+
 gxSprite CrumbStandSprite;
 
 gxSprite CoinSpin1Sprite;
@@ -176,6 +178,8 @@ void LoadAssets()
 	gxLoadSprite("Data/barrel-front.png", &BarrelFrontSprite);
 	gxLoadSprite("Data/barrel-nail.png", &BarrelNailSprite);
 
+	gxLoadSprite("Data/fan.png", &FanSprite);
+
 	gxLoadSprite("Data/crumb-stand.png", &CrumbStandSprite);
 
 	gxLoadSprite("Data/coin-spin-1.png", &CoinSpin1Sprite);
@@ -214,7 +218,6 @@ void LoadAssets()
 	gxLoadSprite("Data/icon-help-2.png", &IconHelp2Sprite);
 	gxLoadSprite("Data/icon-credits-1.png", &IconCredits1Sprite);
 	gxLoadSprite("Data/icon-credits-2.png", &IconCredits2Sprite);
- 
 
 	gxLoadSprite("Data/screen-lose-1.png", &ScreenLose1Sprite);
 	gxLoadSprite("Data/screen-lose-2.png", &ScreenLose2Sprite);

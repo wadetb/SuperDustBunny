@@ -7,28 +7,27 @@
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
-#ifndef DUST_H
-#define DUST_H
+#ifndef FAN_H
+#define FAN_H
 
-#define MAX_DUST_MOTES 50
-
-struct SDustMote
+struct SFanProperties
 {
-	float X, Y;
-	float VX, VY;
-	float Size;
-	float Depth;
-	float Life;
-	float Time;
-	float Alpha;
+	int Dir;
 };
 
-extern SDustMote DustMotes[MAX_DUST_MOTES];
+struct SFan
+{
+	float X, Y;
 
-void InitDust();
-void DisplayDust();
-void UpdateDust();
+	float Dir;
+};
 
-void MakeDustMote(float X, float Y);
+void ParseFanProperties(struct SBlock* Block, rapidxml::xml_node<char>* PropertiesNode);
+
+void CreateFan(int X, int Y, SFanProperties* Properties);
+void ClearFans();
+
+void UpdateFans();
+void DisplayFans();
 
 #endif

@@ -13,9 +13,6 @@
 #include "Vacuum.h"
 
 
-#define MAX_DUST_MOTES 50
-
-
 SDustMote DustMotes[MAX_DUST_MOTES];
 
 

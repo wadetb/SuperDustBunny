@@ -305,6 +305,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Fan.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Fan.h"
+			>
+		</File>
+		<File
 			RelativePath=".\FireWorks.cpp"
 			>
 		</File>

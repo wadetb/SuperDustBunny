@@ -10,6 +10,7 @@
 #include "Common.h"
 #include "Chapter.h"
 #include "Barrel.h"
+#include "Fan.h"
 #include "Dusty.h"
 #include "Coin.h"
 #include "Vacuum.h"
@@ -323,6 +324,7 @@ void DisplayGame_Playing()
 	DisplayChapter();
 	DisplayVacuum_BeforeDusty();
 	DisplayBarrels_BeforeDusty();
+	DisplayFans();
 	DisplayCoins();
     DisplayGear();
     DisplayBall();
@@ -405,6 +407,7 @@ void UpdateGame_Playing()
 
 	if (Dusty.State != DUSTYSTATE_DIE)
 	{
+		UpdateFans();
 		UpdateBarrels();
 		UpdateCoins();   
         UpdateBall();  

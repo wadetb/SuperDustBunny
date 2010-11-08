@@ -18,6 +18,7 @@
 #include "Gear.h"
 #include "Dust.h"
 #include "Vacuum.h"
+#include "Fan.h"
 
 #include <direct.h>
 
@@ -247,6 +248,10 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* FileName
 					{
 						Block->Type = BLOCKTYPE_NAIL;
 					}
+					else if (strcmp(Value, "fan") == 0)
+					{
+						Block->Type = BLOCKTYPE_FAN;
+					}
 				}
 				else if (strcmp(Name, "material") == 0)
 				{
@@ -283,6 +288,10 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* FileName
 			else if (Block->Type == BLOCKTYPE_NAIL)
 			{
 				ParseNailProperties(Block, PropertiesNode);
+			}
+			else if (Block->Type == BLOCKTYPE_FAN)
+			{
+				ParseFanProperties(Block, PropertiesNode);
 			}
 			else
 			{
@@ -639,6 +648,7 @@ void ClearChapter()
 void ClearPageObjects()
 {
 	ClearBarrels();
+	ClearFans();
 	ClearCoins();
 	ClearFireWorks();
 	ClearBalls();
@@ -690,6 +700,10 @@ void CreatePageObjects()
 					break;
 				case BLOCKTYPE_COIN:
 					CreateCoin(x * 64, y * 64);
+					EraseBlock(x, y);
+					break;
+				case BLOCKTYPE_FAN:
+					CreateFan(x * 64, y * 64, (SFanProperties*)Block->Properties);
 					EraseBlock(x, y);
 					break;
 				}

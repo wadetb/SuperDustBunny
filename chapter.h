@@ -41,6 +41,7 @@ enum EBlockType
 	BLOCKTYPE_GEAR,
 	BLOCKTYPE_COIN, 
 	BLOCKTYPE_NAIL, 
+	BLOCKTYPE_FAN, 
 };
 
 enum EBlockMaterial
