@@ -36,6 +36,31 @@ void InitScore()
     Score.Y = 0;
 }
 
+void ParseNailProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode)
+{
+	SNailProperties* NailProperties = (SNailProperties*)malloc(sizeof(SNailProperties));
+
+	// Set default values.
+	NailProperties->Dir = 0;
+
+	// Scan properties for values.
+	rapidxml::xml_node<char>* PropertyNode = PropertiesNode->first_node("property");
+	while (PropertyNode)
+	{
+		const char* Name = PropertyNode->first_attribute("name")->value();
+		const char* Value = PropertyNode->first_attribute("value")->value();
+
+		if (strcmp(Name, "dir") == 0)
+		{
+			NailProperties->Dir = atoi(Value);
+		}
+
+		PropertyNode = PropertyNode->next_sibling("property");
+	}
+
+	Block->Properties = NailProperties;
+}
+
 void GetNextLine(FILE* File, char* Line, int LineSize)
 {
 	*Line = '\0';
@@ -105,6 +130,9 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* FileName
 		ReportError("Missing image source attribute.  Re-saving the TSX or TMX file may help.");
 
 	// Set up the tileset structure.
+	if (Chapter.NTileSets >= MAX_TILESETS)
+		ReportError("Exceeded the maximum of %d total tilesets.", MAX_TILESETS);
+
 	STileSet* TileSet = &Chapter.TileSets[Chapter.NTileSets];
 
 	TileSet->Name = strdup(FileName);
@@ -215,6 +243,10 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* FileName
 					{
 						Block->Type = BLOCKTYPE_GEAR;
 					}
+					else if (strcmp(Value, "nail") == 0)
+					{
+						Block->Type = BLOCKTYPE_NAIL;
+					}
 				}
 				else if (strcmp(Name, "material") == 0)
 				{
@@ -247,6 +279,10 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* FileName
 			else if (Block->Type == BLOCKTYPE_FIREWORK)
 			{
 				ParseFireWorkProperties(Block, PropertiesNode);
+			}
+			else if (Block->Type == BLOCKTYPE_NAIL)
+			{
+				ParseNailProperties(Block, PropertiesNode);
 			}
 			else
 			{
@@ -426,7 +462,9 @@ void LoadPageFromTMX(const char* FileName)
 		ReportError("Wrong map encoding.  Set encoding to CSV in the Tiled preferences and re-save the TMX file.");
 
 	// Build the SPage structure.
-	// TODO: Check MAX_PAGES
+	if (Chapter.NPages >= MAX_PAGES)
+		ReportError("Exceeded the maximum of %d total pages.", MAX_PAGES);
+
 	SPage* Page = &Chapter.Pages[Chapter.NPages++];
 	
 	// Determine page name from the file name (no extension, no path).
@@ -511,8 +549,12 @@ void LoadChapter(const char* ChapterDir)
 {
 	PushErrorContext("While loading chapter '%s':\n", ChapterDir);
 
+	if (Chapter.NBlocks > 0 || Chapter.NPages > 0 || Chapter.NTileSets > 0)
+		ReportError("Attempted to load a chapter without clearing it first.");
+
 	Chapter.NBlocks = 0;
 	Chapter.NPages = 0;
+	Chapter.NTileSets = 0;
 
 	CurrentChapterDir = ChapterDir;
 
@@ -615,7 +657,7 @@ void CreatePageObjects()
 			if (BlockID < SPECIALBLOCKID_FIRST)
 			{
 				if (BlockID < 0 || BlockID > Chapter.NBlocks)
-					ReportError("Invalid block ID encountered when stitching.");
+					ReportError("Invalid block ID encountered when creating page objects.");
 				
 				SBlock* Block = &Chapter.Blocks[BlockID];
 
@@ -662,6 +704,7 @@ void CreatePageObjects()
 	InitDusty();
 	InitDust();
 	InitVacuum();
+	TurnOnVacuum();
 }
 
 void SetCurrentPage(int PageNum)

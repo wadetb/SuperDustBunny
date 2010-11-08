@@ -22,6 +22,7 @@
 HINSTANCE hInst;
 HWND hWnd;
 
+int gxWindowActive;
 
 int gxScreenWidth = 0;
 int gxScreenHeight = 0;
@@ -430,6 +431,20 @@ void gxDrawString( int x, int y, int ptsize, int color, const char* text, ... )
 	}
 }
 
+void Init();
+void Exit();
+bool Update();
+void Display();
+
+void gxDisplayWindow()
+{
+	gxDev->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER|D3DCLEAR_STENCIL, gxRGB32(0,0,0), 1.0f, 0 );
+	gxDev->BeginScene();
+	Display();
+	gxDev->EndScene();
+	gxDev->Present( NULL, NULL, 0, NULL ); // Change the third input to 0 for Default, rest NULL
+}
+
 LRESULT CALLBACK WindowProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 {
 	switch( msg )
@@ -437,6 +452,12 @@ LRESULT CALLBACK WindowProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 	case WM_CLOSE:
 		PostQuitMessage( 0 );
 		return 0;
+	case WM_ACTIVATE:
+		gxWindowActive = wparam != WA_INACTIVE;
+		break;
+	case WM_PAINT:
+		gxDisplayWindow();
+		break;
 	default:
 		break;
 	}
@@ -455,11 +476,6 @@ void CheckMessages()
 		DispatchMessage( &msg );
 	}
 }
-
-void Init();
-void Exit();
-bool Update();
-void Display();
 
 int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,  LPSTR lpCmdLine, int nCmdShow )
 {
@@ -488,16 +504,14 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,  LPSTR lpCmdLi
 	while ( !gxQuitRequested )
 	{
 		CheckMessages();
-		if ( !Update() ) 
-			break;
 
-		gxDev->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER|D3DCLEAR_STENCIL, gxRGB32(0,0,0), 1.0f, 0 );
-		gxDev->BeginScene();
-		Display();
-		gxDev->EndScene();
-		gxDev->Present( NULL, NULL, 0, NULL ); // Change the third input to 0 for Default, rest NULL
+		if (gxWindowActive)
+		{
+			if ( !Update() ) 
+				break;
+		}
 
-		CheckMessages();
+		gxDisplayWindow();
 	}
 
 	Exit();

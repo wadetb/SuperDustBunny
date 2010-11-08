@@ -11,6 +11,7 @@
 #include "Dusty.h"
 #include "Tutorial.h"
 #include "Chapter.h"
+#include "Dust.h"
 
 SDusty Dusty;
 
@@ -340,6 +341,10 @@ void UpdateDusty_Hop()
 	// Check for end of hop animation.
 	if (Dusty.SpriteTransition == 24)
 	{
+		// Spawn some dust motes.
+		for (int i = 0; i < 3; i++)
+			MakeDustMote(Dusty.FloatX, Dusty.FloatY);
+
 		// If still holding right, reset animation and continue hopping.
 		if ( ( Dusty.Direction == DIRECTION_RIGHT && GetInput_MoveRight() ) || 
 			 ( Dusty.Direction == DIRECTION_LEFT  && GetInput_MoveLeft() ) )
@@ -433,19 +438,31 @@ void UpdateDusty_JumpCommon()
 
 	if (Dusty.CollideWithLeftSide && Dusty.Direction == DIRECTION_LEFT && (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_LEFT))
 	{
+		// Spawn some dust motes.
+		for (int i = 0; i < 3; i++)
+			MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);
+
         SetDustyState_WallJump();
         return;
 	}
 
 	if (Dusty.CollideWithRightSide && Dusty.Direction == DIRECTION_RIGHT && (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_RIGHT))
     {
-        SetDustyState_WallJump();
+		// Spawn some dust motes.
+		for (int i = 0; i < 3; i++)
+			MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);
+
+		SetDustyState_WallJump();
         return;
     }
 
 	// When landing on something, revert to standing.
 	if (Dusty.CollideWithBottomSide == true )
 	{	
+		// Spawn some dust motes.
+		for (int i = 0; i < 3; i++)
+			MakeDustMote(Dusty.FloatX, Dusty.FloatY);
+
 		SetDustyState_Stand();
 		return;
 	} 
@@ -1019,6 +1036,20 @@ void UpdateDusty_Collision()
 						{
 							Dusty.CollideMaterial = Block->Material;
 						}
+
+						if (Block->Type == BLOCKTYPE_NAIL)
+						{
+							int SharpDir = ((SNailProperties*)Block->Properties)->Dir;
+
+							bool Sharp = false;
+							if (BlockCollideWithBottomSide && SharpDir ==   0) Sharp = true;
+							if (BlockCollideWithLeftSide   && SharpDir ==  90) Sharp = true;
+							if (BlockCollideWithTopSide    && SharpDir == 180) Sharp = true;
+							if (BlockCollideWithRightSide  && SharpDir == 270) Sharp = true;
+
+							if (Sharp)
+								SetDustyState_Die();
+						}
 					}
 				}
 			}
@@ -1061,7 +1092,9 @@ void DisplayDusty()
 void UpdateDusty()
 {
 	if (Dusty.State != DUSTYSTATE_DIE)
+	{
 		UpdateDusty_Collision();
+	}
 
 	if (Distance(Dusty.FloatX, Dusty.FloatY, Chapter.EndX, Chapter.EndY) < 100)
 	{

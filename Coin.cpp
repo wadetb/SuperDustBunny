@@ -21,7 +21,10 @@ SCoin Coins[MAX_COINS];
 
 void CreateCoin(int X, int Y)
 {
-    SCoin* Coin = &Coins[NCoins++];
+	if (NCoins >= MAX_COINS)
+		ReportError("Exceeded the maximum of %d total coins.", MAX_COINS);
+
+	SCoin* Coin = &Coins[NCoins++];
 
 	Coin->State = COINSTATE_ACTIVE;
 

@@ -40,6 +40,7 @@ enum EBlockType
 	BLOCKTYPE_BALL,
 	BLOCKTYPE_GEAR,
 	BLOCKTYPE_COIN, 
+	BLOCKTYPE_NAIL, 
 };
 
 enum EBlockMaterial
@@ -47,7 +48,7 @@ enum EBlockMaterial
 	MATERIAL_NORMAL,
 	MATERIAL_BREAKABLE,
 	MATERIAL_ICE,
-	MATERIAL_STICKY
+	MATERIAL_STICKY,
 };
 
 struct STileSet
@@ -62,6 +63,11 @@ struct STileSetInfo
 {
 	STileSet* TileSet;
 	int FirstGID;
+};
+
+struct SNailProperties
+{
+	int Dir;
 };
 
 struct SBlock

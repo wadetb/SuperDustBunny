@@ -96,11 +96,11 @@ void DisplayDust()
 	{
 		SDustMote* Mote = &DustMotes[i];
 
-		float Alpha = 1.0f;
+		float Alpha = Mote->Alpha;
 		if (Mote->Time < 1.0f)
-			Alpha = Remap(Mote->Time, 0.0f, 1.0, 0.0f, 1.0f, true);
+			Alpha *= Remap(Mote->Time, 0.0f, 1.0, 0.0f, 1.0f, true);
 		if (Mote->Time > Mote->Life - 1.0f)
-			Alpha = Remap(Mote->Time, Mote->Life-1.0f, Mote->Life, 1.0f, 0.0f, true);
+			Alpha *= Remap(Mote->Time, Mote->Life-1.0f, Mote->Life, 1.0f, 0.0f, true);
 
 		gxDrawSpriteCenteredScaledAlphaAdd((int)(Mote->X), (int)(Mote->Y + ScrollY*Mote->Depth), Mote->Size, Mote->Size, Alpha, &DustMoteSprite);
 	}
@@ -142,11 +142,13 @@ void UpdateDust()
 		//                                                   Vacuum Wind Effects                                                                   //
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		float VacuumStrength = 0.0f;
-		switch (Vacuum.State)
+		if (Vacuum.State == VACUUMSTATE_FAR)
 		{
-		case VACUUMSTATE_FAR: VacuumStrength = 0.1f; break;
-		case VACUUMSTATE_ONSCREEN: VacuumStrength = 10.0f; break;
-		case VACUUMSTATE_RETREAT: VacuumStrength = 0.0f; break;
+			VacuumStrength = Lerp((float)Vacuum.Timer, 500, 0, 0.0f, 3.0f); 
+		}
+		else if (Vacuum.State == VACUUMSTATE_ONSCREEN)
+		{
+			VacuumStrength = Lerp((float)Vacuum.Y, Dusty.FloatY + 1000, Dusty.FloatY + 200, 3.0f, 10.0f); 
 		}
 
 		// Map mote position onto wind grid.
@@ -203,12 +205,31 @@ void UpdateDust()
 			Mote->VX = Random(-0.3f, 0.3f);
 			Mote->VY = Random(-0.3f, 0.3f);
 
-			Mote->Size = Random(0.1f, 1.25f);
+			Mote->Size = Random(0.75f, 1.75f);
 			Mote->Depth = Random(0.8f, 1.2f);
 			Mote->Life = Random(2.0f, 10.0f);
 
+			Mote->Alpha = 1.0f;
 			Mote->Time = 0;
 		}
 	}
+}
+
+void MakeDustMote(float X, float Y)
+{
+	SDustMote* Mote = &DustMotes[(int)Random(0, MAX_DUST_MOTES-1)];
+
+	Mote->X = X;
+	Mote->Y = Y;
+
+	Mote->VX = Random(-3.0f, 3.0f);
+	Mote->VY = Random(-3.0f, 3.0f);
+
+	Mote->Size = Random(1.0f, 2.0f);
+	Mote->Depth = 1.0f;
+	Mote->Life = Random(2.0f, 10.0f);
+
+	Mote->Alpha = 0.5f;
+	Mote->Time = 1.0f;
 }
 

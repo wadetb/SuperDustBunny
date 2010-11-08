@@ -236,12 +236,12 @@ void LoadCurrentChapter()
 {
 	Score.ScoreCounter = 0;
 
+	ClearChapter();
+
 	if (CurrentChapter < 0 || CurrentChapter >= MAX_CHAPTERS)
 		CurrentChapter = 0;
-	
-	LoadChapter(ChapterNames[CurrentChapter]);
 
-	TurnOnVacuum();
+	LoadChapter(ChapterNames[CurrentChapter]);
 }
 
 void AdvanceToNextPage()
@@ -345,8 +345,8 @@ void DisplayGame_Playing()
 	if (DevMode)
 	{
 		// Status of common variables
-		gxDrawString(5, 5+16, 16, gxRGB32(255, 255, 255), "( %.1f %.1f ) ( %.1f %.1f )\n State: %d Col: %d%d%d%d Direction: %d Material: %d", 
-			Dusty.FloatX, Dusty.FloatY, Dusty.FloatVelocityX, Dusty.FloatVelocityY, 
+		gxDrawString(5, 5+16, 16, gxRGB32(255, 255, 255), "( %.1f %.1f ) ( %.1f %.1f ) %s\n State: %d Col: %d%d%d%d Direction: %d Material: %d", 
+			Dusty.FloatX, Dusty.FloatY, Dusty.FloatVelocityX, Dusty.FloatVelocityY, Chapter.Pages[Chapter.PageNum].Name,
 			Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide, Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide, Dusty.Direction, Dusty.CollideMaterial);
 		
 #ifdef PLATFORM_IPHONE
@@ -596,6 +596,16 @@ bool Update()
 	if (kbIsKeyDown(KB_F3) && !kbWasKeyDown(KB_F3))
 	{
 		gxEmulateDisplaySize(GXDISPLAY_IPAD_PORTRAIT);
+	}
+
+	// PgUp and PgDown advance and retreat pages.
+	if (kbIsKeyDown(KB_PRIOR) && !kbWasKeyDown(KB_PRIOR))
+	{
+		SetCurrentPage((Chapter.PageNum+Chapter.NPages-1) % Chapter.NPages);
+	}
+	if (kbIsKeyDown(KB_NEXT) && !kbWasKeyDown(KB_NEXT))
+	{
+		SetCurrentPage((Chapter.PageNum+1) % Chapter.NPages);
 	}
 
 	// Number keys switch levels

@@ -20,7 +20,10 @@ SGear Gears[MAX_GEARS];
 
 void CreateGear(int X, int Y)
 {
-    SGear* Gear = &Gears[NGears++];
+	if (NGears >= MAX_GEARS)
+		ReportError("Exceeded the maximum of %d total gears.", MAX_GEARS);
+
+	SGear* Gear = &Gears[NGears++];
 
     Gear->X = (float)X + 32;
     Gear->Y = (float)Y + 32;

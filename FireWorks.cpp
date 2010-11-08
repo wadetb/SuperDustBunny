@@ -67,6 +67,9 @@ void ParseFireWorkProperties(SBlock* Block, rapidxml::xml_node<char>* Properties
 
 void CreateFireWork(int X, int Y, SFireWorkProperties* Properties)
 {
+	if (NFireWorks >= MAX_FIREWORKS)
+		ReportError("Exceeded the maximum of %d total fireworks.", MAX_FIREWORKS);
+
 	SFireWork* FireWork = &FireWorks[NFireWorks++];
 
 	FireWork->X = (float)X + 32;

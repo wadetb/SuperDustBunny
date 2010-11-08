@@ -21,7 +21,10 @@ SBall Balls[MAX_BALLS];
 
 void CreateBall(int X, int Y)
 {
-    SBall* Ball = &Balls[NBalls++];
+	if (NBalls >= MAX_BALLS)
+		ReportError("Exceeded the maximum of %d total balls.", MAX_BALLS);
+
+	SBall* Ball = &Balls[NBalls++];
 
     Ball->X = (float)X + 32;
     Ball->Y = (float)Y + 32;

@@ -18,10 +18,13 @@ struct SDustMote
 	float Depth;
 	float Life;
 	float Time;
+	float Alpha;
 };
 
 void InitDust();
 void DisplayDust();
 void UpdateDust();
+
+void MakeDustMote(float X, float Y);
 
 #endif
