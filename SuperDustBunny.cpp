@@ -470,26 +470,29 @@ void Display()
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " - - - - - - - - - - - - - - - - - - - - - - ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "     Super Dust Bunny Keyboard Commands      ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Enter - Dismiss start / win / lose screen   ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " S     - Skip all tutorials                  ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Enter  - Dismiss start / win / lose screen  ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " S      - Skip all tutorials                 ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " F1    - Toggle help                         ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " F2    - Emulate iPhone display size         ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " F3    - Emulate iPad display size           ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " F1     - Toggle help                        ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " F2     - Emulate iPhone display size        ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " F3     - Emulate iPad display size          ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Home  - Toggle development mode             ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " \\     - Hold for slow motion                ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " ]     - Step one frame (in slow motion)     ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Home   - Toggle development mode            ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " \\      - Hold for slow motion               ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " ]      - Step one frame (in slow motion)    ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " A     - Hop left                            ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " D     - Hop right                           ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Space - Jump                                ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " A      - Hop left                           ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " D      - Hop right                          ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Space  - Jump                               ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Chapters:                                   ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 1     - Wade1                               ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 2     - Thomas1                             ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 1      - Wade1                              ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 2      - Thomas1                            ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " PgUp   - Previous page                      ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " PgDn   - Next page                          ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Ctrl+E - Edit current page                  ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " - - - - - - - - - - - - - - - - - - - - - - ");
 	}
 	else
@@ -611,7 +614,15 @@ bool Update()
 		SetCurrentPage((Chapter.PageNum+1) % Chapter.NPages);
 	}
 
-	// Number keys switch levels
+	// Ctrl+E key launches Tiled on the current page.
+	if (kbIsKeyDown(KB_LCONTROL) && kbIsKeyDown(KB_E) && !kbWasKeyDown(KB_E))
+	{
+		char Work[1024];
+		snprintf(Work, sizeof(Work), "%s%s.tmx", ChapterNames[CurrentChapter], Chapter.Pages[Chapter.PageNum].Name);
+		ShellExecute(NULL, NULL, "Tools\\Tiled\\Tiled.exe", Work, NULL, 0);
+	}
+
+	// Number keys switch chapters
 	if (kbIsKeyDown(KB_1) && !kbWasKeyDown(KB_1))
 	{
 		CurrentChapter = 0;

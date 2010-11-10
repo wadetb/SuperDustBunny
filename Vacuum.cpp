@@ -15,6 +15,10 @@
 
 SVacuum Vacuum;
 
+const float VACUUM_INITIAL_TIME = 5*60;
+const float VACUUM_RETREAT_TIME = 3*60;
+const float VACUUM_UNJAM_TIME   = 1*60;
+
 
 void InitVacuum()
 {
@@ -156,7 +160,7 @@ void UpdateVacuum()
 		if (Vacuum.Timer <= 0)
 		{
 			Vacuum.State = VACUUMSTATE_FAR;
-			Vacuum.Timer = 3*60;
+			Vacuum.Timer = VACUUM_UNJAM_TIME;
 		}
 	}
 }
@@ -166,10 +170,10 @@ void JamVacuum()
 	if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
 		Vacuum.State = VACUUMSTATE_RETREAT;
-		Vacuum.Timer = 6*60;
+		Vacuum.Timer = VACUUM_RETREAT_TIME;
 	}
 	else
-		Vacuum.Timer += 6*60;
+		Vacuum.Timer += VACUUM_UNJAM_TIME;
 }
 
 void TurnOffVacuum()
@@ -185,7 +189,7 @@ void TurnOffVacuum()
 void TurnOnVacuum()
 {
 	Vacuum.Y = (float)Chapter.PageHeight * 64;
-	Vacuum.Timer = 10*60;
+	Vacuum.Timer = VACUUM_INITIAL_TIME;
 
 	if (Vacuum.State == VACUUMSTATE_OFF)
 	{
