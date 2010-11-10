@@ -113,6 +113,8 @@ void UpdateDust()
 		Mote->Y += Mote->VY;
 
 		Mote->Time += 1.0f/60.0f;
+		if (Length(Mote->VX, Mote->VY) >= 3.0f)
+			Mote->Time += 1.5f/60.0f;
 
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		//                                                   Dusty Wind Effects                                                                    //
@@ -203,8 +205,8 @@ void UpdateDust()
 			Mote->VY = Random(-0.3f, 0.3f);
 
 			Mote->Size = Random(0.75f, 1.75f);
-			Mote->Depth = Random(0.8f, 1.2f);
-			Mote->Life = Random(2.0f, 10.0f);
+			Mote->Depth = 1.0f; //Random(0.999f, 1.001f);
+			Mote->Life = Random(2.0f, 3.0f);
 
 			Mote->Alpha = 1.0f;
 			Mote->Time = 0;

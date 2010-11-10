@@ -324,7 +324,6 @@ void DisplayGame_Playing()
 	DisplayChapter();
 	DisplayVacuum_BeforeDusty();
 	DisplayBarrels_BeforeDusty();
-	DisplayFans();
 	DisplayCoins();
     DisplayGear();
     DisplayBall();
@@ -334,6 +333,7 @@ void DisplayGame_Playing()
 	DisplayDusty();
 	
 	// More Chapter Drawing - Everything here is on top of Dusty
+	DisplayFans();
 	DisplayBarrels_AfterDusty();
 	DisplayDust();
 	DisplayVacuum_AfterDusty();

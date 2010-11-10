@@ -72,6 +72,23 @@ void DisplayFans()
 		SFan* Fan = &Fans[i];
 
 		gxDrawSpriteCenteredRotated((int)Fan->X, (int)(Fan->Y + ScrollY), Fan->Dir * 3.14159f / 180.0f, &FanSprite);
+
+		//gxDrawRectangleFilled((int)(Fan->X - 200), (int)(Fan->Y - 1000 + ScrollY), 400, 1000, gxRGBA32(255, 255, 255, 32));
+	}
+}
+
+void ApplyFan(SFan* Fan, float X, float Y, float Multiplier, float* VX, float* VY)
+{
+	float XDist = Fan->X - X;
+	float YDist = Fan->Y - Y;
+	if (fabsf(XDist) <= 200 && YDist > 0 && YDist < 1000)
+	{
+		float YStrength = Lerp(YDist, 500, 1000, 1.0f, 0.0f);
+		YStrength *= Lerp(fabsf(XDist), 0, 200, 1.0f, 0.0f);
+		*VY -= YStrength*1.1f * Multiplier;
+
+		float XStrength = Lerp(YDist, 0, 750, -2.0f, 1.0f);
+		*VX -= Sign(XDist) * XStrength*0.3f * Multiplier;
 	}
 }
 
@@ -84,13 +101,12 @@ void UpdateFans()
 		// TODO: Update a few dust motes per frame?
 		for (int i = 0; i < MAX_DUST_MOTES; i++)
 		{
-			if (DustMotes[i].X >= Fan->X - 100 && DustMotes[i].X <= Fan->X + 100)
-				DustMotes[i].VY -= 0.6f;
+			ApplyFan(Fan, DustMotes[i].X, DustMotes[i].Y, 1.0f, &DustMotes[i].VX, &DustMotes[i].VY);
 		}
 
 		if (Dusty.State == DUSTYSTATE_JUMP || Dusty.State == DUSTYSTATE_LAUNCH)
 		{
-			// ...
+			ApplyFan(Fan, Dusty.FloatX, Dusty.FloatY, 0.5f, &Dusty.FloatVelocityX, &Dusty.FloatVelocityY);
 		}
 	}
 }

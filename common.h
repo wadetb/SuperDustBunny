@@ -123,6 +123,15 @@ inline float Lerp(float Value, float FromMin, float FromMax, float ToMin=0.0f, f
 	return ToMin + RelativeValue * (ToMax - ToMin);
 }
 
+inline float Sign(float Value)
+{
+	if (Value < 0)
+		return -1.0f;
+	else if (Value > 0)
+		return 1.0f;
+	return 0;
+}
+
 inline float Random(float Min, float Max)
 {
 #ifdef PLATFORM_WINDOWS
