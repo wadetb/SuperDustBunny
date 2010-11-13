@@ -340,7 +340,7 @@ void UpdateDusty_Hop()
 	if (Dusty.SpriteTransition == 24)
 	{
 		// Spawn some dust motes.
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 6; i++)
 			MakeDustMote(Dusty.FloatX, Dusty.FloatY);
 
 		// If still holding right, reset animation and continue hopping.
@@ -437,7 +437,7 @@ void UpdateDusty_JumpCommon()
 	if (Dusty.CollideWithLeftSide && Dusty.Direction == DIRECTION_LEFT && (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_LEFT))
 	{
 		// Spawn some dust motes.
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 6; i++)
 			MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);
 
         SetDustyState_WallJump();
@@ -447,7 +447,7 @@ void UpdateDusty_JumpCommon()
 	if (Dusty.CollideWithRightSide && Dusty.Direction == DIRECTION_RIGHT && (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_RIGHT))
     {
 		// Spawn some dust motes.
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 6; i++)
 			MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);
 
 		SetDustyState_WallJump();

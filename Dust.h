@@ -10,7 +10,7 @@
 #ifndef DUST_H
 #define DUST_H
 
-#define MAX_DUST_MOTES 50
+#define MAX_DUST_MOTES 100
 
 struct SDustMote
 {
