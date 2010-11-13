@@ -13,6 +13,7 @@ enum ELightList
 {
 	LIGHTLIST_BACKGROUND,
 	LIGHTLIST_DUST,
+	LIGHTLIST_FOREGROUND_NO_SHADOW,
 	LIGHTLIST_FOREGROUND,
 	LIGHTLIST_EFFECTS,
 	LIGHTLIST_VACUUM,
@@ -42,6 +43,8 @@ void AddLitQuad(ELightList List, gxSprite* Sprite, float X0, float Y0, float X1,
 
 void AddLitSprite(ELightList List, gxSprite* Sprite, float X, float Y);
 void AddLitSpriteScaled(ELightList List, gxSprite* Sprite, float X, float Y, float ScaleX, float ScaleY);
+
+void AddLitSpriteCenteredScaledAlpha(ELightList List, gxSprite* Sprite, float X, float Y, float Scale, float Alpha);
 
 void AddLitSubSprite(ELightList List, gxSprite* Sprite, float X, float Y, float SubX1, float SubY1, float SubX2, float SubY2);
 

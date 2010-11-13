@@ -802,7 +802,7 @@ void DisplayChapter()
 				int SubX = Block->SubX;
 				int SubY = Block->SubY;
 
-				AddLitSubSprite(LIGHTLIST_BACKGROUND, &TileSet->Sprite, (float)x*64, (float)y*64 + ScrollY, (float)SubX, (float)SubY, (float)SubX + 64, (float)SubY + 64);
+				AddLitSubSprite(LIGHTLIST_FOREGROUND, &TileSet->Sprite, (float)x*64, (float)y*64 + ScrollY, (float)SubX, (float)SubY, (float)SubX + 64, (float)SubY + 64);
 			}
 		}
 	}

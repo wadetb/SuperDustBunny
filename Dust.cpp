@@ -84,7 +84,7 @@ void DisplayDust()
 			for (int y = 0; y < WIND_HEIGHT; y++)
 			{
 				float Dir = (WindDir[y * WIND_WIDTH + x] * 45) * PI / 180.0f;
-				AddLitSpriteCenteredScaledRotated(LIGHTLIST_BACKGROUND, &DustArrowSprite, (x+0.5f) * StepX, (y+0.5f) * StepY, 1.0f, Dir);
+				AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &DustArrowSprite, (x+0.5f) * StepX, (y+0.5f) * StepY, 1.0f, Dir);
 			}
 		}
 	}
@@ -99,7 +99,7 @@ void DisplayDust()
 		if (Mote->Time > Mote->Life - 1.0f)
 			Alpha *= Remap(Mote->Time, Mote->Life-1.0f, Mote->Life, 1.0f, 0.0f, true);
 
-		AddLitSpriteCenteredScaledRotated(LIGHTLIST_DUST, &DustMoteSprite, Mote->X, Mote->Y + ScrollY*Mote->Depth, Mote->Size, Alpha);
+		AddLitSpriteCenteredScaledAlpha(LIGHTLIST_DUST, &DustMoteSprite, Mote->X, Mote->Y + ScrollY*Mote->Depth, Mote->Size, Alpha);
 	}
 }
 

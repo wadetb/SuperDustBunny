@@ -15,18 +15,24 @@
 #define MAX_LIT_QUADS_PER_LIST 512
 
 
+struct SLightState
+{
+	float ShadowOffsetX;
+	float ShadowOffsetY;
+	unsigned int ShadowAlpha;
+};
+
 struct SLightList
 {
 	int NQuads;
 	SLitQuad Quads[MAX_LIT_QUADS_PER_LIST];
 };
 
+
+SLightState LightState;
+
 SLightList LightLists[LIGHTLIST_COUNT];
 
-
-void InitLighting()
-{
-}
 
 void ResetLighting()
 {
@@ -77,11 +83,60 @@ void DrawLitQuad(SLitQuad* Quad)
 	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v, sizeof(gxSpriteVertex) );
 }
 
+void DrawLitQuad_Shadow(SLitQuad* Quad)
+{
+	_gxSetTexture(Quad->Sprite);
+
+	gxSpriteVertex v[4];
+	v[0].x = Quad->X0 + LightState.ShadowOffsetX; 
+	v[0].y = Quad->Y0 + LightState.ShadowOffsetY; 
+	v[0].z = 0.0f; 
+	v[0].w = 1.0f;
+	v[0].color = gxRGBA32(0, 0, 0, LightState.ShadowAlpha);
+	v[0].u = Quad->U0; 
+	v[0].v = Quad->V0;
+
+	v[1].x = Quad->X1 + LightState.ShadowOffsetX; 
+	v[1].y = Quad->Y1 + LightState.ShadowOffsetY; 
+	v[1].z = 0.0f; 
+	v[1].w = 1.0f;
+	v[1].color = gxRGBA32(0, 0, 0, LightState.ShadowAlpha);
+	v[1].u = Quad->U1; 
+	v[1].v = Quad->V1;
+
+	v[3].x = Quad->X2 + LightState.ShadowOffsetX; 
+	v[3].y = Quad->Y2 + LightState.ShadowOffsetY; 
+	v[3].z = 0.0f; 
+	v[3].w = 1.0f;
+	v[2].color = gxRGBA32(0, 0, 0, LightState.ShadowAlpha);
+	v[3].u = Quad->U2; 
+	v[3].v = Quad->V2;
+
+	v[2].x = Quad->X3 + LightState.ShadowOffsetX; 
+	v[2].y = Quad->Y3 + LightState.ShadowOffsetY; 
+	v[2].z = 0.0f; 
+	v[2].w = 1.0f;
+	v[3].color = gxRGBA32(0, 0, 0, LightState.ShadowAlpha);
+	v[2].u = Quad->U3; 
+	v[2].v = Quad->V3;
+
+	gxDev->SetFVF( gxSpriteVertexFVF );
+	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v, sizeof(gxSpriteVertex) );
+}
+
 void RenderLighting()
 {
 	_gxSetAlpha( GXALPHA_BLEND );
 	for (int i = 0; i < LightLists[LIGHTLIST_BACKGROUND].NQuads; i++)
 		DrawLitQuad( &LightLists[LIGHTLIST_BACKGROUND].Quads[i] );
+
+	LightState.ShadowAlpha = 128;
+	LightState.ShadowOffsetX = 30;
+	LightState.ShadowOffsetY = 20;
+
+	_gxSetAlpha( GXALPHA_BLEND );
+	for (int i = 0; i < LightLists[LIGHTLIST_FOREGROUND].NQuads; i++)
+		DrawLitQuad_Shadow( &LightLists[LIGHTLIST_FOREGROUND].Quads[i] );
 
 	_gxSetAlpha( GXALPHA_ADD );
 	for (int i = 0; i < LightLists[LIGHTLIST_DUST].NQuads; i++)
@@ -90,10 +145,16 @@ void RenderLighting()
 	_gxSetAlpha( GXALPHA_BLEND );
 	for (int i = 0; i < LightLists[LIGHTLIST_FOREGROUND].NQuads; i++)
 		DrawLitQuad( &LightLists[LIGHTLIST_FOREGROUND].Quads[i] );
+	for (int i = 0; i < LightLists[LIGHTLIST_FOREGROUND_NO_SHADOW].NQuads; i++)
+		DrawLitQuad( &LightLists[LIGHTLIST_FOREGROUND_NO_SHADOW].Quads[i] );
 
 	_gxSetAlpha( GXALPHA_ADD );
 	for (int i = 0; i < LightLists[LIGHTLIST_EFFECTS].NQuads; i++)
 		DrawLitQuad( &LightLists[LIGHTLIST_EFFECTS].Quads[i] );
+
+	_gxSetAlpha( GXALPHA_BLEND );
+	for (int i = 0; i < LightLists[LIGHTLIST_VACUUM].NQuads; i++)
+		DrawLitQuad_Shadow( &LightLists[LIGHTLIST_VACUUM].Quads[i] );
 
 	_gxSetAlpha( GXALPHA_BLEND );
 	for (int i = 0; i < LightLists[LIGHTLIST_VACUUM].NQuads; i++)
@@ -152,6 +213,18 @@ void AddLitSpriteScaled(ELightList List, gxSprite* Sprite, float X, float Y, flo
 		X+Sprite->width*ScaleX, Y,                       1.0f, 0.0f,
 		X+Sprite->width*ScaleX, Y+Sprite->height*ScaleY, 1.0f, 1.0f, 
 		X,                      Y+Sprite->height*ScaleY, 0.0f, 1.0f);
+}
+
+void AddLitSpriteCenteredScaledAlpha(ELightList List, gxSprite* Sprite, float X, float Y, float Scale, float Alpha)
+{
+	float w = Sprite->width*Scale*0.5f;
+	float h = Sprite->height*Scale*0.5f;
+
+	AddLitQuad(List, Sprite, gxRGBA32(255,255,255,(int)(255*Alpha)),
+		X-w, Y-h, 0.0f, 0.0f, 
+		X+w, Y-h, 1.0f, 0.0f,
+		X+w, Y+h, 1.0f, 1.0f, 
+		X-w, Y+h, 0.0f, 1.0f);
 }
 
 void AddLitSubSprite(ELightList List, gxSprite* Sprite, float X, float Y, float SubX1, float SubY1, float SubX2, float SubY2)
