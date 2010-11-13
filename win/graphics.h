@@ -81,6 +81,8 @@ struct gxSprite
   IDirect3DTexture9* tex;
   int width;
   int height;
+  int texWidth;
+  int texHeight;
 };
 
 /*--------------------------------------------------------------------------------------------------------
@@ -265,5 +267,26 @@ void gxDrawSpriteCenteredRotated(int x, int y, float a, gxSprite* spr);
 void gxDrawSpriteCenteredScaledAlphaAdd(int x, int y, float scalex, float scaley, float alpha, gxSprite* spr);
 
 void gxDrawSpriteSubRect( int x, int y, int x1, int y1, int x2, int y2, gxSprite* p );
+
+struct gxSpriteVertex
+{
+	float x, y, z, w;
+	DWORD color;
+	float u, v;
+};
+
+#define gxSpriteVertexFVF (D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1)
+
+
+enum gxAlphaMode
+{
+	GXALPHA_NONE,
+	GXALPHA_BLEND,
+	GXALPHA_ADD,
+};
+
+void _gxSetAlpha( gxAlphaMode mode );
+void _gxSetTexture( gxSprite* spr );
+void _gxDrawQuad( float x, float y, float w, float h, unsigned int color = D3DCOLOR_RGBA(255,255,255,255), float u1 = 0.0f, float v1 = 0.0f, float u2 = 1.0f, float v2 = 1.0f );
 
 #endif

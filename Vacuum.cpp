@@ -15,9 +15,9 @@
 
 SVacuum Vacuum;
 
-const float VACUUM_INITIAL_TIME = 5*60;
-const float VACUUM_RETREAT_TIME = 3*60;
-const float VACUUM_UNJAM_TIME   = 1*60;
+const int VACUUM_INITIAL_TIME = 5*60;
+const int VACUUM_RETREAT_TIME = 3*60;
+const int VACUUM_UNJAM_TIME   = 1*60;
 
 
 void InitVacuum()
@@ -36,7 +36,7 @@ void DisplayVacuum_BeforeDusty()
 {
 	if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
-		gxDrawSprite(0, (int)Vacuum.Y + ScrollY, &VacuumBackSprite);
+		AddLitSprite(LIGHTLIST_FOREGROUND, &VacuumBackSprite, 0, Vacuum.Y + ScrollY);
 	}
 }
 
@@ -44,7 +44,7 @@ void DisplayVacuum_AfterDusty()
 {
 	if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
-		gxDrawSprite(0, (int)Vacuum.Y + ScrollY, &VacuumFrontSprite);
+		AddLitSprite(LIGHTLIST_VACUUM, &VacuumFrontSprite, 0, Vacuum.Y + ScrollY);
 	}
 
 	if (DevMode)

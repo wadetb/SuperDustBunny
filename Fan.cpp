@@ -71,13 +71,14 @@ void DisplayFans()
 	{
 		SFan* Fan = &Fans[i];
 
-		gxDrawSpriteCenteredRotated((int)Fan->X, (int)(Fan->Y + ScrollY), Fan->Dir * 3.14159f / 180.0f, &FanSprite);
+		AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &FanSprite, Fan->X, Fan->Y + ScrollY, 1.0f, 0.0f);
 
+		// Debug rendering of fan area.
 		//gxDrawRectangleFilled((int)(Fan->X - 200), (int)(Fan->Y - 1000 + ScrollY), 400, 1000, gxRGBA32(255, 255, 255, 32));
 	}
 }
 
-void ApplyFan(SFan* Fan, float X, float Y, float Multiplier, float* VX, float* VY)
+void ApplyFanWind(SFan* Fan, float X, float Y, float Multiplier, float* VX, float* VY)
 {
 	float XDist = Fan->X - X;
 	float YDist = Fan->Y - Y;
@@ -98,15 +99,15 @@ void UpdateFans()
 	{
 		SFan* Fan = &Fans[i];
 
-		// TODO: Update a few dust motes per frame?
+		// TODO: Update a few dust motes per frame for performance?
 		for (int i = 0; i < MAX_DUST_MOTES; i++)
 		{
-			ApplyFan(Fan, DustMotes[i].X, DustMotes[i].Y, 1.0f, &DustMotes[i].VX, &DustMotes[i].VY);
+			ApplyFanWind(Fan, DustMotes[i].X, DustMotes[i].Y, 1.0f, &DustMotes[i].VX, &DustMotes[i].VY);
 		}
 
 		if (Dusty.State == DUSTYSTATE_JUMP || Dusty.State == DUSTYSTATE_LAUNCH)
 		{
-			ApplyFan(Fan, Dusty.FloatX, Dusty.FloatY, 0.5f, &Dusty.FloatVelocityX, &Dusty.FloatVelocityY);
+			ApplyFanWind(Fan, Dusty.FloatX, Dusty.FloatY, 0.5f, &Dusty.FloatVelocityX, &Dusty.FloatVelocityY);
 		}
 	}
 }

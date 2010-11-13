@@ -50,42 +50,22 @@ void DisplayCoins()
 		if (Coin->State == COINSTATE_INACTIVE)
 			continue;
 
-        if (Coin->Sprite == 1) 
-        {
-            gxDrawSpriteCenteredRotated( (int)Coin->X, (int)(Coin->Y + ScrollY), 0, &CoinSpin1Sprite );
-        } 
-		
-        if (Coin->Sprite == 2)
-        {
-            gxDrawSpriteCenteredRotated( (int)Coin->X, (int)(Coin->Y + ScrollY), 0, &CoinSpin2Sprite );
-        } 
+		gxSprite* CoinSprites[6] =
+		{
+			&CoinSpin1Sprite,
+			&CoinSpin2Sprite,
+			&CoinSpin3Sprite,
+			&CoinSpin4Sprite,
+			&CoinSpin5Sprite,
+			&CoinSpin6Sprite,
+		};
 
-        if (Coin->Sprite == 3)
-        {
-            gxDrawSpriteCenteredRotated( (int)Coin->X, (int)(Coin->Y + ScrollY), 0, &CoinSpin3Sprite );
-        }
-
-        if (Coin->Sprite == 4)
-        {
-            gxDrawSpriteCenteredRotated( (int)Coin->X, (int)(Coin->Y + ScrollY), 0, &CoinSpin4Sprite );
-        } 
-
-        if (Coin->Sprite == 5)
-        {
-            gxDrawSpriteCenteredRotated( (int)Coin->X, (int)(Coin->Y + ScrollY), 0, &CoinSpin5Sprite );
-        }
-		
-        if (Coin->Sprite == 6)
-        {
-            gxDrawSpriteCenteredRotated( (int)Coin->X, (int)(Coin->Y + ScrollY), 0, &CoinSpin6Sprite );
-        }    
-		
-    }    
+		AddLitSpriteCenteredScaledRotated( LIGHTLIST_FOREGROUND, CoinSprites[Coin->Sprite], Coin->X, Coin->Y + ScrollY, 1.0f, 0.0f );
+    }
 }
 
 void UpdateCoins()
 {
-
     for (int i = 0; i < NCoins; i++)
     {
         SCoin* Coin = &Coins[i];

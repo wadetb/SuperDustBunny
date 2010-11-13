@@ -37,15 +37,6 @@ extern int gxViewY1 = 0;
 extern int gxViewX2 = 0;
 extern int gxViewY2 = 0;
 
-struct gxSpriteVertex
-{
-	float x, y, z, w;
-	DWORD color;
-	float u, v;
-};
-
-#define gxSpriteVertexFVF (D3DFVF_XYZRHW|D3DFVF_DIFFUSE|D3DFVF_TEX1)
-
 // 8x8 monochrome font from 32 to 127 by Richard Mitton
 BYTE gxFontData[768] =
 {
@@ -265,7 +256,7 @@ void gxSetClipRange( int x1, int y1, int x2, int y2 )
 	gxDev->SetScissorRect( &r );
 }
 
-void _gxDrawQuad( int x, int y, int w, int h, DWORD color = D3DCOLOR_RGBA(255,255,255,255), float u1 = 0.0f, float v1 = 0.0f, float u2 = 1.0f, float v2 = 1.0f )
+void _gxDrawQuad( float x, float y, float w, float h, unsigned int color, float u1, float v1, float u2, float v2 )
 {
 	gxSpriteVertex v[4];
 	v[0].x = x; v[0].y = y; v[0].z = 0.0f; v[0].w = 1.0f;
@@ -286,6 +277,31 @@ void _gxDrawQuad( int x, int y, int w, int h, DWORD color = D3DCOLOR_RGBA(255,25
 
 	gxDev->SetFVF( gxSpriteVertexFVF );
 	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v, sizeof(gxSpriteVertex) );
+}
+
+void _gxSetTexture( gxSprite* spr )
+{
+	gxDev->SetTexture( 0, spr->tex );
+}
+
+void _gxSetAlpha( gxAlphaMode mode )
+{
+	if (mode == GXALPHA_NONE)
+	{
+		gxDev->SetRenderState( D3DRS_ALPHABLENDENABLE, FALSE );
+	}
+	else if (mode == GXALPHA_BLEND)
+	{
+		gxDev->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
+		gxDev->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
+		gxDev->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
+	}
+	else if (mode == GXALPHA_ADD)
+	{
+		gxDev->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
+		gxDev->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
+		gxDev->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ONE );
+	}
 }
 
 void gxDrawSprite( int x, int y, gxSprite* p )
@@ -383,6 +399,8 @@ void gxLoadSprite( const char* name, gxSprite* spr )
 
 	spr->width = info.Width;
 	spr->height = info.Height;
+	spr->texWidth = info.Width;
+	spr->texHeight = info.Height;
 }
 
 void gxDestroySprite( gxSprite* spr )

@@ -337,6 +337,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Lighting.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Lighting.h"
+			>
+		</File>
+		<File
 			RelativePath=".\StartScreen.cpp"
 			>
 		</File>

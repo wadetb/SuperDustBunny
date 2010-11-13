@@ -80,7 +80,7 @@ void DisplayBarrels_BeforeDusty()
 	{
 		SBarrel* Barrel = &Barrels[i];
 		
-		gxDrawSpriteCenteredRotated((int)Barrel->X, (int)(Barrel->Y + ScrollY), Barrel->Dir * 3.14159f / 180.0f, &BarrelBackSprite);
+		AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &BarrelBackSprite, Barrel->X, Barrel->Y + ScrollY, 1.0f, DegreesToRadians(Barrel->Dir));
 	}
 }
 
@@ -90,8 +90,8 @@ void DisplayBarrels_AfterDusty()
 	{
 		SBarrel* Barrel = &Barrels[i];
 		
-		gxDrawSpriteCenteredRotated((int)Barrel->X, (int)(Barrel->Y + ScrollY), Barrel->Dir * 3.14159f / 180.0f, &BarrelFrontSprite);
-		gxDrawSpriteCenteredRotated((int)Barrel->X, (int)(Barrel->Y + ScrollY), 0.0f, &BarrelNailSprite);
+		AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &BarrelFrontSprite, Barrel->X, Barrel->Y + ScrollY, 1.0f, DegreesToRadians(Barrel->Dir));
+		AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &BarrelNailSprite, Barrel->X, Barrel->Y + ScrollY, 1.0f, 0.0f);
 	}
 }
 
@@ -160,7 +160,7 @@ void UpdateBarrels()
 			else
 			{
 				Barrel->Dir = Barrel->ToDir;
-				float Angle = (float)((90 - Barrel->Dir)) * 3.14159f/180.0f;
+				float Angle = DirectionToAngle(Barrel->Dir);
 				float Velocity = 20.0f;
 				SetDustyState_Launch(Velocity*cosf(Angle), -Velocity*sinf(Angle));
 				Barrel->Timer = 30;

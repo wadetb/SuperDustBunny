@@ -44,45 +44,45 @@ void DisplayTutorial()
 {
 	if (Tutorial.State == TUTORIALSTATE_INITIAL)
 	{
-		gxDrawSpriteCenteredRotated (380, 400, 0, &TutorialInitialSprite );  
+		AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &TutorialInitialSprite, 380, 400, 1.0f, 0.0f);
 	}
 
 	if (Tutorial.State == TUTORIALSTATE_BALL)
 	{
-		gxDrawSpriteCenteredRotated (380, 400, 0, &TutorialBallSprite );  
+		AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &TutorialBallSprite, 380, 400, 1.0f, 0.0f);
 	}
 
 	if (Tutorial.State == TUTORIALSTATE_BARREL)
 	{
-		gxDrawSpriteCenteredRotated (380, 400, 0, &TutorialBarrelSprite );  
+		AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &TutorialBarrelSprite, 380, 400, 1.0f, 0.0f);
 	}
 
 	if (Tutorial.State == TUTORIALSTATE_COIN)
 	{
-		gxDrawSpriteCenteredRotated (380, 400, 0, &TutorialCoinSprite );  
+		AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &TutorialCoinSprite, 380, 400, 1.0f, 0.0f);
 	}
 
 	if (Tutorial.State == TUTORIALSTATE_FIREWORK)
 	{
-		gxDrawSpriteCenteredRotated (380, 400, 0, &TutorialFireWorkSprite );  
+		AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &TutorialFireWorkSprite, 380, 400, 1.0f, 0.0f);
 	}
 
 	if (Tutorial.State == TUTORIALSTATE_JUMP)
 	{
-		gxDrawSpriteCenteredRotated (380, 400, 0, &TutorialJumpSprite );  
+		AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &TutorialJumpSprite, 380, 400, 1.0f, 0.0f);
 	}
 
 	if (Tutorial.State == TUTORIALSTATE_WALLJUMP)
 	{
-		gxDrawSpriteCenteredRotated (380, 400, 0, &TutorialWallJumpSprite );  
+		AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &TutorialWallJumpSprite, 380, 400, 1.0f, 0.0f);
 	}
 
 	if (Tutorial.State == TUTORIALSTATE_GEAR)
 	{
-		gxDrawSpriteCenteredRotated (380, 400, 0, &TutorialGearSprite );  
+		AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &TutorialGearSprite, 380, 400, 1.0f, 0.0f);
 	}
 
-	gxDrawSprite(768-384, 1024-364, &CrumbStandSprite );
+	AddLitSprite(LIGHTLIST_FOREGROUND, &CrumbStandSprite, 768-384, 1024-364);
 
 #ifdef PLATFORM_WINDOWS
 	gxDrawString(0, 1024-32, 32, gxRGB32(255, 255, 255), "Press SPACE to continue ");

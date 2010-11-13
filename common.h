@@ -58,7 +58,24 @@
 
 #include "Assets.h"
 
+#include "Lighting.h"
+
 static const float PI = acosf(-1.0f);
+
+inline float DegreesToRadians(float a)
+{
+	return a * PI/180.0f;
+}
+
+inline float RadiansToDegrees(float a)
+{
+	return a * 180.0f/PI;
+}
+
+inline float DirectionToAngle(float a)
+{
+	return DegreesToRadians(90.0f-a);
+}
 
 inline float Max(float a, float b)
 {

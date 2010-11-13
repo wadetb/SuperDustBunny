@@ -84,7 +84,7 @@ void DisplayDust()
 			for (int y = 0; y < WIND_HEIGHT; y++)
 			{
 				float Dir = (WindDir[y * WIND_WIDTH + x] * 45) * PI / 180.0f;
-				gxDrawSpriteCenteredRotated((int)((x+0.5f) * StepX), (int)((y+0.5f) * StepY), Dir, &DustArrowSprite);
+				AddLitSpriteCenteredScaledRotated(LIGHTLIST_BACKGROUND, &DustArrowSprite, (x+0.5f) * StepX, (y+0.5f) * StepY, 1.0f, Dir);
 			}
 		}
 	}
@@ -99,7 +99,7 @@ void DisplayDust()
 		if (Mote->Time > Mote->Life - 1.0f)
 			Alpha *= Remap(Mote->Time, Mote->Life-1.0f, Mote->Life, 1.0f, 0.0f, true);
 
-		gxDrawSpriteCenteredScaledAlphaAdd((int)(Mote->X), (int)(Mote->Y + ScrollY*Mote->Depth), Mote->Size, Mote->Size, Alpha, &DustMoteSprite);
+		AddLitSpriteCenteredScaledRotated(LIGHTLIST_DUST, &DustMoteSprite, Mote->X, Mote->Y + ScrollY*Mote->Depth, Mote->Size, Alpha);
 	}
 }
 
@@ -164,8 +164,8 @@ void UpdateDust()
 
 		if (Strength > 0)
 		{
-			Mote->VX += cosf((90 - Dir * 45) * PI / 180.0f) * Strength;
-			Mote->VY += -sinf((90 - Dir * 45) * PI / 180.0f) * Strength;
+			Mote->VX += cosf(DirectionToAngle(Dir * 45.0f)) * Strength;
+			Mote->VY += -sinf(DirectionToAngle(Dir * 45.0f)) * Strength;
 		}
 
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//

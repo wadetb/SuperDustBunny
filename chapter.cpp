@@ -785,10 +785,6 @@ void DisplayChapter()
 				case SPECIALBLOCKID_BLANK: 
 					// Nothing to draw.
 					break;
-												   
-				case SPECIALBLOCKID_UNKNOWN:
-					gxDrawSprite(x*64, y*64 + ScrollY, &TileUnknownSprite);
-					break;
 				}
 			}
 			else
@@ -800,7 +796,7 @@ void DisplayChapter()
 				int SubX = Block->SubX;
 				int SubY = Block->SubY;
 
-				gxDrawSpriteSubRect(x*64, y*64 + ScrollY, SubX, SubY, SubX + 64, SubY + 64, &TileSet->Sprite);
+				AddLitSubSprite(LIGHTLIST_BACKGROUND, &TileSet->Sprite, (float)x*64, (float)y*64 + ScrollY, (float)SubX, (float)SubY, (float)SubX + 64, (float)SubY + 64);
 			}
 		}
 	}

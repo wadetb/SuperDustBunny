@@ -104,11 +104,11 @@ void DisplayFireWorks()
 		
 		if (FireWork->State == FIREWORKSTATE_WAIT || FireWork->State == FIREWORKSTATE_FUSE || FireWork->State == FIREWORKSTATE_LAUNCH)
 		{
-			gxDrawSpriteCenteredRotated((int)FireWork->X, (int)FireWork->Y + ScrollY, FireWork->FlightDir * 3.14159f / 180.0f, &FireWorkRocketSprite);
+			AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &FireWorkRocketSprite, FireWork->X, FireWork->Y + ScrollY, 1.0f, DegreesToRadians((float)FireWork->FlightDir));
 		}
 		else if (FireWork->State == FIREWORKSTATE_EXPLODE)
 		{
-			gxDrawSpriteCenteredScaledAlphaAdd((int)FireWork->X, (int)FireWork->Y + ScrollY, 1.0f, 1.0f, 1.0f, &FireWorkBangSprite);				
+			AddLitSpriteCenteredScaledRotated(LIGHTLIST_EFFECTS, &FireWorkBangSprite, FireWork->X, FireWork->Y + ScrollY, 1.0f, 0.0f);
 		}
 	}
 }
@@ -210,7 +210,7 @@ void UpdateFireWorks()
 		}
 		else if (FireWork->State == FIREWORKSTATE_LAUNCH)
 		{
-			float Angle = (float)((90 - FireWork->FlightDir)) * 3.14159f/180.0f;
+			float Angle = DirectionToAngle((float)FireWork->FlightDir);
 			float Velocity = 1.5f;
 
 			FireWork->VelocityX += Velocity*cosf(Angle);

@@ -9,6 +9,7 @@
 
 #include "Common.h"
 #include "Chapter.h"
+#include "Lighting.h"
 #include "Barrel.h"
 #include "Fan.h"
 #include "Dusty.h"
@@ -317,9 +318,8 @@ void DisplayGame_Playing()
 	// Calculate scrolling.
 	CalculateScrollY();
 	
-	// Non-scrolling background Drawing
-	//gxDrawSprite( BackgroundX, BackgroundY, &BackgroundCardboardSprite );
-	
+	ResetLighting();
+
 	// Chapter Drawing - Everything here is behind Dusty
 	DisplayChapter();
 	DisplayVacuum_BeforeDusty();
@@ -338,6 +338,8 @@ void DisplayGame_Playing()
 	DisplayDust();
 	DisplayVacuum_AfterDusty();
 	
+	RenderLighting();
+
     // HUD Drawing - Score, etc.
     DisplayScore();   
     	

@@ -58,22 +58,22 @@ void DisplayBall()
 
         if (Ball->Sprite == 1) 
         {
-           gxDrawSpriteCenteredRotated( (int)Ball->X, (int)(Ball->Y + ScrollY), 0, &TennisBallSpin1Sprite );
+			AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &TennisBallSpin1Sprite, Ball->X, Ball->Y + ScrollY, 1.0f, 0.0f);
         } 
 
         if (Ball->Sprite == 2)
         {
-            gxDrawSpriteCenteredRotated( (int)Ball->X, (int)(Ball->Y + ScrollY), 0, &TennisBallSpin2Sprite );
+			AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &TennisBallSpin2Sprite, Ball->X, Ball->Y + ScrollY, 1.0f, 0.0f);
         } 
 
         if (Ball->Sprite == 3)
         {
-            gxDrawSpriteCenteredRotated( (int)Ball->X, (int)(Ball->Y + ScrollY), 0, &TennisBallSpin3Sprite );
+			AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &TennisBallSpin3Sprite, Ball->X, Ball->Y + ScrollY, 1.0f, 0.0f);
         }
 
         if (Ball->Sprite == 4)
         {
-            gxDrawSpriteCenteredRotated( (int)Ball->X, (int)(Ball->Y + ScrollY), 0, &TennisBallSpin4Sprite );
+			AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &TennisBallSpin4Sprite, Ball->X, Ball->Y + ScrollY, 1.0f, 0.0f);
         }   
     }    
 }
