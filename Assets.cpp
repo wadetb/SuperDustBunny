@@ -35,6 +35,7 @@ gxSprite DustyCornerJumpSprite;
 gxSprite DustyDeathSprite;
 
 gxSprite BackgroundCardboardSprite;
+gxSprite BackgroundPaperSprite;
 
 gxSprite TileUnknownSprite;
 
@@ -166,6 +167,7 @@ void LoadAssets()
 	gxLoadSprite("Data/dusty-die.png", &DustyDeathSprite);
 
 	gxLoadSprite("Data/background-cardboard.png", &BackgroundCardboardSprite);
+	gxLoadSprite("Data/background-paper.png", &BackgroundPaperSprite);
 
 	gxLoadSprite("Data/tile-wtf.png", &TileUnknownSprite);
 	

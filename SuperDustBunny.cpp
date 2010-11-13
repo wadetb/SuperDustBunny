@@ -320,6 +320,14 @@ void DisplayGame_Playing()
 	
 	ResetLighting();
 
+	// Repeating background.
+	int y = 0;
+	while (y < Chapter.PageHeight*64)
+	{
+		AddLitSprite(LIGHTLIST_BACKGROUND, &BackgroundPaperSprite, 0, (float)y+ScrollY);
+		y += BackgroundPaperSprite.height;
+	}
+
 	// Chapter Drawing - Everything here is behind Dusty
 	DisplayChapter();
 	DisplayVacuum_BeforeDusty();

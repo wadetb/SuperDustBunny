@@ -9,6 +9,7 @@
 
 #include "Common.h"
 #include "Lighting.h"
+#include "Chapter.h"
 
 
 #define MAX_LIT_QUADS_PER_LIST 512
@@ -78,10 +79,6 @@ void DrawLitQuad(SLitQuad* Quad)
 
 void RenderLighting()
 {
-	// Background color.
-	//gxDrawSprite( BackgroundX, BackgroundY, &BackgroundCardboardSprite );
-	gxDrawRectangleFilled(0, 0, 768, 1024, gxRGBA32(255, 255, 255, 96));
-
 	_gxSetAlpha( GXALPHA_BLEND );
 	for (int i = 0; i < LightLists[LIGHTLIST_BACKGROUND].NQuads; i++)
 		DrawLitQuad( &LightLists[LIGHTLIST_BACKGROUND].Quads[i] );

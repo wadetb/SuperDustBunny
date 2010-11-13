@@ -763,6 +763,12 @@ void CalculateScrollY()
 	if (ScrollY < -(Chapter.PageHeight * 64 - gxScreenHeight))
 	{
 		ScrollY = -(Chapter.PageHeight * 64 - gxScreenHeight);
+	} 
+
+	// Prevent scrolling off top of map.
+	if (ScrollY > 0)
+	{
+		ScrollY = 0;
 	}
 }
 

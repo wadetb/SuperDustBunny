@@ -35,6 +35,7 @@ extern gxSprite DustyCornerJumpSprite;
 extern gxSprite DustyDeathSprite;
 
 extern gxSprite BackgroundCardboardSprite;
+extern gxSprite BackgroundPaperSprite;
 
 extern gxSprite TileUnknownSprite;
 
