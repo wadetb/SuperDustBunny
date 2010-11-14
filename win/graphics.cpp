@@ -1,5 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 
+#include "../Common.h"
 #include "graphics.h"
 
 #include "mouse.h"
@@ -659,5 +660,114 @@ void gxDrawSpriteSubRect(int x, int y, int x1, int y1, int x2, int y2, gxSprite*
 	float v1 = (float)y2 / (float)spr->height;
 
 	_gxDrawQuad( x, y, x2-x1, y2-y1, gxRGBA32(255, 255, 255, 255), u0, v0, u1, v1 );
+}
+
+
+void gxCreateRenderTarget(int Width, int Height, gxSprite* Sprite)
+{
+	Sprite->width = Sprite->texWidth = Width;
+	Sprite->height = Sprite->texHeight = Height;
+	D3DXCreateTexture(gxDev, Width, Height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &Sprite->tex);
+}
+
+void gxSetRenderTarget(gxSprite* Sprite)
+{
+	IDirect3DSurface9* Surf;
+	if (Sprite)
+	{
+		Sprite->tex->GetSurfaceLevel(0, &Surf);
+	}
+	else
+	{
+		gxDev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &Surf);
+	}
+	gxDev->SetRenderTarget(0, Surf);
+	Surf->Release();
+}
+
+void gxClearColor(unsigned int Color)
+{
+	gxDev->Clear(0, NULL, D3DCLEAR_TARGET, Color, 0.0f, 0);
+}
+
+void gxCreateShader(const char* Source, gxShader* Shader)
+{
+	LPD3DXBUFFER CompiledShader;
+	LPD3DXBUFFER ErrorMsgs;
+	D3DXCompileShader(Source, strlen(Source), NULL, NULL, "main", "ps_3_0", 0, &CompiledShader, &ErrorMsgs, NULL);
+
+	if (CompiledShader)
+	{
+		gxDev->CreatePixelShader((DWORD*)CompiledShader->GetBufferPointer(), &Shader->Shader);
+		CompiledShader->Release();
+	}
+	else
+	{
+		ReportError("Failed to compile shader:\n%s", ErrorMsgs->GetBufferPointer());
+	}
+
+	if (ErrorMsgs)
+		ErrorMsgs->Release();
+}
+
+void gxSetPixelShader(gxShader* Shader)
+{
+	gxDev->SetPixelShader(Shader->Shader);
+}
+
+void gxSetPixelShaderConst(int Index, float x, float y, float z, float w)
+{
+	float Floats[4] = {x, y, z, w};
+	gxDev->SetPixelShaderConstantF(Index, Floats, 1);
+}
+
+void gxCopyRenderTarget(gxSprite* From, gxSprite* To)
+{
+	gxSetRenderTarget(To);
+
+	_gxSetAlpha( GXALPHA_NONE );
+	_gxSetTexture(From);
+
+	float HalfPixelX = 0.0f;
+	float HalfPixelY = 0.0f;
+
+	float HalfPixelU = 0.5f/From->texWidth;
+	float HalfPixelV = 0.5f/From->texHeight;
+
+	gxSpriteVertex v[4];
+	v[0].x = 0.0f + HalfPixelX; 
+	v[0].y = 0.0f + HalfPixelY; 
+	v[0].z = 0.0f; 
+	v[0].w = 1.0f;
+	v[0].color = gxRGBA32(255, 255, 255, 255);
+	v[0].u = 0.0f+HalfPixelU; 
+	v[0].v = 0.0f+HalfPixelV;
+
+	v[1].x = (float)To->width + HalfPixelX; 
+	v[1].y = 0.0f + HalfPixelY; 
+	v[1].z = 0.0f; 
+	v[1].w = 1.0f;
+	v[1].color = gxRGBA32(255, 255, 255, 255);
+	v[1].u = 1.0f+HalfPixelU; 
+	v[1].v = 0.0f+HalfPixelV;
+
+	v[3].x = (float)To->width + HalfPixelX; 
+	v[3].y = (float)To->height + HalfPixelY; 
+	v[3].z = 0.0f; 
+	v[3].w = 1.0f;
+	v[3].color = gxRGBA32(255, 255, 255, 255);
+	v[3].u = 1.0f+HalfPixelU; 
+	v[3].v = 1.0f+HalfPixelV;
+
+	v[2].x = 0.0f + HalfPixelX; 
+	v[2].y = (float)To->height + HalfPixelY; 
+	v[2].z = 0.0f; 
+	v[2].w = 1.0f;
+	v[2].color = gxRGBA32(255, 255, 255, 255);
+	v[2].u = 0.0f+HalfPixelU; 
+	v[2].v = 1.0f+HalfPixelV;
+
+	gxDev->SetFVF( gxSpriteVertexFVF );
+	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v, sizeof(gxSpriteVertex) );
 }
 

@@ -289,4 +289,20 @@ void _gxSetAlpha( gxAlphaMode mode );
 void _gxSetTexture( gxSprite* spr );
 void _gxDrawQuad( float x, float y, float w, float h, unsigned int color = D3DCOLOR_RGBA(255,255,255,255), float u1 = 0.0f, float v1 = 0.0f, float u2 = 1.0f, float v2 = 1.0f );
 
+void gxCreateRenderTarget(int Width, int Height, gxSprite* Sprite);
+void gxSetRenderTarget(gxSprite* Sprite);
+
+void gxClearColor(unsigned int Color);
+
+struct gxShader
+{
+	IDirect3DPixelShader9* Shader;
+};
+
+void gxCreateShader(const char* Source, gxShader* Shader);
+void gxSetPixelShader(gxShader* Shader);
+void gxSetPixelShaderConst(int Index, float x, float y=0.0f, float z=0.0f, float w=0.0f);
+
+void gxCopyRenderTarget(gxSprite* From, gxSprite* To);
+
 #endif
