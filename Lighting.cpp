@@ -168,7 +168,7 @@ const char* ColorBleedShaderSource =
 "{\n"
 "	float4 Color = tex2D(ColorSampler, VertexOutput.TexCoord0);\n"
 "	float4 ColorBleed = tex2D(ColorBleedSampler, VertexOutput.TexCoord0);\n"
-"   return Color * saturate(ColorBleed*1.8);\n"
+"   return Color * saturate(ColorBleed*2.0);\n"
 "}\n";
 
 gxShader ColorBleedShader;
