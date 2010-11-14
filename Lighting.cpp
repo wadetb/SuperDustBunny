@@ -452,10 +452,10 @@ void BuildShadows(ELightList List, gxSprite* FinalRT, float ShadowOffsetX, float
 
 		gxCopyRenderTarget(&ShadowPingRT, &ShadowPongRT);
 
-		gxSetPixelShaderConst(0, 0.0f, -3.0f/ShadowPingRT.width, 1.0f/64.0f);
-		gxSetPixelShaderConst(1, 0.0f, -2.0f/ShadowPingRT.width, 6.0f/64.0f);
-		gxSetPixelShaderConst(2, 0.0f, -1.0f/ShadowPingRT.width, 15.0f/64.0f);
-		gxSetPixelShaderConst(3, 0.0f,  0.0f/ShadowPingRT.width, 20.0f/64.0f);
+		gxSetPixelShaderConst(0, 0.0f, -3.0f/ShadowPingRT.height, 1.0f/64.0f);
+		gxSetPixelShaderConst(1, 0.0f, -2.0f/ShadowPingRT.height, 6.0f/64.0f);
+		gxSetPixelShaderConst(2, 0.0f, -1.0f/ShadowPingRT.height, 15.0f/64.0f);
+		gxSetPixelShaderConst(3, 0.0f,  0.0f/ShadowPingRT.height, 20.0f/64.0f);
 
 		gxCopyRenderTarget(&ShadowPongRT, &ShadowPingRT);
 	}

@@ -93,14 +93,16 @@ void sxPlaySound( sxSound* snd )
 {
 	if (snd->buffer)
 	{
-		snd->buffer->Play(0, 0, 0);
+		//snd->buffer->Play(0, 0, 0);
 	}
 }
 
 void sxPlaySoundLooping( sxSound* snd )
 {
 	if (snd->buffer)
-		snd->buffer->Play(0, 0, DSBPLAY_LOOPING);
+	{
+		//snd->buffer->Play(0, 0, DSBPLAY_LOOPING);
+	}
 }
 
 #define DSVOLUME_TO_DB(volume) ((DWORD)(-30*(100 - volume)))
