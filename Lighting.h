@@ -51,6 +51,8 @@ void AddLitSubSprite(ELightList List, gxSprite* Sprite, float X, float Y, float 
 void AddLitSpriteCenteredScaledRotated(ELightList List, gxSprite* Sprite, float X, float Y, float Scale, float Angle);
 void AddLitSpriteCenteredScaledRotatedAdditive(ELightList List, gxSprite* Sprite, float X, float Y, float Scale, float Angle, float Alpha);
 
+void InitLighting();
+
 void ResetLighting();
 void RenderLighting();
 

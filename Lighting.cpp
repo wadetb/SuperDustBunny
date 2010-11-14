@@ -14,7 +14,6 @@
 
 #define MAX_LIT_QUADS_PER_LIST 512
 
-
 struct SLightState
 {
 	float ShadowOffsetX;
@@ -34,13 +33,166 @@ SLightState LightState;
 SLightList LightLists[LIGHTLIST_COUNT];
 
 
-void ResetLighting()
+gxSprite AmbientOcclusionAlphaRT;
+gxSprite AmbientOcclusionDiv2RT;
+gxSprite AmbientOcclusionDiv4RT;
+gxSprite AmbientOcclusionPingRT;
+gxSprite AmbientOcclusionPongRT;
+
+gxSprite AmbientOcclusionForegroundRT;
+gxSprite AmbientOcclusionVacuumRT;
+
+
+gxSprite ShadowAlphaRT;
+gxSprite ShadowPingRT;
+gxSprite ShadowPongRT;
+
+gxSprite ShadowForegroundRT;
+gxSprite ShadowVacuumRT;
+
+
+void gxCreateRenderTarget(int Width, int Height, gxSprite* Sprite)
 {
-	for (int i = 0; i < LIGHTLIST_COUNT; i++)
-	{
-		LightLists[i].NQuads = 0;
-	}
+	Sprite->width = Sprite->texWidth = Width;
+	Sprite->height = Sprite->texHeight = Height;
+	D3DXCreateTexture(gxDev, Width, Height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &Sprite->tex);
 }
+
+void gxSetRenderTarget(gxSprite* Sprite)
+{
+	IDirect3DSurface9* Surf;
+	if (Sprite)
+	{
+		Sprite->tex->GetSurfaceLevel(0, &Surf);
+	}
+	else
+	{
+		gxDev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &Surf);
+	}
+	gxDev->SetRenderTarget(0, Surf);
+	Surf->Release();
+}
+
+void gxClearRenderTarget(unsigned int Color)
+{
+	gxDev->Clear(0, NULL, D3DCLEAR_TARGET, Color, 0.0f, 0);
+}
+
+struct gxShader
+{
+	IDirect3DPixelShader9* Shader;
+};
+
+void gxCreateShader(const char* Source, gxShader* Shader)
+{
+	LPD3DXBUFFER CompiledShader;
+	LPD3DXBUFFER ErrorMsgs;
+	D3DXCompileShader(Source, strlen(Source), NULL, NULL, "main", "ps_3_0", 0, &CompiledShader, &ErrorMsgs, NULL);
+	
+	if (CompiledShader)
+	{
+		gxDev->CreatePixelShader((DWORD*)CompiledShader->GetBufferPointer(), &Shader->Shader);
+		CompiledShader->Release();
+	}
+	else
+	{
+		ReportError("Failed to compile shader:\n%s", ErrorMsgs->GetBufferPointer());
+	}
+	
+	if (ErrorMsgs)
+		ErrorMsgs->Release();
+}
+
+void gxSetPixelShader(gxShader* Shader)
+{
+	gxDev->SetPixelShader(Shader->Shader);
+}
+
+void gxSetPixelShaderConst(int Index, float x, float y=0.0f, float z=0.0f, float w=0.0f)
+{
+	float Floats[4] = {x, y, z, w};
+	gxDev->SetPixelShaderConstantF(Index, Floats, 1);
+}
+
+const char* TexturedColoredShaderSource =
+"sampler Sampler0 : register(s0);\n"
+"struct SVertexOutput\n"
+"{\n"
+"	float2 TexCoord0 : TEXCOORD0;\n"
+"	float4 Color0 : COLOR0;\n"
+"};\n"
+"float4 main(SVertexOutput VertexOutput) : COLOR\n"
+"{\n"
+"	return tex2D(Sampler0, VertexOutput.TexCoord0) * VertexOutput.Color0;\n"
+"}\n";
+
+gxShader TexturedColoredShader;
+
+const char* Gaussian7ShaderSource =
+"float3 BlurOffsetScale0 : register(c0);\n"
+"float3 BlurOffsetScale1 : register(c1);\n"
+"float3 BlurOffsetScale2 : register(c2);\n"
+"float3 BlurOffsetScale3 : register(c3);\n"
+"\n"
+"sampler BlurSampler : register(s0);\n"
+"\n"
+"struct SVertexOutput\n"
+"{\n"
+"	float2 TexCoord0 : TEXCOORD0;\n"
+"};\n"
+"\n"
+"float4 main(SVertexOutput VertexOutput) : COLOR\n"
+"{\n"
+"	float4 color = float4(0,0,0,0);\n"
+"	color += tex2D(BlurSampler, VertexOutput.TexCoord0+BlurOffsetScale0.xy) * BlurOffsetScale0.z;\n"
+"	color += tex2D(BlurSampler, VertexOutput.TexCoord0+BlurOffsetScale1.xy) * BlurOffsetScale1.z;\n"
+"	color += tex2D(BlurSampler, VertexOutput.TexCoord0+BlurOffsetScale2.xy) * BlurOffsetScale2.z;\n"
+"	color += tex2D(BlurSampler, VertexOutput.TexCoord0                    ) * BlurOffsetScale3.z;\n"
+"	color += tex2D(BlurSampler, VertexOutput.TexCoord0-BlurOffsetScale2.xy) * BlurOffsetScale2.z;\n"
+"	color += tex2D(BlurSampler, VertexOutput.TexCoord0-BlurOffsetScale1.xy) * BlurOffsetScale1.z;\n"
+"	color += tex2D(BlurSampler, VertexOutput.TexCoord0-BlurOffsetScale0.xy) * BlurOffsetScale0.z;\n"
+"   return color;\n"
+"}\n";
+
+gxShader Gaussian7Shader;
+
+
+const char* Gaussian13ShaderSource =
+"float3 BlurOffsetScale0 : register(c0);\n"
+"float3 BlurOffsetScale1 : register(c1);\n"
+"float3 BlurOffsetScale2 : register(c2);\n"
+"float3 BlurOffsetScale3 : register(c3);\n"
+"float3 BlurOffsetScale4 : register(c4);\n"
+"float3 BlurOffsetScale5 : register(c5);\n"
+"float3 BlurOffsetScale6 : register(c6);\n"
+"\n"
+"sampler BlurSampler : register(s0);\n"
+"\n"
+"struct SVertexOutput\n"
+"{\n"
+"	float2 TexCoord0 : TEXCOORD0;\n"
+"};\n"
+"\n"
+"float4 main(SVertexOutput VertexOutput) : COLOR\n"
+"{\n"
+"	float4 color = float4(0,0,0,0);\n"
+"	color += tex2D(BlurSampler, VertexOutput.TexCoord0+BlurOffsetScale0.xy) * BlurOffsetScale0.z;\n"
+"	color += tex2D(BlurSampler, VertexOutput.TexCoord0+BlurOffsetScale1.xy) * BlurOffsetScale1.z;\n"
+"	color += tex2D(BlurSampler, VertexOutput.TexCoord0+BlurOffsetScale2.xy) * BlurOffsetScale2.z;\n"
+"	color += tex2D(BlurSampler, VertexOutput.TexCoord0+BlurOffsetScale3.xy) * BlurOffsetScale3.z;\n"
+"	color += tex2D(BlurSampler, VertexOutput.TexCoord0+BlurOffsetScale4.xy) * BlurOffsetScale4.z;\n"
+"	color += tex2D(BlurSampler, VertexOutput.TexCoord0+BlurOffsetScale5.xy) * BlurOffsetScale5.z;\n"
+"	color += tex2D(BlurSampler, VertexOutput.TexCoord0                    ) * BlurOffsetScale6.z;\n"
+"	color += tex2D(BlurSampler, VertexOutput.TexCoord0-BlurOffsetScale5.xy) * BlurOffsetScale5.z;\n"
+"	color += tex2D(BlurSampler, VertexOutput.TexCoord0-BlurOffsetScale4.xy) * BlurOffsetScale4.z;\n"
+"	color += tex2D(BlurSampler, VertexOutput.TexCoord0-BlurOffsetScale3.xy) * BlurOffsetScale3.z;\n"
+"	color += tex2D(BlurSampler, VertexOutput.TexCoord0-BlurOffsetScale2.xy) * BlurOffsetScale2.z;\n"
+"	color += tex2D(BlurSampler, VertexOutput.TexCoord0-BlurOffsetScale1.xy) * BlurOffsetScale1.z;\n"
+"	color += tex2D(BlurSampler, VertexOutput.TexCoord0-BlurOffsetScale0.xy) * BlurOffsetScale0.z;\n"
+"   return color;\n"
+"}\n";
+
+gxShader Gaussian13Shader;
 
 void DrawLitQuad(SLitQuad* Quad)
 {
@@ -124,41 +276,267 @@ void DrawLitQuad_Shadow(SLitQuad* Quad)
 	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v, sizeof(gxSpriteVertex) );
 }
 
+void gxCopyRenderTarget(gxSprite* From, gxSprite* To)
+{
+	gxSetRenderTarget(To);
+
+	_gxSetAlpha( GXALPHA_NONE );
+	_gxSetTexture(From);
+
+	float HalfPixelX = 0.0f;
+	float HalfPixelY = 0.0f;
+
+	float HalfPixelU = 0.5f/From->texWidth;
+	float HalfPixelV = 0.5f/From->texHeight;
+
+	gxSpriteVertex v[4];
+	v[0].x = 0.0f + HalfPixelX; 
+	v[0].y = 0.0f + HalfPixelY; 
+	v[0].z = 0.0f; 
+	v[0].w = 1.0f;
+	v[0].color = gxRGBA32(255, 255, 255, 255);
+	v[0].u = 0.0f+HalfPixelU; 
+	v[0].v = 0.0f+HalfPixelV;
+
+	v[1].x = (float)To->width + HalfPixelX; 
+	v[1].y = 0.0f + HalfPixelY; 
+	v[1].z = 0.0f; 
+	v[1].w = 1.0f;
+	v[1].color = gxRGBA32(255, 255, 255, 255);
+	v[1].u = 1.0f+HalfPixelU; 
+	v[1].v = 0.0f+HalfPixelV;
+
+	v[3].x = (float)To->width + HalfPixelX; 
+	v[3].y = (float)To->height + HalfPixelY; 
+	v[3].z = 0.0f; 
+	v[3].w = 1.0f;
+	v[3].color = gxRGBA32(255, 255, 255, 255);
+	v[3].u = 1.0f+HalfPixelU; 
+	v[3].v = 1.0f+HalfPixelV;
+
+	v[2].x = 0.0f + HalfPixelX; 
+	v[2].y = (float)To->height + HalfPixelY; 
+	v[2].z = 0.0f; 
+	v[2].w = 1.0f;
+	v[2].color = gxRGBA32(255, 255, 255, 255);
+	v[2].u = 0.0f+HalfPixelU; 
+	v[2].v = 1.0f+HalfPixelV;
+
+	gxDev->SetFVF( gxSpriteVertexFVF );
+	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v, sizeof(gxSpriteVertex) );
+}
+
+void InitLighting()
+{
+	gxCreateShader(TexturedColoredShaderSource, &TexturedColoredShader);
+
+	gxCreateShader(Gaussian7ShaderSource, &Gaussian7Shader);
+	gxCreateShader(Gaussian13ShaderSource, &Gaussian13Shader);
+
+	gxCreateRenderTarget(gxScreenWidth,   gxScreenHeight,   &AmbientOcclusionAlphaRT);
+	gxCreateRenderTarget(gxScreenWidth/2, gxScreenHeight/2, &AmbientOcclusionDiv2RT);
+	gxCreateRenderTarget(gxScreenWidth/4, gxScreenHeight/4, &AmbientOcclusionDiv4RT);
+	gxCreateRenderTarget(gxScreenWidth/8, gxScreenHeight/8, &AmbientOcclusionPingRT);
+	gxCreateRenderTarget(gxScreenWidth/8, gxScreenHeight/8, &AmbientOcclusionPongRT);
+
+	gxCreateRenderTarget(gxScreenWidth/8, gxScreenHeight/8, &AmbientOcclusionForegroundRT);
+	gxCreateRenderTarget(gxScreenWidth/8, gxScreenHeight/8, &AmbientOcclusionVacuumRT);
+
+	gxCreateRenderTarget(gxScreenWidth,   gxScreenHeight,   &ShadowAlphaRT);
+	gxCreateRenderTarget(gxScreenWidth,   gxScreenHeight,   &ShadowPingRT);
+	gxCreateRenderTarget(gxScreenWidth,   gxScreenHeight,   &ShadowPongRT);
+
+	gxCreateRenderTarget(gxScreenWidth,   gxScreenHeight,   &ShadowForegroundRT);
+	gxCreateRenderTarget(gxScreenWidth,   gxScreenHeight,   &ShadowVacuumRT);
+}
+
+void ResetLighting()
+{
+	for (int i = 0; i < LIGHTLIST_COUNT; i++)
+	{
+		LightLists[i].NQuads = 0;
+	}
+}
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                      Ambient occlusion                                                                  //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+void BuildAmbientOcclusion(ELightList List, gxSprite* FinalRT)
+{
+	gxSetRenderTarget(&AmbientOcclusionAlphaRT);
+	gxClearRenderTarget(gxRGBA32(0, 0, 0, 0));
+
+	gxSetPixelShader(&TexturedColoredShader);
+
+	LightState.ShadowAlpha = 192;
+	LightState.ShadowOffsetX = 0;
+	LightState.ShadowOffsetY = 0;
+
+	_gxSetAlpha( GXALPHA_BLEND );
+	for (int i = 0; i < LightLists[List].NQuads; i++)
+		DrawLitQuad_Shadow( &LightLists[List].Quads[i] );
+
+	gxCopyRenderTarget(&AmbientOcclusionAlphaRT, &AmbientOcclusionDiv2RT);
+	gxCopyRenderTarget(&AmbientOcclusionDiv2RT, &AmbientOcclusionDiv4RT);
+	gxCopyRenderTarget(&AmbientOcclusionDiv4RT, &AmbientOcclusionPingRT);
+
+	gxSetPixelShader(&Gaussian13Shader);
+
+	for (int i = 0; i < 4; i++)
+	{
+		gxSetPixelShaderConst(0, -6.0f/AmbientOcclusionPingRT.width, 0.0f, 1.0f/4096.0f);
+		gxSetPixelShaderConst(1, -5.0f/AmbientOcclusionPingRT.width, 0.0f, 12.0f/4096.0f);
+		gxSetPixelShaderConst(2, -4.0f/AmbientOcclusionPingRT.width, 0.0f, 66.0f/4096.0f);
+		gxSetPixelShaderConst(3, -3.0f/AmbientOcclusionPingRT.width, 0.0f, 220.0f/4096.0f);
+		gxSetPixelShaderConst(4, -2.0f/AmbientOcclusionPingRT.width, 0.0f, 495.0f/4096.0f);
+		gxSetPixelShaderConst(5, -1.0f/AmbientOcclusionPingRT.width, 0.0f, 792.0f/4096.0f);
+		gxSetPixelShaderConst(6,  0.0f/AmbientOcclusionPingRT.width, 0.0f, 924.0f/4096.0f);
+
+		gxCopyRenderTarget(&AmbientOcclusionPingRT, &AmbientOcclusionPongRT);
+
+		gxSetPixelShaderConst(0, 0.0f, -6.0f/AmbientOcclusionPingRT.height, 1.0f/4096.0f);
+		gxSetPixelShaderConst(1, 0.0f, -5.0f/AmbientOcclusionPingRT.height, 12.0f/4096.0f);
+		gxSetPixelShaderConst(2, 0.0f, -4.0f/AmbientOcclusionPingRT.height, 66.0f/4096.0f);
+		gxSetPixelShaderConst(3, 0.0f, -3.0f/AmbientOcclusionPingRT.height, 220.0f/4096.0f);
+		gxSetPixelShaderConst(4, 0.0f, -2.0f/AmbientOcclusionPingRT.height, 495.0f/4096.0f);
+		gxSetPixelShaderConst(5, 0.0f, -1.0f/AmbientOcclusionPingRT.height, 792.0f/4096.0f);
+		gxSetPixelShaderConst(6, 0.0f,  0.0f/AmbientOcclusionPingRT.height, 924.0f/4096.0f);
+
+		gxCopyRenderTarget(&AmbientOcclusionPongRT, &AmbientOcclusionPingRT);
+	}
+
+	gxSetPixelShader(&TexturedColoredShader);
+	gxCopyRenderTarget(&AmbientOcclusionPingRT, FinalRT);
+
+	gxSetRenderTarget(NULL);
+}
+
+void RenderAmbientOcclusion(gxSprite* FinalRT)
+{
+	_gxSetAlpha(GXALPHA_BLEND);
+	_gxSetTexture(FinalRT);
+	_gxDrawQuad(0, 0, (float)gxScreenWidth, (float)gxScreenHeight);
+}
+
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                      Shadows                                                                            //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+void BuildShadows(ELightList List, gxSprite* FinalRT, float ShadowOffsetX, float ShadowOffsetY)
+{
+	gxSetRenderTarget(&ShadowAlphaRT);
+	gxClearRenderTarget(gxRGBA32(0, 0, 0, 0));
+
+	gxSetPixelShader(&TexturedColoredShader);
+
+	LightState.ShadowAlpha = 128;
+	LightState.ShadowOffsetX = ShadowOffsetX;
+	LightState.ShadowOffsetY = ShadowOffsetY;
+
+	_gxSetAlpha( GXALPHA_BLEND );
+	for (int i = 0; i < LightLists[List].NQuads; i++)
+		DrawLitQuad_Shadow( &LightLists[List].Quads[i] );
+
+	gxCopyRenderTarget(&ShadowAlphaRT, &ShadowPingRT);
+
+	gxSetPixelShader(&Gaussian7Shader);
+
+	for (int i = 0; i < 1; i++)
+	{
+		gxSetPixelShaderConst(0, -3.0f/ShadowPingRT.width, 0.0f, 1.0f/64.0f);
+		gxSetPixelShaderConst(1, -2.0f/ShadowPingRT.width, 0.0f, 6.0f/64.0f);
+		gxSetPixelShaderConst(2, -1.0f/ShadowPingRT.width, 0.0f, 15.0f/64.0f);
+		gxSetPixelShaderConst(3,  0.0f/ShadowPingRT.width, 0.0f, 20.0f/64.0f);
+
+		gxCopyRenderTarget(&ShadowPingRT, &ShadowPongRT);
+
+		gxSetPixelShaderConst(0, 0.0f, -3.0f/ShadowPingRT.width, 1.0f/64.0f);
+		gxSetPixelShaderConst(1, 0.0f, -2.0f/ShadowPingRT.width, 6.0f/64.0f);
+		gxSetPixelShaderConst(2, 0.0f, -1.0f/ShadowPingRT.width, 15.0f/64.0f);
+		gxSetPixelShaderConst(3, 0.0f,  0.0f/ShadowPingRT.width, 20.0f/64.0f);
+
+		gxCopyRenderTarget(&ShadowPongRT, &ShadowPingRT);
+	}
+
+	gxSetPixelShader(&TexturedColoredShader);
+	gxCopyRenderTarget(&ShadowPingRT, FinalRT);
+
+	gxSetRenderTarget(NULL);
+}
+
+void RenderShadows(gxSprite* FinalRT)
+{
+	_gxSetAlpha(GXALPHA_BLEND);
+	_gxSetTexture(FinalRT);
+	_gxDrawQuad(0, 0, (float)gxScreenWidth, (float)gxScreenHeight);
+}
+
+
 void RenderLighting()
 {
+	// Build ambient occlusion buffers.
+	BuildAmbientOcclusion(LIGHTLIST_FOREGROUND, &AmbientOcclusionForegroundRT);
+	BuildAmbientOcclusion(LIGHTLIST_VACUUM, &AmbientOcclusionVacuumRT);
+
+	// Build shadow buffers.
+	BuildShadows(LIGHTLIST_FOREGROUND, &ShadowForegroundRT, 30, 20);
+	BuildShadows(LIGHTLIST_VACUUM, &ShadowVacuumRT, 30, 20);
+
+	// Main rendering.
+	gxSetRenderTarget(NULL);
+
+#if 0
+	// Real background.
 	_gxSetAlpha( GXALPHA_BLEND );
 	for (int i = 0; i < LightLists[LIGHTLIST_BACKGROUND].NQuads; i++)
 		DrawLitQuad( &LightLists[LIGHTLIST_BACKGROUND].Quads[i] );
+#else
+	// White background - useful for testing AO and stuff.
+	gxClearRenderTarget(gxRGBA32(255, 255, 255, 255));
+#endif
 
-	LightState.ShadowAlpha = 128;
-	LightState.ShadowOffsetX = 30;
-	LightState.ShadowOffsetY = 20;
+	// Foreground ambient occlusion & shadows.
+	RenderAmbientOcclusion(&AmbientOcclusionForegroundRT);
+	RenderShadows(&ShadowForegroundRT);
 
-	_gxSetAlpha( GXALPHA_BLEND );
-	for (int i = 0; i < LightLists[LIGHTLIST_FOREGROUND].NQuads; i++)
-		DrawLitQuad_Shadow( &LightLists[LIGHTLIST_FOREGROUND].Quads[i] );
-
+	// Dust layer.
 	_gxSetAlpha( GXALPHA_ADD );
 	for (int i = 0; i < LightLists[LIGHTLIST_DUST].NQuads; i++)
 		DrawLitQuad( &LightLists[LIGHTLIST_DUST].Quads[i] );
 
+	// Foreground.
 	_gxSetAlpha( GXALPHA_BLEND );
 	for (int i = 0; i < LightLists[LIGHTLIST_FOREGROUND].NQuads; i++)
 		DrawLitQuad( &LightLists[LIGHTLIST_FOREGROUND].Quads[i] );
 	for (int i = 0; i < LightLists[LIGHTLIST_FOREGROUND_NO_SHADOW].NQuads; i++)
 		DrawLitQuad( &LightLists[LIGHTLIST_FOREGROUND_NO_SHADOW].Quads[i] );
 
+	// Effects.
 	_gxSetAlpha( GXALPHA_ADD );
 	for (int i = 0; i < LightLists[LIGHTLIST_EFFECTS].NQuads; i++)
 		DrawLitQuad( &LightLists[LIGHTLIST_EFFECTS].Quads[i] );
 
-	_gxSetAlpha( GXALPHA_BLEND );
-	for (int i = 0; i < LightLists[LIGHTLIST_VACUUM].NQuads; i++)
-		DrawLitQuad_Shadow( &LightLists[LIGHTLIST_VACUUM].Quads[i] );
+	// Vacuum ambient occlusion & shadows.
+	RenderAmbientOcclusion(&AmbientOcclusionVacuumRT);
+	RenderShadows(&ShadowVacuumRT);
 
+	// Vacuum.
 	_gxSetAlpha( GXALPHA_BLEND );
 	for (int i = 0; i < LightLists[LIGHTLIST_VACUUM].NQuads; i++)
 		DrawLitQuad( &LightLists[LIGHTLIST_VACUUM].Quads[i] );
+
+	// Color bleeding.
+	// TODO
+
+	// Debugging of render targets.
+	if (DevMode)
+	{
+		//_gxSetAlpha( GXALPHA_BLEND );
+		//_gxSetTexture( &AmbientOcclusionFinalRT );
+		//_gxDrawQuad( 0, 0, 768, 1024);
+	}
 }
 
 void AddLitQuad(

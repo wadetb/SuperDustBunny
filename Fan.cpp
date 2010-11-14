@@ -38,7 +38,7 @@ void ParseFanProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode)
 		}
 		else if (strcmp(Name, "type") != 0 && strcmp(Name, "material") != 0)
 		{
-			ReportError("Unrecognized barrel property '%s'='%s'.", Name, Value);
+			ReportError("Unrecognized fan property '%s'='%s'.", Name, Value);
 		}
 
 		PropertyNode = PropertyNode->next_sibling("property");
@@ -71,7 +71,7 @@ void DisplayFans()
 	{
 		SFan* Fan = &Fans[i];
 
-		AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &FanSprite, Fan->X, Fan->Y + ScrollY, 1.0f, 0.0f);
+		AddLitSpriteCenteredScaledRotated(LIGHTLIST_VACUUM, &FanSprite, Fan->X, Fan->Y + ScrollY, 1.0f, 0.0f);
 
 		// Debug rendering of fan area.
 		//gxDrawRectangleFilled((int)(Fan->X - 200), (int)(Fan->Y - 1000 + ScrollY), 400, 1000, gxRGBA32(255, 255, 255, 32));

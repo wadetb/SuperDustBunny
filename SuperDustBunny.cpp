@@ -94,6 +94,8 @@ void Init()
 	msInit();
 #endif	
 	
+	InitLighting();
+
 	LoadAssets();
 	
 	SetGameState_StartScreen();
