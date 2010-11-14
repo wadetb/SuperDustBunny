@@ -51,7 +51,7 @@ void DisplayGear()
         if (Gear->State == GEARSTATE_INACTIVE)
             continue;
 
-		AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &GearSprite, Gear->X, Gear->Y + ScrollY, 1.0f, Gear->Angle);
+		AddLitSpriteCenteredScaledRotated(LIGHTLIST_VACUUM, &GearSprite, Gear->X, Gear->Y + ScrollY, 1.0f, Gear->Angle);
     }    
 }
 

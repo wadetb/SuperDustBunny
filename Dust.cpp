@@ -95,11 +95,11 @@ void DisplayDust()
 
 		float Alpha = Mote->Alpha;
 		if (Mote->Time < 1.0f)
-			Alpha *= Remap(Mote->Time, 0.0f, 1.0, 0.0f, 1.0f, true);
+			Alpha *= Remap(Mote->Time, 0.0f, 0.25f, 0.0f, 1.0f, true);
 		if (Mote->Time > Mote->Life - 1.0f)
-			Alpha *= Remap(Mote->Time, Mote->Life-1.0f, Mote->Life, 1.0f, 0.0f, true);
+			Alpha *= Remap(Mote->Time, Mote->Life-0.25f, Mote->Life, 1.0f, 0.0f, true);
 
-		AddLitSpriteCenteredScaledAlpha(LIGHTLIST_DUST, &DustMoteSprite, Mote->X, Mote->Y + ScrollY*Mote->Depth, Mote->Size, Alpha);
+		AddLitSpriteCenteredScaledColor(LIGHTLIST_DUST, &DustMoteSprite, Mote->X, Mote->Y + ScrollY*Mote->Depth, Mote->Size, gxRGBA32(192,192,192,(int)(255*Alpha)));
 	}
 }
 
@@ -228,7 +228,7 @@ void MakeDustMote(float X, float Y)
 	Mote->Depth = 1.0f;
 	Mote->Life = Random(2.0f, 10.0f);
 
-	Mote->Alpha = 0.5f;
+	Mote->Alpha = 1.0f;
 	Mote->Time = 1.0f;
 }
 

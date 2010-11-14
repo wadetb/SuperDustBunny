@@ -58,7 +58,7 @@ void DisplayBall()
 
         if (Ball->Sprite == 1) 
         {
-			AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &TennisBallSpin1Sprite, Ball->X, Ball->Y + ScrollY, 1.0f, 0.0f);
+			AddLitSpriteCenteredScaledRotated(LIGHTLIST_VACUUM, &TennisBallSpin1Sprite, Ball->X, Ball->Y + ScrollY, 1.0f, 0.0f);
         } 
 
         if (Ball->Sprite == 2)

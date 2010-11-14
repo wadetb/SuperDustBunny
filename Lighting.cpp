@@ -38,6 +38,8 @@ SLightList LightLists[LIGHTLIST_COUNT];
 //                                                      Render Targets                                                                     //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
+gxSprite ColorRT;
+
 
 gxSprite AmbientOcclusionAlphaRT;
 gxSprite AmbientOcclusionDiv2RT;
@@ -55,6 +57,15 @@ gxSprite ShadowPongRT;
 
 gxSprite ShadowForegroundRT;
 gxSprite ShadowVacuumRT;
+
+
+gxSprite ColorBleedDiv2RT;
+gxSprite ColorBleedDiv4RT;
+gxSprite ColorBleedDiv8RT;
+gxSprite ColorBleedPingRT;
+gxSprite ColorBleedPongRT;
+
+gxSprite ColorBleedFinalRT;
 
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -143,6 +154,24 @@ const char* Gaussian13ShaderSource =
 
 gxShader Gaussian13Shader;
 
+
+const char* ColorBleedShaderSource =
+"sampler ColorSampler : register(s0);\n"
+"sampler ColorBleedSampler : register(s1);\n"
+"\n"
+"struct SVertexOutput\n"
+"{\n"
+"	float2 TexCoord0 : TEXCOORD0;\n"
+"};\n"
+"\n"
+"float4 main(SVertexOutput VertexOutput) : COLOR\n"
+"{\n"
+"	float4 Color = tex2D(ColorSampler, VertexOutput.TexCoord0);\n"
+"	float4 ColorBleed = tex2D(ColorBleedSampler, VertexOutput.TexCoord0);\n"
+"   return Color * saturate(ColorBleed*1.8);\n"
+"}\n";
+
+gxShader ColorBleedShader;
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                      Platform specific drawing                                                          //
@@ -292,8 +321,6 @@ void BuildAmbientOcclusion(ELightList List, gxSprite* FinalRT)
 
 	gxSetPixelShader(&TexturedColoredShader);
 	gxCopyRenderTarget(&AmbientOcclusionPingRT, FinalRT);
-
-	gxSetRenderTarget(NULL);
 }
 
 void RenderAmbientOcclusion(gxSprite* FinalRT)
@@ -355,8 +382,6 @@ void BuildShadows(ELightList List, gxSprite* FinalRT, float ShadowOffsetX, float
 
 	gxSetPixelShader(&TexturedColoredShader);
 	gxCopyRenderTarget(&ShadowPingRT, FinalRT);
-
-	gxSetRenderTarget(NULL);
 }
 
 void RenderShadows(gxSprite* FinalRT)
@@ -367,19 +392,95 @@ void RenderShadows(gxSprite* FinalRT)
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                      Ambient occlusion                                                                  //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+void InitColorBleed()
+{
+	gxCreateRenderTarget(gxScreenWidth/2, gxScreenHeight/2, &ColorBleedDiv2RT);
+	gxCreateRenderTarget(gxScreenWidth/4, gxScreenHeight/4, &ColorBleedDiv4RT);
+	gxCreateRenderTarget(gxScreenWidth/8, gxScreenHeight/8, &ColorBleedDiv8RT);
+	gxCreateRenderTarget(gxScreenWidth/16, gxScreenHeight/16, &ColorBleedPingRT);
+	gxCreateRenderTarget(gxScreenWidth/16, gxScreenHeight/16, &ColorBleedPongRT);
+	gxCreateRenderTarget(gxScreenWidth/16, gxScreenHeight/16, &ColorBleedFinalRT);
+}
+
+void BuildColorBleed()
+{
+	gxSetPixelShader(&Gaussian13Shader);
+
+	// TODO: These samples are nowhere near correct but it looks tolerable so whatever.
+	// Probably should make a Gaussian9 and just type in a 2D 131.
+	gxSetPixelShaderConst(0, -2.0f/ColorBleedPingRT.width, -2.0f/ColorBleedPingRT.width, 1.0f/4096.0f);
+	gxSetPixelShaderConst(1, -2.0f/ColorBleedPingRT.width, -1.0f/ColorBleedPingRT.width, 12.0f/4096.0f);
+	gxSetPixelShaderConst(2, -2.0f/ColorBleedPingRT.width,  0.0f/ColorBleedPingRT.width, 66.0f/4096.0f);
+	gxSetPixelShaderConst(3, -1.0f/ColorBleedPingRT.width, -2.0f/ColorBleedPingRT.width, 220.0f/4096.0f);
+	gxSetPixelShaderConst(4, -1.0f/ColorBleedPingRT.width, -1.0f/ColorBleedPingRT.width, 495.0f/4096.0f);
+	gxSetPixelShaderConst(5, -1.0f/ColorBleedPingRT.width,  0.0f/ColorBleedPingRT.width, 792.0f/4096.0f);
+	gxSetPixelShaderConst(6,  0.0f/ColorBleedPingRT.width,  0.0f/ColorBleedPingRT.width, 924.0f/4096.0f);
+
+	gxCopyRenderTarget(&ColorRT, &ColorBleedDiv2RT);
+	gxCopyRenderTarget(&ColorBleedDiv2RT, &ColorBleedDiv4RT);
+	gxCopyRenderTarget(&ColorBleedDiv4RT, &ColorBleedDiv8RT);
+	gxCopyRenderTarget(&ColorBleedDiv8RT, &ColorBleedPingRT);
+
+	for (int i = 0; i < 2; i++)
+	{
+		gxSetPixelShaderConst(0, -6.0f/ColorBleedPingRT.width, 0.0f, 1.0f/4096.0f);
+		gxSetPixelShaderConst(1, -5.0f/ColorBleedPingRT.width, 0.0f, 12.0f/4096.0f);
+		gxSetPixelShaderConst(2, -4.0f/ColorBleedPingRT.width, 0.0f, 66.0f/4096.0f);
+		gxSetPixelShaderConst(3, -3.0f/ColorBleedPingRT.width, 0.0f, 220.0f/4096.0f);
+		gxSetPixelShaderConst(4, -2.0f/ColorBleedPingRT.width, 0.0f, 495.0f/4096.0f);
+		gxSetPixelShaderConst(5, -1.0f/ColorBleedPingRT.width, 0.0f, 792.0f/4096.0f);
+		gxSetPixelShaderConst(6,  0.0f/ColorBleedPingRT.width, 0.0f, 924.0f/4096.0f);
+
+		gxCopyRenderTarget(&ColorBleedPingRT, &ColorBleedPongRT);
+
+		gxSetPixelShaderConst(0, 0.0f, -6.0f/ColorBleedPingRT.height, 1.0f/4096.0f);
+		gxSetPixelShaderConst(1, 0.0f, -5.0f/ColorBleedPingRT.height, 12.0f/4096.0f);
+		gxSetPixelShaderConst(2, 0.0f, -4.0f/ColorBleedPingRT.height, 66.0f/4096.0f);
+		gxSetPixelShaderConst(3, 0.0f, -3.0f/ColorBleedPingRT.height, 220.0f/4096.0f);
+		gxSetPixelShaderConst(4, 0.0f, -2.0f/ColorBleedPingRT.height, 495.0f/4096.0f);
+		gxSetPixelShaderConst(5, 0.0f, -1.0f/ColorBleedPingRT.height, 792.0f/4096.0f);
+		gxSetPixelShaderConst(6, 0.0f,  0.0f/ColorBleedPingRT.height, 924.0f/4096.0f);
+
+		gxCopyRenderTarget(&ColorBleedPongRT, &ColorBleedPingRT);
+	}
+
+	gxSetPixelShader(&TexturedColoredShader);
+	gxCopyRenderTarget(&ColorBleedPingRT, &ColorBleedFinalRT);
+}
+
+void RenderColorBleed()
+{
+	gxSetPixelShader(&ColorBleedShader);
+	_gxSetAlpha(GXALPHA_NONE);
+	gxDev->SetTexture( 0, ColorRT.tex );
+	gxDev->SetTexture( 1, ColorBleedFinalRT.tex );
+	_gxDrawQuad(0, 0, (float)gxScreenWidth, (float)gxScreenHeight);
+	gxSetPixelShader(&TexturedColoredShader);
+}
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                          Main Lighting Interface                                                                        //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
 void InitLighting()
 {
+	// Compile shaders.
 	gxCreateShader(TexturedColoredShaderSource, &TexturedColoredShader);
 
 	gxCreateShader(Gaussian7ShaderSource, &Gaussian7Shader);
 	gxCreateShader(Gaussian13ShaderSource, &Gaussian13Shader);
 
-	InitAmbientOcclusion();
+	gxCreateShader(ColorBleedShaderSource, &ColorBleedShader);
 
+	// Create render targets.
+	gxCreateRenderTarget(gxScreenWidth, gxScreenHeight, &ColorRT);
+
+	InitAmbientOcclusion();
 	InitShadows();
+	InitColorBleed();
 }
 
 void ResetLighting()
@@ -403,7 +504,7 @@ void RenderLighting()
 	BuildShadows(LIGHTLIST_VACUUM, &ShadowVacuumRT, 30, 20);
 
 	// Main rendering.
-	gxSetRenderTarget(NULL);
+	gxSetRenderTarget(&ColorRT);
 
 #if 1
 	// Real background.
@@ -420,7 +521,7 @@ void RenderLighting()
 	RenderShadows(&ShadowForegroundRT);
 
 	// Dust layer.
-	_gxSetAlpha( GXALPHA_ADD );
+	_gxSetAlpha( GXALPHA_BLEND );
 	for (int i = 0; i < LightLists[LIGHTLIST_DUST].NQuads; i++)
 		DrawLitQuad( &LightLists[LIGHTLIST_DUST].Quads[i] );
 
@@ -445,8 +546,10 @@ void RenderLighting()
 	for (int i = 0; i < LightLists[LIGHTLIST_VACUUM].NQuads; i++)
 		DrawLitQuad( &LightLists[LIGHTLIST_VACUUM].Quads[i] );
 
-	// Color bleeding.
-	// TODO
+	// Color bleeding - Adds color and bleed color into framebuffer.
+	BuildColorBleed();
+	gxSetRenderTarget(NULL);
+	RenderColorBleed();
 
 	// Debugging of render targets.
 	if (DevMode)
@@ -521,6 +624,18 @@ void AddLitSpriteCenteredScaledAlpha(ELightList List, gxSprite* Sprite, float X,
 	float h = Sprite->height*Scale*0.5f;
 
 	AddLitQuad(List, Sprite, gxRGBA32(255,255,255,(int)(255*Alpha)),
+		X-w, Y-h, 0.0f, 0.0f, 
+		X+w, Y-h, 1.0f, 0.0f,
+		X+w, Y+h, 1.0f, 1.0f, 
+		X-w, Y+h, 0.0f, 1.0f);
+}
+
+void AddLitSpriteCenteredScaledColor(ELightList List, gxSprite* Sprite, float X, float Y, float Scale, unsigned int Color)
+{
+	float w = Sprite->width*Scale*0.5f;
+	float h = Sprite->height*Scale*0.5f;
+
+	AddLitQuad(List, Sprite, Color,
 		X-w, Y-h, 0.0f, 0.0f, 
 		X+w, Y-h, 1.0f, 0.0f,
 		X+w, Y+h, 1.0f, 1.0f, 

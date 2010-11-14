@@ -104,7 +104,7 @@ void DisplayFireWorks()
 		
 		if (FireWork->State == FIREWORKSTATE_WAIT || FireWork->State == FIREWORKSTATE_FUSE || FireWork->State == FIREWORKSTATE_LAUNCH)
 		{
-			AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &FireWorkRocketSprite, FireWork->X, FireWork->Y + ScrollY, 1.0f, DegreesToRadians((float)FireWork->FlightDir));
+			AddLitSpriteCenteredScaledRotated(LIGHTLIST_VACUUM, &FireWorkRocketSprite, FireWork->X, FireWork->Y + ScrollY, 1.0f, DegreesToRadians((float)FireWork->FlightDir));
 		}
 		else if (FireWork->State == FIREWORKSTATE_EXPLODE)
 		{
