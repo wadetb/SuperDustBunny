@@ -343,8 +343,8 @@ void InitLighting()
 	gxCreateRenderTarget(gxScreenWidth/8, gxScreenHeight/8, &AmbientOcclusionVacuumRT);
 
 	gxCreateRenderTarget(gxScreenWidth,   gxScreenHeight,   &ShadowAlphaRT);
-	gxCreateRenderTarget(gxScreenWidth,   gxScreenHeight,   &ShadowPingRT);
-	gxCreateRenderTarget(gxScreenWidth,   gxScreenHeight,   &ShadowPongRT);
+	gxCreateRenderTarget(gxScreenWidth/2, gxScreenHeight/2, &ShadowPingRT);
+	gxCreateRenderTarget(gxScreenWidth/2, gxScreenHeight/2, &ShadowPongRT);
 
 	gxCreateRenderTarget(gxScreenWidth,   gxScreenHeight,   &ShadowForegroundRT);
 	gxCreateRenderTarget(gxScreenWidth,   gxScreenHeight,   &ShadowVacuumRT);

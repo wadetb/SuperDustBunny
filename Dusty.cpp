@@ -757,6 +757,8 @@ void SetDustyState_Stuck()
 
 void DisplayDusty_Stuck()
 {
+	// TODO: Get sprites for attempting to escape stickiness, and use them when StuckTimer >= 20 or so.
+
 	if (Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide)
 	{
 		DisplayDustySprite(&DustyWallJumpSprite, -128, -8, -200);
@@ -993,7 +995,10 @@ void UpdateDusty_Collision()
 							if (BlockCollideWithRightSide  && SharpDir == 270) Sharp = true;
 
 							if (Sharp)
+							{
+								// TODO: Need a Stunned state and associated animation frames.
 								SetDustyState_Die();
+							}
 						}
 					}
 				}
