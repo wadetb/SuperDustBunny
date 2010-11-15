@@ -196,6 +196,14 @@ void SetGameState_Playing();
 void SetGameState_Help();
 void SetGameState_Credits();
 
+enum EGameTransition
+{
+	GAMETRANSITION_FIRST_PAGE,
+	GAMETRANSITION_NEXT_PAGE,
+};
+
+void SetGameState_Transition(EGameTransition Type);
+
 void LoadCurrentChapter();
 void AdvanceToNextPage();
 

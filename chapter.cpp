@@ -19,6 +19,7 @@
 #include "Dust.h"
 #include "Vacuum.h"
 #include "Fan.h"
+#include "Wipe.h"
 
 #include <direct.h>
 

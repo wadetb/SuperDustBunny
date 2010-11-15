@@ -39,7 +39,12 @@ struct SLitQuad
 	unsigned int Color;
 };
 
-void AddLitQuad(ELightList List, gxSprite* Sprite, float X0, float Y0, float X1, float Y1, float U0, float V0, float U1, float V1, unsigned int Color);
+void AddLitQuad(
+	ELightList List, gxSprite* Sprite, unsigned int Color,
+	float X0, float Y0, float U0, float V0, 
+	float X1, float Y1, float U1, float V1, 
+	float X2, float Y2, float U2, float V2, 
+	float X3, float Y3, float U3, float V3);
 
 void AddLitSprite(ELightList List, gxSprite* Sprite, float X, float Y);
 void AddLitSpriteScaled(ELightList List, gxSprite* Sprite, float X, float Y, float ScaleX, float ScaleY);

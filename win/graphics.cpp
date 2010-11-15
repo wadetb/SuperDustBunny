@@ -731,11 +731,11 @@ void gxCopyRenderTarget(gxSprite* From, gxSprite* To)
 	_gxSetAlpha( GXALPHA_NONE );
 	_gxSetTexture(From);
 
-	float HalfPixelX = 0.0f;
-	float HalfPixelY = 0.0f;
+	float HalfPixelX = -0.5f;
+	float HalfPixelY = -0.5f;
 
-	float HalfPixelU = 0.5f/From->texWidth;
-	float HalfPixelV = 0.5f/From->texHeight;
+	float HalfPixelU = 0.0f;
+	float HalfPixelV = 0.0f;
 
 	gxSpriteVertex v[4];
 	v[0].x = 0.0f + HalfPixelX; 

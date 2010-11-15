@@ -14,6 +14,8 @@
 //                                                    Sprite Assets                                                                        //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
+gxSprite WhiteSprite;
+
 gxSprite DustyHop1Sprite;
 gxSprite DustyHop2Sprite;
 gxSprite DustyHop3Sprite;
@@ -145,6 +147,8 @@ void LoadAssets()
 	//-----------------------------------------------------------------------------------------------------------------------------------------//
 	//                                                    Sprite Assets                                                                        //
 	//-----------------------------------------------------------------------------------------------------------------------------------------//
+
+	gxLoadSprite("Data/white.png", &WhiteSprite);
 
 	gxLoadSprite("Data/dusty-hop-1.png", &DustyHop1Sprite);
 	gxLoadSprite("Data/dusty-hop-2.png", &DustyHop2Sprite);

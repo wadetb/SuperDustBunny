@@ -1048,7 +1048,6 @@ void UpdateDusty()
 
 	if (Distance(Dusty.FloatX, Dusty.FloatY, Chapter.EndX, Chapter.EndY) < 100)
 	{
-		sxPlaySound( &DustyWinSound );
 		AdvanceToNextPage();
 		return;
 	}

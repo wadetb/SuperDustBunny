@@ -444,6 +444,14 @@
 			RelativePath=".\WinScreen.h"
 			>
 		</File>
+		<File
+			RelativePath=".\Wipe.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Wipe.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

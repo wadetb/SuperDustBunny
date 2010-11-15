@@ -20,6 +20,7 @@
 #include "Dust.h"
 #include "Crumb.h"
 #include "Gear.h"
+#include "Wipe.h"
 #include "Tutorial.h"
 #include "StartScreen.h"
 #include "HelpScreen.h"
@@ -30,8 +31,9 @@
 
 enum EGameState
 {
-	GAMESTATE_START_SCREEN,
 	GAMESTATE_PLAYING,
+	GAMESTATE_TRANSITION,
+	GAMESTATE_START_SCREEN,
 	GAMESTATE_DIE_SCREEN,
 	GAMESTATE_WIN_SCREEN,
 	GAMESTATE_HELP_SCREEN,
@@ -40,6 +42,8 @@ enum EGameState
 };
 
 EGameState GameState = GAMESTATE_START_SCREEN;
+
+EGameTransition GameTransition;
 
 #define MAX_CHAPTERS 10
 
@@ -246,12 +250,16 @@ void LoadCurrentChapter()
 		CurrentChapter = 0;
 
 	LoadChapter(ChapterNames[CurrentChapter]);
+
+	SetGameState_Transition(GAMETRANSITION_FIRST_PAGE);
 }
 
 void AdvanceToNextPage()
 {
 	if (Chapter.PageNum < Chapter.NPages-1)
-		SetCurrentPage(Chapter.PageNum+1);
+	{
+		SetGameState_Transition(GAMETRANSITION_NEXT_PAGE);
+	}
 	else
 		SetGameState_WinScreen();
 }
@@ -348,6 +356,8 @@ void DisplayGame_Playing()
 	DisplayDust();
 	DisplayVacuum_AfterDusty();
 	
+	DisplayWipe();
+
 	RenderLighting();
 
     // HUD Drawing - Score, etc.
@@ -440,6 +450,58 @@ void SetGameState_Tutorial(int State)
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                   Transition Game States                                                                //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+void SetGameState_Transition(EGameTransition Type)
+{
+	StartWipe(WIPE_IN);
+
+	GameTransition = Type;
+
+	GameState = GAMESTATE_TRANSITION;
+}
+
+void UpdateGame_Transition()
+{
+	if (GameTransition == GAMETRANSITION_FIRST_PAGE)
+	{
+		//UpdateWipe();
+
+		//if (Wipe.Middle)
+		//{
+		//	SetCurrentPage(0);
+		//	Wipe.Middle = false;
+		//}
+
+		//if (Wipe.Finished)
+		//{
+			SetGameState_Playing();
+		//}
+	}
+	else if (GameTransition == GAMETRANSITION_NEXT_PAGE)
+	{
+		UpdateWipe();
+		
+		if (Wipe.Middle)
+		{
+			SetCurrentPage(Chapter.PageNum+1);
+			Wipe.Middle = false;
+		}
+
+		if (Wipe.Finished)
+		{
+			SetGameState_Playing();
+		}
+	}
+}
+
+void DisplayGame_Transition()
+{
+	DisplayGame_Playing();
+}
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   Central Display and Update functions                                                  //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
@@ -468,6 +530,10 @@ void Display()
 	else if (GameState == GAMESTATE_PLAYING)
 	{
 		DisplayGame_Playing();
+	}
+	else if (GameState == GAMESTATE_TRANSITION)
+	{
+		DisplayGame_Transition();
 	}
 	else if (GameState == GAMESTATE_TUTORIAL)
 	{
@@ -723,6 +789,10 @@ bool Update()
 	else if (GameState == GAMESTATE_PLAYING)
 	{
 		UpdateGame_Playing();
+	}
+	else if (GameState == GAMESTATE_TRANSITION)
+	{
+		UpdateGame_Transition();
 	}
 	else if (GameState == GAMESTATE_TUTORIAL)
 	{
