@@ -174,7 +174,7 @@ const char* CombineShaderSource =
 "	float4 Color = tex2D(ColorSampler, VertexOutput.TexCoord0);\n"
 "	float4 ColorBleed = tex2D(ColorBleedSampler, VertexOutput.TexCoord0);\n"
 "	float4 Lighting = tex2D(LightingSampler, VertexOutput.TexCoord0);\n"
-"   return (Lighting*2.0) * Color * saturate(ColorBleed*2.0);\n"
+"   return (Lighting*2.0) * Color * saturate(ColorBleed*1.5);\n"
 "}\n";
 
 gxShader CombineShader;
@@ -529,7 +529,7 @@ void RenderLighting()
 	// Main rendering.
 	gxSetRenderTarget(&ColorRT);
 
-#if 1
+#if 0
 	// Real background.
 	_gxSetAlpha( GXALPHA_BLEND );
 	for (int i = 0; i < LightLists[LIGHTLIST_BACKGROUND].NQuads; i++)
