@@ -113,6 +113,7 @@ void UpdateFlashlight()
 
 void DisplayFlashlight()
 {
-	AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightFlashlightSprite, Flashlight.X, Flashlight.Y + ScrollY, 1.0f, 1.0f);
+	if (Chapter.LightsOff)
+		AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightFlashlightSprite, Flashlight.X, Flashlight.Y + ScrollY, 1.0f, 0.8f);
 }
 

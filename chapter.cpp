@@ -571,6 +571,10 @@ void LoadChapter(const char* ChapterDir)
 	if (Chapter.NBlocks > 0 || Chapter.NPages > 0 || Chapter.NTileSets > 0)
 		ReportError("Attempted to load a chapter without clearing it first.");
 
+	Chapter.LightsOff = false;
+	Chapter.EndX = 0;
+	Chapter.EndY = 0;
+
 	Chapter.NBlocks = 0;
 	Chapter.NPages = 0;
 	Chapter.NTileSets = 0;

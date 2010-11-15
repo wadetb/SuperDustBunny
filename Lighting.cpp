@@ -174,7 +174,7 @@ const char* CombineShaderSource =
 "	float4 Color = tex2D(ColorSampler, VertexOutput.TexCoord0);\n"
 "	float4 ColorBleed = tex2D(ColorBleedSampler, VertexOutput.TexCoord0);\n"
 "	float4 Lighting = tex2D(LightingSampler, VertexOutput.TexCoord0);\n"
-"   return Lighting * Color * saturate(ColorBleed*2.0);\n"
+"   return (Lighting*2.0) * Color * saturate(ColorBleed*2.0);\n"
 "}\n";
 
 gxShader CombineShader;
@@ -474,8 +474,6 @@ void RenderCombinedColor()
 
 void InitLighting()
 {
-	LightState.AmbientColor = gxRGBA32(32, 32, 32, 32);
-
 	// Compile shaders.
 	gxCreateShader(TexturedColoredShaderSource, &TexturedColoredShader);
 
@@ -503,6 +501,13 @@ void ResetLighting()
 
 void RenderLighting()
 {
+	// Set up lighting.
+	if (Chapter.LightsOff)
+		LightState.AmbientColor = gxRGBA32(16, 16, 16, 255);
+	else
+		LightState.AmbientColor = gxRGBA32(128, 128, 128, 255);
+
+
 	// Build render targerts.
 
 	// Build ambient occlusion buffers.
