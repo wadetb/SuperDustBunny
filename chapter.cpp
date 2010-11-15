@@ -17,6 +17,7 @@
 #include "Crumb.h"
 #include "Gear.h"
 #include "Dust.h"
+#include "Flashlight.h"
 #include "Vacuum.h"
 #include "Fan.h"
 #include "Wipe.h"
@@ -253,6 +254,10 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* FileName
 					{
 						Block->Type = BLOCKTYPE_FAN;
 					}
+					else if (strcmp(Value, "flashlight_waypoint") == 0)
+					{
+						Block->Type = BLOCKTYPE_FLASHLIGHT_WAYPOINT;
+					}
 				}
 				else if (strcmp(Name, "material") == 0)
 				{
@@ -293,6 +298,10 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* FileName
 			else if (Block->Type == BLOCKTYPE_FAN)
 			{
 				ParseFanProperties(Block, PropertiesNode);
+			}
+			else if (Block->Type == BLOCKTYPE_FLASHLIGHT_WAYPOINT)
+			{
+				ParseFlashlightWaypointProperties(Block, PropertiesNode);
 			}
 			else
 			{
@@ -644,6 +653,12 @@ void ClearChapter()
 			free(Chapter.Blocks[i].Properties);
 	}
 	Chapter.NBlocks = 0;
+
+	if (Chapter.PageBlocks)
+	{
+		free(Chapter.PageBlocks);
+		Chapter.PageBlocks = NULL;
+	}
 }
 
 void ClearPageObjects()
@@ -654,6 +669,13 @@ void ClearPageObjects()
 	ClearFireWorks();
 	ClearBalls();
 	ClearGears();
+	ClearFlashlightWaypoints();
+
+	if (Chapter.PageBlocks)
+	{
+		free(Chapter.PageBlocks);
+		Chapter.PageBlocks = NULL;
+	}
 }
 
 void CreatePageObjects()
@@ -707,6 +729,10 @@ void CreatePageObjects()
 					CreateFan(x * 64, y * 64, (SFanProperties*)Block->Properties);
 					EraseBlock(x, y);
 					break;
+				case BLOCKTYPE_FLASHLIGHT_WAYPOINT:
+					CreateFlashlightWaypoint(x * 64, y * 64, (SFlashlightWaypointProperties*)Block->Properties);
+					EraseBlock(x, y);
+					break;
 				}
 			}
 		}
@@ -718,6 +744,7 @@ void CreatePageObjects()
 	// Initialize global stuff for the page.
 	InitDusty();
 	InitDust();
+	InitFlashlight();
 	InitVacuum();
 	TurnOnVacuum();
 }
@@ -733,9 +760,11 @@ void SetCurrentPage(int PageNum)
 	PushErrorContext("While setting the current page to '%s':\n", Chapter.Pages[PageNum].Name);
 
 	Chapter.PageNum = PageNum;
-	Chapter.PageBlocks = Chapter.Pages[PageNum].Blocks;
 	Chapter.PageWidth = Chapter.Pages[PageNum].Width;
 	Chapter.PageHeight = Chapter.Pages[PageNum].Height;
+
+	Chapter.PageBlocks = (int*)malloc(Chapter.PageWidth * Chapter.PageHeight * sizeof(unsigned int));
+	memcpy(Chapter.PageBlocks, Chapter.Pages[PageNum].Blocks, Chapter.PageWidth * Chapter.PageHeight * sizeof(unsigned int));
 
 	CreatePageObjects();
 

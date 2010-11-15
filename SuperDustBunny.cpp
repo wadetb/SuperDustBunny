@@ -21,6 +21,8 @@
 #include "Crumb.h"
 #include "Gear.h"
 #include "Wipe.h"
+#include "Flashlight.h"
+
 #include "Tutorial.h"
 #include "StartScreen.h"
 #include "HelpScreen.h"
@@ -354,6 +356,9 @@ void DisplayGame_Playing()
 	DisplayDust();
 	DisplayVacuum_AfterDusty();
 	
+	// Lighting effects.
+	DisplayFlashlight();
+
 	RenderLighting();
 
     // HUD Drawing - Score, etc.
@@ -394,6 +399,7 @@ void UpdateGame_Playing()
         UpdateBall();  
         UpdateGear();  
 		UpdateFireWorks();
+		UpdateFlashlight();
 		UpdateScore();
 	}
 

@@ -321,6 +321,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Flashlight.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Flashlight.h"
+			>
+		</File>
+		<File
 			RelativePath=".\Gear.cpp"
 			>
 		</File>
@@ -342,58 +350,6 @@
 		</File>
 		<File
 			RelativePath=".\Lighting.h"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page10.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page11.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page12.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page13.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page14.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page15.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page3.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page4.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page5.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page6.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page7.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page8.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\Chapters\Thomas1\Pages\Page9.txt"
 			>
 		</File>
 		<File

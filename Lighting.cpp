@@ -17,6 +17,8 @@
 
 struct SLightState
 {
+	unsigned int AmbientColor;
+
 	float ShadowOffsetX;
 	float ShadowOffsetY;
 	unsigned int ShadowAlpha;
@@ -39,6 +41,8 @@ SLightList LightLists[LIGHTLIST_COUNT];
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
 gxSprite ColorRT;
+
+gxSprite LightingRT;
 
 
 gxSprite AmbientOcclusionAlphaRT;
@@ -155,9 +159,10 @@ const char* Gaussian13ShaderSource =
 gxShader Gaussian13Shader;
 
 
-const char* ColorBleedShaderSource =
+const char* CombineShaderSource =
 "sampler ColorSampler : register(s0);\n"
 "sampler ColorBleedSampler : register(s1);\n"
+"sampler LightingSampler : register(s2);\n"
 "\n"
 "struct SVertexOutput\n"
 "{\n"
@@ -168,10 +173,11 @@ const char* ColorBleedShaderSource =
 "{\n"
 "	float4 Color = tex2D(ColorSampler, VertexOutput.TexCoord0);\n"
 "	float4 ColorBleed = tex2D(ColorBleedSampler, VertexOutput.TexCoord0);\n"
-"   return Color * saturate(ColorBleed*2.0);\n"
+"	float4 Lighting = tex2D(LightingSampler, VertexOutput.TexCoord0);\n"
+"   return Lighting * Color * saturate(ColorBleed*2.0);\n"
 "}\n";
 
-gxShader ColorBleedShader;
+gxShader CombineShader;
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                      Platform specific drawing                                                          //
@@ -451,12 +457,13 @@ void BuildColorBleed()
 	gxCopyRenderTarget(&ColorBleedPingRT, &ColorBleedFinalRT);
 }
 
-void RenderColorBleed()
+void RenderCombinedColor()
 {
-	gxSetPixelShader(&ColorBleedShader);
+	gxSetPixelShader(&CombineShader);
 	_gxSetAlpha(GXALPHA_NONE);
 	gxDev->SetTexture( 0, ColorRT.tex );
 	gxDev->SetTexture( 1, ColorBleedFinalRT.tex );
+	gxDev->SetTexture( 2, LightingRT.tex );
 	_gxDrawQuad(0, 0, (float)gxScreenWidth, (float)gxScreenHeight);
 	gxSetPixelShader(&TexturedColoredShader);
 }
@@ -467,16 +474,19 @@ void RenderColorBleed()
 
 void InitLighting()
 {
+	LightState.AmbientColor = gxRGBA32(32, 32, 32, 32);
+
 	// Compile shaders.
 	gxCreateShader(TexturedColoredShaderSource, &TexturedColoredShader);
 
 	gxCreateShader(Gaussian7ShaderSource, &Gaussian7Shader);
 	gxCreateShader(Gaussian13ShaderSource, &Gaussian13Shader);
 
-	gxCreateShader(ColorBleedShaderSource, &ColorBleedShader);
+	gxCreateShader(CombineShaderSource, &CombineShader);
 
 	// Create render targets.
 	gxCreateRenderTarget(gxScreenWidth, gxScreenHeight, &ColorRT);
+	gxCreateRenderTarget(gxScreenWidth, gxScreenHeight, &LightingRT);
 
 	InitAmbientOcclusion();
 	InitShadows();
@@ -502,6 +512,14 @@ void RenderLighting()
 	// Build shadow buffers.
 	BuildShadows(LIGHTLIST_FOREGROUND, &ShadowForegroundRT, 30, 20);
 	BuildShadows(LIGHTLIST_VACUUM, &ShadowVacuumRT, 30, 20);
+
+	// Build lighting buffer.
+	gxSetRenderTarget(&LightingRT);
+	gxClearColor(LightState.AmbientColor);
+
+	_gxSetAlpha( GXALPHA_ADD );
+	for (int i = 0; i < LightLists[LIGHTLIST_LIGHTING].NQuads; i++)
+		DrawLitQuad( &LightLists[LIGHTLIST_LIGHTING].Quads[i] );
 
 	// Main rendering.
 	gxSetRenderTarget(&ColorRT);
@@ -548,8 +566,10 @@ void RenderLighting()
 
 	// Color bleeding - Adds color and bleed color into framebuffer.
 	BuildColorBleed();
+
+	// Combine everything into the final output.
 	gxSetRenderTarget(NULL);
-	RenderColorBleed();
+	RenderCombinedColor();
 
 	// Debugging of render targets.
 	if (DevMode)
