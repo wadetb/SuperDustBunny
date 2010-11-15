@@ -250,8 +250,6 @@ void LoadCurrentChapter()
 		CurrentChapter = 0;
 
 	LoadChapter(ChapterNames[CurrentChapter]);
-
-	SetGameState_Transition(GAMETRANSITION_FIRST_PAGE);
 }
 
 void AdvanceToNextPage()
@@ -356,8 +354,6 @@ void DisplayGame_Playing()
 	DisplayDust();
 	DisplayVacuum_AfterDusty();
 	
-	DisplayWipe();
-
 	RenderLighting();
 
     // HUD Drawing - Score, etc.
@@ -388,43 +384,6 @@ void DisplayGame_Playing()
 
 void UpdateGame_Playing()
 { 
-#ifdef PLATFORM_WINDOWS
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	//                                                   Slow Motion Update                                                                    //
-	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	// Backslash key held down causes slow motion mode.
-	if (kbIsKeyDown(KB_BACKSLASH))
-	{
-		SlowMotionMode = true;
-
-		bool StepOneFrame;
-		if (kbIsKeyDown(KB_RBRACKET) && !kbWasKeyDown(KB_RBRACKET))
-		{
-			StepOneFrame = true;
-		}
-		else
-		{
-			StepOneFrame = false;
-		}
-
-		// If Return was not pressed, skip Update() for this frame.
-		if (!StepOneFrame)
-		{
-			return;
-		}
-	}
-	else
-	{
-		SlowMotionMode = false;
-	}
-
-	// Home key causes devmode.
-	if (kbIsKeyDown(KB_HOME) && !kbWasKeyDown(KB_HOME))
-	{
-		DevMode = !DevMode;
-	}
-#endif
-
 	UpdateDusty();
 
 	if (Dusty.State != DUSTYSTATE_DIE)
@@ -455,9 +414,16 @@ void SetGameState_Tutorial(int State)
 
 void SetGameState_Transition(EGameTransition Type)
 {
-	StartWipe(WIPE_IN);
-
 	GameTransition = Type;
+
+	if (GameTransition == GAMETRANSITION_FIRST_PAGE)
+	{
+		StartWipe(WIPE_FADE, 1.0f);
+	}
+	else if (GameTransition == GAMETRANSITION_NEXT_PAGE)
+	{
+		StartWipe(WIPE_DIAGONAL, 0.5f);
+	}
 
 	GameState = GAMESTATE_TRANSITION;
 }
@@ -466,18 +432,18 @@ void UpdateGame_Transition()
 {
 	if (GameTransition == GAMETRANSITION_FIRST_PAGE)
 	{
-		//UpdateWipe();
+		UpdateWipe();
 
-		//if (Wipe.Middle)
-		//{
-		//	SetCurrentPage(0);
-		//	Wipe.Middle = false;
-		//}
+		if (Wipe.Middle)
+		{
+			LoadCurrentChapter();
+			Wipe.Middle = false;
+		}
 
-		//if (Wipe.Finished)
-		//{
+		if (Wipe.Finished)
+		{
 			SetGameState_Playing();
-		//}
+		}
 	}
 	else if (GameTransition == GAMETRANSITION_NEXT_PAGE)
 	{
@@ -498,7 +464,23 @@ void UpdateGame_Transition()
 
 void DisplayGame_Transition()
 {
-	DisplayGame_Playing();
+	if (GameTransition == GAMETRANSITION_FIRST_PAGE)
+	{
+		if (Wipe.T < 0.5f)
+		{
+			DisplayStartScreen();
+		}
+		else
+		{
+			DisplayGame_Playing();
+		}
+		DisplayWipe();
+	}
+	else if (GameTransition == GAMETRANSITION_NEXT_PAGE)
+	{
+		DisplayGame_Playing();
+		DisplayWipe();
+	}
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -610,7 +592,7 @@ void Display()
 
 bool Update()
 {    
-/*
+	/*
 	//Background Music
     if (BackgroundMusic == 1)
     {	        
@@ -650,8 +632,43 @@ bool Update()
 #ifdef PLATFORM_IPHONE
 	msUpdateMouse();
 #endif
-	
+
 #ifdef PLATFORM_WINDOWS
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	//                                                   Slow Motion Update                                                                    //
+	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	// Backslash key held down causes slow motion mode.
+	if (kbIsKeyDown(KB_BACKSLASH))
+	{
+		SlowMotionMode = true;
+
+		bool StepOneFrame;
+		if (kbIsKeyDown(KB_RBRACKET) && !kbWasKeyDown(KB_RBRACKET))
+		{
+			StepOneFrame = true;
+		}
+		else
+		{
+			StepOneFrame = false;
+		}
+
+		// If Return was not pressed, skip Update() for this frame.
+		if (!StepOneFrame)
+		{
+			return true;
+		}
+	}
+	else
+	{
+		SlowMotionMode = false;
+	}
+
+	// Home key causes devmode.
+	if (kbIsKeyDown(KB_HOME) && !kbWasKeyDown(KB_HOME))
+	{
+		DevMode = !DevMode;
+	}
+
 	// Pressing S skips all tutorials.
     if (kbIsKeyDown(KB_S))
     {

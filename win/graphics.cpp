@@ -283,6 +283,50 @@ void _gxDrawQuad( float x, float y, float w, float h, unsigned int color, float 
 	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v, sizeof(gxSpriteVertex) );
 }
 
+void _gxDrawQuad(
+	unsigned int Color,
+	float X0, float Y0, float U0, float V0, 
+	float X1, float Y1, float U1, float V1, 
+	float X2, float Y2, float U2, float V2, 
+	float X3, float Y3, float U3, float V3)
+{
+	gxSpriteVertex v[4];
+	v[0].x = X0; 
+	v[0].y = Y0; 
+	v[0].z = 0.0f; 
+	v[0].w = 1.0f;
+	v[0].color = Color;
+	v[0].u = U0; 
+	v[0].v = V0;
+
+	v[1].x = X1; 
+	v[1].y = Y1; 
+	v[1].z = 0.0f; 
+	v[1].w = 1.0f;
+	v[1].color = Color;
+	v[1].u = U1; 
+	v[1].v = V1;
+
+	v[3].x = X2; 
+	v[3].y = Y2; 
+	v[3].z = 0.0f; 
+	v[3].w = 1.0f;
+	v[3].color = Color;
+	v[3].u = U2; 
+	v[3].v = V2;
+
+	v[2].x = X3; 
+	v[2].y = Y3; 
+	v[2].z = 0.0f; 
+	v[2].w = 1.0f;
+	v[2].color = Color;
+	v[2].u = U3; 
+	v[2].v = V3;
+
+	gxDev->SetFVF( gxSpriteVertexFVF );
+	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v, sizeof(gxSpriteVertex) );
+}
+
 void _gxSetTexture( gxSprite* spr )
 {
 	gxDev->SetTexture( 0, spr->tex );

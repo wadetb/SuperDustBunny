@@ -12,21 +12,22 @@
 enum EWipeType
 {
 	WIPE_NONE,
-	WIPE_IN,
-	WIPE_OUT
+	WIPE_DIAGONAL,
+	WIPE_FADE
 };
 
 struct SWipe
 {
 	EWipeType Type;
 	float T;
+	float Time;
 	bool Middle;
 	bool Finished;
 };
 
 extern SWipe Wipe;
 
-void StartWipe(EWipeType Type);
+void StartWipe(EWipeType Type, float Time);
 
 void UpdateWipe();
 void DisplayWipe();

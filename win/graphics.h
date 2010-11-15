@@ -288,6 +288,12 @@ enum gxAlphaMode
 void _gxSetAlpha( gxAlphaMode mode );
 void _gxSetTexture( gxSprite* spr );
 void _gxDrawQuad( float x, float y, float w, float h, unsigned int color = D3DCOLOR_RGBA(255,255,255,255), float u1 = 0.0f, float v1 = 0.0f, float u2 = 1.0f, float v2 = 1.0f );
+void _gxDrawQuad(
+	unsigned int Color,
+	float X0, float Y0, float U0, float V0, 
+	float X1, float Y1, float U1, float V1, 
+	float X2, float Y2, float U2, float V2, 
+	float X3, float Y3, float U3, float V3);
 
 void gxCreateRenderTarget(int Width, int Height, gxSprite* Sprite);
 void gxSetRenderTarget(gxSprite* Sprite);

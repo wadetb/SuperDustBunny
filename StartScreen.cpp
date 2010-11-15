@@ -61,8 +61,7 @@ void StartScreen_Advance()
 {
 	if (StartScreen.CurItem == STARTSCREEN_ITEM_START)
 	{
-		LoadCurrentChapter();
-		SetGameState_Playing();
+		SetGameState_Transition(GAMETRANSITION_FIRST_PAGE);
 	}
 	else if (StartScreen.CurItem == STARTSCREEN_ITEM_HELP)
 	{

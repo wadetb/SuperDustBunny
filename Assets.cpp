@@ -16,6 +16,8 @@
 
 gxSprite WhiteSprite;
 
+gxSprite WipeDiagonalSprite;
+
 gxSprite DustyHop1Sprite;
 gxSprite DustyHop2Sprite;
 gxSprite DustyHop3Sprite;
@@ -149,6 +151,8 @@ void LoadAssets()
 	//-----------------------------------------------------------------------------------------------------------------------------------------//
 
 	gxLoadSprite("Data/white.png", &WhiteSprite);
+
+	gxLoadSprite("Data/wipe-diagonal.png", &WipeDiagonalSprite);
 
 	gxLoadSprite("Data/dusty-hop-1.png", &DustyHop1Sprite);
 	gxLoadSprite("Data/dusty-hop-2.png", &DustyHop2Sprite);
