@@ -21,6 +21,39 @@
 int NFireWorks = 0;
 SFireWork FireWorks[MAX_FIREWORKS];
 
+#define MAX_FIREWORK_TRAILS			1024
+#define FIREWORK_TRAIL_HISTORY		32
+
+enum EFireWorkTrailType
+{
+	FIREWORKTRAIL_SINGLE_STAGE,
+	FIREWORKTRAIL_DOUBLE_STAGE,
+};
+
+struct SFireWorkTrail
+{
+	EFireWorkTrailType Type;
+
+	float X, Y, Z;
+	float VX, VY, VZ;	
+	float CenterX, CenterY;
+
+	float Life;
+
+	int HistoryCount;
+	float XHistory[FIREWORK_TRAIL_HISTORY];
+	float YHistory[FIREWORK_TRAIL_HISTORY];
+	float ZHistory[FIREWORK_TRAIL_HISTORY];
+
+	int NextFireWorkTrail;
+};
+
+SFireWorkTrail FireWorkTrails[MAX_FIREWORK_TRAILS];
+
+int FirstInactiveFireWorkTrail = -1;
+int FirstActiveFireWorkTrail = -1;
+
+
 void ParseFireWorkProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode)
 {
 	SFireWorkProperties* FireWorkProperties = (SFireWorkProperties*)malloc(sizeof(SFireWorkProperties));
@@ -92,9 +125,189 @@ void CreateFireWork(int X, int Y, SFireWorkProperties* Properties)
 void ClearFireWorks()
 {
 	NFireWorks = 0;
+
+	for (int i = 0; i < MAX_FIREWORK_TRAILS; i++)
+		FireWorkTrails[i].NextFireWorkTrail = i+1;
+	FirstInactiveFireWorkTrail = 0;
+
+	FirstActiveFireWorkTrail = MAX_FIREWORK_TRAILS;
 }
 
-extern int ScrollY;
+void DisplayFireWorkTrails()
+{
+	for (int i = FirstActiveFireWorkTrail; i != MAX_FIREWORK_TRAILS; i = FireWorkTrails[i].NextFireWorkTrail)
+	{
+		SFireWorkTrail* Trail = &FireWorkTrails[i];
+
+		// Fake 3D projection, centered around the explosion.
+		float ZNear = 3000.0f;
+		float Z = Max(1, Min(ZNear, Trail->Z));
+		float X = (Trail->X - Trail->CenterX) * ZNear / (ZNear - Z);
+		float Y = (Trail->Y - Trail->CenterY) * ZNear / (ZNear - Z);
+
+		float Scale = Lerp(Z, 0.0f, ZNear, 1.0f, 2.0f) * 2.0f;
+		float Alpha = Lerp(Trail->Life, 1.0f, 0.0f, 1.0f, 0.0f);
+
+		AddLitSpriteCenteredScaledColor(LIGHTLIST_EFFECTS, &DustMoteSprite, Trail->CenterX + X, Trail->CenterY + Y + ScrollY, Scale, gxRGBA32(255,192,192,(int)(255*Alpha)));
+
+		int Count = Trail->HistoryCount;
+		for (int i = 0; i < Count - 1; i++)
+		{
+			int HistoryIndex0 = (Trail->HistoryCount - (i + 0));
+			int HistoryIndex1 = (Trail->HistoryCount - (i + 1));
+
+			float Z0 = Max(1, Min(ZNear, Trail->ZHistory[HistoryIndex0]));
+			float X0 = (Trail->XHistory[HistoryIndex0] - Trail->CenterX) * ZNear / (ZNear - Z);
+			float Y0 = (Trail->YHistory[HistoryIndex0] - Trail->CenterY) * ZNear / (ZNear - Z);
+
+			float Z1 = Max(1, Min(ZNear, Trail->ZHistory[HistoryIndex1]));
+			float X1 = (Trail->XHistory[HistoryIndex1] - Trail->CenterX) * ZNear / (ZNear - Z);
+			float Y1 = (Trail->YHistory[HistoryIndex1] - Trail->CenterY) * ZNear / (ZNear - Z);
+
+			float Width = 4.0f;
+
+			float TrailScale0 = (1.0f - (float)(i+0)/(float)Count);
+			float TrailScale1 = (1.0f - (float)(i+1)/(float)Count);
+
+			float PerpX = Y0 - Y1;;
+			float PerpY = -(X0 - X1);
+			float Length = sqrtf(PerpX*PerpX + PerpY*PerpY);
+			if (Length > 0)
+			{
+				PerpX *= Width * Scale / Length;
+				PerpY *= Width * Scale / Length;
+			}
+
+			float Alpha = Lerp(Trail->Life, 1.0f, 0.0f, 1.0f, 0.0f) * TrailScale0;
+
+			AddLitQuad(LIGHTLIST_EFFECTS, &WipeDiagonalSprite, gxRGBA32(192,128,128,(int)(255*Alpha)),
+				Trail->CenterX + X0 - PerpX*TrailScale0, Trail->CenterY + Y0 - PerpY*TrailScale0 + ScrollY, 0.0f, 0.0f,
+				Trail->CenterX + X0 + PerpX*TrailScale0, Trail->CenterY + Y0 + PerpY*TrailScale0 + ScrollY, 1.0f, 0.0f,
+				Trail->CenterX + X1 + PerpX*TrailScale1, Trail->CenterY + Y1 + PerpY*TrailScale1 + ScrollY, 1.0f, 0.0f,
+				Trail->CenterX + X1 - PerpX*TrailScale1, Trail->CenterY + Y1 - PerpY*TrailScale1 + ScrollY, 0.0f, 0.0f);
+		}
+	}
+}
+
+void UpdateFireWorkTrails()
+{
+	// Advance Trails.
+	for (int i = FirstActiveFireWorkTrail; i != MAX_FIREWORK_TRAILS; i = FireWorkTrails[i].NextFireWorkTrail)
+	{
+		SFireWorkTrail* Trail = &FireWorkTrails[i];
+
+		int HistoryIndex0 = Trail->HistoryCount-0;
+		int HistoryIndex1 = Trail->HistoryCount-1;
+		int HistoryIndex2 = Trail->HistoryCount-2;
+
+		float Angle0 = atan2f(Trail->Y - Trail->YHistory[HistoryIndex1], Trail->X - Trail->XHistory[HistoryIndex1]);
+		float Angle1 = atan2f(Trail->YHistory[HistoryIndex1] - Trail->YHistory[HistoryIndex2], Trail->XHistory[HistoryIndex1] - Trail->XHistory[HistoryIndex2]);
+
+		float XDist = Trail->X - Trail->XHistory[HistoryIndex1];
+		float YDist = Trail->Y - Trail->YHistory[HistoryIndex1];
+		float Dist = sqrtf(XDist*XDist + YDist*YDist);
+
+		if (Trail->HistoryCount < FIREWORK_TRAIL_HISTORY-1 && (fabsf(Angle1-Angle0) > PI/32.0f || Dist > 10.0f))
+			Trail->HistoryCount++;
+
+		Trail->XHistory[Trail->HistoryCount] = Trail->X;
+		Trail->YHistory[Trail->HistoryCount] = Trail->Y;
+		Trail->ZHistory[Trail->HistoryCount] = Trail->Z;
+
+		Trail->X += Trail->VX;
+		Trail->Y += Trail->VY;
+		Trail->Z += Trail->VZ;
+		
+		Trail->VX *= 0.95f;
+		Trail->VY *= 0.95f;
+		Trail->VY += 0.001f;
+
+		Trail->Life -= 1.0f/60.0f;
+	}
+
+	// Cull dead trails.
+	for (int i = FirstActiveFireWorkTrail; i != MAX_FIREWORK_TRAILS;)
+	{
+		SFireWorkTrail* Trail = &FireWorkTrails[i];
+
+		i = FireWorkTrails[i].NextFireWorkTrail;
+
+		if (Trail->Life <= 0)
+		{
+			int TrailIndex = Trail - FireWorkTrails;
+
+			if (FirstActiveFireWorkTrail == TrailIndex)
+				FirstActiveFireWorkTrail = Trail->NextFireWorkTrail;
+			else
+			{
+				for (int i = FirstActiveFireWorkTrail; i != MAX_FIREWORK_TRAILS; i = FireWorkTrails[i].NextFireWorkTrail)
+				{
+					if (FireWorkTrails[i].NextFireWorkTrail == TrailIndex)
+					{
+						FireWorkTrails[i].NextFireWorkTrail = Trail->NextFireWorkTrail;
+						break;
+					}
+				}
+			}
+
+			Trail->NextFireWorkTrail = FirstInactiveFireWorkTrail;
+			FirstInactiveFireWorkTrail = TrailIndex;
+
+			for (int i = FirstActiveFireWorkTrail; i != MAX_FIREWORK_TRAILS; i = FireWorkTrails[i].NextFireWorkTrail)
+				;
+			for (int i = FirstInactiveFireWorkTrail; i != MAX_FIREWORK_TRAILS; i = FireWorkTrails[i].NextFireWorkTrail)
+				;
+		}
+	}
+}
+
+void SpawnFireWorkTrail(float X, float Y, float Speed, float Life)
+{
+	if (FirstInactiveFireWorkTrail == MAX_FIREWORK_TRAILS)
+		ReportError("Exceeded the maximum of %d firework trails.", MAX_FIREWORK_TRAILS);
+
+	SFireWorkTrail* Trail = &FireWorkTrails[FirstInactiveFireWorkTrail];
+
+	int NextInactive = Trail->NextFireWorkTrail;
+	Trail->NextFireWorkTrail = FirstActiveFireWorkTrail;
+	FirstActiveFireWorkTrail = FirstInactiveFireWorkTrail;
+	FirstInactiveFireWorkTrail = NextInactive;
+
+	for (int i = FirstActiveFireWorkTrail; i != MAX_FIREWORK_TRAILS; i = FireWorkTrails[i].NextFireWorkTrail)
+		;
+	for (int i = FirstInactiveFireWorkTrail; i != MAX_FIREWORK_TRAILS; i = FireWorkTrails[i].NextFireWorkTrail)
+		;
+
+	Trail->CenterX = X;
+	Trail->CenterY = Y;
+
+	Trail->X = X;
+	Trail->Y = Y;
+	Trail->Z = 0;
+
+	// Pick a semi-random direction on a hemisphere (no guarantee the distribution is even though).
+	Trail->VX = Random(-1.0f, 1.0f);
+	Trail->VY = Random(-1.0f, 1.0f);
+	Trail->VZ = Random(0.0f, 1.0f);
+	
+	float Length = sqrtf(Trail->VX*Trail->VX + Trail->VY*Trail->VY + Trail->VZ*Trail->VZ);
+	if (Length < 0.00001f)
+		Length = 0.00001f;
+
+	Trail->VX *= Speed/Length;
+	Trail->VY *= Speed/Length;
+	Trail->VZ *= Speed/Length;
+
+	Trail->Life = Life;
+
+	for (int i = 0; i < FIREWORK_TRAIL_HISTORY; i++)
+	{
+		Trail->XHistory[i] = Trail->X;
+		Trail->YHistory[i] = Trail->Y;
+		Trail->ZHistory[i] = Trail->Z;
+	}
+	Trail->HistoryCount = 2;
+}
 
 void DisplayFireWorks()
 {
@@ -108,13 +321,20 @@ void DisplayFireWorks()
 		}
 		else if (FireWork->State == FIREWORKSTATE_EXPLODE)
 		{
-			AddLitSpriteCenteredScaledRotated(LIGHTLIST_EFFECTS, &FireWorkBangSprite, FireWork->X, FireWork->Y + ScrollY, 1.0f, 0.0f);
 		}
 	}
+
+	DisplayFireWorkTrails();
 }
 
 void ExplodeFireWork(float X, float Y, int Size)
 {
+	// Spawn Trails
+	for (int i = 0; i < 20; i++)
+	{
+		SpawnFireWorkTrail(X, Y, 10.0f, 2.0f);
+	}
+
 	for (int y = 0; y < Chapter.PageHeight; y++)
 	{
 		for (int x = 0; x < Chapter.PageWidth; x++)
@@ -179,6 +399,8 @@ void ExplodeFireWork(float X, float Y, int Size)
 
 void UpdateFireWorks()
 {
+	UpdateFireWorkTrails();
+
 	for (int i = 0; i < NFireWorks; i++)
 	{
 		SFireWork* FireWork = &FireWorks[i];
@@ -225,7 +447,7 @@ void UpdateFireWorks()
 				FireWork->State = FIREWORKSTATE_EXPLODE;
 
 				ExplodeFireWork(FireWork->X, FireWork->Y, FireWork->ExplosionSize);
-            }    	          
+			}    	          
         }     
 		else if (FireWork->State == FIREWORKSTATE_EXPLODE)
         {   

@@ -12,7 +12,7 @@
 #include "Chapter.h"
 
 
-#define MAX_LIT_QUADS_PER_LIST 512
+#define MAX_LIT_QUADS_PER_LIST 4096 // Holy crap
 
 
 struct SLightState
@@ -536,7 +536,9 @@ void RenderLighting()
 		DrawLitQuad( &LightLists[LIGHTLIST_BACKGROUND].Quads[i] );
 #else
 	// White background - useful for testing AO and stuff.
-	gxClearColor(gxRGBA32(255, 255, 255, 255));
+	//gxClearColor(gxRGBA32(255, 255, 255, 255));
+	// Black background - useful for testing fireworks.
+	gxClearColor(gxRGBA32(0, 0, 0, 255));
 #endif
 
 	// Foreground ambient occlusion & shadows.
@@ -555,11 +557,6 @@ void RenderLighting()
 	for (int i = 0; i < LightLists[LIGHTLIST_FOREGROUND_NO_SHADOW].NQuads; i++)
 		DrawLitQuad( &LightLists[LIGHTLIST_FOREGROUND_NO_SHADOW].Quads[i] );
 
-	// Effects.
-	_gxSetAlpha( GXALPHA_ADD );
-	for (int i = 0; i < LightLists[LIGHTLIST_EFFECTS].NQuads; i++)
-		DrawLitQuad( &LightLists[LIGHTLIST_EFFECTS].Quads[i] );
-
 	// Vacuum ambient occlusion & shadows.
 	RenderAmbientOcclusion(&AmbientOcclusionVacuumRT);
 	RenderShadows(&ShadowVacuumRT);
@@ -575,6 +572,11 @@ void RenderLighting()
 	// Combine everything into the final output.
 	gxSetRenderTarget(NULL);
 	RenderCombinedColor();
+
+	// Effects.
+	_gxSetAlpha( GXALPHA_ADD );
+	for (int i = 0; i < LightLists[LIGHTLIST_EFFECTS].NQuads; i++)
+		DrawLitQuad( &LightLists[LIGHTLIST_EFFECTS].Quads[i] );
 
 	// Debugging of render targets.
 	if (DevMode)
