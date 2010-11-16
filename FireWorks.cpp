@@ -218,9 +218,9 @@ void UpdateFireWorkTrails()
 		Trail->Y += Trail->VY;
 		Trail->Z += Trail->VZ;
 		
-		Trail->VX *= 0.95f;
-		Trail->VY *= 0.95f;
-		Trail->VY += 0.001f;
+		Trail->VX *= 0.97f;
+		Trail->VY *= 0.97f;
+		Trail->VY += 0.1f;
 
 		Trail->Life -= 1.0f/60.0f;
 	}
