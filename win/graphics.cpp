@@ -279,6 +279,7 @@ void _gxDrawQuad( float x, float y, float w, float h, unsigned int color, float 
 	v[3].color = color;
 	v[3].u = u2; v[3].v = v2;
 
+	gxDev->SetVertexShader(NULL);
 	gxDev->SetFVF( gxSpriteVertexFVF );
 	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v, sizeof(gxSpriteVertex) );
 }
@@ -323,6 +324,7 @@ void _gxDrawQuad(
 	v[2].u = U3; 
 	v[2].v = V3;
 
+	gxDev->SetVertexShader(NULL);
 	gxDev->SetFVF( gxSpriteVertexFVF );
 	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v, sizeof(gxSpriteVertex) );
 }
@@ -674,6 +676,7 @@ void gxDrawSpriteCenteredRotated(int x, int y, float a, gxSprite* spr)
 	v[3].u = 1.0f; 
 	v[3].v = 1.0f;
 
+	gxDev->SetVertexShader(NULL);
 	gxDev->SetFVF( gxSpriteVertexFVF );
 	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v, sizeof(gxSpriteVertex) );
 }
@@ -737,7 +740,7 @@ void gxClearColor(unsigned int Color)
 	gxDev->Clear(0, NULL, D3DCLEAR_TARGET, Color, 0.0f, 0);
 }
 
-void gxCreateShader(const char* Source, gxShader* Shader)
+void gxCreatePixelShader(const char* Source, gxPixelShader* Shader)
 {
 	LPD3DXBUFFER CompiledShader;
 	LPD3DXBUFFER ErrorMsgs;
@@ -757,7 +760,7 @@ void gxCreateShader(const char* Source, gxShader* Shader)
 		ErrorMsgs->Release();
 }
 
-void gxSetPixelShader(gxShader* Shader)
+void gxSetPixelShader(gxPixelShader* Shader)
 {
 	gxDev->SetPixelShader(Shader->Shader);
 }
@@ -766,6 +769,37 @@ void gxSetPixelShaderConst(int Index, float x, float y, float z, float w)
 {
 	float Floats[4] = {x, y, z, w};
 	gxDev->SetPixelShaderConstantF(Index, Floats, 1);
+}
+
+void gxCreateVertexShader(const char* Source, gxVertexShader* Shader)
+{
+	LPD3DXBUFFER CompiledShader;
+	LPD3DXBUFFER ErrorMsgs;
+	D3DXCompileShader(Source, strlen(Source), NULL, NULL, "main", "vs_3_0", 0, &CompiledShader, &ErrorMsgs, NULL);
+
+	if (CompiledShader)
+	{
+		gxDev->CreateVertexShader((DWORD*)CompiledShader->GetBufferPointer(), &Shader->Shader);
+		CompiledShader->Release();
+	}
+	else
+	{
+		ReportError("Failed to compile shader:\n%s", ErrorMsgs->GetBufferPointer());
+	}
+
+	if (ErrorMsgs)
+		ErrorMsgs->Release();
+}
+
+void gxSetVertexShader(gxVertexShader* Shader)
+{
+	gxDev->SetVertexShader(Shader->Shader);
+}
+
+void gxSetVertexShaderConst(int Index, float x, float y, float z, float w)
+{
+	float Floats[4] = {x, y, z, w};
+	gxDev->SetVertexShaderConstantF(Index, Floats, 1);
 }
 
 void gxCopyRenderTarget(gxSprite* From, gxSprite* To)
@@ -814,6 +848,7 @@ void gxCopyRenderTarget(gxSprite* From, gxSprite* To)
 	v[2].u = 0.0f+HalfPixelU; 
 	v[2].v = 1.0f+HalfPixelV;
 
+	gxDev->SetVertexShader(NULL);
 	gxDev->SetFVF( gxSpriteVertexFVF );
 	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v, sizeof(gxSpriteVertex) );
 }

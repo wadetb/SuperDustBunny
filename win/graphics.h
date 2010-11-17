@@ -300,14 +300,23 @@ void gxSetRenderTarget(gxSprite* Sprite);
 
 void gxClearColor(unsigned int Color);
 
-struct gxShader
+struct gxPixelShader
 {
 	IDirect3DPixelShader9* Shader;
 };
 
-void gxCreateShader(const char* Source, gxShader* Shader);
-void gxSetPixelShader(gxShader* Shader);
+void gxCreatePixelShader(const char* Source, gxPixelShader* Shader);
+void gxSetPixelShader(gxPixelShader* Shader);
 void gxSetPixelShaderConst(int Index, float x, float y=0.0f, float z=0.0f, float w=0.0f);
+
+struct gxVertexShader
+{
+	IDirect3DVertexShader9* Shader;
+};
+
+void gxCreateVertexShader(const char* Source, gxVertexShader* Shader);
+void gxSetVertexShader(gxVertexShader* Shader);
+void gxSetVertexShaderConst(int Index, float x, float y=0.0f, float z=0.0f, float w=0.0f);
 
 void gxCopyRenderTarget(gxSprite* From, gxSprite* To);
 

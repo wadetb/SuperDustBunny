@@ -12,7 +12,23 @@
 #include "Chapter.h"
 
 
-#define MAX_LIT_QUADS_PER_LIST 4096 // Holy crap
+#define MAX_LIT_QUADS_PER_LIST	8192 // Holy crap
+#define MAX_LIT_VERTS			16384
+
+
+int NLitVerts;
+SLitVertex LitVerts[MAX_LIT_VERTS];
+
+
+D3DVERTEXELEMENT9 LitVertexElements[] =
+{
+	{ 0, offsetof(SLitVertex, X), D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+	{ 0, offsetof(SLitVertex, U), D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+	{ 0, offsetof(SLitVertex, Color), D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR, 0 },
+	D3DDECL_END(),
+};
+
+IDirect3DVertexDeclaration9* LitVertexDecl;
 
 
 struct SLightState
@@ -76,6 +92,32 @@ gxSprite ColorBleedFinalRT;
 //                                                      Shaders                                                                            //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
+const char* LitVertexShaderSource =
+"struct SVertexInput\n"
+"{\n"
+"	float2 Position : POSITION;\n"
+"	float2 TexCoord0 : TEXCOORD0;\n"
+"	float4 Color0 : COLOR0;\n"
+"};\n"
+"\n"
+"struct SVertexOutput\n"
+"{\n"
+"	float4 Position : POSITION;\n"
+"	float2 TexCoord0 : TEXCOORD0;\n"
+"	float4 Color0 : COLOR0;\n"
+"};\n"
+"\n"
+"SVertexOutput main(SVertexInput VertexInput)\n"
+"{\n"
+"	SVertexOutput VertexOutput;\n"
+"	VertexOutput.Position = float4(VertexInput.Position.x/768.0*2-1, (1-VertexInput.Position.y/1024)*2-1, 0, 1);\n"
+"	VertexOutput.TexCoord0 = VertexInput.TexCoord0;\n"
+"	VertexOutput.Color0 = VertexInput.Color0;\n"
+"	return VertexOutput;\n"
+"}\n";
+
+gxVertexShader LitVertexShader;
+
 const char* TexturedColoredShaderSource =
 "sampler Sampler0 : register(s0);\n"
 "\n"
@@ -90,7 +132,7 @@ const char* TexturedColoredShaderSource =
 "	return tex2D(Sampler0, VertexOutput.TexCoord0) * VertexOutput.Color0;\n"
 "}\n";
 
-gxShader TexturedColoredShader;
+gxPixelShader TexturedColoredShader;
 
 const char* Gaussian7ShaderSource =
 "float3 BlurOffsetScale0 : register(c0);\n"
@@ -118,7 +160,7 @@ const char* Gaussian7ShaderSource =
 "   return color;\n"
 "}\n";
 
-gxShader Gaussian7Shader;
+gxPixelShader Gaussian7Shader;
 
 
 const char* Gaussian13ShaderSource =
@@ -156,7 +198,7 @@ const char* Gaussian13ShaderSource =
 "   return color;\n"
 "}\n";
 
-gxShader Gaussian13Shader;
+gxPixelShader Gaussian13Shader;
 
 
 const char* CombineShaderSource =
@@ -177,7 +219,7 @@ const char* CombineShaderSource =
 "   return (Lighting*2.0) * Color * saturate(ColorBleed*1.5);\n"
 "}\n";
 
-gxShader CombineShader;
+gxPixelShader CombineShader;
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                      Platform specific drawing                                                          //
@@ -187,82 +229,16 @@ void DrawLitQuad(SLitQuad* Quad)
 {
 	_gxSetTexture(Quad->Sprite);
 
-	gxSpriteVertex v[4];
-	v[0].x = Quad->X0; 
-	v[0].y = Quad->Y0; 
-	v[0].z = 0.0f; 
-	v[0].w = 1.0f;
-	v[0].color = Quad->Color;
-	v[0].u = Quad->U0; 
-	v[0].v = Quad->V0;
-
-	v[1].x = Quad->X1; 
-	v[1].y = Quad->Y1; 
-	v[1].z = 0.0f; 
-	v[1].w = 1.0f;
-	v[1].color = Quad->Color;
-	v[1].u = Quad->U1; 
-	v[1].v = Quad->V1;
-
-	v[3].x = Quad->X2; 
-	v[3].y = Quad->Y2; 
-	v[3].z = 0.0f; 
-	v[3].w = 1.0f;
-	v[3].color = Quad->Color;
-	v[3].u = Quad->U2; 
-	v[3].v = Quad->V2;
-
-	v[2].x = Quad->X3; 
-	v[2].y = Quad->Y3; 
-	v[2].z = 0.0f; 
-	v[2].w = 1.0f;
-	v[2].color = Quad->Color;
-	v[2].u = Quad->U3; 
-	v[2].v = Quad->V3;
-
-	gxDev->SetFVF( gxSpriteVertexFVF );
-	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v, sizeof(gxSpriteVertex) );
+	gxDev->SetVertexDeclaration( LitVertexDecl );
+	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, Quad->Verts, sizeof(SLitVertex) );
 }
 
 void DrawLitQuad_Shadow(SLitQuad* Quad)
 {
 	_gxSetTexture(Quad->Sprite);
 
-	gxSpriteVertex v[4];
-	v[0].x = Quad->X0 + LightState.ShadowOffsetX; 
-	v[0].y = Quad->Y0 + LightState.ShadowOffsetY; 
-	v[0].z = 0.0f; 
-	v[0].w = 1.0f;
-	v[0].color = gxRGBA32(0, 0, 0, LightState.ShadowAlpha);
-	v[0].u = Quad->U0; 
-	v[0].v = Quad->V0;
-
-	v[1].x = Quad->X1 + LightState.ShadowOffsetX; 
-	v[1].y = Quad->Y1 + LightState.ShadowOffsetY; 
-	v[1].z = 0.0f; 
-	v[1].w = 1.0f;
-	v[1].color = gxRGBA32(0, 0, 0, LightState.ShadowAlpha);
-	v[1].u = Quad->U1; 
-	v[1].v = Quad->V1;
-
-	v[3].x = Quad->X2 + LightState.ShadowOffsetX; 
-	v[3].y = Quad->Y2 + LightState.ShadowOffsetY; 
-	v[3].z = 0.0f; 
-	v[3].w = 1.0f;
-	v[2].color = gxRGBA32(0, 0, 0, LightState.ShadowAlpha);
-	v[3].u = Quad->U2; 
-	v[3].v = Quad->V2;
-
-	v[2].x = Quad->X3 + LightState.ShadowOffsetX; 
-	v[2].y = Quad->Y3 + LightState.ShadowOffsetY; 
-	v[2].z = 0.0f; 
-	v[2].w = 1.0f;
-	v[3].color = gxRGBA32(0, 0, 0, LightState.ShadowAlpha);
-	v[2].u = Quad->U3; 
-	v[2].v = Quad->V3;
-
-	gxDev->SetFVF( gxSpriteVertexFVF );
-	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v, sizeof(gxSpriteVertex) );
+	gxDev->SetVertexDeclaration( LitVertexDecl );
+	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, Quad->Verts, sizeof(SLitVertex) );
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -287,6 +263,7 @@ void BuildAmbientOcclusion(ELightList List, gxSprite* FinalRT)
 	gxClearColor(gxRGBA32(0, 0, 0, 0));
 
 	gxSetPixelShader(&TexturedColoredShader);
+	gxSetVertexShader(&LitVertexShader);
 
 	LightState.ShadowAlpha = 192;
 	LightState.ShadowOffsetX = 0;
@@ -356,6 +333,7 @@ void BuildShadows(ELightList List, gxSprite* FinalRT, float ShadowOffsetX, float
 	gxClearColor(gxRGBA32(0, 0, 0, 0));
 
 	gxSetPixelShader(&TexturedColoredShader);
+	gxSetVertexShader(&LitVertexShader);
 
 	LightState.ShadowAlpha = 128;
 	LightState.ShadowOffsetX = ShadowOffsetX;
@@ -474,13 +452,17 @@ void RenderCombinedColor()
 
 void InitLighting()
 {
+	gxDev->CreateVertexDeclaration(LitVertexElements, &LitVertexDecl);
+
 	// Compile shaders.
-	gxCreateShader(TexturedColoredShaderSource, &TexturedColoredShader);
+	gxCreateVertexShader(LitVertexShaderSource, &LitVertexShader);
 
-	gxCreateShader(Gaussian7ShaderSource, &Gaussian7Shader);
-	gxCreateShader(Gaussian13ShaderSource, &Gaussian13Shader);
+	gxCreatePixelShader(TexturedColoredShaderSource, &TexturedColoredShader);
 
-	gxCreateShader(CombineShaderSource, &CombineShader);
+	gxCreatePixelShader(Gaussian7ShaderSource, &Gaussian7Shader);
+	gxCreatePixelShader(Gaussian13ShaderSource, &Gaussian13Shader);
+
+	gxCreatePixelShader(CombineShaderSource, &CombineShader);
 
 	// Create render targets.
 	gxCreateRenderTarget(gxScreenWidth, gxScreenHeight, &ColorRT);
@@ -493,6 +475,8 @@ void InitLighting()
 
 void ResetLighting()
 {
+	NLitVerts = 0;
+
 	for (int i = 0; i < LIGHTLIST_COUNT; i++)
 	{
 		LightLists[i].NQuads = 0;
@@ -507,8 +491,8 @@ void RenderLighting()
 	else
 		LightState.AmbientColor = gxRGBA32(128, 128, 128, 255);
 
-
-	// Build render targerts.
+	// Build render targets.
+	gxSetVertexShader(&LitVertexShader);
 
 	// Build ambient occlusion buffers.
 	BuildAmbientOcclusion(LIGHTLIST_FOREGROUND, &AmbientOcclusionForegroundRT);
@@ -529,6 +513,9 @@ void RenderLighting()
 	// Main rendering.
 	gxSetRenderTarget(&ColorRT);
 
+	gxSetPixelShader(&TexturedColoredShader);
+	gxSetVertexShader(&LitVertexShader);
+
 #if 0
 	// Real background.
 	_gxSetAlpha( GXALPHA_BLEND );
@@ -545,10 +532,16 @@ void RenderLighting()
 	RenderAmbientOcclusion(&AmbientOcclusionForegroundRT);
 	RenderShadows(&ShadowForegroundRT);
 
+	gxSetPixelShader(&TexturedColoredShader);
+	gxSetVertexShader(&LitVertexShader);
+
 	// Dust layer.
 	_gxSetAlpha( GXALPHA_BLEND );
 	for (int i = 0; i < LightLists[LIGHTLIST_DUST].NQuads; i++)
 		DrawLitQuad( &LightLists[LIGHTLIST_DUST].Quads[i] );
+
+	gxSetPixelShader(&TexturedColoredShader);
+	gxSetVertexShader(&LitVertexShader);
 
 	// Foreground.
 	_gxSetAlpha( GXALPHA_BLEND );
@@ -561,6 +554,9 @@ void RenderLighting()
 	RenderAmbientOcclusion(&AmbientOcclusionVacuumRT);
 	RenderShadows(&ShadowVacuumRT);
 
+	gxSetPixelShader(&TexturedColoredShader);
+	gxSetVertexShader(&LitVertexShader);
+
 	// Vacuum.
 	_gxSetAlpha( GXALPHA_BLEND );
 	for (int i = 0; i < LightLists[LIGHTLIST_VACUUM].NQuads; i++)
@@ -572,6 +568,9 @@ void RenderLighting()
 	// Combine everything into the final output.
 	gxSetRenderTarget(NULL);
 	RenderCombinedColor();
+
+	gxSetPixelShader(&TexturedColoredShader);
+	gxSetVertexShader(&LitVertexShader);
 
 	// Effects.
 	_gxSetAlpha( GXALPHA_ADD );
@@ -591,6 +590,18 @@ void RenderLighting()
 //                                          Quad Addition Functions                                                                        //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
+SLitVertex* AllocateLitVerts(int NVerts)
+{
+	if (NLitVerts + NVerts > MAX_LIT_VERTS)
+		ReportError("Exceeded the maximum of %d lit vertices.", MAX_LIT_VERTS);
+
+	SLitVertex* Verts = &LitVerts[NLitVerts];
+	
+	NLitVerts += NVerts;
+
+	return Verts;
+}
+
 void AddLitQuad(
 	ELightList List, gxSprite* Sprite, unsigned int Color,
 	float X0, float Y0, float U0, float V0, 
@@ -606,25 +617,30 @@ void AddLitQuad(
 	Quad->List = List;
 	Quad->Sprite = Sprite;
 
-	Quad->X0 = X0;
-	Quad->Y0 = Y0;
-	Quad->X1 = X1;
-	Quad->Y1 = Y1;
-	Quad->X2 = X2;
-	Quad->Y2 = Y2;
-	Quad->X3 = X3;
-	Quad->Y3 = Y3;
+	Quad->Verts = AllocateLitVerts(4);
+	Quad->Verts[0].X = X0;
+	Quad->Verts[0].Y = Y0;
+	Quad->Verts[0].U = U0;
+	Quad->Verts[0].V = V0;
+	Quad->Verts[0].Color = Color;
 
-	Quad->U0 = U0;
-	Quad->V0 = V0;
-	Quad->U1 = U1;
-	Quad->V1 = V1;
-	Quad->U2 = U2;
-	Quad->V2 = V2;
-	Quad->U3 = U3;
-	Quad->V3 = V3;
+	Quad->Verts[1].X = X1;
+	Quad->Verts[1].Y = Y1;
+	Quad->Verts[1].U = U1;
+	Quad->Verts[1].V = V1;
+	Quad->Verts[1].Color = Color;
 
-	Quad->Color = Color;
+	Quad->Verts[3].X = X2;
+	Quad->Verts[3].Y = Y2;
+	Quad->Verts[3].U = U2;
+	Quad->Verts[3].V = V2;
+	Quad->Verts[3].Color = Color;
+
+	Quad->Verts[2].X = X3;
+	Quad->Verts[2].Y = Y3;
+	Quad->Verts[2].U = U3;
+	Quad->Verts[2].V = V3;
+	Quad->Verts[2].Color = Color;
 }
 
 void AddLitSprite(ELightList List, gxSprite* Sprite, float X, float Y)

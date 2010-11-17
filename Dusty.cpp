@@ -324,6 +324,12 @@ void UpdateDusty_Hop()
 		return;
 	}
 
+	// Jump immediately if requested.
+	if (GetInput_Jump())
+	{
+		SetDustyState_Jump( false );
+	}
+
 	// Set Velocity.
 	if (Dusty.CollideMaterial == MATERIAL_ICE)
 		Dusty.FloatVelocityX = 6.0f;
@@ -364,12 +370,6 @@ void UpdateDusty_Hop()
 		return;
 	}
     
-	// Jump immediately if requested.
-	if (GetInput_Jump())
-	{
-		SetDustyState_Jump( false );
-	}
-
 	// Change direction mid hop.
 	if (Dusty.Direction == DIRECTION_RIGHT && GetInput_MoveLeft())
 	{
