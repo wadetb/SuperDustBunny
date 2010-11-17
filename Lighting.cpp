@@ -230,7 +230,7 @@ void DrawLitQuad(SLitQuad* Quad)
 	_gxSetTexture(Quad->Sprite);
 
 	gxDev->SetVertexDeclaration( LitVertexDecl );
-	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, Quad->Verts, sizeof(SLitVertex) );
+	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, Quad->NVerts-2, Quad->Verts, sizeof(SLitVertex) );
 }
 
 void DrawLitQuad_Shadow(SLitQuad* Quad)
@@ -238,7 +238,7 @@ void DrawLitQuad_Shadow(SLitQuad* Quad)
 	_gxSetTexture(Quad->Sprite);
 
 	gxDev->SetVertexDeclaration( LitVertexDecl );
-	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, Quad->Verts, sizeof(SLitVertex) );
+	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, Quad->NVerts-2, Quad->Verts, sizeof(SLitVertex) );
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -617,7 +617,9 @@ void AddLitQuad(
 	Quad->List = List;
 	Quad->Sprite = Sprite;
 
+	Quad->NVerts = 4;
 	Quad->Verts = AllocateLitVerts(4);
+
 	Quad->Verts[0].X = X0;
 	Quad->Verts[0].Y = Y0;
 	Quad->Verts[0].U = U0;
@@ -641,6 +643,22 @@ void AddLitQuad(
 	Quad->Verts[2].U = U3;
 	Quad->Verts[2].V = V3;
 	Quad->Verts[2].Color = Color;
+}
+
+SLitVertex* AddLitQuad(ELightList List, gxSprite* Sprite, int NVerts)
+{
+	if (LightLists[List].NQuads >= MAX_LIT_QUADS_PER_LIST)
+		ReportError("Exceeded the maximum of %d lit quads per light list.", MAX_LIT_QUADS_PER_LIST);
+
+	SLitQuad* Quad = &LightLists[List].Quads[LightLists[List].NQuads++];
+
+	Quad->List = List;
+	Quad->Sprite = Sprite;
+
+	Quad->NVerts = NVerts;
+	Quad->Verts = AllocateLitVerts(NVerts);
+
+	return Quad->Verts;
 }
 
 void AddLitSprite(ELightList List, gxSprite* Sprite, float X, float Y)

@@ -22,7 +22,7 @@ int NFireWorks = 0;
 SFireWork FireWorks[MAX_FIREWORKS];
 
 #define MAX_FIREWORK_TRAILS			1024
-#define FIREWORK_TRAIL_HISTORY		32
+#define FIREWORK_TRAIL_HISTORY		128
 
 enum EFireWorkTrailType
 {
@@ -150,15 +150,17 @@ void DisplayFireWorkTrails()
 
 		AddLitSpriteCenteredScaledColor(LIGHTLIST_EFFECTS, &DustMoteSprite, Trail->CenterX + X, Trail->CenterY + Y + ScrollY, Scale, gxRGBA32(255,192,192,(int)(255*Alpha)));
 
-		int Count = Trail->HistoryCount;
-		for (int i = 0; i < Count - 1; i++)
-		{
-			int HistoryIndex0 = (Trail->HistoryCount - (i + 0));
-			int HistoryIndex1 = (Trail->HistoryCount - (i + 1));
+		SLitVertex* Verts = AddLitQuad(LIGHTLIST_EFFECTS, &WipeDiagonalSprite, Trail->HistoryCount*2);
 
-			float Z0 = Max(1, Min(ZNear, Trail->ZHistory[HistoryIndex0]));
-			float X0 = (Trail->XHistory[HistoryIndex0] - Trail->CenterX) * ZNear / (ZNear - Z);
-			float Y0 = (Trail->YHistory[HistoryIndex0] - Trail->CenterY) * ZNear / (ZNear - Z);
+		int HistoryIndex0 = Trail->HistoryCount;
+
+		float Z0 = Max(1, Min(ZNear, Trail->ZHistory[HistoryIndex0]));
+		float X0 = (Trail->XHistory[HistoryIndex0] - Trail->CenterX) * ZNear / (ZNear - Z);
+		float Y0 = (Trail->YHistory[HistoryIndex0] - Trail->CenterY) * ZNear / (ZNear - Z);
+
+		for (int i = 0; i < Trail->HistoryCount; i++)
+		{
+			int HistoryIndex1 = (Trail->HistoryCount - i );
 
 			float Z1 = Max(1, Min(ZNear, Trail->ZHistory[HistoryIndex1]));
 			float X1 = (Trail->XHistory[HistoryIndex1] - Trail->CenterX) * ZNear / (ZNear - Z);
@@ -166,8 +168,7 @@ void DisplayFireWorkTrails()
 
 			float Width = 4.0f;
 
-			float TrailScale0 = (1.0f - (float)(i+0)/(float)Count);
-			float TrailScale1 = (1.0f - (float)(i+1)/(float)Count);
+			float TrailScale1 = (1.0f - (float)(i/(float)Trail->HistoryCount));
 
 			float PerpX = Y0 - Y1;;
 			float PerpY = -(X0 - X1);
@@ -178,13 +179,24 @@ void DisplayFireWorkTrails()
 				PerpY *= Width * Scale / Length;
 			}
 
-			float Alpha = Lerp(Trail->Life, 1.0f, 0.0f, 1.0f, 0.0f) * TrailScale0;
+			float Alpha = Lerp(Trail->Life, 1.0f, 0.0f, 1.0f, 0.0f) * TrailScale1;
 
-			AddLitQuad(LIGHTLIST_EFFECTS, &WipeDiagonalSprite, gxRGBA32(192,128,128,(int)(255*Alpha)),
-				Trail->CenterX + X0 - PerpX*TrailScale0, Trail->CenterY + Y0 - PerpY*TrailScale0 + ScrollY, 0.0f, 0.0f,
-				Trail->CenterX + X0 + PerpX*TrailScale0, Trail->CenterY + Y0 + PerpY*TrailScale0 + ScrollY, 1.0f, 0.0f,
-				Trail->CenterX + X1 + PerpX*TrailScale1, Trail->CenterY + Y1 + PerpY*TrailScale1 + ScrollY, 1.0f, 0.0f,
-				Trail->CenterX + X1 - PerpX*TrailScale1, Trail->CenterY + Y1 - PerpY*TrailScale1 + ScrollY, 0.0f, 0.0f);
+			Verts->X = Trail->CenterX + X1 - PerpX*TrailScale1;
+			Verts->Y = Trail->CenterY + Y1 - PerpY*TrailScale1 + ScrollY;
+			Verts->U = 0.0f;
+			Verts->V = 0.0f;
+			Verts->Color = gxRGBA32(192,128,128,(int)(255*Alpha));
+			Verts++;
+
+			Verts->X = Trail->CenterX + X1 + PerpX*TrailScale1;
+			Verts->Y = Trail->CenterY + Y1 + PerpY*TrailScale1 + ScrollY;
+			Verts->U = 1.0f;
+			Verts->V = 0.0f;
+			Verts->Color = gxRGBA32(192,128,128,(int)(255*Alpha));
+			Verts++;
+
+			X0 = X1;
+			Y0 = Y1;
 		}
 	}
 }
@@ -220,7 +232,7 @@ void UpdateFireWorkTrails()
 		
 		Trail->VX *= 0.97f;
 		Trail->VY *= 0.97f;
-		Trail->VY += 0.1f;
+		Trail->VY += 0.01f * Length(Trail->VX, Trail->VY);
 
 		Trail->Life -= 1.0f/60.0f;
 	}

@@ -45,7 +45,7 @@ void AddLitQuad(
 	float X2, float Y2, float U2, float V2, 
 	float X3, float Y3, float U3, float V3);
 
-SLitVertex* AllocateLitVerts(int NVerts);
+SLitVertex* AddLitQuad(ELightList List, gxSprite* Sprite, int NVerts);
 
 void AddLitSprite(ELightList List, gxSprite* Sprite, float X, float Y);
 void AddLitSpriteScaled(ELightList List, gxSprite* Sprite, float X, float Y, float ScaleX, float ScaleY);
