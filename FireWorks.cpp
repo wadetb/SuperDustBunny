@@ -150,7 +150,7 @@ void DisplayFireWorkTrails()
 		SFireWorkTrail* Trail = &FireWorkTrails[i];
 
 		// Fake 3D projection, centered around the explosion.
-		float ZNear = 3000.0f;
+		float ZNear = 175.0f;
 		float Z = Max(1, Min(ZNear, Trail->Z));
 		float X = (Trail->X - Trail->CenterX) * ZNear / (ZNear - Z);
 		float Y = (Trail->Y - Trail->CenterY) * ZNear / (ZNear - Z);
@@ -244,6 +244,7 @@ void UpdateFireWorkTrails()
 		
 		Trail->VX *= 0.97f;
 		Trail->VY *= 0.97f;
+		Trail->VZ *= 0.97f;
 		Trail->VY += 0.007f * Length(Trail->VX, Trail->VY);
 
 		Trail->Life -= 1.0f/60.0f;
