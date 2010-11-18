@@ -162,6 +162,19 @@ inline float Random(float Min, float Max)
 #endif
 }
 
+inline int Random(int Min, int Max)
+{
+#ifdef PLATFORM_WINDOWS
+	unsigned int i;
+	rand_s( &i );
+	return Min + ( i % (Max-Min) );
+#endif
+#ifdef PLATFORM_IPHONE
+	u_int32_t i = arc4random();
+	return (float)( Min + ( (double)i / (double)((2ULL<<31)-1) ) * (Max-Min) );
+#endif
+}
+
 inline float Round(float f)
 {
 	return (f > 0.0f) ? floor(f + 0.5f) : ceil(f - 0.5f);

@@ -199,7 +199,7 @@ void UpdateDust()
 		// Recycle this dust mote with new parameters if requested.
 		if (Recycle)
 		{
-			Mote->X = Random(0, (float)gxScreenWidth);
+			Mote->X = Random(0.0f, (float)gxScreenWidth);
 
 			Mote->VX = Random(-0.3f, 0.3f);
 			Mote->VY = Random(-0.3f, 0.3f);

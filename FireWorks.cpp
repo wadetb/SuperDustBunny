@@ -22,7 +22,7 @@ int NFireWorks = 0;
 SFireWork FireWorks[MAX_FIREWORKS];
 
 #define MAX_FIREWORK_TRAILS			1024
-#define FIREWORK_TRAIL_HISTORY		128
+#define FIREWORK_TRAIL_HISTORY		16
 
 enum EFireWorkTrailType
 {
@@ -40,6 +40,8 @@ struct SFireWorkTrail
 
 	float Life;
 
+	unsigned int Color;
+
 	int HistoryCount;
 	float XHistory[FIREWORK_TRAIL_HISTORY];
 	float YHistory[FIREWORK_TRAIL_HISTORY];
@@ -52,6 +54,14 @@ SFireWorkTrail FireWorkTrails[MAX_FIREWORK_TRAILS];
 
 int FirstInactiveFireWorkTrail = -1;
 int FirstActiveFireWorkTrail = -1;
+
+
+unsigned int FireWorkColors[] =
+{
+	gxRGBA32(255, 192, 192, 0),
+	gxRGBA32(192, 255, 192, 0),
+	gxRGBA32(192, 255, 255, 0),
+};
 
 
 void ParseFireWorkProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode)
@@ -145,10 +155,12 @@ void DisplayFireWorkTrails()
 		float X = (Trail->X - Trail->CenterX) * ZNear / (ZNear - Z);
 		float Y = (Trail->Y - Trail->CenterY) * ZNear / (ZNear - Z);
 
-		float Scale = Lerp(Z, 0.0f, ZNear, 1.0f, 2.0f) * 2.0f;
+		float Scale = Lerp(Z, 0.0f, ZNear, 1.0f, 2.0f);
 		float Alpha = Lerp(Trail->Life, 1.0f, 0.0f, 1.0f, 0.0f);
 
-		AddLitSpriteCenteredScaledColor(LIGHTLIST_EFFECTS, &DustMoteSprite, Trail->CenterX + X, Trail->CenterY + Y + ScrollY, Scale, gxRGBA32(255,192,192,(int)(255*Alpha)));
+		unsigned int Color = Trail->Color & gxRGBA32(255,255,255,0);
+
+		AddLitSpriteCenteredScaledColor(LIGHTLIST_EFFECTS, &SparkSprite, Trail->CenterX + X, Trail->CenterY + Y + ScrollY, Scale * 0.2f, Color | gxRGBA32(0,0,0,(int)(255*Alpha)));
 
 		SLitVertex* Verts = AddLitQuad(LIGHTLIST_EFFECTS, &WipeDiagonalSprite, Trail->HistoryCount*2);
 
@@ -185,14 +197,14 @@ void DisplayFireWorkTrails()
 			Verts->Y = Trail->CenterY + Y1 - PerpY*TrailScale1 + ScrollY;
 			Verts->U = 0.0f;
 			Verts->V = 0.0f;
-			Verts->Color = gxRGBA32(192,128,128,(int)(255*Alpha));
+			Verts->Color = Color | gxRGBA32(0,0,0,(int)(255*Alpha));
 			Verts++;
 
 			Verts->X = Trail->CenterX + X1 + PerpX*TrailScale1;
 			Verts->Y = Trail->CenterY + Y1 + PerpY*TrailScale1 + ScrollY;
 			Verts->U = 1.0f;
 			Verts->V = 0.0f;
-			Verts->Color = gxRGBA32(192,128,128,(int)(255*Alpha));
+			Verts->Color = Color | gxRGBA32(0,0,0,(int)(255*Alpha));
 			Verts++;
 
 			X0 = X1;
@@ -232,7 +244,7 @@ void UpdateFireWorkTrails()
 		
 		Trail->VX *= 0.97f;
 		Trail->VY *= 0.97f;
-		Trail->VY += 0.01f * Length(Trail->VX, Trail->VY);
+		Trail->VY += 0.007f * Length(Trail->VX, Trail->VY);
 
 		Trail->Life -= 1.0f/60.0f;
 	}
@@ -273,7 +285,7 @@ void UpdateFireWorkTrails()
 	}
 }
 
-void SpawnFireWorkTrail(float X, float Y, float Speed, float Life)
+void SpawnFireWorkTrail(float X, float Y, float Speed, float Life, unsigned int Color)
 {
 	if (FirstInactiveFireWorkTrail == MAX_FIREWORK_TRAILS)
 		ReportError("Exceeded the maximum of %d firework trails.", MAX_FIREWORK_TRAILS);
@@ -312,6 +324,8 @@ void SpawnFireWorkTrail(float X, float Y, float Speed, float Life)
 
 	Trail->Life = Life;
 
+	Trail->Color = Color;
+
 	for (int i = 0; i < FIREWORK_TRAIL_HISTORY; i++)
 	{
 		Trail->XHistory[i] = Trail->X;
@@ -342,9 +356,10 @@ void DisplayFireWorks()
 void ExplodeFireWork(float X, float Y, int Size)
 {
 	// Spawn Trails
-	for (int i = 0; i < 20; i++)
+	unsigned int Color = FireWorkColors[Random(0, sizeof(FireWorkColors)/sizeof(FireWorkColors[0]))];
+	for (int i = 0; i < 30; i++)
 	{
-		SpawnFireWorkTrail(X, Y, 10.0f, 2.0f);
+		SpawnFireWorkTrail(X, Y, 5.0f, 1.5f, Color);
 	}
 
 	for (int y = 0; y < Chapter.PageHeight; y++)
