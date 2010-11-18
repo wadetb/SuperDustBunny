@@ -516,7 +516,7 @@ void RenderLighting()
 	gxSetPixelShader(&TexturedColoredShader);
 	gxSetVertexShader(&LitVertexShader);
 
-#if 0
+#if 1
 	// Real background.
 	_gxSetAlpha( GXALPHA_BLEND );
 	for (int i = 0; i < LightLists[LIGHTLIST_BACKGROUND].NQuads; i++)
