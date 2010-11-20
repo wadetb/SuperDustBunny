@@ -118,6 +118,29 @@ const char* LitVertexShaderSource =
 
 gxVertexShader LitVertexShader;
 
+const char* ShadowVertexShaderSource =
+"struct SVertexInput\n"
+"{\n"
+"	float2 Position : POSITION;\n"
+"	float2 TexCoord0 : TEXCOORD0;\n"
+"};\n"
+"\n"
+"struct SVertexOutput\n"
+"{\n"
+"	float4 Position : POSITION;\n"
+"	float2 TexCoord0 : TEXCOORD0;\n"
+"};\n"
+"\n"
+"SVertexOutput main(SVertexInput VertexInput)\n"
+"{\n"
+"	SVertexOutput VertexOutput;\n"
+"	VertexOutput.Position = float4((30.0f + VertexInput.Position.x)/768.0*2-1, (1-(20.0f + VertexInput.Position.y)/1024)*2-1, 0, 1);\n"
+"	VertexOutput.TexCoord0 = VertexInput.TexCoord0;\n"
+"	return VertexOutput;\n"
+"}\n";
+
+gxVertexShader ShadowVertexShader;
+
 const char* TexturedColoredShaderSource =
 "sampler Sampler0 : register(s0);\n"
 "\n"
@@ -133,6 +156,21 @@ const char* TexturedColoredShaderSource =
 "}\n";
 
 gxPixelShader TexturedColoredShader;
+
+const char* TexturedShadowShaderSource =
+"sampler Sampler0 : register(s0);\n"
+"\n"
+"struct SVertexOutput\n"
+"{\n"
+"	float2 TexCoord0 : TEXCOORD0;\n"
+"};\n"
+"\n"
+"float4 main(SVertexOutput VertexOutput) : COLOR\n"
+"{\n"
+"	return float4(0, 0, 0, tex2D(Sampler0, VertexOutput.TexCoord0).a);\n"
+"}\n";
+
+gxPixelShader TexturedShadowShader;
 
 const char* Gaussian7ShaderSource =
 "float3 BlurOffsetScale0 : register(c0);\n"
@@ -233,14 +271,6 @@ void DrawLitQuad(SLitQuad* Quad)
 	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, Quad->NVerts-2, Quad->Verts, sizeof(SLitVertex) );
 }
 
-void DrawLitQuad_Shadow(SLitQuad* Quad)
-{
-	_gxSetTexture(Quad->Sprite);
-
-	gxDev->SetVertexDeclaration( LitVertexDecl );
-	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, Quad->NVerts-2, Quad->Verts, sizeof(SLitVertex) );
-}
-
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                      Ambient occlusion                                                                  //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -262,8 +292,8 @@ void BuildAmbientOcclusion(ELightList List, gxSprite* FinalRT)
 	gxSetRenderTarget(&AmbientOcclusionAlphaRT);
 	gxClearColor(gxRGBA32(0, 0, 0, 0));
 
-	gxSetPixelShader(&TexturedColoredShader);
-	gxSetVertexShader(&LitVertexShader);
+	gxSetPixelShader(&TexturedShadowShader);
+	gxSetVertexShader(&ShadowVertexShader);
 
 	LightState.ShadowAlpha = 192;
 	LightState.ShadowOffsetX = 0;
@@ -271,7 +301,7 @@ void BuildAmbientOcclusion(ELightList List, gxSprite* FinalRT)
 
 	_gxSetAlpha( GXALPHA_BLEND );
 	for (int i = 0; i < LightLists[List].NQuads; i++)
-		DrawLitQuad_Shadow( &LightLists[List].Quads[i] );
+		DrawLitQuad( &LightLists[List].Quads[i] );
 
 	gxCopyRenderTarget(&AmbientOcclusionAlphaRT, &AmbientOcclusionDiv2RT);
 	gxCopyRenderTarget(&AmbientOcclusionDiv2RT, &AmbientOcclusionDiv4RT);
@@ -308,6 +338,9 @@ void BuildAmbientOcclusion(ELightList List, gxSprite* FinalRT)
 
 void RenderAmbientOcclusion(gxSprite* FinalRT)
 {
+	gxSetPixelShader(&TexturedColoredShader);
+	gxSetVertexShader(&LitVertexShader);
+
 	_gxSetAlpha(GXALPHA_BLEND);
 	_gxSetTexture(FinalRT);
 	_gxDrawQuad(0, 0, (float)gxScreenWidth, (float)gxScreenHeight);
@@ -332,8 +365,8 @@ void BuildShadows(ELightList List, gxSprite* FinalRT, float ShadowOffsetX, float
 	gxSetRenderTarget(&ShadowAlphaRT);
 	gxClearColor(gxRGBA32(0, 0, 0, 0));
 
-	gxSetPixelShader(&TexturedColoredShader);
-	gxSetVertexShader(&LitVertexShader);
+	gxSetPixelShader(&TexturedShadowShader);
+	gxSetVertexShader(&ShadowVertexShader);
 
 	LightState.ShadowAlpha = 128;
 	LightState.ShadowOffsetX = ShadowOffsetX;
@@ -341,7 +374,7 @@ void BuildShadows(ELightList List, gxSprite* FinalRT, float ShadowOffsetX, float
 
 	_gxSetAlpha( GXALPHA_BLEND );
 	for (int i = 0; i < LightLists[List].NQuads; i++)
-		DrawLitQuad_Shadow( &LightLists[List].Quads[i] );
+		DrawLitQuad( &LightLists[List].Quads[i] );
 
 	gxCopyRenderTarget(&ShadowAlphaRT, &ShadowPingRT);
 
@@ -370,6 +403,9 @@ void BuildShadows(ELightList List, gxSprite* FinalRT, float ShadowOffsetX, float
 
 void RenderShadows(gxSprite* FinalRT)
 {
+	gxSetPixelShader(&TexturedColoredShader);
+	gxSetVertexShader(&LitVertexShader);
+
 	_gxSetAlpha(GXALPHA_BLEND);
 	_gxSetTexture(FinalRT);
 	_gxDrawQuad(0, 0, (float)gxScreenWidth, (float)gxScreenHeight);
@@ -456,8 +492,10 @@ void InitLighting()
 
 	// Compile shaders.
 	gxCreateVertexShader(LitVertexShaderSource, &LitVertexShader);
+	gxCreateVertexShader(ShadowVertexShaderSource, &ShadowVertexShader);
 
 	gxCreatePixelShader(TexturedColoredShaderSource, &TexturedColoredShader);
+	gxCreatePixelShader(TexturedShadowShaderSource, &TexturedShadowShader);
 
 	gxCreatePixelShader(Gaussian7ShaderSource, &Gaussian7Shader);
 	gxCreatePixelShader(Gaussian13ShaderSource, &Gaussian13Shader);
@@ -516,16 +554,16 @@ void RenderLighting()
 	gxSetPixelShader(&TexturedColoredShader);
 	gxSetVertexShader(&LitVertexShader);
 
-#if 1
+#if 0
 	// Real background.
 	_gxSetAlpha( GXALPHA_BLEND );
 	for (int i = 0; i < LightLists[LIGHTLIST_BACKGROUND].NQuads; i++)
 		DrawLitQuad( &LightLists[LIGHTLIST_BACKGROUND].Quads[i] );
 #else
 	// White background - useful for testing AO and stuff.
-	//gxClearColor(gxRGBA32(255, 255, 255, 255));
+	gxClearColor(gxRGBA32(255, 255, 255, 255));
 	// Black background - useful for testing fireworks.
-	gxClearColor(gxRGBA32(0, 0, 0, 255));
+	//gxClearColor(gxRGBA32(0, 0, 0, 255));
 #endif
 
 	// Foreground ambient occlusion & shadows.
@@ -540,10 +578,10 @@ void RenderLighting()
 	for (int i = 0; i < LightLists[LIGHTLIST_DUST].NQuads; i++)
 		DrawLitQuad( &LightLists[LIGHTLIST_DUST].Quads[i] );
 
+	// Foreground.
 	gxSetPixelShader(&TexturedColoredShader);
 	gxSetVertexShader(&LitVertexShader);
 
-	// Foreground.
 	_gxSetAlpha( GXALPHA_BLEND );
 	for (int i = 0; i < LightLists[LIGHTLIST_FOREGROUND].NQuads; i++)
 		DrawLitQuad( &LightLists[LIGHTLIST_FOREGROUND].Quads[i] );
