@@ -34,10 +34,6 @@ IDirect3DVertexDeclaration9* LitVertexDecl;
 struct SLightState
 {
 	unsigned int AmbientColor;
-
-	float ShadowOffsetX;
-	float ShadowOffsetY;
-	unsigned int ShadowAlpha;
 };
 
 struct SLightList
@@ -119,10 +115,13 @@ const char* LitVertexShaderSource =
 gxVertexShader LitVertexShader;
 
 const char* ShadowVertexShaderSource =
+"float2 ShadowOffset : register(c0);\n"
+"\n"
 "struct SVertexInput\n"
 "{\n"
 "	float2 Position : POSITION;\n"
 "	float2 TexCoord0 : TEXCOORD0;\n"
+"	float4 Color0 : COLOR0;\n"
 "};\n"
 "\n"
 "struct SVertexOutput\n"
@@ -133,8 +132,11 @@ const char* ShadowVertexShaderSource =
 "\n"
 "SVertexOutput main(SVertexInput VertexInput)\n"
 "{\n"
+"	float2 ScreenScale = float2(1.0/768.0, 1.0/1024.0);\n"
+"\n"
 "	SVertexOutput VertexOutput;\n"
-"	VertexOutput.Position = float4((30.0f + VertexInput.Position.x)/768.0*2-1, (1-(20.0f + VertexInput.Position.y)/1024)*2-1, 0, 1);\n"
+"	float2 Position = VertexInput.Position + ShadowOffset;\n"
+"	VertexOutput.Position = float4(Position.x*ScreenScale.x*2-1, (1-Position.y*ScreenScale.y)*2-1, 0, 1);\n"
 "	VertexOutput.TexCoord0 = VertexInput.TexCoord0;\n"
 "	return VertexOutput;\n"
 "}\n";
@@ -158,6 +160,7 @@ const char* TexturedColoredShaderSource =
 gxPixelShader TexturedColoredShader;
 
 const char* TexturedShadowShaderSource =
+"float ShadowAlpha : register(c0);\n"
 "sampler Sampler0 : register(s0);\n"
 "\n"
 "struct SVertexOutput\n"
@@ -293,11 +296,10 @@ void BuildAmbientOcclusion(ELightList List, gxSprite* FinalRT)
 	gxClearColor(gxRGBA32(0, 0, 0, 0));
 
 	gxSetPixelShader(&TexturedShadowShader);
-	gxSetVertexShader(&ShadowVertexShader);
+	gxSetPixelShaderConst(0, 192.0f/255.0f);
 
-	LightState.ShadowAlpha = 192;
-	LightState.ShadowOffsetX = 0;
-	LightState.ShadowOffsetY = 0;
+	gxSetVertexShader(&ShadowVertexShader);
+	gxSetVertexShaderConst(0, 0.0f, 0.0f);
 
 	_gxSetAlpha( GXALPHA_BLEND );
 	for (int i = 0; i < LightLists[List].NQuads; i++)
@@ -366,11 +368,10 @@ void BuildShadows(ELightList List, gxSprite* FinalRT, float ShadowOffsetX, float
 	gxClearColor(gxRGBA32(0, 0, 0, 0));
 
 	gxSetPixelShader(&TexturedShadowShader);
-	gxSetVertexShader(&ShadowVertexShader);
+	gxSetPixelShaderConst(0, 128.0f/255.0f);
 
-	LightState.ShadowAlpha = 128;
-	LightState.ShadowOffsetX = ShadowOffsetX;
-	LightState.ShadowOffsetY = ShadowOffsetY;
+	gxSetVertexShader(&ShadowVertexShader);
+	gxSetVertexShaderConst(0, ShadowOffsetX, ShadowOffsetY);
 
 	_gxSetAlpha( GXALPHA_BLEND );
 	for (int i = 0; i < LightLists[List].NQuads; i++)
@@ -554,7 +555,7 @@ void RenderLighting()
 	gxSetPixelShader(&TexturedColoredShader);
 	gxSetVertexShader(&LitVertexShader);
 
-#if 0
+#if 1
 	// Real background.
 	_gxSetAlpha( GXALPHA_BLEND );
 	for (int i = 0; i < LightLists[LIGHTLIST_BACKGROUND].NQuads; i++)
