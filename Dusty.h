@@ -28,6 +28,7 @@ enum EDustyState
 	DUSTYSTATE_LAUNCH,
 	DUSTYSTATE_DIE,
 	DUSTYSTATE_STUCK,
+	DUSTYSTATE_HOP_ON,
 };
 
 struct SDusty
@@ -55,6 +56,9 @@ struct SDusty
 
 	int StuckJumpCount;
 	int StuckTimer;
+	
+	int ChapterTimer;
+	int TitleLocation;
 
 	bool CollideWithLeftSide;
 	bool CollideWithRightSide;
@@ -74,6 +78,7 @@ void UpdateDusty();
 void InitDusty();
 
 void SetDustyStart(int x, int y);
+void SetDustyState_Hop_On();
 
 void SetDustyState_PrepareLaunch();
 void SetDustyState_Launch(float VelocityX, float VelocityY);

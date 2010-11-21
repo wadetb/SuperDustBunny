@@ -116,6 +116,8 @@ gxSprite TutorialBallSprite;
 gxSprite TutorialJumpSprite;
 gxSprite TutorialWallJumpSprite;
 
+gxSprite ChapterTitle;
+
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 //                                                    Sound Assets                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
@@ -255,6 +257,8 @@ void LoadAssets()
 	gxLoadSprite("Data/tutorial-tennisball.png", &TutorialBallSprite);
 	gxLoadSprite("Data/tutorial-jump.png", &TutorialJumpSprite);
 	gxLoadSprite("Data/tutorial-walljump.png", &TutorialWallJumpSprite);
+	
+	gxLoadSprite("Data/chapter-title.png", &ChapterTitle);
 
 	//-----------------------------------------------------------------------------------------------------------------------------------------//
 	//                                                    Sound Assets                                                                         //

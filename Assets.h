@@ -122,6 +122,8 @@ extern gxSprite TutorialBallSprite;
 extern gxSprite TutorialJumpSprite;
 extern gxSprite TutorialWallJumpSprite;
 
+extern gxSprite ChapterTitle;
+
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 //                                                    Sound Assets                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//

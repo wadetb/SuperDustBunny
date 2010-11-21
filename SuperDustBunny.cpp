@@ -390,6 +390,7 @@ void DisplayGame_Playing()
 void UpdateGame_Playing()
 { 
 	UpdateDusty();
+	
 
 	if (Dusty.State != DUSTYSTATE_DIE)
 	{
@@ -400,7 +401,7 @@ void UpdateGame_Playing()
         UpdateGear();  
 		UpdateFireWorks();
 		UpdateFlashlight();
-		UpdateScore();
+		UpdateScore();		
 	}
 
 	UpdateDust();
