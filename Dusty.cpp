@@ -21,7 +21,8 @@ SDusty Dusty;
 
 void InitDusty()
 {
-	Dusty.State = DUSTYSTATE_STAND;
+	//Dusty.State = DUSTYSTATE_STAND;
+    SetDustyState_Hop_On();
 
 	Dusty.Direction = DIRECTION_RIGHT;
 
@@ -49,7 +50,6 @@ void InitDusty()
 
 void SetDustyStart(int x, int y)
 {
-    SetDustyState_Hop_On();
 	Dusty.FloatX = (float)x;
 	Dusty.FloatY = (float)y;
 }
@@ -795,7 +795,8 @@ void UpdateDusty_Stuck()
 
 void SetDustyState_Hop_On()
 {
-    Dusty.ChapterTimer = 200;   
+    Dusty.ChapterTimer = 100;   
+    Dusty.FloatX = -100;
     Dusty.State = DUSTYSTATE_HOP_ON;
 }
 
@@ -803,21 +804,16 @@ void DisplayDusty_Hop_On()
 {    
     switch (Dusty.ChapterTimer)
     {
-    case 200:   gxDrawSprite(50, 400, &ChapterTitle); break;
-    case 190:    gxDrawSprite(60, 400, &ChapterTitle); break;
-    case 180:    gxDrawSprite(70, 400, &ChapterTitle); break;
-    case 170:    gxDrawSprite(80, 400, &ChapterTitle); break;
-    case 160:    gxDrawSprite(90, 400, &ChapterTitle); break;
-    case 150:    gxDrawSprite(100, 400, &ChapterTitle); break;
-    case 140:    gxDrawSprite(110, 400, &ChapterTitle); break;
-    case 130:    gxDrawSprite(120, 400, &ChapterTitle); break;
-    case 120:    gxDrawSprite(130, 400, &ChapterTitle); break;
-    case 110:    gxDrawSprite(140, 400, &ChapterTitle); break;
-    case 100:    gxDrawSprite(140, 400, &ChapterTitle); break;
-    case 90:    gxDrawSprite(140, 400, &ChapterTitle); break;
-    case 80:    gxDrawSprite(140, 400, &ChapterTitle); break;
-    case 70:    gxDrawSprite(140, 400, &ChapterTitle); break;
-    case 60:    gxDrawSprite(140, 400, &ChapterTitle); break;
+    case 100:   gxDrawSprite(90, 5800, &ChapterTitle); break;
+    case 90:   gxDrawSprite(90, 5800, &ChapterTitle); break;
+    case 80:   gxDrawSprite(90, 5800, &ChapterTitle); break;
+    case 70:   gxDrawSprite(90, 5800, &ChapterTitle); break;
+    case 60:   gxDrawSprite(90, 5800, &ChapterTitle); break;
+    case 50:   gxDrawSprite(90, 5800, &ChapterTitle); break;
+    case 40:   gxDrawSprite(90, 5800, &ChapterTitle); break;
+    case 30:   gxDrawSprite(90, 5800, &ChapterTitle); break;
+    case 20:   gxDrawSprite(90, 5800, &ChapterTitle); break;
+    case 10:   gxDrawSprite(90, 5800, &ChapterTitle); break;
     default:    break;
     }
 
@@ -867,33 +863,13 @@ void UpdateDusty_Hop_On()
 {
     if (Dusty.ChapterTimer > 50)
     {  
-        // Update animation
-        Dusty.SpriteTransition += 1;
-        
-        Dusty.FloatX += Dusty.FloatVelocityX*3;
-        Dusty.FloatY -= Dusty.FloatVelocityY*3;
-
-        // Check for end of hop animation.
-        if (Dusty.SpriteTransition == 24)
-        {
-            // Spawn some dust motes.
-            for (int i = 0; i < 6; i++)
-                MakeDustMote(Dusty.FloatX, Dusty.FloatY);
-                
-            Dusty.SpriteTransition = 0;
-        }
-    }
-    
-    if (Dusty.ChapterTimer != 0 && Dusty.ChapterTimer < 50)
-    {
         Dusty.SpriteTransition = 0;
-        Dusty.FloatX = 0;
-        Dusty.FloatY = 0;    
     }
     
     if (Dusty.ChapterTimer == 0)
     {
-        Dusty.ChapterTimer = 0;        
+        Dusty.ChapterTimer = 200;
+        SetDustyState_Stand();        
         return;
     }
     Dusty.ChapterTimer -= 1;
