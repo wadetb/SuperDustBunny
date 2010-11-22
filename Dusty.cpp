@@ -21,8 +21,7 @@ SDusty Dusty;
 
 void InitDusty()
 {
-	//Dusty.State = DUSTYSTATE_STAND;
-    SetDustyState_Hop_On();
+	Dusty.State = DUSTYSTATE_HOP_ON;   
 
 	Dusty.Direction = DIRECTION_RIGHT;
 
@@ -67,6 +66,7 @@ void SetDustyState_WallJump();
 void SetDustyState_CornerJump();
 void SetDustyState_PrepareLaunch();
 void SetDustyState_Launch();
+
 
 void UpdateDusty_JumpCommon();
 
@@ -796,39 +796,73 @@ void UpdateDusty_Stuck()
 void SetDustyState_Hop_On()
 {
     Dusty.ChapterTimer = 100;   
-    Dusty.FloatX = -100;
+    Dusty.SpriteTransition = 0;
     Dusty.State = DUSTYSTATE_HOP_ON;
 }
 
 void DisplayDusty_Hop_On()
-{    
-    switch (Dusty.ChapterTimer)
+{       
+    float ScaleX, OffsetX;
+    if (Dusty.Direction == DIRECTION_RIGHT)
     {
-    case 100:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-    case 90:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-    case 80:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-    case 70:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-    case 60:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-    case 50:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-    case 40:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-    case 30:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-    case 20:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-    case 10:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-    default:    break;
+        ScaleX = 1.0f;
+        OffsetX = 0.0f;
+    }
+    else
+    {
+        ScaleX = -1.0f;
+        OffsetX = 256.0f;
+    }
+
+    switch (Dusty.SpriteTransition)
+    {
+    case 0:    DisplayDustySprite(&DustyHop2Sprite, -122,  0, -201); break;
+    case 1:    DisplayDustySprite(&DustyHop2Sprite, -122,  0, -212); break;
+    case 2:    DisplayDustySprite(&DustyHop2Sprite, -122,  0, -218); break;
+    case 3:    DisplayDustySprite(&DustyHop2Sprite, -122,  0, -224); break;
+    case 4:    DisplayDustySprite(&DustyHop2Sprite, -122,  0, -228); break;
+    case 5:    DisplayDustySprite(&DustyHop2Sprite, -122,  0, -236); break;
+    case 6:    DisplayDustySprite(&DustyHop3Sprite, -122,  0, -226); break;
+    case 7:    DisplayDustySprite(&DustyHop3Sprite, -122,  0, -226); break;
+    case 8:    DisplayDustySprite(&DustyHop3Sprite, -122,  0, -226); break;
+    case 9:    DisplayDustySprite(&DustyHop3Sprite, -122,  0, -226); break;
+    case 10:   DisplayDustySprite(&DustyHop3Sprite, -122,  0, -226); break;
+    case 11:   DisplayDustySprite(&DustyHop3Sprite, -122,  0, -226); break;
+    case 12:   DisplayDustySprite(&DustyHop4Sprite, -119,  0, -220); break;
+    case 13:   DisplayDustySprite(&DustyHop4Sprite, -119,  0, -215); break;
+    case 14:   DisplayDustySprite(&DustyHop4Sprite, -119,  0, -210); break;
+    case 15:   DisplayDustySprite(&DustyHop4Sprite, -119,  0, -205); break;
+    case 16:   DisplayDustySprite(&DustyHop4Sprite, -119,  0, -200); break;
+    case 17:   DisplayDustySprite(&DustyHop4Sprite, -119,  0, -195); break;
+    case 18:   DisplayDustySprite(&DustyHop5Sprite, -119, 18, -217); break;
+    case 19:   DisplayDustySprite(&DustyHop5Sprite, -119, 18, -217); break;
+    case 20:   DisplayDustySprite(&DustyHop5Sprite, -119, 18, -217); break;
+    case 21:   DisplayDustySprite(&DustyHop5Sprite, -119, 18, -217); break;
+    case 22:   DisplayDustySprite(&DustyHop5Sprite, -119, 18, -217); break;
+    case 23:   DisplayDustySprite(&DustyHop5Sprite, -119, 18, -217); break;
+    default:   break;
     }
 }
 
 void UpdateDusty_Hop_On()
 {
-    if (Dusty.ChapterTimer > 50)
-    {  
-        Dusty.SpriteTransition = 0;
-    }
-    
-    if (Dusty.ChapterTimer == 0)
+    // Move Dusty through animation one time.
+    if (Dusty.SpriteTransition != 24)
     {
-        Dusty.ChapterTimer = 200;
-        SetDustyState_Stand();        
+        Dusty.FloatX += Dusty.FloatVelocityX*3;
+    }
+    // Check for end of hop animation.
+    if (Dusty.SpriteTransition == 24)
+    {
+        // Spawn some dust motes.
+        for (int i = 0; i < 6; i++)
+            MakeDustMote(Dusty.FloatX, Dusty.FloatY);
+            Dusty.SpriteTransition = 0;
+    }
+            
+    if (Dusty.ChapterTimer == 0)
+    {       
+        SetDustyState_Stand();
         return;
     }
     Dusty.ChapterTimer -= 1;
@@ -1067,7 +1101,7 @@ void DisplayDusty()
 	case DUSTYSTATE_LAUNCH:             DisplayDusty_Launch(); break;	
 	case DUSTYSTATE_DIE:				DisplayDusty_Die(); break;
 	case DUSTYSTATE_STUCK:				DisplayDusty_Stuck(); break;
-	case DUSTYSTATE_HOP_ON:             DisplayDusty_Hop(); break;
+	case DUSTYSTATE_HOP_ON:             DisplayDusty_Hop_On(); break;
 	}
 
 	if (DevMode)
@@ -1088,7 +1122,7 @@ void UpdateDusty()
 	if (Dusty.State != DUSTYSTATE_DIE)
 	{
 	    if (Dusty.State != DUSTYSTATE_HOP_ON)
-	    {
+	    {   
 		    UpdateDusty_Collision();
 		}
 	}

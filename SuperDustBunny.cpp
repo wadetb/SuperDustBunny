@@ -41,6 +41,7 @@ enum EGameState
 	GAMESTATE_HELP_SCREEN,
 	GAMESTATE_CREDITS_SCREEN,
 	GAMESTATE_TUTORIAL,
+	GAMESTATE_CHAPTER_INTRO,
 };
 
 EGameState GameState = GAMESTATE_START_SCREEN;
@@ -70,6 +71,7 @@ bool NextPageButtonPressed = false;
 bool DisplayHelp = false;
 bool DevMode = true;
 bool SlowMotionMode = false;
+bool ChapterTitleIntro = true;
 
 int BackgroundX = 0;
 int BackgroundY = 0;
@@ -391,7 +393,7 @@ void UpdateGame_Playing()
 { 
 	UpdateDusty();
 	
-
+	
 	if (Dusty.State != DUSTYSTATE_DIE)
 	{
 		UpdateFans();
@@ -401,11 +403,51 @@ void UpdateGame_Playing()
         UpdateGear();  
 		UpdateFireWorks();
 		UpdateFlashlight();
-		UpdateScore();		
+		UpdateScore();      		
 	}
 
 	UpdateDust();
-    UpdateVacuum();  
+    UpdateVacuum(); 
+    
+    ////In The future this can be a function that will determine if it is the first page.
+
+    //if(ChapterTitleIntro)
+    //{	
+    //    ChapterTitleIntro = false;
+    //    SetGameState_ChapterIntro();
+    //    return;
+    //}  
+}
+
+void SetGameState_ChapterIntro()
+{
+    GameState = GAMESTATE_CHAPTER_INTRO;
+}
+
+void DisplayChapterIntro()
+{
+    switch (Dusty.ChapterTimer)
+    {
+    case 100:  gxDrawSprite(90, 5800, &ChapterTitle); break;
+    case 90:   gxDrawSprite(90, 5800, &ChapterTitle); break;
+    case 80:   gxDrawSprite(90, 5800, &ChapterTitle); break;
+    case 70:   gxDrawSprite(90, 5800, &ChapterTitle); break;
+    case 60:   gxDrawSprite(90, 5800, &ChapterTitle); break;
+    case 50:   gxDrawSprite(90, 5800, &ChapterTitle); break;
+    case 40:   gxDrawSprite(90, 5800, &ChapterTitle); break;
+    case 30:   gxDrawSprite(90, 5800, &ChapterTitle); break;
+    case 20:   gxDrawSprite(90, 5800, &ChapterTitle); break;
+    case 10:   gxDrawSprite(90, 5800, &ChapterTitle); break;
+    default:    break;
+    }
+    
+    DisplayDusty_Hop_On();
+}
+
+void UpdateChapterIntro()
+{
+    
+    UpdateDusty_Hop_On();
 }
 
 void SetGameState_Tutorial(int State)
@@ -529,6 +571,10 @@ void Display()
 		DisplayGame_Playing();
 	    DisplayTutorial();
 	}
+	else if (GameState == GAMESTATE_CHAPTER_INTRO)
+	{
+	    DisplayChapterIntro();	
+	}
 
 #ifdef PLATFORM_WINDOWS
 	if (DisplayHelp)
@@ -598,7 +644,7 @@ void Display()
 }
 
 bool Update()
-{    
+{   
 	/*
 	//Background Music
     if (BackgroundMusic == 1)
@@ -821,6 +867,10 @@ bool Update()
 	else if (GameState == GAMESTATE_TUTORIAL)
 	{
 	    UpdateTutorial();
+	}
+	else if (GameState == GAMESTATE_CHAPTER_INTRO)
+	{
+	    UpdateChapterIntro();
 	}
 	
 	return true;
