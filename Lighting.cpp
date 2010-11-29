@@ -170,7 +170,7 @@ const char* TexturedShadowShaderSource =
 "\n"
 "float4 main(SVertexOutput VertexOutput) : COLOR\n"
 "{\n"
-"	return float4(0, 0, 0, tex2D(Sampler0, VertexOutput.TexCoord0).a);\n"
+"	return float4(0, 0, 0, ShadowAlpha * tex2D(Sampler0, VertexOutput.TexCoord0).a);\n"
 "}\n";
 
 gxPixelShader TexturedShadowShader;
@@ -368,7 +368,7 @@ void BuildShadows(ELightList List, gxSprite* FinalRT, float ShadowOffsetX, float
 	gxClearColor(gxRGBA32(0, 0, 0, 0));
 
 	gxSetPixelShader(&TexturedShadowShader);
-	gxSetPixelShaderConst(0, 128.0f/255.0f);
+	gxSetPixelShaderConst(0, 192.0f/255.0f);
 
 	gxSetVertexShader(&ShadowVertexShader);
 	gxSetVertexShaderConst(0, ShadowOffsetX, ShadowOffsetY);
