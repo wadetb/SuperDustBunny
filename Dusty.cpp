@@ -12,6 +12,7 @@
 #include "Tutorial.h"
 #include "Chapter.h"
 #include "Dust.h"
+#include "ChapterIntro.h"
 
 SDusty Dusty;
 
@@ -21,7 +22,7 @@ SDusty Dusty;
 
 void InitDusty()
 {
-	Dusty.State = DUSTYSTATE_HOP_ON;   
+	Dusty.State = DUSTYSTATE_STAND;   
 
 	Dusty.Direction = DIRECTION_RIGHT;
 
@@ -106,6 +107,12 @@ void SetDustyState_Stand()
 	Dusty.FloatVelocityY = 0;
 
 	Dusty.SpriteTransition = 0;
+
+	if (ChapterIntroDisplayed != true)
+	{
+		ChapterIntroDisplayed = true;
+		SetDustyState_Hop_On();
+	}
 
 	Dusty.State = DUSTYSTATE_STAND;
 }
@@ -860,8 +867,9 @@ void UpdateDusty_Hop_On()
             Dusty.SpriteTransition = 0;
     }
             
-    if (Dusty.ChapterTimer == 0)
-    {       
+    if (Dusty.SpriteTransition == 0)
+    {
+		Dusty.FloatGravity = 0.5f;
         SetDustyState_Stand();
         return;
     }

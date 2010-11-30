@@ -224,4 +224,6 @@ void AdvanceToNextPage();
 extern bool DevMode;
 extern int ScrollY;
 
+extern bool ChapterIntroDisplayed;
+
 #endif

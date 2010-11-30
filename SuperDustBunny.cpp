@@ -29,6 +29,7 @@
 #include "CreditsScreen.h"
 #include "DieScreen.h"
 #include "WinScreen.h"
+#include "ChapterIntro.h"
 
 
 enum EGameState
@@ -71,7 +72,7 @@ bool NextPageButtonPressed = false;
 bool DisplayHelp = false;
 bool DevMode = true;
 bool SlowMotionMode = false;
-bool ChapterTitleIntro = true;
+bool ChapterIntroDisplayed = true;
 
 int BackgroundX = 0;
 int BackgroundY = 0;
@@ -309,6 +310,15 @@ void SetGameState_WinScreen()
 	InitWinScreen();
 }
 
+void SetGameState_ChapterIntro()
+{
+    GameState = GAMESTATE_CHAPTER_INTRO;
+	
+	TurnOffVacuum();
+
+	InitChapterIntro();
+}
+
 void SetGameState_Playing()
 {
 	GameState = GAMESTATE_PLAYING;
@@ -318,6 +328,12 @@ void SetGameState_Playing()
 	// Remove this to re-enable the tutorials when we are closer to a release.
 	// For now they just slow down development.
 	SkipTutorials();
+
+	if (ChapterIntroDisplayed)
+	{
+		ChapterIntroDisplayed = false;
+		SetGameState_ChapterIntro();
+	}
 
 	if (Tutorial.InitialDisplayed == false)
 	{    
@@ -392,8 +408,7 @@ void DisplayGame_Playing()
 void UpdateGame_Playing()
 { 
 	UpdateDusty();
-	
-	
+		
 	if (Dusty.State != DUSTYSTATE_DIE)
 	{
 		UpdateFans();
@@ -417,37 +432,6 @@ void UpdateGame_Playing()
     //    SetGameState_ChapterIntro();
     //    return;
     //}  
-}
-
-void SetGameState_ChapterIntro()
-{
-    GameState = GAMESTATE_CHAPTER_INTRO;
-}
-
-void DisplayChapterIntro()
-{
-    switch (Dusty.ChapterTimer)
-    {
-    case 100:  gxDrawSprite(90, 5800, &ChapterTitle); break;
-    case 90:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-    case 80:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-    case 70:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-    case 60:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-    case 50:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-    case 40:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-    case 30:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-    case 20:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-    case 10:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-    default:    break;
-    }
-    
-    DisplayDusty_Hop_On();
-}
-
-void UpdateChapterIntro()
-{
-    
-    UpdateDusty_Hop_On();
 }
 
 void SetGameState_Tutorial(int State)

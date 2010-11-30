@@ -257,6 +257,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\ChapterIntro.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\ChapterIntro.h"
+			>
+		</File>
+		<File
 			RelativePath=".\Coin.cpp"
 			>
 		</File>
