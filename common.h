@@ -220,6 +220,7 @@ void SetGameState_Transition(EGameTransition Type);
 
 void LoadCurrentChapter();
 void AdvanceToNextPage();
+void DisplayGame_Playing();
 
 extern bool DevMode;
 extern int ScrollY;

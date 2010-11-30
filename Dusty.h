@@ -57,7 +57,6 @@ struct SDusty
 	int StuckJumpCount;
 	int StuckTimer;
 	
-	int ChapterTimer;
 	int TitleLocation;
 
 	bool CollideWithLeftSide;

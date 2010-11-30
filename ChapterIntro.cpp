@@ -8,13 +8,29 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
 #include "Common.h"
+#include "Chapter.h"
 #include "ChapterIntro.h"
 #include "Vacuum.h"
 #include "Dusty.h"
 
+#include "Lighting.h"
+#include "Barrel.h"
+#include "Fan.h"
+#include "Dusty.h"
+#include "Coin.h"
+#include "Vacuum.h"
+#include "TennisBall.h"
+#include "FireWorks.h"
+#include "Dust.h"
+#include "Crumb.h"
+#include "Gear.h"
+#include "Wipe.h"
+#include "Flashlight.h"
+
 struct SChapterIntro
 {
 	bool Pressed;
+	int Timer;
 };
 
 SChapterIntro ChapterIntro;
@@ -22,24 +38,27 @@ SChapterIntro ChapterIntro;
 void InitChapterIntro()
 {
 	ChapterIntro.Pressed = false;
+	ChapterIntro.Timer = 2;
 }
 
 void DisplayChapterIntro()
 {
-	switch (Dusty.ChapterTimer)
+	switch (ChapterIntro.Timer)
 	{
-	case 100:  gxDrawSprite(90, 5800, &ChapterTitle); break;
-	case 90:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-	case 80:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-	case 70:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-	case 60:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-	case 50:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-	case 40:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-	case 30:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-	case 20:   gxDrawSprite(90, 5800, &ChapterTitle); break;
-	case 10:   gxDrawSprite(90, 5800, &ChapterTitle); break;
+	case 2:		gxDrawSprite(90, 5800, &ChapterTitle); break;
+	case 4:		gxDrawSprite(90, 5800, &ChapterTitle); break;
+	case 6:		gxDrawSprite(90, 5800, &ChapterTitle); break;
+	case 8:		gxDrawSprite(90, 5800, &ChapterTitle); break;
+	case 10:	gxDrawSprite(90, 5800, &ChapterTitle); break;
+	case 12:	gxDrawSprite(90, 5800, &ChapterTitle); break;
+	case 14:	gxDrawSprite(90, 5800, &ChapterTitle); break;
+	case 16:	gxDrawSprite(90, 5800, &ChapterTitle); break;
+	case 18:	gxDrawSprite(90, 5800, &ChapterTitle); break;
+	case 20:	gxDrawSprite(90, 5800, &ChapterTitle); break;
 	default:    break;
 	}
+
+	DisplayGame_Playing(); 
 }
 
 void ChapterIntro_Advance()
@@ -52,8 +71,9 @@ void ChapterIntro_Advance()
 void UpdateChapterIntro()
 {
 	// Advance to playing state when Timer Expires.
-	if (Dusty.ChapterTimer == 0)
+	if (ChapterIntro.Timer >= 30)
 	{
+		ChapterIntro.Timer = 0;
 		#ifdef PLATFORM_WINDOWS
 			bool Pressed = kbIsKeyDown(KB_RETURN) || msButton1;
 		#endif
@@ -68,4 +88,5 @@ void UpdateChapterIntro()
 		}
 		ChapterIntro.Pressed = Pressed;
 	}
+	ChapterIntro.Timer += 1;
 }
