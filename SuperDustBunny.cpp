@@ -72,7 +72,7 @@ bool NextPageButtonPressed = false;
 bool DisplayHelp = false;
 bool DevMode = true;
 bool SlowMotionMode = false;
-bool ChapterIntroDisplayed = true;
+bool ChapterIntroDisplayed = false;
 
 int BackgroundX = 0;
 int BackgroundY = 0;
@@ -329,9 +329,9 @@ void SetGameState_Playing()
 	// For now they just slow down development.
 	SkipTutorials();
 
-	if (ChapterIntroDisplayed)
+	if (ChapterIntroDisplayed == false)
 	{
-		ChapterIntroDisplayed = false;
+		ChapterIntroDisplayed = true;
 		SetGameState_ChapterIntro();
 	}
 

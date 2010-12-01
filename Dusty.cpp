@@ -46,11 +46,13 @@ void InitDusty()
 	Dusty.CollideWithRightSide = false;
 	Dusty.CollideWithTopSide = false;
 	Dusty.CollideWithBottomSide = false;
+
+	Dusty.DustyHopOnDisplayed = false;
 };
 
 void SetDustyStart(int x, int y)
 {
-	Dusty.FloatX = (float)x;
+	Dusty.FloatX = (float)x -100;
 	Dusty.FloatY = (float)y;
 }
 
@@ -106,15 +108,7 @@ void SetDustyState_Stand()
 
 	Dusty.FloatVelocityY = 0;
 
-	Dusty.SpriteTransition = 0;
-
-	if (ChapterIntroDisplayed != true)
-	{
-		ChapterIntroDisplayed = true;
-		SetDustyState_Hop_On();
-	}
-
-	Dusty.State = DUSTYSTATE_STAND;
+	Dusty.SpriteTransition = 0;	
 }
 
 void DisplayDusty_Stand()
@@ -134,6 +128,13 @@ void DisplayDusty_Stand()
 
 void UpdateDusty_Stand()
 {
+	if (Dusty.DustyHopOnDisplayed == false)
+	{
+		Dusty.DustyHopOnDisplayed = true;
+		SetDustyState_Hop_On();
+		return;
+	}	
+	
 	// Check for hitting something sticky.
 	if (Dusty.CollideMaterial == MATERIAL_STICKY)
 	{
@@ -808,17 +809,19 @@ void SetDustyState_Hop_On()
 
 void DisplayDusty_Hop_On()
 {       
-    DisplayDusty_Stand();
-	//DisplayDusty_Hop();
+	DisplayDusty_Hop();
 }
 
 void UpdateDusty_Hop_On()
 {
-	// Move Dusty through animation one time.
+	int IntroTimer = 0;
 	if(Dusty.Direction == DIRECTION_RIGHT)
 	{
 		Dusty.FloatX += Dusty.FloatVelocityX*3;
 	}
+	
+	IntroTimer += 1;
+	Dusty.SpriteTransition += 1;
 
     // Check for end of hop animation.
     if (Dusty.SpriteTransition == 24)
@@ -829,12 +832,12 @@ void UpdateDusty_Hop_On()
             Dusty.SpriteTransition = 0;
     }
             
-    if (Dusty.SpriteTransition == 0)
+    if (IntroTimer == 30)
     {
+		Dusty.SpriteTransition = 5;
         SetDustyState_Stand();
         return;
     }
-	Dusty.SpriteTransition -= 1;
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//

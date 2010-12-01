@@ -29,7 +29,6 @@
 
 struct SChapterIntro
 {
-	bool Pressed;
 	int Timer;
 };
 
@@ -37,7 +36,6 @@ SChapterIntro ChapterIntro;
 
 void InitChapterIntro()
 {
-	ChapterIntro.Pressed = false;
 	ChapterIntro.Timer = 2;
 }
 
@@ -57,36 +55,28 @@ void DisplayChapterIntro()
 	case 20:	gxDrawSprite(90, 5800, &ChapterTitle); break;
 	default:    break;
 	}
-
+	// Dusty Drawing
+	DisplayDusty();
 	DisplayGame_Playing(); 
 }
 
 void ChapterIntro_Advance()
 {
-	LoadCurrentChapter();
 	TurnOnVacuum();
+	LoadCurrentChapter();
 	SetGameState_Playing();
 }
 
 void UpdateChapterIntro()
 {
+	UpdateDusty();
 	// Advance to playing state when Timer Expires.
-	if (ChapterIntro.Timer >= 30)
+	if (ChapterIntro.Timer >= 100)
 	{
 		ChapterIntro.Timer = 0;
-		#ifdef PLATFORM_WINDOWS
-			bool Pressed = kbIsKeyDown(KB_RETURN) || msButton1;
-		#endif
-		#ifdef PLATFORM_IPHONE
-			bool Pressed = msButton1;
-		#endif
-		// Advance to playing state when button is released.
-		if (!Pressed && ChapterIntro.Pressed)
-		{
-			ChapterIntro_Advance();
-			return;
-		}
-		ChapterIntro.Pressed = Pressed;
+		ChapterIntro_Advance();
+		return;
 	}
 	ChapterIntro.Timer += 1;
+	
 }

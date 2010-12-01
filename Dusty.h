@@ -67,6 +67,8 @@ struct SDusty
 	bool CollideWithBottomLeftCorner;
 	bool CollideWithBottomRightCorner;
 
+	bool DustyHopOnDisplayed;
+
 	int CollideMaterial;
 };
 
