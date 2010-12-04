@@ -316,6 +316,8 @@ void SetGameState_ChapterIntro()
 	
 	TurnOffVacuum();
 
+	SetDustyState_Hop(DIRECTION_RIGHT);
+
 	InitChapterIntro();
 }
 

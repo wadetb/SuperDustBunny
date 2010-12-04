@@ -46,8 +46,6 @@ void InitDusty()
 	Dusty.CollideWithRightSide = false;
 	Dusty.CollideWithTopSide = false;
 	Dusty.CollideWithBottomSide = false;
-
-	Dusty.DustyHopOnDisplayed = false;
 };
 
 void SetDustyStart(int x, int y)
@@ -109,6 +107,8 @@ void SetDustyState_Stand()
 	Dusty.FloatVelocityY = 0;
 
 	Dusty.SpriteTransition = 0;	
+
+	Dusty.State = DUSTYSTATE_STAND;
 }
 
 void DisplayDusty_Stand()
@@ -128,13 +128,6 @@ void DisplayDusty_Stand()
 
 void UpdateDusty_Stand()
 {
-	if (Dusty.DustyHopOnDisplayed == false)
-	{
-		Dusty.DustyHopOnDisplayed = true;
-		SetDustyState_Hop_On();
-		return;
-	}	
-	
 	// Check for hitting something sticky.
 	if (Dusty.CollideMaterial == MATERIAL_STICKY)
 	{
@@ -829,7 +822,7 @@ void UpdateDusty_Hop_On()
         // Spawn some dust motes.
         for (int i = 0; i < 6; i++)
             MakeDustMote(Dusty.FloatX, Dusty.FloatY);
-            Dusty.SpriteTransition = 0;
+        Dusty.SpriteTransition = 0;
     }
             
     if (IntroTimer == 30)
@@ -1091,12 +1084,9 @@ void DisplayDusty()
 
 void UpdateDusty()
 {
-	if (Dusty.State != DUSTYSTATE_DIE)
+	if (Dusty.State != DUSTYSTATE_DIE && Dusty.State != DUSTYSTATE_HOP_ON)
 	{
-	    if (Dusty.State != DUSTYSTATE_HOP_ON)
-	    {   
-		    UpdateDusty_Collision();
-		}
+		UpdateDusty_Collision();
 	}
 		
 	if (Distance(Dusty.FloatX, Dusty.FloatY, Chapter.EndX, Chapter.EndY) < 100)

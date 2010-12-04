@@ -41,6 +41,8 @@ void InitChapterIntro()
 
 void DisplayChapterIntro()
 {
+	DisplayGame_Playing(); 
+
 	switch (ChapterIntro.Timer)
 	{
 	case 2:		gxDrawSprite(90, 5800, &ChapterTitle); break;
@@ -55,15 +57,12 @@ void DisplayChapterIntro()
 	case 20:	gxDrawSprite(90, 5800, &ChapterTitle); break;
 	default:    break;
 	}
-	// Dusty Drawing
-	DisplayDusty();
-	DisplayGame_Playing(); 
 }
 
 void ChapterIntro_Advance()
 {
 	TurnOnVacuum();
-	LoadCurrentChapter();
+	SetDustyState_Stand();
 	SetGameState_Playing();
 }
 
@@ -71,9 +70,8 @@ void UpdateChapterIntro()
 {
 	UpdateDusty();
 	// Advance to playing state when Timer Expires.
-	if (ChapterIntro.Timer >= 100)
+	if (ChapterIntro.Timer >= 50)
 	{
-		ChapterIntro.Timer = 0;
 		ChapterIntro_Advance();
 		return;
 	}

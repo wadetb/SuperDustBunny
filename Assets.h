@@ -21,6 +21,7 @@ extern gxSprite WipeDiagonalSprite;
 extern gxSprite LightFlashlightSprite;
 
 extern gxSprite SparkSprite;
+extern gxSprite FlareSprite;
 
 extern gxSprite DustyHop1Sprite;
 extern gxSprite DustyHop2Sprite;

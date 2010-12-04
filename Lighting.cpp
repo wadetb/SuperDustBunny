@@ -13,7 +13,7 @@
 
 
 #define MAX_LIT_QUADS_PER_LIST	8192 // Holy crap
-#define MAX_LIT_VERTS			16384
+#define MAX_LIT_VERTS			65536
 
 
 int NLitVerts;

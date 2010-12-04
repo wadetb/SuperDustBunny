@@ -67,8 +67,6 @@ struct SDusty
 	bool CollideWithBottomLeftCorner;
 	bool CollideWithBottomRightCorner;
 
-	bool DustyHopOnDisplayed;
-
 	int CollideMaterial;
 };
 
@@ -81,13 +79,11 @@ void InitDusty();
 void SetDustyStart(int x, int y);
 
 void SetDustyState_Hop_On();
-void DisplayDusty_Hop_On();
-void UpdateDusty_Hop_On();
-
 void SetDustyState_PrepareLaunch();
 void SetDustyState_Launch(float VelocityX, float VelocityY);
 void SetDustyState_Die();
 void SetDustyState_Stuck();
-
+void SetDustyState_Stand();
+void SetDustyState_Hop(EDirection Direction);
 
 #endif
