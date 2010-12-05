@@ -360,6 +360,13 @@ void DisplayFireWorks()
 		}
 		else if (FireWork->State == FIREWORKSTATE_EXPLODE)
 		{
+			if (Chapter.LightsOff)
+			{
+				float Alpha = 0.5f;
+				Alpha *= Lerp((float)FireWork->Timer, 90.0f, 0.0f, 1.0f, 0.0f);
+				Alpha *= Lerp((float)FireWork->Timer, 180.0f, 160.0f, 0.0f, 1.0f);
+				AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightFlashlightSprite, FireWork->X, FireWork->Y + ScrollY, 1.3f, Alpha);
+			}
 		}
 	}
 
@@ -483,7 +490,7 @@ void UpdateFireWorks()
 
 			if (Distance(FireWork->X, FireWork->Y, FireWork->OriginalX, FireWork->OriginalY) >= FireWork->FlightDistance*64)
 			{
-				FireWork->Timer = 30;
+				FireWork->Timer = 180;
 				FireWork->State = FIREWORKSTATE_EXPLODE;
 
 				ExplodeFireWork(FireWork->X, FireWork->Y, FireWork->ExplosionSize);

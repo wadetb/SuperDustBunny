@@ -560,6 +560,9 @@ void RenderLighting()
 	BuildShadows(LIGHTLIST_VACUUM, &ShadowVacuumRT, 30, 20);
 
 	// Build lighting buffer.
+	gxSetPixelShader(&TexturedColoredShader);
+	gxSetVertexShader(&LitVertexShader);
+
 	gxSetRenderTarget(&LightingRT);
 	gxClearColor(LightState.AmbientColor);
 

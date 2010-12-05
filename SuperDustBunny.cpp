@@ -53,9 +53,9 @@ EGameTransition GameTransition;
 
 const char* ChapterNames[MAX_CHAPTERS] =
 {
-	"Chapters/TMXTest",
 	"Chapters/Wade1",
 	"Chapters/Thomas1",
+	"",
 	"",
 	"",
 	"",
@@ -741,11 +741,13 @@ bool Update()
 	// PgUp and PgDown advance and retreat pages.
 	if (kbIsKeyDown(KB_PRIOR) && !kbWasKeyDown(KB_PRIOR))
 	{
-		SetCurrentPage((Chapter.PageNum+Chapter.NPages-1) % Chapter.NPages);
+		if (Chapter.NPages > 0)
+			SetCurrentPage((Chapter.PageNum+Chapter.NPages-1) % Chapter.NPages);
 	}
 	if (kbIsKeyDown(KB_NEXT) && !kbWasKeyDown(KB_NEXT))
 	{
-		SetCurrentPage((Chapter.PageNum+1) % Chapter.NPages);
+		if (Chapter.NPages > 0)
+			SetCurrentPage((Chapter.PageNum+1) % Chapter.NPages);
 	}
 
 	// Ctrl+E key launches Tiled on the current page.

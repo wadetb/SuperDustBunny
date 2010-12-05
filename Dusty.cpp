@@ -797,7 +797,15 @@ void UpdateDusty_Stuck()
 void SetDustyState_Hurt()
 {   
     Dusty.SpriteTransition = 0;
-    Dusty.State = DUSTYSTATE_HURT;
+
+	if (Dusty.CollideWithBottomSide)
+	{
+		Dusty.FloatVelocityY = -15;
+		Dusty.FloatY += -40;
+		Dusty.CollideWithBottomSide = false;
+	}
+
+	Dusty.State = DUSTYSTATE_HURT;
 }
 
 void DisplayDusty_Hurt()
