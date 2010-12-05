@@ -23,6 +23,8 @@ extern gxSprite LightFlashlightSprite;
 extern gxSprite SparkSprite;
 extern gxSprite FlareSprite;
 
+extern gxSprite FireWorkWhiteSprite;
+
 extern gxSprite DustyHop1Sprite;
 extern gxSprite DustyHop2Sprite;
 extern gxSprite DustyHop3Sprite;

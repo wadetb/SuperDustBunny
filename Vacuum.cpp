@@ -109,7 +109,10 @@ void UpdateVacuum()
 		Vacuum.Timer = 0;
 	// Shift-V key to banish the vacuum.
 	if (kbIsKeyDown(KB_LSHIFT) && kbIsKeyDown(KB_V) && !kbWasKeyDown(KB_V))
+	{
+		JamVacuum();
 		Vacuum.Timer = 1000000;
+	}
 #endif
 
 	if (Vacuum.State == VACUUMSTATE_FAR)
