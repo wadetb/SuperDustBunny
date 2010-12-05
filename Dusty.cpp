@@ -794,42 +794,34 @@ void UpdateDusty_Stuck()
 	}
 }
 
-void SetDustyState_Hop_On()
+void SetDustyState_Hurt()
 {   
     Dusty.SpriteTransition = 0;
-    Dusty.State = DUSTYSTATE_HOP_ON;
+    Dusty.State = DUSTYSTATE_HURT;
 }
 
-void DisplayDusty_Hop_On()
+void DisplayDusty_Hurt()
 {       
-	DisplayDusty_Hop();
+	// TODO: Need new sprite
+	DisplayDusty_Die();
 }
 
-void UpdateDusty_Hop_On()
+void UpdateDusty_Hurt()
 {
-	int IntroTimer = 0;
-	if(Dusty.Direction == DIRECTION_RIGHT)
-	{
-		Dusty.FloatX += Dusty.FloatVelocityX*3;
-	}
-	
-	IntroTimer += 1;
-	Dusty.SpriteTransition += 1;
+	Dusty.FloatX = Dusty.FloatX + Dusty.FloatVelocityX;                                                   
+	Dusty.FloatY += Dusty.FloatVelocityY;
 
-    // Check for end of hop animation.
-    if (Dusty.SpriteTransition == 24)
+	Dusty.FloatVelocityY += Dusty.FloatGravity;
+
+	if (Dusty.FloatVelocityY > 15.0f)
+		Dusty.FloatVelocityY = 15.0f;
+
+	// If Dusty lands or the timer expires, revert to stand state.
+	Dusty.SpriteTransition += 1;
+    if (Dusty.SpriteTransition >= 60 || Dusty.CollideWithBottomSide)
     {
-        // Spawn some dust motes.
-        for (int i = 0; i < 6; i++)
-            MakeDustMote(Dusty.FloatX, Dusty.FloatY);
-        Dusty.SpriteTransition = 0;
-    }
-            
-    if (IntroTimer == 30)
-    {
-		Dusty.SpriteTransition = 5;
-        SetDustyState_Stand();
-        return;
+		SetDustyState_Stand();
+		return;
     }
 }
 
@@ -1026,7 +1018,7 @@ void UpdateDusty_Collision()
 							Dusty.CollideMaterial = Block->Material;
 						}
 
-						if (Block->Type == BLOCKTYPE_NAIL)
+						if (Block->Type == BLOCKTYPE_NAIL && Dusty.State != DUSTYSTATE_HURT)
 						{
 							int SharpDir = ((SNailProperties*)Block->Properties)->Dir;
 
@@ -1038,8 +1030,7 @@ void UpdateDusty_Collision()
 
 							if (Sharp)
 							{
-								// TODO: Need a Stunned state and associated animation frames.
-								SetDustyState_Die();
+								SetDustyState_Hurt();
 							}
 						}
 					}
@@ -1066,7 +1057,7 @@ void DisplayDusty()
 	case DUSTYSTATE_LAUNCH:             DisplayDusty_Launch(); break;	
 	case DUSTYSTATE_DIE:				DisplayDusty_Die(); break;
 	case DUSTYSTATE_STUCK:				DisplayDusty_Stuck(); break;
-	case DUSTYSTATE_HOP_ON:             DisplayDusty_Hop_On(); break;
+	case DUSTYSTATE_HURT:				DisplayDusty_Hurt(); break;
 	}
 
 	if (DevMode)
@@ -1084,7 +1075,7 @@ void DisplayDusty()
 
 void UpdateDusty()
 {
-	if (Dusty.State != DUSTYSTATE_DIE && Dusty.State != DUSTYSTATE_HOP_ON)
+	if (Dusty.State != DUSTYSTATE_DIE)
 	{
 		UpdateDusty_Collision();
 	}
@@ -1106,6 +1097,6 @@ void UpdateDusty()
 	case DUSTYSTATE_LAUNCH:             UpdateDusty_Launch(); break;
 	case DUSTYSTATE_DIE:				UpdateDusty_Die(); break;
 	case DUSTYSTATE_STUCK:				UpdateDusty_Stuck(); break;
-	case DUSTYSTATE_HOP_ON:             UpdateDusty_Hop_On(); break;
+	case DUSTYSTATE_HURT:				UpdateDusty_Hurt(); break;
 	}
 }
