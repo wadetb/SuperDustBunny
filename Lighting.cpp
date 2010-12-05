@@ -175,6 +175,22 @@ const char* TexturedShadowShaderSource =
 
 gxPixelShader TexturedShadowShader;
 
+const char* EffectsShaderSource =
+"sampler Sampler0 : register(s0);\n"
+"\n"
+"struct SVertexOutput\n"
+"{\n"
+"	float2 TexCoord0 : TEXCOORD0;\n"
+"	float4 Color0 : COLOR0;\n"
+"};\n"
+"\n"
+"float4 main(SVertexOutput VertexOutput) : COLOR\n"
+"{\n"
+"	return tex2D(Sampler0, VertexOutput.TexCoord0) * VertexOutput.Color0 * 2;\n"
+"}\n";
+
+gxPixelShader EffectsShader;
+
 const char* Gaussian7ShaderSource =
 "float3 BlurOffsetScale0 : register(c0);\n"
 "float3 BlurOffsetScale1 : register(c1);\n"
@@ -498,6 +514,8 @@ void InitLighting()
 	gxCreatePixelShader(TexturedColoredShaderSource, &TexturedColoredShader);
 	gxCreatePixelShader(TexturedShadowShaderSource, &TexturedShadowShader);
 
+	gxCreatePixelShader(EffectsShaderSource, &EffectsShader);
+
 	gxCreatePixelShader(Gaussian7ShaderSource, &Gaussian7Shader);
 	gxCreatePixelShader(Gaussian13ShaderSource, &Gaussian13Shader);
 
@@ -612,6 +630,8 @@ void RenderLighting()
 	gxSetVertexShader(&LitVertexShader);
 
 	// Effects.
+	gxSetPixelShader(&EffectsShader);
+	gxSetVertexShader(&LitVertexShader);
 	_gxSetAlpha( GXALPHA_ADD );
 	for (int i = 0; i < LightLists[LIGHTLIST_EFFECTS].NQuads; i++)
 		DrawLitQuad( &LightLists[LIGHTLIST_EFFECTS].Quads[i] );

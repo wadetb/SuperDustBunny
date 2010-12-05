@@ -22,7 +22,7 @@ int NFireWorks = 0;
 SFireWork FireWorks[MAX_FIREWORKS];
 
 #define MAX_FIREWORK_TRAILS			2048
-#define FIREWORK_TRAIL_HISTORY		16
+#define FIREWORK_TRAIL_HISTORY		8
 
 enum EFireWorkTrailType
 {
@@ -235,18 +235,11 @@ void UpdateFireWorkTrails()
 	{
 		SFireWorkTrail* Trail = &FireWorkTrails[i];
 
-		//int HistoryIndex0 = Trail->HistoryCount-0;
-		//int HistoryIndex1 = Trail->HistoryCount-1;
-		//int HistoryIndex2 = Trail->HistoryCount-2;
-
-		//float Angle0 = atan2f(Trail->Y - Trail->YHistory[HistoryIndex1], Trail->X - Trail->XHistory[HistoryIndex1]);
-		//float Angle1 = atan2f(Trail->YHistory[HistoryIndex1] - Trail->YHistory[HistoryIndex2], Trail->XHistory[HistoryIndex1] - Trail->XHistory[HistoryIndex2]);
-
 		float XDist = Trail->X - Trail->History[1].X;
 		float YDist = Trail->Y - Trail->History[1].Y;
 		float Dist = sqrtf(XDist*XDist + YDist*YDist);
 
-		if (Dist >= Trail->Length / (float)(FIREWORK_TRAIL_HISTORY/2))
+		if (Dist >= Trail->Length / (float)(FIREWORK_TRAIL_HISTORY/3))
 		{
 			if (Trail->HistoryCount < FIREWORK_TRAIL_HISTORY)
 				Trail->HistoryCount++;
@@ -268,7 +261,7 @@ void UpdateFireWorkTrails()
 		Trail->VX *= 0.975f;
 		Trail->VY *= 0.97f;
 		Trail->VZ *= 0.97f;
-		Trail->VY += 0.02f;// * Length(Trail->VX, Trail->VY);
+		Trail->VY += 0.005f;
 
 		Trail->Life -= 1.0f/60.0f;
 	}
@@ -347,9 +340,9 @@ void SpawnFireWorkTrail(float X, float Y, float Length, float Speed, float Life,
 
 	for (int i = 0; i < FIREWORK_TRAIL_HISTORY; i++)
 	{
-		Trail->History[i].X = Trail->X;
-		Trail->History[i].Y = Trail->Y;
-		Trail->History[i].Z = Trail->Z;
+		Trail->History[i].X = Trail->X - Trail->VX*i*0.001f;
+		Trail->History[i].Y = Trail->Y - Trail->VY*i*0.001f;
+		Trail->History[i].Z = Trail->Z - Trail->VZ*i*0.001f;
 		Trail->History[i].Life = 1.0f;
 	}
 	Trail->HistoryCount = FIREWORK_TRAIL_HISTORY;
