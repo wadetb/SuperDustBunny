@@ -93,6 +93,8 @@ struct SChapter
 	const char* Name;
 
 	bool LightsOff;
+
+	float StartX, StartY;
 	float EndX, EndY;
 
 	int NPages;

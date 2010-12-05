@@ -38,6 +38,8 @@ void InitDusty()
 
 	Dusty.SpriteTransition = 5;
 
+	Dusty.NoCollision = false;
+
 	Dusty.WallStickTimer = 0;
 	Dusty.LastWall = DIRECTION_NONE;
 	Dusty.WallJumpTimer = 0;
@@ -48,10 +50,10 @@ void InitDusty()
 	Dusty.CollideWithBottomSide = false;
 };
 
-void SetDustyStart(int x, int y)
+void SetDustyPosition(float x, float y)
 {
-	Dusty.FloatX = (float)x -100;
-	Dusty.FloatY = (float)y;
+	Dusty.FloatX = x;
+	Dusty.FloatY = y;
 }
 
 
@@ -723,6 +725,8 @@ void SetDustyState_Die()
 
 	//sxPlaySound( &DieSound );    
 
+	Dusty.NoCollision = true;
+
 	Dusty.State = DUSTYSTATE_DIE;
 }
 
@@ -1083,7 +1087,7 @@ void DisplayDusty()
 
 void UpdateDusty()
 {
-	if (Dusty.State != DUSTYSTATE_DIE)
+	if (!Dusty.NoCollision)
 	{
 		UpdateDusty_Collision();
 	}

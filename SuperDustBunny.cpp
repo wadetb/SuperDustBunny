@@ -196,8 +196,13 @@ void ReportError(const char* ErrorMessage, ...)
 //                                                             Input functions
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
+SRemoteControl RemoteControl;
+
 bool GetInput_MoveLeft()
 {
+	if (RemoteControl.Enabled)
+		return RemoteControl.MoveLeft;
+
 #ifdef PLATFORM_WINDOWS
 	return kbIsKeyDown(KB_A);
 #endif
@@ -208,6 +213,9 @@ bool GetInput_MoveLeft()
 
 bool GetInput_MoveRight()
 {
+	if (RemoteControl.Enabled)
+		return RemoteControl.MoveRight;
+
 #ifdef PLATFORM_WINDOWS
 	return kbIsKeyDown(KB_D);
 #endif
@@ -218,6 +226,9 @@ bool GetInput_MoveRight()
 
 bool GetInput_Jump()
 {
+	if (RemoteControl.Enabled)
+		return RemoteControl.Jump;
+
 	// Jump inhibitor is used to make the game ignore the jump key until it's released.
 	if (Tutorial.JumpInhibit)
 	{
@@ -313,10 +324,6 @@ void SetGameState_WinScreen()
 void SetGameState_ChapterIntro()
 {
     GameState = GAMESTATE_CHAPTER_INTRO;
-	
-	TurnOffVacuum();
-
-	SetDustyState_Hop(DIRECTION_RIGHT);
 
 	InitChapterIntro();
 }
@@ -330,12 +337,6 @@ void SetGameState_Playing()
 	// Remove this to re-enable the tutorials when we are closer to a release.
 	// For now they just slow down development.
 	SkipTutorials();
-
-	if (ChapterIntroDisplayed == false)
-	{
-		ChapterIntroDisplayed = true;
-		SetGameState_ChapterIntro();
-	}
 
 	if (Tutorial.InitialDisplayed == false)
 	{    
@@ -472,12 +473,13 @@ void UpdateGame_Transition()
 		if (Wipe.Middle)
 		{
 			LoadCurrentChapter();
+			SetDustyPosition(Chapter.StartX-3000, Chapter.StartY);
 			Wipe.Middle = false;
 		}
 
 		if (Wipe.Finished)
 		{
-			SetGameState_Playing();
+			SetGameState_ChapterIntro();
 		}
 	}
 	else if (GameTransition == GAMETRANSITION_NEXT_PAGE)

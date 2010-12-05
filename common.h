@@ -197,6 +197,16 @@ void PopErrorContext();
 // Reports a fatal error and immediately exits the program.
 void ReportError(const char* ErrorMessage, ...);
 
+struct SRemoteControl
+{
+	bool Enabled;
+	bool MoveLeft;
+	bool MoveRight;
+	bool Jump;
+};
+
+extern SRemoteControl RemoteControl;
+
 bool GetInput_MoveLeft();
 bool GetInput_MoveRight();
 bool GetInput_Jump();

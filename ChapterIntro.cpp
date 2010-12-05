@@ -13,20 +13,6 @@
 #include "Vacuum.h"
 #include "Dusty.h"
 
-#include "Lighting.h"
-#include "Barrel.h"
-#include "Fan.h"
-#include "Dusty.h"
-#include "Coin.h"
-#include "Vacuum.h"
-#include "TennisBall.h"
-#include "FireWorks.h"
-#include "Dust.h"
-#include "Crumb.h"
-#include "Gear.h"
-#include "Wipe.h"
-#include "Flashlight.h"
-
 struct SChapterIntro
 {
 	int Timer;
@@ -36,7 +22,18 @@ SChapterIntro ChapterIntro;
 
 void InitChapterIntro()
 {
-	ChapterIntro.Timer = 2;
+	ChapterIntro.Timer = 0;
+
+	TurnOffVacuum();
+
+	SetDustyPosition(Chapter.StartX - 300, Chapter.StartY);
+	Dusty.NoCollision = true;
+	Dusty.CollideWithBottomSide = true;
+
+	RemoteControl.Enabled = true;
+	RemoteControl.MoveRight = true;
+
+	SetDustyState_Hop(DIRECTION_RIGHT);
 }
 
 void DisplayChapterIntro()
@@ -62,19 +59,24 @@ void DisplayChapterIntro()
 void ChapterIntro_Advance()
 {
 	TurnOnVacuum();
+	
+	Dusty.NoCollision = false;
 	SetDustyState_Stand();
+
+	RemoteControl.Enabled = false;
+
 	SetGameState_Playing();
 }
 
 void UpdateChapterIntro()
 {
 	UpdateDusty();
+
 	// Advance to playing state when Timer Expires.
-	if (ChapterIntro.Timer >= 50)
+	if (ChapterIntro.Timer >= 40)
 	{
 		ChapterIntro_Advance();
 		return;
 	}
 	ChapterIntro.Timer += 1;
-	
 }

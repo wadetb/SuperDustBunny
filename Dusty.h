@@ -56,8 +56,9 @@ struct SDusty
 
 	int StuckJumpCount;
 	int StuckTimer;
-	
-	int TitleLocation;
+
+	bool NoCollision;
+	bool RemoteControl;
 
 	bool CollideWithLeftSide;
 	bool CollideWithRightSide;
@@ -76,7 +77,7 @@ void DisplayDusty();
 void UpdateDusty();
 void InitDusty();
 
-void SetDustyStart(int x, int y);
+void SetDustyPosition(float x, float y);
 
 void SetDustyState_Hop_On();
 void SetDustyState_PrepareLaunch();

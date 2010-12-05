@@ -701,7 +701,8 @@ void CreatePageObjects()
 				switch (Block->Type)
 				{
 				case BLOCKTYPE_CHAPTERSTART:
-					SetDustyStart(x * 64 + 32, y * 64 + 64);
+					Chapter.StartX = (float)x * 64 + 32;
+					Chapter.StartY = (float)y * 64 + 64;
 					EraseBlock(x, y);
 					break;
 				case BLOCKTYPE_CHAPTEREND:
@@ -747,8 +748,11 @@ void CreatePageObjects()
 
 	// Initialize global stuff for the page.
 	InitDusty();
+	SetDustyPosition(Chapter.StartX, Chapter.StartY);
+
 	InitDust();
 	InitFlashlight();
+
 	InitVacuum();
 	TurnOnVacuum();
 }
