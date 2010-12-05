@@ -12,7 +12,7 @@
 #include "Tutorial.h"
 #include "Chapter.h"
 #include "Dust.h"
-#include "ChapterIntro.h"
+#include "Vacuum.h"
 
 SDusty Dusty;
 
@@ -744,7 +744,7 @@ void UpdateDusty_Die()
 
 	if (Dusty.FloatY + ScrollY > gxScreenHeight)
 	{
-		SetGameState_DieScreen();
+		SetGameState_Transition(GAMETRANSITION_DIE_SCREEN);
 		return;
 	} 
 }

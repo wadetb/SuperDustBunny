@@ -13,7 +13,8 @@ enum EWipeType
 {
 	WIPE_NONE,
 	WIPE_DIAGONAL,
-	WIPE_FADE
+	WIPE_FADE_TO_BLACK,
+	WIPE_FADE_TO_WHITE,
 };
 
 struct SWipe

@@ -306,10 +306,6 @@ void SetGameState_Credits()
 void SetGameState_DieScreen()
 {
 	GameState = GAMESTATE_DIE_SCREEN;
-
-	TurnOffVacuum();
-
-	InitDieScreen();
 }
 
 void SetGameState_WinScreen()
@@ -454,11 +450,15 @@ void SetGameState_Transition(EGameTransition Type)
 
 	if (GameTransition == GAMETRANSITION_FIRST_PAGE)
 	{
-		StartWipe(WIPE_FADE, 1.0f);
+		StartWipe(WIPE_FADE_TO_BLACK, 1.0f);
 	}
 	else if (GameTransition == GAMETRANSITION_NEXT_PAGE)
 	{
 		StartWipe(WIPE_DIAGONAL, 0.5f);
+	}
+	else if (GameTransition == GAMETRANSITION_DIE_SCREEN)
+	{
+		StartWipe(WIPE_FADE_TO_WHITE, 3.0f);
 	}
 
 	GameState = GAMESTATE_TRANSITION;
@@ -497,6 +497,22 @@ void UpdateGame_Transition()
 			SetGameState_Playing();
 		}
 	}
+	else if (GameTransition == GAMETRANSITION_DIE_SCREEN)
+	{
+		UpdateWipe();
+
+		if (Wipe.Middle)
+		{
+			TurnOffVacuum();
+			InitDieScreen();
+			Wipe.Middle = false;
+		}
+
+		if (Wipe.Finished)
+		{
+			SetGameState_DieScreen();
+		}
+	}
 }
 
 void DisplayGame_Transition()
@@ -516,6 +532,18 @@ void DisplayGame_Transition()
 	else if (GameTransition == GAMETRANSITION_NEXT_PAGE)
 	{
 		DisplayGame_Playing();
+		DisplayWipe();
+	}
+	else if (GameTransition == GAMETRANSITION_DIE_SCREEN)
+	{
+		if (Wipe.T < 0.5f)
+		{
+			DisplayGame_Playing();
+		}
+		else
+		{
+			DisplayDieScreen();
+		}
 		DisplayWipe();
 	}
 }

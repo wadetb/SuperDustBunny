@@ -26,16 +26,20 @@ void InitDieScreen()
 
 void DisplayDieScreen()
 {
-	gxDrawRectangleFilled(0, 0, 768, 1024, 0xffffffff);
+	ResetLighting();
+
+	AddLitSprite(LIGHTLIST_BACKGROUND, &BackgroundCardboardSprite, 0, 0);
 
 	float t = DieScreen.Timer / 10.0f;
 	float dx = cos(t/5)*10 + cos(1+t/7)*10 + cos(1-t/9)*10 + 100;
 	float dy = sin(t/5)*10 + sin(1+t/7)*10 + sin(1-t/9)*10 - Min(t*2, 175.0f);
 
-	float alpha = Min(t, 1.0f);
+	float Alpha = 1.0f; //Min(t, 1.0f);
 
-	gxDrawSpriteAlpha(30, 600, alpha, DieScreen.Pressed ? &ScreenLoseGrave2Sprite : &ScreenLoseGrave1Sprite);
-	gxDrawSpriteAlpha(768/2-ScreenLoseGhostSprite.width/2 + (int)dx, 200+(int)dy, alpha*alpha*0.5f, &ScreenLoseGhostSprite);
+	AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, DieScreen.Pressed ? &ScreenLoseGrave2Sprite : &ScreenLoseGrave1Sprite, 384, 800, 1.0f, Alpha);
+	AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, &ScreenLoseGhostSprite, 768/2 + dx, 200+ScreenLoseGhostSprite.height/2+dy, 1.0f, Alpha*Alpha*0.5f);
+
+	RenderLighting();
 }
 
 void DieScreen_Advance()
