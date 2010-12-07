@@ -19,6 +19,8 @@ const int VACUUM_INITIAL_TIME = 5*60;
 const int VACUUM_RETREAT_TIME = 3*60;
 const int VACUUM_UNJAM_TIME   = 1*60;
 
+const float VacuumYOffset = 200;
+
 
 void InitVacuum()
 {
@@ -38,9 +40,9 @@ void DisplayVacuum_BeforeDusty()
 	if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
 		if (Vacuum.Dir == VACUUMDIR_UP)
-			AddLitSpriteScaled(LIGHTLIST_FOREGROUND, &VacuumBackSprite, 0, Vacuum.Y + ScrollY - 150, 1.0f, 1.0f);
+			AddLitSpriteScaled(LIGHTLIST_FOREGROUND, &VacuumBackSprite, 0, Vacuum.Y + ScrollY - VacuumYOffset, 1.0f, 1.0f);
 		else
-			AddLitSpriteScaled(LIGHTLIST_FOREGROUND, &VacuumBackSprite, 0, Vacuum.Y + ScrollY + 150, 1.0f, -1.0f);
+			AddLitSpriteScaled(LIGHTLIST_FOREGROUND, &VacuumBackSprite, 0, Vacuum.Y + ScrollY + VacuumYOffset, 1.0f, -1.0f);
 	}
 }
 
@@ -49,15 +51,17 @@ void DisplayVacuum_AfterDusty()
 	if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
 		if (Vacuum.Dir == VACUUMDIR_UP)
-			AddLitSpriteScaled(LIGHTLIST_VACUUM, &VacuumFrontSprite, 0, Vacuum.Y + ScrollY - 150, 1.0f, 1.0f);
+			AddLitSpriteScaled(LIGHTLIST_VACUUM, &VacuumFrontSprite, 0, Vacuum.Y + ScrollY - VacuumYOffset, 1.0f, 1.0f);
 		else
-			AddLitSpriteScaled(LIGHTLIST_VACUUM, &VacuumFrontSprite, 0, Vacuum.Y + ScrollY + 150, 1.0f, -1.0f);
+			AddLitSpriteScaled(LIGHTLIST_VACUUM, &VacuumFrontSprite, 0, Vacuum.Y + ScrollY + VacuumYOffset, 1.0f, -1.0f);
 	}
 
 	if (DevMode)
 	{
 		gxDrawString(5, 64, 16, 0xffffffff, "Vacuum State=%d Timer=%d y=%d\n      [On%02d Jam%02d TOn%02d TOff%02d]", 
 			Vacuum.State, Vacuum.Timer, (int)Vacuum.Y, (int)(VacuumOnSound.volume*99), (int)(VacuumJamSound.volume*99), (int)(VacuumTurnOnSound.volume*99), (int)(VacuumTurnOffSound.volume*99));
+
+		gxDrawRectangleFilled(0, (int)Vacuum.Y + ScrollY, gxScreenWidth, 2, gxRGBA32(255,0,0,255));
 	}
 }
 
@@ -137,9 +141,9 @@ void UpdateVacuum()
 			
 			// Vacuum.Y is the leading edge of the vacuum.
 			if (Vacuum.Dir == VACUUMDIR_UP)
-				Vacuum.Y = (float)-ScrollY + (float)gxScreenHeight + 150;
+				Vacuum.Y = (float)-ScrollY + (float)gxScreenHeight + VacuumYOffset;
 			else
-				Vacuum.Y = (float)-ScrollY - 150;
+				Vacuum.Y = (float)-ScrollY - VacuumYOffset;
 
 			Vacuum.Timer = 0;
 		}
@@ -237,4 +241,14 @@ bool IsInVacuum(float Y)
 		return Y >= Vacuum.Y;
 	else
 		return Y <= Vacuum.Y;
+}
+
+void GetVacuumForce(float X, float Y, float* VX, float* VY, float Strength)
+{
+	float DirX = (float)gxScreenWidth/2 - X;
+	float DirY = Vacuum.Y - Y;
+	float Length = sqrtf(DirX*DirX + DirY*DirY);
+
+	*VX = DirX/Length * Strength;
+	*VY = DirY/Length * Strength;
 }

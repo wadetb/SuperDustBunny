@@ -720,8 +720,10 @@ void UpdateDusty_Launch()
 
 void SetDustyState_Die()
 {
-	Dusty.FloatVelocityX = 0;
-	Dusty.FloatVelocityY = -20;
+	Dusty.FloatVelocityX = Dusty.FloatX > (float)gxScreenWidth/2 ? -15.0f : 15.0f;
+	Dusty.FloatVelocityY = -30;
+
+	Dusty.SpriteTransition = 0;
 
 	//sxPlaySound( &DieSound );    
 
@@ -737,12 +739,23 @@ void DisplayDusty_Die()
 
 void UpdateDusty_Die()
 {
+	Dusty.SpriteTransition += 1;
+
 	Dusty.FloatX += Dusty.FloatVelocityX;
 	Dusty.FloatY += Dusty.FloatVelocityY;
 
 	Dusty.FloatVelocityY += Dusty.FloatGravity;
 
-	if (Dusty.FloatY + ScrollY > gxScreenHeight)
+	float DirX, DirY;
+	GetVacuumForce(Dusty.FloatX, Dusty.FloatY, &DirX, &DirY, (float)Dusty.SpriteTransition/40.0f);
+	Dusty.FloatVelocityX += DirX;
+	Dusty.FloatVelocityY += DirY;
+
+	Dusty.FloatVelocityX *= 0.99f;
+	Dusty.FloatVelocityY *= 0.99f;
+
+	if (Distance(Dusty.FloatX, Dusty.FloatY, (float)gxScreenWidth/2, Vacuum.Y) < 20.0f)
+	//if (Dusty.FloatY + ScrollY > gxScreenHeight)
 	{
 		SetGameState_Transition(GAMETRANSITION_DIE_SCREEN);
 		return;

@@ -172,12 +172,10 @@ void UpdateDust()
 		//	Mote->VY += -sinf(DirectionToAngle(Dir * 45.0f)) * Strength;
 		//}
 
-		float DirX = (float)gxScreenWidth/2 - Mote->X;
-		float DirY = (Vacuum.Y + ScrollY) - (Mote->Y + ScrollY*Mote->Depth);
-		float Length = sqrtf(DirX*DirX + DirY*DirY);
-
-		Mote->VX += DirX/Length * VacuumStrength * 0.1f;
-		Mote->VY += DirY/Length * VacuumStrength * 0.1f;
+		float DirX, DirY;
+		GetVacuumForce(Mote->X, Mote->Y, &DirX, &DirY, VacuumStrength * 0.1f);
+		Mote->VX += DirX;
+		Mote->VY += DirY;
 
 
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
