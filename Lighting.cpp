@@ -543,7 +543,7 @@ void ResetLighting()
 void RenderLighting()
 {
 	// Set up lighting.
-	if (Chapter.LightsOff)
+	if (Chapter.PageProps.LightsOff)
 		LightState.AmbientColor = gxRGBA32(16, 16, 16, 255);
 	else
 		LightState.AmbientColor = gxRGBA32(128, 128, 128, 255);

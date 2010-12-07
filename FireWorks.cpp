@@ -360,7 +360,7 @@ void DisplayFireWorks()
 		}
 		else if (FireWork->State == FIREWORKSTATE_EXPLODE)
 		{
-			if (Chapter.LightsOff)
+			if (Chapter.PageProps.LightsOff)
 			{
 				float Alpha = 0.5f;
 				Alpha *= Lerp((float)FireWork->Timer, 90.0f, 0.0f, 1.0f, 0.0f);

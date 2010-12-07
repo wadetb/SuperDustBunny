@@ -107,6 +107,36 @@ void GetNextLine(FILE* File, char* Line, int LineSize)
 	}
 }
 
+void InitPageProperties(SPageProperties* Props)
+{
+	Props->LightsOff = false;
+}
+
+void ParsePageProperties(SPageProperties* Props, rapidxml::xml_node<char>* PropertiesNode)
+{
+	rapidxml::xml_node<char>* PropertyNode = PropertiesNode->first_node("property");
+
+	while (PropertyNode != NULL)
+	{
+		const char* Name = PropertyNode->first_attribute("name")->value();
+		const char* Value = PropertyNode->first_attribute("value")->value();
+
+		if (strcmp(Name, "lights") == 0)
+		{
+			if (strcmp(Value, "off") == 0)
+				Props->LightsOff = true;
+			else if (strcmp(Value, "on") == 0)
+				Props->LightsOff = false;
+			else
+				ReportError("'%s' is not a valid value for the 'lights' property.  Fix this problem and re-save the TMX file.", Value);
+		}
+		else
+			ReportError("'%s' is not a valid map property (value is '%s').  Fix this problem and re-save the TMX file.", Name, Value);
+
+		PropertyNode = PropertyNode->next_sibling("property");
+	}
+}
+
 // Loads a <tileset> node from either an internal or external tileset.
 // FileName is used to locate image files.
 void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* FileName)
@@ -561,6 +591,15 @@ void LoadPageFromTMX(const char* FileName)
 		Data++;
 	}
 	
+	// Scan the properties.
+	InitPageProperties(&Page->Props);
+
+	rapidxml::xml_node<char>* PropertiesNode = MapNode->first_node("properties");
+	if (PropertiesNode)
+	{
+		ParsePageProperties(&Page->Props, PropertiesNode);
+	}
+
 	PopErrorContext();
 }
 
@@ -571,7 +610,6 @@ void LoadChapter(const char* ChapterDir)
 	if (Chapter.NBlocks > 0 || Chapter.NPages > 0 || Chapter.NTileSets > 0)
 		ReportError("Attempted to load a chapter without clearing it first.");
 
-	Chapter.LightsOff = false;
 	Chapter.EndX = 0;
 	Chapter.EndY = 0;
 
@@ -773,6 +811,8 @@ void SetCurrentPage(int PageNum)
 
 	Chapter.PageBlocks = (int*)malloc(Chapter.PageWidth * Chapter.PageHeight * sizeof(unsigned int));
 	memcpy(Chapter.PageBlocks, Chapter.Pages[PageNum].Blocks, Chapter.PageWidth * Chapter.PageHeight * sizeof(unsigned int));
+
+	Chapter.PageProps = Chapter.Pages[PageNum].Props;
 
 	CreatePageObjects();
 

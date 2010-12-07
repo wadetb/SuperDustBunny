@@ -79,41 +79,54 @@ void ClearFlashlightWaypoints()
 void InitFlashlight()
 {
 	Flashlight.CurWaypoint = NFlashlightWaypoints-1;
-	SFlashlightWaypoint* Waypoint = &FlashlightWaypoints[Flashlight.CurWaypoint];
-	Flashlight.X = Waypoint->X;
-	Flashlight.Y = Waypoint->Y;
-	Flashlight.Timer = Waypoint->Delay;
+	if (Flashlight.CurWaypoint >= 0)
+	{
+		SFlashlightWaypoint* Waypoint = &FlashlightWaypoints[Flashlight.CurWaypoint];
+		Flashlight.X = Waypoint->X;
+		Flashlight.Y = Waypoint->Y;
+		Flashlight.Timer = Waypoint->Delay;
+	}
 }
 
 void UpdateFlashlight()
 {
-	if (Flashlight.Timer > 0)
-	{
-		Flashlight.Timer -= 1.0f/60.0f;
-		return;
-	}
-
 	if (Flashlight.CurWaypoint >= 0)
 	{
 		SFlashlightWaypoint* Waypoint = &FlashlightWaypoints[Flashlight.CurWaypoint];
 
-		if (Distance(Waypoint->X, Waypoint->Y, Flashlight.X, Flashlight.Y) < 32)
+		// If the flashlight reaches the waypoint, or if dusty passes the waypoint, advance to the next one.
+		bool PassedIt = Dusty.FloatY <= Waypoint->Y;
+
+		if (PassedIt || Distance(Waypoint->X, Waypoint->Y, Flashlight.X, Flashlight.Y) < 32)
 		{
+			Flashlight.CurWaypoint--;
+
 			if (Flashlight.CurWaypoint >= 0)
 			{
-				Flashlight.CurWaypoint--;
 				Waypoint = &FlashlightWaypoints[Flashlight.CurWaypoint];
+				
+				if (PassedIt)
+					Flashlight.Timer = 0;
+				else
+					Flashlight.Timer = Waypoint->Delay;
 			}
 		}
 
-		Flashlight.X = Flashlight.X * 0.97f + Waypoint->X * 0.03f;
-		Flashlight.Y = Flashlight.Y * 0.97f + Waypoint->Y * 0.03f;
+		if (Flashlight.Timer > 0)
+		{
+			Flashlight.Timer -= 1.0f/60.0f;
+		}
+		else
+		{
+			Flashlight.X = Flashlight.X * 0.97f + Waypoint->X * 0.03f;
+			Flashlight.Y = Flashlight.Y * 0.97f + Waypoint->Y * 0.03f;
+		}
 	}
 }
 
 void DisplayFlashlight()
 {
-	if (Chapter.LightsOff)
-		AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightFlashlightSprite, Flashlight.X, Flashlight.Y + ScrollY, 1.0f, 0.8f);
+	if (Chapter.PageProps.LightsOff)
+		AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightFlashlightSprite, Flashlight.X, Flashlight.Y + ScrollY, 1.5f, 0.8f);
 }
 

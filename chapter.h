@@ -80,19 +80,26 @@ struct SBlock
 	void* Properties;
 };
 
+struct SPageProperties
+{
+	bool LightsOff;
+};
+
 struct SPage
 {
 	char* Name;
+
 	int* Blocks;
+
 	int Width;
 	int Height;
+
+	SPageProperties Props;
 };
 
 struct SChapter
 {
 	const char* Name;
-
-	bool LightsOff;
 
 	float StartX, StartY;
 	float EndX, EndY;
@@ -107,6 +114,7 @@ struct SChapter
 	SBlock Blocks[MAX_BLOCKS];
 
 	int PageNum;
+	SPageProperties PageProps;
 	int* PageBlocks;
 	int PageWidth;
 	int PageHeight;
@@ -136,8 +144,6 @@ void CalculateScrollY();
 void InitScore();
 void DisplayScore();
 void UpdateScore();
-
-void InitCrumb();
 
 int GetBlockID(int x, int y);
 
