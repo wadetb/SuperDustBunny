@@ -17,8 +17,16 @@ enum EVacuumState
 	VACUUMSTATE_RETREAT,
 };
 
+enum EVacuumDir
+{
+	VACUUMDIR_UP,
+	VACUUMDIR_DOWN
+};
+
 struct SVacuum
 {
+	EVacuumDir Dir;
+
 	EVacuumState State;
 
 	int Timer;
@@ -39,5 +47,7 @@ void UpdateVacuumSound();
 void TurnOnVacuum();
 void TurnOffVacuum();
 void JamVacuum();
+
+bool IsInVacuum(float Y);
 
 #endif

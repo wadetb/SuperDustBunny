@@ -147,26 +147,38 @@ void UpdateDust()
 		}
 		else if (Vacuum.State == VACUUMSTATE_ONSCREEN)
 		{
-			VacuumStrength = Lerp((float)Vacuum.Y, Dusty.FloatY + 1000, Dusty.FloatY + 200, 3.0f, 10.0f); 
+			// TODO for reverse direction
+			if (Vacuum.Dir == VACUUMDIR_UP)
+				VacuumStrength = Lerp(Vacuum.Y, Dusty.FloatY + 1000, Dusty.FloatY + 200, 1.5f, 20.0f); 
+			else
+				VacuumStrength = Lerp(Vacuum.Y, Dusty.FloatY - 1000, Dusty.FloatY - 200, 1.5f, 20.0f); 
 		}
 
 		// Map mote position onto wind grid.
-		int WindX = (int)(Mote->X / gxScreenWidth * WIND_WIDTH);
-		int WindY = (int)((Mote->Y + ScrollY*Mote->Depth) / gxScreenHeight * WIND_HEIGHT);
+		//int WindX = (int)(Mote->X / gxScreenWidth * WIND_WIDTH);
+		//int WindY = (int)((Mote->Y + ScrollY*Mote->Depth) / gxScreenHeight * WIND_HEIGHT);
 
-		if (WindX < 0) WindX = 0;
-		if (WindX >= WIND_WIDTH) WindX = WIND_WIDTH-1;
-		if (WindY < 0) WindY = 0;
-		if (WindY >= WIND_HEIGHT) WindY = WIND_HEIGHT-1;
+		//if (WindX < 0) WindX = 0;
+		//if (WindX >= WIND_WIDTH) WindX = WIND_WIDTH-1;
+		//if (WindY < 0) WindY = 0;
+		//if (WindY >= WIND_HEIGHT) WindY = WIND_HEIGHT-1;
 
-		EWindDirection Dir = WindDir[WindY * WIND_WIDTH + WindX];
-		float Strength = VacuumStrength *  WindStrength[WindY * WIND_WIDTH + WindX] / 50.0f;
+		//EWindDirection Dir = WindDir[WindY * WIND_WIDTH + WindX];
+		//float Strength = VacuumStrength *  WindStrength[WindY * WIND_WIDTH + WindX] / 50.0f;
 
-		if (Strength > 0)
-		{
-			Mote->VX += cosf(DirectionToAngle(Dir * 45.0f)) * Strength;
-			Mote->VY += -sinf(DirectionToAngle(Dir * 45.0f)) * Strength;
-		}
+		//if (Strength > 0)
+		//{
+		//	Mote->VX += cosf(DirectionToAngle(Dir * 45.0f)) * Strength;
+		//	Mote->VY += -sinf(DirectionToAngle(Dir * 45.0f)) * Strength;
+		//}
+
+		float DirX = (float)gxScreenWidth/2 - Mote->X;
+		float DirY = (Vacuum.Y + ScrollY) - (Mote->Y + ScrollY*Mote->Depth);
+		float Length = sqrtf(DirX*DirX + DirY*DirY);
+
+		Mote->VX += DirX/Length * VacuumStrength * 0.1f;
+		Mote->VY += DirY/Length * VacuumStrength * 0.1f;
+
 
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		//                                                   Dust Mote Recycling                                                                   //

@@ -22,6 +22,7 @@ const int VACUUM_UNJAM_TIME   = 1*60;
 
 void InitVacuum()
 {
+	Vacuum.Dir = (EVacuumDir)Chapter.PageProps.VacuumDir;
 	Vacuum.State = VACUUMSTATE_OFF;
 	Vacuum.Volume = 0.5f;
 
@@ -36,7 +37,10 @@ void DisplayVacuum_BeforeDusty()
 {
 	if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
-		AddLitSprite(LIGHTLIST_FOREGROUND, &VacuumBackSprite, 0, Vacuum.Y + ScrollY);
+		if (Vacuum.Dir == VACUUMDIR_UP)
+			AddLitSpriteScaled(LIGHTLIST_FOREGROUND, &VacuumBackSprite, 0, Vacuum.Y + ScrollY - 150, 1.0f, 1.0f);
+		else
+			AddLitSpriteScaled(LIGHTLIST_FOREGROUND, &VacuumBackSprite, 0, Vacuum.Y + ScrollY + 150, 1.0f, -1.0f);
 	}
 }
 
@@ -44,7 +48,10 @@ void DisplayVacuum_AfterDusty()
 {
 	if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
-		AddLitSprite(LIGHTLIST_VACUUM, &VacuumFrontSprite, 0, Vacuum.Y + ScrollY);
+		if (Vacuum.Dir == VACUUMDIR_UP)
+			AddLitSpriteScaled(LIGHTLIST_VACUUM, &VacuumFrontSprite, 0, Vacuum.Y + ScrollY - 150, 1.0f, 1.0f);
+		else
+			AddLitSpriteScaled(LIGHTLIST_VACUUM, &VacuumFrontSprite, 0, Vacuum.Y + ScrollY + 150, 1.0f, -1.0f);
 	}
 
 	if (DevMode)
@@ -117,11 +124,23 @@ void UpdateVacuum()
 
 	if (Vacuum.State == VACUUMSTATE_FAR)
 	{
+		// Place the vacuum far off screen for dust purposes.
+		if (Vacuum.Dir == VACUUMDIR_UP)
+			Vacuum.Y = (float)-ScrollY + (float)gxScreenHeight + 1500;
+		else
+			Vacuum.Y = (float)-ScrollY - 1500;
+
 		Vacuum.Timer--;
 		if (Vacuum.Timer <= 0)
 		{
 			Vacuum.State = VACUUMSTATE_ONSCREEN;
-			Vacuum.Y = -ScrollY + (float)gxScreenHeight;
+			
+			// Vacuum.Y is the leading edge of the vacuum.
+			if (Vacuum.Dir == VACUUMDIR_UP)
+				Vacuum.Y = (float)-ScrollY + (float)gxScreenHeight + 150;
+			else
+				Vacuum.Y = (float)-ScrollY - 150;
+
 			Vacuum.Timer = 0;
 		}
 	}
@@ -145,9 +164,12 @@ void UpdateVacuum()
 			Vacuum.Timer++;
 
 			// Move the vacuum gradually up the screen.
-			Vacuum.Y -= VacuumSpeed;
+			if (Vacuum.Dir == VACUUMDIR_UP)
+				Vacuum.Y -= VacuumSpeed;
+			else
+				Vacuum.Y += VacuumSpeed;
 
-			if ((float)Vacuum.Y + 150 <= Dusty.FloatY)
+			if (IsInVacuum(Dusty.FloatY))
 			{
 				SetDustyState_Die();
 			}
@@ -158,7 +180,10 @@ void UpdateVacuum()
 		Vacuum.Timer--;
 
 		// Move the vacuum back down the screen.
-		Vacuum.Y += 5;
+		if (Vacuum.Dir == VACUUMDIR_UP)
+			Vacuum.Y += 5;
+		else
+			Vacuum.Y -= 5;
 
 		if (Vacuum.Timer <= 0)
 		{
@@ -191,7 +216,11 @@ void TurnOffVacuum()
 
 void TurnOnVacuum()
 {
-	Vacuum.Y = (float)Chapter.PageHeight * 64;
+	if (Vacuum.Dir == VACUUMDIR_UP)
+		Vacuum.Y = (float)Chapter.PageHeight * 64;
+	else
+		Vacuum.Y = 0;
+
 	Vacuum.Timer = VACUUM_INITIAL_TIME;
 
 	if (Vacuum.State == VACUUMSTATE_OFF)
@@ -200,4 +229,12 @@ void TurnOnVacuum()
 		sxSetSoundVolume(&VacuumTurnOnSound, 0);
 		sxPlaySound(&VacuumTurnOnSound);
 	}
+}
+
+bool IsInVacuum(float Y)
+{
+	if (Vacuum.Dir == VACUUMDIR_UP)
+		return Y >= Vacuum.Y;
+	else
+		return Y <= Vacuum.Y;
 }

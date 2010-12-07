@@ -12,8 +12,6 @@
 
 #define MAX_PAGES			100
 #define MAX_BLOCKS			10000
-#define MAX_PAGE_BLOCKS		(256*1024)
-#define MAX_STITCHED_PAGES	100
 #define MAX_TILESETS		100
 #define MAX_PAGE_TILESETS	10
 
@@ -83,6 +81,7 @@ struct SBlock
 struct SPageProperties
 {
 	bool LightsOff;
+	int VacuumDir;
 };
 
 struct SPage

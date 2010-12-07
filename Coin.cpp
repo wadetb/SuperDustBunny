@@ -92,7 +92,7 @@ void UpdateCoins()
             Coin->Y += Coin->FloatVelocityY;
             Coin->FloatVelocityY += 1.0f;
 
-			if (Coin->Y >= Vacuum.Y)
+			if (IsInVacuum(Coin->Y))
 			{
 				Coin->State = COINSTATE_INACTIVE;
 				sxPlaySound(&VacuumClogSound);

@@ -109,7 +109,7 @@ void UpdateBall()
             Ball->Y += Ball->FloatVelocityY;
             Ball->FloatVelocityY += 1.0f;
 
-            if (Ball->Y >= Vacuum.Y + 175)
+            if (IsInVacuum(Ball->Y))
             {
                 Ball->State = BALLSTATE_INACTIVE;
                 sxPlaySound (&VacuumClogSound);
