@@ -19,6 +19,7 @@ gxSprite WhiteSprite;
 gxSprite WipeDiagonalSprite;
 
 gxSprite LightFlashlightSprite;
+gxSprite LightVacuumSprite;
 
 gxSprite SparkSprite;
 gxSprite FlareSprite;
@@ -164,6 +165,7 @@ void LoadAssets()
 	gxLoadSprite("Data/wipe-diagonal.png", &WipeDiagonalSprite);
 	
 	gxLoadSprite("Data/light-flashlight.png", &LightFlashlightSprite);
+	gxLoadSprite("Data/light-vacuum.png", &LightVacuumSprite);
 
 	gxLoadSprite("Data/spark.png", &SparkSprite);
 	gxLoadSprite("Data/flare.png", &FlareSprite);

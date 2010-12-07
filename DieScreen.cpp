@@ -9,6 +9,7 @@
 
 #include "Common.h"
 #include "DieScreen.h"
+#include "Chapter.h"
 
 struct SDieScreen
 {
@@ -22,6 +23,8 @@ void InitDieScreen()
 {
 	DieScreen.Pressed = false;
 	DieScreen.Timer = 0;
+
+	Chapter.PageProps.LightsOff = false;
 }
 
 void DisplayDieScreen()

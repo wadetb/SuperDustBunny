@@ -19,6 +19,7 @@ extern gxSprite WhiteSprite;
 extern gxSprite WipeDiagonalSprite;
 
 extern gxSprite LightFlashlightSprite;
+extern gxSprite LightVacuumSprite;
 
 extern gxSprite SparkSprite;
 extern gxSprite FlareSprite;

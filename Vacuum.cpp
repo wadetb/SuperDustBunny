@@ -54,6 +54,15 @@ void DisplayVacuum_AfterDusty()
 			AddLitSpriteScaled(LIGHTLIST_VACUUM, &VacuumFrontSprite, 0, Vacuum.Y + ScrollY - VacuumYOffset, 1.0f, 1.0f);
 		else
 			AddLitSpriteScaled(LIGHTLIST_VACUUM, &VacuumFrontSprite, 0, Vacuum.Y + ScrollY + VacuumYOffset, 1.0f, -1.0f);
+
+		if (Chapter.PageProps.LightsOff)
+		{
+			if (Vacuum.Dir == VACUUMDIR_UP)
+			{
+				AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightVacuumSprite,     150, Vacuum.Y + ScrollY - 275, 1.0f, 1.0f);
+				AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightVacuumSprite, 768-150, Vacuum.Y + ScrollY - 275, 1.0f, 1.0f);
+			}
+		}
 	}
 
 	if (DevMode)
@@ -139,11 +148,13 @@ void UpdateVacuum()
 		{
 			Vacuum.State = VACUUMSTATE_ONSCREEN;
 			
+			int LightsOffset = Chapter.PageProps.LightsOff ? 512 : 0;
+
 			// Vacuum.Y is the leading edge of the vacuum.
 			if (Vacuum.Dir == VACUUMDIR_UP)
-				Vacuum.Y = (float)-ScrollY + (float)gxScreenHeight + VacuumYOffset;
+				Vacuum.Y = (float)-ScrollY + (float)gxScreenHeight + VacuumYOffset + LightsOffset;
 			else
-				Vacuum.Y = (float)-ScrollY - VacuumYOffset;
+				Vacuum.Y = (float)-ScrollY - VacuumYOffset - LightsOffset;
 
 			Vacuum.Timer = 0;
 		}
