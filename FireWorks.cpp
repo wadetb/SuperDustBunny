@@ -15,6 +15,7 @@
 #include "Coin.h"
 #include "Gear.h"
 #include "TennisBall.h"
+#include "Debris.h"
 
 #define MAX_FIREWORKS 100
 
@@ -396,6 +397,8 @@ void ExplodeFireWork(float X, float Y, int Size)
 					{ 
 						sxPlaySound( &BlockBreakSound );
 						Chapter.PageBlocks[y * Chapter.PageWidth + x] = SPECIALBLOCKID_BLANK;
+
+						CreateDebris((float)x*64+32, (float)y*64+32, 0.0f, BlockID);
 					}
 				}       					           
 			}	

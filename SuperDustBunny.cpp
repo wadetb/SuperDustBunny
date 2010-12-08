@@ -22,6 +22,7 @@
 #include "Gear.h"
 #include "Wipe.h"
 #include "Flashlight.h"
+#include "Debris.h"
 
 #include "Tutorial.h"
 #include "StartScreen.h"
@@ -363,7 +364,8 @@ void DisplayGame_Playing()
     DisplayGear();
     DisplayBall();
 	DisplayFireWorks();
-	
+	DisplayDebris();
+
 	// Dusty Drawing
 	DisplayDusty();
 	
@@ -421,6 +423,7 @@ void UpdateGame_Playing()
 	}
 
 	UpdateDust();
+	UpdateDebris();
     UpdateVacuum(); 
     
     ////In The future this can be a function that will determine if it is the first page.

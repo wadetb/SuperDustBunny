@@ -21,6 +21,7 @@
 #include "Vacuum.h"
 #include "Fan.h"
 #include "Wipe.h"
+#include "Debris.h"
 
 #include <direct.h>
 
@@ -799,6 +800,7 @@ void CreatePageObjects()
 	SetDustyPosition(Chapter.StartX, Chapter.StartY);
 
 	InitDust();
+	InitDebris();
 	InitFlashlight();
 
 	InitVacuum();

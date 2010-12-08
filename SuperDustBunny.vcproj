@@ -289,6 +289,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Debris.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Debris.h"
+			>
+		</File>
+		<File
 			RelativePath=".\DieScreen.cpp"
 			>
 		</File>

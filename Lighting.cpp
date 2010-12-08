@@ -774,13 +774,28 @@ void AddLitSubSprite(ELightList List, gxSprite* Sprite, float X, float Y, float 
 		X,               Y+(SubY2-SubY1), SubX1/Sprite->texWidth, SubY2/Sprite->texHeight);
 }
 
+void AddLitSubSpriteCenteredScaledRotated(ELightList List, gxSprite* Sprite, float X, float Y, float SubX1, float SubY1, float SubX2, float SubY2, float Scale, float Angle)
+{
+	float ca = cosf(Angle);
+	float sa = sinf(Angle);
+
+	float w = Scale * (SubX2-SubX1) * 0.5f;
+	float h = Scale * (SubY2-SubY1) * 0.5f;
+
+	AddLitQuad(List, Sprite, gxRGBA32(255,255,255,255),
+		X + (-w * ca) - (-h * sa), Y + (-w * sa) + (-h * ca), SubX1/Sprite->texWidth, SubY1/Sprite->texHeight, 
+		X + (+w * ca) - (-h * sa), Y + (+w * sa) + (-h * ca), SubX2/Sprite->texWidth, SubY1/Sprite->texHeight,
+		X + (+w * ca) - (+h * sa), Y + (+w * sa) + (+h * ca), SubX2/Sprite->texWidth, SubY2/Sprite->texHeight, 
+		X + (-w * ca) - (+h * sa), Y + (-w * sa) + (+h * ca), SubX1/Sprite->texWidth, SubY2/Sprite->texHeight);
+}
+
 void AddLitSpriteCenteredScaledRotated(ELightList List, gxSprite* Sprite, float X, float Y, float Scale, float Angle)
 {
 	float ca = cosf(Angle);
 	float sa = sinf(Angle);
 
-	float w = (float)Sprite->width * 0.5f;
-	float h = (float)Sprite->height * 0.5f;
+	float w = Scale * (float)Sprite->width * 0.5f;
+	float h = Scale * (float)Sprite->height * 0.5f;
 
 	AddLitQuad(List, Sprite, gxRGBA32(255,255,255,255),
 		X + (-w * ca) - (-h * sa),    Y + (-w * sa) + (-h * ca),    0.0f, 0.0f, 

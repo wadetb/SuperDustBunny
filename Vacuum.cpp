@@ -258,8 +258,21 @@ void GetVacuumForce(float X, float Y, float* VX, float* VY, float Strength)
 {
 	float DirX = (float)gxScreenWidth/2 - X;
 	float DirY = Vacuum.Y - Y;
+	
 	float Length = sqrtf(DirX*DirX + DirY*DirY);
 
-	*VX = DirX/Length * Strength;
-	*VY = DirY/Length * Strength;
+	if (Length >= 1000)
+	{
+		*VX = 0;
+		*VY = 0;
+		return;
+	}
+
+	DirX /= Length;
+	DirY /= Length;
+
+	float AttenuatedStrength = Strength * Lerp(Length, 1000, 200, 1.5f, 20.0f); 
+
+	*VX = DirX * AttenuatedStrength;
+	*VY = DirY * AttenuatedStrength;
 }

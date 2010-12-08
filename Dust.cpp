@@ -140,19 +140,7 @@ void UpdateDust()
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		//                                                   Vacuum Wind Effects                                                                   //
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		float VacuumStrength = 0.0f;
-		if (Vacuum.State == VACUUMSTATE_FAR)
-		{
-			VacuumStrength = Lerp((float)Vacuum.Timer, 500, 0, 0.0f, 3.0f); 
-		}
-		else if (Vacuum.State == VACUUMSTATE_ONSCREEN)
-		{
-			// TODO for reverse direction
-			if (Vacuum.Dir == VACUUMDIR_UP)
-				VacuumStrength = Lerp(Vacuum.Y, Dusty.FloatY + 1000, Dusty.FloatY + 200, 1.5f, 20.0f); 
-			else
-				VacuumStrength = Lerp(Vacuum.Y, Dusty.FloatY - 1000, Dusty.FloatY - 200, 1.5f, 20.0f); 
-		}
+		float VacuumStrength = 1.0f;
 
 		// Map mote position onto wind grid.
 		//int WindX = (int)(Mote->X / gxScreenWidth * WIND_WIDTH);
