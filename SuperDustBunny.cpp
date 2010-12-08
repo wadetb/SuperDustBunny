@@ -378,6 +378,11 @@ void DisplayGame_Playing()
 	// Lighting effects.
 	DisplayFlashlight();
 
+	if (GameState == GAMESTATE_CHAPTER_INTRO)
+	{
+		DisplayChapterIntro();
+	}
+
 	RenderLighting();
 
     // HUD Drawing - Score, etc.
@@ -592,7 +597,7 @@ void Display()
 	}
 	else if (GameState == GAMESTATE_CHAPTER_INTRO)
 	{
-	    DisplayChapterIntro();	
+		DisplayGame_Playing();
 	}
 
 #ifdef PLATFORM_WINDOWS

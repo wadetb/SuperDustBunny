@@ -38,45 +38,43 @@ void InitChapterIntro()
 
 void DisplayChapterIntro()
 {
-	DisplayGame_Playing(); 
-
-	switch (ChapterIntro.Timer)
+	if (ChapterIntro.Timer <= 200)
 	{
-	case 2:		gxDrawSprite(90, 5800, &ChapterTitle); break;
-	case 4:		gxDrawSprite(90, 5800, &ChapterTitle); break;
-	case 6:		gxDrawSprite(90, 5800, &ChapterTitle); break;
-	case 8:		gxDrawSprite(90, 5800, &ChapterTitle); break;
-	case 10:	gxDrawSprite(90, 5800, &ChapterTitle); break;
-	case 12:	gxDrawSprite(90, 5800, &ChapterTitle); break;
-	case 14:	gxDrawSprite(90, 5800, &ChapterTitle); break;
-	case 16:	gxDrawSprite(90, 5800, &ChapterTitle); break;
-	case 18:	gxDrawSprite(90, 5800, &ChapterTitle); break;
-	case 20:	gxDrawSprite(90, 5800, &ChapterTitle); break;
-	default:    break;
+		AddLitSprite( LIGHTLIST_VACUUM, &ChapterTitle, 50, -450 + (2 * ChapterIntro.Timer));
+	}
+	else
+	{
+		AddLitSprite( LIGHTLIST_VACUUM, &ChapterTitle, 50, -50);
 	}
 }
 
 void ChapterIntro_Advance()
 {
 	TurnOnVacuum();
-	
+
 	Dusty.NoCollision = false;
+
 	SetDustyState_Stand();
-
-	RemoteControl.Enabled = false;
-
+	
 	SetGameState_Playing();
 }
 
 void UpdateChapterIntro()
 {
+	ChapterIntro.Timer += 1;
+	
 	UpdateDusty();
 
 	// Advance to playing state when Timer Expires.
 	if (ChapterIntro.Timer >= 40)
 	{
+		RemoteControl.Enabled = false;
+	}
+
+	if (ChapterIntro.Timer >= 300)
+	{
 		ChapterIntro_Advance();
 		return;
 	}
-	ChapterIntro.Timer += 1;
+	
 }
