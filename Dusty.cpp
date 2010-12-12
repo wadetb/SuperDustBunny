@@ -1105,7 +1105,7 @@ void UpdateDusty()
 		UpdateDusty_Collision();
 	}
 		
-	if (Distance(Dusty.FloatX, Dusty.FloatY, Chapter.EndX, Chapter.EndY) < 100)
+	if (Dusty.State != DUSTYSTATE_DIE && Distance(Dusty.FloatX, Dusty.FloatY, Chapter.EndX, Chapter.EndY) < 100)
 	{
 		AdvanceToNextPage();
 		return;

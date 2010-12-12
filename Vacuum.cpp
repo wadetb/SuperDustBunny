@@ -35,18 +35,7 @@ void InitVacuum()
 	sxPlaySoundLooping(&VacuumJamSound);
 }
 
-void DisplayVacuum_BeforeDusty()
-{
-	if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.State == VACUUMSTATE_ONSCREEN)
-	{
-		if (Vacuum.Dir == VACUUMDIR_UP)
-			AddLitSpriteScaled(LIGHTLIST_FOREGROUND, &VacuumBackSprite, 0, Vacuum.Y + ScrollY - VacuumYOffset, 1.0f, 1.0f);
-		else
-			AddLitSpriteScaled(LIGHTLIST_FOREGROUND, &VacuumBackSprite, 0, Vacuum.Y + ScrollY + VacuumYOffset, 1.0f, -1.0f);
-	}
-}
-
-void DisplayVacuum_AfterDusty()
+void DisplayVacuum()
 {
 	if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
@@ -59,8 +48,7 @@ void DisplayVacuum_AfterDusty()
 		{
 			if (Vacuum.Dir == VACUUMDIR_UP)
 			{
-				AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightVacuumSprite,     150, Vacuum.Y + ScrollY - 275, 1.0f, 1.0f);
-				AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightVacuumSprite, 768-150, Vacuum.Y + ScrollY - 275, 1.0f, 1.0f);
+				AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightVacuumSprite, 384, Vacuum.Y + ScrollY - 384, 1.0f, 1.0f);
 			}
 		}
 	}

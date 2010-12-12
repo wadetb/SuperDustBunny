@@ -321,8 +321,6 @@ void SetGameState_WinScreen()
 void SetGameState_ChapterIntro()
 {
     GameState = GAMESTATE_CHAPTER_INTRO;
-
-	InitChapterIntro();
 }
 
 void SetGameState_Playing()
@@ -358,7 +356,6 @@ void DisplayGame_Playing()
 
 	// Chapter Drawing - Everything here is behind Dusty
 	DisplayChapter();
-	DisplayVacuum_BeforeDusty();
 	DisplayBarrels_BeforeDusty();
 	DisplayCoins();
     DisplayGear();
@@ -373,15 +370,13 @@ void DisplayGame_Playing()
 	DisplayFans();
 	DisplayBarrels_AfterDusty();
 	DisplayDust();
-	DisplayVacuum_AfterDusty();
+	DisplayVacuum();
 	
 	// Lighting effects.
 	DisplayFlashlight();
 
-	if (GameState == GAMESTATE_CHAPTER_INTRO)
-	{
-		DisplayChapterIntro();
-	}
+	// Overlay
+	DisplayChapterIntro();
 
 	RenderLighting();
 
@@ -481,7 +476,7 @@ void UpdateGame_Transition()
 		if (Wipe.Middle)
 		{
 			LoadCurrentChapter();
-			SetDustyPosition(Chapter.StartX-3000, Chapter.StartY);
+			InitChapterIntro();
 			Wipe.Middle = false;
 		}
 

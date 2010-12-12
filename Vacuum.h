@@ -38,8 +38,7 @@ struct SVacuum
 extern SVacuum Vacuum;
 
 void InitVacuum();
-void DisplayVacuum_BeforeDusty();
-void DisplayVacuum_AfterDusty();
+void DisplayVacuum();
 void UpdateVacuum();
 void UpdateVacuumSound();
 

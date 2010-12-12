@@ -26,7 +26,7 @@ void InitChapterIntro()
 
 	TurnOffVacuum();
 
-	SetDustyPosition(Chapter.StartX - 300, Chapter.StartY);
+	SetDustyPosition(Chapter.StartX - 400, Chapter.StartY);
 	Dusty.NoCollision = true;
 	Dusty.CollideWithBottomSide = true;
 
@@ -38,13 +38,13 @@ void InitChapterIntro()
 
 void DisplayChapterIntro()
 {
-	if (ChapterIntro.Timer <= 200)
+	if (ChapterIntro.Timer <= 40)
 	{
-		AddLitSprite( LIGHTLIST_VACUUM, &ChapterTitle, 50, -450 + (2 * ChapterIntro.Timer));
+		AddLitSprite( LIGHTLIST_VACUUM, &ChapterTitle, 0, -100);
 	}
 	else
 	{
-		AddLitSprite( LIGHTLIST_VACUUM, &ChapterTitle, 50, -50);
+		AddLitSprite( LIGHTLIST_VACUUM, &ChapterTitle, 0, -100 - (20 * (float)(ChapterIntro.Timer - 40)));
 	}
 }
 
@@ -52,10 +52,9 @@ void ChapterIntro_Advance()
 {
 	TurnOnVacuum();
 
+	RemoteControl.Enabled = false;
 	Dusty.NoCollision = false;
 
-	SetDustyState_Stand();
-	
 	SetGameState_Playing();
 }
 
@@ -65,13 +64,13 @@ void UpdateChapterIntro()
 	
 	UpdateDusty();
 
-	// Advance to playing state when Timer Expires.
-	if (ChapterIntro.Timer >= 40)
+	if (ChapterIntro.Timer == 40)
 	{
-		RemoteControl.Enabled = false;
+		RemoteControl.MoveRight = false;
 	}
 
-	if (ChapterIntro.Timer >= 300)
+	// Advance to playing state when Timer Expires.
+	if (ChapterIntro.Timer >= 100)
 	{
 		ChapterIntro_Advance();
 		return;
