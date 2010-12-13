@@ -43,6 +43,10 @@ void InitDusty()
 	Dusty.WallStickTimer = 0;
 	Dusty.LastWall = DIRECTION_NONE;
 	Dusty.WallJumpTimer = 0;
+
+	Dusty.Lives = 3;
+
+	Dusty.GainLife = false;
 	
 	Dusty.CollideWithLeftSide = false;
 	Dusty.CollideWithRightSide = false;

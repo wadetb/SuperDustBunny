@@ -76,7 +76,9 @@ void UpdateCoins()
 		
 			if (Dist < 100)
 			{
-				Coin->State = COINSTATE_FALLING;        
+				Coin->State = COINSTATE_FALLING;
+
+				Dusty.GainLife = true;
 
 				sxPlaySound(&CoinVacuumedUpSound);  
 
@@ -106,9 +108,9 @@ void UpdateCoins()
 			Coin->Transition = 5;
 
 			Coin->Sprite += 1;
-			if (Coin->Sprite == 7)
+			if (Coin->Sprite == 6)
 			{
-				Coin->Sprite = 1;
+				Coin->Sprite = 0;
 			}  
 		}
     }  

@@ -57,6 +57,10 @@ struct SDusty
 	int StuckJumpCount;
 	int StuckTimer;
 
+	int Lives;
+
+	bool GainLife;
+
 	bool NoCollision;
 	bool RemoteControl;
 
@@ -86,5 +90,7 @@ void SetDustyState_Die();
 void SetDustyState_Stuck();
 void SetDustyState_Stand();
 void SetDustyState_Hop(EDirection Direction);
+
+void DustyGainLife();
 
 #endif

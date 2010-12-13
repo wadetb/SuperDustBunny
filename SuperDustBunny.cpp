@@ -23,6 +23,7 @@
 #include "Wipe.h"
 #include "Flashlight.h"
 #include "Debris.h"
+#include "Lives.h"
 
 #include "Tutorial.h"
 #include "StartScreen.h"
@@ -371,6 +372,7 @@ void DisplayGame_Playing()
 	DisplayBarrels_AfterDusty();
 	DisplayDust();
 	DisplayVacuum();
+	DisplayLives();
 	
 	// Lighting effects.
 	DisplayFlashlight();
@@ -419,7 +421,8 @@ void UpdateGame_Playing()
         UpdateGear();  
 		UpdateFireWorks();
 		UpdateFlashlight();
-		UpdateScore();      		
+		UpdateScore();
+		UpdateLives();
 	}
 
 	UpdateDust();
@@ -503,6 +506,14 @@ void UpdateGame_Transition()
 	else if (GameTransition == GAMETRANSITION_DIE_SCREEN)
 	{
 		UpdateWipe();
+
+		if (Dusty.Lives >= 1)//Check before the Die Screen Transition
+		{
+			Dusty.Lives -= 1;
+			LoadCurrentChapter();//Load the Current Chapter if Lives Left.
+			SetGameState_Playing();
+			return;
+		}
 
 		if (Wipe.Middle)
 		{

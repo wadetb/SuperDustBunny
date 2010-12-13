@@ -22,6 +22,7 @@
 #include "Fan.h"
 #include "Wipe.h"
 #include "Debris.h"
+#include "Lives.h"
 
 #include <direct.h>
 
@@ -797,6 +798,7 @@ void CreatePageObjects()
 
 	// Initialize global stuff for the page.
 	InitDusty();
+	InitLives();
 	SetDustyPosition(Chapter.StartX, Chapter.StartY);
 
 	InitDust();
@@ -940,7 +942,7 @@ void EraseBlock(int x, int y)
 
 void DisplayScore()
 {
-    gxDrawString(600, 0, 16, gxRGB32(255, 255, 255), "Score: %d", Score.ScoreCounter);
+    gxDrawString(400, 0, 16, gxRGB32(255, 255, 255), "Score: %d", Score.ScoreCounter);
 }
 
 void UpdateScore()

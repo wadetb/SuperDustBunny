@@ -369,6 +369,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Lives.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Lives.h"
+			>
+		</File>
+		<File
 			RelativePath=".\StartScreen.cpp"
 			>
 		</File>
