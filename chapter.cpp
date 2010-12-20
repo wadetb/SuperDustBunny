@@ -798,7 +798,6 @@ void CreatePageObjects()
 
 	// Initialize global stuff for the page.
 	InitDusty();
-	InitLives();
 	SetDustyPosition(Chapter.StartX, Chapter.StartY);
 
 	InitDust();

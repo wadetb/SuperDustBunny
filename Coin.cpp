@@ -31,6 +31,7 @@ void CreateCoin(int X, int Y)
     Coin->X = (float)X + 32;
     Coin->Y = (float)Y + 32;
     Coin->FloatVelocityY = 0.0f;
+    Coin->FloatVelocityX = 0.0f;
     
     Coin->Transition = 5;
 	Coin->Sprite = 1;
@@ -76,7 +77,7 @@ void UpdateCoins()
 		
 			if (Dist < 100)
 			{
-				Coin->State = COINSTATE_FALLING;
+				Coin->State = COINSTATE_COLLECTED;
 
 				Dusty.GainLife = true;
 
@@ -89,16 +90,17 @@ void UpdateCoins()
 				}
 			} 	                       	    
 		}
-		else if (Coin->State == COINSTATE_FALLING)
+		else if (Coin->State == COINSTATE_COLLECTED)
 		{
-            Coin->Y += Coin->FloatVelocityY;
-            Coin->FloatVelocityY += 1.0f;
+            Coin->Y += -Coin->FloatVelocityY;
+            Coin->FloatVelocityY -= 1.0f;
+            Coin->X += -Coin->FloatVelocityX;
+            Coin->FloatVelocityX -= 1.0f;
 
-			if (IsInVacuum(Coin->Y))
+			if (Coin->Y < 0 && Coin->X < 0)
 			{
 				Coin->State = COINSTATE_INACTIVE;
 				sxPlaySound(&VacuumClogSound);
-				JamVacuum();
 			}       
 		}
 				

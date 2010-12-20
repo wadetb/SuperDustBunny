@@ -14,7 +14,7 @@
 enum ECoinState
 {
     COINSTATE_ACTIVE,
-	COINSTATE_FALLING,
+	COINSTATE_COLLECTED,
     COINSTATE_INACTIVE,
 };
 
@@ -24,6 +24,7 @@ struct SCoin
 
     float X, Y;
     float FloatVelocityY;
+    float FloatVelocityX;
     
     int Sprite;
     int Transition;

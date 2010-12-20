@@ -411,7 +411,7 @@ void ExplodeFireWork(float X, float Y, int Size)
 		float Dist =(Distance(X, Y, Coin->X, Coin->Y));
 		if (Dist < Size*64)
 		{                    
-			Coin->State = COINSTATE_FALLING;     
+			Coin->State = COINSTATE_COLLECTED;     
 		}        
 	}
 

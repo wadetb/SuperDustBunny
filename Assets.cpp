@@ -71,6 +71,13 @@ gxSprite CoinSpin4Sprite;
 gxSprite CoinSpin5Sprite;
 gxSprite CoinSpin6Sprite;
 
+gxSprite CoinLife1Sprite;
+gxSprite CoinLife2Sprite;
+gxSprite CoinLife3Sprite;
+gxSprite CoinLife4Sprite;
+gxSprite CoinLife5Sprite;
+gxSprite CoinLife6Sprite;
+
 gxSprite TennisBallSpin1Sprite;
 gxSprite TennisBallSpin2Sprite;
 gxSprite TennisBallSpin3Sprite;
@@ -216,7 +223,14 @@ void LoadAssets()
 	gxLoadSprite("Data/coin-spin-4.png", &CoinSpin4Sprite);
 	gxLoadSprite("Data/coin-spin-5.png", &CoinSpin5Sprite);
 	gxLoadSprite("Data/coin-spin-6.png", &CoinSpin6Sprite);
-
+	
+    gxLoadSprite("Data/coin-lives-1.png", &CoinLife1Sprite);
+    gxLoadSprite("Data/coin-lives-2.png", &CoinLife2Sprite);
+    gxLoadSprite("Data/coin-lives-3.png", &CoinLife3Sprite);
+    gxLoadSprite("Data/coin-lives-4.png", &CoinLife4Sprite);
+    gxLoadSprite("Data/coin-lives-5.png", &CoinLife5Sprite);
+    gxLoadSprite("Data/coin-lives-6.png", &CoinLife6Sprite);
+	
 	gxLoadSprite("Data/tennisball-spin-1.png", &TennisBallSpin1Sprite);
 	gxLoadSprite("Data/tennisball-spin-2.png", &TennisBallSpin2Sprite);
 	gxLoadSprite("Data/tennisball-spin-3.png", &TennisBallSpin3Sprite);

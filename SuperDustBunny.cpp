@@ -372,7 +372,6 @@ void DisplayGame_Playing()
 	DisplayBarrels_AfterDusty();
 	DisplayDust();
 	DisplayVacuum();
-	DisplayLives();
 	
 	// Lighting effects.
 	DisplayFlashlight();
@@ -383,7 +382,8 @@ void DisplayGame_Playing()
 	RenderLighting();
 
     // HUD Drawing - Score, etc.
-    DisplayScore();   
+    DisplayScore(); 
+    DisplayLives();  
     	
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Debugging aids                                                                        //

@@ -10,16 +10,7 @@
 #ifndef LIVES_H
 #define LIVES_H
 
-struct SLives
-{ 
-    int Sprite;
-    int Transition;
-};
-
-extern SLives Lives;
-
 void DisplayLives();
 void UpdateLives();
-void InitLives();
 
 #endif

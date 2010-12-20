@@ -12,27 +12,18 @@
 #include "Dusty.h"
 #include "Lives.h"
 
-SLives Lives;
-
-void InitLives()
-{
-    Lives.Transition = 5;
-	Lives.Sprite = 1;
-}
-
 void DisplayLives()
 {
-	gxSprite* LivesSprites[6] =
-		{
-			&CoinSpin1Sprite,
-			&CoinSpin2Sprite,
-			&CoinSpin3Sprite,
-			&CoinSpin4Sprite,
-			&CoinSpin5Sprite,
-			&CoinSpin6Sprite,
-		};
- 
-	AddLitSprite( LIGHTLIST_VACUUM, LivesSprites[Lives.Sprite], 640, -30);
+	switch(Dusty.Lives)
+	{
+	case 1:     AddLitSprite( LIGHTLIST_VACUUM, &CoinLife1Sprite, 640, 30);
+    case 2:     AddLitSprite( LIGHTLIST_VACUUM, &CoinLife2Sprite, 640, 30);
+    case 3:     AddLitSprite( LIGHTLIST_VACUUM, &CoinLife3Sprite, 640, 30);
+    case 4:     AddLitSprite( LIGHTLIST_VACUUM, &CoinLife4Sprite, 640, 30);
+    case 5:     AddLitSprite( LIGHTLIST_VACUUM, &CoinLife5Sprite, 640, 30);
+    case 6:     AddLitSprite( LIGHTLIST_VACUUM, &CoinLife6Sprite, 640, 30);
+    default:    break;	
+	}
 	gxDrawString(550, 0, 16, gxRGB32(255, 255, 255), "Lives: %d", Dusty.Lives);
 }
 
@@ -42,17 +33,5 @@ void UpdateLives()
 	{
 		Dusty.GainLife = false;
 		Dusty.Lives += 1;
-	}
-
-	Lives.Transition -= 1;
-	if (Lives.Transition == 0)
-	{
-		Lives.Transition = 5;
-
-		Lives.Sprite += 1;
-		if (Lives.Sprite == 6)
-		{
-			Lives.Sprite = 0;
-		}  
 	}
 }
