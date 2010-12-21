@@ -9,6 +9,7 @@
 
 #include "Common.h"
 #include "StartScreen.h"
+#include "Dusty.h"
 
 enum 
 {
@@ -99,6 +100,7 @@ void UpdateStartScreen()
 
 	if (!kbIsKeyDown(KB_RETURN) && kbWasKeyDown(KB_RETURN))
 	{
+		Dusty.Lives = 1;
 		StartScreen_Advance();
 		return;
 	}

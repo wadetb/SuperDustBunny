@@ -44,8 +44,6 @@ void InitDusty()
 	Dusty.LastWall = DIRECTION_NONE;
 	Dusty.WallJumpTimer = 0;
 
-	Dusty.Lives = 3;
-
 	Dusty.GainLife = false;
 	
 	Dusty.CollideWithLeftSide = false;
@@ -761,7 +759,15 @@ void UpdateDusty_Die()
 	if (Distance(Dusty.FloatX, Dusty.FloatY, (float)gxScreenWidth/2, Vacuum.Y) < 40.0f)
 	//if (Dusty.FloatY + ScrollY > gxScreenHeight)
 	{
-		SetGameState_Transition(GAMETRANSITION_DIE_SCREEN);
+		if (Dusty.Lives > 0)//Check before the Die Screen Transition
+		{
+			Dusty.Lives -= 1;
+			SetCurrentPage(Chapter.PageNum);//Load the Current Chapter if Lives Left.
+		}
+		else
+		{
+			SetGameState_Transition(GAMETRANSITION_DIE_SCREEN);
+		}
 		return;
 	} 
 }

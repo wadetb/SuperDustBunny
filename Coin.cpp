@@ -92,10 +92,27 @@ void UpdateCoins()
 		}
 		else if (Coin->State == COINSTATE_COLLECTED)
 		{
-            Coin->Y += -Coin->FloatVelocityY;
-            Coin->FloatVelocityY -= 1.0f;
-            Coin->X += -Coin->FloatVelocityX;
-            Coin->FloatVelocityX -= 1.0f;
+			if (Coin->X < 400)
+			{
+				Coin->Y += Coin->FloatVelocityY;
+				Coin->FloatVelocityY -= 1.0f;
+				Coin->X += -Coin->FloatVelocityX;
+				Coin->FloatVelocityX -= 1.0f;
+			}
+			else if (Coin->X >= 400 && Coin->X < 500)
+			{
+				Coin->Y += Coin->FloatVelocityY;
+				Coin->FloatVelocityY -= 1.5f;
+				Coin->X += -Coin->FloatVelocityX;
+				Coin->FloatVelocityX -= 1.3f;
+			}
+			else if (Coin->X >= 501)
+			{
+				Coin->Y += Coin->FloatVelocityY;
+				Coin->FloatVelocityY -= 2.0f;
+				Coin->X += -Coin->FloatVelocityX;
+				Coin->FloatVelocityX -= 0.2f;
+			}
 
 			if (Coin->Y < 0 && Coin->X < 0)
 			{

@@ -372,6 +372,7 @@ void DisplayGame_Playing()
 	DisplayBarrels_AfterDusty();
 	DisplayDust();
 	DisplayVacuum();
+	DisplayLives();
 	
 	// Lighting effects.
 	DisplayFlashlight();
@@ -382,8 +383,7 @@ void DisplayGame_Playing()
 	RenderLighting();
 
     // HUD Drawing - Score, etc.
-    DisplayScore(); 
-    DisplayLives();  
+    DisplayScore();   
     	
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Debugging aids                                                                        //
@@ -506,14 +506,6 @@ void UpdateGame_Transition()
 	else if (GameTransition == GAMETRANSITION_DIE_SCREEN)
 	{
 		UpdateWipe();
-
-		if (Dusty.Lives >= 1)//Check before the Die Screen Transition
-		{
-			Dusty.Lives -= 1;
-			LoadCurrentChapter();//Load the Current Chapter if Lives Left.
-			SetGameState_Playing();
-			return;
-		}
 
 		if (Wipe.Middle)
 		{
