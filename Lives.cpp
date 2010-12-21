@@ -16,12 +16,12 @@ void DisplayLives()
 {
 	switch(Dusty.Lives)
 	{
-	case 1:     AddLitSprite( LIGHTLIST_VACUUM, &CoinLife1Sprite, 640, 30);
-    case 2:     AddLitSprite( LIGHTLIST_VACUUM, &CoinLife2Sprite, 640, 30);
-    case 3:     AddLitSprite( LIGHTLIST_VACUUM, &CoinLife3Sprite, 640, 30);
-    case 4:     AddLitSprite( LIGHTLIST_VACUUM, &CoinLife4Sprite, 640, 30);
-    case 5:     AddLitSprite( LIGHTLIST_VACUUM, &CoinLife5Sprite, 640, 30);
-    case 6:     AddLitSprite( LIGHTLIST_VACUUM, &CoinLife6Sprite, 640, 30);
+	case 1:     AddLitSprite( LIGHTLIST_VACUUM, &CoinLife1Sprite, 640, 100);
+    case 2:     AddLitSprite( LIGHTLIST_VACUUM, &CoinLife2Sprite, 640, 100);
+    case 3:     AddLitSprite( LIGHTLIST_VACUUM, &CoinLife3Sprite, 640, 100);
+    case 4:     AddLitSprite( LIGHTLIST_VACUUM, &CoinLife4Sprite, 640, 100);
+    case 5:     AddLitSprite( LIGHTLIST_VACUUM, &CoinLife5Sprite, 640, 100);
+    case 6:     AddLitSprite( LIGHTLIST_VACUUM, &CoinLife6Sprite, 640, 100);
     default:    break;	
 	}
 	gxDrawString(550, 0, 16, gxRGB32(255, 255, 255), "Lives: %d", Dusty.Lives);

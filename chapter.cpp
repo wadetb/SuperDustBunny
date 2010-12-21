@@ -286,7 +286,7 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* FileName
 					}
 					else if (strcmp(Value, "coin") == 0)
 					{
-						Block->Type = BLOCKTYPE_GEAR;
+						Block->Type = BLOCKTYPE_COIN;
 					}
 					else if (strcmp(Value, "nail") == 0)
 					{
