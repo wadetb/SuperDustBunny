@@ -23,6 +23,7 @@
 #include "Wipe.h"
 #include "Debris.h"
 #include "Lives.h"
+#include "Recorder.h"
 
 #include <direct.h>
 
@@ -628,6 +629,8 @@ void LoadChapter(const char* ChapterDir)
 	Chapter.NBlocks = 0;
 	Chapter.NPages = 0;
 	Chapter.NTileSets = 0;
+
+	Chapter.Name = strdup(ChapterDir);
 
 	CurrentChapterDir = ChapterDir;
 

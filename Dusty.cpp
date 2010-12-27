@@ -13,6 +13,7 @@
 #include "Chapter.h"
 #include "Dust.h"
 #include "Vacuum.h"
+#include "Recorder.h"
 
 SDusty Dusty;
 
@@ -766,6 +767,7 @@ void UpdateDusty_Die()
 		}
 		else
 		{
+			StopRecording(RESULT_DIE);
 			SetGameState_Transition(GAMETRANSITION_DIE_SCREEN);
 		}
 		return;

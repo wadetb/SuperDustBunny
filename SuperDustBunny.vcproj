@@ -377,6 +377,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Recorder.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Recorder.h"
+			>
+		</File>
+		<File
 			RelativePath=".\StartScreen.cpp"
 			>
 		</File>

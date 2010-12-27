@@ -24,8 +24,9 @@
 #include "Flashlight.h"
 #include "Debris.h"
 #include "Lives.h"
-
+#include "Recorder.h"
 #include "Tutorial.h"
+
 #include "StartScreen.h"
 #include "HelpScreen.h"
 #include "CreditsScreen.h"
@@ -202,6 +203,9 @@ SRemoteControl RemoteControl;
 
 bool GetInput_MoveLeft()
 {
+	if (IsPlaybackActive())
+		return Recorder.MoveLeft;
+
 	if (RemoteControl.Enabled)
 		return RemoteControl.MoveLeft;
 
@@ -215,6 +219,9 @@ bool GetInput_MoveLeft()
 
 bool GetInput_MoveRight()
 {
+	if (IsPlaybackActive())
+		return Recorder.MoveRight;
+
 	if (RemoteControl.Enabled)
 		return RemoteControl.MoveRight;
 
@@ -228,6 +235,9 @@ bool GetInput_MoveRight()
 
 bool GetInput_Jump()
 {
+	if (IsPlaybackActive())
+		return Recorder.Jump;
+
 	if (RemoteControl.Enabled)
 		return RemoteControl.Jump;
 
@@ -274,10 +284,14 @@ void AdvanceToNextPage()
 {
 	if (Chapter.PageNum < Chapter.NPages-1)
 	{
+		StopRecording(RESULT_NEXT_PAGE);
 		SetGameState_Transition(GAMETRANSITION_NEXT_PAGE);
 	}
 	else
+	{
+		StopRecording(RESULT_CHAPTER_END);
 		SetGameState_WinScreen();
+	}
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -486,6 +500,7 @@ void UpdateGame_Transition()
 		if (Wipe.Finished)
 		{
 			SetGameState_ChapterIntro();
+			StartRecording();
 		}
 	}
 	else if (GameTransition == GAMETRANSITION_NEXT_PAGE)
@@ -501,6 +516,7 @@ void UpdateGame_Transition()
 		if (Wipe.Finished)
 		{
 			SetGameState_Playing();
+			StartRecording();
 		}
 	}
 	else if (GameTransition == GAMETRANSITION_DIE_SCREEN)
@@ -708,6 +724,9 @@ bool Update()
 	msUpdateMouse();
 #endif
 
+	// Recorder must be updated immediately after the devices are queried, before any GetInput_Xyz calls.
+	UpdateRecorder();
+
 #ifdef PLATFORM_WINDOWS
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Slow Motion Update                                                                    //
@@ -745,6 +764,7 @@ bool Update()
 	}
 
 	// Pressing S skips all tutorials.
+	// RECORDER FIXME
     if (kbIsKeyDown(KB_S))
     {
 		SkipTutorials();
@@ -775,15 +795,24 @@ bool Update()
 	}
 
 	// PgUp and PgDown advance and retreat pages.
+	// RECORDER FIXME
 	if (kbIsKeyDown(KB_PRIOR) && !kbWasKeyDown(KB_PRIOR))
 	{
 		if (Chapter.NPages > 0)
+		{
+			StopRecording(RESULT_NONE);
 			SetCurrentPage((Chapter.PageNum+Chapter.NPages-1) % Chapter.NPages);
+			StartRecording();
+		}
 	}
 	if (kbIsKeyDown(KB_NEXT) && !kbWasKeyDown(KB_NEXT))
 	{
 		if (Chapter.NPages > 0)
+		{
+			StopRecording(RESULT_NONE);
 			SetCurrentPage((Chapter.PageNum+1) % Chapter.NPages);
+			StartRecording();
+		}
 	}
 
 	// Ctrl+E key launches Tiled on the current page.
@@ -795,6 +824,7 @@ bool Update()
 	}
 
 	// Number keys switch chapters
+	// RECORDER FIXME
 	if (kbIsKeyDown(KB_1) && !kbWasKeyDown(KB_1))
 	{
 		CurrentChapter = 0;
