@@ -3,58 +3,44 @@
 //                                                          Super Dust Bunny                                                               //
 //                                                                                                                                         //
 //                               Authors: Thomas Perry <perry.thomas.12@gmail.com> & Wade Brainerd <wadetb@gmail.com>                      //
-//                                      Copyright 2010 by Thomas Perry and Wade Brainerd. All rights reserved.                             //
+//                                      Copyright 2010 by Thomas Perry and Wade Brainerd. All rights reserved.                              //
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
-#include "Common.h"
-#include "WinScreen.h"
+#ifndef RECORDER_H
+#define RECORDER_H
 
-struct SWinScreen
+enum ERecordingEndType
 {
-	bool Pressed;
+	RESULT_NONE = 0,
+	RESULT_NEXT_PAGE,
+	RESULT_CHAPTER_END,
+	RESULT_DIE,
+	RESULT_QUIT,
 };
 
-SWinScreen WinScreen;
-
-void InitWinScreen()
+struct SRecorder
 {
-	WinScreen.Pressed = false;
-}
+	bool RecordingActive;
 
-void DisplayWinScreen()
-{
-	if (WinScreen.Pressed)
-	{
-		gxDrawSprite(0, 0, &ScreenWin2Sprite);
-	}
-	else
-	{
-		gxDrawSprite(0, 0, &ScreenWin1Sprite);
-	}
-}
+	bool PlaybackActive;
+	bool MoveLeft;
+	bool MoveRight;
+	bool Jump;
+};
 
-void WinScreen_Advance()
-{
-	SetGameState_StartScreen();
-}
+extern SRecorder Recorder;
 
-void UpdateWinScreen()
-{
-#ifdef PLATFORM_WINDOWS
-	bool Pressed = kbIsKeyDown(KB_RETURN) || msButton1;
+bool IsRecordingActive();
+
+void StartRecording();
+void StopRecording(ERecordingEndType Result);
+
+bool IsPlaybackActive();
+
+void StartPlayback();
+void StopPlayback();
+
+void UpdateRecorder();
+
 #endif
-#ifdef PLATFORM_IPHONE
-	bool Pressed = msButton1;
-#endif
-
-	// Advance to playing state when button is released.
-	if (!Pressed && WinScreen.Pressed)
-	{
-		WinScreen_Advance();
-		return;
-	}
-
-	WinScreen.Pressed = Pressed;
-}
-

@@ -113,6 +113,7 @@ void GetNextLine(FILE* File, char* Line, int LineSize)
 void InitPageProperties(SPageProperties* Props)
 {
 	Props->LightsOff = false;
+	Props->VacuumOff = false;
 	Props->VacuumDir = VACUUMDIR_UP;
 }
 
@@ -132,7 +133,16 @@ void ParsePageProperties(SPageProperties* Props, rapidxml::xml_node<char>* Prope
 			else if (strcmp(Value, "on") == 0)
 				Props->LightsOff = false;
 			else
-				ReportError("'%s' is not a valid value for the 'lights' property.  Fix this problem and re-save the TMX file.", Value);
+				ReportError("'%s' is not a valid value for the 'lights' property.  The value must be 'on' or 'off'.  Fix this problem and re-save the TMX file.", Value);
+		}
+		else if (strcmp(Name, "vacuum") == 0)
+		{
+			if (strcmp(Value, "off") == 0)
+				Props->VacuumOff = true;
+			else if (strcmp(Value, "on") == 0)
+				Props->VacuumOff = false;
+			else
+				ReportError("'%s' is not a valid value for the 'vacuum' property.  The value must be 'on' or 'off'.  Fix this problem and re-save the TMX file.", Value);
 		}
 		else if (strcmp(Name, "vacuum_dir") == 0)
 		{
@@ -141,7 +151,7 @@ void ParsePageProperties(SPageProperties* Props, rapidxml::xml_node<char>* Prope
 			else if (strcmp(Value, "down") == 0)
 				Props->VacuumDir = VACUUMDIR_DOWN;
 			else
-				ReportError("'%s' is not a valid value for the 'vacuum_dir' property.  Fix this problem and re-save the TMX file.", Value);
+				ReportError("'%s' is not a valid value for the 'vacuum_dir' property.  The value must be 'up' or 'down'.  Fix this problem and re-save the TMX file.", Value);
 		}
 		else
 			ReportError("'%s' is not a valid map property (value is '%s').  Fix this problem and re-save the TMX file.", Name, Value);

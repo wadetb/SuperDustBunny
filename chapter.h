@@ -81,6 +81,7 @@ struct SBlock
 struct SPageProperties
 {
 	bool LightsOff;
+	bool VacuumOff;
 	int VacuumDir;
 };
 

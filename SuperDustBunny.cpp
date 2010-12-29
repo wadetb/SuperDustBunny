@@ -56,9 +56,9 @@ EGameTransition GameTransition;
 
 const char* ChapterNames[MAX_CHAPTERS] =
 {
+	"Chapters/01-Study",
 	"Chapters/Wade1",
 	"Chapters/Thomas1",
-	"",
 	"",
 	"",
 	"",

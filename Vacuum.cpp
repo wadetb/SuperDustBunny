@@ -37,6 +37,10 @@ void InitVacuum()
 
 void DisplayVacuum()
 {
+	// If the vacuum is disabled for this page, don't display at all.
+	if (Chapter.PageProps.VacuumOff)
+		return;
+
 	if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
 		if (Vacuum.Dir == VACUUMDIR_UP)
@@ -122,6 +126,10 @@ void UpdateVacuum()
 		Vacuum.Timer = 1000000;
 	}
 #endif
+
+	// If the vacuum is disabled for this page, don't update at all.
+	if (Chapter.PageProps.VacuumOff)
+		return;
 
 	if (Vacuum.State == VACUUMSTATE_FAR)
 	{
@@ -244,6 +252,14 @@ bool IsInVacuum(float Y)
 
 void GetVacuumForce(float X, float Y, float* VX, float* VY, float Strength)
 {
+	// If the vacuum is disabled for this page, no vacuum forces.
+	if (Chapter.PageProps.VacuumOff)
+	{
+		*VX = 0;
+		*VY = 0;
+		return;
+	}
+
 	float DirX = (float)gxScreenWidth/2 - X;
 	float DirY = Vacuum.Y - Y;
 	
