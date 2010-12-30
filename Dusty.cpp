@@ -763,7 +763,8 @@ void UpdateDusty_Die()
 		if (Dusty.Lives > 0)//Check before the Die Screen Transition
 		{
 			Dusty.Lives -= 1;
-			SetCurrentPage(Chapter.PageNum);//Load the Current Chapter if Lives Left.
+			StopRecording(RESULT_RESTART_PAGE);
+			SetGameState_Transition(GAMETRANSITION_RESTART_PAGE);
 		}
 		else
 		{

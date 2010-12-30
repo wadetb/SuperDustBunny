@@ -476,6 +476,10 @@ void SetGameState_Transition(EGameTransition Type)
 	{
 		StartWipe(WIPE_DIAGONAL, 0.5f);
 	}
+	else if (GameTransition == GAMETRANSITION_RESTART_PAGE)
+	{
+		StartWipe(WIPE_FADE_TO_WHITE, 1.0f);
+	}
 	else if (GameTransition == GAMETRANSITION_DIE_SCREEN)
 	{
 		StartWipe(WIPE_FADE_TO_WHITE, 3.0f);
@@ -506,10 +510,26 @@ void UpdateGame_Transition()
 	else if (GameTransition == GAMETRANSITION_NEXT_PAGE)
 	{
 		UpdateWipe();
-		
+
 		if (Wipe.Middle)
 		{
 			SetCurrentPage(Chapter.PageNum+1);
+			Wipe.Middle = false;
+		}
+
+		if (Wipe.Finished)
+		{
+			SetGameState_Playing();
+			StartRecording();
+		}
+	}
+	else if (GameTransition == GAMETRANSITION_RESTART_PAGE)
+	{
+		UpdateWipe();
+
+		if (Wipe.Middle)
+		{
+			SetCurrentPage(Chapter.PageNum);
 			Wipe.Middle = false;
 		}
 
@@ -552,6 +572,11 @@ void DisplayGame_Transition()
 		DisplayWipe();
 	}
 	else if (GameTransition == GAMETRANSITION_NEXT_PAGE)
+	{
+		DisplayGame_Playing();
+		DisplayWipe();
+	}
+	else if (GameTransition == GAMETRANSITION_RESTART_PAGE)
 	{
 		DisplayGame_Playing();
 		DisplayWipe();
