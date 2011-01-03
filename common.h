@@ -238,5 +238,6 @@ extern bool DevMode;
 extern int ScrollY;
 
 extern bool ChapterIntroDisplayed;
+extern bool GamePause;
 
 #endif

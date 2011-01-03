@@ -76,6 +76,7 @@ bool DisplayHelp = false;
 bool DevMode = true;
 bool SlowMotionMode = false;
 bool ChapterIntroDisplayed = false;
+bool GamePause = false;
 
 int BackgroundX = 0;
 int BackgroundY = 0;
@@ -387,7 +388,18 @@ void DisplayGame_Playing()
 	DisplayDust();
 	DisplayVacuum();
 	DisplayLives();
-	
+
+	//Display Pause
+
+    if (GamePause)
+    {
+        AddLitSprite( LIGHTLIST_VACUUM, &Pause1Sprite, 340, -10);
+    }
+    else
+    {
+        AddLitSprite( LIGHTLIST_VACUUM, &Pause2Sprite, 340, -10);
+    }
+        
 	// Lighting effects.
 	DisplayFlashlight();
 
@@ -397,8 +409,8 @@ void DisplayGame_Playing()
 	RenderLighting();
 
     // HUD Drawing - Score, etc.
-    DisplayScore();   
-    	
+    DisplayScore();
+        	
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Debugging aids                                                                        //
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -424,24 +436,41 @@ void DisplayGame_Playing()
 
 void UpdateGame_Playing()
 { 
-	UpdateDusty();
-		
-	if (Dusty.State != DUSTYSTATE_DIE)
+    //Pause Update
+    if (kbIsKeyDown(KB_P) && !kbWasKeyDown(KB_P))
+    {
+        if (GamePause)
+        {
+            GamePause = false;
+        }
+        else if (GamePause == false)
+        {
+            GamePause = true;
+        }
+    }
+    
+	if (GamePause != true)
 	{
-		UpdateFans();
-		UpdateBarrels();
-		UpdateCoins();   
-        UpdateBall();  
-        UpdateGear();  
-		UpdateFireWorks();
-		UpdateFlashlight();
-		UpdateScore();
-		UpdateLives();
-	}
+	    UpdateDusty();
+    		
+	    if (Dusty.State != DUSTYSTATE_DIE)
+	    {
+		    UpdateFans();
+		    UpdateBarrels();
+		    UpdateCoins();   
+            UpdateBall();  
+            UpdateGear();  
+		    UpdateFireWorks();
+		    UpdateFlashlight();
+		    UpdateScore();
+		    UpdateLives();
+	    }
 
-	UpdateDust();
-	UpdateDebris();
-    UpdateVacuum(); 
+	    UpdateDust();
+	    UpdateDebris();
+        UpdateVacuum(); 
+    
+    }
     
     ////In The future this can be a function that will determine if it is the first page.
 
@@ -638,7 +667,7 @@ void Display()
 	{
 		DisplayGame_Playing();
 	}
-
+	
 #ifdef PLATFORM_WINDOWS
 	if (DisplayHelp)
 	{
@@ -708,6 +737,7 @@ void Display()
 
 bool Update()
 {   
+    
 	/*
 	//Background Music
     if (BackgroundMusic == 1)
@@ -914,7 +944,7 @@ bool Update()
 
 	// Vacuum sounds always need to be updated no matter what state the game is in.
 	UpdateVacuumSound();
-
+	
 	if (GameState == GAMESTATE_START_SCREEN)	
 	{
 		UpdateStartScreen();

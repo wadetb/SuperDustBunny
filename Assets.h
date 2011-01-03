@@ -84,6 +84,9 @@ extern gxSprite CoinLife4Sprite;
 extern gxSprite CoinLife5Sprite;
 extern gxSprite CoinLife6Sprite;
 
+extern gxSprite Pause1Sprite;
+extern gxSprite Pause2Sprite;
+
 extern gxSprite TennisBallSpin1Sprite;
 extern gxSprite TennisBallSpin2Sprite;
 extern gxSprite TennisBallSpin3Sprite;

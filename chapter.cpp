@@ -954,7 +954,7 @@ void EraseBlock(int x, int y)
 
 void DisplayScore()
 {
-    gxDrawString(400, 0, 16, gxRGB32(255, 255, 255), "Score: %d", Score.ScoreCounter);
+    //gxDrawString(400, 0, 16, gxRGB32(255, 255, 255), "Score: %d", Score.ScoreCounter);
 }
 
 void UpdateScore()
