@@ -28,19 +28,11 @@
 #include <direct.h>
 
 SChapter Chapter;
-SScore Score;
 
 int ScrollY;
 
 const char* CurrentChapterDir;
 
-void InitScore()
-{
-    Score.RaiseScore = false;
-    Score.ScoreCounter = 0;
-    Score.X = 600;
-    Score.Y = 0;
-}
 
 void ParseNailProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode)
 {
@@ -951,30 +943,3 @@ void EraseBlock(int x, int y)
 
 	Chapter.PageBlocks[y * Chapter.PageWidth + x] = SPECIALBLOCKID_BLANK;
 }
-
-void DisplayScore()
-{
-    //gxDrawString(400, 0, 16, gxRGB32(255, 255, 255), "Score: %d", Score.ScoreCounter);
-}
-
-void UpdateScore()
-{
-    if (Dusty.State == DUSTYSTATE_JUMP || Dusty.State == DUSTYSTATE_LAUNCH)
-    {
-        Score.RaiseScore = true;
-    }
-    else
-    {   
-        Score.RaiseScore = false;
-    }
-    
-    if (Score.RaiseScore == true)
-    {
-        Score.ScoreCounter += 1;
-    }
-    else
-    {
-        Score.ScoreCounter += 0;
-    }
-}
-

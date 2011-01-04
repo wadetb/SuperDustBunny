@@ -120,15 +120,8 @@ struct SChapter
 	int PageHeight;
 };
 
-struct SScore
-{
-    bool RaiseScore;
-    int ScoreCounter;
-    int X, Y;  
-};
-
 extern SChapter Chapter;
-extern SScore Score;
+
 
 extern int ScrollY;
 
@@ -140,10 +133,6 @@ void SetCurrentPage(int PageNum);
 void DisplayChapter();
 
 void CalculateScrollY();
-
-void InitScore();
-void DisplayScore();
-void UpdateScore();
 
 int GetBlockID(int x, int y);
 

@@ -132,6 +132,8 @@ gxSprite TutorialWallJumpSprite;
 
 gxSprite ChapterTitle;
 
+gxSprite Score1Sprite;
+
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 //                                                    Sound Assets                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
@@ -286,7 +288,10 @@ void LoadAssets()
 	gxLoadSprite("Data/tutorial-jump.png", &TutorialJumpSprite);
 	gxLoadSprite("Data/tutorial-walljump.png", &TutorialWallJumpSprite);
 	
-	gxLoadSprite("Data/chapter-title.png", &ChapterTitle);
+    gxLoadSprite("Data/chapter-title.png", &ChapterTitle);
+    
+    gxLoadSprite("Data/Score.png", &Score1Sprite);
+	
 
 	//-----------------------------------------------------------------------------------------------------------------------------------------//
 	//                                                    Sound Assets                                                                         //

@@ -26,6 +26,7 @@
 #include "Lives.h"
 #include "Recorder.h"
 #include "Tutorial.h"
+#include "GameScore.h"
 
 #include "StartScreen.h"
 #include "HelpScreen.h"
@@ -271,7 +272,7 @@ bool GetInput_Jump()
 
 void LoadCurrentChapter()
 {
-	Score.ScoreCounter = 0;
+	Score.Counter = 0;
 
 	ClearChapter();
 
@@ -388,6 +389,9 @@ void DisplayGame_Playing()
 	DisplayDust();
 	DisplayVacuum();
 	DisplayLives();
+	
+    // HUD Drawing - Score, etc.
+    DisplayScore();
 
 	//Display Pause
 
@@ -408,9 +412,7 @@ void DisplayGame_Playing()
 
 	RenderLighting();
 
-    // HUD Drawing - Score, etc.
-    DisplayScore();
-        	
+      	
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Debugging aids                                                                        //
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
