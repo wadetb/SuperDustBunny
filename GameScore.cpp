@@ -37,27 +37,30 @@ void DisplayScore()
 
 void UpdateScore()
 {
+   if (Gear.State == GEARSTATE_FALLING)
+   {
+        Score.Type = 1;
+        RaiseScore();
+   }
    
-    //If Dusty hits Gear or Tennis Ball
-    // Set Score.Type to 1
-    // RaiseScore();
-    
-    //If Dusty Launches from Barrel
-    // Set Score.Type to 2
-    // RaiseScore();
-    
-    //If Dusty Jumps with the fan
-    // Set Score.Type to 3
-    // RaiseScore();
-    
-    //If Dusty Sets off Fireworks
-    // Set Score.Type to 4
-    // RaiseScore();
-    
-    //If Dusty Knocks down debris
-    //Set Score.type to 5
-    //RaiseScore();
-      
+   if (Ball.State == BALLSTATE_FALLING)
+   {
+        Score.Type = 1;
+        RaiseScore();
+   }
+   
+   if (Barrel.State == BARRELSTATE_LAUNCH)
+   {
+        Score.Type = 2;
+        RaiseScore();
+   }
+   
+   if (FireWork.State == FIREWORKSTATE_EXPLODE)
+   {
+        Score.Type = 3;
+        RaiseScore();
+   }
+         
 }
 
 void RaiseScore()
@@ -72,4 +75,6 @@ void RaiseScore()
     case 5:    Score.Counter += 20; break;
     default:   break;   
     }
+    
+    Score.Type = 0;
 }
