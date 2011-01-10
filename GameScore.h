@@ -13,7 +13,9 @@
 struct SScore
 {
     int Counter;
-    int Type;  
+    int Type;
+    int Place;
+    int Number;  
 };
 
 extern SScore Score;

@@ -78,6 +78,17 @@ gxSprite CoinLife4Sprite;
 gxSprite CoinLife5Sprite;
 gxSprite CoinLife6Sprite;
 
+gxSprite ScoreNumber0Sprite;
+gxSprite ScoreNumber1Sprite;
+gxSprite ScoreNumber2Sprite;
+gxSprite ScoreNumber3Sprite;
+gxSprite ScoreNumber4Sprite;
+gxSprite ScoreNumber5Sprite;
+gxSprite ScoreNumber6Sprite;
+gxSprite ScoreNumber7Sprite;
+gxSprite ScoreNumber8Sprite;
+gxSprite ScoreNumber9Sprite;
+
 gxSprite Pause1Sprite;
 gxSprite Pause2Sprite;
 
@@ -235,6 +246,17 @@ void LoadAssets()
 	gxLoadSprite("Data/coin-lives-4.png", &CoinLife4Sprite);
 	gxLoadSprite("Data/coin-lives-5.png", &CoinLife5Sprite);
 	gxLoadSprite("Data/coin-lives-6.png", &CoinLife6Sprite);
+	
+    gxLoadSprite("Data/number-0.png", &ScoreNumber0Sprite);
+    gxLoadSprite("Data/number-0.png", &ScoreNumber1Sprite);
+    gxLoadSprite("Data/number-0.png", &ScoreNumber2Sprite);
+    gxLoadSprite("Data/number-0.png", &ScoreNumber3Sprite);
+    gxLoadSprite("Data/number-0.png", &ScoreNumber4Sprite);
+    gxLoadSprite("Data/number-0.png", &ScoreNumber5Sprite);
+    gxLoadSprite("Data/number-0.png", &ScoreNumber6Sprite);
+    gxLoadSprite("Data/number-0.png", &ScoreNumber7Sprite);
+    gxLoadSprite("Data/number-0.png", &ScoreNumber8Sprite);
+    gxLoadSprite("Data/number-0.png", &ScoreNumber9Sprite);
 	
     gxLoadSprite("Data/game-pause-1.png", &Pause1Sprite);
     gxLoadSprite("Data/game-pause-2.png", &Pause2Sprite);
