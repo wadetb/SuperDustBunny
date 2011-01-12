@@ -12,10 +12,22 @@
 
 struct SScore
 {
-    int Counter;
+    int CounterSingle;
+    int CounterTen;
+    int CounterHundred;
+    int CounterThousand;
+    int CounterTenThousand;
+    
     int Type;
-    int Place;
-    int Number;  
+    
+    int ToRaise;
+    
+    bool Raise;
+    bool Single;
+    bool Ten;
+    bool Hundred;
+    bool Thousand;
+    bool TenThousand;  
 };
 
 extern SScore Score;
@@ -23,6 +35,7 @@ extern SScore Score;
 void InitScore();
 void DisplayScore();
 void UpdateScore();
-void RaiseScore();
+
+void ResetScore();
 
 #endif

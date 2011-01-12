@@ -13,6 +13,7 @@
 #include "Tutorial.h"
 #include "Vacuum.h"
 #include "Chapter.h"
+#include "GameScore.h"
 
 #define MAX_COINS 100
 
@@ -78,6 +79,9 @@ void UpdateCoins()
 			if (Dist < 100)
 			{
 				Coin->State = COINSTATE_COLLECTED;
+				
+                Score.Type = 5;
+                Score.Raise = true;
 
 				Dusty.GainLife = true;
 

@@ -272,7 +272,7 @@ bool GetInput_Jump()
 
 void LoadCurrentChapter()
 {
-	Score.Counter = 0;
+	ResetScore();
 
 	ClearChapter();
 
@@ -345,6 +345,7 @@ void SetGameState_Playing()
 	GameState = GAMESTATE_PLAYING;
 
 	InitTutorial();
+	InitScore();
 
 	// Remove this to re-enable the tutorials when we are closer to a release.
 	// For now they just slow down development.
@@ -464,7 +465,7 @@ void UpdateGame_Playing()
             UpdateGear();  
 		    UpdateFireWorks();
 		    UpdateFlashlight();
-		    UpdateScore();
+		    UpdateScore();		 
 		    UpdateLives();
 	    }
 

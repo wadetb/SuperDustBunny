@@ -12,6 +12,7 @@
 #include "Dusty.h"
 #include "Tutorial.h"
 #include "Vacuum.h"
+#include "GameScore.h"
 
 #define MAX_GEARS 100
 
@@ -70,6 +71,9 @@ void UpdateGear()
 				Gear->State = GEARSTATE_FALLING;
 				sxPlaySound( &GearGrindSound );
 				
+                Score.Type = 1;
+                Score.Raise = true;
+				
 				if (Dusty.FloatVelocityX < 0)
 				{
 					Gear->AngularVelocity = -5 * PI / 180.0f;
@@ -115,7 +119,7 @@ void UpdateGear()
                 Gear->State = GEARSTATE_INACTIVE;
                 sxPlaySound (&VacuumClogSound);
                 JamVacuum();
-            }
+            }           
         }
     }    
 }

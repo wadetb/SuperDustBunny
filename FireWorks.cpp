@@ -16,6 +16,7 @@
 #include "Gear.h"
 #include "TennisBall.h"
 #include "Debris.h"
+#include "GameScore.h"
 
 #define MAX_FIREWORKS 100
 
@@ -495,6 +496,9 @@ void UpdateFireWorks()
 			{
 				FireWork->Timer = 180;
 				FireWork->State = FIREWORKSTATE_EXPLODE;
+				
+                Score.Type = 4;
+                Score.Raise = true;
 
 				ExplodeFireWork(FireWork->X, FireWork->Y, FireWork->ExplosionSize);
 			}    	          

@@ -12,6 +12,7 @@
 #include "Dusty.h"
 #include "Tutorial.h"
 #include "Vacuum.h"
+#include "GameScore.h"
 
 #define MAX_BALLS 100
 
@@ -93,7 +94,10 @@ void UpdateBall()
 
             if (Dist < 125)
             {
-                Ball->State = BALLSTATE_FALLING;        
+                Ball->State = BALLSTATE_FALLING;
+                
+                Score.Type = 2;
+                Score.Raise = true;        
 
                 sxPlaySound( &VacuumClogSound );  
 

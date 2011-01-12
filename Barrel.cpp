@@ -12,6 +12,7 @@
 #include "Chapter.h"
 #include "Dusty.h"
 #include "Tutorial.h"
+#include "GameScore.h"
 
 #define MAX_BARRELS 100
 
@@ -165,6 +166,9 @@ void UpdateBarrels()
 				SetDustyState_Launch(Velocity*cosf(Angle), -Velocity*sinf(Angle));
 				Barrel->Timer = 30;
 				Barrel->State = BARRELSTATE_LAUNCH;
+				
+                Score.Type = 3;
+                Score.Raise = true;
 			}
 		}
 		else if (Barrel->State == BARRELSTATE_LAUNCH)
