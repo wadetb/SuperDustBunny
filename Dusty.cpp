@@ -118,16 +118,31 @@ void SetDustyState_Stand()
 
 void DisplayDusty_Stand()
 {
-	if (Dusty.SpriteTransition <= 4)
-		DisplayDustySprite(&DustyHop5Sprite, -119, 18, -218);
+	if (Dusty.CollideMaterial == MATERIAL_ICE && fabsf(Dusty.FloatVelocityX) > 1)
+	{
+		gxSprite* SlideSprites[] =
+		{
+			&DustySlide1Sprite,
+			&DustySlide2Sprite,
+			&DustySlide3Sprite
+		};
+
+		int Index = (Dusty.SpriteTransition/5) % 3;
+		DisplayDustySprite(SlideSprites[Index], -128, 5, -221);
+	}
 	else
 	{
-		if (Dusty.SpriteTransition % 40 < 10)
-			DisplayDustySprite(&DustyIdle1Sprite, -124, 5, -221);
-		else if (Dusty.SpriteTransition % 40 < 20)
-			DisplayDustySprite(&DustyIdle2Sprite, -124, 5, -221);
+		if (Dusty.SpriteTransition <= 4)
+			DisplayDustySprite(&DustyHop5Sprite, -119, 18, -218);
 		else
-			DisplayDustySprite(&DustyIdle2Sprite, -124, 5, -221);
+		{
+			if (Dusty.SpriteTransition % 40 < 10)
+				DisplayDustySprite(&DustyIdle1Sprite, -124, 5, -221);
+			else if (Dusty.SpriteTransition % 40 < 20)
+				DisplayDustySprite(&DustyIdle2Sprite, -124, 5, -221);
+			else
+				DisplayDustySprite(&DustyIdle2Sprite, -124, 5, -221);
+		}
 	}
 }
 
@@ -758,7 +773,6 @@ void UpdateDusty_Die()
 	Dusty.FloatVelocityY *= 0.99f;
 
 	if (Distance(Dusty.FloatX, Dusty.FloatY, (float)gxScreenWidth/2, Vacuum.Y) < 40.0f)
-	//if (Dusty.FloatY + ScrollY > gxScreenHeight)
 	{
 		if (Dusty.Lives > 0)//Check before the Die Screen Transition
 		{

@@ -62,6 +62,8 @@ void StartScreen_Advance()
 {
 	if (StartScreen.CurItem == STARTSCREEN_ITEM_START)
 	{
+		Dusty.Lives = 0;
+
 		SetGameState_Transition(GAMETRANSITION_FIRST_PAGE);
 	}
 	else if (StartScreen.CurItem == STARTSCREEN_ITEM_HELP)
@@ -100,7 +102,6 @@ void UpdateStartScreen()
 
 	if (!kbIsKeyDown(KB_RETURN) && kbWasKeyDown(KB_RETURN))
 	{
-		Dusty.Lives = 1;
 		StartScreen_Advance();
 		return;
 	}
