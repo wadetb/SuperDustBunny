@@ -21,6 +21,7 @@ struct SScore
     int Type;
     
     int ToRaise;
+    int Left;
     
     bool Raise;
     bool Single;

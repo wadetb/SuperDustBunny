@@ -33,6 +33,7 @@ void InitScore()
     
     Score.Type = 0;
     Score.ToRaise = 0;
+    Score.Left = 0;
     
     Score.Raise = false;
     Score.Single = true;
@@ -166,11 +167,16 @@ void UpdateScore()
     }
 
     if (Score.Raise)
-    {
-        for (int i = 0; i < Score.ToRaise; i++)
+    {    
+        if (Score.Left == Score.ToRaise)
         {
-            Score.CounterSingle += 1;    
+            Score.Raise = false;
+            Score.Type = 0;
+            Score.Left = 0;
         }
+        
+        Score.CounterSingle += 1;
+        Score.Left += 1;
         
         if (Score.CounterSingle > 9)
         {
@@ -178,7 +184,7 @@ void UpdateScore()
             Score.CounterTen += 1;        
             Score.Ten = true;
         }
-        
+
         if (Score.CounterTen > 9)
         {
             Score.CounterTen = (Score.CounterTen - 10);
@@ -203,9 +209,6 @@ void UpdateScore()
         if (Score.CounterTenThousand > 9)
         {
             Score.CounterTenThousand = (Score.TenThousand - 10);
-        }
-        
-        Score.Raise = false;
-        Score.Type = 0;    
+        }                  
     }         
 }
