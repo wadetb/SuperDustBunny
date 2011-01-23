@@ -35,9 +35,9 @@
 #include "win/keyboard.h"
 #include "win/sound.h"
 #elif defined(PLATFORM_IPHONE)
-#include "iPhone/graphics.h"
-#include "iPhone/mouse.h"
-#include "iPhone/sound.h"
+#include "iOS/graphics.h"
+#include "iOS/mouse.h"
+#include "iOS/sound.h"
 #include <mach/mach.h>
 #include <mach/mach_time.h>
 #elif defined(PLATFORM_MAC)

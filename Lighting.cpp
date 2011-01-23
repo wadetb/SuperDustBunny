@@ -19,6 +19,7 @@
 int NLitVerts;
 SLitVertex LitVerts[MAX_LIT_VERTS];
 
+#ifdef PLATFORM_WINDOWS
 
 D3DVERTEXELEMENT9 LitVertexElements[] =
 {
@@ -30,6 +31,13 @@ D3DVERTEXELEMENT9 LitVertexElements[] =
 
 IDirect3DVertexDeclaration9* LitVertexDecl;
 
+#endif
+
+#ifdef PLATFORM_IPHONE
+
+#pragma warning(TODO)
+
+#endif
 
 struct SLightState
 {
@@ -286,8 +294,14 @@ void DrawLitQuad(SLitQuad* Quad)
 {
 	_gxSetTexture(Quad->Sprite);
 
+#ifdef PLATFORM_WINDOWS
 	gxDev->SetVertexDeclaration( LitVertexDecl );
 	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, Quad->NVerts-2, Quad->Verts, sizeof(SLitVertex) );
+#endif
+    
+#ifdef PLATFORM_IPHONE
+#pragma warning(TODO)
+#endif
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -492,10 +506,14 @@ void RenderCombinedColor()
 {
 	gxSetPixelShader(&CombineShader);
 	_gxSetAlpha(GXALPHA_NONE);
+    
+#ifdef PLATFORM_WINDOWS
 	gxDev->SetTexture( 0, ColorRT.tex );
 	gxDev->SetTexture( 1, ColorBleedFinalRT.tex );
 	gxDev->SetTexture( 2, LightingRT.tex );
-	_gxDrawQuad(0, 0, (float)gxScreenWidth, (float)gxScreenHeight);
+#endif
+	
+    _gxDrawQuad(0, 0, (float)gxScreenWidth, (float)gxScreenHeight);
 	gxSetPixelShader(&TexturedColoredShader);
 }
 
@@ -505,8 +523,10 @@ void RenderCombinedColor()
 
 void InitLighting()
 {
+#ifdef PLATFORM_WINDOWS
 	gxDev->CreateVertexDeclaration(LitVertexElements, &LitVertexDecl);
-
+#endif
+    
 	// Compile shaders.
 	gxCreateVertexShader(LitVertexShaderSource, &LitVertexShader);
 	gxCreateVertexShader(ShadowVertexShaderSource, &ShadowVertexShader);

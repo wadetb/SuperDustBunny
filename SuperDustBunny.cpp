@@ -95,9 +95,11 @@ void Init()
 	// Use iPad "portrait mode" screen dimensions.
 	gxInit(GXDISPLAY_IPAD_PORTRAIT);
 
+#ifdef PLATFORM_WINDOWS
 	// Default to iPhone size.
 	gxEmulateDisplaySize(GXDISPLAY_IPHONE_PORTRAIT);
-
+#endif
+    
 	sxInit();
 
 #ifdef PLATFORM_WINDOWS
@@ -439,6 +441,7 @@ void DisplayGame_Playing()
 
 void UpdateGame_Playing()
 { 
+#ifdef PLATFORM_WINDOWS
     //Pause Update
     if (kbIsKeyDown(KB_P) && !kbWasKeyDown(KB_P))
     {
@@ -451,6 +454,7 @@ void UpdateGame_Playing()
             GamePause = true;
         }
     }
+#endif
     
 	if (GamePause != true)
 	{

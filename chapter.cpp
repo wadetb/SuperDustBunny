@@ -25,7 +25,9 @@
 #include "Lives.h"
 #include "Recorder.h"
 
+#ifdef PLATFORM_WINDOWS
 #include <direct.h>
+#endif
 
 SChapter Chapter;
 
