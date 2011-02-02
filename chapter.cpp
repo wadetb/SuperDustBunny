@@ -795,6 +795,10 @@ void CreatePageObjects()
 					CreateFlashlightWaypoint(x * 64, y * 64, (SFlashlightWaypointProperties*)Block->Properties);
 					EraseBlock(x, y);
 					break;
+			    case BLOCKTYPE_STAPLER:
+				    CreateStapler(x * 64, y * 64, (SStaplerProperties*)Block->Properties);
+				    EraseBlock(x, y);
+				    break;	
 				}
 			}
 		}
