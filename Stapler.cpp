@@ -62,10 +62,8 @@ void CreateStapler(int X, int Y, SStaplerProperties* Properties)
 
     Stapler->X = (float)X + 32;
     Stapler->Y = (float)Y + 32;
-
-    Stapler->FromDir = (float)Properties->From;
-    Stapler->ToDir = (float)Properties->To;
-    Stapler->Dir = Stapler->FromDir;
+    
+    Stapler->PowerJump = 0;
 
     Stapler->State = STAPLERSTATE_WAIT;
 }
@@ -75,33 +73,14 @@ void ClearStaplers()
     NStaplers = 0;
 }
 
-void DisplayStaplers_BeforeDusty()
+void DisplayStaplers()
 {
     for (int i = 0; i < NStaplers; i++)
     {
         SStapler* Stapler = &Staplers[i];
 
-        AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &StaplerBackSprite, Stapler->X, Stapler->Y + ScrollY, 1.0f, DegreesToRadians(Stapler->Dir));
+        AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &StaplerUpSprite, Stapler->X, Stapler->Y + ScrollY, 1.0f, 0.0f);
     }
-}
-
-void DisplayStaplers_AfterDusty()
-{
-    for (int i = 0; i < NStaplers; i++)
-    {
-        SStapler* Stapler = &Staplers[i];
-
-        AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND_NO_SHADOW, &StaplerFrontSprite, Stapler->X, Stapler->Y + ScrollY, 1.0f, DegreesToRadians(Stapler->Dir));
-        AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND_NO_SHADOW, &StaplerNailSprite, Stapler->X, Stapler->Y + ScrollY, 1.0f, 0.0f);
-    }
-}
-
-float GetDirDifference(float a, float b) 
-{
-    float mn = a - b;
-    while (mn < -180) mn += 360;
-    while (mn > 180) mn -= 360;
-    return mn;
 }
 
 void UpdateStaplers()
@@ -114,62 +93,68 @@ void UpdateStaplers()
         {
             float Dist = Distance(Dusty.FloatX, Dusty.FloatY, Stapler->X, Stapler->Y+60);
 
-            if (Dist < 200)
+            if (Dusty.CollideWithBottomSide && Dist < 25)
             {
-                float NewDir = AngleBetween(Stapler->X, Stapler->Y, Dusty.FloatX, Dusty.FloatY-60) * 180 / PI;
-                float DirDelta = GetDirDifference(NewDir, Stapler->FromDir);
-                Stapler->Dir = Stapler->FromDir + Remap(Dist, 200, 100, 0, DirDelta, true);
-
-                if (Dist < 100)
-                {
-                    Dusty.FloatX = Dusty.FloatX * 0.8f + Stapler->X * 0.2f;
-                    Dusty.FloatY = Dusty.FloatY * 0.8f + (Stapler->Y+60) * 0.2f;
-                    Dusty.FloatVelocityX = 0;
-                    Dusty.FloatVelocityY = 0;
-                    //SetDustyState_PrepareLaunch();
-                }
-            }
-
-            if (Dist < 25)
-            {
-                if (Tutorial.StaplerDisplayed == false)
-                {
-                    SetGameState_Tutorial(TUTORIALSTATE_STAPLER);
-                    return;
-                }
-
-                Dusty.FloatX = (float)Stapler->X;
-                Dusty.FloatY = (float)Stapler->Y + 60;
-                SetDustyState_PrepareLaunch();
-
+                //if (Tutorial.StaplerDisplayed == false)
+                //{
+                //    SetGameState_Tutorial(TUTORIALSTATE_STAPLER);
+                //    return;
+                //}
+                
                 Stapler->State = STAPLERSTATE_PRELAUNCH;
+                Dusty.State = SetDustyState_PrepareLaunch();
+                
             }
         }
         else if (Stapler->State == STAPLERSTATE_PRELAUNCH)
-        {
-            Dusty.FloatX = (float)Stapler->X;
-            Dusty.FloatY = (float)Stapler->Y + 60;
-
-            float Diff = GetDirDifference(Stapler->Dir, Stapler->ToDir);
-            if (Diff > 5 || Diff < -5)
+        {       
+            while (kbIsKeyDown(KB_SPACE))
             {
-                if (Diff < 0)
-                    Stapler->Dir = fmodf(Stapler->Dir+5, 360);
-                else
-                    Stapler->Dir = fmodf(Stapler->Dir+355, 360);
+                if (Stapler->PowerJumpCounter > 100)
+                {
+                    Stapler->PowerJumpCounter = 100;
+                }
+                
+                Stapler->PowerJumpCounter += 1;
+                
+                switch(Stapler->PowerJumpCounter)
+                {
+                    case 10: Stapler->PowerJump = 1; break;
+                    case 20: Stapler->PowerJump = 2; break;
+                    case 30: Stapler->PowerJump = 3; break;
+                    case 40: Stapler->PowerJump = 4; break;
+                    case 50: Stapler->PowerJump = 5; break;
+                    case 60: Stapler->PowerJump = 6; break;
+                    case 70: Stapler->PowerJump = 7; break;
+                    case 80: Stapler->PowerJump = 8; break;
+                    case 90: Stapler->PowerJump = 9; break;
+                    case 100: Stapler->PowerJump = 10; break;
+                    default: break;
+                }      
             }
-            else
+           
+            if (kbWasKeyDown(KB_SPACE))
             {
-                Stapler->Dir = Stapler->ToDir;
-                float Angle = DirectionToAngle(Stapler->Dir);
-                float Velocity = 20.0f;
-                SetDustyState_Launch(Velocity*cosf(Angle), -Velocity*sinf(Angle));
-                Stapler->Timer = 30;
-                Stapler->State = STAPLERSTATE_LAUNCH;
+                Stapler->State == STAPLERSTATE_LAUNCH;
+                
+                switch(Stapler->PowerJump)
+                {
+                    case 1:  
+                    case 2: 
+                    case 3: 
+                    case 4: 
+                    case 5: 
+                    case 6: 
+                    case 7: 
+                    case 8: 
+                    case 9: 
+                    case 10:              
+                    default: break;
+                }
 
-                Score.Type = 3;
-                Score.Raise = true;
-            }
+                Stapler->PowerJumpCounter = 0;
+                Stapler->PowerJump = 0;
+            }          
         }
         else if (Stapler->State == STAPLERSTATE_LAUNCH)
         {

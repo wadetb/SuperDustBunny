@@ -730,6 +730,7 @@ void ClearPageObjects()
 	ClearFireWorks();
 	ClearBalls();
 	ClearGears();
+	ClearStaplers();
 	ClearFlashlightWaypoints();
 
 	if (Chapter.PageBlocks)

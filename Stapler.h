@@ -30,11 +30,9 @@ struct SStapler
 
     EStaplerState State;
 
-    float FromDir;
-    float ToDir;
-    float Dir;
-
     int Timer;
+    int PowerJump;
+    int PowerJumpCounter;
 };
 
 extern SStapler Stapler;
@@ -45,7 +43,6 @@ void CreateStapler(int X, int Y, SStaplerProperties* Properties);
 void ClearStaplers();
 
 void UpdateStaplers();
-void DisplayStaplers_BeforeDusty();
-void DisplayStaplers_AfterDusty();
+void DisplayStaplers();
 
 #endif
