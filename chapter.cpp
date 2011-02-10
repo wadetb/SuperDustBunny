@@ -24,6 +24,7 @@
 #include "Debris.h"
 #include "Lives.h"
 #include "Recorder.h"
+#include "Stapler.h"
 
 #ifdef PLATFORM_WINDOWS
 #include <direct.h>
@@ -304,6 +305,10 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* FileName
 					else if (strcmp(Value, "flashlight_waypoint") == 0)
 					{
 						Block->Type = BLOCKTYPE_FLASHLIGHT_WAYPOINT;
+					}
+					else if (strcmp(Value, "stapler") == 0)
+					{
+					    Block->Type = BLOCKTYPE_STAPLER;
 					}
 				}
 				else if (strcmp(Name, "material") == 0)
@@ -797,7 +802,7 @@ void CreatePageObjects()
 					EraseBlock(x, y);
 					break;
 			    case BLOCKTYPE_STAPLER:
-				    CreateStapler(x * 64, y * 64, (SStaplerProperties*)Block->Properties);
+				    CreateStapler(x * 64, y * 64);
 				    EraseBlock(x, y);
 				    break;	
 				}

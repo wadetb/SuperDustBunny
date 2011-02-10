@@ -19,41 +19,7 @@
 int NStaplers = 0;
 SStapler Staplers[MAX_STAPLERS];
 
-void ParseStaplerProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode)
-{
-    SStaplerProperties* StaplerProperties = (SStaplerProperties*)malloc(sizeof(SStaplerProperties));
-
-    // Set default values.
-    StaplerProperties->From = 0;
-    StaplerProperties->To = 0;
-
-    // Scan properties for values.
-    rapidxml::xml_node<char>* PropertyNode = PropertiesNode->first_node("property");
-    while (PropertyNode)
-    {
-        const char* Name = PropertyNode->first_attribute("name")->value();
-        const char* Value = PropertyNode->first_attribute("value")->value();
-
-        if (strcmp(Name, "from") == 0)
-        {
-            StaplerProperties->From = atoi(Value);
-        }
-        else if (strcmp(Name, "to") == 0)
-        {
-            StaplerProperties->To = atoi(Value);
-        }
-        else if (strcmp(Name, "type") != 0 && strcmp(Name, "material") != 0)
-        {
-            ReportError("Unrecognized Stapler property '%s'='%s'.", Name, Value);
-        }
-
-        PropertyNode = PropertyNode->next_sibling("property");
-    }
-
-    Block->Properties = StaplerProperties;
-}
-
-void CreateStapler(int X, int Y, SStaplerProperties* Properties)
+void CreateStapler(int X, int Y)
 {
     if (NStaplers >= MAX_STAPLERS)
         ReportError("Exceeded the maximum of %d total Staplers.", MAX_STAPLERS);
@@ -79,7 +45,33 @@ void DisplayStaplers()
     {
         SStapler* Stapler = &Staplers[i];
 
-        AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &StaplerUpSprite, Stapler->X, Stapler->Y + ScrollY, 1.0f, 0.0f);
+        if (Stapler->State == STAPLERSTATE_WAIT)
+        {
+            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &StaplerUpSprite, Stapler->X, Stapler->Y + ScrollY, 1.0f, 0.0f);
+        }
+        else if (Stapler->State == STAPLERSTATE_PRELAUNCH)
+        {
+            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &StaplerDownSprite, Stapler->X, Stapler->Y + ScrollY, 1.0f, 0.0f);
+            
+            switch(Stapler->PowerJumpCounter)
+            {
+            case 10: AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &PowerJump1Sprite, Stapler->X + 50, (Stapler->Y) + ScrollY, 1.0f, 0.0f); break;
+            case 20: AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &PowerJump2Sprite, Stapler->X + 50, (Stapler->Y + 10) + ScrollY, 1.0f, 0.0f); break;
+            case 30: AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &PowerJump3Sprite, Stapler->X + 50, (Stapler->Y + 20) + ScrollY, 1.0f, 0.0f); break;
+            case 40: AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &PowerJump4Sprite, Stapler->X + 50, (Stapler->Y + 30) + ScrollY, 1.0f, 0.0f); break;
+            case 50: AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &PowerJump5Sprite, Stapler->X + 50, (Stapler->Y + 40) + ScrollY, 1.0f, 0.0f); break;
+            case 60: AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &PowerJump6Sprite, Stapler->X + 50, (Stapler->Y + 50) + ScrollY, 1.0f, 0.0f); break;
+            case 70: AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &PowerJump7Sprite, Stapler->X + 50, (Stapler->Y + 60) + ScrollY, 1.0f, 0.0f); break;
+            case 80: AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &PowerJump8Sprite, Stapler->X + 50, (Stapler->Y + 70) + ScrollY, 1.0f, 0.0f); break;
+            case 90: AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &PowerJump9Sprite, Stapler->X + 50, (Stapler->Y + 80) + ScrollY, 1.0f, 0.0f); break;
+            case 100: AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &PowerJump10Sprite, Stapler->X + 50, (Stapler->Y + 90) + ScrollY, 1.0f, 0.0f); break;
+            default: continue;
+            }
+        }
+        else if (Stapler->State == STAPLERSTATE_LAUNCH)
+        {
+            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &StaplerExtendUpSprite, Stapler->X, Stapler->Y + ScrollY, 1.0f, 0.0f);
+        }            
     }
 }
 
@@ -102,83 +94,53 @@ void UpdateStaplers()
                 //}
                 
                 Stapler->State = STAPLERSTATE_PRELAUNCH;
-                Dusty.State = SetDustyState_PrepareLaunch();
+                SetDustyState_PrepareLaunch();
                 
             }
         }
-        else if (Stapler->State == STAPLERSTATE_PRELAUNCH)
-        {       
-            while (kbIsKeyDown(KB_SPACE))
+        
+        if (Stapler->State == STAPLERSTATE_PRELAUNCH)
+        {    
+           
+            if (kbIsKeyDown(KB_SPACE))
             {
                 if (Stapler->PowerJumpCounter > 100)
                 {
                     Stapler->PowerJumpCounter = 100;
                 }
                 
-                Stapler->PowerJumpCounter += 1;
-                
-                switch(Stapler->PowerJumpCounter)
-                {
-                    case 10: Stapler->PowerJump = 1; break;
-                    case 20: Stapler->PowerJump = 2; break;
-                    case 30: Stapler->PowerJump = 3; break;
-                    case 40: Stapler->PowerJump = 4; break;
-                    case 50: Stapler->PowerJump = 5; break;
-                    case 60: Stapler->PowerJump = 6; break;
-                    case 70: Stapler->PowerJump = 7; break;
-                    case 80: Stapler->PowerJump = 8; break;
-                    case 90: Stapler->PowerJump = 9; break;
-                    case 100: Stapler->PowerJump = 10; break;
-                    default: break;
-                }      
+                Stapler->PowerJumpCounter += 1;    
             }
-           
+            
             if (kbWasKeyDown(KB_SPACE))
             {
-                Stapler->State == STAPLERSTATE_LAUNCH;
-                
-                switch(Stapler->PowerJump)
+                switch(Stapler->PowerJumpCounter)
                 {
-                    case 1:  
-                    case 2: 
-                    case 3: 
-                    case 4: 
-                    case 5: 
-                    case 6: 
-                    case 7: 
-                    case 8: 
-                    case 9: 
-                    case 10:              
-                    default: break;
+                case 10: Stapler->PowerJump = 0.8f; break;
+                case 20: Stapler->PowerJump = 0.9f; break;
+                case 30: Stapler->PowerJump = 1.0f; break;
+                case 40: Stapler->PowerJump = 1.1f; break;
+                case 50: Stapler->PowerJump = 1.2f; break;
+                case 60: Stapler->PowerJump = 1.3f; break;
+                case 70: Stapler->PowerJump = 1.4f; break;
+                case 80: Stapler->PowerJump = 1.5f; break;
+                case 90: Stapler->PowerJump = 1.6f; break;
+                case 100: Stapler->PowerJump = 1.7f; break;
+                default: continue;
                 }
-
+                
+                Stapler->State = STAPLERSTATE_LAUNCH; 
+            }
+                       
+            if (Stapler->State == STAPLERSTATE_LAUNCH)
+            {
+                Dusty.FloatY = Dusty.FloatY * Stapler->PowerJump;
+                
                 Stapler->PowerJumpCounter = 0;
                 Stapler->PowerJump = 0;
-            }          
-        }
-        else if (Stapler->State == STAPLERSTATE_LAUNCH)
-        {
-            Stapler->Timer--;
-            if (Stapler->Timer == 0)
-            {
-                Stapler->State = STAPLERSTATE_RESET;
-            }
-        }
-        else if (Stapler->State == STAPLERSTATE_RESET)
-        {
-            float Diff = GetDirDifference(Stapler->Dir, Stapler->FromDir);
-            if (Diff > 5 || Diff < -5)
-            {
-                if (Diff < 0)
-                    Stapler->Dir = fmodf(Stapler->Dir+5, 360);
-                else
-                    Stapler->Dir = fmodf(Stapler->Dir+355, 360);
-            }
-            else
-            {
-                Stapler->Dir = Stapler->FromDir;
+                
                 Stapler->State = STAPLERSTATE_WAIT;
-            }
-        }
-    }
+            }      
+        }             
+    }  
 }

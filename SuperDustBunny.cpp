@@ -24,6 +24,7 @@
 #include "Flashlight.h"
 #include "Debris.h"
 #include "Lives.h"
+#include "Stapler.h"
 #include "Recorder.h"
 #include "Tutorial.h"
 #include "GameScore.h"
@@ -382,6 +383,7 @@ void DisplayGame_Playing()
     DisplayBall();
 	DisplayFireWorks();
 	DisplayDebris();
+	DisplayStaplers();
 
 	// Dusty Drawing
 	DisplayDusty();
@@ -471,6 +473,7 @@ void UpdateGame_Playing()
 		    UpdateFlashlight();
 		    UpdateScore();		 
 		    UpdateLives();
+		    UpdateStaplers();
 	    }
 
 	    UpdateDust();

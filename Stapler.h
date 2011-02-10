@@ -31,15 +31,13 @@ struct SStapler
     EStaplerState State;
 
     int Timer;
-    int PowerJump;
+    float PowerJump;
     int PowerJumpCounter;
 };
 
 extern SStapler Stapler;
 
-void ParseStaplerProperties(struct SBlock* Block, rapidxml::xml_node<char>* PropertiesNode);
-
-void CreateStapler(int X, int Y, SStaplerProperties* Properties);
+void CreateStapler(int X, int Y);
 void ClearStaplers();
 
 void UpdateStaplers();

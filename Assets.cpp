@@ -103,6 +103,21 @@ gxSprite TennisBallSpin4Sprite;
 
 gxSprite GearSprite;
 
+gxSprite StaplerExtendUpSprite;
+gxSprite StaplerUpSprite;
+gxSprite StaplerDownSprite;
+
+gxSprite PowerJump1Sprite; 
+gxSprite PowerJump2Sprite; 
+gxSprite PowerJump3Sprite; 
+gxSprite PowerJump4Sprite; 
+gxSprite PowerJump5Sprite; 
+gxSprite PowerJump6Sprite; 
+gxSprite PowerJump7Sprite; 
+gxSprite PowerJump8Sprite; 
+gxSprite PowerJump9Sprite; 
+gxSprite PowerJump10Sprite; 
+
 gxSprite DustMoteSprite;
 gxSprite DustArrowSprite;
 
@@ -275,6 +290,21 @@ void LoadAssets()
 	gxLoadSprite("Data/tennisball-spin-4.png", &TennisBallSpin4Sprite);
 
 	gxLoadSprite("Data/gear.png", &GearSprite);
+	
+    gxLoadSprite("Data/staplerextendup.png", &StaplerExtendUpSprite);
+    gxLoadSprite("Data/staplerup.png", &StaplerUpSprite);
+    gxLoadSprite("Data/staplerdown.png", &StaplerDownSprite);
+    
+    gxLoadSprite("Data/powerjump1sprite.png", &PowerJump1Sprite);
+    gxLoadSprite("Data/powerjump2sprite.png", &PowerJump2Sprite);
+    gxLoadSprite("Data/powerjump3sprite.png", &PowerJump3Sprite);
+    gxLoadSprite("Data/powerjump4sprite.png", &PowerJump4Sprite);
+    gxLoadSprite("Data/powerjump5sprite.png", &PowerJump5Sprite);
+    gxLoadSprite("Data/powerjump6sprite.png", &PowerJump6Sprite);
+    gxLoadSprite("Data/powerjump7sprite.png", &PowerJump7Sprite);
+    gxLoadSprite("Data/powerjump8sprite.png", &PowerJump8Sprite);
+    gxLoadSprite("Data/powerjump9sprite.png", &PowerJump9Sprite);
+    gxLoadSprite("Data/powerjump10sprite.png", &PowerJump10Sprite);
 
 	gxLoadSprite("Data/dust-mote.png", &DustMoteSprite);
 	gxLoadSprite("Data/dust-arrow.png", &DustArrowSprite);
