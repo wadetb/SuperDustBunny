@@ -27,6 +27,13 @@ void sxGetOpenALAudioData(CFURLRef inFileURL, void** outData, ALsizei *outDataSi
 	ExtAudioFileRef extRef;
 	ExtAudioFileOpenURL(inFileURL, &extRef);
 	
+    if (extRef == NULL)
+    {
+        *outData = NULL;
+        *outDataSize = 0;
+        return;
+    }
+    
 	AudioStreamBasicDescription fileFormat;
 	UInt32 propSize = sizeof(fileFormat);
 	ExtAudioFileGetProperty(extRef, kExtAudioFileProperty_FileDataFormat, &propSize, &fileFormat);
@@ -81,6 +88,13 @@ void sxLoadSound(const char* filename, sxSound* sound)
 	
 	CFRelease(url);
 
+    if (data == NULL)
+    {
+        sound->buffer = 0;
+        sound->source = 0;
+        return;
+    }
+    
 	alGenBuffers(1, &sound->buffer);
 	alBufferData(sound->buffer, format, data, size, freq); 
 	

@@ -101,7 +101,7 @@ void UpdateStaplers()
         
         if (Stapler->State == STAPLERSTATE_PRELAUNCH)
         {    
-           
+#ifdef PLATFORM_WINDOWS
             if (kbIsKeyDown(KB_SPACE))
             {
                 if (Stapler->PowerJumpCounter > 100)
@@ -131,7 +131,8 @@ void UpdateStaplers()
                 
                 Stapler->State = STAPLERSTATE_LAUNCH; 
             }
-                       
+#endif
+            
             if (Stapler->State == STAPLERSTATE_LAUNCH)
             {
                 Dusty.FloatY = Dusty.FloatY * Stapler->PowerJump;

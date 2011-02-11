@@ -5,6 +5,10 @@
 int gxScreenWidth;
 int gxScreenHeight;
 
+GLuint _gxDefaultFrameBuffer;
+GLuint _gxDefaultFrameBufferWidth;
+GLuint _gxDefaultFrameBufferHeight;
+
 struct gxSpriteVertex
 {
 	float x, y, z, w;
@@ -103,6 +107,39 @@ void gxInitFontSprite()
 	free(buffer);	
 }
 
+const char* gxSpriteVertexShaderSource =
+"attribute vec2 PositionAttr;\n"
+"attribute vec2 TexCoordAttr;\n"
+"attribute vec4 ColorAttr;\n"
+"\n"
+"varying vec2 TexCoordInterp;\n"
+"varying vec4 ColorInterp;\n"
+"\n"
+"void main()\n"
+"{\n"
+"	gl_Position = vec4(PositionAttr.x/768.0*2.0-1.0, (1.0-PositionAttr.y/1024.0)*2.0-1.0, 0, 1);\n"
+"	TexCoordInterp = TexCoordAttr;\n"
+"	ColorInterp = ColorAttr;\n"
+"}\n";
+
+const char* gxSpritePixelShaderSource =
+"uniform lowp sampler2D Sampler;\n"
+"\n"
+"varying lowp vec2 TexCoordInterp;\n"
+"varying lowp vec4 ColorInterp;\n"
+"\n"
+"void main()\n"
+"{\n"
+"	gl_FragColor = texture2D(Sampler, TexCoordInterp) * ColorInterp;\n"
+"}\n";
+
+gxShader gxSpriteShader;
+
+void gxInitSpriteShader()
+{
+    gxCreateShader(gxSpriteVertexShaderSource, gxSpritePixelShaderSource, &gxSpriteShader);
+}
+
 void gxInit(gxDisplayType disp)
 {
 	switch (disp) 
@@ -125,13 +162,11 @@ void gxInit(gxDisplayType disp)
 		break;
 	}
 	
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glEnableClientState(GL_COLOR_ARRAY);
-	
 	msSetMouseRange( 0, 0, gxScreenWidth, gxScreenHeight );	
 	
 	gxInitFontSprite();
+    
+    gxInitSpriteShader();
 }
 
 void gxDeinit()
@@ -189,52 +224,51 @@ void gxDestroySprite(gxSprite* sprite)
 	sprite->texHeight = 0;
 }
 
-void _gxDrawQuad( int x, int y, int w, int h, unsigned color = gxRGBA32(255,255,255,255), float u1 = 0.0f, float v1 = 0.0f, float u2 = 1.0f, float v2 = 1.0f )
+void _gxDrawQuad( float x, float y, float w, float h, unsigned int color, float u1, float v1, float u2, float v2 )
 {
-	static gxSpriteVertex v[4];
-	v[0].x = x; v[0].y = y; v[0].z = -10.0f; v[0].w = 1.0f;
+    gxSpriteVertex v[4];
+	
+    v[0].x = x; v[0].y = y;
 	v[0].color = color;
 	v[0].u = u1; v[0].v = v1;
 	
-	v[1].x = x+w; v[1].y = y; v[1].z = -10.0f; v[1].w = 1.0f;
+	v[1].x = x+w; v[1].y = y;
 	v[1].color = color;
 	v[1].u = u2; v[1].v = v1;
 	
-	v[2].x = x+w; v[3].y = y+h; v[3].z = -10.0f; v[3].w = 1.0f;
+	v[2].x = x+w; v[3].y = y+h;
 	v[2].color = color;
 	v[2].u = u2; v[3].v = v2;
 	
-	v[3].x = x; v[2].y = y+h; v[2].z = -10.0f; v[2].w = 1.0f;
+	v[3].x = x; v[2].y = y+h;
 	v[3].color = color;
 	v[3].u = u1; v[2].v = v2;
 	
-	glVertexPointer(3, GL_FLOAT, sizeof(gxSpriteVertex), &v[0].x);
-	glTexCoordPointer(2, GL_FLOAT, sizeof(gxSpriteVertex), &v[0].u);
-	glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(gxSpriteVertex), &v[0].color);
+    glVertexAttribPointer(GX_ATTRIB_VERTEX, 2, GL_FLOAT, 0, sizeof(gxSpriteVertex), &v[0].x);
+    glVertexAttribPointer(GX_ATTRIB_TEXCOORD, 2, GL_FLOAT, 0, sizeof(gxSpriteVertex), &v[0].u);
+    glVertexAttribPointer(GX_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, sizeof(gxSpriteVertex), &v[0].color);
+
+    glEnableVertexAttribArray(GX_ATTRIB_VERTEX);
+    glEnableVertexAttribArray(GX_ATTRIB_TEXCOORD);
+    glEnableVertexAttribArray(GX_ATTRIB_COLOR);
 
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 }
 
 void gxDrawSprite(int x, int y, gxSprite* sprite)
 {
+    gxSetShader(&gxSpriteShader);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, sprite->tex);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	_gxDrawQuad(x, y, sprite->texWidth, sprite->texHeight);
-}
-
-void gxDrawSprite0(int x, int y, gxSprite* sprite)
-{
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, sprite->tex);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	_gxDrawQuad(x, y, sprite->texWidth, sprite->texHeight);
+	_gxDrawQuad(x, y, sprite->width, sprite->height, gxRGBA32(255, 255, 255, 255), 
+                0, 0, (float)sprite->width/(float)sprite->texWidth, (float)sprite->height/(float)sprite->texHeight);
 }
 
 void gxDrawSpriteAlpha(int x, int y, float alpha, gxSprite *sprite)
 {
+    gxSetShader(&gxSpriteShader);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, sprite->tex);
 	glEnable(GL_BLEND);
@@ -242,21 +276,9 @@ void gxDrawSpriteAlpha(int x, int y, float alpha, gxSprite *sprite)
 	_gxDrawQuad(x, y, sprite->texWidth, sprite->texHeight, gxRGBA32(255, 255, 255, (int)(alpha*255)));
 }
 
-void gxDrawSpriteClipped( int x, int y, gxSprite* p, int srcx, int srcy, int srcw, int srch )
-{
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, p->tex);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	float u0 = float(srcx)/p->texWidth;
-	float u1 = float(srcx + srcw)/p->texWidth;
-	float v0 = float(srcy)/p->texHeight;
-	float v1 = float(srcy + srch)/p->texHeight;
-	_gxDrawQuad(x, y, srcw, srch, gxRGBA32(255,255,255,255), u0, v0, u1, v1);
-}
-
 void gxDrawRectangleFilled(int x, int y, int width, int height, unsigned int color)
 {
+    gxSetShader(&gxSpriteShader);
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -272,6 +294,7 @@ void gxDrawString( int x, int y, int ptsize, int color, const char* text, ... )
 	vsnprintf(work, sizeof(work), text, args);
 	va_end(args);
 	
+    gxSetShader(&gxSpriteShader);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, gxFontSprite.tex);
 	glDisable(GL_BLEND);
@@ -312,87 +335,30 @@ FILE* gxOpenFile(const char* relativePath, const char* mode)
 	return fopen(work, mode);
 }
 
-
-void gxDrawSpriteCenteredRotated(int x, int y, float a, gxSprite* spr)
+void _gxSetAlpha( gxAlphaMode mode )
 {
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, spr->tex);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		
-	float ca = cosf(a);
-	float sa = sinf(a);
-	
-	float w = (float)spr->width * 0.5f;
-	float h = (float)spr->height * 0.5f;
-	
-	gxSpriteVertex v[4];
-	v[0].x = x + (-w * ca) - (-h * sa); 
-	v[0].y = y + (-w * sa) + (-h * ca); 
-	v[0].z = 0.0f; 
-	v[0].w = 1.0f;
-	v[0].color = 0xffffffff;
-	v[0].u = 0.0f; 
-	v[0].v = 0.0f;
-	
-	v[1].x = x + (+w * ca) - (-h * sa); 
-	v[1].y = y + (+w * sa) + (-h * ca); 
-	v[1].z = 0.0f; 
-	v[1].w = 1.0f;
-	v[1].color = 0xffffffff;
-	v[1].u = float(spr->width)/spr->texWidth; 
-	v[1].v = 0.0f;
-	
-	v[3].x = x + (-w * ca) - (+h * sa); 
-	v[3].y = y + (-w * sa) + (+h * ca); 
-	v[3].z = 0.0f; 
-	v[3].w = 1.0f;
-	v[3].color = 0xffffffff;
-	v[3].u = 0.0f; 
-	v[3].v = float(spr->height)/spr->texHeight;
-	
-	v[2].x = x + (+w * ca) - (+h * sa); 
-	v[2].y = y + (+w * sa) + (+h * ca); 
-	v[2].z = 0.0f; 
-	v[2].w = 1.0f;
-	v[2].color = 0xffffffff;
-	v[2].u = float(spr->width)/spr->texWidth; 
-	v[2].v = float(spr->height)/spr->texHeight;
-	
-	glVertexPointer(3, GL_FLOAT, sizeof(gxSpriteVertex), &v[0].x);
-	glTexCoordPointer(2, GL_FLOAT, sizeof(gxSpriteVertex), &v[0].u);
-	glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(gxSpriteVertex), &v[0].color);
-	
-	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    if (mode == GXALPHA_BLEND)
+    {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
+    else if (mode == GXALPHA_ADD)
+    {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    }
+    else
+    {
+        glDisable(GL_BLEND);
+    }
 }
 
-void gxDrawSpriteCenteredScaledAlphaAdd(int x, int y, float scalex, float scaley, float alpha, gxSprite* sprite)
+void _gxSetTexture( gxSprite* sprite )
 {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, sprite->tex);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-	float w = scalex * sprite->width;
-	float h = scaley * sprite->height;
-	_gxDrawQuad((float)x - w/2, (float)y - h/2, 
-				w * sprite->texWidth / sprite->width, 
-				h * sprite->texHeight / sprite->height, 
-				gxRGBA32(255,255,255,(int)(255*alpha)));
 }
 
-
-void _gxSetAlpha( gxAlphaMode mode )
-{
-}
-
-void _gxSetTexture( gxSprite* spr )
-{
-}
-
-void _gxDrawQuad( float x, float y, float w, float h, unsigned int color, float u1, float v1, float u2, float v2 )
-{
-    
-}
 void _gxDrawQuad(
                  unsigned int Color,
                  float X0, float Y0, float U0, float V0, 
@@ -403,51 +369,226 @@ void _gxDrawQuad(
     
 }
 
-void gxCreateRenderTarget(int Width, int Height, gxSprite* Sprite)
+void gxCreateShader(const char* VertexSource, const char* PixelSource, gxShader* Shader)
 {
+    Shader->VertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(Shader->VertexShader, 1, &VertexSource, NULL);
+    glCompileShader(Shader->VertexShader);
     
+    GLint logLength;
+    glGetShaderiv(Shader->VertexShader, GL_INFO_LOG_LENGTH, &logLength);
+    if (logLength > 0)
+    {
+        GLchar *log = (GLchar *)malloc(logLength);
+        glGetShaderInfoLog(Shader->VertexShader, logLength, &logLength, log);
+        NSLog(@"Shader compile log:\n%s", log);
+        free(log);
+    }
+    
+    GLint status;
+    glGetShaderiv(Shader->VertexShader, GL_COMPILE_STATUS, &status);
+    if (status == 0)
+    {
+        assert(false);
+    }
+    
+    Shader->PixelShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(Shader->PixelShader, 1, &PixelSource, NULL);
+    glCompileShader(Shader->PixelShader);
+    
+    glGetShaderiv(Shader->PixelShader, GL_INFO_LOG_LENGTH, &logLength);
+    if (logLength > 0)
+    {
+        GLchar *log = (GLchar *)malloc(logLength);
+        glGetShaderInfoLog(Shader->PixelShader, logLength, &logLength, log);
+        NSLog(@"Shader compile log:\n%s", log);
+        free(log);
+    }
+    
+    glGetShaderiv(Shader->PixelShader, GL_COMPILE_STATUS, &status);
+    if (status == 0)
+    {
+        assert(false);
+    }
+    
+    Shader->Program = glCreateProgram();
+    glAttachShader(Shader->Program, Shader->VertexShader);
+    glAttachShader(Shader->Program, Shader->PixelShader);
+    
+    glBindAttribLocation(Shader->Program, GX_ATTRIB_VERTEX, "PositionAttr");
+    glBindAttribLocation(Shader->Program, GX_ATTRIB_COLOR, "ColorAttr");
+    glBindAttribLocation(Shader->Program, GX_ATTRIB_TEXCOORD, "TexCoordAttr");   
+
+    glLinkProgram(Shader->Program);
+    
+    glGetProgramiv(Shader->Program, GL_INFO_LOG_LENGTH, &logLength);
+    if (logLength > 0)
+    {
+        GLchar *log = (GLchar *)malloc(logLength);
+        glGetProgramInfoLog(Shader->Program, logLength, &logLength, log);
+        NSLog(@"Program link log:\n%s", log);
+        free(log);
+    }
+    
+    glGetProgramiv(Shader->Program, GL_LINK_STATUS, &status);
+    if (status == 0)
+    {
+        assert(false);
+    }
+    
+    glValidateProgram(Shader->Program);
+    glGetProgramiv(Shader->Program, GL_INFO_LOG_LENGTH, &logLength);
+    if (logLength > 0)
+    {
+        GLchar *log = (GLchar *)malloc(logLength);
+        glGetProgramInfoLog(Shader->Program, logLength, &logLength, log);
+        NSLog(@"Program validate log:\n%s", log);
+        free(log);
+    }
+    
+    glGetProgramiv(Shader->Program, GL_VALIDATE_STATUS, &status);
+    if (status == 0)
+    {
+        assert(false);
+    }
+}
+
+void gxSetShader(gxShader* Shader)
+{
+    glUseProgram(Shader->Program);
+}
+
+gxShaderConstant gxGetShaderConstantByName(gxShader* Shader, const char* Name)
+{
+    return glGetUniformLocation(Shader->Program, Name);
+}
+
+void gxSetShaderConstant(gxShaderConstant Constant, float x)
+{
+    glUniform1f(Constant, x);
+}
+
+void gxSetShaderConstant(gxShaderConstant Constant, float x, float y)
+{
+    glUniform2f(Constant, x, y);
+}
+
+void gxSetShaderConstant(gxShaderConstant Constant, float x, float y, float z)
+{
+    glUniform3f(Constant, x, y, z);
+}
+
+void gxSetShaderConstant(gxShaderConstant Constant, float x, float y, float z, float w)
+{
+    glUniform4f(Constant, x, y, z, w);
+}
+
+void gxSetShaderSampler(gxShaderConstant Constant, gxSprite* Sprite)
+{
+    glActiveTexture(GL_TEXTURE0 + Constant);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, Sprite->tex);
+    glUniform1i(Constant, Constant);
+    glActiveTexture(GL_TEXTURE0);
+}
+
+void gxCreateRenderTarget(int width, int height, gxSprite* sprite)
+{
+	sprite->width = width;
+	sprite->height = height;
+	
+	sprite->texWidth = sprite->width;
+	sprite->texHeight = sprite->height;
+	
+	void* pixels = calloc(sprite->texWidth * sprite->texHeight * 4, 1);
+
+    glEnable(GL_TEXTURE_2D);
+    glGenTextures(1, &sprite->tex);
+    glBindTexture(GL_TEXTURE_2D, sprite->tex);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sprite->texWidth, sprite->texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+
+	glGenFramebuffers(1, &sprite->framebuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, sprite->framebuffer);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, sprite->tex, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, _gxDefaultFrameBuffer);
+    
+    free(pixels);
 }
 
 void gxSetRenderTarget(gxSprite* Sprite)
 {
-    
+    if (Sprite)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, Sprite->framebuffer);    
+        glViewport(0, 0, Sprite->width, Sprite->height);
+    }
+    else
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, _gxDefaultFrameBuffer);    
+        glViewport(0, 0, _gxDefaultFrameBufferWidth, _gxDefaultFrameBufferHeight);
+    }
 }
 
 void gxClearColor(unsigned int Color)
 {
+    int A = (Color>>24) & 0xFF;
+    int B = (Color>>16) & 0xFF;
+    int G = (Color>>8) & 0xFF;
+    int R = (Color>>0) & 0xFF;
     
+    glClearColor(R/255.0f, G/255.0f, B/255.0f, A/255.0f);
+    
+    glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void gxCreatePixelShader(const char* Source, gxPixelShader* Shader)
-{
-        
-}
-
-void gxSetPixelShader(gxPixelShader* Shader)
-{
-    
-}
-
-void gxSetPixelShaderConst(int Index, float x, float y, float z, float w)
-{
-    
-}
-
-void gxCreateVertexShader(const char* Source, gxVertexShader* Shader)
-{
-    
-}
-
-void gxSetVertexShader(gxVertexShader* Shader)
-{
-    
-}
-
-void gxSetVertexShaderConst(int Index, float x, float y, float z, float w)
-{
-}
-    
 void gxCopyRenderTarget(gxSprite* From, gxSprite* To)
 {
+	gxSetRenderTarget(To);
     
+	_gxSetAlpha( GXALPHA_NONE );
+	_gxSetTexture(From);
+    
+	float HalfPixelX = -0.5f;
+	float HalfPixelY = -0.5f;
+    
+	float HalfPixelU = 0.0f;
+	float HalfPixelV = 0.0f;
+    
+	gxSpriteVertex v[4];
+	v[0].x = 0.0f + HalfPixelX; 
+	v[0].y = 0.0f + HalfPixelY; 
+	v[0].color = gxRGBA32(255, 255, 255, 255);
+	v[0].u = 0.0f+HalfPixelU; 
+	v[0].v = 0.0f+HalfPixelV;
+    
+	v[1].x = (float)768 + HalfPixelX; 
+	v[1].y = 0.0f + HalfPixelY; 
+	v[1].color = gxRGBA32(255, 255, 255, 255);
+	v[1].u = 1.0f+HalfPixelU; 
+	v[1].v = 0.0f+HalfPixelV;
+    
+	v[2].x = (float)768 + HalfPixelX; 
+	v[2].y = (float)1024 + HalfPixelY; 
+	v[2].color = gxRGBA32(255, 255, 255, 255);
+	v[2].u = 1.0f+HalfPixelU; 
+	v[2].v = 1.0f+HalfPixelV;
+    
+	v[3].x = 0.0f + HalfPixelX; 
+	v[3].y = (float)1024 + HalfPixelY; 
+	v[3].color = gxRGBA32(255, 255, 255, 255);
+	v[3].u = 0.0f+HalfPixelU; 
+	v[3].v = 1.0f+HalfPixelV;
+    
+    glVertexAttribPointer(GX_ATTRIB_VERTEX, 2, GL_FLOAT, 0, sizeof(gxSpriteVertex), &v[0].x);
+    glVertexAttribPointer(GX_ATTRIB_TEXCOORD, 2, GL_FLOAT, 0, sizeof(gxSpriteVertex), &v[0].u);
+    glVertexAttribPointer(GX_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, sizeof(gxSpriteVertex), &v[0].color);
+    
+    glEnableVertexAttribArray(GX_ATTRIB_VERTEX);
+    glEnableVertexAttribArray(GX_ATTRIB_TEXCOORD);
+    glEnableVertexAttribArray(GX_ATTRIB_COLOR);
+    
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 }

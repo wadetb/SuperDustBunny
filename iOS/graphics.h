@@ -1,24 +1,27 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
-extern "C" {
-void Init();
-void Exit();
-bool Update();
-void Display();
-}
-
 #include <stdio.h>
 
-#import <OpenGLES/ES1/gl.h>
-#import <OpenGLES/ES1/glext.h>
+#import <OpenGLES/ES2/gl.h>
+#import <OpenGLES/ES2/glext.h>
 
 #define gxRGBA32(r,g,b,a) (((b)<<16)|((g)<<8)|((r)<<0)|((a)<<24))
 #define gxRGB32(r,g,b)    gxRGBA32(r,g,b,255)
 
+
+enum
+{
+    GX_ATTRIB_VERTEX,
+    GX_ATTRIB_TEXCOORD,
+    GX_ATTRIB_COLOR
+};
+
+
 struct gxSprite
 {
 	GLuint tex;
+    GLuint framebuffer;
 	int width;
 	int height;
 	int texWidth;
@@ -55,9 +58,6 @@ void gxGetFileName(const char* relativePath, char* buffer, int bufferSize);
 
 FILE* gxOpenFile(const char* relativePath, const char* mode);
 
-void gxDrawSpriteCenteredRotated(int x, int y, float a, gxSprite* spr);
-void gxDrawSpriteCenteredScaledAlphaAdd(int x, int y, float scalex, float scaley, float alpha, gxSprite* spr);
-
 enum gxAlphaMode
 {
 	GXALPHA_NONE,
@@ -80,6 +80,25 @@ void gxSetRenderTarget(gxSprite* Sprite);
 
 void gxClearColor(unsigned int Color);
 
+struct gxShader
+{
+    GLuint VertexShader;
+    GLuint PixelShader;
+    GLuint Program;
+};
+
+void gxCreateShader(const char* VertexSource, const char* PixelSource, gxShader* Shader);
+void gxSetShader(gxShader* Shader);
+
+typedef GLint gxShaderConstant;
+
+gxShaderConstant gxGetShaderConstantByName(gxShader* Shader, const char* Name);
+void gxSetShaderConstant(gxShaderConstant Constant, float x);
+void gxSetShaderConstant(gxShaderConstant Constant, float x, float y);
+void gxSetShaderConstant(gxShaderConstant Constant, float x, float y, float z);
+void gxSetShaderConstant(gxShaderConstant Constant, float x, float y, float z, float w);
+void gxSetShaderSampler(gxShaderConstant Constant, gxSprite* Sprite);
+
 struct gxPixelShader
 {
 	GLuint Shader;
@@ -100,5 +119,11 @@ void gxSetVertexShaderConst(int Index, float x, float y=0.0f, float z=0.0f, floa
 
 void gxCopyRenderTarget(gxSprite* From, gxSprite* To);
 
+extern "C" {
+    void Init();
+    void Exit();
+    bool Update();
+    void Display();
+}
 
 #endif

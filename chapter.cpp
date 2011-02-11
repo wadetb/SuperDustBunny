@@ -434,6 +434,7 @@ void LoadPageFromTMX(const char* FileName)
 	int FileSize = ftell(PageFile);
 	rewind(PageFile);
 
+    // TODO: Check for allocation errors throughout.
 	char* XML = (char*)malloc(FileSize + 1);
 	fread(XML, FileSize, 1, PageFile);
 	fclose(PageFile);
@@ -485,10 +486,14 @@ void LoadPageFromTMX(const char* FileName)
 		}
 		else
 		{
+            // It hasn't been loaded previously, so load the external tileset.
+            char TileSetName[1024];
+            snprintf(TileSetName, sizeof(TileSetName), "%s/%s", CurrentChapterDir, TileSetSourceAttr->value());
+            
 			// If the external tileset has been loaded already, just reference it.
 			for (int i = 0; i < Chapter.NTileSets; i++)
 			{
-				if (strcmp(Chapter.TileSets[i].Name, TileSetSourceAttr->value()) == 0)
+				if (strcmp(Chapter.TileSets[i].Name, TileSetName) == 0)
 				{
 					TileSetIndex = i;
 					break;
@@ -497,10 +502,6 @@ void LoadPageFromTMX(const char* FileName)
 
 			if (TileSetIndex == -1)
 			{
-				// It hasn't been loaded previously, so load the external tileset.
-				char TileSetName[1024];
-				snprintf(TileSetName, sizeof(TileSetName), "%s/%s", CurrentChapterDir, TileSetSourceAttr->value());
-
 				LoadTileSet(TileSetName);
 				TileSetIndex = Chapter.NTileSets - 1;
 			}

@@ -10,6 +10,18 @@
 
 #import "EAGLView.h"
 
+extern int _msNewX;
+extern int _msNewY;
+extern int _msNewButton1;
+
+extern float _msNewAccelX;
+extern float _msNewAccelY;
+extern float _msNewAccelZ;
+
+extern GLuint _gxDefaultFrameBuffer;
+extern GLuint _gxDefaultFrameBufferWidth;
+extern GLuint _gxDefaultFrameBufferHeight;
+
 @interface EAGLView (PrivateMethods)
 - (void)createFramebuffer;
 - (void)deleteFramebuffer;
@@ -82,6 +94,10 @@
         
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
             NSLog(@"Failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
+
+        _gxDefaultFrameBuffer = defaultFramebuffer;
+        _gxDefaultFrameBufferWidth = framebufferWidth;
+        _gxDefaultFrameBufferHeight = framebufferHeight;
     }
 }
 
@@ -135,6 +151,43 @@
 {
     // The framebuffer will be re-created at the beginning of the next setFramebuffer method call.
     [self deleteFramebuffer];
+}
+
+- (void)accelerometer:(UIAccelerometer*)accelerometer didAccelerate:(UIAcceleration*)acceleration
+{
+	// This applies a pretty heavy smoothing function to the accelerometer.
+	accel[0] = acceleration.x * 0.5f + accel[0] * (1.0f - 0.5f);
+	accel[1] = acceleration.y * 0.5f + accel[1] * (1.0f - 0.5f);
+	accel[2] = acceleration.z * 0.5f + accel[2] * (1.0f - 0.5f);
+	_msNewAccelX = accel[0];
+	_msNewAccelY = accel[1];
+	_msNewAccelZ = accel[2];
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	UITouch *touch = [[event allTouches] anyObject];
+    CGPoint touchPoint = [touch locationInView:self];
+	_msNewX = framebufferWidth*2 - touchPoint.x*2;
+	_msNewY = touchPoint.y*2;
+	_msNewButton1 = 1;
+}
+
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	UITouch *touch = [[event allTouches] anyObject];
+    CGPoint touchPoint = [touch locationInView:self];
+	_msNewX = framebufferWidth*2 - touchPoint.x*2;
+	_msNewY = touchPoint.y*2;
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	UITouch *touch = [[event allTouches] anyObject];
+    CGPoint touchPoint = [touch locationInView:self];
+	_msNewX = framebufferWidth*2 - touchPoint.x*2;
+	_msNewY = touchPoint.y*2;
+	_msNewButton1 = 0;
 }
 
 @end

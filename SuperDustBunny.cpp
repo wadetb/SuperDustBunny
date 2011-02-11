@@ -218,7 +218,7 @@ bool GetInput_MoveLeft()
 	return kbIsKeyDown(KB_A);
 #endif
 #ifdef PLATFORM_IPHONE
-	return msAccelX < -0.25f;
+	return msAccelX < -0.15f;
 #endif
 }
 
@@ -234,7 +234,7 @@ bool GetInput_MoveRight()
 	return kbIsKeyDown(KB_D);
 #endif
 #ifdef PLATFORM_IPHONE
-	return msAccelX > 0.25f;
+	return msAccelX > 0.15f;
 #endif
 }
 
@@ -397,9 +397,8 @@ void DisplayGame_Playing()
 	
     // HUD Drawing - Score, etc.
     DisplayScore();
-
+    
 	//Display Pause
-
     if (GamePause)
     {
         AddLitSprite( LIGHTLIST_VACUUM, &Pause1Sprite, 340, -10);
@@ -415,8 +414,7 @@ void DisplayGame_Playing()
 	// Overlay
 	DisplayChapterIntro();
 
-	RenderLighting();
-
+    RenderLighting();
       	
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Debugging aids                                                                        //
@@ -447,16 +445,17 @@ void UpdateGame_Playing()
     //Pause Update
     if (kbIsKeyDown(KB_P) && !kbWasKeyDown(KB_P))
     {
-        if (GamePause)
-        {
-            GamePause = false;
-        }
-        else if (GamePause == false)
-        {
-            GamePause = true;
-        }
+        GamePause = !GamePause;
     }
 #endif
+#ifdef PLATFORM_IPHONE
+    if (msButton1 && !msOldButton1)
+    {
+        if (msX >= 384-150 && msX <= 384+150 && msY < 200)
+            GamePause = !GamePause;
+    }
+#endif
+    
     
 	if (GamePause != true)
 	{
