@@ -193,164 +193,336 @@ sxSound TennisBallVacuumedUpSound;
 
 
 //-----------------------------------------------------------------------------------------------------------------------------------------//
-//                                                    Asset Function Definition                                                            //
+//                                                    iOS Compressed Sprite Loading                                                        //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
+
+#ifdef PLATFORM_IPHONE
+
+#define MAX_SPRITE_ASSETS 512
+
+
+struct SSpriteAsset
+{
+    char* SourceFileName;
+    char* RawFileName;
+    int Width;
+    int Height;
+    int TexWidth;
+    int TexHeight;
+};
+
+
+int NSpriteAssets = 0;
+SSpriteAsset SpriteAssets[MAX_SPRITE_ASSETS];
+
+
+void LoadAssetList(const char* FileName)
+{
+	PushErrorContext("While loading asset list '%s':\n", FileName);
+    
+	FILE* AssetFile = gxOpenFile(FileName, "r");    
+	if (!AssetFile)
+		ReportError("Unable to open asset list file.  Check that all required files and tools are present, and re-build the XCode project to fix.");
+    
+	// Read the entire XML file into a text buffer.
+	fseek(AssetFile, 0, SEEK_END);
+	int FileSize = ftell(AssetFile);
+	rewind(AssetFile);
+    
+	char* XML = (char*)malloc(FileSize + 1);
+	fread(XML, FileSize, 1, AssetFile);
+	fclose(AssetFile);
+	XML[FileSize] = '\0';
+    
+	// Parse the XML text buffer into a Document hierarchy.
+	rapidxml::xml_document<> Document;
+	Document.parse<0>(XML);
+
+    // Get the root <assets> node.
+	rapidxml::xml_node<char>* AssetsNode = Document.first_node("Assets");
+	if (AssetsNode == NULL)
+		ReportError("Missing <assets> node.  Re-building the XCode project may help.");
+    
+    // Iterate over all the <asset> nodes.
+	rapidxml::xml_node<char>* AssetNode = AssetsNode->first_node("SpriteAsset");
+	while (AssetNode)
+	{
+        if (NSpriteAssets >= MAX_SPRITE_ASSETS)
+            ReportError("Exceeded the limit of %d sprite assets.", MAX_SPRITE_ASSETS);
+        
+        SSpriteAsset* SpriteAsset = &SpriteAssets[NSpriteAssets++];
+        
+        rapidxml::xml_attribute<char>* Name = AssetNode->first_attribute("name");
+        if (!Name)
+            ReportError("SpriteAsset is missing the Name property.  Re-building the XCode project may help.");
+        SpriteAsset->SourceFileName = strdup(Name->value());
+        
+        rapidxml::xml_attribute<char>* TexName = AssetNode->first_attribute("texName");
+        if (!TexName)
+            ReportError("SpriteAsset is missing the texName property.  Re-building the XCode project may help.");
+        SpriteAsset->RawFileName = strdup(TexName->value());
+        
+        rapidxml::xml_attribute<char>* Width = AssetNode->first_attribute("width");
+        if (!Width)
+            ReportError("SpriteAsset is missing the width property.  Re-building the XCode project may help.");
+        SpriteAsset->Width = atoi(Width->value());
+        
+        rapidxml::xml_attribute<char>* Height = AssetNode->first_attribute("height");
+        if (!Height)
+            ReportError("SpriteAsset is missing the height property.  Re-building the XCode project may help.");
+        SpriteAsset->Height = atoi(Height->value());
+        
+        rapidxml::xml_attribute<char>* TexWidth = AssetNode->first_attribute("texWidth");
+        if (!TexWidth)
+            ReportError("SpriteAsset is missing the texWidth property.  Re-building the XCode project may help.");
+        SpriteAsset->TexWidth = atoi(TexWidth->value());
+        
+        rapidxml::xml_attribute<char>* TexHeight = AssetNode->first_attribute("texHeight");
+        if (!TexHeight)
+            ReportError("SpriteAsset is missing the texHeight property.  Re-building the XCode project may help.");
+        SpriteAsset->TexHeight = atoi(TexHeight->value());
+		
+		AssetNode = AssetNode->next_sibling("SpriteAsset");
+	}
+    
+	PopErrorContext();
+}
+
+#endif
+
+void LoadSpriteAsset(const char* FileName, gxSprite* Sprite)
+{
+#ifdef PLATFORM_IPHONE
+    for (int i = 0; i < NSpriteAssets; i++)
+    {
+        SSpriteAsset* SpriteAsset = &SpriteAssets[i];
+        
+        if (strcmp(FileName, SpriteAsset->SourceFileName) == 0)
+        {
+            Sprite->width = SpriteAsset->Width;
+            Sprite->height = SpriteAsset->Height;
+            Sprite->texWidth = SpriteAsset->TexWidth;
+            Sprite->texHeight = SpriteAsset->TexHeight;
+
+            FILE* RawFile = gxOpenFile(SpriteAsset->RawFileName, "rb");
+   
+            fseek(RawFile, 0, SEEK_END);
+            int FileSize = ftell(RawFile);
+            rewind(RawFile);
+            
+            char* Pixels = (char*)malloc(FileSize);
+            fread(Pixels, FileSize, 1, RawFile);
+            fclose(RawFile);
+            
+            glGenTextures(1, &Sprite->tex);
+            glBindTexture(GL_TEXTURE_2D, Sprite->tex);
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            
+            int BPP = 4;
+            bool HasAlpha = true;
+            
+            GLenum Format;
+            if (HasAlpha) 
+                Format = (BPP == 4) ? GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG : GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG;
+            else
+                Format = (BPP == 4) ? GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG : GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG;
+
+            int MipLevel = 0;
+            int MipWidth = Sprite->texWidth;
+            int MipHeight = Sprite->texHeight;
+            int DataOffset = 0;
+            
+            do
+            {
+                GLsizei DataSize = MipWidth * MipHeight * BPP / 8;
+                if (DataSize < 32) 
+                    DataSize = 32;
+                
+                glCompressedTexImage2D(GL_TEXTURE_2D, MipLevel, Format, MipWidth, MipHeight, 0, DataSize, Pixels + DataOffset);
+                
+                MipLevel++;
+                MipWidth /= 2;
+                MipHeight /= 2;
+                
+                DataOffset += DataSize;
+                
+            } while (DataOffset < FileSize);
+            
+            free(Pixels);
+
+            return;
+        }
+    }
+    
+    gxLoadSprite(FileName, Sprite);
+#endif
+    
+#ifdef PLATFORM_WINDOWS
+    gxLoadSprite(FileName, Sprite);
+#endif
+}
 
 void LoadAssets()
 {
 	//-----------------------------------------------------------------------------------------------------------------------------------------//
+	//                                                    Assets List                                                                          //
+	//-----------------------------------------------------------------------------------------------------------------------------------------//
+    LoadAssetList("Converted/Assets.xml");
+    
+	//-----------------------------------------------------------------------------------------------------------------------------------------//
 	//                                                    Sprite Assets                                                                        //
 	//-----------------------------------------------------------------------------------------------------------------------------------------//
+	LoadSpriteAsset("Data/white.png", &WhiteSprite);
 
-	gxLoadSprite("Data/white.png", &WhiteSprite);
-
-	gxLoadSprite("Data/wipe-diagonal.png", &WipeDiagonalSprite);
+	LoadSpriteAsset("Data/wipe-diagonal.png", &WipeDiagonalSprite);
 	
-	gxLoadSprite("Data/light-flashlight.png", &LightFlashlightSprite);
-	gxLoadSprite("Data/light-vacuum.png", &LightVacuumSprite);
+	LoadSpriteAsset("Data/light-flashlight.png", &LightFlashlightSprite);
+	LoadSpriteAsset("Data/light-vacuum.png", &LightVacuumSprite);
 
-	gxLoadSprite("Data/spark.png", &SparkSprite);
-	gxLoadSprite("Data/flare.png", &FlareSprite);
+	LoadSpriteAsset("Data/spark.png", &SparkSprite);
+	LoadSpriteAsset("Data/flare.png", &FlareSprite);
 
-	gxLoadSprite("Data/firework-white.png", &FireWorkWhiteSprite);
+	LoadSpriteAsset("Data/firework-white.png", &FireWorkWhiteSprite);
 
-	gxLoadSprite("Data/dusty-hop-1.png", &DustyHop1Sprite);
-	gxLoadSprite("Data/dusty-hop-2.png", &DustyHop2Sprite);
-	gxLoadSprite("Data/dusty-hop-3.png", &DustyHop3Sprite);
-	gxLoadSprite("Data/dusty-hop-4.png", &DustyHop4Sprite);
-	gxLoadSprite("Data/dusty-hop-5.png", &DustyHop5Sprite);
+	LoadSpriteAsset("Data/dusty-hop-1.png", &DustyHop1Sprite);
+	LoadSpriteAsset("Data/dusty-hop-2.png", &DustyHop2Sprite);
+	LoadSpriteAsset("Data/dusty-hop-3.png", &DustyHop3Sprite);
+	LoadSpriteAsset("Data/dusty-hop-4.png", &DustyHop4Sprite);
+	LoadSpriteAsset("Data/dusty-hop-5.png", &DustyHop5Sprite);
 
-	gxLoadSprite("Data/dusty-hop-2b.png", &DustyHop2bSprite);
-	gxLoadSprite("Data/dusty-hop-2c.png", &DustyHop2cSprite);
-	gxLoadSprite("Data/dusty-hop-4b.png", &DustyHop4bSprite);
-	gxLoadSprite("Data/dusty-hop-4c.png", &DustyHop4cSprite);
+	LoadSpriteAsset("Data/dusty-hop-2b.png", &DustyHop2bSprite);
+	LoadSpriteAsset("Data/dusty-hop-2c.png", &DustyHop2cSprite);
+	LoadSpriteAsset("Data/dusty-hop-4b.png", &DustyHop4bSprite);
+	LoadSpriteAsset("Data/dusty-hop-4c.png", &DustyHop4cSprite);
 
-	gxLoadSprite("Data/dusty-idle-1.png", &DustyIdle1Sprite);
-	gxLoadSprite("Data/dusty-idle-2.png", &DustyIdle2Sprite);
-	gxLoadSprite("Data/dusty-idle-3.png", &DustyIdle3Sprite);
+	LoadSpriteAsset("Data/dusty-idle-1.png", &DustyIdle1Sprite);
+	LoadSpriteAsset("Data/dusty-idle-2.png", &DustyIdle2Sprite);
+	LoadSpriteAsset("Data/dusty-idle-3.png", &DustyIdle3Sprite);
 
-	gxLoadSprite("Data/dusty-slide-1.png", &DustySlide1Sprite);
-	gxLoadSprite("Data/dusty-slide-2.png", &DustySlide2Sprite);
-	gxLoadSprite("Data/dusty-slide-3.png", &DustySlide3Sprite);
+	LoadSpriteAsset("Data/dusty-slide-1.png", &DustySlide1Sprite);
+	LoadSpriteAsset("Data/dusty-slide-2.png", &DustySlide2Sprite);
+	LoadSpriteAsset("Data/dusty-slide-3.png", &DustySlide3Sprite);
 
-	gxLoadSprite("Data/dusty-walljump.png", &DustyWallJumpSprite);
-	gxLoadSprite("Data/dusty-cornerjump.png", &DustyCornerJumpSprite);
+	LoadSpriteAsset("Data/dusty-walljump.png", &DustyWallJumpSprite);
+	LoadSpriteAsset("Data/dusty-cornerjump.png", &DustyCornerJumpSprite);
 
-	gxLoadSprite("Data/dusty-die.png", &DustyDeathSprite);
+	LoadSpriteAsset("Data/dusty-die.png", &DustyDeathSprite);
 
-	gxLoadSprite("Data/background-cardboard.png", &BackgroundCardboardSprite);
-	gxLoadSprite("Data/background-paper.png", &BackgroundPaperSprite);
+	LoadSpriteAsset("Data/background-cardboard.png", &BackgroundCardboardSprite);
+	LoadSpriteAsset("Data/background-paper.png", &BackgroundPaperSprite);
 
-	gxLoadSprite("Data/tile-wtf.png", &TileUnknownSprite);
+	LoadSpriteAsset("Data/tile-wtf.png", &TileUnknownSprite);
 	
-	gxLoadSprite("Data/tile-platform.png", &TileDelayDest);
-	gxLoadSprite("Data/tile-greenplatform.png", &TileGreenDelayDest);
-	gxLoadSprite("Data/tile-yellowplatform.png", &TileYellowDelayDest);
-	gxLoadSprite("Data/tile-redplatform.png", &TileRedDelayDest);
+	LoadSpriteAsset("Data/tile-platform.png", &TileDelayDest);
+	LoadSpriteAsset("Data/tile-greenplatform.png", &TileGreenDelayDest);
+	LoadSpriteAsset("Data/tile-yellowplatform.png", &TileYellowDelayDest);
+	LoadSpriteAsset("Data/tile-redplatform.png", &TileRedDelayDest);
 
-	gxLoadSprite("Data/barrel-back.png", &BarrelBackSprite);
-	gxLoadSprite("Data/barrel-front.png", &BarrelFrontSprite);
-	gxLoadSprite("Data/barrel-nail.png", &BarrelNailSprite);
+	LoadSpriteAsset("Data/barrel-back.png", &BarrelBackSprite);
+	LoadSpriteAsset("Data/barrel-front.png", &BarrelFrontSprite);
+	LoadSpriteAsset("Data/barrel-nail.png", &BarrelNailSprite);
 
-	gxLoadSprite("Data/fan.png", &FanSprite);
+	LoadSpriteAsset("Data/fan.png", &FanSprite);
 
-	gxLoadSprite("Data/crumb-stand.png", &CrumbStandSprite);
+	LoadSpriteAsset("Data/crumb-stand.png", &CrumbStandSprite);
 
-	gxLoadSprite("Data/coin-spin-1.png", &CoinSpin1Sprite);
-	gxLoadSprite("Data/coin-spin-2.png", &CoinSpin2Sprite);
-	gxLoadSprite("Data/coin-spin-3.png", &CoinSpin3Sprite);
-	gxLoadSprite("Data/coin-spin-4.png", &CoinSpin4Sprite);
-	gxLoadSprite("Data/coin-spin-5.png", &CoinSpin5Sprite);
-	gxLoadSprite("Data/coin-spin-6.png", &CoinSpin6Sprite);
+	LoadSpriteAsset("Data/coin-spin-1.png", &CoinSpin1Sprite);
+	LoadSpriteAsset("Data/coin-spin-2.png", &CoinSpin2Sprite);
+	LoadSpriteAsset("Data/coin-spin-3.png", &CoinSpin3Sprite);
+	LoadSpriteAsset("Data/coin-spin-4.png", &CoinSpin4Sprite);
+	LoadSpriteAsset("Data/coin-spin-5.png", &CoinSpin5Sprite);
+	LoadSpriteAsset("Data/coin-spin-6.png", &CoinSpin6Sprite);
 
-	gxLoadSprite("Data/coin-lives-1.png", &CoinLife1Sprite);
-	gxLoadSprite("Data/coin-lives-2.png", &CoinLife2Sprite);
-	gxLoadSprite("Data/coin-lives-3.png", &CoinLife3Sprite);
-	gxLoadSprite("Data/coin-lives-4.png", &CoinLife4Sprite);
-	gxLoadSprite("Data/coin-lives-5.png", &CoinLife5Sprite);
-	gxLoadSprite("Data/coin-lives-6.png", &CoinLife6Sprite);
+	LoadSpriteAsset("Data/coin-lives-1.png", &CoinLife1Sprite);
+	LoadSpriteAsset("Data/coin-lives-2.png", &CoinLife2Sprite);
+	LoadSpriteAsset("Data/coin-lives-3.png", &CoinLife3Sprite);
+	LoadSpriteAsset("Data/coin-lives-4.png", &CoinLife4Sprite);
+	LoadSpriteAsset("Data/coin-lives-5.png", &CoinLife5Sprite);
+	LoadSpriteAsset("Data/coin-lives-6.png", &CoinLife6Sprite);
 	
-    gxLoadSprite("Data/number-0.png", &ScoreNumber0Sprite);
-    gxLoadSprite("Data/number-1.png", &ScoreNumber1Sprite);
-    gxLoadSprite("Data/number-2.png", &ScoreNumber2Sprite);
-    gxLoadSprite("Data/number-3.png", &ScoreNumber3Sprite);
-    gxLoadSprite("Data/number-4.png", &ScoreNumber4Sprite);
-    gxLoadSprite("Data/number-5.png", &ScoreNumber5Sprite);
-    gxLoadSprite("Data/number-6.png", &ScoreNumber6Sprite);
-    gxLoadSprite("Data/number-7.png", &ScoreNumber7Sprite);
-    gxLoadSprite("Data/number-8.png", &ScoreNumber8Sprite);
-    gxLoadSprite("Data/number-9.png", &ScoreNumber9Sprite);
+    LoadSpriteAsset("Data/number-0.png", &ScoreNumber0Sprite);
+    LoadSpriteAsset("Data/number-1.png", &ScoreNumber1Sprite);
+    LoadSpriteAsset("Data/number-2.png", &ScoreNumber2Sprite);
+    LoadSpriteAsset("Data/number-3.png", &ScoreNumber3Sprite);
+    LoadSpriteAsset("Data/number-4.png", &ScoreNumber4Sprite);
+    LoadSpriteAsset("Data/number-5.png", &ScoreNumber5Sprite);
+    LoadSpriteAsset("Data/number-6.png", &ScoreNumber6Sprite);
+    LoadSpriteAsset("Data/number-7.png", &ScoreNumber7Sprite);
+    LoadSpriteAsset("Data/number-8.png", &ScoreNumber8Sprite);
+    LoadSpriteAsset("Data/number-9.png", &ScoreNumber9Sprite);
 	
-    gxLoadSprite("Data/game-pause-1.png", &Pause1Sprite);
-    gxLoadSprite("Data/game-pause-2.png", &Pause2Sprite);
+    LoadSpriteAsset("Data/game-pause-1.png", &Pause1Sprite);
+    LoadSpriteAsset("Data/game-pause-2.png", &Pause2Sprite);
 
-	gxLoadSprite("Data/tennisball-spin-1.png", &TennisBallSpin1Sprite);
-	gxLoadSprite("Data/tennisball-spin-2.png", &TennisBallSpin2Sprite);
-	gxLoadSprite("Data/tennisball-spin-3.png", &TennisBallSpin3Sprite);
-	gxLoadSprite("Data/tennisball-spin-4.png", &TennisBallSpin4Sprite);
+	LoadSpriteAsset("Data/tennisball-spin-1.png", &TennisBallSpin1Sprite);
+	LoadSpriteAsset("Data/tennisball-spin-2.png", &TennisBallSpin2Sprite);
+	LoadSpriteAsset("Data/tennisball-spin-3.png", &TennisBallSpin3Sprite);
+	LoadSpriteAsset("Data/tennisball-spin-4.png", &TennisBallSpin4Sprite);
 
-	gxLoadSprite("Data/gear.png", &GearSprite);
+	LoadSpriteAsset("Data/gear.png", &GearSprite);
 	
-    gxLoadSprite("Data/staplerextendup.png", &StaplerExtendUpSprite);
-    gxLoadSprite("Data/staplerup.png", &StaplerUpSprite);
-    gxLoadSprite("Data/staplerdown.png", &StaplerDownSprite);
+    LoadSpriteAsset("Data/staplerextendup.png", &StaplerExtendUpSprite);
+    LoadSpriteAsset("Data/staplerup.png", &StaplerUpSprite);
+    LoadSpriteAsset("Data/staplerdown.png", &StaplerDownSprite);
     
-    gxLoadSprite("Data/powerjump1sprite.png", &PowerJump1Sprite);
-    gxLoadSprite("Data/powerjump2sprite.png", &PowerJump2Sprite);
-    gxLoadSprite("Data/powerjump3sprite.png", &PowerJump3Sprite);
-    gxLoadSprite("Data/powerjump4sprite.png", &PowerJump4Sprite);
-    gxLoadSprite("Data/powerjump5sprite.png", &PowerJump5Sprite);
-    gxLoadSprite("Data/powerjump6sprite.png", &PowerJump6Sprite);
-    gxLoadSprite("Data/powerjump7sprite.png", &PowerJump7Sprite);
-    gxLoadSprite("Data/powerjump8sprite.png", &PowerJump8Sprite);
-    gxLoadSprite("Data/powerjump9sprite.png", &PowerJump9Sprite);
-    gxLoadSprite("Data/powerjump10sprite.png", &PowerJump10Sprite);
+    LoadSpriteAsset("Data/powerjump1sprite.png", &PowerJump1Sprite);
+    LoadSpriteAsset("Data/powerjump2sprite.png", &PowerJump2Sprite);
+    LoadSpriteAsset("Data/powerjump3sprite.png", &PowerJump3Sprite);
+    LoadSpriteAsset("Data/powerjump4sprite.png", &PowerJump4Sprite);
+    LoadSpriteAsset("Data/powerjump5sprite.png", &PowerJump5Sprite);
+    LoadSpriteAsset("Data/powerjump6sprite.png", &PowerJump6Sprite);
+    LoadSpriteAsset("Data/powerjump7sprite.png", &PowerJump7Sprite);
+    LoadSpriteAsset("Data/powerjump8sprite.png", &PowerJump8Sprite);
+    LoadSpriteAsset("Data/powerjump9sprite.png", &PowerJump9Sprite);
+    LoadSpriteAsset("Data/powerjump10sprite.png", &PowerJump10Sprite);
 
-	gxLoadSprite("Data/dust-mote.png", &DustMoteSprite);
-	gxLoadSprite("Data/dust-arrow.png", &DustArrowSprite);
+	LoadSpriteAsset("Data/dust-mote.png", &DustMoteSprite);
+	LoadSpriteAsset("Data/dust-arrow.png", &DustArrowSprite);
 
-	gxLoadSprite("Data/firework-rocket.png", &FireWorkRocketSprite);
-	gxLoadSprite("Data/firework-bang.png", &FireWorkBangSprite);
+	LoadSpriteAsset("Data/firework-rocket.png", &FireWorkRocketSprite);
+	LoadSpriteAsset("Data/firework-bang.png", &FireWorkBangSprite);
 
-	gxLoadSprite("Data/vacuum-back.png", &VacuumBackSprite);
-	gxLoadSprite("Data/vacuum-front.png", &VacuumFrontSprite);
+	LoadSpriteAsset("Data/vacuum-back.png", &VacuumBackSprite);
+	LoadSpriteAsset("Data/vacuum-front.png", &VacuumFrontSprite);
 
-	gxLoadSprite("Data/screen-start-1.png", &ScreenStart1Sprite);
-	gxLoadSprite("Data/screen-start-2.png", &ScreenStart2Sprite);
-    gxLoadSprite("Data/screen-help-1.png", &ScreenHelp1Sprite);
-    gxLoadSprite("Data/screen-help-2.png", &ScreenHelp2Sprite);
-    gxLoadSprite("Data/screen-credits-1.png", &ScreenCredits1Sprite);
-    gxLoadSprite("Data/screen-credits-2.png", &ScreenCredits2Sprite);
+	LoadSpriteAsset("Data/screen-start-1.png", &ScreenStart1Sprite);
+	LoadSpriteAsset("Data/screen-start-2.png", &ScreenStart2Sprite);
+    LoadSpriteAsset("Data/screen-help-1.png", &ScreenHelp1Sprite);
+    LoadSpriteAsset("Data/screen-help-2.png", &ScreenHelp2Sprite);
+    LoadSpriteAsset("Data/screen-credits-1.png", &ScreenCredits1Sprite);
+    LoadSpriteAsset("Data/screen-credits-2.png", &ScreenCredits2Sprite);
     
-	gxLoadSprite("Data/icon-start-1.png", &IconStart1Sprite);
-	gxLoadSprite("Data/icon-start-2.png", &IconStart2Sprite);
-	gxLoadSprite("Data/icon-help-1.png", &IconHelp1Sprite);
-	gxLoadSprite("Data/icon-help-2.png", &IconHelp2Sprite);
-	gxLoadSprite("Data/icon-credits-1.png", &IconCredits1Sprite);
-	gxLoadSprite("Data/icon-credits-2.png", &IconCredits2Sprite);
+	LoadSpriteAsset("Data/icon-start-1.png", &IconStart1Sprite);
+	LoadSpriteAsset("Data/icon-start-2.png", &IconStart2Sprite);
+	LoadSpriteAsset("Data/icon-help-1.png", &IconHelp1Sprite);
+	LoadSpriteAsset("Data/icon-help-2.png", &IconHelp2Sprite);
+	LoadSpriteAsset("Data/icon-credits-1.png", &IconCredits1Sprite);
+	LoadSpriteAsset("Data/icon-credits-2.png", &IconCredits2Sprite);
 
-	gxLoadSprite("Data/screen-lose-1.png", &ScreenLose1Sprite);
-	gxLoadSprite("Data/screen-lose-2.png", &ScreenLose2Sprite);
+	LoadSpriteAsset("Data/screen-lose-1.png", &ScreenLose1Sprite);
+	LoadSpriteAsset("Data/screen-lose-2.png", &ScreenLose2Sprite);
 	
-	gxLoadSprite("Data/screen-lose-ghost.png", &ScreenLoseGhostSprite);
-	gxLoadSprite("Data/screen-lose-grave-1.png", &ScreenLoseGrave1Sprite);
-	gxLoadSprite("Data/screen-lose-grave-2.png", &ScreenLoseGrave2Sprite);
+	LoadSpriteAsset("Data/screen-lose-ghost.png", &ScreenLoseGhostSprite);
+	LoadSpriteAsset("Data/screen-lose-grave-1.png", &ScreenLoseGrave1Sprite);
+	LoadSpriteAsset("Data/screen-lose-grave-2.png", &ScreenLoseGrave2Sprite);
 	
-	gxLoadSprite("Data/screen-win-1.png", &ScreenWin1Sprite);
-	gxLoadSprite("Data/screen-win-2.png", &ScreenWin2Sprite);
+	LoadSpriteAsset("Data/screen-win-1.png", &ScreenWin1Sprite);
+	LoadSpriteAsset("Data/screen-win-2.png", &ScreenWin2Sprite);
 
-	gxLoadSprite("Data/tutorial-initial.png", &TutorialInitialSprite);
-	gxLoadSprite("Data/tutorial-barrel.png", &TutorialBarrelSprite);
-	gxLoadSprite("Data/tutorial-coin.png", &TutorialCoinSprite);
-	gxLoadSprite("Data/tutorial-firework.png", &TutorialFireWorkSprite);
-	gxLoadSprite("Data/tutorial-gear.png", &TutorialGearSprite);
-	gxLoadSprite("Data/tutorial-tennisball.png", &TutorialBallSprite);
-	gxLoadSprite("Data/tutorial-jump.png", &TutorialJumpSprite);
-	gxLoadSprite("Data/tutorial-walljump.png", &TutorialWallJumpSprite);
+	LoadSpriteAsset("Data/tutorial-initial.png", &TutorialInitialSprite);
+	LoadSpriteAsset("Data/tutorial-barrel.png", &TutorialBarrelSprite);
+	LoadSpriteAsset("Data/tutorial-coin.png", &TutorialCoinSprite);
+	LoadSpriteAsset("Data/tutorial-firework.png", &TutorialFireWorkSprite);
+	LoadSpriteAsset("Data/tutorial-gear.png", &TutorialGearSprite);
+	LoadSpriteAsset("Data/tutorial-tennisball.png", &TutorialBallSprite);
+	LoadSpriteAsset("Data/tutorial-jump.png", &TutorialJumpSprite);
+	LoadSpriteAsset("Data/tutorial-walljump.png", &TutorialWallJumpSprite);
 	
-    gxLoadSprite("Data/chapter-title.png", &ChapterTitle);
+    LoadSpriteAsset("Data/chapter-title.png", &ChapterTitle);
     
-    gxLoadSprite("Data/Score.png", &Score1Sprite);
+    LoadSpriteAsset("Data/Score.png", &Score1Sprite);
 	
 
 	//-----------------------------------------------------------------------------------------------------------------------------------------//

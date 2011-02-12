@@ -52,22 +52,18 @@ void DisplayWipe()
 		float BotX1 = gxScreenWidth + 200.0f - TotalWidth*Wipe.T;
 		float BotX2 = BotX1 + gxScreenWidth + 800.0f;
 
-		_gxSetAlpha(GXALPHA_BLEND);
-		_gxSetTexture(&WipeDiagonalSprite);
-		_gxDrawQuad(gxRGBA32(0,0,0,255),
-			TopX1, 0,                       0.0f, 0.0f, 
-			TopX2, 0,                       1.0f, 0.0f,
-			BotX2, (float)gxScreenHeight,   1.0f, 1.0f, 
-			BotX1, (float)gxScreenHeight,   0.0f, 1.0f);
+        AddLitQuad(LIGHTLIST_WIPE, &WipeDiagonalSprite, gxRGBA32(0, 0, 0, 255),
+           TopX1, 0,                       0.0f, 0.0f, 
+           TopX2, 0,                       1.0f, 0.0f,
+           BotX2, (float)gxScreenHeight,   1.0f, 1.0f, 
+           BotX1, (float)gxScreenHeight,   0.0f, 1.0f);
 	}
 	else
 	if (Wipe.Type == WIPE_FADE_TO_BLACK)
 	{
 		int Alpha = (int)(sinf(Wipe.T*PI)*255);
 
-		_gxSetAlpha(GXALPHA_BLEND);
-		_gxSetTexture(&WhiteSprite);
-		_gxDrawQuad(gxRGBA32(0,0,0,Alpha),
+        AddLitQuad(LIGHTLIST_WIPE, &WhiteSprite, gxRGBA32(0, 0, 0, Alpha),
 			0,                    0,                       0.0f, 0.0f, 
 			(float)gxScreenWidth, 0,                       1.0f, 0.0f,
 			(float)gxScreenWidth, (float)gxScreenHeight,   1.0f, 1.0f, 
@@ -82,9 +78,7 @@ void DisplayWipe()
 		else
 			Alpha = (int)Lerp(Wipe.T, 0.5f, 1.0f, 255.0f, 0.0f);
 
-		_gxSetAlpha(GXALPHA_BLEND);
-		_gxSetTexture(&WhiteSprite);
-		_gxDrawQuad(gxRGBA32(255,255,255,Alpha),
+        AddLitQuad(LIGHTLIST_WIPE, &WhiteSprite, gxRGBA32(255, 255, 255, Alpha),
 			0,                    0,                       0.0f, 0.0f, 
 			(float)gxScreenWidth, 0,                       1.0f, 0.0f,
 			(float)gxScreenWidth, (float)gxScreenHeight,   1.0f, 1.0f, 

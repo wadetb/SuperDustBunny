@@ -202,7 +202,7 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* FileName
 	char ImageFileName[1024];
 	snprintf(ImageFileName, sizeof(ImageFileName), "%s/%s", CurrentDirectory, ImageSourceAttr->value());
 
-	gxLoadSprite(ImageFileName, &TileSet->Sprite);
+	LoadSpriteAsset(ImageFileName, &TileSet->Sprite);
 
 	if (TileSet->Sprite.width == 0 || TileSet->Sprite.height == 0)
 		ReportError("Invalid tileset image '%s'.  Fix this problem and re-save the TSX or TMX file.", FileName);

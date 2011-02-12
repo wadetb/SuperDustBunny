@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0814324E1305E3E3007D4611 /* Converter.py in Resources */ = {isa = PBXBuildFile; fileRef = 0814324D1305E3E3007D4611 /* Converter.py */; };
+		0814334D13061704007D4611 /* Converted in Resources */ = {isa = PBXBuildFile; fileRef = 0814334C13061704007D4611 /* Converted */; };
+		0856F6BC130574B500573848 /* icon-iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856F6BB130574B500573848 /* icon-iphone.png */; };
+		0856F6C11305769000573848 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856F6BE1305761300573848 /* Default.png */; };
 		08587B0B12E8D0AA003A66B6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08587B0A12E8D0AA003A66B6 /* UIKit.framework */; };
 		08587B0D12E8D0AA003A66B6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08587B0C12E8D0AA003A66B6 /* Foundation.framework */; };
 		08587B0F12E8D0AA003A66B6 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08587B0E12E8D0AA003A66B6 /* CoreGraphics.framework */; };
@@ -60,6 +64,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0814324D1305E3E3007D4611 /* Converter.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Converter.py; path = ../../Tools/Converter/Converter.py; sourceTree = "<group>"; };
+		0814334C13061704007D4611 /* Converted */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Converted; path = ../../Converted; sourceTree = "<group>"; };
+		0856F6BB130574B500573848 /* icon-iphone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-iphone.png"; sourceTree = "<group>"; };
+		0856F6BE1305761300573848 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		08587B0612E8D0AA003A66B6 /* SuperDustBunny.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SuperDustBunny.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		08587B0A12E8D0AA003A66B6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		08587B0C12E8D0AA003A66B6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -148,6 +156,7 @@
 		089350B812EFCBFC00BEFFFA /* SuperDustBunnyViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SuperDustBunnyViewController.xib; sourceTree = "<group>"; };
 		08B5953B1304D60B006F3D32 /* Stapler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Stapler.cpp; path = ../Stapler.cpp; sourceTree = "<group>"; };
 		08B5953C1304D60B006F3D32 /* Stapler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Stapler.h; path = ../Stapler.h; sourceTree = "<group>"; };
+		08B5953F13057193006F3D32 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		08CE829D12F3140B00320555 /* Data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Data; path = ../../Data; sourceTree = "<group>"; };
 		08CE82A012F3141A00320555 /* Tilesets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Tilesets; path = ../../Tilesets; sourceTree = "<group>"; };
 		08CE82A212F3142500320555 /* Chapters */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Chapters; path = ../../Chapters; sourceTree = "<group>"; };
@@ -173,9 +182,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0814324B1305E288007D4611 /* Converter */ = {
+			isa = PBXGroup;
+			children = (
+				0814324D1305E3E3007D4611 /* Converter.py */,
+			);
+			name = Converter;
+			sourceTree = "<group>";
+		};
 		08587AFB12E8D0AA003A66B6 = {
 			isa = PBXGroup;
 			children = (
+				0814334C13061704007D4611 /* Converted */,
+				0814324B1305E288007D4611 /* Converter */,
+				0856F6BE1305761300573848 /* Default.png */,
+				0856F6BB130574B500573848 /* icon-iphone.png */,
+				08B5953F13057193006F3D32 /* icon.png */,
 				08CE82A212F3142500320555 /* Chapters */,
 				08CE82A012F3141A00320555 /* Tilesets */,
 				08CE829D12F3140B00320555 /* Data */,
@@ -322,6 +344,7 @@
 			buildPhases = (
 				08587B0212E8D0AA003A66B6 /* Sources */,
 				08587B0312E8D0AA003A66B6 /* Frameworks */,
+				0814324C1305E2B4007D4611 /* ShellScript */,
 				08587B0412E8D0AA003A66B6 /* Resources */,
 			);
 			buildRules = (
@@ -371,10 +394,30 @@
 				08CE829E12F3140B00320555 /* Data in Resources */,
 				08CE82A112F3141A00320555 /* Tilesets in Resources */,
 				08CE82A312F3142500320555 /* Chapters in Resources */,
+				0856F6BC130574B500573848 /* icon-iphone.png in Resources */,
+				0856F6C11305769000573848 /* Default.png in Resources */,
+				0814324E1305E3E3007D4611 /* Converter.py in Resources */,
+				0814334D13061704007D4611 /* Converted in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		0814324C1305E2B4007D4611 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd ../../\n/opt/local/bin/python2.6 -u Tools/Converter/Converter.py\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		08587B0212E8D0AA003A66B6 /* Sources */ = {

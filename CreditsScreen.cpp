@@ -27,11 +27,11 @@ void DisplayCreditsScreen()
 {
     if (CreditsScreen.CreditsPressed)
     {
-        gxDrawSprite( 0, 0, &ScreenCredits2Sprite );
+        AddLitSprite(LIGHTLIST_BACKGROUND, &ScreenCredits2Sprite, 0, 0);
     }
     else
     {
-        gxDrawSprite( 0, 0, &ScreenCredits1Sprite );
+        AddLitSprite(LIGHTLIST_BACKGROUND, &ScreenCredits1Sprite, 0, 0);
     }   
 }
 

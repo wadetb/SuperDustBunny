@@ -17,7 +17,24 @@
 
 
 int NLitVerts;
+
+#ifdef PLATFORM_IPHONE
+
+int NLitVertIndices;
+
+int BufferObjectIndex;
+
+GLuint LitVertsVBO[2];
+GLuint LitVertsIBO[2];
+
+SLitVertex* LitVerts;
+GLushort* LitVertIndices;
+
+#else
+
 SLitVertex LitVerts[MAX_LIT_VERTS];
+
+#endif
 
 
 int LitRenderTargetWidth = 320;
@@ -65,7 +82,6 @@ gxSprite ColorRT;
 gxSprite LightingRT;
 
 
-gxSprite AmbientOcclusionAlphaRT;
 gxSprite AmbientOcclusionDiv2RT;
 gxSprite AmbientOcclusionDiv4RT;
 gxSprite AmbientOcclusionPingRT;
@@ -75,7 +91,6 @@ gxSprite AmbientOcclusionForegroundRT;
 gxSprite AmbientOcclusionVacuumRT;
 
 
-gxSprite ShadowAlphaRT;
 gxSprite ShadowPingRT;
 gxSprite ShadowPongRT;
 
@@ -294,6 +309,8 @@ gxPixelShader CombineShader;
 #ifdef PLATFORM_IPHONE
 
 const char* LitVertexShaderSource =
+"uniform vec2 Offset;\n"
+"\n"
 "attribute vec2 PositionAttr;\n"
 "attribute vec2 TexCoordAttr;\n"
 "attribute vec4 ColorAttr;\n"
@@ -303,7 +320,7 @@ const char* LitVertexShaderSource =
 "\n"
 "void main()\n"
 "{\n"
-"	gl_Position = vec4(PositionAttr.x/768.0*2.0-1.0, (1.0-PositionAttr.y/1024.0)*2.0-1.0, 0, 1);\n"
+"	gl_Position = vec4((PositionAttr.x+Offset.x)/768.0*2.0-1.0, (1.0-(PositionAttr.y+Offset.y)/1024.0)*2.0-1.0, 0, 1);\n"
 "	TexCoordInterp = TexCoordAttr;\n"
 "	ColorInterp = ColorAttr;\n"
 "}\n";
@@ -322,26 +339,7 @@ const char* TexturedColoredShaderSource =
 gxShader LitShader;
 
 
-const char* ShadowVertexShaderSource =
-"uniform vec2 ShadowOffset;\n"
-"\n"
-"attribute vec2 PositionAttr;\n"
-"attribute vec2 TexCoordAttr;\n"
-"attribute vec4 ColorAttr;\n"
-"\n"
-"varying lowp vec2 TexCoordInterp;\n"
-"varying lowp vec4 ColorInterp;\n"
-"\n"
-"void main()\n"
-"{\n"
-"	vec2 Position = vec2(PositionAttr.x + ShadowOffset.x, PositionAttr.y - 30.0);\n"
-"	gl_Position = vec4(Position.x/768.0*2.0-1.0, (1.0-(PositionAttr.y - 300.0)/1024.0)*2.0-1.0, 0, 1);\n"
-"	TexCoordInterp = TexCoordAttr;\n"
-"	ColorInterp = ColorAttr;\n"
-"}\n";
-
-
-const char* TexturedShadowShaderSource =
+const char* ShadowShaderSource =
 "uniform lowp float ShadowAlpha;\n"
 "uniform lowp sampler2D Sampler;\n"
 "\n"
@@ -357,6 +355,21 @@ gxShaderConstant ShadowShadowAlpha;
 gxShaderConstant ShadowSampler;
 
 gxShader ShadowShader;
+
+
+const char* ApplyShadowShaderSource =
+"uniform lowp sampler2D Sampler;\n"
+"\n"
+"varying lowp vec2 TexCoordInterp;\n"
+"\n"
+"void main()\n"
+"{\n"
+"	gl_FragColor = vec4(0.0, 0.0, 0.0, texture2D(Sampler, TexCoordInterp).a);\n"
+"}\n";
+
+gxShaderConstant ApplyShadowSampler;
+
+gxShader ApplyShadowShader;
 
 
 const char* EffectsShaderSource =
@@ -465,7 +478,7 @@ const char* CombineShaderSource =
 "	lowp vec4 Color = texture2D(ColorSampler, TexCoordInterp);\n"
 "	lowp vec4 ColorBleed = texture2D(ColorBleedSampler, TexCoordInterp);\n"
 "	lowp vec4 Lighting = texture2D(LightingSampler, TexCoordInterp);\n"
-"   gl_FragColor = Color; //(Lighting*2.0) * Color/* * saturate(ColorBleed*1.5)*/;\n"
+"   gl_FragColor = (Lighting*2.0) * Color/* * saturate(ColorBleed*1.5)*/;\n"
 "}\n";
 
 gxShaderConstant CombineColorSampler;
@@ -481,60 +494,64 @@ gxShader CombineShader;
 //                                                      Platform specific drawing                                                          //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-void DrawLitQuad(SLitQuad* Quad)
+void DrawLightList(int List, gxAlphaMode Alpha)
 {
-	_gxSetTexture(Quad->Sprite);
-
+    _gxSetAlpha(Alpha);
+    
 #ifdef PLATFORM_WINDOWS
-	gxDev->SetVertexDeclaration( LitVertexDecl );
-	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, Quad->NVerts-2, Quad->Verts, sizeof(SLitVertex) );
-#endif
-    
-#ifdef PLATFORM_IPHONE
-    glVertexAttribPointer(GX_ATTRIB_VERTEX, 2, GL_FLOAT, 0, sizeof(SLitVertex), &Quad->Verts->X);
-    glVertexAttribPointer(GX_ATTRIB_TEXCOORD, 2, GL_FLOAT, 0, sizeof(SLitVertex), &Quad->Verts->U);
-    glVertexAttribPointer(GX_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, sizeof(SLitVertex), &Quad->Verts->Color);
-    
-    glEnableVertexAttribArray(GX_ATTRIB_VERTEX);
-    glEnableVertexAttribArray(GX_ATTRIB_TEXCOORD);
-    glEnableVertexAttribArray(GX_ATTRIB_COLOR);
-
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, Quad->NVerts);
-#endif
-}
-
-void DrawLitQuadShadow(SLitQuad* Quad, float ShadowX, float ShadowY)
-{
-    for (int i = 0; i < Quad->NVerts; i++)
+    for (int i = 0; i < LightLists[List].NQuads; i++)
     {
-        Quad->Verts[i].X += ShadowX;
-        Quad->Verts[i].Y += ShadowY;
+        SLitQuad* Quad = &LightLists[List].Quads[i];
+        
+        _gxSetTexture(Quad->Sprite);
+        
+        gxDev->SetVertexDeclaration( LitVertexDecl );
+        gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, Quad->NVerts-2, Quad->Verts, sizeof(SLitVertex) );
     }
-    
-	_gxSetTexture(Quad->Sprite);
-    
-#ifdef PLATFORM_WINDOWS
-	gxDev->SetVertexDeclaration( LitVertexDecl );
-	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, Quad->NVerts-2, Quad->Verts, sizeof(SLitVertex) );
 #endif
     
 #ifdef PLATFORM_IPHONE
-    glVertexAttribPointer(GX_ATTRIB_VERTEX, 2, GL_FLOAT, 0, sizeof(SLitVertex), &Quad->Verts->X);
-    glVertexAttribPointer(GX_ATTRIB_TEXCOORD, 2, GL_FLOAT, 0, sizeof(SLitVertex), &Quad->Verts->U);
-    glVertexAttribPointer(GX_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, sizeof(SLitVertex), &Quad->Verts->Color);
+    glBindBuffer(GL_ARRAY_BUFFER, LitVertsVBO[BufferObjectIndex]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, LitVertsIBO[BufferObjectIndex]);
     
     glEnableVertexAttribArray(GX_ATTRIB_VERTEX);
     glEnableVertexAttribArray(GX_ATTRIB_TEXCOORD);
     glEnableVertexAttribArray(GX_ATTRIB_COLOR);
     
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, Quad->NVerts);
-#endif
-
-    for (int i = 0; i < Quad->NVerts; i++)
+    glVertexAttribPointer(GX_ATTRIB_VERTEX, 2, GL_FLOAT, 0, sizeof(SLitVertex), (void*)offsetof(SLitVertex, X));
+    glVertexAttribPointer(GX_ATTRIB_TEXCOORD, 2, GL_FLOAT, 0, sizeof(SLitVertex), (void*)offsetof(SLitVertex, U));
+    glVertexAttribPointer(GX_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, sizeof(SLitVertex), (void*)offsetof(SLitVertex, Color));
+    
+    int QuadIndex = 0;
+    
+    while (QuadIndex < LightLists[List].NQuads)
     {
-        Quad->Verts[i].X -= ShadowX;
-        Quad->Verts[i].Y -= ShadowY;
+        SLitQuad* BaseQuad = &LightLists[List].Quads[QuadIndex];
+        int BaseIndex = BaseQuad->BaseIndex;
+        int IndexCount = 0;
+
+        _gxSetTexture(BaseQuad->Sprite);
+
+        SLitQuad* Quad = BaseQuad;
+        for (;;)
+        {
+            if (Quad->Sprite != BaseQuad->Sprite)
+                break;
+            
+            if (Quad->BaseIndex != BaseIndex + IndexCount)
+                break;
+            
+            IndexCount += Quad->IndexCount;
+            Quad++;
+            QuadIndex++;
+        }
+        
+        glDrawElements(GL_TRIANGLE_STRIP, IndexCount, GL_UNSIGNED_SHORT, (void*)(BaseIndex * sizeof(GLushort)));
     }
+    
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+#endif
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -543,19 +560,18 @@ void DrawLitQuadShadow(SLitQuad* Quad, float ShadowX, float ShadowY)
 
 void InitAmbientOcclusion()
 {
-	gxCreateRenderTarget(LitRenderTargetWidth,   LitRenderTargetHeight,   &AmbientOcclusionAlphaRT);
-	gxCreateRenderTarget(LitRenderTargetWidth/2, LitRenderTargetHeight/2, &AmbientOcclusionDiv2RT);
-	gxCreateRenderTarget(LitRenderTargetWidth/4, LitRenderTargetHeight/4, &AmbientOcclusionDiv4RT);
-	gxCreateRenderTarget(LitRenderTargetWidth/8, LitRenderTargetHeight/8, &AmbientOcclusionPingRT);
-	gxCreateRenderTarget(LitRenderTargetWidth/8, LitRenderTargetHeight/8, &AmbientOcclusionPongRT);
+	gxCreateRenderTarget(LitRenderTargetWidth/2, LitRenderTargetHeight/2, &AmbientOcclusionDiv2RT, true);
+	gxCreateRenderTarget(LitRenderTargetWidth/4, LitRenderTargetHeight/4, &AmbientOcclusionDiv4RT, true);
+	gxCreateRenderTarget(LitRenderTargetWidth/8, LitRenderTargetHeight/8, &AmbientOcclusionPingRT, true);
+	gxCreateRenderTarget(LitRenderTargetWidth/8, LitRenderTargetHeight/8, &AmbientOcclusionPongRT, true);
 
-	gxCreateRenderTarget(LitRenderTargetWidth/8, LitRenderTargetHeight/8, &AmbientOcclusionForegroundRT);
-	gxCreateRenderTarget(LitRenderTargetWidth/8, LitRenderTargetHeight/8, &AmbientOcclusionVacuumRT);
+	gxCreateRenderTarget(LitRenderTargetWidth/8, LitRenderTargetHeight/8, &AmbientOcclusionForegroundRT, true);
+	gxCreateRenderTarget(LitRenderTargetWidth/8, LitRenderTargetHeight/8, &AmbientOcclusionVacuumRT, true);
 }
 
-void BuildAmbientOcclusion(ELightList List, gxSprite* FinalRT)
+void DrawAmbientOcclusion(ELightList List, gxSprite* FinalRT)
 {
-	gxSetRenderTarget(&AmbientOcclusionAlphaRT);
+	gxSetRenderTarget(FinalRT);
 	gxClearColor(gxRGBA32(0, 0, 0, 0));
     
 #ifdef PLATFORM_WINDOWS
@@ -572,11 +588,12 @@ void BuildAmbientOcclusion(ELightList List, gxSprite* FinalRT)
     gxSetShaderConstant(ShadowShadowAlpha, 192.0f/255.0f);
 #endif
     
-	_gxSetAlpha( GXALPHA_BLEND );
-	for (int i = 0; i < LightLists[List].NQuads; i++)
-		DrawLitQuad( &LightLists[List].Quads[i] );
+    DrawLightList(List, GXALPHA_BLEND);
+}
 
-	gxCopyRenderTarget(&AmbientOcclusionAlphaRT, &AmbientOcclusionDiv2RT);
+void BlurAmbientOcclusion(gxSprite* FinalRT)
+{
+	gxCopyRenderTarget(FinalRT, &AmbientOcclusionDiv2RT);
 	gxCopyRenderTarget(&AmbientOcclusionDiv2RT, &AmbientOcclusionDiv4RT);
 	gxCopyRenderTarget(&AmbientOcclusionDiv4RT, &AmbientOcclusionPingRT);
 
@@ -654,7 +671,7 @@ void RenderAmbientOcclusion(gxSprite* FinalRT)
 #endif
 
 #ifdef PLATFORM_IPHONE)
-    gxSetShader(&LitShader);
+    gxSetShader(&ApplyShadowShader);
 #endif
     
 	_gxSetAlpha(GXALPHA_BLEND);
@@ -668,17 +685,16 @@ void RenderAmbientOcclusion(gxSprite* FinalRT)
 
 void InitShadows()
 {
-	gxCreateRenderTarget(LitRenderTargetWidth,   LitRenderTargetHeight,   &ShadowAlphaRT);
-	gxCreateRenderTarget(LitRenderTargetWidth/2, LitRenderTargetHeight/2, &ShadowPingRT);
-	gxCreateRenderTarget(LitRenderTargetWidth/2, LitRenderTargetHeight/2, &ShadowPongRT);
+	gxCreateRenderTarget(LitRenderTargetWidth/2, LitRenderTargetHeight/2, &ShadowPingRT, true);
+	gxCreateRenderTarget(LitRenderTargetWidth/2, LitRenderTargetHeight/2, &ShadowPongRT, true);
 
-	gxCreateRenderTarget(LitRenderTargetWidth,   LitRenderTargetHeight,   &ShadowForegroundRT);
-	gxCreateRenderTarget(LitRenderTargetWidth,   LitRenderTargetHeight,   &ShadowVacuumRT);
+	gxCreateRenderTarget(LitRenderTargetWidth,   LitRenderTargetHeight,   &ShadowForegroundRT, true);
+	gxCreateRenderTarget(LitRenderTargetWidth,   LitRenderTargetHeight,   &ShadowVacuumRT, true);
 }
 
-void BuildShadows(ELightList List, gxSprite* FinalRT, float ShadowOffsetX, float ShadowOffsetY)
+void DrawShadows(ELightList List, gxSprite* FinalRT, float ShadowOffsetX, float ShadowOffsetY)
 {
-	gxSetRenderTarget(&ShadowAlphaRT);
+	gxSetRenderTarget(FinalRT);
 	gxClearColor(gxRGBA32(0, 0, 0, 0));
 
 #ifdef PLATFORM_WINDOWS
@@ -695,11 +711,12 @@ void BuildShadows(ELightList List, gxSprite* FinalRT, float ShadowOffsetX, float
     gxSetShaderConstant(ShadowShadowAlpha, 192.0f/255.0f);
 #endif
     
-	_gxSetAlpha( GXALPHA_BLEND );
-	for (int i = 0; i < LightLists[List].NQuads; i++)
-		DrawLitQuadShadow( &LightLists[List].Quads[i], ShadowOffsetX, ShadowOffsetY );
-    
-	gxCopyRenderTarget(&ShadowAlphaRT, &ShadowPingRT);
+    DrawLightList(List, GXALPHA_BLEND);
+}
+
+void BlurShadows(gxSprite* FinalRT)
+{
+	gxCopyRenderTarget(FinalRT, &ShadowPingRT);
 
 #ifdef PLATFORM_WINDOWS
 	gxSetPixelShader(&Gaussian7Shader);
@@ -763,7 +780,7 @@ void RenderShadows(gxSprite* FinalRT)
 #endif
 
 #ifdef PLATFORM_IPHONE
-    gxSetShader(&LitShader);
+    gxSetShader(&ApplyShadowShader);
 #endif
     
 	_gxSetAlpha(GXALPHA_BLEND);
@@ -777,12 +794,12 @@ void RenderShadows(gxSprite* FinalRT)
 
 void InitColorBleed()
 {
-	gxCreateRenderTarget(LitRenderTargetWidth/2,    LitRenderTargetHeight/2,    &ColorBleedDiv2RT);
-	gxCreateRenderTarget(LitRenderTargetWidth/4,    LitRenderTargetHeight/4,    &ColorBleedDiv4RT);
-	gxCreateRenderTarget(LitRenderTargetWidth/8,    LitRenderTargetHeight/8,    &ColorBleedDiv8RT);
-	gxCreateRenderTarget(LitRenderTargetWidth/16,   LitRenderTargetHeight/16,   &ColorBleedPingRT);
-	gxCreateRenderTarget(LitRenderTargetWidth/16,   LitRenderTargetHeight/16,   &ColorBleedPongRT);
-	gxCreateRenderTarget(LitRenderTargetWidth/16,   LitRenderTargetHeight/16,   &ColorBleedFinalRT);
+	gxCreateRenderTarget(LitRenderTargetWidth/2,    LitRenderTargetHeight/2,    &ColorBleedDiv2RT, false);
+	gxCreateRenderTarget(LitRenderTargetWidth/4,    LitRenderTargetHeight/4,    &ColorBleedDiv4RT, false);
+	gxCreateRenderTarget(LitRenderTargetWidth/8,    LitRenderTargetHeight/8,    &ColorBleedDiv8RT, false);
+	gxCreateRenderTarget(LitRenderTargetWidth/16,   LitRenderTargetHeight/16,   &ColorBleedPingRT, false);
+	gxCreateRenderTarget(LitRenderTargetWidth/16,   LitRenderTargetHeight/16,   &ColorBleedPongRT, false);
+	gxCreateRenderTarget(LitRenderTargetWidth/16,   LitRenderTargetHeight/16,   &ColorBleedFinalRT, false);
 }
 
 void BuildColorBleed()
@@ -900,8 +917,7 @@ void RenderCombinedColor()
     
 #ifdef PLATFORM_IPHONE
     gxSetShaderSampler(CombineColorSampler, &ColorRT);
-    //gxSetShaderSampler(CombineColorSampler, &ShadowAlphaRT);
-    gxSetShaderSampler(CombineColorBleedSampler, &ColorBleedFinalRT);
+//    gxSetShaderSampler(CombineColorBleedSampler, &ColorBleedFinalRT);
     gxSetShaderSampler(CombineLightingSampler, &LightingRT);
 #endif
 	
@@ -941,12 +957,31 @@ void InitLighting()
 #endif
 
 #ifdef PLATFORM_IPHONE
+    // Create the vertex and index buffers.
+    glGenBuffers(2, LitVertsVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, LitVertsVBO[0]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(SLitVertex) * MAX_LIT_VERTS, NULL, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, LitVertsVBO[1]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(SLitVertex) * MAX_LIT_VERTS, NULL, GL_DYNAMIC_DRAW);
+    
+    glGenBuffers(2, LitVertsIBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, LitVertsIBO[0]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * MAX_LIT_VERTS * 2, NULL, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, LitVertsIBO[1]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * MAX_LIT_VERTS * 2, NULL, GL_DYNAMIC_DRAW);
+    
+    BufferObjectIndex = 0;
+    
+    // Create shaders.
 	gxCreateShader(LitVertexShaderSource, TexturedColoredShaderSource, &LitShader);
 
-	gxCreateShader(LitVertexShaderSource, TexturedShadowShaderSource, &ShadowShader);
-    ShadowShadowOffset = gxGetShaderConstantByName(&ShadowShader, "ShadowOffset");
+	gxCreateShader(LitVertexShaderSource, ShadowShaderSource, &ShadowShader);
+    ShadowShadowOffset = gxGetShaderConstantByName(&ShadowShader, "Offset");
     ShadowShadowAlpha = gxGetShaderConstantByName(&ShadowShader, "ShadowAlpha");
     ShadowSampler = gxGetShaderConstantByName(&ShadowShader, "Sampler");
+    
+    gxCreateShader(LitVertexShaderSource, ApplyShadowShaderSource, &ApplyShadowShader);
+    ApplyShadowSampler = gxGetShaderConstantByName(&ApplyShadowShader, "Sampler");
     
     gxCreateShader(LitVertexShaderSource, EffectsShaderSource, &EffectsShader);
     EffectsSampler = gxGetShaderConstantByName(&EffectsShader, "Sampler");
@@ -975,18 +1010,35 @@ void InitLighting()
 #endif
     
 	// Create render targets.
-	gxCreateRenderTarget(LitRenderTargetWidth, LitRenderTargetHeight, &ColorRT);
-	gxCreateRenderTarget(LitRenderTargetHeight, LitRenderTargetHeight, &LightingRT);
+	gxCreateRenderTarget(LitRenderTargetWidth, LitRenderTargetHeight, &ColorRT, false);
+	gxCreateRenderTarget(LitRenderTargetHeight, LitRenderTargetHeight, &LightingRT, false);
 
 	InitAmbientOcclusion();
 	InitShadows();
-	InitColorBleed();
+	//InitColorBleed();
 }
 
 void ResetLighting()
 {
 	NLitVerts = 0;
 
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Begin writing buffers                                                                 //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+#ifdef PLATFORM_IPHONE
+    NLitVertIndices = 0;
+    
+    BufferObjectIndex ^= 1;
+    
+    glBindBuffer(GL_ARRAY_BUFFER, LitVertsVBO[BufferObjectIndex]);
+    LitVerts = (SLitVertex*)glMapBufferOES(GL_ARRAY_BUFFER, GL_WRITE_ONLY_OES);
+    assert(LitVerts);
+    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, LitVertsIBO[BufferObjectIndex]);
+    LitVertIndices = (GLushort*)glMapBufferOES(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY_OES);
+    assert(LitVertIndices);
+#endif
+    
 	for (int i = 0; i < LIGHTLIST_COUNT; i++)
 	{
 		LightLists[i].NQuads = 0;
@@ -995,30 +1047,41 @@ void ResetLighting()
 
 void RenderLighting()
 {
-	// Set up lighting.
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Finish writing buffers                                                                //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+#ifdef PLATFORM_IPHONE
+    glBindBuffer(GL_ARRAY_BUFFER, LitVertsVBO[BufferObjectIndex]);
+    glUnmapBufferOES(GL_ARRAY_BUFFER);
+    LitVerts = NULL;
+    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, LitVertsIBO[BufferObjectIndex]);
+    glUnmapBufferOES(GL_ELEMENT_ARRAY_BUFFER);
+    LitVertIndices = NULL;
+#endif
+    
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Set up lighting globals                                                               //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	if (Chapter.PageProps.LightsOff)
 		LightState.AmbientColor = gxRGBA32(16, 16, 16, 255);
 	else
 		LightState.AmbientColor = gxRGBA32(128, 128, 128, 255);
 
-	// Build render targets.
-#ifdef PLATFORM_WINDOWS
-	gxSetVertexShader(&LitVertexShader);
-#endif
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Build shadows and ambient occlusion                                                   //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    _gxSetAlpha(GXALPHA_BLEND);
     
-#ifdef PLATFORM_IPHONE
-    gxSetShader(&LitShader);
-#endif
-    
-	// Build ambient occlusion buffers.
-	BuildAmbientOcclusion(LIGHTLIST_FOREGROUND, &AmbientOcclusionForegroundRT);
-    BuildAmbientOcclusion(LIGHTLIST_VACUUM, &AmbientOcclusionVacuumRT);
+	DrawAmbientOcclusion(LIGHTLIST_FOREGROUND, &AmbientOcclusionForegroundRT);
+    DrawAmbientOcclusion(LIGHTLIST_VACUUM, &AmbientOcclusionVacuumRT);
 
-	// Build shadow buffers.
-	BuildShadows(LIGHTLIST_FOREGROUND, &ShadowForegroundRT, 30, 20);
-	BuildShadows(LIGHTLIST_VACUUM, &ShadowVacuumRT, 30, 20);
+	DrawShadows(LIGHTLIST_FOREGROUND, &ShadowForegroundRT, 30, 20);
+	DrawShadows(LIGHTLIST_VACUUM, &ShadowVacuumRT, 30, 20);
 
-	// Build lighting buffer.
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Build lighting                                                                        //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 #ifdef PLATFORM_WINDOWS
 	gxSetPixelShader(&TexturedColoredShader);
 	gxSetVertexShader(&LitVertexShader);
@@ -1031,13 +1094,29 @@ void RenderLighting()
 	gxSetRenderTarget(&LightingRT);
 	gxClearColor(LightState.AmbientColor);
 
-	_gxSetAlpha( GXALPHA_ADD );
-	for (int i = 0; i < LightLists[LIGHTLIST_LIGHTING].NQuads; i++)
-		DrawLitQuad( &LightLists[LIGHTLIST_LIGHTING].Quads[i] );
-
+    DrawLightList(LIGHTLIST_LIGHTING, GXALPHA_ADD);
+    
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Blur shadows and ambient occlusion                                                    //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    BlurAmbientOcclusion(&AmbientOcclusionForegroundRT);
+    BlurAmbientOcclusion(&AmbientOcclusionVacuumRT);
+    
+    BlurShadows(&ShadowForegroundRT);
+    BlurShadows(&ShadowVacuumRT);
+    
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Draw layers                                                                           //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	// Main rendering.
 	gxSetRenderTarget(&ColorRT);
 
+	// White background - useful for testing AO and stuff.
+	gxClearColor(gxRGBA32(255, 255, 255, 255));
+	// Black background - useful for testing fireworks.
+	//gxClearColor(gxRGBA32(0, 0, 0, 255));
+    
+	// Real background.
 #ifdef PLATFORM_WINDOWS
 	gxSetPixelShader(&TexturedColoredShader);
 	gxSetVertexShader(&LitVertexShader);
@@ -1046,38 +1125,14 @@ void RenderLighting()
 #ifdef PLATFORM_IPHONE
     gxSetShader(&LitShader);
 #endif
-
-#if 1
-	// Real background.
-	_gxSetAlpha( GXALPHA_BLEND );
-	for (int i = 0; i < LightLists[LIGHTLIST_BACKGROUND].NQuads; i++)
-		DrawLitQuad( &LightLists[LIGHTLIST_BACKGROUND].Quads[i] );
-#else
-	// White background - useful for testing AO and stuff.
-	gxClearColor(gxRGBA32(255, 255, 255, 255));
-	// Black background - useful for testing fireworks.
-	//gxClearColor(gxRGBA32(0, 0, 0, 255));
-#endif
+    
+    DrawLightList(LIGHTLIST_BACKGROUND, GXALPHA_NONE);
 
 	// Foreground ambient occlusion & shadows.
 	RenderAmbientOcclusion(&AmbientOcclusionForegroundRT);
 	RenderShadows(&ShadowForegroundRT);
 
-#ifdef PLATFORM_WINDOWS
-	gxSetPixelShader(&TexturedColoredShader);
-	gxSetVertexShader(&LitVertexShader);
-#endif
-    
-#ifdef PLATFORM_IPHONE
-    gxSetShader(&LitShader);
-#endif
-    
 	// Dust layer.
-	_gxSetAlpha( GXALPHA_BLEND );
-	for (int i = 0; i < LightLists[LIGHTLIST_DUST].NQuads; i++)
-		DrawLitQuad( &LightLists[LIGHTLIST_DUST].Quads[i] );
-
-	// Foreground.
 #ifdef PLATFORM_WINDOWS
 	gxSetPixelShader(&TexturedColoredShader);
 	gxSetVertexShader(&LitVertexShader);
@@ -1087,11 +1142,9 @@ void RenderLighting()
     gxSetShader(&LitShader);
 #endif
     
-	_gxSetAlpha( GXALPHA_BLEND );
-	for (int i = 0; i < LightLists[LIGHTLIST_FOREGROUND].NQuads; i++)
-		DrawLitQuad( &LightLists[LIGHTLIST_FOREGROUND].Quads[i] );
-	for (int i = 0; i < LightLists[LIGHTLIST_FOREGROUND_NO_SHADOW].NQuads; i++)
-		DrawLitQuad( &LightLists[LIGHTLIST_FOREGROUND_NO_SHADOW].Quads[i] );
+    DrawLightList(LIGHTLIST_DUST, GXALPHA_BLEND);
+    DrawLightList(LIGHTLIST_FOREGROUND, GXALPHA_BLEND);
+    DrawLightList(LIGHTLIST_FOREGROUND_NO_SHADOW, GXALPHA_BLEND);
 
 	// Vacuum ambient occlusion & shadows.
 	RenderAmbientOcclusion(&AmbientOcclusionVacuumRT);
@@ -1107,20 +1160,22 @@ void RenderLighting()
 #endif
     
 	// Vacuum.
-	_gxSetAlpha( GXALPHA_BLEND );
-	for (int i = 0; i < LightLists[LIGHTLIST_VACUUM].NQuads; i++)
-		DrawLitQuad( &LightLists[LIGHTLIST_VACUUM].Quads[i] );
+    DrawLightList(LIGHTLIST_VACUUM, GXALPHA_BLEND);
 
 	// Color bleeding - Adds color and bleed color into framebuffer.
 	//BuildColorBleed();
 
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Combine layers into frame                                                             //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
 	// Combine everything into the final output.
 	gxSetRenderTarget(NULL);
-
-	_gxSetAlpha( GXALPHA_NONE );
 	RenderCombinedColor();
 
-	// Effects.
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Draw effects on top                                                                   //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 #ifdef PLATFORM_WINDOWS
 	gxSetPixelShader(&EffectsShader);
 	gxSetVertexShader(&LitVertexShader);
@@ -1130,9 +1185,22 @@ void RenderLighting()
     gxSetShader(&EffectsShader);
 #endif
 
-	_gxSetAlpha( GXALPHA_ADD );
-	for (int i = 0; i < LightLists[LIGHTLIST_EFFECTS].NQuads; i++)
-		DrawLitQuad( &LightLists[LIGHTLIST_EFFECTS].Quads[i] );
+    DrawLightList(LIGHTLIST_EFFECTS, GXALPHA_ADD);
+
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                   Draw screen wipes                                                                     //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+	// Screen wipe.
+#ifdef PLATFORM_WINDOWS
+	gxSetPixelShader(&TexturedColoredShader);
+	gxSetVertexShader(&LitVertexShader);
+#endif
+    
+#ifdef PLATFORM_IPHONE
+    gxSetShader(&LitShader);
+#endif
+    
+    DrawLightList(LIGHTLIST_WIPE, GXALPHA_BLEND);
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -1151,6 +1219,26 @@ SLitVertex* AllocateLitVerts(int NVerts)
 	return Verts;
 }
 
+#ifdef PLATFORM_IPHONE
+void AddLitQuadStripIndices(SLitQuad* Quad, int NVerts)
+{
+    Quad->BaseIndex = NLitVertIndices;
+    
+    int Index = NLitVertIndices;
+    
+    if (NLitVerts > 0)
+        LitVertIndices[Index++] = NLitVerts;
+
+    for (int i = 0; i < NVerts; i++)
+        LitVertIndices[Index++] = NLitVerts+i;
+    
+    LitVertIndices[Index++] = NLitVerts+NVerts-1;
+    
+    Quad->IndexCount = Index - Quad->BaseIndex;
+    NLitVertIndices = Index;
+}
+#endif
+
 void AddLitQuad(
 	ELightList List, gxSprite* Sprite, unsigned int Color,
 	float X0, float Y0, float U0, float V0, 
@@ -1168,6 +1256,10 @@ void AddLitQuad(
     
 	Quad->List = List;
 	Quad->Sprite = Sprite;
+
+#ifdef PLATFORM_IPHONE
+    AddLitQuadStripIndices(Quad, 4);
+#endif    
 
 	Quad->NVerts = 4;
 	Quad->Verts = AllocateLitVerts(4);
@@ -1206,6 +1298,10 @@ SLitVertex* AddLitQuad(ELightList List, gxSprite* Sprite, int NVerts)
 
 	Quad->List = List;
 	Quad->Sprite = Sprite;
+
+#ifdef PLATFORM_IPHONE
+    AddLitQuadStripIndices(Quad, NVerts);
+#endif    
 
 	Quad->NVerts = NVerts;
 	Quad->Verts = AllocateLitVerts(NVerts);

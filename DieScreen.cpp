@@ -29,8 +29,6 @@ void InitDieScreen()
 
 void DisplayDieScreen()
 {
-	ResetLighting();
-
 	AddLitSprite(LIGHTLIST_BACKGROUND, &BackgroundCardboardSprite, 0, 0);
 
 	float t = DieScreen.Timer / 10.0f;
@@ -41,8 +39,6 @@ void DisplayDieScreen()
 
 	AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, DieScreen.Pressed ? &ScreenLoseGrave2Sprite : &ScreenLoseGrave1Sprite, 384, 800, 1.0f, Alpha);
 	AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, &ScreenLoseGhostSprite, 768/2 + dx, 200+ScreenLoseGhostSprite.height/2+dy, 1.0f, Alpha*Alpha*0.5f);
-
-	RenderLighting();
 }
 
 void DieScreen_Advance()

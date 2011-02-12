@@ -27,11 +27,11 @@ void DisplayHelpScreen()
 {
     if (HelpScreen.HelpPressed)
     {
-        gxDrawSprite( 0, 0, &ScreenHelp2Sprite );
+        AddLitSprite(LIGHTLIST_BACKGROUND, &ScreenHelp2Sprite, 0, 0);
     }
     else
     {
-        gxDrawSprite( 0, 0, &ScreenHelp1Sprite );
+        AddLitSprite(LIGHTLIST_BACKGROUND, &ScreenHelp1Sprite, 0, 0);
     }
 }
 

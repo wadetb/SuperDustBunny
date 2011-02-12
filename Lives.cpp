@@ -24,7 +24,6 @@ void DisplayLives()
     case 6:     AddLitSprite( LIGHTLIST_VACUUM, &CoinLife6Sprite, 640, -30); break;
     default:    break;	
 	}
-	gxDrawString(550, 0, 16, gxRGB32(255, 255, 255), "Lives: %d", Dusty.Lives);
 }
 
 void UpdateLives()

@@ -205,4 +205,6 @@ extern sxSound TennisBallVacuumedUpSound;
 
 void LoadAssets();
 
+void LoadSpriteAsset(const char* FileName, gxSprite* Sprite);
+
 #endif

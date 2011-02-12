@@ -75,7 +75,7 @@ void _gxDrawQuad(
                  float X2, float Y2, float U2, float V2, 
                  float X3, float Y3, float U3, float V3);
 
-void gxCreateRenderTarget(int Width, int Height, gxSprite* Sprite);
+void gxCreateRenderTarget(int Width, int Height, gxSprite* Sprite, bool Alpha);
 void gxSetRenderTarget(gxSprite* Sprite);
 
 void gxClearColor(unsigned int Color);

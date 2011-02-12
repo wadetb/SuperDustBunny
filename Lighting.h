@@ -25,6 +25,7 @@ enum ELightList
 	LIGHTLIST_EFFECTS,
 	LIGHTLIST_VACUUM,
 	LIGHTLIST_LIGHTING,
+	LIGHTLIST_WIPE,
 	LIGHTLIST_COUNT
 };
 
@@ -36,6 +37,11 @@ struct SLitQuad
 
 	int NVerts;
 	SLitVertex* Verts;
+    
+#ifdef PLATFORM_IPHONE
+    GLushort BaseIndex;
+    GLushort IndexCount;
+#endif
 };
 
 void AddLitQuad(

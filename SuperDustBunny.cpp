@@ -75,7 +75,7 @@ int CurrentChapter = 0;
 bool NextPageButtonPressed = false;
 
 bool DisplayHelp = false;
-bool DevMode = true;
+bool DevMode = false;
 bool SlowMotionMode = false;
 bool ChapterIntroDisplayed = false;
 bool GamePause = false;
@@ -364,8 +364,6 @@ void DisplayGame_Playing()
 {	
 	// Calculate scrolling.
 	CalculateScrollY();
-	
-	ResetLighting();
 
 	// Repeating background.
 	int y = 0;
@@ -413,8 +411,6 @@ void DisplayGame_Playing()
 
 	// Overlay
 	DisplayChapterIntro();
-
-    RenderLighting();
       	
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Debugging aids                                                                        //
@@ -638,7 +634,9 @@ void DisplayGame_Transition()
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
 void Display()
-{
+{	
+	ResetLighting();
+
 	if (GameState == GAMESTATE_START_SCREEN)
 	{
 		DisplayStartScreen();
@@ -676,7 +674,9 @@ void Display()
 	{
 		DisplayGame_Playing();
 	}
-	
+
+    RenderLighting();
+
 #ifdef PLATFORM_WINDOWS
 	if (DisplayHelp)
 	{

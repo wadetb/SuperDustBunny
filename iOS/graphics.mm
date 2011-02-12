@@ -98,7 +98,6 @@ void gxInitFontSprite()
 		pixels += 8 * 4;
 	}
 	
-	glEnable(GL_TEXTURE_2D);
 	glGenTextures(1, &gxFontSprite.tex);
 	glBindTexture(GL_TEXTURE_2D, gxFontSprite.tex);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -162,6 +161,11 @@ void gxInit(gxDisplayType disp)
 		break;
 	}
 	
+    glEnable(GL_TEXTURE_2D);
+    glEnableVertexAttribArray(GX_ATTRIB_VERTEX);
+    glEnableVertexAttribArray(GX_ATTRIB_TEXCOORD);
+    glEnableVertexAttribArray(GX_ATTRIB_COLOR);
+    
 	msSetMouseRange( 0, 0, gxScreenWidth, gxScreenHeight );	
 	
 	gxInitFontSprite();
@@ -202,7 +206,6 @@ void gxLoadSprite(const char* filename, gxSprite* sprite)
 	CGColorSpaceRelease(colorSpace);
 	CGContextDrawImage(context, CGRectMake(0, sprite->texHeight-sprite->height, sprite->width, sprite->height), image);
 	
-	glEnable(GL_TEXTURE_2D);
 	glGenTextures(1, &sprite->tex);
 	glBindTexture(GL_TEXTURE_2D, sprite->tex);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -248,17 +251,12 @@ void _gxDrawQuad( float x, float y, float w, float h, unsigned int color, float 
     glVertexAttribPointer(GX_ATTRIB_TEXCOORD, 2, GL_FLOAT, 0, sizeof(gxSpriteVertex), &v[0].u);
     glVertexAttribPointer(GX_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, sizeof(gxSpriteVertex), &v[0].color);
 
-    glEnableVertexAttribArray(GX_ATTRIB_VERTEX);
-    glEnableVertexAttribArray(GX_ATTRIB_TEXCOORD);
-    glEnableVertexAttribArray(GX_ATTRIB_COLOR);
-
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 }
 
 void gxDrawSprite(int x, int y, gxSprite* sprite)
 {
     gxSetShader(&gxSpriteShader);
-	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, sprite->tex);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -295,7 +293,6 @@ void gxDrawString( int x, int y, int ptsize, int color, const char* text, ... )
 	va_end(args);
 	
     gxSetShader(&gxSpriteShader);
-	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, gxFontSprite.tex);
 	glDisable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -355,7 +352,6 @@ void _gxSetAlpha( gxAlphaMode mode )
 
 void _gxSetTexture( gxSprite* sprite )
 {
-	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, sprite->tex);
 }
 
@@ -492,7 +488,7 @@ void gxSetShaderSampler(gxShaderConstant Constant, gxSprite* Sprite)
     glActiveTexture(GL_TEXTURE0);
 }
 
-void gxCreateRenderTarget(int width, int height, gxSprite* sprite)
+void gxCreateRenderTarget(int width, int height, gxSprite* sprite, bool Alpha)
 {
 	sprite->width = width;
 	sprite->height = height;
@@ -502,14 +498,16 @@ void gxCreateRenderTarget(int width, int height, gxSprite* sprite)
 	
 	void* pixels = calloc(sprite->texWidth * sprite->texHeight * 4, 1);
 
-    glEnable(GL_TEXTURE_2D);
     glGenTextures(1, &sprite->tex);
     glBindTexture(GL_TEXTURE_2D, sprite->tex);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sprite->texWidth, sprite->texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-
+    if (Alpha)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sprite->texWidth, sprite->texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+    else
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, sprite->texWidth, sprite->texHeight, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, pixels);
+        
 	glGenFramebuffers(1, &sprite->framebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, sprite->framebuffer);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, sprite->tex, 0);
@@ -530,6 +528,9 @@ void gxSetRenderTarget(gxSprite* Sprite)
         glBindFramebuffer(GL_FRAMEBUFFER, _gxDefaultFrameBuffer);    
         glViewport(0, 0, _gxDefaultFrameBufferWidth, _gxDefaultFrameBufferHeight);
     }
+
+    GLenum attach[] = { GL_COLOR_ATTACHMENT0 };
+    glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, attach);    
 }
 
 void gxClearColor(unsigned int Color)
@@ -547,7 +548,7 @@ void gxClearColor(unsigned int Color)
 void gxCopyRenderTarget(gxSprite* From, gxSprite* To)
 {
 	gxSetRenderTarget(To);
-    
+ 
 	_gxSetAlpha( GXALPHA_NONE );
 	_gxSetTexture(From);
     
@@ -585,10 +586,6 @@ void gxCopyRenderTarget(gxSprite* From, gxSprite* To)
     glVertexAttribPointer(GX_ATTRIB_VERTEX, 2, GL_FLOAT, 0, sizeof(gxSpriteVertex), &v[0].x);
     glVertexAttribPointer(GX_ATTRIB_TEXCOORD, 2, GL_FLOAT, 0, sizeof(gxSpriteVertex), &v[0].u);
     glVertexAttribPointer(GX_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, sizeof(gxSpriteVertex), &v[0].color);
-    
-    glEnableVertexAttribArray(GX_ATTRIB_VERTEX);
-    glEnableVertexAttribArray(GX_ATTRIB_TEXCOORD);
-    glEnableVertexAttribArray(GX_ATTRIB_COLOR);
     
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 }

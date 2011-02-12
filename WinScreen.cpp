@@ -26,11 +26,11 @@ void DisplayWinScreen()
 {
 	if (WinScreen.Pressed)
 	{
-		gxDrawSprite(0, 0, &ScreenWin2Sprite);
+		AddLitSprite(LIGHTLIST_BACKGROUND, &ScreenWin2Sprite, 0, 0);
 	}
 	else
 	{
-		gxDrawSprite(0, 0, &ScreenWin1Sprite);
+		AddLitSprite(LIGHTLIST_BACKGROUND, &ScreenWin1Sprite, 0, 0);
 	}
 }
 

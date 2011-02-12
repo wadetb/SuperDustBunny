@@ -78,7 +78,7 @@ void StartScreen_Advance()
 
 void DisplayStartScreen()
 {
-	gxDrawSprite( 0, 0, &ScreenStart2Sprite );
+	AddLitSprite(LIGHTLIST_BACKGROUND, &ScreenStart2Sprite, 0, 0 );
 
 	for (int i = 0; i < STARTSCREEN_ITEM_COUNT; i++)
 	{
@@ -90,7 +90,7 @@ void DisplayStartScreen()
 		if (StartScreen.Pressed && i == StartScreen.CurItem)
 			Pressed = true;
 
-		gxDrawSpriteAlpha(768/2-600/2 + i*600 - (int)StartScreen.X, 420, Alpha, (Pressed ? StartScreenPressedIcons : StartScreenIcons)[i]);
+		AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, (Pressed ? StartScreenPressedIcons : StartScreenIcons)[i], 384 + i*600 - (int)StartScreen.X, 720, 1.0, Alpha );
 	}
 }
 
