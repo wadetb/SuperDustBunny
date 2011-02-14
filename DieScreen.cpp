@@ -30,6 +30,7 @@ void InitDieScreen()
 void DisplayDieScreen()
 {
 	AddLitSprite(LIGHTLIST_BACKGROUND, &BackgroundCardboardSprite, 0, 0);
+	//AddLitSpriteScaled(LIGHTLIST_BACKGROUND, &WhiteSprite, 0, 0, 10000.0f, 100000.0f);
 
 	float t = DieScreen.Timer / 10.0f;
 	float dx = cos(t/5)*10 + cos(1+t/7)*10 + cos(1-t/9)*10 + 100;

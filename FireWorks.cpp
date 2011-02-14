@@ -24,7 +24,7 @@ int NFireWorks = 0;
 SFireWork FireWorks[MAX_FIREWORKS];
 
 #define MAX_FIREWORK_TRAILS			2048
-#define FIREWORK_TRAIL_HISTORY		8
+#define FIREWORK_TRAIL_HISTORY		16
 
 enum EFireWorkTrailType
 {
@@ -263,7 +263,7 @@ void UpdateFireWorkTrails()
 		Trail->VX *= 0.975f;
 		Trail->VY *= 0.97f;
 		Trail->VZ *= 0.97f;
-		Trail->VY += 0.005f;
+		Trail->VY += 0.015f;
 
 		Trail->Life -= 1.0f/60.0f;
 	}
@@ -360,7 +360,7 @@ void DisplayFireWorks()
 		{
 			AddLitSpriteCenteredScaledRotated(LIGHTLIST_VACUUM, &FireWorkRocketSprite, FireWork->X, FireWork->Y + ScrollY, 1.0f, DegreesToRadians((float)FireWork->FlightDir));
 		}
-		else if (FireWork->State == FIREWORKSTATE_EXPLODE)
+		if (FireWork->State == FIREWORKSTATE_EXPLODE)
 		{
 			if (Chapter.PageProps.LightsOff)
 			{
@@ -381,7 +381,7 @@ void ExplodeFireWork(float X, float Y, int Size)
 	unsigned int Color = FireWorkColors[Random(0, sizeof(FireWorkColors)/sizeof(FireWorkColors[0]))];
 	for (int i = 0; i < 50; i++)
 	{
-		SpawnFireWorkTrail(X, Y, Random(100.0f, 120.0f), Random(4.75f, 5.25f), Random(2.6f, 2.7f), Random(1.0f, 2.0f), Color);
+		SpawnFireWorkTrail(X, Y, Random(300.0f, 320.0f), Random(8.75f, 10.25f), Random(2.0f, 2.2f), Random(2.0f, 3.0f), Color);
 	}
 
 	for (int y = 0; y < Chapter.PageHeight; y++)
@@ -505,6 +505,15 @@ void UpdateFireWorks()
         }     
 		else if (FireWork->State == FIREWORKSTATE_EXPLODE)
         {   
+			float Angle = DirectionToAngle((float)FireWork->FlightDir);
+			float Velocity = 1.5f;
+
+			FireWork->VelocityX += Velocity*cosf(Angle);
+			FireWork->VelocityY += -Velocity*sinf(Angle);
+
+			FireWork->X += FireWork->VelocityX;
+			FireWork->Y += FireWork->VelocityY;
+
 			FireWork->Timer--;
 			if (FireWork->Timer == 0)
 			{

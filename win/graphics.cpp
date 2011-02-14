@@ -713,7 +713,7 @@ void gxDrawSpriteSubRect(int x, int y, int x1, int y1, int x2, int y2, gxSprite*
 }
 
 
-void gxCreateRenderTarget(int Width, int Height, gxSprite* Sprite)
+void gxCreateRenderTarget(int Width, int Height, gxSprite* Sprite, bool Alpha)
 {
 	Sprite->width = Sprite->texWidth = Width;
 	Sprite->height = Sprite->texHeight = Height;

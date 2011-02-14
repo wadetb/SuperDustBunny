@@ -59,9 +59,9 @@ EGameTransition GameTransition;
 const char* ChapterNames[MAX_CHAPTERS] =
 {
 	"Chapters/01-Study",
+	"Chapters/02-Fridge",
 	"Chapters/Wade1",
 	"Chapters/Thomas1",
-	"",
 	"",
 	"",
 	"",
@@ -504,7 +504,7 @@ void SetGameState_Transition(EGameTransition Type)
 
 	if (GameTransition == GAMETRANSITION_FIRST_PAGE)
 	{
-		StartWipe(WIPE_FADE_TO_BLACK, 1.0f);
+		StartWipe(WIPE_FADE_TO_BLACK, 2.0f);
 	}
 	else if (GameTransition == GAMETRANSITION_NEXT_PAGE)
 	{

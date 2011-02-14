@@ -45,7 +45,7 @@ void InitScore()
 
 void DisplayScore()
 {
-    AddLitSprite( LIGHTLIST_VACUUM, &Score1Sprite, -40, -30);
+//    AddLitSprite( LIGHTLIST_VACUUM, &Score1Sprite, -40, -30);
 
     if (Score.Single)
     {

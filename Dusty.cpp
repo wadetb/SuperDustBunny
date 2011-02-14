@@ -808,11 +808,17 @@ void DisplayDusty_Stuck()
 
 	if (Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide)
 	{
-		DisplayDustySprite(&DustyWallJumpSprite, -128, -8, -200);
+		if (Dusty.StuckTimer > 10)
+			DisplayDustySprite(&DustyHop2Sprite, -128, -8, -200);
+		else
+			DisplayDustySprite(&DustyWallJumpSprite, -128, -8, -200);
 	}
 	else
 	{
-		DisplayDustySprite(&DustyIdle3Sprite, -124, 5, -221);
+		if (Dusty.StuckTimer > 10)
+			DisplayDustySprite(&DustyHop5Sprite, -124, 5, -221);
+		else
+			DisplayDustySprite(&DustyIdle3Sprite, -124, 5, -221);
 	}
 }
 

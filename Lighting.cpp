@@ -576,7 +576,7 @@ void DrawAmbientOcclusion(ELightList List, gxSprite* FinalRT)
     
 #ifdef PLATFORM_WINDOWS
 	gxSetPixelShader(&TexturedShadowShader);
-	gxSetPixelShaderConst(0, 192.0f/255.0f);
+	gxSetPixelShaderConst(0, 200.0f/255.0f);
 
 	gxSetVertexShader(&ShadowVertexShader);
 	gxSetVertexShaderConst(0, 0.0f, 0.0f);
@@ -656,7 +656,7 @@ void BlurAmbientOcclusion(gxSprite* FinalRT)
 	gxSetPixelShader(&TexturedColoredShader);
 #endif
     
-#ifdef PLATFORM_IPHONE)
+#ifdef PLATFORM_IPHONE
     gxSetShader(&LitShader);
 #endif
     
@@ -670,7 +670,7 @@ void RenderAmbientOcclusion(gxSprite* FinalRT)
 	gxSetVertexShader(&LitVertexShader);
 #endif
 
-#ifdef PLATFORM_IPHONE)
+#ifdef PLATFORM_IPHONE
     gxSetShader(&ApplyShadowShader);
 #endif
     
@@ -921,7 +921,7 @@ void RenderCombinedColor()
     gxSetShaderSampler(CombineLightingSampler, &LightingRT);
 #endif
 	
-    _gxDrawQuad(0, 0, gxScreenWidth, gxScreenHeight, gxRGBA32(255,255,255,255), 0, 1, 1, 0);
+    _gxDrawQuad(0, 0, (float)gxScreenWidth, (float)gxScreenHeight, gxRGBA32(255,255,255,255), 0, 1, 1, 0);
     
 #ifdef PLATFORM_WINDOWS
 	gxSetPixelShader(&TexturedColoredShader);
@@ -1384,6 +1384,22 @@ void AddLitSpriteCenteredScaledRotated(ELightList List, gxSprite* Sprite, float 
 	float h = Scale * (float)Sprite->height * 0.5f;
 
 	AddLitQuad(List, Sprite, gxRGBA32(255,255,255,255),
+		X + (-w * ca) - (-h * sa),    Y + (-w * sa) + (-h * ca),    0.0f, 0.0f, 
+		X + (+w * ca) - (-h * sa),    Y + (+w * sa) + (-h * ca),    1.0f, 0.0f, 
+		X + (+w * ca) - (+h * sa),    Y + (+w * sa) + (+h * ca),    1.0f, 1.0f, 
+		X + (-w * ca) - (+h * sa),    Y + (-w * sa) + (+h * ca),    0.0f, 1.0f);
+}
+
+
+void AddLitSpriteCenteredScaledRotatedAlpha(ELightList List, gxSprite* Sprite, float X, float Y, float Scale, float Angle, float Alpha)
+{
+	float ca = cosf(Angle);
+	float sa = sinf(Angle);
+
+	float w = (float)Sprite->width * 0.5f;
+	float h = (float)Sprite->height * 0.5f;
+
+	AddLitQuad(List, Sprite, gxRGBA32(255,255,255,(int)(255*Alpha)),
 		X + (-w * ca) - (-h * sa),    Y + (-w * sa) + (-h * ca),    0.0f, 0.0f, 
 		X + (+w * ca) - (-h * sa),    Y + (+w * sa) + (-h * ca),    1.0f, 0.0f, 
 		X + (+w * ca) - (+h * sa),    Y + (+w * sa) + (+h * ca),    1.0f, 1.0f, 
