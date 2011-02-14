@@ -808,17 +808,11 @@ void DisplayDusty_Stuck()
 
 	if (Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide)
 	{
-		if (Dusty.StuckTimer > 10)
-			DisplayDustySprite(&DustyHop2Sprite, -128, -8, -200);
-		else
-			DisplayDustySprite(&DustyWallJumpSprite, -128, -8, -200);
+		DisplayDustySprite(&DustyWallJumpSprite, -128, -8, -200);
 	}
 	else
 	{
-		if (Dusty.StuckTimer > 10)
-			DisplayDustySprite(&DustyHop5Sprite, -124, 5, -221);
-		else
-			DisplayDustySprite(&DustyIdle3Sprite, -124, 5, -221);
+		DisplayDustySprite(&DustyIdle3Sprite, -124, 5, -221);
 	}
 }
 
@@ -1090,7 +1084,7 @@ void UpdateDusty_Collision()
 							{
 								SetDustyState_Hurt();
 							}
-						}
+						}					
 					}
 				}
 			}

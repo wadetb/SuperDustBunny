@@ -80,23 +80,14 @@ void UpdateStaplers()
     for (int i = 0; i < NStaplers; i++)
     {
         SStapler* Stapler = &Staplers[i];
-
+        
         if (Stapler->State == STAPLERSTATE_WAIT)
         {
-            float Dist = Distance(Dusty.FloatX, Dusty.FloatY, Stapler->X, Stapler->Y+60);
-
-            if (Dusty.CollideWithBottomSide && Dist < 25)
-            {
                 //if (Tutorial.StaplerDisplayed == false)
                 //{
                 //    SetGameState_Tutorial(TUTORIALSTATE_STAPLER);
                 //    return;
-                //}
-                
-                Stapler->State = STAPLERSTATE_PRELAUNCH;
-                SetDustyState_PrepareLaunch();
-                
-            }
+                //}  
         }
         
         if (Stapler->State == STAPLERSTATE_PRELAUNCH)

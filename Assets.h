@@ -124,6 +124,87 @@ extern gxSprite PowerJump8Sprite;
 extern gxSprite PowerJump9Sprite; 
 extern gxSprite PowerJump10Sprite; 
 
+extern gxSprite DustMoteSprite;
+extern gxSprite DustArrowSprite;
+
+extern gxSprite FireWorkRocketSprite;
+extern gxSprite FireWorkBangSprite;
+
+extern gxSprite VacuumBackSprite;
+extern gxSprite VacuumFrontSprite;
+
+extern gxSprite ScreenStart1Sprite;
+extern gxSprite ScreenStart2Sprite;
+extern gxSprite ScreenHelp1Sprite;
+extern gxSprite ScreenHelp2Sprite;
+extern gxSprite ScreenCredits1Sprite;
+extern gxSprite ScreenCredits2Sprite;
+
+extern gxSprite IconStart1Sprite;
+extern gxSprite IconStart2Sprite;
+extern gxSprite IconHelp1Sprite;
+extern gxSprite IconHelp2Sprite;
+extern gxSprite IconCredits1Sprite;
+extern gxSprite IconCredits2Sprite;
+
+extern gxSprite ScreenLose1Sprite;
+extern gxSprite ScreenLose2Sprite;
+
+extern gxSprite ScreenLoseGhostSprite;
+extern gxSprite ScreenLoseGrave1Sprite;
+extern gxSprite ScreenLoseGrave2Sprite;
+
+extern gxSprite ScreenWin1Sprite;
+extern gxSprite ScreenWin2Sprite;
+
+extern gxSprite TutorialInitialSprite;
+extern gxSprite TutorialBarrelSprite;
+extern gxSprite TutorialCoinSprite;
+extern gxSprite TutorialFireWorkSprite;
+extern gxSprite TutorialGearSprite;
+extern gxSprite TutorialBallSprite;
+extern gxSprite TutorialJumpSprite;
+extern gxSprite TutorialWallJumpSprite;
+
+extern gxSprite ChapterTitle;
+
+extern gxSprite Score1Sprite;
+
+//-----------------------------------------------------------------------------------------------------------------------------------------//
+//                                                    Sound Assets                                                                         //
+//-----------------------------------------------------------------------------------------------------------------------------------------//
+
+extern sxSound DustyToJumpSound;
+extern sxSound DustyJumpSound;
+extern sxSound DustyWallJumpSound;
+extern sxSound DustyLaunchSound;
+extern sxSound DustyWinSound;
+
+extern sxSound Song1Sound;
+extern sxSound Song2Sound;
+extern sxSound Song3Sound;
+
+extern sxSound VacuumClogSound;
+extern sxSound VacuumClangSound;
+extern sxSound VacuumTurnOnSound;
+extern sxSound VacuumTurnOffSound;
+extern sxSound VacuumJamSound;
+extern sxSound VacuumOnSound;
+
+extern sxSound BlockBreakSound;
+extern sxSound JelloSound;
+extern sxSound CoinVacuumedUpSound;
+extern sxSound GearGrindSound;
+extern sxSound TennisBallVacuumedUpSound;
+
+//-----------------------------------------------------------------------------------------------------------------------------------------//
+//                                                    Asset Function Declarations                                                          //
+//-----------------------------------------------------------------------------------------------------------------------------------------//
+
+void LoadAssets();
+
+#endif
+
 
 
 extern gxSprite DustMoteSprite;
