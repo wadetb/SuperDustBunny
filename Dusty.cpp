@@ -427,17 +427,20 @@ void UpdateDusty_JumpCommon()
 	// Air control.
 	if (GetInput_MoveLeft())
 	{
-		Dusty.Direction = DIRECTION_LEFT;
 		if (Dusty.FloatVelocityX >= -6)
 			Dusty.FloatVelocityX -= 1.0f;
 	}
 	if (GetInput_MoveRight())
 	{
-		Dusty.Direction = DIRECTION_RIGHT;
 		if (Dusty.FloatVelocityX <= 6)
 			Dusty.FloatVelocityX += 1.0f;
 	}
-	
+
+    if (Dusty.FloatVelocityX > 0)
+        Dusty.Direction = DIRECTION_RIGHT;
+    else if (Dusty.FloatVelocityX < 0)
+        Dusty.Direction = DIRECTION_LEFT;
+
 	// Collision with corners is indicated by separate collision variables being set.
 	if (Dusty.CollideWithBottomLeftCorner)
 	{
@@ -883,20 +886,6 @@ void UpdateDusty_Hurt()
 
 void UpdateDusty_Collision()
 {
-	// Adjust Dusty's bottom collision rectangle while jumping to help him clear platforms more easily.  
-	// This will almost certainly cause issues and have to be taken out and replaced by a "mantle" action.
-	// UPDATE: We now have corner jump, which seems to avoid the need for this.
-	//if ((Dusty.State == DUSTYSTATE_JUMP || Dusty.State == DUSTYSTATE_LAUNCH) && Dusty.FloatVelocityY < 0)
-	//{
-	//	Dusty.Bottom = -30;
-	//	Dusty.Top = -90;
-	//}
-	//else
-	//{
-	//	Dusty.Bottom = 0;
-	//	Dusty.Top = -120;
-	//}
-
 	// Initialize all collision variables to false.  One or more of these will be set to true in this function.
 	// This function also corrects Dusty's position to not intersect anything.
 	Dusty.CollideWithRightSide = false;
@@ -1046,18 +1035,17 @@ void UpdateDusty_Collision()
 						if (Dusty.FloatVelocityY > 0)
 							Dusty.FloatVelocityY = 0;
 
-						// I'm taking the ability to enter corner jump from the top out for now.  I'll put it back in after testing
-						// for while if it seems important.
-						//if (LeftBlockIsEmpty && abs(LeftDistance - UpDistance) < CornerThreshold)
-						//{
-						//	Dusty.CollideWithBottomRightCorner = true;
-						//	Dusty.FloatX -= LeftDistance;
-						//}
-						//if (RightBlockIsEmpty && abs(RightDistance - UpDistance) < CornerThreshold)
-						//{
-						//	Dusty.CollideWithBottomLeftCorner = true;
-						//	Dusty.FloatX += RightDistance;
-						//}
+						// Top side corner jump is back in the game.
+						if (LeftBlockIsEmpty && abs(LeftDistance - UpDistance) < CornerThreshold)
+						{
+							Dusty.CollideWithBottomRightCorner = true;
+							Dusty.FloatX -= LeftDistance;
+						}
+						if (RightBlockIsEmpty && abs(RightDistance - UpDistance) < CornerThreshold)
+						{
+							Dusty.CollideWithBottomLeftCorner = true;
+							Dusty.FloatX += RightDistance;
+						}
 					}
 
 					int BlockID = GetBlockID(x, y);
@@ -1084,7 +1072,7 @@ void UpdateDusty_Collision()
 							{
 								SetDustyState_Hurt();
 							}
-						}					
+						}
 					}
 				}
 			}

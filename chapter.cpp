@@ -628,6 +628,8 @@ void LoadPageFromTMX(const char* FileName)
 
 void LoadChapter(const char* ChapterDir)
 {
+    float StartTime = GetCurrentTime();
+
 	PushErrorContext("While loading chapter '%s':\n", ChapterDir);
 
 	if (Chapter.NBlocks > 0 || Chapter.NPages > 0 || Chapter.NTileSets > 0)
@@ -693,6 +695,9 @@ void LoadChapter(const char* ChapterDir)
 	SetCurrentPage(0);
 
 	PopErrorContext();
+    
+    double EndTime = GetCurrentTime();
+    LogMessage("Loading chapter '%s' took %.1f seconds.\n", ChapterDir, EndTime-StartTime);
 }
 
 void ClearChapter()

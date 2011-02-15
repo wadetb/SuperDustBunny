@@ -37,8 +37,8 @@ SLitVertex LitVerts[MAX_LIT_VERTS];
 #endif
 
 
-int LitRenderTargetWidth = 320;
-int LitRenderTargetHeight = 480;
+int LitRenderTargetWidth;
+int LitRenderTargetHeight;
 
 
 #ifdef PLATFORM_WINDOWS
@@ -522,9 +522,10 @@ void DrawLightList(int List, gxAlphaMode Alpha)
     glVertexAttribPointer(GX_ATTRIB_TEXCOORD, 2, GL_FLOAT, 0, sizeof(SLitVertex), (void*)offsetof(SLitVertex, U));
     glVertexAttribPointer(GX_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, sizeof(SLitVertex), (void*)offsetof(SLitVertex, Color));
     
+    int NQuads = LightLists[List].NQuads;
     int QuadIndex = 0;
     
-    while (QuadIndex < LightLists[List].NQuads)
+    while (QuadIndex < NQuads)
     {
         SLitQuad* BaseQuad = &LightLists[List].Quads[QuadIndex];
         int BaseIndex = BaseQuad->BaseIndex;
@@ -535,6 +536,9 @@ void DrawLightList(int List, gxAlphaMode Alpha)
         SLitQuad* Quad = BaseQuad;
         for (;;)
         {
+            if (QuadIndex >= NQuads)
+                break;
+            
             if (Quad->Sprite != BaseQuad->Sprite)
                 break;
             
@@ -685,11 +689,11 @@ void RenderAmbientOcclusion(gxSprite* FinalRT)
 
 void InitShadows()
 {
-	gxCreateRenderTarget(LitRenderTargetWidth/2, LitRenderTargetHeight/2, &ShadowPingRT, true);
-	gxCreateRenderTarget(LitRenderTargetWidth/2, LitRenderTargetHeight/2, &ShadowPongRT, true);
+	gxCreateRenderTarget(LitRenderTargetWidth/4, LitRenderTargetHeight/4, &ShadowPingRT, true);
+	gxCreateRenderTarget(LitRenderTargetWidth/4, LitRenderTargetHeight/4, &ShadowPongRT, true);
 
-	gxCreateRenderTarget(LitRenderTargetWidth,   LitRenderTargetHeight,   &ShadowForegroundRT, true);
-	gxCreateRenderTarget(LitRenderTargetWidth,   LitRenderTargetHeight,   &ShadowVacuumRT, true);
+	gxCreateRenderTarget(LitRenderTargetWidth/2, LitRenderTargetHeight/2, &ShadowForegroundRT, true);
+	gxCreateRenderTarget(LitRenderTargetWidth/2, LitRenderTargetHeight/2, &ShadowVacuumRT, true);
 }
 
 void DrawShadows(ELightList List, gxSprite* FinalRT, float ShadowOffsetX, float ShadowOffsetY)
@@ -938,7 +942,12 @@ void RenderCombinedColor()
 
 void InitLighting()
 {
+    float StartTime = GetCurrentTime();
+    
 #ifdef PLATFORM_WINDOWS
+    LitRenderTargetWidth = 320;
+    LitRenderTargetHeight = 480;
+    
 	gxDev->CreateVertexDeclaration(LitVertexElements, &LitVertexDecl);
     
 	// Compile shaders.
@@ -957,6 +966,23 @@ void InitLighting()
 #endif
 
 #ifdef PLATFORM_IPHONE
+    switch (gxGetDisplayType()) 
+    {
+    case GXDISPLAY_IPAD_PORTRAIT:
+        LitRenderTargetWidth = 768;
+        LitRenderTargetHeight = 1024;
+        break;
+    case GXDISPLAY_IPHONE_RETINA_PORTRAIT:
+        LitRenderTargetWidth = 640;
+        LitRenderTargetHeight = 960;
+        break;
+    default:
+    case GXDISPLAY_IPHONE_PORTRAIT:
+        LitRenderTargetWidth = 320;
+        LitRenderTargetHeight = 480;
+        break;
+    };
+    
     // Create the vertex and index buffers.
     glGenBuffers(2, LitVertsVBO);
     glBindBuffer(GL_ARRAY_BUFFER, LitVertsVBO[0]);
@@ -1016,6 +1042,10 @@ void InitLighting()
 	InitAmbientOcclusion();
 	InitShadows();
 	//InitColorBleed();
+
+    
+    double EndTime = GetCurrentTime();
+    LogMessage("Lighting setup took %.1f seconds.\n", EndTime-StartTime);
 }
 
 void ResetLighting()
@@ -1073,8 +1103,8 @@ void RenderLighting()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
     _gxSetAlpha(GXALPHA_BLEND);
     
-	DrawAmbientOcclusion(LIGHTLIST_FOREGROUND, &AmbientOcclusionForegroundRT);
-    DrawAmbientOcclusion(LIGHTLIST_VACUUM, &AmbientOcclusionVacuumRT);
+	//DrawAmbientOcclusion(LIGHTLIST_FOREGROUND, &AmbientOcclusionForegroundRT);
+    //DrawAmbientOcclusion(LIGHTLIST_VACUUM, &AmbientOcclusionVacuumRT);
 
 	DrawShadows(LIGHTLIST_FOREGROUND, &ShadowForegroundRT, 30, 20);
 	DrawShadows(LIGHTLIST_VACUUM, &ShadowVacuumRT, 30, 20);
@@ -1099,11 +1129,11 @@ void RenderLighting()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
     //                                                   Blur shadows and ambient occlusion                                                    //
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    BlurAmbientOcclusion(&AmbientOcclusionForegroundRT);
-    BlurAmbientOcclusion(&AmbientOcclusionVacuumRT);
+    //BlurAmbientOcclusion(&AmbientOcclusionForegroundRT);
+    //BlurAmbientOcclusion(&AmbientOcclusionVacuumRT);
     
-    BlurShadows(&ShadowForegroundRT);
-    BlurShadows(&ShadowVacuumRT);
+    //BlurShadows(&ShadowForegroundRT);
+    //BlurShadows(&ShadowVacuumRT);
     
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
     //                                                   Draw layers                                                                           //
@@ -1129,7 +1159,7 @@ void RenderLighting()
     DrawLightList(LIGHTLIST_BACKGROUND, GXALPHA_NONE);
 
 	// Foreground ambient occlusion & shadows.
-	RenderAmbientOcclusion(&AmbientOcclusionForegroundRT);
+	//RenderAmbientOcclusion(&AmbientOcclusionForegroundRT);
 	RenderShadows(&ShadowForegroundRT);
 
 	// Dust layer.
@@ -1147,7 +1177,7 @@ void RenderLighting()
     DrawLightList(LIGHTLIST_FOREGROUND_NO_SHADOW, GXALPHA_BLEND);
 
 	// Vacuum ambient occlusion & shadows.
-	RenderAmbientOcclusion(&AmbientOcclusionVacuumRT);
+	//RenderAmbientOcclusion(&AmbientOcclusionVacuumRT);
 	RenderShadows(&ShadowVacuumRT);
 
 #ifdef PLATFORM_WINDOWS
@@ -1325,6 +1355,15 @@ void AddLitSpriteScaled(ELightList List, gxSprite* Sprite, float X, float Y, flo
 		X+Sprite->width*ScaleX, Y,                       1.0f, 0.0f,
 		X+Sprite->width*ScaleX, Y+Sprite->height*ScaleY, 1.0f, 1.0f, 
 		X,                      Y+Sprite->height*ScaleY, 0.0f, 1.0f);
+}
+
+void AddLitSpriteAlpha(ELightList List, gxSprite* Sprite, float X, float Y, float Alpha)
+{
+	AddLitQuad(List, Sprite, gxRGBA32(255,255,255,(int)(255*Alpha)),
+               X,               Y,                0.0f, 0.0f, 
+               X+Sprite->width, Y,                1.0f, 0.0f,
+               X+Sprite->width, Y+Sprite->height, 1.0f, 1.0f, 
+               X,               Y+Sprite->height, 0.0f, 1.0f);
 }
 
 void AddLitSpriteCenteredScaledAlpha(ELightList List, gxSprite* Sprite, float X, float Y, float Scale, float Alpha)

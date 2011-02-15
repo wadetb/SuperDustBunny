@@ -180,6 +180,11 @@ inline float Round(float f)
 	return (f > 0.0f) ? floor(f + 0.5f) : ceil(f - 0.5f);
 }
 
+inline float SinWave(float Time, float Period, float Amplitude=1.0f)
+{
+    return Amplitude * (1.0f-(cosf((Time * 2*PI) / Period)*0.5f+0.5f));
+}
+
 #ifdef PLATFORM_WINDOWS
 #define strcasecmp _stricmp
 #define strdup _strdup
@@ -196,6 +201,11 @@ void PopErrorContext();
 
 // Reports a fatal error and immediately exits the program.
 void ReportError(const char* ErrorMessage, ...);
+
+void LogMessage(const char* LogMessage, ...);
+
+// Returns current time in seconds.  ONLY to be used for logging prints and non-final profiling code.
+double GetCurrentTime();
 
 struct SRemoteControl
 {

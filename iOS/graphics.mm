@@ -139,27 +139,10 @@ void gxInitSpriteShader()
     gxCreateShader(gxSpriteVertexShaderSource, gxSpritePixelShaderSource, &gxSpriteShader);
 }
 
-void gxInit(gxDisplayType disp)
+void gxInit()
 {
-	switch (disp) 
-	{
-	case GXDISPLAY_IPHONE_PORTRAIT:
-		gxScreenWidth = 320;
-		gxScreenHeight = 480;
-		break;
-	case GXDISPLAY_IPHONE_LANDSCAPE:
-		gxScreenWidth = 480;
-		gxScreenHeight = 320;
-		break;
-	case GXDISPLAY_IPAD_PORTRAIT: 
-		gxScreenWidth = 768;
-		gxScreenHeight = 1024;
-		break;
-	case GXDISPLAY_IPAD_LANDSCAPE: 
-		gxScreenWidth = 1024;
-		gxScreenHeight = 768;
-		break;
-	}
+    gxScreenWidth = 768;
+    gxScreenHeight = 1024;
 	
     glEnable(GL_TEXTURE_2D);
     glEnableVertexAttribArray(GX_ATTRIB_VERTEX);
@@ -175,6 +158,25 @@ void gxInit(gxDisplayType disp)
 
 void gxDeinit()
 {
+}
+
+gxDisplayType gxGetDisplayType()
+{
+    float Version = [[[UIDevice currentDevice] systemVersion] floatValue];
+    if (Version < 3.2f)
+        return GXDISPLAY_IPHONE_PORTRAIT;
+
+    UIScreen* MainScreen = [UIScreen mainScreen];
+    int Width = MainScreen.currentMode.size.width;
+    int Height = MainScreen.currentMode.size.height;
+
+    if (Width == 768 && Height == 1024)
+        return GXDISPLAY_IPAD_PORTRAIT;
+
+    if (Width == 640 && Height == 960)
+        return GXDISPLAY_IPHONE_RETINA_PORTRAIT;
+    
+    return GXDISPLAY_IPHONE_PORTRAIT;    
 }
 
 void gxLoadSprite(const char* filename, gxSprite* sprite)
@@ -254,26 +256,6 @@ void _gxDrawQuad( float x, float y, float w, float h, unsigned int color, float 
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 }
 
-void gxDrawSprite(int x, int y, gxSprite* sprite)
-{
-    gxSetShader(&gxSpriteShader);
-	glBindTexture(GL_TEXTURE_2D, sprite->tex);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	_gxDrawQuad(x, y, sprite->width, sprite->height, gxRGBA32(255, 255, 255, 255), 
-                0, 0, (float)sprite->width/(float)sprite->texWidth, (float)sprite->height/(float)sprite->texHeight);
-}
-
-void gxDrawSpriteAlpha(int x, int y, float alpha, gxSprite *sprite)
-{
-    gxSetShader(&gxSpriteShader);
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, sprite->tex);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	_gxDrawQuad(x, y, sprite->texWidth, sprite->texHeight, gxRGBA32(255, 255, 255, (int)(alpha*255)));
-}
-
 void gxDrawRectangleFilled(int x, int y, int width, int height, unsigned int color)
 {
     gxSetShader(&gxSpriteShader);
@@ -311,8 +293,6 @@ void gxDrawString( int x, int y, int ptsize, int color, const char* text, ... )
 		x += ptsize;
 	}
 }
-
-
 
 void gxGetResourceFileName(const char* relativePath, char* buffer, int bufferSize)
 {
@@ -529,8 +509,10 @@ void gxSetRenderTarget(gxSprite* Sprite)
         glViewport(0, 0, _gxDefaultFrameBufferWidth, _gxDefaultFrameBufferHeight);
     }
 
-    GLenum attach[] = { GL_COLOR_ATTACHMENT0 };
-    glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, attach);    
+//    GLenum attach[] = { GL_COLOR_ATTACHMENT0 };
+//    glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, attach);    
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void gxClearColor(unsigned int Color)

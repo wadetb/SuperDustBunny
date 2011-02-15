@@ -43,12 +43,12 @@ struct SStartScreen
 
 	bool Dragging;
 	bool Pressed;
+    
+    float PressedTime;
+    float StartupTime;
 };
 
 SStartScreen StartScreen;
-
-
-
 
 
 void InitStartScreen()
@@ -56,6 +56,8 @@ void InitStartScreen()
 	StartScreen.CurItem = STARTSCREEN_ITEM_START;
 	StartScreen.X = StartScreen.CurItem * 600.0f;
 	StartScreen.PrevX = StartScreen.X;
+    StartScreen.PressedTime = 0.0f;
+    StartScreen.StartupTime = 0.0f;
 }
 
 void StartScreen_Advance()
@@ -82,16 +84,27 @@ void DisplayStartScreen()
 
 	for (int i = 0; i < STARTSCREEN_ITEM_COUNT; i++)
 	{
-		float Alpha = 1.0f;
-		if (i != StartScreen.CurItem)
-			Alpha = 0.5f;
+        float X = 384 + i*600 - (int)StartScreen.X;
+        float Y = 720;
 
-		bool Pressed = false;
-		if (StartScreen.Pressed && i == StartScreen.CurItem)
-			Pressed = true;
-
-		AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, (Pressed ? StartScreenPressedIcons : StartScreenIcons)[i], 384 + i*600 - (int)StartScreen.X, 720, 1.0, Alpha );
+        if (i == StartScreen.CurItem)
+        {
+            float OverlayAlpha = SinWave(StartScreen.PressedTime, 1.0f);
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, StartScreenIcons[i], X, Y, 1.0, 1.0f);
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, StartScreenPressedIcons[i], X, Y, 1.0, OverlayAlpha);
+        }
+        else
+        {
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, StartScreenIcons[i], X, Y, 1.0, 1.0f);
+        }
 	}
+
+    if (StartScreen.StartupTime < 1.0f)
+    {
+        float Alpha = Max(0, 1.0f - StartScreen.StartupTime);
+        AddLitSpriteAlpha(LIGHTLIST_WIPE, &ScreenStart1Sprite, 0, 0, Alpha);
+    }
+    
 }
 
 void UpdateStartScreen()
@@ -127,15 +140,18 @@ void UpdateStartScreen()
 
 			StartScreen.Dragging = false;
 			StartScreen.Pressed = false;
-		}
+
+            StartScreen.CurItem = (int)Round(StartScreen.X / 600.0f);
+        }
 		else 
 		{
-			if (abs(msY - StartScreen.DragX) > 10)
+			if (abs(msX - StartScreen.DragX) > 10)
 				StartScreen.Pressed = false;
 
-			StartScreen.X += msY - StartScreen.DragX;
-			StartScreen.DragX = (float)msY;
+			StartScreen.X += StartScreen.DragX - msX;
+			StartScreen.DragX = (float)msX;
 		}
+        
 	}
 	else
 	{
@@ -143,7 +159,8 @@ void UpdateStartScreen()
 		{
 			StartScreen.Pressed = true;
 			StartScreen.Dragging = true;
-			StartScreen.DragX = (float)msY;
+			StartScreen.DragX = (float)msX;
+            StartScreen.PressedTime = 0.0f;
 		}
 		else 
 		{
@@ -152,12 +169,23 @@ void UpdateStartScreen()
 		}
 	}
 
-	if (StartScreen.X < 0)
+    if (StartScreen.X < 0)
 		StartScreen.X = 0;
 	if (StartScreen.X >= (STARTSCREEN_ITEM_COUNT-1)*600)
 		StartScreen.X = (STARTSCREEN_ITEM_COUNT-1)*600;
 
-	StartScreen.CurItem = (int)Round(StartScreen.X / 600.0f);
-
 	StartScreen.PrevX = StartScreen.X;
+    
+    if (StartScreen.Pressed)
+    {
+        if (StartScreen.PressedTime < 0.5f)
+            StartScreen.PressedTime += 1.0f/60.0f;        
+    }
+    else
+    {
+        if (StartScreen.PressedTime > 0.0f)
+            StartScreen.PressedTime -= 1.0f/60.0f;
+    }
+    
+    StartScreen.StartupTime += 1.0f/60.0f;
 }

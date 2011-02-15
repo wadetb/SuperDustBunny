@@ -23,6 +23,9 @@
 // + Score information, once that is implemented.
 // + Make a new recording each time the page is restarted.
 // + Playback, individual recordings or an entire session.
+// + Log device type.
+// + Log average FPS.
+// + Log available memory.
 
 
 #define MAX_RECORDER_ENTRIES 16384
@@ -114,16 +117,16 @@ void StopRecording(ERecordingEndType Result)
 	RecorderHeader.Duration = RecordingTime;
 	RecorderHeader.NEntries = NRecorderEntries;
 
+	int DataSize = sizeof(SRecorderHeader) + sizeof(SRecorderEntry)*NRecorderEntries;
+	char* Data = (char*)malloc(DataSize);
+	memcpy(Data, &RecorderHeader, sizeof(SRecorderHeader));
+	memcpy(Data + sizeof(SRecorderHeader), RecorderEntries, sizeof(SRecorderEntry) * NRecorderEntries);
+    
 #ifdef PLATFORM_WINDOWS
 	DWORD dwBytesWritten = 0;
 	HINTERNET hSession = WinHttpOpen(L"Super Dust Bunny", WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
 	HINTERNET hConnect = WinHttpConnect(hSession, L"pluszerogames.com", INTERNET_DEFAULT_HTTP_PORT, 0);
 	HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"POST", L"/sdb/recording.php", NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, 0);
-
-	int DataSize = sizeof(SRecorderHeader) + sizeof(SRecorderEntry)*NRecorderEntries;
-	char* Data = (char*)malloc(DataSize);
-	memcpy(Data, &RecorderHeader, sizeof(SRecorderHeader));
-	memcpy(Data + sizeof(SRecorderHeader), RecorderEntries, sizeof(SRecorderEntry) * NRecorderEntries);
 
 	WinHttpSendRequest(hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, Data, DataSize, DataSize, 0);
 	WinHttpReceiveResponse(hRequest, NULL);
@@ -131,9 +134,13 @@ void StopRecording(ERecordingEndType Result)
 	WinHttpCloseHandle(hRequest);
 	WinHttpCloseHandle(hConnect);
 	WinHttpCloseHandle(hSession);
-
-	free(Data);
 #endif
+    
+#ifdef PLATFORM_IPHONE
+    // TODO: See NSHTTPURLRequest.
+#endif
+    
+	free(Data);
 
 	Recorder.RecordingActive = false;
 }

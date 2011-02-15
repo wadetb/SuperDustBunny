@@ -1,4 +1,4 @@
-//
+ //
 //  EAGLView.m
 //  OpenGLES_iPhone
 //
@@ -168,8 +168,8 @@ extern GLuint _gxDefaultFrameBufferHeight;
 {
 	UITouch *touch = [[event allTouches] anyObject];
     CGPoint touchPoint = [touch locationInView:self];
-	_msNewX = framebufferWidth*2 - touchPoint.x*2;
-	_msNewY = touchPoint.y*2;
+	_msNewX = touchPoint.x * 768 / framebufferWidth;
+	_msNewY = touchPoint.y * 1024 / framebufferHeight;
 	_msNewButton1 = 1;
 }
 
@@ -177,16 +177,16 @@ extern GLuint _gxDefaultFrameBufferHeight;
 {
 	UITouch *touch = [[event allTouches] anyObject];
     CGPoint touchPoint = [touch locationInView:self];
-	_msNewX = framebufferWidth*2 - touchPoint.x*2;
-	_msNewY = touchPoint.y*2;
+	_msNewX = touchPoint.x * 768 / framebufferWidth;
+	_msNewY = touchPoint.y * 1024 / framebufferHeight;
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
 	UITouch *touch = [[event allTouches] anyObject];
     CGPoint touchPoint = [touch locationInView:self];
-	_msNewX = framebufferWidth*2 - touchPoint.x*2;
-	_msNewY = touchPoint.y*2;
+	_msNewX = touchPoint.x * 768 / framebufferWidth;
+	_msNewY = touchPoint.y * 1024 / framebufferHeight;
 	_msNewButton1 = 0;
 }
 

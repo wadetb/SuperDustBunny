@@ -94,7 +94,7 @@ int BackgroundMusic = 1;
 void Init()
 {
 	// Use iPad "portrait mode" screen dimensions.
-	gxInit(GXDISPLAY_IPAD_PORTRAIT);
+	gxInit();
 
 #ifdef PLATFORM_WINDOWS
 	// Default to iPhone size.
@@ -197,6 +197,28 @@ void ReportError(const char* ErrorMessage, ...)
 	// TODO: Use iPhone popop dialog.
 	printf("ERROR: %s\n", Work);
 	exit(1);
+#endif
+}
+
+void LogMessage(const char* LogMessage, ...)
+{
+#ifdef PLATFORM_IPHONE
+	va_list args;
+	va_start(args, LogMessage);
+	vprintf(LogMessage, args);
+	va_end(args);
+#endif
+}
+
+double GetCurrentTime()
+{
+#ifdef PLATFORM_IPHONE
+	mach_timebase_info_data_t timerInfo;
+	mach_timebase_info(&timerInfo);
+	
+	const double TIMER_RATIO = ((double)timerInfo.numer / (double)timerInfo.denom);
+
+	return (double)mach_absolute_time() * TIMER_RATIO / 1000000000.0;
 #endif
 }
 
@@ -452,30 +474,29 @@ void UpdateGame_Playing()
     }
 #endif
     
+    // TODO: GamePause should actually stop the update and display loop, to reduce battery life.
+	if (GamePause)
+        return;
     
-	if (GamePause != true)
-	{
-	    UpdateDusty();
-    		
-	    if (Dusty.State != DUSTYSTATE_DIE)
-	    {
-		    UpdateFans();
-		    UpdateBarrels();
-		    UpdateCoins();   
-            UpdateBall();  
-            UpdateGear();  
-		    UpdateFireWorks();
-		    UpdateFlashlight();
-		    UpdateScore();		 
-		    UpdateLives();
-		    UpdateStaplers();
-	    }
-
-	    UpdateDust();
-	    UpdateDebris();
-        UpdateVacuum(); 
-    
+    UpdateDusty();
+        
+    if (Dusty.State != DUSTYSTATE_DIE)
+    {
+        UpdateFans();
+        UpdateBarrels();
+        UpdateCoins();   
+        UpdateBall();  
+        UpdateGear();  
+        UpdateFireWorks();
+        UpdateFlashlight();
+        UpdateScore();		 
+        UpdateLives();
+        UpdateStaplers();
     }
+
+    UpdateDust();
+    UpdateDebris();
+    UpdateVacuum(); 
     
     ////In The future this can be a function that will determine if it is the first page.
 
@@ -738,10 +759,12 @@ void Display()
 	FPS = 1.0f / (Time - LastTime);
 	LastTime = Time;
 
-	FPS = (double)(int(FPS / 10.0f + 0.5f) * 10);
+	//FPS = (double)(int(FPS / 10.0f + 0.5f) * 10);
 #endif
 
 	gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "FPS: %.0f", FPS);
+
+	gxDrawString(msX-8, msY-8, 16, gxRGB32(255, 255, 255), "X");
 }
 
 bool Update()
@@ -949,6 +972,10 @@ bool Update()
 		LoadCurrentChapter();
 		SetGameState_Playing();
 	}
+#endif
+    
+#ifdef PLATFORM_IPHONE
+    // TODO: Consider holding a button down while hitting the rocker to engage debug features.
 #endif
 
 	// Vacuum sounds always need to be updated no matter what state the game is in.
