@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		0814324E1305E3E3007D4611 /* Converter.py in Resources */ = {isa = PBXBuildFile; fileRef = 0814324D1305E3E3007D4611 /* Converter.py */; };
 		0814334D13061704007D4611 /* Converted in Resources */ = {isa = PBXBuildFile; fileRef = 0814334C13061704007D4611 /* Converted */; };
-		0856F6BC130574B500573848 /* icon-iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856F6BB130574B500573848 /* icon-iphone.png */; };
 		0856F6C11305769000573848 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856F6BE1305761300573848 /* Default.png */; };
 		08587B0B12E8D0AA003A66B6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08587B0A12E8D0AA003A66B6 /* UIKit.framework */; };
 		08587B0D12E8D0AA003A66B6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08587B0C12E8D0AA003A66B6 /* Foundation.framework */; };
@@ -56,6 +55,9 @@
 		089350C412EFCBFC00BEFFFA /* SuperDustBunnyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 089350B712EFCBFC00BEFFFA /* SuperDustBunnyViewController.m */; };
 		089350C512EFCBFC00BEFFFA /* SuperDustBunnyViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 089350B812EFCBFC00BEFFFA /* SuperDustBunnyViewController.xib */; };
 		08B5953D1304D60B006F3D32 /* Stapler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08B5953B1304D60B006F3D32 /* Stapler.cpp */; };
+		08CB7013130B2235008F8F34 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 08CB7011130B2235008F8F34 /* SettingsViewController.m */; };
+		08CB7014130B2235008F8F34 /* SettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08CB7012130B2235008F8F34 /* SettingsViewController.xib */; };
+		08CB701A130C3548008F8F34 /* Settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08CB7018130C3548008F8F34 /* Settings.cpp */; };
 		08CE829E12F3140B00320555 /* Data in Resources */ = {isa = PBXBuildFile; fileRef = 08CE829D12F3140B00320555 /* Data */; };
 		08CE82A112F3141A00320555 /* Tilesets in Resources */ = {isa = PBXBuildFile; fileRef = 08CE82A012F3141A00320555 /* Tilesets */; };
 		08CE82A312F3142500320555 /* Chapters in Resources */ = {isa = PBXBuildFile; fileRef = 08CE82A212F3142500320555 /* Chapters */; };
@@ -157,6 +159,11 @@
 		08B5953B1304D60B006F3D32 /* Stapler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Stapler.cpp; path = ../Stapler.cpp; sourceTree = "<group>"; };
 		08B5953C1304D60B006F3D32 /* Stapler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Stapler.h; path = ../Stapler.h; sourceTree = "<group>"; };
 		08B5953F13057193006F3D32 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
+		08CB7010130B2235008F8F34 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SettingsViewController.h; path = SuperDustBunny.xcodeproj/SettingsViewController.h; sourceTree = "<group>"; };
+		08CB7011130B2235008F8F34 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SettingsViewController.m; path = SuperDustBunny.xcodeproj/SettingsViewController.m; sourceTree = "<group>"; };
+		08CB7012130B2235008F8F34 /* SettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SettingsViewController.xib; path = SuperDustBunny.xcodeproj/SettingsViewController.xib; sourceTree = "<group>"; };
+		08CB7018130C3548008F8F34 /* Settings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Settings.cpp; path = ../Settings.cpp; sourceTree = "<group>"; };
+		08CB7019130C3548008F8F34 /* Settings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Settings.h; path = ../Settings.h; sourceTree = "<group>"; };
 		08CE829D12F3140B00320555 /* Data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Data; path = ../../Data; sourceTree = "<group>"; };
 		08CE82A012F3141A00320555 /* Tilesets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Tilesets; path = ../../Tilesets; sourceTree = "<group>"; };
 		08CE82A212F3142500320555 /* Chapters */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Chapters; path = ../../Chapters; sourceTree = "<group>"; };
@@ -193,6 +200,8 @@
 		08587AFB12E8D0AA003A66B6 = {
 			isa = PBXGroup;
 			children = (
+				08CB7018130C3548008F8F34 /* Settings.cpp */,
+				08CB7019130C3548008F8F34 /* Settings.h */,
 				0814334C13061704007D4611 /* Converted */,
 				0814324B1305E288007D4611 /* Converter */,
 				0856F6BE1305761300573848 /* Default.png */,
@@ -324,6 +333,9 @@
 				089350B612EFCBFC00BEFFFA /* SuperDustBunnyViewController.h */,
 				089350B712EFCBFC00BEFFFA /* SuperDustBunnyViewController.m */,
 				089350B812EFCBFC00BEFFFA /* SuperDustBunnyViewController.xib */,
+				08CB7010130B2235008F8F34 /* SettingsViewController.h */,
+				08CB7011130B2235008F8F34 /* SettingsViewController.m */,
+				08CB7012130B2235008F8F34 /* SettingsViewController.xib */,
 			);
 			name = iOS;
 			sourceTree = "<group>";
@@ -394,10 +406,10 @@
 				08CE829E12F3140B00320555 /* Data in Resources */,
 				08CE82A112F3141A00320555 /* Tilesets in Resources */,
 				08CE82A312F3142500320555 /* Chapters in Resources */,
-				0856F6BC130574B500573848 /* icon-iphone.png in Resources */,
 				0856F6C11305769000573848 /* Default.png in Resources */,
 				0814324E1305E3E3007D4611 /* Converter.py in Resources */,
 				0814334D13061704007D4611 /* Converted in Resources */,
+				08CB7014130B2235008F8F34 /* SettingsViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -459,6 +471,8 @@
 				089350C312EFCBFC00BEFFFA /* SuperDustBunnyAppDelegate.m in Sources */,
 				089350C412EFCBFC00BEFFFA /* SuperDustBunnyViewController.m in Sources */,
 				08B5953D1304D60B006F3D32 /* Stapler.cpp in Sources */,
+				08CB7013130B2235008F8F34 /* SettingsViewController.m in Sources */,
+				08CB701A130C3548008F8F34 /* Settings.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

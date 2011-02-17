@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @class SuperDustBunnyViewController;
+@class SettingsViewController;
 
 @interface SuperDustBunnyAppDelegate : NSObject <UIApplicationDelegate> {
 @private
@@ -18,5 +19,6 @@
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 
 @property (nonatomic, retain) IBOutlet SuperDustBunnyViewController *viewController;
+@property (nonatomic, retain) IBOutlet SettingsViewController *settingsViewController;
 
 @end

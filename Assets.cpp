@@ -55,11 +55,6 @@ gxSprite BackgroundPaperSprite;
 
 gxSprite TileUnknownSprite;
 
-gxSprite TileDelayDest;
-gxSprite TileGreenDelayDest;
-gxSprite TileYellowDelayDest;
-gxSprite TileRedDelayDest;
-
 gxSprite BarrelBackSprite;
 gxSprite BarrelFrontSprite;
 gxSprite BarrelNailSprite;
@@ -124,7 +119,6 @@ gxSprite DustArrowSprite;
 gxSprite FireWorkRocketSprite;
 gxSprite FireWorkBangSprite;
 
-gxSprite VacuumBackSprite;
 gxSprite VacuumFrontSprite;
 
 gxSprite ScreenStart1Sprite;
@@ -417,11 +411,6 @@ void LoadAssets()
 
 	LoadSpriteAsset("Data/tile-wtf.png", &TileUnknownSprite);
 	
-	LoadSpriteAsset("Data/tile-platform.png", &TileDelayDest);
-	LoadSpriteAsset("Data/tile-greenplatform.png", &TileGreenDelayDest);
-	LoadSpriteAsset("Data/tile-yellowplatform.png", &TileYellowDelayDest);
-	LoadSpriteAsset("Data/tile-redplatform.png", &TileRedDelayDest);
-
 	LoadSpriteAsset("Data/barrel-back.png", &BarrelBackSprite);
 	LoadSpriteAsset("Data/barrel-front.png", &BarrelFrontSprite);
 	LoadSpriteAsset("Data/barrel-nail.png", &BarrelNailSprite);
@@ -486,7 +475,6 @@ void LoadAssets()
 	LoadSpriteAsset("Data/firework-rocket.png", &FireWorkRocketSprite);
 	LoadSpriteAsset("Data/firework-bang.png", &FireWorkBangSprite);
 
-	LoadSpriteAsset("Data/vacuum-back.png", &VacuumBackSprite);
 	LoadSpriteAsset("Data/vacuum-front.png", &VacuumFrontSprite);
 
 	LoadSpriteAsset("Data/screen-start-1.png", &ScreenStart1Sprite);

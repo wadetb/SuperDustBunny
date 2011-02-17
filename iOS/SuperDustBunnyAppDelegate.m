@@ -17,7 +17,7 @@
 
 @synthesize window;
 
-@synthesize viewController;
+@synthesize viewController, settingsViewController;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {

@@ -335,16 +335,6 @@ void _gxSetTexture( gxSprite* sprite )
 	glBindTexture(GL_TEXTURE_2D, sprite->tex);
 }
 
-void _gxDrawQuad(
-                 unsigned int Color,
-                 float X0, float Y0, float U0, float V0, 
-                 float X1, float Y1, float U1, float V1, 
-                 float X2, float Y2, float U2, float V2, 
-                 float X3, float Y3, float U3, float V3)
-{
-    
-}
-
 void gxCreateShader(const char* VertexSource, const char* PixelSource, gxShader* Shader)
 {
     Shader->VertexShader = glCreateShader(GL_VERTEX_SHADER);

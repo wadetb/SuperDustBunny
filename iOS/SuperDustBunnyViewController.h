@@ -15,9 +15,16 @@
 #import <OpenGLES/ES2/gl.h>
 #import <OpenGLES/ES2/glext.h>
 
+@class SettingsViewController;
+
 @interface SuperDustBunnyViewController : UIViewController {
 @private
     EAGLContext *context;
 }
+
+@property (nonatomic, retain) IBOutlet SettingsViewController *settingsViewController;
+
+- (void)showSettings;
+- (void)hideSettings;
 
 @end

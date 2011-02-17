@@ -11,6 +11,7 @@
 #include "StartScreen.h"
 #include "Dusty.h"
 
+
 enum 
 {
 	STARTSCREEN_ITEM_HELP,
@@ -33,6 +34,7 @@ gxSprite* StartScreenPressedIcons[STARTSCREEN_ITEM_COUNT] =
 	&IconCredits2Sprite
 };
 
+
 struct SStartScreen
 {
 	int CurItem;
@@ -49,6 +51,9 @@ struct SStartScreen
 };
 
 SStartScreen StartScreen;
+
+
+extern "C" void ShowSettings();
 
 
 void InitStartScreen()
@@ -74,7 +79,8 @@ void StartScreen_Advance()
 	}
 	else if (StartScreen.CurItem == STARTSCREEN_ITEM_CREDITS)
 	{
-		SetGameState_Credits();
+        ShowSettings();
+//		SetGameState_Credits();
     }
 }
 

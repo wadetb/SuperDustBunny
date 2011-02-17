@@ -55,11 +55,6 @@ extern gxSprite BackgroundPaperSprite;
 
 extern gxSprite TileUnknownSprite;
 
-extern gxSprite TileDelayDest;
-extern gxSprite TileGreenDelayDest;
-extern gxSprite TileYellowDelayDest;
-extern gxSprite TileRedDelayDest;
-
 extern gxSprite BarrelBackSprite;
 extern gxSprite BarrelFrontSprite;
 extern gxSprite BarrelNailSprite;
@@ -74,12 +69,6 @@ extern gxSprite CoinSpin3Sprite;
 extern gxSprite CoinSpin4Sprite;
 extern gxSprite CoinSpin5Sprite;
 extern gxSprite CoinSpin6Sprite;
-extern gxSprite CoinSpin7Sprite;
-extern gxSprite CoinSpin8Sprite;
-extern gxSprite CoinSpin9Sprite;
-extern gxSprite CoinSpin10Sprite;
-extern gxSprite CoinSpin11Sprite;
-extern gxSprite CoinSpin12Sprite;
 
 extern gxSprite CoinLife1Sprite;
 extern gxSprite CoinLife2Sprite;
@@ -130,7 +119,6 @@ extern gxSprite DustArrowSprite;
 extern gxSprite FireWorkRocketSprite;
 extern gxSprite FireWorkBangSprite;
 
-extern gxSprite VacuumBackSprite;
 extern gxSprite VacuumFrontSprite;
 
 extern gxSprite ScreenStart1Sprite;

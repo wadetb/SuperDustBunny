@@ -23,6 +23,8 @@ void Display();
 extern int gxScreenWidth;
 extern int gxScreenHeight;
 
+SuperDustBunnyViewController *theViewController;
+
 
 @interface SuperDustBunnyViewController ()
 @property (nonatomic, retain) EAGLContext *context;
@@ -31,9 +33,12 @@ extern int gxScreenHeight;
 @implementation SuperDustBunnyViewController
 
 @synthesize context;
+@synthesize settingsViewController;
 
 - (void)awakeFromNib
 {
+    theViewController = self;
+    
     EAGLContext *aContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
     
     if (!aContext) {
@@ -56,6 +61,7 @@ extern int gxScreenHeight;
     
     Init();
     
+    // Likely cause of white flash:
     [NSTimer scheduledTimerWithTimeInterval:(NSTimeInterval)(1 / 60.0f) target:self selector:@selector(mainLoop:) userInfo:nil repeats:NO];
 }
 
@@ -97,6 +103,25 @@ extern int gxScreenHeight;
         [EAGLContext setCurrentContext:nil];
 	self.context = nil;	
 }
+
+- (void)showSettings
+{
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:1.0];
+    [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:[self view] cache:NO];
+    [[self view] addSubview:[settingsViewController view]];
+    [UIView commitAnimations];
+}
+
+- (void)hideSettings
+{
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:1.0];
+    [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:[self view] cache:NO];
+    [[settingsViewController view] removeFromSuperview];
+    [UIView commitAnimations];
+}
+
 - (void)drawFrame
 {
     [(EAGLView *)self.view setFramebuffer];
@@ -152,3 +177,8 @@ extern int gxScreenHeight;
 }
 
 @end
+
+void ShowSettings()
+{
+    [theViewController showSettings];
+}
