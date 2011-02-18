@@ -28,6 +28,7 @@
 #include "Recorder.h"
 #include "Tutorial.h"
 #include "GameScore.h"
+#include "Settings.h"
 
 #include "StartScreen.h"
 #include "HelpScreen.h"
@@ -111,6 +112,7 @@ void Init()
 	msInit();
 #endif	
 	
+    InitSettings();
 	InitLighting();
 
 	LoadAssets();
@@ -228,6 +230,10 @@ double GetCurrentTime()
 
 SRemoteControl RemoteControl;
 
+
+float AccelThreshold[3] = { 0.25f, 0.20f, 0.15f };
+
+
 bool GetInput_MoveLeft()
 {
 	if (IsPlaybackActive())
@@ -240,7 +246,7 @@ bool GetInput_MoveLeft()
 	return kbIsKeyDown(KB_A);
 #endif
 #ifdef PLATFORM_IPHONE
-	return msAccelX < -0.15f;
+	return msAccelX < -AccelThreshold[Settings.TiltSensitivity];
 #endif
 }
 
@@ -256,7 +262,7 @@ bool GetInput_MoveRight()
 	return kbIsKeyDown(KB_D);
 #endif
 #ifdef PLATFORM_IPHONE
-	return msAccelX > 0.15f;
+	return msAccelX > AccelThreshold[Settings.TiltSensitivity];
 #endif
 }
 
@@ -283,12 +289,24 @@ bool GetInput_Jump()
 	if (Tutorial.JumpInhibit)
 		return false;
 
+    if (Settings.ContinuousJump)
+    {
 #ifdef PLATFORM_WINDOWS
-	return kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE);
+        return kbIsKeyDown(KB_SPACE);
 #endif
 #ifdef PLATFORM_IPHONE
-	return msButton1 && !msOldButton1;
+        return msButton1;
 #endif	
+    }
+    else
+    {
+#ifdef PLATFORM_WINDOWS
+        return kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE);
+#endif
+#ifdef PLATFORM_IPHONE
+        return msButton1 && !msOldButton1;
+#endif	
+    }
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -764,7 +782,7 @@ void Display()
 
 	gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "FPS: %.0f", FPS);
 
-	gxDrawString(msX-8, msY-8, 16, gxRGB32(255, 255, 255), "X");
+	//gxDrawString(msX-8, msY-8, 16, gxRGB32(255, 255, 255), "X");
 }
 
 bool Update()

@@ -9,6 +9,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 #import "SuperDustBunnyViewController.h"
+#import "SettingsViewController.h"
 #import "EAGLView.h"
 
 #include <mach/mach.h>
@@ -110,11 +111,14 @@ SuperDustBunnyViewController *theViewController;
     [UIView setAnimationDuration:1.0];
     [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:[self view] cache:NO];
     [[self view] addSubview:[settingsViewController view]];
+    [settingsViewController transferSettingsToView];    
     [UIView commitAnimations];
 }
 
 - (void)hideSettings
 {
+    [settingsViewController transferSettingsFromView];
+
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:1.0];
     [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:[self view] cache:NO];

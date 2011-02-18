@@ -10,16 +10,16 @@
 #define __SETTINGS_H__
 
 
-struct SSettings
+typedef struct
 {
-    float TiltSensitivity;
+    int TiltSensitivity;
     bool ContinuousJump;
     bool FallGracePeriod;
     bool DoubleJump;
     
     bool InfiniteLives;
     bool DisableVacuum;
-};
+}  SSettings;
 
 
 extern SSettings Settings;
@@ -29,6 +29,5 @@ void InitSettings();
 
 void LoadSettings();
 void SaveSettings();
-
 
 #endif

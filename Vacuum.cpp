@@ -11,6 +11,7 @@
 #include "Vacuum.h"
 #include "Dusty.h"
 #include "Chapter.h"
+#include "Settings.h"
 
 
 SVacuum Vacuum;
@@ -38,7 +39,7 @@ void InitVacuum()
 void DisplayVacuum()
 {
 	// If the vacuum is disabled for this page, don't display at all.
-	if (Chapter.PageProps.VacuumOff)
+	if (Chapter.PageProps.VacuumOff || Settings.DisableVacuum)
 		return;
 
 	if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.State == VACUUMSTATE_ONSCREEN)
@@ -128,7 +129,7 @@ void UpdateVacuum()
 #endif
 
 	// If the vacuum is disabled for this page, don't update at all.
-	if (Chapter.PageProps.VacuumOff)
+	if (Chapter.PageProps.VacuumOff || Settings.DisableVacuum)
 		return;
 
 	if (Vacuum.State == VACUUMSTATE_FAR)
@@ -253,7 +254,7 @@ bool IsInVacuum(float Y)
 void GetVacuumForce(float X, float Y, float* VX, float* VY, float Strength)
 {
 	// If the vacuum is disabled for this page, no vacuum forces.
-	if (Chapter.PageProps.VacuumOff)
+	if (Chapter.PageProps.VacuumOff || Settings.DisableVacuum)
 	{
 		*VX = 0;
 		*VY = 0;

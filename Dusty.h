@@ -57,6 +57,9 @@ struct SDusty
 	int StuckJumpCount;
 	int StuckTimer;
 
+    int JumpGraceTimer;
+    int AirJumpCount;
+    
 	int Lives;
 
 	bool GainLife;

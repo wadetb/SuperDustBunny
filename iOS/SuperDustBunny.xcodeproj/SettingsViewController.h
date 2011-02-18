@@ -14,10 +14,22 @@
 @interface SettingsViewController : UIViewController {
 @private
     
+    UISegmentedControl *tiltSensitivity;
+    UISwitch *continuousJump;
+    UISwitch *fallGracePeriod;
+    UISwitch *doubleJump;
+    UISwitch *infiniteLives;
+    UISwitch *disableVacuum;
 }
 
 @property (nonatomic, retain) IBOutlet SuperDustBunnyViewController *mainViewController;
 
+@property (nonatomic, retain) IBOutlet UISegmentedControl *tiltSensitivity;
+@property (nonatomic, retain) IBOutlet UISwitch *continuousJump;
+@property (nonatomic, retain) IBOutlet UISwitch *fallGracePeriod;
+@property (nonatomic, retain) IBOutlet UISwitch *doubleJump;
+@property (nonatomic, retain) IBOutlet UISwitch *infiniteLives;
+@property (nonatomic, retain) IBOutlet UISwitch *disableVacuum;
 
 - (IBAction)done:(id)sender;
 - (IBAction)tiltSensitivityChanged:(id)sender;
@@ -26,5 +38,8 @@
 - (IBAction)doubleJumpChanged:(id)sender;
 - (IBAction)infiniteLivesChanged:(id)sender;
 - (IBAction)disableVacuumChanged:(id)sender;
+
+- (void)transferSettingsFromView;
+- (void)transferSettingsToView;
 
 @end

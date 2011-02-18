@@ -14,6 +14,8 @@
 #include "Dust.h"
 #include "Vacuum.h"
 #include "Recorder.h"
+#include "Settings.h"
+
 
 SDusty Dusty;
 
@@ -45,6 +47,9 @@ void InitDusty()
 	Dusty.LastWall = DIRECTION_NONE;
 	Dusty.WallJumpTimer = 0;
 
+    Dusty.JumpGraceTimer = 0;
+    Dusty.AirJumpCount = 0;
+    
 	Dusty.GainLife = false;
 	
 	Dusty.CollideWithLeftSide = false;
@@ -112,6 +117,8 @@ void SetDustyState_Stand()
 	Dusty.FloatVelocityY = 0;
 
 	Dusty.SpriteTransition = 0;	
+
+    Dusty.AirJumpCount = 0;
 
 	Dusty.State = DUSTYSTATE_STAND;
 }
@@ -239,6 +246,8 @@ void SetDustyState_Jump( bool OffWall )
 void SetDustyState_Fall()
 {
 	Dusty.State = DUSTYSTATE_JUMP;
+    
+    Dusty.JumpGraceTimer = 20;
 }
 
 void DisplayDusty_Jump()
@@ -275,6 +284,32 @@ void UpdateDusty_Jump()
 	if (Dusty.FloatVelocityY > 15.0f)
 		Dusty.FloatVelocityY = 15.0f;
 
+    // Grace period jump.  Allows a midair jump within a few frames of falling.
+    if (Settings.FallGracePeriod && Dusty.JumpGraceTimer > 0)
+    {
+        Dusty.JumpGraceTimer--;
+        if (GetInput_Jump())
+        {
+            printf("Grace period jump\n");
+            Dusty.JumpGraceTimer = 0;
+            SetDustyState_Jump( false );
+            return;
+        }
+    }
+    
+    // A single mid-air double jump.
+    // TODO: Work out rules about when this can be activated.  Y velocity?  Timer?
+    if (Settings.DoubleJump && Dusty.AirJumpCount == 0)
+    {
+        Dusty.AirJumpCount++;
+        if (GetInput_Jump())
+        {
+            printf("Double jump\n");
+            SetDustyState_Jump( false );
+            return;
+        }
+    }
+    
 	UpdateDusty_JumpCommon();
 }
 
@@ -514,6 +549,7 @@ void SetDustyState_WallJump()
 	Dusty.LastWall = Dusty.Direction;
 
 	Dusty.WallJumpTimer = 0;
+    Dusty.AirJumpCount = 0;
 
 	// Switch directions when entering a wall jump.
 	if (Dusty.Direction == DIRECTION_RIGHT)
@@ -596,6 +632,7 @@ void UpdateDusty_WallJump()
 	}
 
 	// Let go of wall by pressing direction.
+    // TODO: GetInput_HardMoveLeft/Right.
 	if ( ( Dusty.Direction == DIRECTION_LEFT  && GetInput_MoveLeft() ) ||
 		 ( Dusty.Direction == DIRECTION_RIGHT && GetInput_MoveRight() ) )
 	{
@@ -616,7 +653,8 @@ void SetDustyState_CornerJump()
 	Dusty.LastWall = Dusty.Direction;
 
 	Dusty.WallJumpTimer = 0;
-
+    Dusty.AirJumpCount = 0;
+    
 	Dusty.SpriteTransition = 0;
 
 	// Switch directions when entering a corner jump.
@@ -777,9 +815,10 @@ void UpdateDusty_Die()
 
 	if (Distance(Dusty.FloatX, Dusty.FloatY, (float)gxScreenWidth/2, Vacuum.Y) < 40.0f)
 	{
-		if (Dusty.Lives > 0)//Check before the Die Screen Transition
+		if (Dusty.Lives > 0) //Check before the Die Screen Transition
 		{
-			Dusty.Lives -= 1;
+            if (!Settings.InfiniteLives)
+                Dusty.Lives -= 1;
 			StopRecording(RESULT_RESTART_PAGE);
 			SetGameState_Transition(GAMETRANSITION_RESTART_PAGE);
 		}
