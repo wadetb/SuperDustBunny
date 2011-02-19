@@ -19,7 +19,7 @@ void InitSettings()
     Settings.TiltSensitivity = 1;
     Settings.ContinuousJump = false;
     Settings.FallGracePeriod = true;
-    Settings.DoubleJump = true;
+    Settings.DoubleJump = false;
     Settings.InfiniteLives = false;
     Settings.DisableVacuum = false;
 }

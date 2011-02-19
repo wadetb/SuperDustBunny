@@ -94,6 +94,8 @@ extern gxSprite ScoreNumber9Sprite;
 extern gxSprite ButtonPauseSprite;
 extern gxSprite ButtonPlaySprite;
 
+extern gxSprite PortalSprite;
+
 extern gxSprite TennisBallSpin1Sprite;
 extern gxSprite TennisBallSpin2Sprite;
 extern gxSprite TennisBallSpin3Sprite;

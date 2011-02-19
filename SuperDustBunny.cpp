@@ -640,6 +640,11 @@ void UpdateGame_Transition()
 			Wipe.Middle = false;
 		}
 
+        if (Wipe.T >= 0.5f)
+        {
+            UpdateDieScreen();
+        }
+        
 		if (Wipe.Finished)
 		{
 			SetGameState_DieScreen();

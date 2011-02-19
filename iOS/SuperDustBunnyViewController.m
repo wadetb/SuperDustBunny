@@ -192,6 +192,13 @@ SuperDustBunnyViewController *theViewController;
 	}
 }
 
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == 1) {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://pluszerogames.com/sdb/feedback.html"]];
+    }
+}
+
 @end
 
 void ShowSettings()

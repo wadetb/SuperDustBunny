@@ -104,6 +104,8 @@ struct SChapter
 
 	float StartX, StartY;
 	float EndX, EndY;
+    
+    float PortalAngle;
 
 	int NPages;
 	SPage Pages[MAX_PAGES];

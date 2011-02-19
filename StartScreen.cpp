@@ -11,6 +11,10 @@
 #include "StartScreen.h"
 #include "Dusty.h"
 
+#ifdef PLATFORM_IPHONE
+#import "SuperDustBunnyViewController.h"
+#endif
+
 
 enum 
 {
@@ -116,6 +120,8 @@ void DisplayStartScreen()
 void DisplayWelcomeAlert()
 {
 #ifdef PLATFORM_IPHONE
+    theViewController.paused = TRUE;
+    
     NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
     
     NSString *title = [NSString stringWithFormat:@"Welcome to SuperDustBunny Beta Build %@", version];
@@ -126,13 +132,16 @@ void DisplayWelcomeAlert()
     "We would also like feedback about how the game looks, and how easy it is to control the bunny.\n\n"
     "Thanks for your efforts!";
     
+    
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title
                                                     message:message
-                                                   delegate:nil
+                                                   delegate:theViewController
                                           cancelButtonTitle:@"OK"
-                                          otherButtonTitles:nil];
+                                          otherButtonTitles:@" Send Feedback ", nil];
     [alert show];
     [alert release];
+    
+    theViewController.paused = FALSE;
 #endif
 }
 

@@ -94,6 +94,8 @@ gxSprite ScoreNumber9Sprite;
 gxSprite ButtonPauseSprite;
 gxSprite ButtonPlaySprite;
 
+gxSprite PortalSprite;
+
 gxSprite TennisBallSpin1Sprite;
 gxSprite TennisBallSpin2Sprite;
 gxSprite TennisBallSpin3Sprite;
@@ -452,6 +454,8 @@ void LoadAssets()
 	
     LoadSpriteAsset("Data/button-pause.png", &ButtonPauseSprite);
     LoadSpriteAsset("Data/button-play.png", &ButtonPlaySprite);
+
+    LoadSpriteAsset("Data/portal.png", &PortalSprite);
 
 	LoadSpriteAsset("Data/tennisball-spin-1.png", &TennisBallSpin1Sprite);
 	LoadSpriteAsset("Data/tennisball-spin-2.png", &TennisBallSpin2Sprite);

@@ -11,6 +11,11 @@
 #include "DieScreen.h"
 #include "Chapter.h"
 
+#ifdef PLATFORM_IPHONE
+#import "SuperDustBunnyViewController.h"
+#endif
+
+
 struct SDieScreen
 {
 	bool Pressed;
@@ -30,7 +35,6 @@ void InitDieScreen()
 void DisplayDieScreen()
 {
 	AddLitSprite(LIGHTLIST_BACKGROUND, &BackgroundCardboardSprite, 0, 0);
-	//AddLitSpriteScaled(LIGHTLIST_BACKGROUND, &WhiteSprite, 0, 0, 10000.0f, 100000.0f);
 
 	float t = DieScreen.Timer / 10.0f;
 	float dx = cos(t/5)*10 + cos(1+t/7)*10 + cos(1-t/9)*10 + 100;
@@ -56,14 +60,43 @@ void UpdateDieScreen()
 	bool Pressed = msButton1;
 #endif
 
-	// Advance to playing state when button is released.
-	if (!Pressed && DieScreen.Pressed)
-	{
-		DieScreen_Advance();
-		return;
-	}
-
-	DieScreen.Pressed = Pressed;
-
 	DieScreen.Timer++;
+    
+    if (DieScreen.Timer == 120)
+    {
+#ifdef PLATFORM_IPHONE
+        theViewController.paused = TRUE;
+        
+        NSString *title = @"Thanks for playing Super Dust Bunny!";
+        
+        NSString *message = 
+        @"Looks like you ran out of lives, sorry about that.  To get more lives, pick up any gold coins you see.\n\n"
+        "If part of the game seems too hard, please send us feedback about it!\n\n"
+        "Also, if you just want to see everything there is to see, check out the cheats available in the Settings page. "
+        "To get to the settings page, swipe to the right once at the main menu.\n\n"
+        "Thanks for testing our game!";
+        
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title
+                                                        message:message
+                                                       delegate:theViewController
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:@" Send Feedback ", nil];
+        [alert show];
+        [alert release];
+        
+        theViewController.paused = FALSE;
+#endif
+    }
+    
+    if (DieScreen.Timer >= 130)
+    {
+        if (!Pressed && DieScreen.Pressed)
+        {
+            DieScreen_Advance();
+            return;
+        }
+        
+        DieScreen.Pressed = Pressed;
+    }
 }

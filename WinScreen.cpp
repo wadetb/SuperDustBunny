@@ -10,16 +10,24 @@
 #include "Common.h"
 #include "WinScreen.h"
 
+#ifdef PLATFORM_IPHONE
+#import "SuperDustBunnyViewController.h"
+#endif
+
 struct SWinScreen
 {
 	bool Pressed;
+    int Timer;
 };
 
+
 SWinScreen WinScreen;
+
 
 void InitWinScreen()
 {
 	WinScreen.Pressed = false;
+    WinScreen.Timer = 0;
 }
 
 void DisplayWinScreen()
@@ -48,13 +56,44 @@ void UpdateWinScreen()
 	bool Pressed = msButton1;
 #endif
 
-	// Advance to playing state when button is released.
-	if (!Pressed && WinScreen.Pressed)
-	{
-		WinScreen_Advance();
-		return;
-	}
+    WinScreen.Timer++;
 
-	WinScreen.Pressed = Pressed;
+    if (WinScreen.Timer == 120)
+    {
+#ifdef PLATFORM_IPHONE
+        theViewController.paused = TRUE;
+        
+        NSString *title = @"Thanks for playing Super Dust Bunny!";
+        
+        NSString *message = 
+        @"Congratulations, you beat the game!  (Or at least, the tiny part of the game that's included in this beta build..) "
+        "Please let us know how you felt about it by leaving us feedback.\n\n"
+        "We'll be sure to mix up the content in each round of beta testing, so you'll have some new challenges before long. "
+        "In the meantime, why not play again and try to win as quickly as possible?  We'd love to hear about your best times.\n\n"
+        "Thanks again for testing our game!";
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title
+                                                        message:message
+                                                       delegate:theViewController
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:@" Send Feedback ", nil];
+        [alert show];
+        [alert release];
+        
+        theViewController.paused = FALSE;
+#endif
+    }
+    
+	// Advance to playing state when button is released.
+	if (WinScreen.Timer > 130)
+    { 
+        if (!Pressed && WinScreen.Pressed)
+        {
+            WinScreen_Advance();
+            return;
+        }
+        
+        WinScreen.Pressed = Pressed;
+    }
 }
 

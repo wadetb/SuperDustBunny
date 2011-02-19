@@ -17,7 +17,7 @@
 
 @class SettingsViewController;
 
-@interface SuperDustBunnyViewController : UIViewController {
+@interface SuperDustBunnyViewController : UIViewController <UIAlertViewDelegate> {
 @private
     EAGLContext *context;
     BOOL paused;
@@ -30,4 +30,8 @@
 - (void)showSettings;
 - (void)hideSettings;
 
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
+
 @end
+
+extern SuperDustBunnyViewController *theViewController;
