@@ -23,9 +23,12 @@
     BOOL paused;
 }
 
+@property (nonatomic, retain) EAGLContext *context;
 @property (nonatomic, retain) IBOutlet SettingsViewController *settingsViewController;
-
 @property BOOL paused;
+
+- (void)drawFrame;
+- (void)mainLoop:(id)sender;
 
 - (void)showSettings;
 - (void)hideSettings;

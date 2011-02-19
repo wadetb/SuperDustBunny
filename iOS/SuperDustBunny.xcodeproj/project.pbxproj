@@ -204,7 +204,6 @@
 			children = (
 				0814334C13061704007D4611 /* Converted */,
 				0814324B1305E288007D4611 /* Converter */,
-				0856F6BE1305761300573848 /* Default.png */,
 				08CE82A212F3142500320555 /* Chapters */,
 				08CE82A012F3141A00320555 /* Tilesets */,
 				08CE829D12F3140B00320555 /* Data */,
@@ -311,6 +310,7 @@
 		0893509F12EFCBFC00BEFFFA /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				0856F6BE1305761300573848 /* Default.png */,
 				08172271130EBB4800F380F1 /* Icon.png */,
 				08172272130EBB4800F380F1 /* Icon@2x.png */,
 				089350A012EFCBFC00BEFFFA /* EAGLView.h */,

@@ -53,6 +53,8 @@ struct SRecorderHeader
 	int EndY;
 	int Result;
 
+    int AvgFPS;
+    
 	int Duration;
 	int NEntries;
 };
@@ -83,7 +85,7 @@ void StartRecording()
 
 	memset(&RecorderHeader, 0, sizeof(RecorderHeader));
 
-	RecorderHeader.HeaderVersion = 1;
+	RecorderHeader.HeaderVersion = 2;
 	RecorderHeader.Build = 0;
 
 	snprintf(RecorderHeader.Chapter, sizeof(RecorderHeader.Chapter), "%s", Chapter.Name);
@@ -109,6 +111,9 @@ void StartRecording()
     [osVersion getCString:RecorderHeader.OSVersion maxLength:sizeof(RecorderHeader.OSVersion) encoding:NSUTF8StringEncoding];
 #endif
 
+    Recorder.SumFPS = 0;
+    Recorder.FPSCount = 0;
+
 	RecordingTime = 0;
 
 	NRecorderEntries = 0;
@@ -126,6 +131,8 @@ void StopRecording(ERecordingEndType Result)
 	RecorderHeader.EndX = (int)Dusty.FloatX;
 	RecorderHeader.EndY = (int)Dusty.FloatY;
 
+    RecorderHeader.AvgFPS = Recorder.SumFPS / Recorder.FPSCount;
+    
 	RecorderHeader.Duration = RecordingTime;
 	RecorderHeader.NEntries = NRecorderEntries;
 
@@ -158,7 +165,11 @@ void StopRecording(ERecordingEndType Result)
     [request setHTTPMethod:@"POST"];
     [request setHTTPBody:data];
 
-    [NSURLConnection connectionWithRequest:request delegate:nil];
+    //[NSURLConnection connectionWithRequest:request delegate:nil];
+    
+    NSURLResponse *response;
+    NSData* result = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil];
+    NSLog(@"HTTP post response:\n%@\n\n", [[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding]);
 #endif
     
 	free(Data);

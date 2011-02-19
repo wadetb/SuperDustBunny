@@ -88,6 +88,8 @@ int SongCounter = 1;
 int SongDuration = 1500;
 int BackgroundMusic = 1;
 
+float FPS;
+
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                      Initialization functions                                                           //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -329,6 +331,33 @@ bool GetInput_Jump()
 #endif	
     }
 }
+
+void UpdateFPS()
+{
+#ifdef PLATFORM_WINDOWS
+	static DWORD LastTime = 0;
+	DWORD Time = timeGetTime();
+	FPS = (1000.0f / ((float)Time - (float)LastTime) + 0.5f);
+	LastTime = Time;
+#endif
+#ifdef PLATFORM_IPHONE
+	mach_timebase_info_data_t timerInfo;
+	mach_timebase_info(&timerInfo);
+    
+	const double TIMER_RATIO = 1e-9 * ((float)timerInfo.numer / (float)timerInfo.denom);
+    
+	static double LastTime = mach_absolute_time() * TIMER_RATIO - 1.0f / 60.0f;
+	double Time = mach_absolute_time() * TIMER_RATIO;
+	FPS = 1.0f / (Time - LastTime);
+	LastTime = Time;
+#endif
+    
+	//FPS = (double)(int(FPS / 10.0f + 0.5f) * 10);
+    
+    Recorder.SumFPS += (int)FPS;
+    Recorder.FPSCount++;
+}
+
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   LoadCurrentChapter Implementation                                                       //
@@ -777,39 +806,15 @@ void Display()
 	}
 #endif	
 
-	float FPS = 0;
-
-#ifdef PLATFORM_WINDOWS
-	static DWORD LastTime = 0;
-	DWORD Time = timeGetTime();
-	FPS = (1000.0f / ((float)Time - (float)LastTime) + 0.5f);
-	LastTime = Time;
-
-	FPS = (float)(int(FPS / 10.0f + 0.5f) * 10);
-#endif
-#ifdef PLATFORM_IPHONE
-	//Get the resolution of the iPhone timer.
-	mach_timebase_info_data_t timerInfo;
-	mach_timebase_info(&timerInfo);
-
-	const double TIMER_RATIO = 1e-9 * ((float)timerInfo.numer / (float)timerInfo.denom);
-
-	static double LastTime = mach_absolute_time() * TIMER_RATIO - 1.0f / 60.0f;
-	double Time = mach_absolute_time() * TIMER_RATIO;
-	FPS = 1.0f / (Time - LastTime);
-	LastTime = Time;
-
-	//FPS = (double)(int(FPS / 10.0f + 0.5f) * 10);
-#endif
-
+    UpdateFPS();
+    
 	gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "FPS: %.0f", FPS);
 
 	//gxDrawString(msX-8, msY-8, 16, gxRGB32(255, 255, 255), "X");
 }
 
 bool Update()
-{   
-    
+{
 	/*
 	//Background Music
     if (BackgroundMusic == 1)

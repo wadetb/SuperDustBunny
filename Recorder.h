@@ -28,6 +28,9 @@ struct SRecorder
 	bool MoveLeft;
 	bool MoveRight;
 	bool Jump;
+    
+    int SumFPS;
+    int FPSCount;
 };
 
 extern SRecorder Recorder;

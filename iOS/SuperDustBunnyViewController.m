@@ -26,10 +26,6 @@ extern int gxScreenHeight;
 SuperDustBunnyViewController *theViewController;
 
 
-@interface SuperDustBunnyViewController ()
-@property (nonatomic, retain) EAGLContext *context;
-@end
-
 @implementation SuperDustBunnyViewController
 
 @synthesize context;
@@ -64,8 +60,11 @@ SuperDustBunnyViewController *theViewController;
     
     Init();
     
+    [self drawFrame];
+
     // Likely cause of white flash:
-    [NSTimer scheduledTimerWithTimeInterval:(NSTimeInterval)(1 / 60.0f) target:self selector:@selector(mainLoop:) userInfo:nil repeats:NO];
+    [NSTimer scheduledTimerWithTimeInterval:(NSTimeInterval)(0) target:self selector:@selector(mainLoop:) userInfo:nil repeats:NO];
+    //[self mainLoop:nil];
 }
 
 - (void)dealloc
