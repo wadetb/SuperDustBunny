@@ -50,8 +50,11 @@ gxSprite DustyCornerJumpSprite;
 
 gxSprite DustyDeathSprite;
 
+gxSprite LogoSprite;
+
 gxSprite BackgroundCardboardSprite;
 gxSprite BackgroundPaperSprite;
+gxSprite BackgroundFridgeSprite;
 
 gxSprite TileUnknownSprite;
 
@@ -88,8 +91,8 @@ gxSprite ScoreNumber7Sprite;
 gxSprite ScoreNumber8Sprite;
 gxSprite ScoreNumber9Sprite;
 
-gxSprite Pause1Sprite;
-gxSprite Pause2Sprite;
+gxSprite ButtonPauseSprite;
+gxSprite ButtonPlaySprite;
 
 gxSprite TennisBallSpin1Sprite;
 gxSprite TennisBallSpin2Sprite;
@@ -406,8 +409,11 @@ void LoadAssets()
 
 	LoadSpriteAsset("Data/dusty-die.png", &DustyDeathSprite);
 
+    LoadSpriteAsset("Data/logo.png", &LogoSprite);
+    
 	LoadSpriteAsset("Data/background-cardboard.png", &BackgroundCardboardSprite);
 	LoadSpriteAsset("Data/background-paper.png", &BackgroundPaperSprite);
+	LoadSpriteAsset("Data/background-fridge.png", &BackgroundFridgeSprite);
 
 	LoadSpriteAsset("Data/tile-wtf.png", &TileUnknownSprite);
 	
@@ -444,8 +450,8 @@ void LoadAssets()
     LoadSpriteAsset("Data/number-8.png", &ScoreNumber8Sprite);
     LoadSpriteAsset("Data/number-9.png", &ScoreNumber9Sprite);
 	
-    LoadSpriteAsset("Data/game-pause-1.png", &Pause1Sprite);
-    LoadSpriteAsset("Data/game-pause-2.png", &Pause2Sprite);
+    LoadSpriteAsset("Data/button-pause.png", &ButtonPauseSprite);
+    LoadSpriteAsset("Data/button-play.png", &ButtonPlaySprite);
 
 	LoadSpriteAsset("Data/tennisball-spin-1.png", &TennisBallSpin1Sprite);
 	LoadSpriteAsset("Data/tennisball-spin-2.png", &TennisBallSpin2Sprite);

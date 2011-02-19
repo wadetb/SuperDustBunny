@@ -48,12 +48,11 @@ struct SStartScreen
     
     float PressedTime;
     float StartupTime;
+    
+    bool WelcomeDisplayed;
 };
 
 SStartScreen StartScreen;
-
-
-extern "C" void ShowSettings();
 
 
 void InitStartScreen()
@@ -62,14 +61,13 @@ void InitStartScreen()
 	StartScreen.X = StartScreen.CurItem * 600.0f;
 	StartScreen.PrevX = StartScreen.X;
     StartScreen.PressedTime = 0.0f;
-    StartScreen.StartupTime = 0.0f;
 }
 
 void StartScreen_Advance()
 {
 	if (StartScreen.CurItem == STARTSCREEN_ITEM_START)
 	{
-		Dusty.Lives = 0;
+		Dusty.Lives = 3;
 
 		SetGameState_Transition(GAMETRANSITION_FIRST_PAGE);
 	}
@@ -86,12 +84,15 @@ void StartScreen_Advance()
 
 void DisplayStartScreen()
 {
-	AddLitSprite(LIGHTLIST_BACKGROUND, &ScreenStart2Sprite, 0, 0 );
+	AddLitSprite(LIGHTLIST_BACKGROUND, &BackgroundFridgeSprite, 0, 0);
+
+    float Scale = Lerp(StartScreen.StartupTime, 0.0f, 0.8f, 2.0f, 1.0f);
+    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &LogoSprite, 384, 220, Scale, 1.0f);
 
 	for (int i = 0; i < STARTSCREEN_ITEM_COUNT; i++)
 	{
         float X = 384 + i*600 - (int)StartScreen.X;
-        float Y = 720;
+        float Y = 730;
 
         if (i == StartScreen.CurItem)
         {
@@ -110,7 +111,29 @@ void DisplayStartScreen()
         float Alpha = Max(0, 1.0f - StartScreen.StartupTime);
         AddLitSpriteAlpha(LIGHTLIST_WIPE, &ScreenStart1Sprite, 0, 0, Alpha);
     }
+}
+
+void DisplayWelcomeAlert()
+{
+#ifdef PLATFORM_IPHONE
+    NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
     
+    NSString *title = [NSString stringWithFormat:@"Welcome to SuperDustBunny Beta Build %@", version];
+    
+    NSString *message = 
+    @"We're thrilled that you're helping us to test and improve our first iPhone game.\n\n"
+    "The goal of this beta is to see how the game runs on different models of iPhone and iTouch.  Please let us know how well it works.\n\n"
+    "We would also like feedback about how the game looks, and how easy it is to control the bunny.\n\n"
+    "Thanks for your efforts!";
+    
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title
+                                                    message:message
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+    [alert release];
+#endif
 }
 
 void UpdateStartScreen()
@@ -194,4 +217,10 @@ void UpdateStartScreen()
     }
     
     StartScreen.StartupTime += 1.0f/60.0f;
+    
+    if (StartScreen.StartupTime >= 1.0f && !StartScreen.WelcomeDisplayed)
+    {
+        StartScreen.WelcomeDisplayed = true;
+        DisplayWelcomeAlert();
+    }
 }

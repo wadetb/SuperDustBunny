@@ -16,6 +16,9 @@
 #pragma comment(lib,"winhttp.lib")
 #endif
 
+#ifdef PLATFORM_IPHONE
+#include <sys/sysctl.h>
+#endif
 
 // TODO:
 // + Some sort of incrementing session ID, updated each time the game runs.
@@ -96,6 +99,15 @@ void StartRecording()
 	snprintf(RecorderHeader.ComputerName, sizeof(RecorderHeader.ComputerName), getenv("COMPUTERNAME"));
 	snprintf(RecorderHeader.UserName, sizeof(RecorderHeader.UserName), getenv("USERNAME"));
 #endif
+#ifdef PLATFORM_IPHONE
+    [[[UIDevice currentDevice] name] getCString:RecorderHeader.UserName maxLength:sizeof(RecorderHeader.UserName) encoding:NSUTF8StringEncoding];
+
+    size_t size = sizeof(RecorderHeader.ComputerName);
+    sysctlbyname("hw.machine", RecorderHeader.ComputerName, &size, NULL, 0);
+
+    NSString *osVersion = [NSString stringWithFormat:@"%@ %@", [[UIDevice currentDevice] systemName], [[UIDevice currentDevice] systemVersion]];
+    [osVersion getCString:RecorderHeader.OSVersion maxLength:sizeof(RecorderHeader.OSVersion) encoding:NSUTF8StringEncoding];
+#endif
 
 	RecordingTime = 0;
 
@@ -137,7 +149,16 @@ void StopRecording(ERecordingEndType Result)
 #endif
     
 #ifdef PLATFORM_IPHONE
-    // TODO: See NSHTTPURLRequest.
+    NSData *data = [NSMutableData dataWithBytes:Data length:DataSize];
+    
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:
+                                    [NSURL URLWithString:
+                                     @"http://www.pluszerogames.com/sdb/recording.php"]];
+    
+    [request setHTTPMethod:@"POST"];
+    [request setHTTPBody:data];
+
+    [NSURLConnection connectionWithRequest:request delegate:nil];
 #endif
     
 	free(Data);

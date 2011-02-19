@@ -32,36 +32,3 @@ void SaveSettings()
 {
 }
 
-
-extern "C"
-{
-void SetTiltSensitivity(int value)
-{
-    Settings.TiltSensitivity = value;
-}
-
-void SetContinuousJump(bool value)
-{
-    Settings.ContinuousJump = value;
-}
-
-void SetFallGracePeriod(bool value)
-{
-    Settings.FallGracePeriod = value;
-}
-
-void SetDoubleJump(bool value)
-{
-    Settings.DoubleJump = value;
-}
-
-void SetInfiniteLives(bool value)
-{
-    Settings.InfiniteLives = value;
-}
-
-void SetDisableVacuum(bool value)
-{
-    Settings.DisableVacuum = value;
-}
-}

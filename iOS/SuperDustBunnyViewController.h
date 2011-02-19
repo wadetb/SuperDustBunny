@@ -20,9 +20,12 @@
 @interface SuperDustBunnyViewController : UIViewController {
 @private
     EAGLContext *context;
+    BOOL paused;
 }
 
 @property (nonatomic, retain) IBOutlet SettingsViewController *settingsViewController;
+
+@property BOOL paused;
 
 - (void)showSettings;
 - (void)hideSettings;

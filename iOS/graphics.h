@@ -114,11 +114,9 @@ void gxSetVertexShaderConst(int Index, float x, float y=0.0f, float z=0.0f, floa
 
 void gxCopyRenderTarget(gxSprite* From, gxSprite* To);
 
-extern "C" {
-    void Init();
-    void Exit();
-    bool Update();
-    void Display();
-}
+void Init();
+void Exit();
+bool Update();
+void Display();
 
 #endif

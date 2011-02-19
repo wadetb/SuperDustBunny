@@ -50,8 +50,11 @@ extern gxSprite DustyCornerJumpSprite;
 
 extern gxSprite DustyDeathSprite;
 
+extern gxSprite LogoSprite;
+
 extern gxSprite BackgroundCardboardSprite;
 extern gxSprite BackgroundPaperSprite;
+extern gxSprite BackgroundFridgeSprite;
 
 extern gxSprite TileUnknownSprite;
 
@@ -88,8 +91,8 @@ extern gxSprite ScoreNumber7Sprite;
 extern gxSprite ScoreNumber8Sprite;
 extern gxSprite ScoreNumber9Sprite;
 
-extern gxSprite Pause1Sprite;
-extern gxSprite Pause2Sprite;
+extern gxSprite ButtonPauseSprite;
+extern gxSprite ButtonPlaySprite;
 
 extern gxSprite TennisBallSpin1Sprite;
 extern gxSprite TennisBallSpin2Sprite;

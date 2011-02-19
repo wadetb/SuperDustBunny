@@ -290,8 +290,12 @@ void UpdateDusty_Jump()
         Dusty.JumpGraceTimer--;
         if (GetInput_Jump())
         {
-            printf("Grace period jump\n");
             Dusty.JumpGraceTimer = 0;
+
+            // Spawn some dust motes.
+            for (int i = 0; i < 10; i++)
+                MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);
+            
             SetDustyState_Jump( false );
             return;
         }
@@ -301,10 +305,14 @@ void UpdateDusty_Jump()
     // TODO: Work out rules about when this can be activated.  Y velocity?  Timer?
     if (Settings.DoubleJump && Dusty.AirJumpCount == 0)
     {
-        Dusty.AirJumpCount++;
         if (GetInput_Jump())
         {
-            printf("Double jump\n");
+            Dusty.AirJumpCount++;
+            
+            // Spawn some dust motes.
+            for (int i = 0; i < 10; i++)
+                MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);
+
             SetDustyState_Jump( false );
             return;
         }

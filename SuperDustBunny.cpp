@@ -196,8 +196,8 @@ void ReportError(const char* ErrorMessage, ...)
 #endif
 
 #ifdef PLATFORM_IPHONE
-	// TODO: Use iPhone popop dialog.
-	printf("ERROR: %s\n", Work);
+	printf("SuperDustBunny Error: %s\n", Work);
+    DisplayAlert("SuperDustBunny Error", Work);
 	exit(1);
 #endif
 }
@@ -221,6 +221,27 @@ double GetCurrentTime()
 	const double TIMER_RATIO = ((double)timerInfo.numer / (double)timerInfo.denom);
 
 	return (double)mach_absolute_time() * TIMER_RATIO / 1000000000.0;
+#endif
+}
+
+
+void DisplayAlert(const char* Title, const char* AlertMessage, ...)
+{
+	char Work[1024];
+    
+	va_list args;
+	va_start(args, AlertMessage);
+	vsnprintf(Work, sizeof(Work), AlertMessage, args);
+	va_end(args);
+    
+#ifdef PLATFORM_IPHONE
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithUTF8String:Title]
+                                                    message:[NSString stringWithUTF8String:Work]
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+    [alert release];
 #endif
 }
 
@@ -438,13 +459,9 @@ void DisplayGame_Playing()
     
 	//Display Pause
     if (GamePause)
-    {
-        AddLitSprite( LIGHTLIST_VACUUM, &Pause1Sprite, 340, -10);
-    }
+        AddLitSpriteCenteredScaledAlpha( LIGHTLIST_VACUUM, &ButtonPlaySprite, gxScreenWidth/2, 64, 1.0f, 1.0f);
     else
-    {
-        AddLitSprite( LIGHTLIST_VACUUM, &Pause2Sprite, 340, -10);
-    }
+        AddLitSpriteCenteredScaledAlpha( LIGHTLIST_VACUUM, &ButtonPauseSprite, gxScreenWidth/2, 64, 1.0f, 1.0f);
         
 	// Lighting effects.
 	DisplayFlashlight();

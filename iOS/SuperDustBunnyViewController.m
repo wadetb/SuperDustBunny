@@ -15,7 +15,6 @@
 #include <mach/mach.h>
 #include <mach/mach_time.h>
 
-
 void Init();
 void Exit();
 void Update();
@@ -35,6 +34,7 @@ SuperDustBunnyViewController *theViewController;
 
 @synthesize context;
 @synthesize settingsViewController;
+@synthesize paused;
 
 - (void)awakeFromNib
 {
@@ -59,6 +59,8 @@ SuperDustBunnyViewController *theViewController;
     
     [[UIAccelerometer sharedAccelerometer] setUpdateInterval:(1.0f/60.0f)];
 	[[UIAccelerometer sharedAccelerometer] setDelegate:(EAGLView *)self.view];	
+    
+    paused = FALSE;
     
     Init();
     
@@ -107,12 +109,15 @@ SuperDustBunnyViewController *theViewController;
 
 - (void)showSettings
 {
+    paused = TRUE;
+    
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:1.0];
-    [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:[self view] cache:NO];
+    [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:[self view] cache:YES];
     [[self view] addSubview:[settingsViewController view]];
-    [settingsViewController transferSettingsToView];    
     [UIView commitAnimations];
+
+    [settingsViewController transferSettingsToView];    
 }
 
 - (void)hideSettings
@@ -121,9 +126,11 @@ SuperDustBunnyViewController *theViewController;
 
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:1.0];
-    [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:[self view] cache:NO];
+    [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:[self view] cache:YES];
     [[settingsViewController view] removeFromSuperview];
     [UIView commitAnimations];
+
+    paused = FALSE;
 }
 
 - (void)drawFrame
@@ -149,8 +156,6 @@ SuperDustBunnyViewController *theViewController;
 	
 	double lastUpdateTime = mach_absolute_time() * TIMER_RATIO - TARGET_TIME;
 	
-    // TODO: Detect deactivate / activate by the operating system, and pause / resume.
-    // Currently getting a crash when stopping.
 	for (;;)
 	{
 		NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
@@ -161,8 +166,15 @@ SuperDustBunnyViewController *theViewController;
         {
             result = CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0.001, TRUE);
             now = mach_absolute_time() * TIMER_RATIO;
-        } while (result == kCFRunLoopRunHandledSource /*|| now - lastUpdateTime < TARGET_TIME*/);
+        } while (paused || result == kCFRunLoopRunHandledSource /*|| now - lastUpdateTime < TARGET_TIME*/);
         
+        if (result == kCFRunLoopRunStopped)
+        {
+            NSLog(@"Run loop stopped.\n");
+            [pool release];
+            break;
+        }
+            
         if (now - lastUpdateTime >= 5 * TARGET_TIME)
         {
             lastUpdateTime = now;
@@ -186,3 +198,4 @@ void ShowSettings()
 {
     [theViewController showSettings];
 }
+
