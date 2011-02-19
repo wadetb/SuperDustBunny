@@ -252,7 +252,7 @@ void DisplayAlert(const char* Title, const char* AlertMessage, ...)
 SRemoteControl RemoteControl;
 
 
-float AccelThreshold[3] = { 0.25f, 0.20f, 0.15f };
+float AccelThreshold[3] = { 0.20f, 0.15f, 0.10f };
 
 
 bool GetInput_MoveLeft()
