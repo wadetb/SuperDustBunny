@@ -93,6 +93,9 @@ gxSprite ScoreNumber9Sprite;
 
 gxSprite ButtonPauseSprite;
 gxSprite ButtonPlaySprite;
+gxSprite ButtonMuteSprite;
+gxSprite ButtonUnmuteSprite;
+gxSprite ButtonHomeSprite;
 
 gxSprite PortalSprite;
 
@@ -454,6 +457,9 @@ void LoadAssets()
 	
     LoadSpriteAsset("Data/button-pause.png", &ButtonPauseSprite);
     LoadSpriteAsset("Data/button-play.png", &ButtonPlaySprite);
+    LoadSpriteAsset("Data/button-home.png", &ButtonHomeSprite);
+    LoadSpriteAsset("Data/button-mute.png", &ButtonMuteSprite);
+    LoadSpriteAsset("Data/button-unmute.png", &ButtonUnmuteSprite);
 
     LoadSpriteAsset("Data/portal.png", &PortalSprite);
 

@@ -80,6 +80,7 @@ bool DevMode = false;
 bool SlowMotionMode = false;
 bool ChapterIntroDisplayed = false;
 bool GamePause = false;
+bool GameMuted = false;
 
 int BackgroundX = 0;
 int BackgroundY = 0;
@@ -437,6 +438,8 @@ void SetGameState_Playing()
 {
 	GameState = GAMESTATE_PLAYING;
 
+    GamePause = false;
+    
 	InitTutorial();
 	InitScore();
 
@@ -448,6 +451,34 @@ void SetGameState_Playing()
 	{    
 		SetGameState_Tutorial(TUTORIALSTATE_INITIAL);
 	}    
+}
+
+void DisplayPauseScreen()
+{
+    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonHomeSprite, 192, 500, 1.0f, 1.0f);
+    
+    if (GameMuted)
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonUnmuteSprite, 768-192, 500, 1.0f, 1.0f);
+    else
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonMuteSprite, 768-192, 500, 1.0f, 1.0f);        
+}
+
+void UpdatePauseScreen()
+{
+    if (msButton1 && !msOldButton1)
+    {
+        if (msX > 384+64 && msY >= 300 && msY <= 600)
+        {
+            GameMuted = !GameMuted;
+        }
+
+        if (msX < 384-64 && msY >= 300 && msY <= 600)
+        {
+            GamePause = false;
+			StopRecording(RESULT_RESTART_PAGE);
+            SetGameState_StartScreen();
+        }
+    }
 }
 
 void DisplayGame_Playing()
@@ -488,7 +519,10 @@ void DisplayGame_Playing()
     
 	//Display Pause
     if (GamePause)
+    {
         AddLitSpriteCenteredScaledAlpha( LIGHTLIST_VACUUM, &ButtonPlaySprite, gxScreenWidth/2, 64, 1.0f, 1.0f);
+        DisplayPauseScreen();
+    }
     else
         AddLitSpriteCenteredScaledAlpha( LIGHTLIST_VACUUM, &ButtonPauseSprite, gxScreenWidth/2, 64, 1.0f, 1.0f);
         
@@ -540,7 +574,10 @@ void UpdateGame_Playing()
     
     // TODO: GamePause should actually stop the update and display loop, to reduce battery life.
 	if (GamePause)
+    {
+        UpdatePauseScreen();
         return;
+    }
     
     UpdateDusty();
         

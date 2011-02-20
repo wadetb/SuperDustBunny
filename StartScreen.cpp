@@ -50,6 +50,8 @@ struct SStartScreen
 	bool Dragging;
 	bool Pressed;
     
+    bool ReleasedAtLeastOnce;
+    
     float PressedTime;
     float StartupTime;
     
@@ -65,10 +67,16 @@ void InitStartScreen()
 	StartScreen.X = StartScreen.CurItem * 600.0f;
 	StartScreen.PrevX = StartScreen.X;
     StartScreen.PressedTime = 0.0f;
+    StartScreen.ReleasedAtLeastOnce = false;
 }
 
 void StartScreen_Advance()
 {
+    StartScreen.Dragging = false;
+    StartScreen.Pressed = false;
+    StartScreen.PressedTime = 0.0f;
+    StartScreen.ReleasedAtLeastOnce = false;
+    
 	if (StartScreen.CurItem == STARTSCREEN_ITEM_START)
 	{
 		Dusty.Lives = 3;
@@ -167,6 +175,11 @@ void UpdateStartScreen()
 	}
 #endif
 
+    if (!msButton1)
+        StartScreen.ReleasedAtLeastOnce = true;
+    if (!StartScreen.ReleasedAtLeastOnce)
+        return;
+    
 	if (StartScreen.Dragging)
 	{
 		if (!msButton1)
@@ -188,8 +201,7 @@ void UpdateStartScreen()
 
 			StartScreen.X += StartScreen.DragX - msX;
 			StartScreen.DragX = (float)msX;
-		}
-        
+		}        
 	}
 	else
 	{

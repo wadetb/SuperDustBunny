@@ -165,11 +165,13 @@ void StopRecording(ERecordingEndType Result)
     [request setHTTPMethod:@"POST"];
     [request setHTTPBody:data];
 
-    //[NSURLConnection connectionWithRequest:request delegate:nil];
+    // Asynchronnous:
+    [NSURLConnection connectionWithRequest:request delegate:nil];
     
-    NSURLResponse *response;
-    NSData* result = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil];
-    NSLog(@"HTTP post response:\n%@\n\n", [[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding]);
+    // Synchronous, for testing:
+    //NSURLResponse *response;
+    //NSData* result = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil];
+    //NSLog(@"HTTP post response:\n%@\n\n", [[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding]);
 #endif
     
 	free(Data);
