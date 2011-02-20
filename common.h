@@ -214,6 +214,7 @@ void HTTPPost(const char* URL, const void* Data, int DataSize);
 void ShowSettings();
 
 // Returns current time in seconds.  ONLY to be used for logging prints and non-final profiling code.
+#undef GetCurrentTime
 double GetCurrentTime();
 
 struct SRemoteControl

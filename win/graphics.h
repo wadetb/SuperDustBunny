@@ -117,7 +117,7 @@ enum gxDisplayType
   gxInit( GXDISPLAY_IPAD_PORTRAIT );
 
 --------------------------------------------------------------------------------------------------------*/
-void gxInit( gxDisplayType type );
+void gxInit();
 void gxDeinit();
 
 void gxEmulateDisplaySize( gxDisplayType type );

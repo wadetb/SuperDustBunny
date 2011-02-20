@@ -89,7 +89,9 @@ void StartScreen_Advance()
 	}
 	else if (StartScreen.CurItem == STARTSCREEN_ITEM_CREDITS)
 	{
+#ifdef PLATFORM_IPHONE
         ShowSettings();
+#endif
 //		SetGameState_Credits();
     }
 }

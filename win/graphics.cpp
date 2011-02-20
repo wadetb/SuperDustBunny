@@ -170,9 +170,9 @@ void gxGetDisplaySize( gxDisplayType disp, int* w, int* h )
 
 //2016mm x 3024mm
 
-void gxInit( gxDisplayType disp )
+void gxInit()
 {
-	gxGetDisplayResolution( disp, &gxScreenWidth, &gxScreenHeight );
+	gxGetDisplayResolution( GXDISPLAY_IPAD_PORTRAIT, &gxScreenWidth, &gxScreenHeight );
 
 	gxD3D = Direct3DCreate9( D3D_SDK_VERSION );
 
@@ -215,7 +215,7 @@ void gxInit( gxDisplayType disp )
 
 	gxInitFontSprite();
 
-	gxEmulateDisplaySize( disp );
+	gxEmulateDisplaySize( GXDISPLAY_IPAD_PORTRAIT );
 }
 
 void gxEmulateDisplaySize( gxDisplayType disp )

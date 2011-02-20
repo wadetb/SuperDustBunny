@@ -393,6 +393,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Settings.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Settings.h"
+			>
+		</File>
+		<File
 			RelativePath=".\Stapler.cpp"
 			>
 		</File>

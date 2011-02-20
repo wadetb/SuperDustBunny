@@ -225,6 +225,10 @@ double GetCurrentTime()
 
 	return (double)mach_absolute_time() * TIMER_RATIO / 1000000000.0;
 #endif
+
+#ifdef PLATFORM_WINDOWS
+    return 0;
+#endif
 }
 
 
