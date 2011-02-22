@@ -25,11 +25,11 @@ SScore Score;
 
 void InitScore()
 {
-    Score.CounterSingle = 0;
-    Score.CounterTen = 0;
-    Score.CounterHundred = 0;
-    Score.CounterThousand = 0;
-    Score.CounterTenThousand = 0;
+    Score.CounterSingle = 5;
+    Score.CounterTen = 4;
+    Score.CounterHundred = 3;
+    Score.CounterThousand = 2;
+    Score.CounterTenThousand = 6;
     
     Score.Type = 0;
     Score.ToRaise = 0;
@@ -37,30 +37,28 @@ void InitScore()
     
     Score.Raise = false;
     Score.Single = true;
-    Score.Ten = false;
-    Score.Hundred = false;
-    Score.Thousand = false;
-    Score.TenThousand = false;
+    Score.Ten = true;
+    Score.Hundred = true;
+    Score.Thousand = true;
+    Score.TenThousand = true;
 }
 
 void DisplayScore()
 {
-//    AddLitSprite( LIGHTLIST_VACUUM, &Score1Sprite, -40, -30);
-
     if (Score.Single)
     {
         switch (Score.CounterSingle)
         {
-        case 0:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber0Sprite, 280, 5); break;
-        case 1:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber1Sprite, 280, 5); break;
-        case 2:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber2Sprite, 280, 5); break;
-        case 3:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber3Sprite, 280, 5); break;
-        case 4:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber4Sprite, 280, 5); break;
-        case 5:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber5Sprite, 280, 5); break;
-        case 6:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber6Sprite, 280, 5); break;
-        case 7:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber7Sprite, 280, 5); break;
-        case 8:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber8Sprite, 280, 5); break;
-        case 9:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber9Sprite, 280, 5); break;
+        case 0:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 0, 0, 84, 100); break;        
+        case 1:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 84, 0, 116, 100); break;
+        case 2:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 116, 0, 202, 100); break;
+        case 3:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 202, 0, 290, 100); break;
+        case 4:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 290, 0, 372, 100); break;
+        case 5:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 372, 0, 456, 100); break;
+        case 6:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 456, 0, 542, 100); break;
+        case 7:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 542, 0, 626, 100); break;
+        case 8:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 626, 0, 708, 100); break;
+        case 9:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 708, 0, 796, 100); break;
         default:   break;   
         }
     }
@@ -69,16 +67,16 @@ void DisplayScore()
     {
         switch (Score.CounterTen)
         {
-        case 0:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber0Sprite, 250, 5); break;
-        case 1:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber1Sprite, 250, 5); break;
-        case 2:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber2Sprite, 250, 5); break;
-        case 3:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber3Sprite, 250, 5); break;
-        case 4:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber4Sprite, 250, 5); break;
-        case 5:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber5Sprite, 250, 5); break;
-        case 6:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber6Sprite, 250, 5); break;
-        case 7:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber7Sprite, 250, 5); break;
-        case 8:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber8Sprite, 250, 5); break;
-        case 9:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber9Sprite, 250, 5); break;
+        case 0:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 0, 0, 84, 100); break;        
+        case 1:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 84, 0, 116, 100); break;
+        case 2:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 116, 0, 202, 100); break;
+        case 3:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 202, 0, 290, 100); break;
+        case 4:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 290, 0, 372, 100); break;
+        case 5:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 372, 0, 456, 100); break;
+        case 6:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 456, 0, 542, 100); break;
+        case 7:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 542, 0, 626, 100); break;
+        case 8:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 626, 0, 708, 100); break;
+        case 9:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 708, 0, 796, 100); break;
         default:   break;   
         }
     }
@@ -87,16 +85,16 @@ void DisplayScore()
     {
         switch (Score.CounterHundred)
         {
-        case 0:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber0Sprite, 220, 5); break;
-        case 1:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber1Sprite, 220, 5); break;
-        case 2:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber2Sprite, 220, 5); break;
-        case 3:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber3Sprite, 220, 5); break;
-        case 4:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber4Sprite, 220, 5); break;
-        case 5:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber5Sprite, 220, 5); break;
-        case 6:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber6Sprite, 220, 5); break;
-        case 7:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber7Sprite, 220, 5); break;
-        case 8:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber8Sprite, 220, 5); break;
-        case 9:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber9Sprite, 220, 5); break;
+        case 0:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 0, 0, 84, 100); break;        
+        case 1:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 84, 0, 116, 100); break;
+        case 2:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 116, 0, 202, 100); break;
+        case 3:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 202, 0, 290, 100); break;
+        case 4:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 290, 0, 372, 100); break;
+        case 5:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 372, 0, 456, 100); break;
+        case 6:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 456, 0, 542, 100); break;
+        case 7:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 542, 0, 626, 100); break;
+        case 8:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 626, 0, 708, 100); break;
+        case 9:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 708, 0, 796, 100); break;
         default:   break;   
         }
     }
@@ -105,16 +103,16 @@ void DisplayScore()
     {
         switch (Score.CounterThousand)
         {
-        case 0:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber0Sprite, 190, 5); break;
-        case 1:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber1Sprite, 190, 5); break;
-        case 2:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber2Sprite, 190, 5); break;
-        case 3:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber3Sprite, 190, 5); break;
-        case 4:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber4Sprite, 190, 5); break;
-        case 5:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber5Sprite, 190, 5); break;
-        case 6:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber6Sprite, 190, 5); break;
-        case 7:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber7Sprite, 190, 5); break;
-        case 8:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber8Sprite, 190, 5); break;
-        case 9:    AddLitSprite( LIGHTLIST_VACUUM, &ScoreNumber9Sprite, 190, 5); break;
+        case 0:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 0, 0, 84, 100); break;        
+        case 1:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 84, 0, 116, 100); break;
+        case 2:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 116, 0, 202, 100); break;
+        case 3:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 202, 0, 290, 100); break;
+        case 4:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 290, 0, 372, 100); break;
+        case 5:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 372, 0, 456, 100); break;
+        case 6:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 456, 0, 542, 100); break;
+        case 7:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 542, 0, 626, 100); break;
+        case 8:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 626, 0, 708, 100); break;
+        case 9:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 708, 0, 796, 100); break;
         default:   break;   
         }
     }

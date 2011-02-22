@@ -91,6 +91,8 @@ gxSprite ScoreNumber7Sprite;
 gxSprite ScoreNumber8Sprite;
 gxSprite ScoreNumber9Sprite;
 
+gxSprite FullScoreSprite;
+
 gxSprite ButtonPauseSprite;
 gxSprite ButtonPlaySprite;
 gxSprite ButtonMuteSprite;
@@ -224,7 +226,8 @@ void LoadAssetList(const char* FileName)
     
 	FILE* AssetFile = gxOpenFile(FileName, "r");    
 	if (!AssetFile)
-		ReportError("Unable to open asset list file.  Check that all required files and tools are present, and re-build the XCode project to fix.");
+        return;
+		//ReportError("Unable to open asset list file.  Check that all required files and tools are present, and re-build the XCode project to fix.");
     
 	// Read the entire XML file into a text buffer.
 	fseek(AssetFile, 0, SEEK_END);
@@ -456,6 +459,8 @@ void LoadAssets()
     LoadSpriteAsset("Data/number-7.png", &ScoreNumber7Sprite);
     LoadSpriteAsset("Data/number-8.png", &ScoreNumber8Sprite);
     LoadSpriteAsset("Data/number-9.png", &ScoreNumber9Sprite);
+    
+    LoadSpriteAsset("Data/full-score.png", &FullScoreSprite);
 	
     LoadSpriteAsset("Data/button-pause.png", &ButtonPauseSprite);
     LoadSpriteAsset("Data/button-play.png", &ButtonPlaySprite);

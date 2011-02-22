@@ -91,6 +91,8 @@ extern gxSprite ScoreNumber7Sprite;
 extern gxSprite ScoreNumber8Sprite;
 extern gxSprite ScoreNumber9Sprite;
 
+extern gxSprite FullScoreSprite;
+
 extern gxSprite ButtonPauseSprite;
 extern gxSprite ButtonPlaySprite;
 extern gxSprite ButtonMuteSprite;
