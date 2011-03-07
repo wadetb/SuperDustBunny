@@ -37,10 +37,12 @@ struct SStapler
 
 extern SStapler Stapler;
 
-void CreateStapler(int X, int Y);
+void CreateStapler(int X, int Y, SStaplerProperties* Properties);
 void ClearStaplers();
 
 void UpdateStaplers();
 void DisplayStaplers();
+
+void ParseStaplerProperties(struct SBlock* Block, rapidxml::xml_node<char>* PropertiesNode);
 
 #endif

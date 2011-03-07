@@ -19,7 +19,29 @@
 int NStaplers = 0;
 SStapler Staplers[MAX_STAPLERS];
 
-void CreateStapler(int X, int Y)
+void ParseStaplerProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode)
+{
+    SStaplerProperties* StaplerProperties = (SStaplerProperties*)malloc(sizeof(SStaplerProperties));
+
+    // Scan properties for values.
+    rapidxml::xml_node<char>* PropertyNode = PropertiesNode->first_node("property");
+    while (PropertyNode)
+    {
+        const char* Name = PropertyNode->first_attribute("name")->value();
+        const char* Value = PropertyNode->first_attribute("value")->value();
+
+        if (strcmp(Name, "type") != 0 && strcmp(Name, "material") != 0)
+        {
+            ReportError("Unrecognized stapler property '%s'='%s'.", Name, Value);
+        }
+
+        PropertyNode = PropertyNode->next_sibling("property");
+    }
+
+    Block->Properties = StaplerProperties;
+}
+
+void CreateStapler(int X, int Y, SStaplerProperties* Properties)
 {
     if (NStaplers >= MAX_STAPLERS)
         ReportError("Exceeded the maximum of %d total Staplers.", MAX_STAPLERS);
@@ -74,6 +96,7 @@ void DisplayStaplers()
         }            
     }
 }
+#ifdef PLATFORM_WINDOWS
 
 void UpdateStaplers()
 {
@@ -87,43 +110,46 @@ void UpdateStaplers()
                 //{
                 //    SetGameState_Tutorial(TUTORIALSTATE_STAPLER);
                 //    return;
-                //}  
+                //}        
         }
         
         if (Stapler->State == STAPLERSTATE_PRELAUNCH)
-        {    
-#ifdef PLATFORM_WINDOWS
-            if (kbIsKeyDown(KB_SPACE))
-            {
-                if (Stapler->PowerJumpCounter > 100)
+        {   
+            float Dist = Distance(Dusty.FloatX, Dusty.FloatY, Stapler->X, Stapler->Y+60);
+         
+            if (Dist < 100 && Dusty.CollideWithBottomSide)
+            {     
+                if (kbIsKeyDown(KB_SPACE))
                 {
-                    Stapler->PowerJumpCounter = 100;
+                    if (Stapler->PowerJumpCounter > 100)
+                    {
+                        Stapler->PowerJumpCounter = 100;
+                    }
+                    
+                    Stapler->PowerJumpCounter += 1;    
                 }
                 
-                Stapler->PowerJumpCounter += 1;    
-            }
-            
-            if (kbWasKeyDown(KB_SPACE))
-            {
-                switch(Stapler->PowerJumpCounter)
+                if (kbWasKeyDown(KB_SPACE))
                 {
-                case 10: Stapler->PowerJump = 0.8f; break;
-                case 20: Stapler->PowerJump = 0.9f; break;
-                case 30: Stapler->PowerJump = 1.0f; break;
-                case 40: Stapler->PowerJump = 1.1f; break;
-                case 50: Stapler->PowerJump = 1.2f; break;
-                case 60: Stapler->PowerJump = 1.3f; break;
-                case 70: Stapler->PowerJump = 1.4f; break;
-                case 80: Stapler->PowerJump = 1.5f; break;
-                case 90: Stapler->PowerJump = 1.6f; break;
-                case 100: Stapler->PowerJump = 1.7f; break;
-                default: continue;
+                    switch(Stapler->PowerJumpCounter)
+                    {
+                    case 10: Stapler->PowerJump = 0.8f; break;
+                    case 20: Stapler->PowerJump = 0.9f; break;
+                    case 30: Stapler->PowerJump = 1.0f; break;
+                    case 40: Stapler->PowerJump = 1.1f; break;
+                    case 50: Stapler->PowerJump = 1.2f; break;
+                    case 60: Stapler->PowerJump = 1.3f; break;
+                    case 70: Stapler->PowerJump = 1.4f; break;
+                    case 80: Stapler->PowerJump = 1.5f; break;
+                    case 90: Stapler->PowerJump = 1.6f; break;
+                    case 100: Stapler->PowerJump = 1.7f; break;
+                    default: continue;
+                    }
+                    
+                    Stapler->State = STAPLERSTATE_LAUNCH; 
                 }
-                
-                Stapler->State = STAPLERSTATE_LAUNCH; 
             }
-#endif
-            
+        
             if (Stapler->State == STAPLERSTATE_LAUNCH)
             {
                 Dusty.FloatY = Dusty.FloatY * Stapler->PowerJump;
@@ -136,3 +162,4 @@ void UpdateStaplers()
         }             
     }  
 }
+#endif

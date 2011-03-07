@@ -15,9 +15,11 @@
 #include "Vacuum.h"
 #include "Recorder.h"
 #include "Settings.h"
+#include "Stapler.h"
 
 
 SDusty Dusty;
+SStapler Stapler;
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                  Dusty initialization function                                                          //
@@ -1120,6 +1122,15 @@ void UpdateDusty_Collision()
 								SetDustyState_Hurt();
 							}
 						}
+						
+                        if (Dusty.CollideWithBottomSide && Block->Type == BLOCKTYPE_STAPLER)
+                        {
+                            Stapler.State = STAPLERSTATE_PRELAUNCH;
+                        }
+                        else
+                        {
+                            Stapler.State = STAPLERSTATE_WAIT;
+                        } 
 					}
 				}
 			}
