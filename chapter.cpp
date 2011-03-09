@@ -347,10 +347,6 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* FileName
 			{
 				ParseNailProperties(Block, PropertiesNode);
 			}
-			else if (Block->Type == BLOCKTYPE_STAPLER)
-			{
-			    ParseStaplerProperties(Block, PropertiesNode);
-			}
 			else if (Block->Type == BLOCKTYPE_FAN)
 			{
 				ParseFanProperties(Block, PropertiesNode);
@@ -811,10 +807,10 @@ void CreatePageObjects()
 					CreateFlashlightWaypoint(x * 64, y * 64, (SFlashlightWaypointProperties*)Block->Properties);
 					EraseBlock(x, y);
 					break;
-			    case BLOCKTYPE_STAPLER:
-				    CreateStapler(x * 64, y * 64, (SStaplerProperties*)Block->Properties);
-				    EraseBlock(x, y);
-				    break;	
+				case BLOCKTYPE_STAPLER:
+					CreateStapler(x * 64, y * 64);
+					EraseBlock(x, y);
+					break;
 				}
 			}
 		}

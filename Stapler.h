@@ -28,6 +28,14 @@ struct SStapler
 {
     float X, Y;
 
+	float FloatX;
+	float FloatY;
+
+	float Left;
+	float Right;
+	float Bottom;
+	float Top;
+
     EStaplerState State;
 
     int Timer;
@@ -37,7 +45,7 @@ struct SStapler
 
 extern SStapler Stapler;
 
-void CreateStapler(int X, int Y, SStaplerProperties* Properties);
+void CreateStapler(int X, int Y);
 void ClearStaplers();
 
 void UpdateStaplers();
