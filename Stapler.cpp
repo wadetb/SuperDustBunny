@@ -82,10 +82,10 @@ void DisplayStaplers()
         }            
     }
 }
-#ifdef PLATFORM_WINDOWS
 
 void UpdateStaplers()
 {
+#ifdef PLATFORM_WINDOWS
     for (int i = 0; i < NStaplers; i++)
     {
         SStapler* Stapler = &Staplers[i];
@@ -251,5 +251,6 @@ void UpdateStaplers()
             }      
         }             
     }  
-}
 #endif
+}
+        

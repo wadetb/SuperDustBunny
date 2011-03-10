@@ -3,12 +3,15 @@
 
 #include <stdio.h>
 
+#import <OpenGLES/ES1/gl.h>
+#import <OpenGLES/ES1/glext.h>
 #import <OpenGLES/ES2/gl.h>
 #import <OpenGLES/ES2/glext.h>
 
 #define gxRGBA32(r,g,b,a) (((b)<<16)|((g)<<8)|((r)<<0)|((a)<<24))
 #define gxRGB32(r,g,b)    gxRGBA32(r,g,b,255)
 
+extern GLuint gxOpenGLESVersion;
 
 enum
 {

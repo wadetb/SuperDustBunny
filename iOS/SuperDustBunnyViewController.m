@@ -23,6 +23,8 @@ void Display();
 extern int gxScreenWidth;
 extern int gxScreenHeight;
 
+extern GLuint gxOpenGLESVersion;
+
 SuperDustBunnyViewController *theViewController;
 
 
@@ -36,10 +38,14 @@ SuperDustBunnyViewController *theViewController;
 {
     theViewController = self;
     
-    EAGLContext *aContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+    EAGLContext *aContext;
+    
+    //aContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+    //gxOpenGLESVersion = 2;
     
     if (!aContext) {
         aContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
+        gxOpenGLESVersion = 1;
     }
     
     if (!aContext)

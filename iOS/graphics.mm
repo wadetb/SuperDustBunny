@@ -9,6 +9,8 @@ GLuint _gxDefaultFrameBuffer;
 GLuint _gxDefaultFrameBufferWidth;
 GLuint _gxDefaultFrameBufferHeight;
 
+GLuint gxOpenGLESVersion;
+
 struct gxSpriteVertex
 {
 	float x, y, z, w;
@@ -144,16 +146,37 @@ void gxInit()
     gxScreenWidth = 768;
     gxScreenHeight = 1024;
 	
-    glEnable(GL_TEXTURE_2D);
-    glEnableVertexAttribArray(GX_ATTRIB_VERTEX);
-    glEnableVertexAttribArray(GX_ATTRIB_TEXCOORD);
-    glEnableVertexAttribArray(GX_ATTRIB_COLOR);
-    
 	msSetMouseRange( 0, 0, gxScreenWidth, gxScreenHeight );	
 	
+    glEnable(GL_TEXTURE_2D);
+    
+    if (gxOpenGLESVersion == 2)
+    {
+        glEnableVertexAttribArray(GX_ATTRIB_VERTEX);
+        glEnableVertexAttribArray(GX_ATTRIB_TEXCOORD);
+        glEnableVertexAttribArray(GX_ATTRIB_COLOR);
+    }
+    else
+    {
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
+    }
+    
 	gxInitFontSprite();
     
-    gxInitSpriteShader();
+    if (gxOpenGLESVersion == 2)
+    {
+        gxInitSpriteShader();
+    }
+    else
+    {
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrthof(0, gxScreenWidth, gxScreenHeight, 0, -1.0f, 1.0f);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+    }
 }
 
 void gxDeinit()
@@ -208,6 +231,7 @@ void gxLoadSprite(const char* filename, gxSprite* sprite)
 	CGColorSpaceRelease(colorSpace);
 	CGContextDrawImage(context, CGRectMake(0, sprite->texHeight-sprite->height, sprite->width, sprite->height), image);
 	
+	glEnable(GL_TEXTURE_2D);
 	glGenTextures(1, &sprite->tex);
 	glBindTexture(GL_TEXTURE_2D, sprite->tex);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -249,16 +273,32 @@ void _gxDrawQuad( float x, float y, float w, float h, unsigned int color, float 
 	v[3].color = color;
 	v[3].u = u1; v[2].v = v2;
 	
-    glVertexAttribPointer(GX_ATTRIB_VERTEX, 2, GL_FLOAT, 0, sizeof(gxSpriteVertex), &v[0].x);
-    glVertexAttribPointer(GX_ATTRIB_TEXCOORD, 2, GL_FLOAT, 0, sizeof(gxSpriteVertex), &v[0].u);
-    glVertexAttribPointer(GX_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, sizeof(gxSpriteVertex), &v[0].color);
+    if (gxOpenGLESVersion == 2)
+    {
+        glVertexAttribPointer(GX_ATTRIB_VERTEX, 2, GL_FLOAT, 0, sizeof(gxSpriteVertex), &v[0].x);
+        glVertexAttribPointer(GX_ATTRIB_TEXCOORD, 2, GL_FLOAT, 0, sizeof(gxSpriteVertex), &v[0].u);
+        glVertexAttribPointer(GX_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, sizeof(gxSpriteVertex), &v[0].color);
+    }
+    else
+    {
+        glVertexPointer(3, GL_FLOAT, sizeof(gxSpriteVertex), &v[0].x);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(gxSpriteVertex), &v[0].u);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(gxSpriteVertex), &v[0].color);
+    }
 
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 }
 
 void gxDrawRectangleFilled(int x, int y, int width, int height, unsigned int color)
 {
-    gxSetShader(&gxSpriteShader);
+    if (gxOpenGLESVersion == 2)
+    {
+        gxSetShader(&gxSpriteShader);
+    }
+    else
+    {
+        // ES1 TODO
+    }
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -274,7 +314,16 @@ void gxDrawString( int x, int y, int ptsize, int color, const char* text, ... )
 	vsnprintf(work, sizeof(work), text, args);
 	va_end(args);
 	
-    gxSetShader(&gxSpriteShader);
+    if (gxOpenGLESVersion == 2)
+    {
+        gxSetShader(&gxSpriteShader);
+    }
+    else
+    {
+        // ES1 TODO
+    }
+    
+	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, gxFontSprite.tex);
 	glDisable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -555,9 +604,18 @@ void gxCopyRenderTarget(gxSprite* From, gxSprite* To)
 	v[3].u = 0.0f+HalfPixelU; 
 	v[3].v = 1.0f+HalfPixelV;
     
-    glVertexAttribPointer(GX_ATTRIB_VERTEX, 2, GL_FLOAT, 0, sizeof(gxSpriteVertex), &v[0].x);
-    glVertexAttribPointer(GX_ATTRIB_TEXCOORD, 2, GL_FLOAT, 0, sizeof(gxSpriteVertex), &v[0].u);
-    glVertexAttribPointer(GX_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, sizeof(gxSpriteVertex), &v[0].color);
+    if (gxOpenGLESVersion == 2)
+    {
+        glVertexAttribPointer(GX_ATTRIB_VERTEX, 2, GL_FLOAT, 0, sizeof(gxSpriteVertex), &v[0].x);
+        glVertexAttribPointer(GX_ATTRIB_TEXCOORD, 2, GL_FLOAT, 0, sizeof(gxSpriteVertex), &v[0].u);
+        glVertexAttribPointer(GX_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, sizeof(gxSpriteVertex), &v[0].color);
+    }
+    else
+    {
+        glVertexPointer(3, GL_FLOAT, sizeof(gxSpriteVertex), &v[0].x);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(gxSpriteVertex), &v[0].u);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(gxSpriteVertex), &v[0].color);
+    }
     
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 }

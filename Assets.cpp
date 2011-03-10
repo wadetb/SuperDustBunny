@@ -227,7 +227,7 @@ void LoadAssetList(const char* FileName)
 	FILE* AssetFile = gxOpenFile(FileName, "r");    
 	if (!AssetFile)
         return;
-		//ReportError("Unable to open asset list file.  Check that all required files and tools are present, and re-build the XCode project to fix.");
+    //ReportError("Unable to open asset list file.  Check that all required files and tools are present, and re-build the XCode project to fix.");
     
 	// Read the entire XML file into a text buffer.
 	fseek(AssetFile, 0, SEEK_END);
@@ -310,7 +310,10 @@ void LoadSpriteAsset(const char* FileName, gxSprite* Sprite)
             Sprite->texHeight = SpriteAsset->TexHeight;
 
             FILE* RawFile = gxOpenFile(SpriteAsset->RawFileName, "rb");
-   
+
+            if (!RawFile)
+                break;
+            
             fseek(RawFile, 0, SEEK_END);
             int FileSize = ftell(RawFile);
             rewind(RawFile);

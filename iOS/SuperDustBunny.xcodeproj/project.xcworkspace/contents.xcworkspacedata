@@ -2,6 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:../../Stapler.cpp">
+   </FileRef>
+   <FileRef
+      location = "group:../../Stapler.h">
+   </FileRef>
+   <FileRef
       location = "self:SuperDustBunny.xcodeproj">
    </FileRef>
 </Workspace>

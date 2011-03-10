@@ -514,13 +514,22 @@ void DrawLightList(int List, gxAlphaMode Alpha)
     glBindBuffer(GL_ARRAY_BUFFER, LitVertsVBO[BufferObjectIndex]);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, LitVertsIBO[BufferObjectIndex]);
     
-    glEnableVertexAttribArray(GX_ATTRIB_VERTEX);
-    glEnableVertexAttribArray(GX_ATTRIB_TEXCOORD);
-    glEnableVertexAttribArray(GX_ATTRIB_COLOR);
-    
-    glVertexAttribPointer(GX_ATTRIB_VERTEX, 2, GL_FLOAT, 0, sizeof(SLitVertex), (void*)offsetof(SLitVertex, X));
-    glVertexAttribPointer(GX_ATTRIB_TEXCOORD, 2, GL_FLOAT, 0, sizeof(SLitVertex), (void*)offsetof(SLitVertex, U));
-    glVertexAttribPointer(GX_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, sizeof(SLitVertex), (void*)offsetof(SLitVertex, Color));
+    if (gxOpenGLESVersion == 2)
+    {
+        glEnableVertexAttribArray(GX_ATTRIB_VERTEX);
+        glEnableVertexAttribArray(GX_ATTRIB_TEXCOORD);
+        glEnableVertexAttribArray(GX_ATTRIB_COLOR);
+        
+        glVertexAttribPointer(GX_ATTRIB_VERTEX, 2, GL_FLOAT, 0, sizeof(SLitVertex), (void*)offsetof(SLitVertex, X));
+        glVertexAttribPointer(GX_ATTRIB_TEXCOORD, 2, GL_FLOAT, 0, sizeof(SLitVertex), (void*)offsetof(SLitVertex, U));
+        glVertexAttribPointer(GX_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, sizeof(SLitVertex), (void*)offsetof(SLitVertex, Color));
+    }
+    else
+    {
+        glVertexPointer(3, GL_FLOAT, sizeof(SLitVertex), (void*)offsetof(SLitVertex, X));
+        glTexCoordPointer(2, GL_FLOAT, sizeof(SLitVertex), (void*)offsetof(SLitVertex, U));
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(SLitVertex), (void*)offsetof(SLitVertex, Color));
+    }
     
     int NQuads = LightLists[List].NQuads;
     int QuadIndex = 0;
@@ -710,9 +719,16 @@ void DrawShadows(ELightList List, gxSprite* FinalRT, float ShadowOffsetX, float 
 #endif
 
 #ifdef PLATFORM_IPHONE
-    gxSetShader(&ShadowShader);
-    gxSetShaderConstant(ShadowShadowOffset, ShadowOffsetX, ShadowOffsetY);
-    gxSetShaderConstant(ShadowShadowAlpha, 192.0f/255.0f);
+    if (gxOpenGLESVersion == 2)
+    {
+        gxSetShader(&ShadowShader);
+        gxSetShaderConstant(ShadowShadowOffset, ShadowOffsetX, ShadowOffsetY);
+        gxSetShaderConstant(ShadowShadowAlpha, 192.0f/255.0f);
+    }
+    else
+    {
+        // ES1 TODO
+    }
 #endif
     
     DrawLightList(List, GXALPHA_BLEND);
@@ -784,7 +800,14 @@ void RenderShadows(gxSprite* FinalRT)
 #endif
 
 #ifdef PLATFORM_IPHONE
-    gxSetShader(&ApplyShadowShader);
+    if (gxOpenGLESVersion == 2)
+    {
+        gxSetShader(&ApplyShadowShader);
+    }
+    else
+    {
+        // ES1 TODO
+    }
 #endif
     
 	_gxSetAlpha(GXALPHA_BLEND);
@@ -908,7 +931,14 @@ void RenderCombinedColor()
 #endif
 
 #ifdef PLATFORM_IPHONE
-    gxSetShader(&CombineShader);
+    if (gxOpenGLESVersion == 2)
+    {
+        gxSetShader(&CombineShader);
+    }
+    else
+    {
+        // ES1 TODO
+    }
 #endif
     
 	_gxSetAlpha(GXALPHA_NONE);
@@ -920,9 +950,12 @@ void RenderCombinedColor()
 #endif
     
 #ifdef PLATFORM_IPHONE
-    gxSetShaderSampler(CombineColorSampler, &ColorRT);
-//    gxSetShaderSampler(CombineColorBleedSampler, &ColorBleedFinalRT);
-    gxSetShaderSampler(CombineLightingSampler, &LightingRT);
+    if (gxOpenGLESVersion == 2)
+    {
+        gxSetShaderSampler(CombineColorSampler, &ColorRT);
+    //    gxSetShaderSampler(CombineColorBleedSampler, &ColorBleedFinalRT);
+        gxSetShaderSampler(CombineLightingSampler, &LightingRT);
+    }
 #endif
 	
     _gxDrawQuad(0, 0, (float)gxScreenWidth, (float)gxScreenHeight, gxRGBA32(255,255,255,255), 0, 1, 1, 0);
@@ -932,7 +965,10 @@ void RenderCombinedColor()
 #endif
     
 #ifdef PLATFORM_IPHONE
-    gxSetShader(&LitShader);
+    if (gxOpenGLESVersion == 2)
+    {
+        gxSetShader(&LitShader);
+    }
 #endif
 }
 
@@ -999,51 +1035,56 @@ void InitLighting()
     BufferObjectIndex = 0;
     
     // Create shaders.
-	gxCreateShader(LitVertexShaderSource, TexturedColoredShaderSource, &LitShader);
+    if (gxOpenGLESVersion == 2)
+    {
+        gxCreateShader(LitVertexShaderSource, TexturedColoredShaderSource, &LitShader);
 
-	gxCreateShader(LitVertexShaderSource, ShadowShaderSource, &ShadowShader);
-    ShadowShadowOffset = gxGetShaderConstantByName(&ShadowShader, "Offset");
-    ShadowShadowAlpha = gxGetShaderConstantByName(&ShadowShader, "ShadowAlpha");
-    ShadowSampler = gxGetShaderConstantByName(&ShadowShader, "Sampler");
-    
-    gxCreateShader(LitVertexShaderSource, ApplyShadowShaderSource, &ApplyShadowShader);
-    ApplyShadowSampler = gxGetShaderConstantByName(&ApplyShadowShader, "Sampler");
-    
-    gxCreateShader(LitVertexShaderSource, EffectsShaderSource, &EffectsShader);
-    EffectsSampler = gxGetShaderConstantByName(&EffectsShader, "Sampler");
-    
-    gxCreateShader(LitVertexShaderSource, Gaussian7ShaderSource, &Gaussian7Shader);
-    Gaussian7BlurOffsetScale0 = gxGetShaderConstantByName(&Gaussian7Shader, "BlurOffsetScale0");
-    Gaussian7BlurOffsetScale1 = gxGetShaderConstantByName(&Gaussian7Shader, "BlurOffsetScale1");
-    Gaussian7BlurOffsetScale2 = gxGetShaderConstantByName(&Gaussian7Shader, "BlurOffsetScale2");
-    Gaussian7BlurOffsetScale3 = gxGetShaderConstantByName(&Gaussian7Shader, "BlurOffsetScale3");
-    Gaussian7BlurSampler = gxGetShaderConstantByName(&Gaussian7Shader, "BlurSampler");
-    
-    gxCreateShader(LitVertexShaderSource, Gaussian13ShaderSource, &Gaussian13Shader);
-    Gaussian13BlurOffsetScale0 = gxGetShaderConstantByName(&Gaussian13Shader, "BlurOffsetScale0");
-    Gaussian13BlurOffsetScale1 = gxGetShaderConstantByName(&Gaussian13Shader, "BlurOffsetScale1");
-    Gaussian13BlurOffsetScale2 = gxGetShaderConstantByName(&Gaussian13Shader, "BlurOffsetScale2");
-    Gaussian13BlurOffsetScale3 = gxGetShaderConstantByName(&Gaussian13Shader, "BlurOffsetScale3");
-    Gaussian13BlurOffsetScale4 = gxGetShaderConstantByName(&Gaussian13Shader, "BlurOffsetScale4");
-    Gaussian13BlurOffsetScale5 = gxGetShaderConstantByName(&Gaussian13Shader, "BlurOffsetScale5");
-    Gaussian13BlurOffsetScale6 = gxGetShaderConstantByName(&Gaussian13Shader, "BlurOffsetScale6");
-    Gaussian13BlurSampler = gxGetShaderConstantByName(&Gaussian13Shader, "BlurSampler");
+        gxCreateShader(LitVertexShaderSource, ShadowShaderSource, &ShadowShader);
+        ShadowShadowOffset = gxGetShaderConstantByName(&ShadowShader, "Offset");
+        ShadowShadowAlpha = gxGetShaderConstantByName(&ShadowShader, "ShadowAlpha");
+        ShadowSampler = gxGetShaderConstantByName(&ShadowShader, "Sampler");
+        
+        gxCreateShader(LitVertexShaderSource, ApplyShadowShaderSource, &ApplyShadowShader);
+        ApplyShadowSampler = gxGetShaderConstantByName(&ApplyShadowShader, "Sampler");
+        
+        gxCreateShader(LitVertexShaderSource, EffectsShaderSource, &EffectsShader);
+        EffectsSampler = gxGetShaderConstantByName(&EffectsShader, "Sampler");
+        
+        gxCreateShader(LitVertexShaderSource, Gaussian7ShaderSource, &Gaussian7Shader);
+        Gaussian7BlurOffsetScale0 = gxGetShaderConstantByName(&Gaussian7Shader, "BlurOffsetScale0");
+        Gaussian7BlurOffsetScale1 = gxGetShaderConstantByName(&Gaussian7Shader, "BlurOffsetScale1");
+        Gaussian7BlurOffsetScale2 = gxGetShaderConstantByName(&Gaussian7Shader, "BlurOffsetScale2");
+        Gaussian7BlurOffsetScale3 = gxGetShaderConstantByName(&Gaussian7Shader, "BlurOffsetScale3");
+        Gaussian7BlurSampler = gxGetShaderConstantByName(&Gaussian7Shader, "BlurSampler");
+        
+        gxCreateShader(LitVertexShaderSource, Gaussian13ShaderSource, &Gaussian13Shader);
+        Gaussian13BlurOffsetScale0 = gxGetShaderConstantByName(&Gaussian13Shader, "BlurOffsetScale0");
+        Gaussian13BlurOffsetScale1 = gxGetShaderConstantByName(&Gaussian13Shader, "BlurOffsetScale1");
+        Gaussian13BlurOffsetScale2 = gxGetShaderConstantByName(&Gaussian13Shader, "BlurOffsetScale2");
+        Gaussian13BlurOffsetScale3 = gxGetShaderConstantByName(&Gaussian13Shader, "BlurOffsetScale3");
+        Gaussian13BlurOffsetScale4 = gxGetShaderConstantByName(&Gaussian13Shader, "BlurOffsetScale4");
+        Gaussian13BlurOffsetScale5 = gxGetShaderConstantByName(&Gaussian13Shader, "BlurOffsetScale5");
+        Gaussian13BlurOffsetScale6 = gxGetShaderConstantByName(&Gaussian13Shader, "BlurOffsetScale6");
+        Gaussian13BlurSampler = gxGetShaderConstantByName(&Gaussian13Shader, "BlurSampler");
 
-    gxCreateShader(LitVertexShaderSource, CombineShaderSource, &CombineShader);
-    CombineColorSampler = gxGetShaderConstantByName(&CombineShader, "ColorSampler");
-    CombineColorBleedSampler = gxGetShaderConstantByName(&CombineShader, "ColorBleedSampler");
-    CombineLightingSampler = gxGetShaderConstantByName(&CombineShader, "LightingSampler");
+        gxCreateShader(LitVertexShaderSource, CombineShaderSource, &CombineShader);
+        CombineColorSampler = gxGetShaderConstantByName(&CombineShader, "ColorSampler");
+        CombineColorBleedSampler = gxGetShaderConstantByName(&CombineShader, "ColorBleedSampler");
+        CombineLightingSampler = gxGetShaderConstantByName(&CombineShader, "LightingSampler");
+    }
 #endif
     
 	// Create render targets.
-	gxCreateRenderTarget(LitRenderTargetWidth, LitRenderTargetHeight, &ColorRT, false);
-	gxCreateRenderTarget(LitRenderTargetHeight, LitRenderTargetHeight, &LightingRT, false);
+    if (gxOpenGLESVersion == 2)
+    {
+        gxCreateRenderTarget(LitRenderTargetWidth, LitRenderTargetHeight, &ColorRT, false);
+        gxCreateRenderTarget(LitRenderTargetHeight, LitRenderTargetHeight, &LightingRT, false);
 
-	InitAmbientOcclusion();
-	InitShadows();
-	//InitColorBleed();
+        InitAmbientOcclusion();
+        InitShadows();
+        //InitColorBleed();
+    }
 
-    
     double EndTime = GetCurrentTime();
     LogMessage("Lighting setup took %.1f seconds.\n", EndTime-StartTime);
 }
@@ -1090,6 +1131,7 @@ void RenderLighting()
     LitVertIndices = NULL;
 #endif
     
+    
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
     //                                                   Set up lighting globals                                                               //
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -1098,139 +1140,226 @@ void RenderLighting()
 	else
 		LightState.AmbientColor = gxRGBA32(128, 128, 128, 255);
 
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Build shadows and ambient occlusion                                                   //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    _gxSetAlpha(GXALPHA_BLEND);
-    
-	//DrawAmbientOcclusion(LIGHTLIST_FOREGROUND, &AmbientOcclusionForegroundRT);
-    //DrawAmbientOcclusion(LIGHTLIST_VACUUM, &AmbientOcclusionVacuumRT);
-
-	DrawShadows(LIGHTLIST_FOREGROUND, &ShadowForegroundRT, 30, 20);
-	DrawShadows(LIGHTLIST_VACUUM, &ShadowVacuumRT, 30, 20);
-
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Build lighting                                                                        //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-#ifdef PLATFORM_WINDOWS
-	gxSetPixelShader(&TexturedColoredShader);
-	gxSetVertexShader(&LitVertexShader);
-#endif
     
 #ifdef PLATFORM_IPHONE
-    gxSetShader(&LitShader);
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    //                                                         OpenGL ES 1.1 Renderer                                                          //
+    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+    if (gxOpenGLESVersion == 1)
+    {
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+        //                                                   Build lighting                                                                        //
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+        //gxSetRenderTarget(&LightingRT);
+        //gxClearColor(LightState.AmbientColor);
+        
+        //DrawLightList(LIGHTLIST_LIGHTING, GXALPHA_ADD);
+        
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+        //                                                   Draw layers to screen                                                                 //
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+        gxSetRenderTarget(NULL);
+        
+        // White background - useful for testing AO and stuff.
+        gxClearColor(gxRGBA32(255, 255, 255, 255));
+        // Black background - useful for testing fireworks.
+        //gxClearColor(gxRGBA32(0, 0, 0, 255));
+        
+        DrawLightList(LIGHTLIST_BACKGROUND, GXALPHA_NONE);
+        //DrawLightListShadow(LIGHTLIST_FOREGROUND, GXALPHA_BLEND);        
+        DrawLightList(LIGHTLIST_DUST, GXALPHA_BLEND);
+        DrawLightList(LIGHTLIST_FOREGROUND, GXALPHA_BLEND);
+        DrawLightList(LIGHTLIST_FOREGROUND_NO_SHADOW, GXALPHA_BLEND);        
+        //DrawLightListShadow(LIGHTLIST_VACUUM, GXALPHA_BLEND);        
+        DrawLightList(LIGHTLIST_VACUUM, GXALPHA_BLEND);
+        DrawLightList(LIGHTLIST_EFFECTS, GXALPHA_ADD);
+        DrawLightList(LIGHTLIST_WIPE, GXALPHA_BLEND);
+    }
+    else
 #endif
-
-	gxSetRenderTarget(&LightingRT);
-	gxClearColor(LightState.AmbientColor);
-
-    DrawLightList(LIGHTLIST_LIGHTING, GXALPHA_ADD);
-    
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Blur shadows and ambient occlusion                                                    //
+    //                                                         OpenGL ES 2.0 Renderer                                                          //
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //BlurAmbientOcclusion(&AmbientOcclusionForegroundRT);
-    //BlurAmbientOcclusion(&AmbientOcclusionVacuumRT);
-    
-    //BlurShadows(&ShadowForegroundRT);
-    //BlurShadows(&ShadowVacuumRT);
-    
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Draw layers                                                                           //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	// Main rendering.
-	gxSetRenderTarget(&ColorRT);
-
-	// White background - useful for testing AO and stuff.
-	gxClearColor(gxRGBA32(255, 255, 255, 255));
-	// Black background - useful for testing fireworks.
-	//gxClearColor(gxRGBA32(0, 0, 0, 255));
-    
-	// Real background.
+    {
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+        //                                                   Build shadows and ambient occlusion                                                   //
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+        _gxSetAlpha(GXALPHA_BLEND);
+        
+        //DrawAmbientOcclusion(LIGHTLIST_FOREGROUND, &AmbientOcclusionForegroundRT);
+        //DrawAmbientOcclusion(LIGHTLIST_VACUUM, &AmbientOcclusionVacuumRT);
+        
+        DrawShadows(LIGHTLIST_FOREGROUND, &ShadowForegroundRT, 30, 20);
+        DrawShadows(LIGHTLIST_VACUUM, &ShadowVacuumRT, 30, 20);
+        
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+        //                                                   Build lighting                                                                        //
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 #ifdef PLATFORM_WINDOWS
-	gxSetPixelShader(&TexturedColoredShader);
-	gxSetVertexShader(&LitVertexShader);
+        gxSetPixelShader(&TexturedColoredShader);
+        gxSetVertexShader(&LitVertexShader);
 #endif
-    
+        
 #ifdef PLATFORM_IPHONE
-    gxSetShader(&LitShader);
+        if (gxOpenGLESVersion == 2)
+        {
+            gxSetShader(&LitShader);
+        }
+        else
+        {
+            // ES1 TODO (consider passing shader to DrawLightList?)
+        }
 #endif
-    
-    DrawLightList(LIGHTLIST_BACKGROUND, GXALPHA_NONE);
-
-	// Foreground ambient occlusion & shadows.
-	//RenderAmbientOcclusion(&AmbientOcclusionForegroundRT);
-	RenderShadows(&ShadowForegroundRT);
-
-	// Dust layer.
+        
+        gxSetRenderTarget(&LightingRT);
+        gxClearColor(LightState.AmbientColor);
+        
+        DrawLightList(LIGHTLIST_LIGHTING, GXALPHA_ADD);
+        
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+        //                                                   Blur shadows and ambient occlusion                                                    //
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+        //BlurAmbientOcclusion(&AmbientOcclusionForegroundRT);
+        //BlurAmbientOcclusion(&AmbientOcclusionVacuumRT);
+        
+        //BlurShadows(&ShadowForegroundRT);
+        //BlurShadows(&ShadowVacuumRT);
+        
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+        //                                                   Draw layers                                                                           //
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+        // Main rendering.
+        gxSetRenderTarget(&ColorRT);
+        
+        // White background - useful for testing AO and stuff.
+        gxClearColor(gxRGBA32(255, 255, 255, 255));
+        // Black background - useful for testing fireworks.
+        //gxClearColor(gxRGBA32(0, 0, 0, 255));
+        
+        // Real background.
 #ifdef PLATFORM_WINDOWS
-	gxSetPixelShader(&TexturedColoredShader);
-	gxSetVertexShader(&LitVertexShader);
+        gxSetPixelShader(&TexturedColoredShader);
+        gxSetVertexShader(&LitVertexShader);
 #endif
-    
+        
 #ifdef PLATFORM_IPHONE
-    gxSetShader(&LitShader);
+        if (gxOpenGLESVersion == 2)
+        {
+            gxSetShader(&LitShader);
+        }
+        else
+        {
+            // ES1 TODO
+        }
 #endif
-    
-    DrawLightList(LIGHTLIST_DUST, GXALPHA_BLEND);
-    DrawLightList(LIGHTLIST_FOREGROUND, GXALPHA_BLEND);
-    DrawLightList(LIGHTLIST_FOREGROUND_NO_SHADOW, GXALPHA_BLEND);
-
-	// Vacuum ambient occlusion & shadows.
-	//RenderAmbientOcclusion(&AmbientOcclusionVacuumRT);
-	RenderShadows(&ShadowVacuumRT);
-
+        
+        DrawLightList(LIGHTLIST_BACKGROUND, GXALPHA_NONE);
+        
+        // Foreground ambient occlusion & shadows.
+        //RenderAmbientOcclusion(&AmbientOcclusionForegroundRT);
+        RenderShadows(&ShadowForegroundRT);
+        
+        // Dust layer.
 #ifdef PLATFORM_WINDOWS
-	gxSetPixelShader(&TexturedColoredShader);
-	gxSetVertexShader(&LitVertexShader);
+        gxSetPixelShader(&TexturedColoredShader);
+        gxSetVertexShader(&LitVertexShader);
 #endif
-    
+        
 #ifdef PLATFORM_IPHONE
-    gxSetShader(&LitShader);
+        if (gxOpenGLESVersion == 2)
+        {
+            gxSetShader(&LitShader);
+        }
+        else
+        {
+            // ES1 TODO
+        }
 #endif
-    
-	// Vacuum.
-    DrawLightList(LIGHTLIST_VACUUM, GXALPHA_BLEND);
-
-	// Color bleeding - Adds color and bleed color into framebuffer.
-	//BuildColorBleed();
-
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Combine layers into frame                                                             //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-
-	// Combine everything into the final output.
-	gxSetRenderTarget(NULL);
-	RenderCombinedColor();
-
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Draw effects on top                                                                   //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+        
+        DrawLightList(LIGHTLIST_DUST, GXALPHA_BLEND);
+        DrawLightList(LIGHTLIST_FOREGROUND, GXALPHA_BLEND);
+        DrawLightList(LIGHTLIST_FOREGROUND_NO_SHADOW, GXALPHA_BLEND);
+        
+        // Vacuum ambient occlusion & shadows.
+        //RenderAmbientOcclusion(&AmbientOcclusionVacuumRT);
+        RenderShadows(&ShadowVacuumRT);
+        
 #ifdef PLATFORM_WINDOWS
-	gxSetPixelShader(&EffectsShader);
-	gxSetVertexShader(&LitVertexShader);
+        gxSetPixelShader(&TexturedColoredShader);
+        gxSetVertexShader(&LitVertexShader);
 #endif
-    
+        
 #ifdef PLATFORM_IPHONE
-    gxSetShader(&EffectsShader);
+        if (gxOpenGLESVersion == 2)
+        {
+            gxSetShader(&LitShader);        
+        }
+        else
+        {
+            // ES1 TODO
+        }
 #endif
-
-    DrawLightList(LIGHTLIST_EFFECTS, GXALPHA_ADD);
-
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-    //                                                   Draw screen wipes                                                                     //
-    // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	// Screen wipe.
+        
+        // Vacuum.
+        DrawLightList(LIGHTLIST_VACUUM, GXALPHA_BLEND);
+        
+        // Color bleeding - Adds color and bleed color into framebuffer.
+        //BuildColorBleed();
+        
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+        //                                                   Combine layers into frame                                                             //
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+        
+        // Combine everything into the final output.
+        if (gxOpenGLESVersion == 2)
+        {
+            gxSetRenderTarget(NULL);
+            RenderCombinedColor();
+        }
+        
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+        //                                                   Draw effects on top                                                                   //
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 #ifdef PLATFORM_WINDOWS
-	gxSetPixelShader(&TexturedColoredShader);
-	gxSetVertexShader(&LitVertexShader);
+        gxSetPixelShader(&EffectsShader);
+        gxSetVertexShader(&LitVertexShader);
 #endif
-    
+        
 #ifdef PLATFORM_IPHONE
-    gxSetShader(&LitShader);
+        if (gxOpenGLESVersion == 2)
+        {
+            gxSetShader(&EffectsShader);
+        }
+        else
+        {
+            // ES1 TODO
+        }
 #endif
-    
-    DrawLightList(LIGHTLIST_WIPE, GXALPHA_BLEND);
+        
+        DrawLightList(LIGHTLIST_EFFECTS, GXALPHA_ADD);
+        
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+        //                                                   Draw screen wipes                                                                     //
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+        // Screen wipe.
+#ifdef PLATFORM_WINDOWS
+        gxSetPixelShader(&TexturedColoredShader);
+        gxSetVertexShader(&LitVertexShader);
+#endif
+        
+#ifdef PLATFORM_IPHONE
+        if (gxOpenGLESVersion == 2)
+        {
+            gxSetShader(&LitShader);
+        }
+        else
+        {
+            // ES1 TODO
+        }
+#endif
+        
+        DrawLightList(LIGHTLIST_WIPE, GXALPHA_BLEND);
+    }
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
