@@ -28,9 +28,6 @@ struct SStapler
 {
     float X, Y;
 
-	float FloatX;
-	float FloatY;
-
 	float Left;
 	float Right;
 	float Bottom;
@@ -41,6 +38,12 @@ struct SStapler
     int Timer;
     float PowerJump;
     int PowerJumpCounter;
+
+	bool CollideWithLeftSide;
+	bool CollideWithRightSide;
+	bool CollideWithTopSide;
+
+	bool CanLaunch;
 };
 
 extern SStapler Stapler;
@@ -50,6 +53,7 @@ void ClearStaplers();
 
 void UpdateStaplers();
 void DisplayStaplers();
+void UpdateStapler_Collision();
 
 void ParseStaplerProperties(struct SBlock* Block, rapidxml::xml_node<char>* PropertiesNode);
 

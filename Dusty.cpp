@@ -19,7 +19,7 @@
 
 
 SDusty Dusty;
-SStapler Stapler;
+
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                  Dusty initialization function                                                          //
@@ -739,7 +739,17 @@ void SetDustyState_PrepareLaunch()
 
 void DisplayDusty_PrepareLaunch()
 {
-	//DisplayDustySprite(&DustyHop3Sprite, -124, -18, -160);
+	if (Dusty.SpriteTransition <= 4)
+		DisplayDustySprite(&DustyHop5Sprite, -119, 18, -218);
+	else
+	{
+		if (Dusty.SpriteTransition % 40 < 10)
+			DisplayDustySprite(&DustyIdle1Sprite, -124, 5, -221);
+		else if (Dusty.SpriteTransition % 40 < 20)
+			DisplayDustySprite(&DustyIdle2Sprite, -124, 5, -221);
+		else
+			DisplayDustySprite(&DustyIdle2Sprite, -124, 5, -221);
+	}
 }
 
 void UpdateDusty_PrepareLaunch()
@@ -930,6 +940,29 @@ void UpdateDusty_Hurt()
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                  DustyState_StaplerLaunch() Implementation                                              //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+void SetDustyState_StaplerLaunch()
+{
+	Dusty.State = DUSTYSTATE_STAPLERLAUNCH;
+}
+
+void DisplayDusty_StaplerLaunch()
+{
+	DisplayDusty_Jump();
+}
+
+void UpdateDusty_StaplerLaunch()
+{
+	Dusty.FloatY += Dusty.FloatY * Stapler.PowerJump;
+
+	Dusty.FloatVelocityY += Dusty.FloatGravity * 0.75f;
+
+	UpdateDusty_JumpCommon();
+}
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                  UpdateDusty_Collision Implementation                                                   //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
@@ -941,6 +974,8 @@ void UpdateDusty_Collision()
 	Dusty.CollideWithLeftSide = false;
 	Dusty.CollideWithBottomSide = false;
 	Dusty.CollideWithTopSide = false;
+
+	UpdateStapler_Collision();
 
 	Dusty.CollideWithBottomLeftCorner = false;
 	Dusty.CollideWithBottomRightCorner = false;
@@ -1147,6 +1182,7 @@ void DisplayDusty()
 	case DUSTYSTATE_DIE:				DisplayDusty_Die(); break;
 	case DUSTYSTATE_STUCK:				DisplayDusty_Stuck(); break;
 	case DUSTYSTATE_HURT:				DisplayDusty_Hurt(); break;
+	case DUSTYSTATE_STAPLERLAUNCH:		DisplayDusty_StaplerLaunch(); break;
 	}
 
 	if (DevMode)
@@ -1187,5 +1223,6 @@ void UpdateDusty()
 	case DUSTYSTATE_DIE:				UpdateDusty_Die(); break;
 	case DUSTYSTATE_STUCK:				UpdateDusty_Stuck(); break;
 	case DUSTYSTATE_HURT:				UpdateDusty_Hurt(); break;
+	case DUSTYSTATE_STAPLERLAUNCH:		UpdateDusty_StaplerLaunch(); break;
 	}
 }

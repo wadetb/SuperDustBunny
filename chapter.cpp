@@ -628,7 +628,7 @@ void LoadPageFromTMX(const char* FileName)
 
 void LoadChapter(const char* ChapterDir)
 {
-    float StartTime = GetCurrentTime();
+    float StartTime = (float)GetCurrentTime();
 
 	PushErrorContext("While loading chapter '%s':\n", ChapterDir);
 
@@ -850,6 +850,8 @@ void SetCurrentPage(int PageNum)
 
 	Chapter.PageProps = Chapter.Pages[PageNum].Props;
 
+	Chapter.PortalAngle = 0;
+
 	CreatePageObjects();
 
 	PopErrorContext();
@@ -928,7 +930,7 @@ void DisplayChapter()
         for (int i = 5; i > 0; i--)
         {
             float Alpha = (float)i / 5.0f;
-            float Angle = Chapter.PortalAngle - (1.0f-Angle);
+            float Angle = Chapter.PortalAngle - (1.0f-Alpha);
             AddLitSpriteCenteredScaledRotatedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &PortalSprite, Chapter.EndX, Chapter.EndY - 50 + ScrollY, 1.0f, Angle, Alpha);
         }
     }
