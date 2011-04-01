@@ -6,28 +6,30 @@
 //                                      Copyright 2010 by Thomas Perry and Wade Brainerd. All rights reserved.                             //
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
-#ifndef __SETTINGS_H__
-#define __SETTINGS_H__
+
+#include "Common.h"
+#include "Settings.h"
 
 
-typedef struct
+SSettings Settings;
+
+
+void InitSettings()
 {
-    int TiltSensitivity;
-    bool ContinuousJump;
-    bool FallGracePeriod;
-    bool DoubleJump;
-    
-    bool InfiniteLives;
-    bool DisableVacuum;
-}  SSettings;
+    Settings.ControlStyle = CONTROL_SWIPE;
+    Settings.TiltSensitivity = 1;
+    Settings.ContinuousJump = false;
+    Settings.FallGracePeriod = true;
+    Settings.DoubleJump = false;
+    Settings.InfiniteLives = false;
+    Settings.DisableVacuum = false;
+}
 
+void LoadSettings()
+{
+}
 
-extern SSettings Settings;
+void SaveSettings()
+{
+}
 
-
-void InitSettings();
-
-void LoadSettings();
-void SaveSettings();
-
-#endif

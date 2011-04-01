@@ -1,13 +1,4 @@
-﻿//-----------------------------------------------------------------------------------------------------------------------------------------//
-//                                                                                                                                         // 
-//                                                          Super Dust Bunny                                                               //
-//                                                                                                                                         //
-//                               Authors: Thomas Perry <perry.thomas.12@gmail.com> & Wade Brainerd <wadetb@gmail.com>                      //
-//                                      Copyright 2010 by Thomas Perry and Wade Brainerd. All rights reserved.                              //
-//                                                                                                                                         //
-//-----------------------------------------------------------------------------------------------------------------------------------------//
-
-#include "Common.h"
+﻿#include "Common.h"
 #include "Dusty.h"
 #include "Tutorial.h"
 #include "Chapter.h"
@@ -73,6 +64,7 @@ void SetDustyPosition(float x, float y)
 
 void SetDustyState_Stand();
 void SetDustyState_Jump( bool OffWall );
+void SetDustyState_JumpWithVelocity( float VX, float VY );
 void SetDustyState_Fall();
 void SetDustyState_Hop( EDirection Direction );
 void SetDustyState_WallJump();
@@ -82,6 +74,52 @@ void SetDustyState_Launch();
 
 
 void UpdateDusty_JumpCommon();
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                  General purpose control                                                                //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+bool UpdateDusty_CheckSwipeJump(float Angle, float Range, float Power)
+{
+    if ( GetInput_CheckSwipeDir( Angle, Range ) )
+    {
+        float dX, dY;
+        GetInput_NextSwipeDir(&dX, &dY);
+        
+        float L = Length(dX, dY);
+        dX /= L;
+        dY /= L;
+        
+        dX *= Power;
+        dY *= Power;
+        
+        SetDustyState_JumpWithVelocity(dX, dY);
+
+        AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle+Range))*100, Dusty.FloatY + -sinf(DegreesToRadians(Angle+Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
+        AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle-Range))*100, Dusty.FloatY + -sinf(DegreesToRadians(Angle-Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
+        
+        AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + dX*10, Dusty.FloatY + dY*10 + ScrollY, gxRGB32(192, 128, 128), 0.5f);
+        
+        return true;
+    }
+    
+    return false;
+}
+
+bool UpdateDusty_CheckSwipeDir(float Angle, float Range)
+{
+    if ( GetInput_CheckSwipeDir( Angle, Range ) )
+    {
+        AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle+Range))*100, Dusty.FloatY + -sinf(DegreesToRadians(Angle+Range))*100 + ScrollY, gxRGB32(128, 128, 192), 0.5f);
+        AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle-Range))*100, Dusty.FloatY + -sinf(DegreesToRadians(Angle-Range))*100 + ScrollY, gxRGB32(128, 128, 192), 0.5f);
+        
+        //AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + dX*10, Dusty.FloatY + dY*10 + ScrollY, gxRGB32(128, 128, 192), 0.5f);
+        
+        return true;
+    }
+    
+    return false;
+}
 
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -169,25 +207,44 @@ void UpdateDusty_Stand()
 		Dusty.FloatX += Dusty.FloatVelocityX;
 		Dusty.FloatVelocityX *= 0.9f;
 	}
+    
+    if (Settings.ControlStyle == CONTROL_TILT)
+    {
+        if ( GetInput_Jump() )      
+        {
+            SetDustyState_Jump( false );
+            return;
+        }
 
-	if ( GetInput_Jump() )      
-	{
-		SetDustyState_Jump( false );
-		return;
-	}
+        if ( GetInput_MoveRight() )
+        {
+            SetDustyState_Hop(DIRECTION_RIGHT);
+            return;
+        }
 
-	if ( GetInput_MoveRight() )
-	{
-		SetDustyState_Hop(DIRECTION_RIGHT);
-		return;
-	}
-
-	if ( GetInput_MoveLeft() )
-	{
-		SetDustyState_Hop(DIRECTION_LEFT);
-		return;
-	}
-
+        if ( GetInput_MoveLeft() )
+        {
+            SetDustyState_Hop(DIRECTION_LEFT);
+            return;
+        }
+    }
+    else
+    {
+        if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f, 10.0f) )
+            return;
+        
+        if ( UpdateDusty_CheckSwipeDir(0.0f, 45.0f) )
+        {
+            SetDustyState_Hop(DIRECTION_RIGHT);
+            return;
+        }
+        if ( UpdateDusty_CheckSwipeDir(180.0f, 45.0f) )
+        {
+            SetDustyState_Hop(DIRECTION_LEFT);
+            return;
+        }
+    }
+    
 	if (Dusty.CollideWithBottomSide == false)
 	{
 		SetDustyState_Fall();
@@ -244,6 +301,20 @@ void SetDustyState_Jump( bool OffWall )
 	Dusty.State = DUSTYSTATE_JUMP;
 }
 
+void SetDustyState_JumpWithVelocity( float VX, float VY )
+{
+	Dusty.FloatY -= 40.0f;
+    
+	Dusty.FloatVelocityX = VX;
+	Dusty.FloatVelocityY = VY;
+    if (Dusty.FloatVelocityX < 0)
+        Dusty.Direction = DIRECTION_LEFT;
+    else
+        Dusty.Direction = DIRECTION_RIGHT;
+    
+	Dusty.State = DUSTYSTATE_JUMP;
+}
+
 // This is a specialized way to get into the Jump state, without the initial velocity boost.
 void SetDustyState_Fall()
 {
@@ -290,16 +361,33 @@ void UpdateDusty_Jump()
     if (Settings.FallGracePeriod && Dusty.JumpGraceTimer > 0)
     {
         Dusty.JumpGraceTimer--;
-        if (GetInput_Jump())
+        
+        if (Settings.ControlStyle == CONTROL_TILT)
         {
-            Dusty.JumpGraceTimer = 0;
+            if (GetInput_Jump())
+            {
+                Dusty.JumpGraceTimer = 0;
 
-            // Spawn some dust motes.
-            for (int i = 0; i < 10; i++)
-                MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);
-            
-            SetDustyState_Jump( false );
-            return;
+                // Spawn some dust motes.
+                for (int i = 0; i < 10; i++)
+                    MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);
+                
+                SetDustyState_Jump( false );
+                return;
+            }
+        }
+        else
+        {
+            if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f, 10.0f) )
+            {
+                Dusty.JumpGraceTimer = 0;
+                
+                // Spawn some dust motes.
+                for (int i = 0; i < 10; i++)
+                    MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);                    
+                
+                return;
+            }
         }
     }
     
@@ -307,17 +395,24 @@ void UpdateDusty_Jump()
     // TODO: Work out rules about when this can be activated.  Y velocity?  Timer?
     if (Settings.DoubleJump && Dusty.AirJumpCount == 0)
     {
-        if (GetInput_Jump())
+        if (Settings.ControlStyle == CONTROL_TILT)
         {
-            Dusty.AirJumpCount++;
-            
-            // Spawn some dust motes.
-            for (int i = 0; i < 10; i++)
-                MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);
+            if (GetInput_Jump())
+            {
+                Dusty.AirJumpCount++;
+                
+                // Spawn some dust motes.
+                for (int i = 0; i < 10; i++)
+                    MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);
 
-            SetDustyState_Jump( false );
-            return;
+                SetDustyState_Jump( false );
+                return;
+            }
         }
+        else
+        {
+            // SWIPE TODO
+        }        
     }
     
 	UpdateDusty_JumpCommon();
@@ -391,20 +486,48 @@ void UpdateDusty_Hop()
 		return;
 	}
 
-	// Jump immediately if requested.
-	if (GetInput_Jump())
-	{
-		SetDustyState_Jump( false );
-	}
-
-	// Set Velocity.
+    // Set Velocity first.
+    float VelocitySign = Dusty.Direction == DIRECTION_LEFT ? -1.0f : 1.0f;
+    
 	if (Dusty.CollideMaterial == MATERIAL_ICE)
-		Dusty.FloatVelocityX = 6.0f;
+		Dusty.FloatVelocityX = 6.0f * VelocitySign;
 	else
-		Dusty.FloatVelocityX = 8.25f;
+		Dusty.FloatVelocityX = 8.25f * VelocitySign;
+    
+	// Jump immediately if requested.
+    if (Settings.ControlStyle == CONTROL_TILT)
+    {
+        if (GetInput_Jump())
+        {
+            SetDustyState_Jump( false );
+        }
+    }
+    else
+    {
+        if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f, 10.0f) )
+            return;
+        
+        float VX, VY;
+        GetInput_NextSwipeDir(&VX, &VY);
 
-	if (Dusty.Direction == DIRECTION_LEFT)
-		Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
+        // Change hop direction.
+        if ( Dusty.Direction == DIRECTION_LEFT )
+        {
+            if (UpdateDusty_CheckSwipeDir(0.0f, 45.0f))
+            {
+                Dusty.Direction = DIRECTION_RIGHT;
+                Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
+            }
+        }
+        if ( Dusty.Direction == DIRECTION_RIGHT )
+        {
+            if (UpdateDusty_CheckSwipeDir(180.0f, 45.0f))
+            {
+                Dusty.Direction = DIRECTION_LEFT;
+                Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
+            }
+        }
+    }
 
 	// Update animation
 	Dusty.SpriteTransition += 1;
@@ -416,19 +539,27 @@ void UpdateDusty_Hop()
 		for (int i = 0; i < 6; i++)
 			MakeDustMote(Dusty.FloatX, Dusty.FloatY);
 
-		// If still holding right, reset animation and continue hopping.
-		if ( ( Dusty.Direction == DIRECTION_RIGHT && GetInput_MoveRight() ) || 
-			 ( Dusty.Direction == DIRECTION_LEFT  && GetInput_MoveLeft() ) )
-		{
-			Dusty.FloatX += Dusty.FloatVelocityX*3;
-			Dusty.SpriteTransition = 0;
-		}
-		else  // If not, revert to stand.
-		{	
-		    		                         
-			SetDustyState_Stand();
-			return;
-		}
+        if (Settings.ControlStyle == CONTROL_TILT)
+        {
+            // If still holding right, reset animation and continue hopping.
+            if ( ( Dusty.Direction == DIRECTION_RIGHT && GetInput_MoveRight() ) || 
+                 ( Dusty.Direction == DIRECTION_LEFT  && GetInput_MoveLeft() ) )
+            {
+                Dusty.FloatX += Dusty.FloatVelocityX*3;
+                Dusty.SpriteTransition = 0;
+            }
+            else  // If not, revert to stand.
+            {	
+                                                 
+                SetDustyState_Stand();
+                return;
+            }
+        }
+        else
+        {
+            SetDustyState_Stand();
+            return;
+        }        
 	}
 
 	// Fall if he walks off the current platform.
@@ -439,16 +570,19 @@ void UpdateDusty_Hop()
 	}
     
 	// Change direction mid hop.
-	if (Dusty.Direction == DIRECTION_RIGHT && GetInput_MoveLeft())
-	{
-		Dusty.Direction = DIRECTION_LEFT;
-		Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
-	}
-	if (Dusty.Direction == DIRECTION_LEFT && GetInput_MoveRight())
-	{
-		Dusty.Direction = DIRECTION_RIGHT;
-		Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
-	}
+    if (Settings.ControlStyle == CONTROL_TILT)
+    {
+        if (Dusty.Direction == DIRECTION_RIGHT && GetInput_MoveLeft())
+        {
+            Dusty.Direction = DIRECTION_LEFT;
+            Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
+        }
+        if (Dusty.Direction == DIRECTION_LEFT && GetInput_MoveRight())
+        {
+            Dusty.Direction = DIRECTION_RIGHT;
+            Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
+        }
+    }
 
 	// If we have not switched states, move Dusty.
 	if (Dusty.SpriteTransition == 18)
@@ -470,16 +604,46 @@ void UpdateDusty_JumpCommon()
 	Dusty.SpriteTransition++;
 
 	// Air control.
-	if (GetInput_MoveLeft())
-	{
-		if (Dusty.FloatVelocityX >= -6)
-			Dusty.FloatVelocityX -= 1.0f;
-	}
-	if (GetInput_MoveRight())
-	{
-		if (Dusty.FloatVelocityX <= 6)
-			Dusty.FloatVelocityX += 1.0f;
-	}
+    if (Settings.ControlStyle == CONTROL_TILT)
+    {
+        if (GetInput_MoveLeft())
+        {
+            if (Dusty.FloatVelocityX >= -6)
+                Dusty.FloatVelocityX -= 1.0f;
+        }
+        if (GetInput_MoveRight())
+        {
+            if (Dusty.FloatVelocityX <= 6)
+                Dusty.FloatVelocityX += 1.0f;
+        }
+    }
+    else
+    {
+        float dX, dY;
+        GetInput_NextSwipeDir(&dX, &dY);
+        
+        float L = sqrtf(dX*dX + dY*dY);
+        if (L > 5.0f)
+        {
+            if (fabsf(Dusty.FloatVelocityX) < 10)
+                Dusty.FloatVelocityX += dX / 20.0f;
+            if (fabsf(Dusty.FloatVelocityY) < 10)
+                Dusty.FloatVelocityY += dY / 20.0f;
+        }
+        
+#if 0
+        if (VX < 0)
+        {
+            if (Dusty.FloatVelocityX >= -6)
+                Dusty.FloatVelocityX -= 3.0f;
+        }
+        if (VX > 0)
+        {
+            if (Dusty.FloatVelocityX <= 6)
+                Dusty.FloatVelocityX += 3.0f;
+        }
+#endif
+    }
 
     if (Dusty.FloatVelocityX > 0)
         Dusty.Direction = DIRECTION_RIGHT;
@@ -635,20 +799,45 @@ void UpdateDusty_WallJump()
 	}
 
 	// Jump off wall by pressing jump
-	if (GetInput_Jump())
-	{
-		SetDustyState_Jump( true );
-		return;
-	}
+    if (Settings.ControlStyle == CONTROL_TILT)
+    {
+        if (GetInput_Jump())
+        {
+            SetDustyState_Jump( true );
+            return;
+        }
 
-	// Let go of wall by pressing direction.
-    // TODO: GetInput_HardMoveLeft/Right.
-	if ( ( Dusty.Direction == DIRECTION_LEFT  && GetInput_MoveLeft() ) ||
-		 ( Dusty.Direction == DIRECTION_RIGHT && GetInput_MoveRight() ) )
-	{
-		SetDustyState_Fall();
-		return;
-	}
+        // Let go of wall by pressing direction.
+        // TODO: GetInput_HardMoveLeft/Right.
+        if ( ( Dusty.Direction == DIRECTION_LEFT  && GetInput_MoveLeft() ) ||
+             ( Dusty.Direction == DIRECTION_RIGHT && GetInput_MoveRight() ) )
+        {
+            SetDustyState_Fall();
+            return;
+        }
+    }
+    else
+    {
+        // Swipe down to fall.
+        if ( UpdateDusty_CheckSwipeDir( -90.0f, 20.0f ) )
+        {            
+            SetDustyState_Fall();
+            return;                
+        }
+
+        if ( Dusty.Direction == DIRECTION_RIGHT )
+        {
+            if ( UpdateDusty_CheckSwipeJump(0.0f, 90.0f, 10.0f) )
+                return;
+        }
+        
+        if ( Dusty.Direction == DIRECTION_LEFT )
+        {
+            if ( UpdateDusty_CheckSwipeJump(180.0f, 90.0f, 10.0f) )
+                return;
+            
+        }
+    }
 }	
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -689,41 +878,93 @@ void UpdateDusty_CornerJump()
 		return;
 
 	// Jump off wall by pressing jump
-	if (GetInput_Jump())
-	{
-		SetDustyState_Jump( true );
-		return;
-	}
+    if (Settings.ControlStyle == CONTROL_TILT)
+    {
+        if (GetInput_Jump())
+        {
+            SetDustyState_Jump( true );
+            return;
+        }
 
-	// Let go of wall by pressing direction away from corner.
-	if ( ( Dusty.Direction == DIRECTION_LEFT  && GetInput_MoveLeft() ) ||
-		 ( Dusty.Direction == DIRECTION_RIGHT && GetInput_MoveRight() ) )
-	{
-		SetDustyState_Fall();
-		return;
-	}
+        // Let go of wall by pressing direction away from corner.
+        if ( ( Dusty.Direction == DIRECTION_LEFT  && GetInput_MoveLeft() ) ||
+             ( Dusty.Direction == DIRECTION_RIGHT && GetInput_MoveRight() ) )
+        {
+            SetDustyState_Fall();
+            return;
+        }
 
-	// Get up and walk by pressing direction towards corner.
-	if ( ( Dusty.Direction == DIRECTION_LEFT  && GetInput_MoveRight() ) ||
-		 ( Dusty.Direction == DIRECTION_RIGHT && GetInput_MoveLeft() ) )
-	{
-		EDirection NewDirection;
+        // Get up and walk by pressing direction towards corner.
+        if ( ( Dusty.Direction == DIRECTION_LEFT  && GetInput_MoveRight() ) ||
+             ( Dusty.Direction == DIRECTION_RIGHT && GetInput_MoveLeft() ) )
+        {
+            EDirection NewDirection;
 
-		// Help him along to prevent going back into corner jump.
-		if (Dusty.Direction == DIRECTION_LEFT)
-		{
-			NewDirection = DIRECTION_RIGHT;
-			Dusty.FloatX += 48;
-		}
-		else
-		{
-			NewDirection = DIRECTION_LEFT;
-			Dusty.FloatX -= 48;
-		}
+            // Help him along to prevent going back into corner jump.
+            if (Dusty.Direction == DIRECTION_LEFT)
+            {
+                NewDirection = DIRECTION_RIGHT;
+                Dusty.FloatX += 48;
+            }
+            else
+            {
+                NewDirection = DIRECTION_LEFT;
+                Dusty.FloatX -= 48;
+            }
 
-		SetDustyState_Hop(NewDirection);
-		return;
-	}
+            SetDustyState_Hop(NewDirection);
+            return;
+        }
+    }
+    else
+    {
+        // Let go of wall by pressing direction away from corner.
+        // Get up and walk by pressing direction towards corner.
+        if ( Dusty.Direction == DIRECTION_LEFT )
+        {
+            if ( UpdateDusty_CheckSwipeJump(135.0f, 45.0f, 10.0f) )
+                return;
+            if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f, 10.0f) )
+                return;
+            
+            if ( UpdateDusty_CheckSwipeDir(225.0f, 45.0f) )
+            {
+                Dusty.FloatVelocityX = -5;
+                
+                SetDustyState_Fall();
+                return;                
+            }
+            if (UpdateDusty_CheckSwipeDir(0.0f, 45.0f) )
+            {
+                Dusty.FloatX += 48;                
+                
+                SetDustyState_Hop(DIRECTION_RIGHT);
+                return;
+            }
+        }
+        else
+        {
+            if ( UpdateDusty_CheckSwipeJump(45.0f, 45.0f, 10.0f) )
+                return;
+            if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f, 10.0f) )
+                return;
+            
+            if ( UpdateDusty_CheckSwipeDir(-45.0f, 45.0f) )
+            {
+                Dusty.FloatVelocityX = 5;
+                
+                SetDustyState_Fall();
+                return;                                
+            }
+            if ( UpdateDusty_CheckSwipeDir(180.0f, 45.0f) )
+            {
+                Dusty.FloatX -= 48;                
+                
+                SetDustyState_Hop(DIRECTION_LEFT);
+                return;                
+            }
+        }
+    }
 }	
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -886,18 +1127,25 @@ void UpdateDusty_Stuck()
 		return;
 	}
 
-	if (GetInput_Jump())
-	{
-		Dusty.StuckJumpCount++;
+    if (Settings.ControlStyle == CONTROL_TILT)
+    {
+        if (GetInput_Jump())
+        {
+            Dusty.StuckJumpCount++;
 
-		if (Dusty.StuckJumpCount == 2)
-		{
-			SetDustyState_Jump(false);
-			return;
-		}
+            if (Dusty.StuckJumpCount == 2)
+            {
+                SetDustyState_Jump(false);
+                return;
+            }
 
-		Dusty.StuckTimer = 30;
-	}
+            Dusty.StuckTimer = 30;
+        }
+    }
+    else
+    {
+        // SWIPE TODO
+    }
 }
 
 void SetDustyState_Hurt()
@@ -955,7 +1203,7 @@ void DisplayDusty_StaplerLaunch()
 
 void UpdateDusty_StaplerLaunch()
 {
-	Dusty.FloatY += Dusty.FloatY * Stapler.PowerJump;
+	//Dusty.FloatY += Dusty.FloatY * Stapler.PowerJump;
 
 	Dusty.FloatVelocityY += Dusty.FloatGravity * 0.75f;
 
@@ -1225,4 +1473,6 @@ void UpdateDusty()
 	case DUSTYSTATE_HURT:				UpdateDusty_Hurt(); break;
 	case DUSTYSTATE_STAPLERLAUNCH:		UpdateDusty_StaplerLaunch(); break;
 	}
+    
+    GetInput_UseSwipe();
 }

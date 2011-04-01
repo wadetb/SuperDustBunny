@@ -201,7 +201,6 @@ void ReportError(const char* ErrorMessage, ...)
 #ifdef PLATFORM_IPHONE
 	printf("SuperDustBunny Error: %s\n", Work);
     DisplayAlert("SuperDustBunny Error", Work);
-	exit(1);
 #endif
 }
 
@@ -259,11 +258,19 @@ void DisplayAlert(const char* Title, const char* AlertMessage, ...)
 SRemoteControl RemoteControl;
 
 
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                         Tilt controls                                                                   //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   //
+
+
 float AccelThreshold[3] = { 0.20f, 0.15f, 0.10f };
 
 
 bool GetInput_MoveLeft()
 {
+    if (Settings.ControlStyle != CONTROL_TILT)
+        ReportError("Tilt controls queried when a different control style was in use.");
+    
 	if (IsPlaybackActive())
 		return Recorder.MoveLeft;
 
@@ -280,6 +287,9 @@ bool GetInput_MoveLeft()
 
 bool GetInput_MoveRight()
 {
+    if (Settings.ControlStyle != CONTROL_TILT)
+        ReportError("Tilt controls queried while a different control style was in use.");
+    
 	if (IsPlaybackActive())
 		return Recorder.MoveRight;
 
@@ -296,6 +306,9 @@ bool GetInput_MoveRight()
 
 bool GetInput_Jump()
 {
+    if (Settings.ControlStyle != CONTROL_TILT)
+        ReportError("Tilt controls queried while a different control style was in use.");
+    
 	if (IsPlaybackActive())
 		return Recorder.Jump;
 
@@ -336,6 +349,223 @@ bool GetInput_Jump()
 #endif	
     }
 }
+
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                        Debug lines                                                                      //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   //
+
+#define MAX_DEBUG_LINES 100
+
+
+struct SDebugLine
+{
+    int EndFrame;
+    float X1, Y1;
+    float X2, Y2;
+    unsigned int Color;
+};
+
+
+SDebugLine DebugLines[MAX_DEBUG_LINES];
+int CurFrame;
+
+void AddDebugLine(float X1, float Y1, float X2, float Y2, unsigned int Color, float Time)
+{    
+    for (int i = 0; i < MAX_DEBUG_LINES; i++)
+    {
+        if (DebugLines[i].EndFrame <= CurFrame)
+        {
+            SDebugLine* DebugLine = &DebugLines[i];
+            DebugLine->X1 = X1;
+            DebugLine->Y1 = Y1;
+            DebugLine->X2 = X2;
+            DebugLine->Y2 = Y2;
+            DebugLine->Color = Color;
+            DebugLine->EndFrame = CurFrame + int(Time*60.0f);
+            return;
+        }
+    }
+}
+
+void DisplayDebugLine(float X1, float Y1, float X2, float Y2, float Width, unsigned int Color)
+{
+    float PerpX = Y2 - Y1;
+    float PerpY = -(X2 - X1);
+    float L = Length(PerpX, PerpY);
+    if (Length > 0)
+    {
+        PerpX *= Width / L;
+        PerpY *= Width / L;
+    }
+    else
+    {
+        PerpX = 0;
+        PerpY = 0;
+    }
+    
+    AddLitQuad(LIGHTLIST_WIPE, &WhiteSprite, Color,
+               X1 - PerpX, Y1 - PerpY, 0, 0,
+               X1 + PerpX, Y1 + PerpY, 0, 0,
+               X2 + PerpX, Y2 + PerpY, 0, 0,
+               X2 - PerpX, Y2 - PerpY, 0, 0);    
+}
+
+void DisplayDebug()
+{
+    for (int i = 0; i < MAX_DEBUG_LINES; i++)
+    {
+        if (DebugLines[i].EndFrame > CurFrame)
+        {
+            SDebugLine* DebugLine = &DebugLines[i];
+
+            float Width = 4.0f;
+            
+            DisplayDebugLine(DebugLine->X1, DebugLine->Y1, DebugLine->X2, DebugLine->Y2, Width, DebugLine->Color);
+        }
+    }
+    
+    CurFrame++;
+}
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                        Swipe controls                                                                   //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   //
+
+#define MAX_SWIPE_POINTS 128
+
+
+struct SSwipe
+{
+    bool Active;
+    bool Valid;
+    int Count;
+};
+
+struct SSwipePoint
+{
+    float X, Y;
+};
+
+
+SSwipe Swipe;
+
+SSwipePoint SwipePoints[MAX_SWIPE_POINTS];
+
+
+void UpdateSwipe()
+{
+    if (Settings.ControlStyle != CONTROL_SWIPE)
+        return;
+
+    // Consume old points.
+    if (Swipe.Valid)
+    {
+        for (int i = 0; i < Swipe.Count-1; i++)
+            SwipePoints[i] = SwipePoints[i+1];
+        
+        Swipe.Count--;
+        
+        if (Swipe.Count <= 1)
+        {
+            Swipe.Count = 0;
+            Swipe.Valid = false;
+        }
+    }
+    
+    // Add new ones.
+    if (!Swipe.Active)
+    {
+        if (msButton1)
+        {
+            Swipe.Active = true;
+        }
+    }
+    else
+    {
+        if (Swipe.Count < MAX_SWIPE_POINTS)
+        {
+            if (Swipe.Count > 0)
+                AddDebugLine(SwipePoints[Swipe.Count-1].X, SwipePoints[Swipe.Count-1].Y, msX, msY, gxRGBA32(192, 128, 128, 255), 1.0f/60.0f);
+        
+            SwipePoints[Swipe.Count].X = msX;
+            SwipePoints[Swipe.Count].Y = msY;
+            
+            Swipe.Count++;
+            
+            if (!Swipe.Valid && Swipe.Count >= 3)
+                Swipe.Valid = true;
+        }
+        
+        if (!msButton1)
+        {
+            Swipe.Active = false;
+        }
+    }
+}
+
+void GetInput_NextSwipeDir(float* dX, float* dY)
+{
+    if (Settings.ControlStyle != CONTROL_SWIPE)
+        ReportError("Swipe controls queried while a different control style was in use.");
+    
+    if (!Swipe.Valid)
+    {
+        *dX = 0;
+        *dY = 0;
+        return;
+    }
+    
+    *dX = SwipePoints[1].X - SwipePoints[0].X;
+    *dY = SwipePoints[1].Y - SwipePoints[0].Y;
+}
+
+bool GetInput_CheckSwipeDir(float Angle, float Range)
+{
+    if (Settings.ControlStyle != CONTROL_SWIPE)
+        ReportError("Swipe controls queried while a different control style was in use.");
+    
+    if (!Swipe.Valid)
+        return false;
+    
+    float dX, dY;
+    GetInput_NextSwipeDir(&dX, &dY);
+    
+    float L = sqrtf(dX*dX + dY*dY);
+    if (L < 10.0f)
+        return false;
+    
+    dX /= L;
+    dY /= L;
+    
+    float aX = cosf(DegreesToRadians(Angle));
+    float aY = -sinf(DegreesToRadians(Angle));
+    
+    float Dot = aX*dX + aY*dY;
+    float cR = cosf(Range);
+    
+    return Dot >= cR;
+}
+
+void GetInput_UseSwipe()
+{
+    if (Settings.ControlStyle != CONTROL_SWIPE)
+        ReportError("Swipe controls queried while a different control style was in use.");
+}
+
+void DisplaySwipe()
+{
+    unsigned int color = Swipe.Valid ? gxRGBA32(192, 128, 128, 255) : gxRGBA32(128, 192, 128, 255);
+    
+    for (int i = 1; i < Swipe.Count; i++)
+        DisplayDebugLine(SwipePoints[i-1].X, SwipePoints[i-1].Y, SwipePoints[i].X, SwipePoints[i].Y, color, 1.0f/60.0f);
+    
+	//gxDrawString(5, 37, 16, gxRGB32(255, 255, 255), "Active:%d Valid:%d Count:%d", Swipe.Active, Swipe.Valid, Swipe.Count);
+}
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                   Frames per second tracking                                                            //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   //
 
 void UpdateFPS()
 {
@@ -520,6 +750,8 @@ void DisplayGame_Playing()
 	
     // HUD Drawing - Score, etc.
     DisplayScore();
+    
+    DisplayDebug();
     
 	//Display Pause
     if (GamePause)
@@ -805,6 +1037,9 @@ void Display()
 	{
 		DisplayGame_Playing();
 	}
+    
+    
+    DisplaySwipe();
 
     RenderLighting();
 
@@ -897,9 +1132,12 @@ bool Update()
 	msUpdateMouse();
 #endif
 
-	// Recorder must be updated immediately after the devices are queried, before any GetInput_Xyz calls.
+	// Recorder must be updated immediately after the devices are queried, before UpdateSwipe or any GetInput_Xyz calls.
 	UpdateRecorder();
 
+    // UpdatSwipe must be called before any GetInput_Xyz calls.
+    UpdateSwipe();
+    
 #ifdef PLATFORM_WINDOWS
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Slow Motion Update                                                                    //

@@ -35,9 +35,9 @@
 #include "win/keyboard.h"
 #include "win/sound.h"
 #elif defined(PLATFORM_IPHONE)
-#include "iOS/graphics.h"
-#include "iOS/mouse.h"
-#include "iOS/sound.h"
+#include "../iOS/graphics.h"
+#include "../iOS/mouse.h"
+#include "../iOS/sound.h"
 #include <mach/mach.h>
 #include <mach/mach_time.h>
 #elif defined(PLATFORM_MAC)
@@ -217,6 +217,8 @@ void ShowSettings();
 #undef GetCurrentTime
 double GetCurrentTime();
 
+void AddDebugLine(float X1, float Y1, float X2, float Y2, unsigned int Color, float Time);
+
 struct SRemoteControl
 {
 	bool Enabled;
@@ -230,6 +232,10 @@ extern SRemoteControl RemoteControl;
 bool GetInput_MoveLeft();
 bool GetInput_MoveRight();
 bool GetInput_Jump();
+
+void GetInput_NextSwipeDir(float* dX, float* dY);
+bool GetInput_CheckSwipeDir(float Angle, float Range);
+void GetInput_UseSwipe();
 
 void SetGameState_StartScreen();
 void SetGameState_DieScreen();

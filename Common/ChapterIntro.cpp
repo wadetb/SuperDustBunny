@@ -12,16 +12,30 @@
 #include "ChapterIntro.h"
 #include "Vacuum.h"
 #include "Dusty.h"
+#include "Settings.h"
+
 
 struct SChapterIntro
 {
 	int Timer;
 };
 
+
 SChapterIntro ChapterIntro;
+
+
+void ChapterIntro_Advance();
 
 void InitChapterIntro()
 {
+    if (Settings.ControlStyle == CONTROL_SWIPE)
+    {
+        // SWIPE TODO
+        ChapterIntro.Timer = 100;
+        ChapterIntro_Advance();
+        return;
+    }
+    
 	ChapterIntro.Timer = 0;
 
 	TurnOffVacuum();

@@ -9,7 +9,7 @@
 #import "SettingsViewController.h"
 #import "SuperDustBunnyViewController.h"
 
-#include "Settings.h"
+#include "../Common/Settings.h"
 
 @implementation SettingsViewController
 

@@ -46,8 +46,6 @@ struct SStapler
 	bool CanLaunch;
 };
 
-extern SStapler Stapler;
-
 void CreateStapler(int X, int Y);
 void ClearStaplers();
 

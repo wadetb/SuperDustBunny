@@ -38,10 +38,10 @@ SuperDustBunnyViewController *theViewController;
 {
     theViewController = self;
     
-    EAGLContext *aContext;
+    EAGLContext *aContext = NULL;
     
-    //aContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
-    //gxOpenGLESVersion = 2;
+    aContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+    gxOpenGLESVersion = 2;
     
     if (!aContext) {
         aContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
@@ -199,6 +199,8 @@ SuperDustBunnyViewController *theViewController;
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
+    paused = FALSE;
+    
     if (buttonIndex == 1) {
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://pluszerogames.com/sdb/feedback.html"]];
     }

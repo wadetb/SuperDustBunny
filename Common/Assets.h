@@ -127,7 +127,6 @@ extern gxSprite DustMoteSprite;
 extern gxSprite DustArrowSprite;
 
 extern gxSprite FireWorkRocketSprite;
-extern gxSprite FireWorkBangSprite;
 
 extern gxSprite VacuumFrontSprite;
 
@@ -165,8 +164,6 @@ extern gxSprite TutorialJumpSprite;
 extern gxSprite TutorialWallJumpSprite;
 
 extern gxSprite ChapterTitle;
-
-extern gxSprite Score1Sprite;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 //                                                    Sound Assets                                                                         //

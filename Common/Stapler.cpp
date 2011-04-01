@@ -158,8 +158,6 @@ void UpdateStaplers()
     }  
 #endif
 }
-<<<<<<< .mine
-#endif
 
 void UpdateStapler_Collision()
 {
@@ -209,6 +207,3 @@ void UpdateStapler_Collision()
 		}
 	}
 }
-=======
-        
->>>>>>> .r769

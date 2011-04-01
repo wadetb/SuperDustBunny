@@ -10,6 +10,10 @@
 #include "Common.h"
 #include "Assets.h"
 
+#ifdef PLATFORM_IPHONE
+#include <zlib.h>
+#endif
+
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 //                                                    Sprite Assets                                                                        //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
@@ -127,7 +131,6 @@ gxSprite DustMoteSprite;
 gxSprite DustArrowSprite;
 
 gxSprite FireWorkRocketSprite;
-gxSprite FireWorkBangSprite;
 
 gxSprite VacuumFrontSprite;
 
@@ -165,8 +168,6 @@ gxSprite TutorialJumpSprite;
 gxSprite TutorialWallJumpSprite;
 
 gxSprite ChapterTitle;
-
-gxSprite Score1Sprite;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 //                                                    Sound Assets                                                                         //
@@ -309,18 +310,19 @@ void LoadSpriteAsset(const char* FileName, gxSprite* Sprite)
             Sprite->texWidth = SpriteAsset->TexWidth;
             Sprite->texHeight = SpriteAsset->TexHeight;
 
-            FILE* RawFile = gxOpenFile(SpriteAsset->RawFileName, "rb");
+            char work[1024];
+            gxGetResourceFileName(SpriteAsset->RawFileName, work, sizeof(work));
+
+            gzFile RawFile = gzopen(work, "rb");
 
             if (!RawFile)
                 break;
             
-            fseek(RawFile, 0, SEEK_END);
-            int FileSize = ftell(RawFile);
-            rewind(RawFile);
+            int MaxFileSize = 1024 * 1024 * 4;
             
-            char* Pixels = (char*)malloc(FileSize);
-            fread(Pixels, FileSize, 1, RawFile);
-            fclose(RawFile);
+            char* Pixels = (char*)malloc(MaxFileSize);
+            int FileSize = gzread(RawFile, Pixels, MaxFileSize);
+            gzclose(RawFile);
             
             glGenTextures(1, &Sprite->tex);
             glBindTexture(GL_TEXTURE_2D, Sprite->tex);
@@ -499,7 +501,6 @@ void LoadAssets()
 	LoadSpriteAsset("Data/dust-arrow.png", &DustArrowSprite);
 
 	LoadSpriteAsset("Data/firework-rocket.png", &FireWorkRocketSprite);
-	LoadSpriteAsset("Data/firework-bang.png", &FireWorkBangSprite);
 
 	LoadSpriteAsset("Data/vacuum-front.png", &VacuumFrontSprite);
 
@@ -538,8 +539,6 @@ void LoadAssets()
 	
     LoadSpriteAsset("Data/chapter-title.png", &ChapterTitle);
     
-    LoadSpriteAsset("Data/Score.png", &Score1Sprite);
-	
 
 	//-----------------------------------------------------------------------------------------------------------------------------------------//
 	//                                                    Sound Assets                                                                         //

@@ -1075,7 +1075,9 @@ void InitLighting()
 #endif
     
 	// Create render targets.
+#ifdef PLATFORM_IPHONE
     if (gxOpenGLESVersion == 2)
+#endif
     {
         gxCreateRenderTarget(LitRenderTargetWidth, LitRenderTargetHeight, &ColorRT, false);
         gxCreateRenderTarget(LitRenderTargetHeight, LitRenderTargetHeight, &LightingRT, false);
@@ -1084,7 +1086,7 @@ void InitLighting()
         InitShadows();
         //InitColorBleed();
     }
-
+    
     double EndTime = GetCurrentTime();
     LogMessage("Lighting setup took %.1f seconds.\n", EndTime-StartTime);
 }
@@ -1311,7 +1313,9 @@ void RenderLighting()
         // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
         
         // Combine everything into the final output.
+#ifdef PLATFORM_IPHONE
         if (gxOpenGLESVersion == 2)
+#endif
         {
             gxSetRenderTarget(NULL);
             RenderCombinedColor();

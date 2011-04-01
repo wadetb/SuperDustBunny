@@ -150,8 +150,6 @@ void DisplayWelcomeAlert()
                                           otherButtonTitles:@" Send Feedback ", nil];
     [alert show];
     [alert release];
-    
-    theViewController.paused = FALSE;
 #endif
 }
 
