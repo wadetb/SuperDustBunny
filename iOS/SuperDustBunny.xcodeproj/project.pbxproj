@@ -62,6 +62,7 @@
 		085AAA8C132D169700DF32CA /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 085AAA8B132D169700DF32CA /* libz.dylib */; };
 		08A8FC7613302F6300E45A98 /* TODO.txt in Resources */ = {isa = PBXBuildFile; fileRef = 08A8FC7513302F6300E45A98 /* TODO.txt */; };
 		08B5EE21133A7F37000D5116 /* Chapters in Resources */ = {isa = PBXBuildFile; fileRef = 08B5EE20133A7F37000D5116 /* Chapters */; };
+		08BF391713466F4E002C1A7B /* Converted in Resources */ = {isa = PBXBuildFile; fileRef = 08BF391613466F4E002C1A7B /* Converted */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -164,6 +165,7 @@
 		085AAA8B132D169700DF32CA /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		08A8FC7513302F6300E45A98 /* TODO.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = TODO.txt; path = ../../Docs/TODO.txt; sourceTree = "<group>"; };
 		08B5EE20133A7F37000D5116 /* Chapters */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Chapters; path = ../../Chapters; sourceTree = "<group>"; };
+		08BF391613466F4E002C1A7B /* Converted */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Converted; path = ../../Converted; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -188,6 +190,7 @@
 		085AA94F132C572A00DF32CA = {
 			isa = PBXGroup;
 			children = (
+				08BF391613466F4E002C1A7B /* Converted */,
 				08B5EE20133A7F37000D5116 /* Chapters */,
 				08A8FC7313302BB300E45A98 /* Documentation */,
 				085AAA88132D0E7100DF32CA /* Converter */,
@@ -408,6 +411,7 @@
 				085AAA8A132D0E8F00DF32CA /* Converter.py in Resources */,
 				08A8FC7613302F6300E45A98 /* TODO.txt in Resources */,
 				08B5EE21133A7F37000D5116 /* Chapters in Resources */,
+				08BF391713466F4E002C1A7B /* Converted in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
