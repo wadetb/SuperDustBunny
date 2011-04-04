@@ -701,7 +701,13 @@ void RenderAmbientOcclusion(gxSprite* FinalRT)
     
 	_gxSetAlpha(GXALPHA_BLEND);
 	_gxSetTexture(FinalRT);
-	_gxDrawQuad(0, 0, 768.0, 1024.0, gxRGBA32(255,255,255,255), 0, 1, 1, 0);
+
+#ifdef PLATFORM_IPHONE
+	_gxDrawQuad(0, 0, (float)gxScreenWidth, (float)gxScreenHeight, gxRGBA32(255,255,255,255), 0, 1, 1, 0);
+#endif
+#ifdef PLATFORM_WINDOWS
+	_gxDrawQuad(0, 0, (float)gxScreenWidth, (float)gxScreenHeight, gxRGBA32(255,255,255,255), 0, 0, 1, 1);
+#endif
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -824,7 +830,13 @@ void RenderShadows(gxSprite* FinalRT)
     
 	_gxSetAlpha(GXALPHA_BLEND);
 	_gxSetTexture(FinalRT);
-	_gxDrawQuad(0, 0, 768, 1024, gxRGBA32(255,255,255,255), 0, 1, 1, 0);
+
+#ifdef PLATFORM_IPHONE
+	_gxDrawQuad(0, 0, (float)gxScreenWidth, (float)gxScreenHeight, gxRGBA32(255,255,255,255), 0, 1, 1, 0);
+#endif
+#ifdef PLATFORM_WINDOWS
+	_gxDrawQuad(0, 0, (float)gxScreenWidth, (float)gxScreenHeight, gxRGBA32(255,255,255,255), 0, 0, 1, 1);
+#endif
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -970,7 +982,12 @@ void RenderCombinedColor()
     }
 #endif
 	
+#ifdef PLATFORM_IPHONE
     _gxDrawQuad(0, 0, (float)gxScreenWidth, (float)gxScreenHeight, gxRGBA32(255,255,255,255), 0, 1, 1, 0);
+#endif
+#ifdef PLATFORM_WINDOWS
+	_gxDrawQuad(0, 0, (float)gxScreenWidth, (float)gxScreenHeight, gxRGBA32(255,255,255,255), 0, 0, 1, 1);
+#endif
     
 #ifdef PLATFORM_WINDOWS
 	gxSetPixelShader(&TexturedColoredShader);
@@ -990,7 +1007,7 @@ void RenderCombinedColor()
 
 void InitLighting()
 {
-    float StartTime = GetCurrentTime();
+    double StartTime = GetCurrentTime();
     
 #ifdef PLATFORM_WINDOWS
     LitRenderTargetWidth = 320;

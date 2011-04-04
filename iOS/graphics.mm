@@ -343,24 +343,6 @@ void gxDrawString( int x, int y, int ptsize, int color, const char* text, ... )
 	}
 }
 
-void gxGetResourceFileName(const char* relativePath, char* buffer, int bufferSize)
-{
-	CFBundleRef mainBundle = CFBundleGetMainBundle();
-	CFURLRef url = CFBundleCopyBundleURL(mainBundle);
-	UInt8 bundlePath[1024];
-	CFURLGetFileSystemRepresentation(url, YES, bundlePath, sizeof(bundlePath));
-	CFRelease(url);
-	
-	snprintf(buffer, bufferSize, "%s/%s", (char*)bundlePath, relativePath);
-}
-
-FILE* gxOpenFile(const char* relativePath, const char* mode)
-{
-	char work[1024];
-	gxGetResourceFileName(relativePath, work, sizeof(work));
-	return fopen(work, mode);
-}
-
 void _gxSetAlpha( gxAlphaMode mode )
 {
     if (mode == GXALPHA_BLEND)

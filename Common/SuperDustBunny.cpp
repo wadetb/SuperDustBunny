@@ -138,6 +138,41 @@ void Exit()
 	sxDeinit();
 }
 
+
+void GetAssetFileName(const char* FileName, char* Buf, int BufSize)
+{
+#ifdef PLATFORM_IPHONE
+	CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+
+	UInt8 BundlePath[1024];
+	CFURLGetFileSystemRepresentation(url, YES, BundlePath, sizeof(BundlePath));
+
+	CFRelease(url);
+
+	snprintf(Buf, sizeof(BufSize), "%s/%s", (char*)BundlePath, FileName);
+#endif
+
+#ifdef PLATFORM_WINDOWS
+	char ModulePath[1024];
+	GetModuleFileName(NULL, ModulePath, sizeof(ModulePath));
+	PathRemoveFileSpec(ModulePath);
+
+	// Go from e.g. /SuperDustBunny/trunk/Build/win/ to /SuperDustBunny/trunk/
+	snprintf(Buf, BufSize, "%s/../../%s", ModulePath, FileName);
+#endif
+}
+
+FILE* OpenAssetFile(const char* FileName, const char* Mode)
+{
+	char Work[1024];
+
+	GetAssetFileName(FileName, Work, sizeof(Work));
+
+	return fopen(Work, Mode);
+}
+
+
+
 #define MAX_ERROR_CONTEXT 10
 
 struct SErrorContext
@@ -486,10 +521,10 @@ void UpdateSwipe()
         if (Swipe.Count < MAX_SWIPE_POINTS)
         {
             if (Swipe.Count > 0)
-                AddDebugLine(SwipePoints[Swipe.Count-1].X, SwipePoints[Swipe.Count-1].Y, msX, msY, gxRGBA32(192, 128, 128, 255), 1.0f/60.0f);
+                AddDebugLine(SwipePoints[Swipe.Count-1].X, SwipePoints[Swipe.Count-1].Y, (float)msX, (float)msY, gxRGBA32(192, 128, 128, 255), 1.0f/60.0f);
         
-            SwipePoints[Swipe.Count].X = msX;
-            SwipePoints[Swipe.Count].Y = msY;
+            SwipePoints[Swipe.Count].X = (float)msX;
+            SwipePoints[Swipe.Count].Y = (float)msY;
             
             Swipe.Count++;
             
@@ -547,18 +582,12 @@ bool GetInput_CheckSwipeDir(float Angle, float Range)
     return Dot >= cR;
 }
 
-void GetInput_UseSwipe()
-{
-    if (Settings.ControlStyle != CONTROL_SWIPE)
-        ReportError("Swipe controls queried while a different control style was in use.");
-}
-
 void DisplaySwipe()
 {
     unsigned int color = Swipe.Valid ? gxRGBA32(192, 128, 128, 255) : gxRGBA32(128, 192, 128, 255);
     
     for (int i = 1; i < Swipe.Count; i++)
-        DisplayDebugLine(SwipePoints[i-1].X, SwipePoints[i-1].Y, SwipePoints[i].X, SwipePoints[i].Y, color, 1.0f/60.0f);
+        DisplayDebugLine(SwipePoints[i-1].X, SwipePoints[i-1].Y, SwipePoints[i].X, SwipePoints[i].Y, 4.0f, color);
     
 	//gxDrawString(5, 37, 16, gxRGB32(255, 255, 255), "Active:%d Valid:%d Count:%d", Swipe.Active, Swipe.Valid, Swipe.Count);
 }
@@ -725,7 +754,7 @@ void DisplayGame_Playing()
 	while (y < Chapter.PageHeight*64)
 	{
 		AddLitSprite(LIGHTLIST_BACKGROUND, &BackgroundPaperSprite, 0, (float)y+ScrollY);
-		y += BackgroundPaperSprite.height;
+		y += 1024;
 	}
 
 	// Chapter Drawing - Everything here is behind Dusty
@@ -756,11 +785,11 @@ void DisplayGame_Playing()
 	// Display buttons
     if (GamePause)
     {
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonPlaySprite, gxScreenWidth/2, 64, 1.0f, 1.0f);
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonPlaySprite, (float)gxScreenWidth/2, 64, 1.0f, 1.0f);
         DisplayPauseScreen();
     }
     else
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonPauseSprite, gxScreenWidth/2, 64, 1.0f, 1.0f);
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonPauseSprite, (float)gxScreenWidth/2, 64, 1.0f, 1.0f);
         
 	// Lighting effects.
 	DisplayFlashlight();

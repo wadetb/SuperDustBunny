@@ -30,10 +30,12 @@
 #endif
 
 #if defined(PLATFORM_WINDOWS)
-#include "win/graphics.h"
-#include "win/mouse.h"
-#include "win/keyboard.h"
-#include "win/sound.h"
+#include "../win/graphics.h"
+#include "../win/mouse.h"
+#include "../win/keyboard.h"
+#include "../win/sound.h"
+#include <shlwapi.h>
+#include <windowsx.h>
 #elif defined(PLATFORM_IPHONE)
 #include "../iOS/graphics.h"
 #include "../iOS/mouse.h"
@@ -57,8 +59,12 @@
 #include "rapidxml/rapidxml.hpp"
 
 #include "Assets.h"
-
 #include "Lighting.h"
+
+
+FILE* OpenAssetFile(const char* FileName, const char* Mode);
+void GetAssetFileName(const char* FileName, char* Buf, int BufSize);
+
 
 static const float PI = acosf(-1.0f);
 

@@ -16,7 +16,12 @@ SSettings Settings;
 
 void InitSettings()
 {
+#ifdef PLATFORM_WINDOWS
+	Settings.ControlStyle = CONTROL_TILT;
+#endif
+#ifdef PLATFORM_IPHONE
     Settings.ControlStyle = CONTROL_SWIPE;
+#endif
     Settings.TiltSensitivity = 1;
     Settings.ContinuousJump = false;
     Settings.FallGracePeriod = true;

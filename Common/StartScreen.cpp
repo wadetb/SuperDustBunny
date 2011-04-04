@@ -106,7 +106,7 @@ void DisplayStartScreen()
 
 	for (int i = 0; i < STARTSCREEN_ITEM_COUNT; i++)
 	{
-        float X = 384 + i*600 - (int)StartScreen.X;
+        float X = 384 + i*600 - StartScreen.X;
         float Y = LitScreenHeight * 3/4;
 
         if (i == StartScreen.CurItem)

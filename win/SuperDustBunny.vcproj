@@ -18,7 +18,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\"
+			OutputDirectory="..\..\Build\win"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="2"
@@ -172,298 +172,298 @@
 			Name="Win"
 			>
 			<File
-				RelativePath="win\graphics.cpp"
+				RelativePath=".\graphics.cpp"
 				>
 			</File>
 			<File
-				RelativePath="win\graphics.h"
+				RelativePath=".\graphics.h"
 				>
 			</File>
 			<File
-				RelativePath="win\keyboard.cpp"
+				RelativePath=".\keyboard.cpp"
 				>
 			</File>
 			<File
-				RelativePath="win\keyboard.h"
+				RelativePath=".\keyboard.h"
 				>
 			</File>
 			<File
-				RelativePath="win\mouse.cpp"
+				RelativePath=".\mouse.cpp"
 				>
 			</File>
 			<File
-				RelativePath="win\mouse.h"
+				RelativePath=".\mouse.h"
 				>
 			</File>
 			<File
-				RelativePath="win\sound.cpp"
+				RelativePath=".\sound.cpp"
 				>
 			</File>
 			<File
-				RelativePath="win\sound.h"
+				RelativePath=".\sound.h"
 				>
 			</File>
 		</Filter>
 		<Filter
-			Name="rapidxml"
+			Name="Common"
 			>
 			<File
-				RelativePath=".\rapidxml\license.txt"
+				RelativePath="..\Common\Assets.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\rapidxml\manual.html"
+				RelativePath="..\Common\Assets.h"
 				>
 			</File>
 			<File
-				RelativePath=".\rapidxml\rapidxml.hpp"
+				RelativePath="..\Common\Barrel.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\rapidxml\rapidxml_iterators.hpp"
+				RelativePath="..\Common\Barrel.h"
 				>
 			</File>
 			<File
-				RelativePath=".\rapidxml\rapidxml_print.hpp"
+				RelativePath="..\Common\chapter.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\rapidxml\rapidxml_utils.hpp"
+				RelativePath="..\Common\chapter.h"
 				>
 			</File>
+			<File
+				RelativePath="..\Common\ChapterIntro.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\ChapterIntro.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Coin.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Coin.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\common.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\CreditsScreen.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\CreditsScreen.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Crumb.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Debris.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Debris.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\DieScreen.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\DieScreen.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Dust.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Dust.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Dusty.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Dusty.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Fan.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Fan.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\FireWorks.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\FireWorks.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Flashlight.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Flashlight.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\GameScore.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\GameScore.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Gear.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Gear.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\HelpScreen.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\HelpScreen.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Lighting.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Lighting.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Lives.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Lives.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Recorder.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Recorder.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Settings.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Settings.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Stapler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Stapler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\StartScreen.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\StartScreen.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\SuperDustBunny.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\TennisBall.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\TennisBall.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Tutorial.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Tutorial.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Vacuum.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Vacuum.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\WinScreen.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\WinScreen.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Wipe.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\Wipe.h"
+				>
+			</File>
+			<Filter
+				Name="rapidxml"
+				>
+				<File
+					RelativePath="..\Common\rapidxml\license.txt"
+					>
+				</File>
+				<File
+					RelativePath="..\Common\rapidxml\manual.html"
+					>
+				</File>
+				<File
+					RelativePath="..\Common\rapidxml\rapidxml.hpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Common\rapidxml\rapidxml_iterators.hpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Common\rapidxml\rapidxml_print.hpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Common\rapidxml\rapidxml_utils.hpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
-		<File
-			RelativePath=".\Assets.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Assets.h"
-			>
-		</File>
-		<File
-			RelativePath=".\Barrel.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Barrel.h"
-			>
-		</File>
-		<File
-			RelativePath=".\chapter.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\chapter.h"
-			>
-		</File>
-		<File
-			RelativePath=".\ChapterIntro.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\ChapterIntro.h"
-			>
-		</File>
-		<File
-			RelativePath=".\Coin.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Coin.h"
-			>
-		</File>
-		<File
-			RelativePath=".\common.h"
-			>
-		</File>
-		<File
-			RelativePath=".\CreditsScreen.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\CreditsScreen.h"
-			>
-		</File>
-		<File
-			RelativePath=".\Crumb.h"
-			>
-		</File>
-		<File
-			RelativePath=".\Debris.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Debris.h"
-			>
-		</File>
-		<File
-			RelativePath=".\DieScreen.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\DieScreen.h"
-			>
-		</File>
-		<File
-			RelativePath=".\Dust.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Dust.h"
-			>
-		</File>
-		<File
-			RelativePath=".\Dusty.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Dusty.h"
-			>
-		</File>
-		<File
-			RelativePath=".\Fan.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Fan.h"
-			>
-		</File>
-		<File
-			RelativePath=".\FireWorks.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\FireWorks.h"
-			>
-		</File>
-		<File
-			RelativePath=".\Flashlight.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Flashlight.h"
-			>
-		</File>
-		<File
-			RelativePath=".\GameScore.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\GameScore.h"
-			>
-		</File>
-		<File
-			RelativePath=".\Gear.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Gear.h"
-			>
-		</File>
-		<File
-			RelativePath=".\HelpScreen.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\HelpScreen.h"
-			>
-		</File>
-		<File
-			RelativePath=".\Lighting.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Lighting.h"
-			>
-		</File>
-		<File
-			RelativePath=".\Lives.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Lives.h"
-			>
-		</File>
-		<File
-			RelativePath=".\Recorder.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Recorder.h"
-			>
-		</File>
-		<File
-			RelativePath=".\Settings.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Settings.h"
-			>
-		</File>
-		<File
-			RelativePath=".\Stapler.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Stapler.h"
-			>
-		</File>
-		<File
-			RelativePath=".\StartScreen.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\StartScreen.h"
-			>
-		</File>
-		<File
-			RelativePath=".\SuperDustBunny.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\TennisBall.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\TennisBall.h"
-			>
-		</File>
-		<File
-			RelativePath="..\Docs\TODO.txt"
-			>
-		</File>
-		<File
-			RelativePath=".\Tutorial.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Tutorial.h"
-			>
-		</File>
-		<File
-			RelativePath=".\Vacuum.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Vacuum.h"
-			>
-		</File>
-		<File
-			RelativePath=".\WinScreen.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\WinScreen.h"
-			>
-		</File>
-		<File
-			RelativePath=".\Wipe.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Wipe.h"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

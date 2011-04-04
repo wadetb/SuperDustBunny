@@ -228,7 +228,7 @@ void LoadAssetList(const char* FileName)
 {
 	PushErrorContext("While loading asset list '%s':\n", FileName);
     
-	FILE* AssetFile = gxOpenFile(FileName, "r");    
+	FILE* AssetFile = OpenAssetFile(FileName, "r");    
 	if (!AssetFile)
         return;
     //ReportError("Unable to open asset list file.  Check that all required files and tools are present, and re-build the XCode project to fix.");
@@ -373,13 +373,16 @@ void LoadSpriteAsset(const char* FileName, gxSprite* Sprite)
 #endif
     
 #ifdef PLATFORM_WINDOWS
-    gxLoadSprite(FileName, Sprite);
+	char Work[1024];
+	GetAssetFileName(FileName, Work, sizeof(Work));
+
+    gxLoadSprite(Work, Sprite);
 #endif
 }
 
 void LoadAssets()
 {
-    float StartTime = GetCurrentTime();
+    double StartTime = GetCurrentTime();
     
 	//-----------------------------------------------------------------------------------------------------------------------------------------//
 	//                                                    Assets List                                                                          //

@@ -380,12 +380,7 @@ void LoadTileSet(const char* FileName)
 {
 	PushErrorContext("While loading tileset '%s':\n", FileName);
 
-#ifdef PLATFORM_IPHONE
-	FILE* BlocksFile = gxOpenFile(FileName, "r");
-#endif
-#ifdef PLATFORM_WINDOWS
-	FILE* BlocksFile = fopen(FileName, "r");
-#endif
+	FILE* BlocksFile = OpenAssetFile(FileName, "r");
 
 	if (!BlocksFile)
 		ReportError("Unable to open TSX file.  Check that all required files are present, and re-save the TMX file to fix.");
@@ -419,12 +414,7 @@ void LoadPageFromTMX(const char* FileName)
 	PushErrorContext("While loading page '%s':\n", FileName);
 
 	// Open the TMX file.
-#ifdef PLATFORM_IPHONE
-	FILE* PageFile = gxOpenFile(FileName, "r");
-#endif
-#ifdef PLATFORM_WINDOWS
-	FILE* PageFile = fopen(FileName, "r");
-#endif
+	FILE* PageFile = OpenAssetFile(FileName, "r");
 
 	if (!PageFile)
 		ReportError("Unable to open TMX file.  Check that all required files are present, and re-save the TMX file to fix.");
@@ -628,7 +618,7 @@ void LoadPageFromTMX(const char* FileName)
 
 void LoadChapter(const char* ChapterDir)
 {
-    float StartTime = (float)GetCurrentTime();
+    double StartTime = (float)GetCurrentTime();
 
 	PushErrorContext("While loading chapter '%s':\n", ChapterDir);
 
@@ -649,12 +639,7 @@ void LoadChapter(const char* ChapterDir)
 	char FileName[1024];
 	snprintf(FileName, sizeof(FileName), "%s/Chapter.txt", ChapterDir);
 
-#ifdef PLATFORM_IPHONE
-	FILE* ChapFile = gxOpenFile(FileName, "r");
-#endif
-#ifdef PLATFORM_WINDOWS
-	FILE* ChapFile = fopen(FileName, "r");
-#endif
+	FILE* ChapFile = OpenAssetFile(FileName, "r");
 
 	if (!ChapFile)
 		ReportError("Chapter.txt is missing.");

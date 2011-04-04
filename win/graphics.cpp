@@ -1,6 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 
-#include "../Common.h"
+#include "../Common/Common.h"
 #include "graphics.h"
 
 #include "mouse.h"
