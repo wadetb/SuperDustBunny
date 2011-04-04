@@ -28,26 +28,21 @@ void ChapterIntro_Advance();
 
 void InitChapterIntro()
 {
-    if (Settings.ControlStyle == CONTROL_SWIPE)
-    {
-        // SWIPE TODO
-        ChapterIntro.Timer = 100;
-        ChapterIntro_Advance();
-        return;
-    }
-    
-	ChapterIntro.Timer = 0;
+    ChapterIntro.Timer = 0;
 
 	TurnOffVacuum();
 
-	SetDustyPosition(Chapter.StartX - 400, Chapter.StartY);
-	Dusty.NoCollision = true;
-	Dusty.CollideWithBottomSide = true;
+    if (Settings.ControlStyle == CONTROL_TILT)
+    {
+        SetDustyPosition(Chapter.StartX - 400, Chapter.StartY);
+        Dusty.NoCollision = true;
+        Dusty.CollideWithBottomSide = true;
 
-	RemoteControl.Enabled = true;
-	RemoteControl.MoveRight = true;
+        RemoteControl.Enabled = true;
+        RemoteControl.MoveRight = true;
 
-	SetDustyState_Hop(DIRECTION_RIGHT);
+        SetDustyState_Hop(DIRECTION_RIGHT);
+    }
 }
 
 void DisplayChapterIntro()
@@ -66,8 +61,11 @@ void ChapterIntro_Advance()
 {
 	TurnOnVacuum();
 
-	RemoteControl.Enabled = false;
-	Dusty.NoCollision = false;
+    if (Settings.ControlStyle == CONTROL_TILT)
+    {
+        RemoteControl.Enabled = false;
+        Dusty.NoCollision = false;
+    }
 
 	SetGameState_Playing();
 }
@@ -76,12 +74,15 @@ void UpdateChapterIntro()
 {
 	ChapterIntro.Timer += 1;
 	
-	UpdateDusty();
+    if (Settings.ControlStyle == CONTROL_TILT)
+    {
+        UpdateDusty();
 
-	if (ChapterIntro.Timer == 40)
-	{
-		RemoteControl.MoveRight = false;
-	}
+        if (ChapterIntro.Timer == 40)
+        {
+            RemoteControl.MoveRight = false;
+        }
+    }
 
 	// Advance to playing state when Timer Expires.
 	if (ChapterIntro.Timer >= 100)

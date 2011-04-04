@@ -129,6 +129,9 @@ extern gxSprite DustArrowSprite;
 extern gxSprite FireWorkRocketSprite;
 
 extern gxSprite VacuumFrontSprite;
+extern gxSprite Vacuum1Sprite;
+extern gxSprite Vacuum2Sprite;
+extern gxSprite Vacuum3Sprite;
 
 extern gxSprite ScreenStart1Sprite;
 extern gxSprite ScreenStart2Sprite;

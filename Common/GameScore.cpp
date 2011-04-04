@@ -41,10 +41,39 @@ void InitScore()
     Score.Hundred = false;
     Score.Thousand = false;
     Score.TenThousand = false;
+    
+    Score.PageTime = 0;
+}
+
+void DisplayDigit(int Digit, int X, int Y)
+{
+    switch (Digit)
+    {
+        case 0:    AddLitSubSprite( LIGHTLIST_WIPE, &FullScoreSprite, X, Y, 0, 0, 54, 63); break;        
+        case 1:    AddLitSubSprite( LIGHTLIST_WIPE, &FullScoreSprite, X+20, Y, 54, 0, 74, 63); break;
+        case 2:    AddLitSubSprite( LIGHTLIST_WIPE, &FullScoreSprite, X, Y, 74, 0, 131, 63); break;
+        case 3:    AddLitSubSprite( LIGHTLIST_WIPE, &FullScoreSprite, X, Y, 131, 0, 187, 63); break;
+        case 4:    AddLitSubSprite( LIGHTLIST_WIPE, &FullScoreSprite, X, Y, 187, 0, 242, 63); break;
+        case 5:    AddLitSubSprite( LIGHTLIST_WIPE, &FullScoreSprite, X, Y, 242, 0, 296, 63); break;
+        case 6:    AddLitSubSprite( LIGHTLIST_WIPE, &FullScoreSprite, X, Y, 296, 0, 353, 63); break;
+        case 7:    AddLitSubSprite( LIGHTLIST_WIPE, &FullScoreSprite, X, Y, 353, 0, 406, 63); break;
+        case 8:    AddLitSubSprite( LIGHTLIST_WIPE, &FullScoreSprite, X, Y, 406, 0, 462, 63); break;
+        case 9:    AddLitSubSprite( LIGHTLIST_WIPE, &FullScoreSprite, X, Y, 462, 0, 520, 63); break;
+        default:   break;   
+    }    
 }
 
 void DisplayScore()
 {
+    int Seconds = Score.PageTime / 60;
+    int Hundredths = ( Score.PageTime % 60 ) * 60 / 100;
+    
+    if (Seconds/10) DisplayDigit(Seconds/10, 10+0*64, 10);
+    DisplayDigit(Seconds%10, 10+1*64, 10);
+    DisplayDigit(Hundredths/10, 30+2*64, 10);
+    DisplayDigit(Hundredths%10, 30+3*64, 10);
+    
+#if 0
     if (Score.Single)
     {
         switch (Score.CounterSingle)
@@ -134,10 +163,14 @@ void DisplayScore()
         default:   break;   
         }
     }                      
+#endif
 }
 
 void ResetScore()
-{
+{    
+    Score.PageTime = 0;
+
+#if 0
     Score.Single = true;
     Score.Ten = false;
     Score.Hundred = false;
@@ -149,10 +182,14 @@ void ResetScore()
     Score.CounterHundred = 0;
     Score.CounterThousand = 0;
     Score.CounterTenThousand = 0;    
+#endif
 }
 
 void UpdateScore()
-{       
+{    
+    Score.PageTime++;
+    
+#if 0
     switch (Score.Type)
     {
     case 0:    return;
@@ -208,5 +245,6 @@ void UpdateScore()
         {
             Score.CounterTenThousand = (Score.TenThousand - 10);
         }                  
-    }         
+    } 
+#endif
 }

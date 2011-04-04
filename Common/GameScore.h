@@ -29,6 +29,8 @@ struct SScore
     bool Hundred;
     bool Thousand;
     bool TenThousand;  
+    
+    int PageTime;
 };
 
 extern SScore Score;

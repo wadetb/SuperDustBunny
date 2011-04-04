@@ -44,6 +44,11 @@ struct SLitQuad
 #endif
 };
 
+extern float LitScreenHeight;
+extern float LitSceneZoom;
+extern float LitSceneOffsetX;
+extern float LitSceneOffsetY;
+
 void AddLitQuad(
 	ELightList List, gxSprite* Sprite, unsigned int Color,
 	float X0, float Y0, float U0, float V0, 

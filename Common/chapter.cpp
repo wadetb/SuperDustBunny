@@ -817,7 +817,7 @@ void CreatePageObjects()
 	}
 
 	// Set initial ScrollY.
-	ScrollY = -(Chapter.PageHeight * 64 - gxScreenHeight);
+	ScrollY = -(Chapter.PageHeight * 64 - LitScreenHeight);
 
 	// Initialize global stuff for the page.
 	InitDusty();
@@ -870,15 +870,15 @@ void CalculateScrollY()
 	}
 
 	// Screen also tracks Dusty downwards.
-	if (Dusty.FloatY + ScrollY > gxScreenHeight - 200)
+	if (Dusty.FloatY + ScrollY > LitScreenHeight - 200)
 	{
-		ScrollY = (gxScreenHeight - 200) - (int)Dusty.FloatY;
+		ScrollY = (LitScreenHeight - 200) - (int)Dusty.FloatY;
 	}
 
 	// Prevent scrolling off bottom of map.
-	if (ScrollY < -(Chapter.PageHeight * 64 - gxScreenHeight))
+	if (ScrollY < -(Chapter.PageHeight * 64 - LitScreenHeight))
 	{
-		ScrollY = -(Chapter.PageHeight * 64 - gxScreenHeight);
+		ScrollY = -(Chapter.PageHeight * 64 - LitScreenHeight);
 	} 
 
 	// Prevent scrolling off top of map.
@@ -893,7 +893,7 @@ void DisplayChapter()
 	for (int y = 0; y < Chapter.PageHeight; y++)
 	{
 		// Skip rows of tiles that cannot be on screen.
-		if (y*64 + ScrollY > gxScreenHeight || (y+1)*64 + ScrollY < 0)
+		if (y*64 + ScrollY > LitScreenHeight || (y+1)*64 + ScrollY < 0)
 			continue;
 
 		for (int x = 0; x < Chapter.PageWidth; x++)
@@ -924,7 +924,7 @@ void DisplayChapter()
 	}
     
     if (Chapter.EndX + 256 + ScrollY >= 0 && 
-        Chapter.EndY - 256 + ScrollY <= gxScreenHeight)
+        Chapter.EndY - 256 + ScrollY <= LitScreenHeight)
     {
         Chapter.PortalAngle += 2.0f*PI / 60.0f * 0.1f; 
         for (int i = 5; i > 0; i--)

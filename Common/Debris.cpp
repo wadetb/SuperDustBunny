@@ -131,7 +131,7 @@ void UpdateDebris()
 		Deb->Y += Deb->VY;
 		Deb->Angle += Deb->VAngle;
 
-		if (Deb->Y + ScrollY >= gxScreenHeight || Distance(Deb->X, Deb->Y, (float)gxScreenWidth/2, Vacuum.Y) < 100.0f)
+		if (Deb->Y + ScrollY >= LitScreenHeight || Distance(Deb->X, Deb->Y, (float)gxScreenWidth/2, Vacuum.Y) < 100.0f)
 		{
 			Deb->Used = false;
 		}

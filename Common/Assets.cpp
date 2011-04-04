@@ -133,6 +133,9 @@ gxSprite DustArrowSprite;
 gxSprite FireWorkRocketSprite;
 
 gxSprite VacuumFrontSprite;
+gxSprite Vacuum1Sprite;
+gxSprite Vacuum2Sprite;
+gxSprite Vacuum3Sprite;
 
 gxSprite ScreenStart1Sprite;
 gxSprite ScreenStart2Sprite;
@@ -388,184 +391,187 @@ void LoadAssets()
 	//-----------------------------------------------------------------------------------------------------------------------------------------//
 	//                                                    Sprite Assets                                                                        //
 	//-----------------------------------------------------------------------------------------------------------------------------------------//
-	LoadSpriteAsset("Data/white.png", &WhiteSprite);
+	LoadSpriteAsset("Assets/white.png", &WhiteSprite);
 
-	LoadSpriteAsset("Data/wipe-diagonal.png", &WipeDiagonalSprite);
+	LoadSpriteAsset("Assets/wipe-diagonal.png", &WipeDiagonalSprite);
 	
-	LoadSpriteAsset("Data/light-flashlight.png", &LightFlashlightSprite);
-	LoadSpriteAsset("Data/light-vacuum.png", &LightVacuumSprite);
+	LoadSpriteAsset("Assets/light-flashlight.png", &LightFlashlightSprite);
+	LoadSpriteAsset("Assets/light-vacuum.png", &LightVacuumSprite);
 
-	LoadSpriteAsset("Data/spark.png", &SparkSprite);
-	LoadSpriteAsset("Data/flare.png", &FlareSprite);
+	LoadSpriteAsset("Assets/spark.png", &SparkSprite);
+	LoadSpriteAsset("Assets/flare.png", &FlareSprite);
 
-	LoadSpriteAsset("Data/firework-white.png", &FireWorkWhiteSprite);
+	LoadSpriteAsset("Assets/firework-white.png", &FireWorkWhiteSprite);
 
-	LoadSpriteAsset("Data/dusty-hop-1.png", &DustyHop1Sprite);
-	LoadSpriteAsset("Data/dusty-hop-2.png", &DustyHop2Sprite);
-	LoadSpriteAsset("Data/dusty-hop-3.png", &DustyHop3Sprite);
-	LoadSpriteAsset("Data/dusty-hop-4.png", &DustyHop4Sprite);
-	LoadSpriteAsset("Data/dusty-hop-5.png", &DustyHop5Sprite);
+	LoadSpriteAsset("Assets/dusty-hop-1.png", &DustyHop1Sprite);
+	LoadSpriteAsset("Assets/dusty-hop-2.png", &DustyHop2Sprite);
+	LoadSpriteAsset("Assets/dusty-hop-3.png", &DustyHop3Sprite);
+	LoadSpriteAsset("Assets/dusty-hop-4.png", &DustyHop4Sprite);
+	LoadSpriteAsset("Assets/dusty-hop-5.png", &DustyHop5Sprite);
 
-	LoadSpriteAsset("Data/dusty-hop-2b.png", &DustyHop2bSprite);
-	LoadSpriteAsset("Data/dusty-hop-2c.png", &DustyHop2cSprite);
-	LoadSpriteAsset("Data/dusty-hop-4b.png", &DustyHop4bSprite);
-	LoadSpriteAsset("Data/dusty-hop-4c.png", &DustyHop4cSprite);
+	LoadSpriteAsset("Assets/dusty-hop-2b.png", &DustyHop2bSprite);
+	LoadSpriteAsset("Assets/dusty-hop-2c.png", &DustyHop2cSprite);
+	LoadSpriteAsset("Assets/dusty-hop-4b.png", &DustyHop4bSprite);
+	LoadSpriteAsset("Assets/dusty-hop-4c.png", &DustyHop4cSprite);
 
-	LoadSpriteAsset("Data/dusty-idle-1.png", &DustyIdle1Sprite);
-	LoadSpriteAsset("Data/dusty-idle-2.png", &DustyIdle2Sprite);
-	LoadSpriteAsset("Data/dusty-idle-3.png", &DustyIdle3Sprite);
+	LoadSpriteAsset("Assets/dusty-idle-1.png", &DustyIdle1Sprite);
+	LoadSpriteAsset("Assets/dusty-idle-2.png", &DustyIdle2Sprite);
+	LoadSpriteAsset("Assets/dusty-idle-3.png", &DustyIdle3Sprite);
 
-	LoadSpriteAsset("Data/dusty-slide-1.png", &DustySlide1Sprite);
-	LoadSpriteAsset("Data/dusty-slide-2.png", &DustySlide2Sprite);
-	LoadSpriteAsset("Data/dusty-slide-3.png", &DustySlide3Sprite);
+	LoadSpriteAsset("Assets/dusty-slide-1.png", &DustySlide1Sprite);
+	LoadSpriteAsset("Assets/dusty-slide-2.png", &DustySlide2Sprite);
+	LoadSpriteAsset("Assets/dusty-slide-3.png", &DustySlide3Sprite);
 
-	LoadSpriteAsset("Data/dusty-walljump.png", &DustyWallJumpSprite);
-	LoadSpriteAsset("Data/dusty-cornerjump.png", &DustyCornerJumpSprite);
+	LoadSpriteAsset("Assets/dusty-walljump.png", &DustyWallJumpSprite);
+	LoadSpriteAsset("Assets/dusty-cornerjump.png", &DustyCornerJumpSprite);
 
-	LoadSpriteAsset("Data/dusty-die.png", &DustyDeathSprite);
+	LoadSpriteAsset("Assets/dusty-die.png", &DustyDeathSprite);
 
-    LoadSpriteAsset("Data/logo.png", &LogoSprite);
+    LoadSpriteAsset("Assets/logo.png", &LogoSprite);
     
-	LoadSpriteAsset("Data/background-cardboard.png", &BackgroundCardboardSprite);
-	LoadSpriteAsset("Data/background-paper.png", &BackgroundPaperSprite);
-	LoadSpriteAsset("Data/background-fridge.png", &BackgroundFridgeSprite);
+	LoadSpriteAsset("Assets/background-cardboard.png", &BackgroundCardboardSprite);
+	LoadSpriteAsset("Assets/background-paper.png", &BackgroundPaperSprite);
+	LoadSpriteAsset("Assets/background-fridge.png", &BackgroundFridgeSprite);
 
-	LoadSpriteAsset("Data/tile-wtf.png", &TileUnknownSprite);
+	LoadSpriteAsset("Assets/tile-wtf.png", &TileUnknownSprite);
 	
-	LoadSpriteAsset("Data/barrel-back.png", &BarrelBackSprite);
-	LoadSpriteAsset("Data/barrel-front.png", &BarrelFrontSprite);
-	LoadSpriteAsset("Data/barrel-nail.png", &BarrelNailSprite);
+	LoadSpriteAsset("Assets/barrel-back.png", &BarrelBackSprite);
+	LoadSpriteAsset("Assets/barrel-front.png", &BarrelFrontSprite);
+	LoadSpriteAsset("Assets/barrel-nail.png", &BarrelNailSprite);
 
-	LoadSpriteAsset("Data/fan.png", &FanSprite);
+	LoadSpriteAsset("Assets/fan.png", &FanSprite);
 
-	LoadSpriteAsset("Data/crumb-stand.png", &CrumbStandSprite);
+	LoadSpriteAsset("Assets/crumb-stand.png", &CrumbStandSprite);
 
-	LoadSpriteAsset("Data/coin-spin-1.png", &CoinSpin1Sprite);
-	LoadSpriteAsset("Data/coin-spin-2.png", &CoinSpin2Sprite);
-	LoadSpriteAsset("Data/coin-spin-3.png", &CoinSpin3Sprite);
-	LoadSpriteAsset("Data/coin-spin-4.png", &CoinSpin4Sprite);
-	LoadSpriteAsset("Data/coin-spin-5.png", &CoinSpin5Sprite);
-	LoadSpriteAsset("Data/coin-spin-6.png", &CoinSpin6Sprite);
+	LoadSpriteAsset("Assets/coin-spin-1.png", &CoinSpin1Sprite);
+	LoadSpriteAsset("Assets/coin-spin-2.png", &CoinSpin2Sprite);
+	LoadSpriteAsset("Assets/coin-spin-3.png", &CoinSpin3Sprite);
+	LoadSpriteAsset("Assets/coin-spin-4.png", &CoinSpin4Sprite);
+	LoadSpriteAsset("Assets/coin-spin-5.png", &CoinSpin5Sprite);
+	LoadSpriteAsset("Assets/coin-spin-6.png", &CoinSpin6Sprite);
 
-	LoadSpriteAsset("Data/coin-lives-1.png", &CoinLife1Sprite);
-	LoadSpriteAsset("Data/coin-lives-2.png", &CoinLife2Sprite);
-	LoadSpriteAsset("Data/coin-lives-3.png", &CoinLife3Sprite);
-	LoadSpriteAsset("Data/coin-lives-4.png", &CoinLife4Sprite);
-	LoadSpriteAsset("Data/coin-lives-5.png", &CoinLife5Sprite);
-	LoadSpriteAsset("Data/coin-lives-6.png", &CoinLife6Sprite);
+	LoadSpriteAsset("Assets/coin-lives-1.png", &CoinLife1Sprite);
+	LoadSpriteAsset("Assets/coin-lives-2.png", &CoinLife2Sprite);
+	LoadSpriteAsset("Assets/coin-lives-3.png", &CoinLife3Sprite);
+	LoadSpriteAsset("Assets/coin-lives-4.png", &CoinLife4Sprite);
+	LoadSpriteAsset("Assets/coin-lives-5.png", &CoinLife5Sprite);
+	LoadSpriteAsset("Assets/coin-lives-6.png", &CoinLife6Sprite);
 	
-    LoadSpriteAsset("Data/number-0.png", &ScoreNumber0Sprite);
-    LoadSpriteAsset("Data/number-1.png", &ScoreNumber1Sprite);
-    LoadSpriteAsset("Data/number-2.png", &ScoreNumber2Sprite);
-    LoadSpriteAsset("Data/number-3.png", &ScoreNumber3Sprite);
-    LoadSpriteAsset("Data/number-4.png", &ScoreNumber4Sprite);
-    LoadSpriteAsset("Data/number-5.png", &ScoreNumber5Sprite);
-    LoadSpriteAsset("Data/number-6.png", &ScoreNumber6Sprite);
-    LoadSpriteAsset("Data/number-7.png", &ScoreNumber7Sprite);
-    LoadSpriteAsset("Data/number-8.png", &ScoreNumber8Sprite);
-    LoadSpriteAsset("Data/number-9.png", &ScoreNumber9Sprite);
+    LoadSpriteAsset("Assets/number-0.png", &ScoreNumber0Sprite);
+    LoadSpriteAsset("Assets/number-1.png", &ScoreNumber1Sprite);
+    LoadSpriteAsset("Assets/number-2.png", &ScoreNumber2Sprite);
+    LoadSpriteAsset("Assets/number-3.png", &ScoreNumber3Sprite);
+    LoadSpriteAsset("Assets/number-4.png", &ScoreNumber4Sprite);
+    LoadSpriteAsset("Assets/number-5.png", &ScoreNumber5Sprite);
+    LoadSpriteAsset("Assets/number-6.png", &ScoreNumber6Sprite);
+    LoadSpriteAsset("Assets/number-7.png", &ScoreNumber7Sprite);
+    LoadSpriteAsset("Assets/number-8.png", &ScoreNumber8Sprite);
+    LoadSpriteAsset("Assets/number-9.png", &ScoreNumber9Sprite);
     
-    LoadSpriteAsset("Data/full-score.png", &FullScoreSprite);
+    LoadSpriteAsset("Assets/full-score.png", &FullScoreSprite);
 	
-    LoadSpriteAsset("Data/button-pause.png", &ButtonPauseSprite);
-    LoadSpriteAsset("Data/button-play.png", &ButtonPlaySprite);
-    LoadSpriteAsset("Data/button-home.png", &ButtonHomeSprite);
-    LoadSpriteAsset("Data/button-mute.png", &ButtonMuteSprite);
-    LoadSpriteAsset("Data/button-unmute.png", &ButtonUnmuteSprite);
+    LoadSpriteAsset("Assets/button-pause.png", &ButtonPauseSprite);
+    LoadSpriteAsset("Assets/button-play.png", &ButtonPlaySprite);
+    LoadSpriteAsset("Assets/button-home.png", &ButtonHomeSprite);
+    LoadSpriteAsset("Assets/button-mute.png", &ButtonMuteSprite);
+    LoadSpriteAsset("Assets/button-unmute.png", &ButtonUnmuteSprite);
 
-    LoadSpriteAsset("Data/portal.png", &PortalSprite);
+    LoadSpriteAsset("Assets/portal.png", &PortalSprite);
 
-	LoadSpriteAsset("Data/tennisball-spin-1.png", &TennisBallSpin1Sprite);
-	LoadSpriteAsset("Data/tennisball-spin-2.png", &TennisBallSpin2Sprite);
-	LoadSpriteAsset("Data/tennisball-spin-3.png", &TennisBallSpin3Sprite);
-	LoadSpriteAsset("Data/tennisball-spin-4.png", &TennisBallSpin4Sprite);
+	LoadSpriteAsset("Assets/tennisball-spin-1.png", &TennisBallSpin1Sprite);
+	LoadSpriteAsset("Assets/tennisball-spin-2.png", &TennisBallSpin2Sprite);
+	LoadSpriteAsset("Assets/tennisball-spin-3.png", &TennisBallSpin3Sprite);
+	LoadSpriteAsset("Assets/tennisball-spin-4.png", &TennisBallSpin4Sprite);
 
-	LoadSpriteAsset("Data/gear.png", &GearSprite);
+	LoadSpriteAsset("Assets/gear.png", &GearSprite);
 	
-    LoadSpriteAsset("Data/staplerextendup.png", &StaplerExtendUpSprite);
-    LoadSpriteAsset("Data/staplerup.png", &StaplerUpSprite);
-    LoadSpriteAsset("Data/staplerdown.png", &StaplerDownSprite);
+    LoadSpriteAsset("Assets/staplerextendup.png", &StaplerExtendUpSprite);
+    LoadSpriteAsset("Assets/staplerup.png", &StaplerUpSprite);
+    LoadSpriteAsset("Assets/staplerdown.png", &StaplerDownSprite);
     
-    LoadSpriteAsset("Data/powerjump1sprite.png", &PowerJump1Sprite);
-    LoadSpriteAsset("Data/powerjump2sprite.png", &PowerJump2Sprite);
-    LoadSpriteAsset("Data/powerjump3sprite.png", &PowerJump3Sprite);
-    LoadSpriteAsset("Data/powerjump4sprite.png", &PowerJump4Sprite);
-    LoadSpriteAsset("Data/powerjump5sprite.png", &PowerJump5Sprite);
-    LoadSpriteAsset("Data/powerjump6sprite.png", &PowerJump6Sprite);
-    LoadSpriteAsset("Data/powerjump7sprite.png", &PowerJump7Sprite);
-    LoadSpriteAsset("Data/powerjump8sprite.png", &PowerJump8Sprite);
-    LoadSpriteAsset("Data/powerjump9sprite.png", &PowerJump9Sprite);
-    LoadSpriteAsset("Data/powerjump10sprite.png", &PowerJump10Sprite);
+    LoadSpriteAsset("Assets/powerjump1sprite.png", &PowerJump1Sprite);
+    LoadSpriteAsset("Assets/powerjump2sprite.png", &PowerJump2Sprite);
+    LoadSpriteAsset("Assets/powerjump3sprite.png", &PowerJump3Sprite);
+    LoadSpriteAsset("Assets/powerjump4sprite.png", &PowerJump4Sprite);
+    LoadSpriteAsset("Assets/powerjump5sprite.png", &PowerJump5Sprite);
+    LoadSpriteAsset("Assets/powerjump6sprite.png", &PowerJump6Sprite);
+    LoadSpriteAsset("Assets/powerjump7sprite.png", &PowerJump7Sprite);
+    LoadSpriteAsset("Assets/powerjump8sprite.png", &PowerJump8Sprite);
+    LoadSpriteAsset("Assets/powerjump9sprite.png", &PowerJump9Sprite);
+    LoadSpriteAsset("Assets/powerjump10sprite.png", &PowerJump10Sprite);
 
-	LoadSpriteAsset("Data/dust-mote.png", &DustMoteSprite);
-	LoadSpriteAsset("Data/dust-arrow.png", &DustArrowSprite);
+	LoadSpriteAsset("Assets/dust-mote.png", &DustMoteSprite);
+	LoadSpriteAsset("Assets/dust-arrow.png", &DustArrowSprite);
 
-	LoadSpriteAsset("Data/firework-rocket.png", &FireWorkRocketSprite);
+	LoadSpriteAsset("Assets/firework-rocket.png", &FireWorkRocketSprite);
 
-	LoadSpriteAsset("Data/vacuum-front.png", &VacuumFrontSprite);
+	LoadSpriteAsset("Assets/vacuum-front.png", &VacuumFrontSprite);
+	LoadSpriteAsset("Assets/vacuum-1.png", &Vacuum1Sprite);
+	LoadSpriteAsset("Assets/vacuum-2.png", &Vacuum2Sprite);
+	LoadSpriteAsset("Assets/vacuum-3.png", &Vacuum3Sprite);
 
-	LoadSpriteAsset("Data/screen-start-1.png", &ScreenStart1Sprite);
-	LoadSpriteAsset("Data/screen-start-2.png", &ScreenStart2Sprite);
-    LoadSpriteAsset("Data/screen-help-1.png", &ScreenHelp1Sprite);
-    LoadSpriteAsset("Data/screen-help-2.png", &ScreenHelp2Sprite);
-    LoadSpriteAsset("Data/screen-credits-1.png", &ScreenCredits1Sprite);
-    LoadSpriteAsset("Data/screen-credits-2.png", &ScreenCredits2Sprite);
+	LoadSpriteAsset("Assets/screen-start-1.png", &ScreenStart1Sprite);
+	LoadSpriteAsset("Assets/screen-start-2.png", &ScreenStart2Sprite);
+    LoadSpriteAsset("Assets/screen-help-1.png", &ScreenHelp1Sprite);
+    LoadSpriteAsset("Assets/screen-help-2.png", &ScreenHelp2Sprite);
+    LoadSpriteAsset("Assets/screen-credits-1.png", &ScreenCredits1Sprite);
+    LoadSpriteAsset("Assets/screen-credits-2.png", &ScreenCredits2Sprite);
     
-	LoadSpriteAsset("Data/icon-start-1.png", &IconStart1Sprite);
-	LoadSpriteAsset("Data/icon-start-2.png", &IconStart2Sprite);
-	LoadSpriteAsset("Data/icon-help-1.png", &IconHelp1Sprite);
-	LoadSpriteAsset("Data/icon-help-2.png", &IconHelp2Sprite);
-	LoadSpriteAsset("Data/icon-credits-1.png", &IconCredits1Sprite);
-	LoadSpriteAsset("Data/icon-credits-2.png", &IconCredits2Sprite);
+	LoadSpriteAsset("Assets/icon-start-1.png", &IconStart1Sprite);
+	LoadSpriteAsset("Assets/icon-start-2.png", &IconStart2Sprite);
+	LoadSpriteAsset("Assets/icon-help-1.png", &IconHelp1Sprite);
+	LoadSpriteAsset("Assets/icon-help-2.png", &IconHelp2Sprite);
+	LoadSpriteAsset("Assets/icon-credits-1.png", &IconCredits1Sprite);
+	LoadSpriteAsset("Assets/icon-credits-2.png", &IconCredits2Sprite);
 
-	LoadSpriteAsset("Data/screen-lose-1.png", &ScreenLose1Sprite);
-	LoadSpriteAsset("Data/screen-lose-2.png", &ScreenLose2Sprite);
+	LoadSpriteAsset("Assets/screen-lose-1.png", &ScreenLose1Sprite);
+	LoadSpriteAsset("Assets/screen-lose-2.png", &ScreenLose2Sprite);
 	
-	LoadSpriteAsset("Data/screen-lose-ghost.png", &ScreenLoseGhostSprite);
-	LoadSpriteAsset("Data/screen-lose-grave-1.png", &ScreenLoseGrave1Sprite);
-	LoadSpriteAsset("Data/screen-lose-grave-2.png", &ScreenLoseGrave2Sprite);
+	LoadSpriteAsset("Assets/screen-lose-ghost.png", &ScreenLoseGhostSprite);
+	LoadSpriteAsset("Assets/screen-lose-grave-1.png", &ScreenLoseGrave1Sprite);
+	LoadSpriteAsset("Assets/screen-lose-grave-2.png", &ScreenLoseGrave2Sprite);
 	
-	LoadSpriteAsset("Data/screen-win-1.png", &ScreenWin1Sprite);
-	LoadSpriteAsset("Data/screen-win-2.png", &ScreenWin2Sprite);
+	LoadSpriteAsset("Assets/screen-win-1.png", &ScreenWin1Sprite);
+	LoadSpriteAsset("Assets/screen-win-2.png", &ScreenWin2Sprite);
 
-	LoadSpriteAsset("Data/tutorial-initial.png", &TutorialInitialSprite);
-	LoadSpriteAsset("Data/tutorial-barrel.png", &TutorialBarrelSprite);
-	LoadSpriteAsset("Data/tutorial-coin.png", &TutorialCoinSprite);
-	LoadSpriteAsset("Data/tutorial-firework.png", &TutorialFireWorkSprite);
-	LoadSpriteAsset("Data/tutorial-gear.png", &TutorialGearSprite);
-	LoadSpriteAsset("Data/tutorial-tennisball.png", &TutorialBallSprite);
-	LoadSpriteAsset("Data/tutorial-jump.png", &TutorialJumpSprite);
-	LoadSpriteAsset("Data/tutorial-walljump.png", &TutorialWallJumpSprite);
+	LoadSpriteAsset("Assets/tutorial-initial.png", &TutorialInitialSprite);
+	LoadSpriteAsset("Assets/tutorial-barrel.png", &TutorialBarrelSprite);
+	LoadSpriteAsset("Assets/tutorial-coin.png", &TutorialCoinSprite);
+	LoadSpriteAsset("Assets/tutorial-firework.png", &TutorialFireWorkSprite);
+	LoadSpriteAsset("Assets/tutorial-gear.png", &TutorialGearSprite);
+	LoadSpriteAsset("Assets/tutorial-tennisball.png", &TutorialBallSprite);
+	LoadSpriteAsset("Assets/tutorial-jump.png", &TutorialJumpSprite);
+	LoadSpriteAsset("Assets/tutorial-walljump.png", &TutorialWallJumpSprite);
 	
-    LoadSpriteAsset("Data/chapter-title.png", &ChapterTitle);
+    LoadSpriteAsset("Assets/chapter-title.png", &ChapterTitle);
     
 
 	//-----------------------------------------------------------------------------------------------------------------------------------------//
 	//                                                    Sound Assets                                                                         //
 	//-----------------------------------------------------------------------------------------------------------------------------------------//
 
-	sxLoadSound("Data/dusty-to-jump.wav", &DustyToJumpSound);
-	sxLoadSound("Data/dusty-jump.wav", &DustyJumpSound);
-	sxLoadSound("Data/dusty-walljump.wav", &DustyWallJumpSound);
-	sxLoadSound("Data/dusty-launch.wav", &DustyLaunchSound);
-	sxLoadSound("Data/dusty-win.wav", &DustyWinSound);
+	sxLoadSound("Assets/dusty-to-jump.wav", &DustyToJumpSound);
+	sxLoadSound("Assets/dusty-jump.wav", &DustyJumpSound);
+	sxLoadSound("Assets/dusty-walljump.wav", &DustyWallJumpSound);
+	sxLoadSound("Assets/dusty-launch.wav", &DustyLaunchSound);
+	sxLoadSound("Assets/dusty-win.wav", &DustyWinSound);
 
-	sxLoadSound("Data/song-1.wav", &Song1Sound);
-	sxLoadSound("Data/song-2.wav", &Song2Sound);
-	sxLoadSound("Data/song-3.wav", &Song3Sound);
+	sxLoadSound("Assets/song-1.wav", &Song1Sound);
+	sxLoadSound("Assets/song-2.wav", &Song2Sound);
+	sxLoadSound("Assets/song-3.wav", &Song3Sound);
 
-	sxLoadSound("Data/vacuum-clog.wav", &VacuumClogSound);
-	sxLoadSound("Data/vacuum-clang.wav", &VacuumClangSound);
-	sxLoadSound("Data/vacuum-turnon.wav", &VacuumTurnOnSound);
-	sxLoadSound("Data/vacuum-turnoff.wav", &VacuumTurnOffSound);
-	sxLoadSound("Data/vacuum-jam.wav", &VacuumJamSound);
-	sxLoadSound("Data/vacuum-on.wav", &VacuumOnSound);
+	sxLoadSound("Assets/vacuum-clog.wav", &VacuumClogSound);
+	sxLoadSound("Assets/vacuum-clang.wav", &VacuumClangSound);
+	sxLoadSound("Assets/vacuum-turnon.wav", &VacuumTurnOnSound);
+	sxLoadSound("Assets/vacuum-turnoff.wav", &VacuumTurnOffSound);
+	sxLoadSound("Assets/vacuum-jam.wav", &VacuumJamSound);
+	sxLoadSound("Assets/vacuum-on.wav", &VacuumOnSound);
 	
-	sxLoadSound("Data/BlockBreak.wav", &BlockBreakSound);
-	sxLoadSound("Data/Jello.wav", &JelloSound);
-	sxLoadSound("Data/CoinVacuumedUp.wav", &CoinVacuumedUpSound);
-	sxLoadSound("Data/GearGrind.wav", &GearGrindSound);
-	sxLoadSound("Data/TennisBallVacuumedUp.wav", &TennisBallVacuumedUpSound);
+	sxLoadSound("Assets/BlockBreak.wav", &BlockBreakSound);
+	sxLoadSound("Assets/Jello.wav", &JelloSound);
+	sxLoadSound("Assets/CoinVacuumedUp.wav", &CoinVacuumedUpSound);
+	sxLoadSound("Assets/GearGrind.wav", &GearGrindSound);
+	sxLoadSound("Assets/TennisBallVacuumedUp.wav", &TennisBallVacuumedUpSound);
     
     double EndTime = GetCurrentTime();
     LogMessage("Asset loading took %.1f seconds.\n", EndTime-StartTime);

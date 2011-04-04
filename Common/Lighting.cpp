@@ -37,6 +37,18 @@ SLitVertex LitVerts[MAX_LIT_VERTS];
 #endif
 
 
+float LitAspectOffset;
+float LitAspectScale;
+
+float LitScreenHeight;
+
+
+// TODO: Move to SLighting.
+float LitSceneZoom = 1.0f;
+float LitSceneOffsetX = 0.0f;
+float LitSceneOffsetY = 0.0f;
+
+
 int LitRenderTargetWidth;
 int LitRenderTargetHeight;
 
@@ -1007,15 +1019,24 @@ void InitLighting()
     case GXDISPLAY_IPAD_PORTRAIT:
         LitRenderTargetWidth = 768;
         LitRenderTargetHeight = 1024;
+        LitAspectScale = 1.0f;
+        LitAspectOffset = 0.0f;
+        LitScreenHeight = 1024.0f;
         break;
     case GXDISPLAY_IPHONE_RETINA_PORTRAIT:
         LitRenderTargetWidth = 640;
         LitRenderTargetHeight = 960;
+        LitAspectScale = (640.0f/960.0f) / (768.0f/1024.0f);
+        LitAspectOffset = 0.0f; //-(1024 - (1024 * LitAspectScale)) * 0.5f;
+        LitScreenHeight = 1024 / LitAspectScale;
         break;
     default:
     case GXDISPLAY_IPHONE_PORTRAIT:
         LitRenderTargetWidth = 320;
         LitRenderTargetHeight = 480;
+        LitAspectScale = (320.0f/480.0f) / (768.0f/1024.0f);
+        LitAspectOffset = 0.0f; //-(1024 - (1024 * LitAspectScale)) * 0.5f;
+        LitScreenHeight = 1024 / LitAspectScale;
         break;
     };
     
@@ -1427,26 +1448,39 @@ void AddLitQuad(
 	Quad->NVerts = 4;
 	Quad->Verts = AllocateLitVerts(4);
 
+    // TODO: Move math to GPU, as an optimization.
+    if (List != LIGHTLIST_WIPE)
+    {
+        X0 = LitSceneOffsetX + (X0 - (gxScreenWidth/2)) * LitSceneZoom + (gxScreenWidth/2);
+        X1 = LitSceneOffsetX + (X1 - (gxScreenWidth/2)) * LitSceneZoom + (gxScreenWidth/2);
+        X2 = LitSceneOffsetX + (X2 - (gxScreenWidth/2)) * LitSceneZoom + (gxScreenWidth/2);
+        X3 = LitSceneOffsetX + (X3 - (gxScreenWidth/2)) * LitSceneZoom + (gxScreenWidth/2);
+        Y0 = LitSceneOffsetY + (Y0 - (LitScreenHeight/2)) * LitSceneZoom + (LitScreenHeight/2);
+        Y1 = LitSceneOffsetY + (Y1 - (LitScreenHeight/2)) * LitSceneZoom + (LitScreenHeight/2);
+        Y2 = LitSceneOffsetY + (Y2 - (LitScreenHeight/2)) * LitSceneZoom + (LitScreenHeight/2);
+        Y3 = LitSceneOffsetY + (Y3 - (LitScreenHeight/2)) * LitSceneZoom + (LitScreenHeight/2);
+    }
+    
 	Quad->Verts[0].X = X0;
-	Quad->Verts[0].Y = Y0;
+	Quad->Verts[0].Y = LitAspectOffset + Y0 * LitAspectScale;
 	Quad->Verts[0].U = U0 * tw;
 	Quad->Verts[0].V = V0 * th;
 	Quad->Verts[0].Color = Color;
 
 	Quad->Verts[1].X = X1;
-	Quad->Verts[1].Y = Y1;
+	Quad->Verts[1].Y = LitAspectOffset + Y1 * LitAspectScale;
 	Quad->Verts[1].U = U1 * tw;
 	Quad->Verts[1].V = V1 * th;
 	Quad->Verts[1].Color = Color;
 
 	Quad->Verts[3].X = X2;
-	Quad->Verts[3].Y = Y2;
+	Quad->Verts[3].Y = LitAspectOffset + Y2 * LitAspectScale;
 	Quad->Verts[3].U = U2 * tw;
 	Quad->Verts[3].V = V2 * th;
 	Quad->Verts[3].Color = Color;
 
 	Quad->Verts[2].X = X3;
-	Quad->Verts[2].Y = Y3;
+	Quad->Verts[2].Y = LitAspectOffset + Y3 * LitAspectScale;
 	Quad->Verts[2].U = U3 * tw;
 	Quad->Verts[2].V = V3 * th;
 	Quad->Verts[2].Color = Color;

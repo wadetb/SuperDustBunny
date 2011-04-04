@@ -33,6 +33,8 @@ struct SVacuum
 	float Y;
 
 	float Volume;
+    
+    int BlinkTimer;
 };
 
 extern SVacuum Vacuum;

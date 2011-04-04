@@ -20,7 +20,7 @@ const int VACUUM_INITIAL_TIME = 5*60;
 const int VACUUM_RETREAT_TIME = 3*60;
 const int VACUUM_UNJAM_TIME   = 1*60;
 
-const float VacuumYOffset = 200;
+const float VacuumYOffset = 100;
 
 
 void InitVacuum()
@@ -44,10 +44,21 @@ void DisplayVacuum()
 
 	if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
+        gxSprite* Sprite;
+        switch (Vacuum.BlinkTimer/6)
+        {
+            case 0: Sprite = &Vacuum1Sprite; break;
+            case 1: Sprite = &Vacuum2Sprite; break;
+            case 2: Sprite = &Vacuum3Sprite; break;
+            case 3: Sprite = &Vacuum2Sprite; break;
+            case 4: Sprite = &Vacuum1Sprite; break;
+            default: Sprite = &Vacuum1Sprite; break;
+        }
+        
 		if (Vacuum.Dir == VACUUMDIR_UP)
-			AddLitSpriteScaled(LIGHTLIST_VACUUM, &VacuumFrontSprite, 0, Vacuum.Y + ScrollY - VacuumYOffset, 1.0f, 1.0f);
+			AddLitSpriteScaled(LIGHTLIST_VACUUM, Sprite, 0, Vacuum.Y + ScrollY - VacuumYOffset, 1.0f, 1.0f);
 		else
-			AddLitSpriteScaled(LIGHTLIST_VACUUM, &VacuumFrontSprite, 0, Vacuum.Y + ScrollY + VacuumYOffset, 1.0f, -1.0f);
+			AddLitSpriteScaled(LIGHTLIST_VACUUM, Sprite, 0, Vacuum.Y + ScrollY + VacuumYOffset, 1.0f, -1.0f);
 
 		if (Chapter.PageProps.LightsOff)
 		{
@@ -136,7 +147,7 @@ void UpdateVacuum()
 	{
 		// Place the vacuum far off screen for dust purposes.
 		if (Vacuum.Dir == VACUUMDIR_UP)
-			Vacuum.Y = (float)-ScrollY + (float)gxScreenHeight + 1500;
+			Vacuum.Y = (float)-ScrollY + (float)LitScreenHeight + 1500;
 		else
 			Vacuum.Y = (float)-ScrollY - 1500;
 
@@ -149,7 +160,7 @@ void UpdateVacuum()
 
 			// Vacuum.Y is the leading edge of the vacuum.
 			if (Vacuum.Dir == VACUUMDIR_UP)
-				Vacuum.Y = (float)-ScrollY + (float)gxScreenHeight + VacuumYOffset + LightsOffset;
+				Vacuum.Y = (float)-ScrollY + (float)LitScreenHeight + VacuumYOffset + LightsOffset;
 			else
 				Vacuum.Y = (float)-ScrollY - VacuumYOffset - LightsOffset;
 
@@ -160,10 +171,6 @@ void UpdateVacuum()
 	{
 		if (Dusty.State != DUSTYSTATE_DIE)
 		{
-			// Shake the screen by adjusting ScrollY randomly.
-			int ShakeY = (rand() % 13) - 6;
-			ScrollY += ShakeY;
-
 			// The vacuum gets faster the longer it stays unclogged.
 			float VacuumSpeed;
 			if (Vacuum.Timer < 4*60)
@@ -203,6 +210,29 @@ void UpdateVacuum()
 			Vacuum.Timer = VACUUM_UNJAM_TIME;
 		}
 	}
+    
+    if (Vacuum.State == VACUUMSTATE_ONSCREEN || Vacuum.State == VACUUMSTATE_RETREAT)
+    {
+        Vacuum.BlinkTimer--;
+        if (Vacuum.BlinkTimer < 0)
+            Vacuum.BlinkTimer = 120 + rand() % 120;
+    }
+    
+    // Zoom the screen when the vacuum is on screen.
+    float TargetZoom;
+    if (Vacuum.State == VACUUMSTATE_ONSCREEN && Dusty.State != DUSTYSTATE_DIE)
+    {
+        LitSceneOffsetX = Clamp(LitSceneOffsetX + (rand() % 13) - 6, -10, 10);
+        LitSceneOffsetY = Clamp(LitSceneOffsetY + (rand() % 13) - 6, -10, 10);
+        TargetZoom = 1.1f;
+    }
+    else
+    {
+        LitSceneOffsetX = 0.0f;
+        LitSceneOffsetY = 0.0f;
+        TargetZoom = 1.0f;
+    }
+    LitSceneZoom = LitSceneZoom * 0.9f + TargetZoom * 0.1f;
 }
 
 void JamVacuum()
@@ -224,6 +254,10 @@ void TurnOffVacuum()
 		sxSetSoundVolume(&VacuumTurnOffSound, 0);
 		sxPlaySound(&VacuumTurnOffSound);
 	}
+    
+    LitSceneOffsetX = 0.0f;
+    LitSceneOffsetY = 0.0f;
+    LitSceneZoom = 1.0f;
 }
 
 void TurnOnVacuum()

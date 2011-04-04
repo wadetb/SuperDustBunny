@@ -77,7 +77,7 @@ void DisplayDust()
 	if (DevMode)
 	{
 		float StepX = (float)gxScreenWidth / WIND_WIDTH;
-		float StepY = (float)gxScreenHeight / WIND_HEIGHT;
+		float StepY = (float)LitScreenHeight / WIND_HEIGHT;
 
 		for (int x = 0; x < WIND_WIDTH; x++)
 		{
@@ -144,7 +144,7 @@ void UpdateDust()
 
 		// Map mote position onto wind grid.
 		//int WindX = (int)(Mote->X / gxScreenWidth * WIND_WIDTH);
-		//int WindY = (int)((Mote->Y + ScrollY*Mote->Depth) / gxScreenHeight * WIND_HEIGHT);
+		//int WindY = (int)((Mote->Y + ScrollY*Mote->Depth) / LitScreenHeight * WIND_HEIGHT);
 
 		//if (WindX < 0) WindX = 0;
 		//if (WindX >= WIND_WIDTH) WindX = WIND_WIDTH-1;
@@ -177,11 +177,11 @@ void UpdateDust()
 		if (Mote->Time >= Mote->Life || Mote->X >= gxScreenWidth || Mote->X < 0 )
 		{
 			Recycle = true;
-			Mote->Y = Random(0.0f, (float)gxScreenHeight) - (float)ScrollY;
+			Mote->Y = Random(0.0f, (float)LitScreenHeight) - (float)ScrollY;
 		}
 
 		// If it's gone off the bottom of the screen, reintroduce it at the top.
-		if (Mote->Y + ScrollY*Mote->Depth > gxScreenHeight + 50)
+		if (Mote->Y + ScrollY*Mote->Depth > LitScreenHeight + 50)
 		{
 			Recycle = true;
 			Mote->Y = Random(-100.0f, 100.0f) - (float)ScrollY;
@@ -191,7 +191,7 @@ void UpdateDust()
 		if (Mote->Y + ScrollY*Mote->Depth < -50)
 		{
 			Recycle = true;
-			Mote->Y = Random(gxScreenHeight-100.0f, gxScreenHeight+100.0f) - (float)ScrollY;
+			Mote->Y = Random(LitScreenHeight-100.0f, LitScreenHeight+100.0f) - (float)ScrollY;
 		}
 
 		// Recycle this dust mote with new parameters if requested.

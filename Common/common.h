@@ -80,25 +80,26 @@ inline float DirectionToAngle(float a)
 inline float Max(float a, float b)
 {
 	if (a > b)
-	{
 		return a;
-	}
 	else
-	{
 		return b;
-	}
 }
 
 inline float Min(float a, float b)
 {
 	if ( a < b)
-	{
 		return a;
-	}
 	else
-	{
 		return b;
-	}
+}
+
+inline float Clamp(float a, float mn, float mx)
+{
+    if (a < mn)
+        return mn;
+    if (a > mx)
+        return mx;
+    return a;
 }
 
 inline float Length(float dx, float dy)

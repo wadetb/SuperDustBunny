@@ -753,14 +753,14 @@ void DisplayGame_Playing()
     
     DisplayDebug();
     
-	//Display Pause
+	// Display buttons
     if (GamePause)
     {
-        AddLitSpriteCenteredScaledAlpha( LIGHTLIST_VACUUM, &ButtonPlaySprite, gxScreenWidth/2, 64, 1.0f, 1.0f);
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonPlaySprite, gxScreenWidth/2, 64, 1.0f, 1.0f);
         DisplayPauseScreen();
     }
     else
-        AddLitSpriteCenteredScaledAlpha( LIGHTLIST_VACUUM, &ButtonPauseSprite, gxScreenWidth/2, 64, 1.0f, 1.0f);
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonPauseSprite, gxScreenWidth/2, 64, 1.0f, 1.0f);
         
 	// Lighting effects.
 	DisplayFlashlight();
@@ -808,7 +808,7 @@ void UpdateGame_Playing()
     }
 #endif
     
-    // TODO: GamePause should actually stop the update and display loop, to reduce battery life.
+    // TODO: GamePause should actually stop the update and display loop, to reduce battery use.
 	if (GamePause)
     {
         UpdatePauseScreen();
@@ -834,15 +834,6 @@ void UpdateGame_Playing()
     UpdateDust();
     UpdateDebris();
     UpdateVacuum(); 
-    
-    ////In The future this can be a function that will determine if it is the first page.
-
-    //if(ChapterTitleIntro)
-    //{	
-    //    ChapterTitleIntro = false;
-    //    SetGameState_ChapterIntro();
-    //    return;
-    //}  
 }
 
 void SetGameState_Tutorial(int State)
@@ -860,6 +851,10 @@ void SetGameState_Transition(EGameTransition Type)
 {
 	GameTransition = Type;
 
+    LitSceneOffsetX = 0.0f;
+    LitSceneOffsetY = 0.0f;
+    LitSceneZoom = 1.0f;
+    
 	if (GameTransition == GAMETRANSITION_FIRST_PAGE)
 	{
 		StartWipe(WIPE_FADE_TO_BLACK, 2.0f);
@@ -1084,7 +1079,7 @@ void Display()
 
     UpdateFPS();
     
-	gxDrawString(5, 5, 16, gxRGB32(255, 255, 255), "FPS: %.0f", FPS);
+	gxDrawString(5, gxScreenHeight-16, 16, gxRGB32(255, 255, 255), "FPS: %.0f", FPS);
 
 	//gxDrawString(msX-8, msY-8, 16, gxRGB32(255, 255, 255), "X");
 }

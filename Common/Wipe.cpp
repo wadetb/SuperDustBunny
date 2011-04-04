@@ -55,8 +55,8 @@ void DisplayWipe()
         AddLitQuad(LIGHTLIST_WIPE, &WipeDiagonalSprite, gxRGBA32(0, 0, 0, 255),
            TopX1, 0,                       0.0f, 0.0f, 
            TopX2, 0,                       1.0f, 0.0f,
-           BotX2, (float)gxScreenHeight,   1.0f, 1.0f, 
-           BotX1, (float)gxScreenHeight,   0.0f, 1.0f);
+           BotX2, (float)LitScreenHeight,  1.0f, 1.0f, 
+           BotX1, (float)LitScreenHeight,  0.0f, 1.0f);
 	}
 	else
 	if (Wipe.Type == WIPE_FADE_TO_BLACK)
@@ -66,8 +66,8 @@ void DisplayWipe()
         AddLitQuad(LIGHTLIST_WIPE, &WhiteSprite, gxRGBA32(0, 0, 0, Alpha),
 			0,                    0,                       0.0f, 0.0f, 
 			(float)gxScreenWidth, 0,                       1.0f, 0.0f,
-			(float)gxScreenWidth, (float)gxScreenHeight,   1.0f, 1.0f, 
-			0,                    (float)gxScreenHeight,   0.0f, 1.0f);
+			(float)gxScreenWidth, (float)LitScreenHeight,  1.0f, 1.0f, 
+			0,                    (float)LitScreenHeight,  0.0f, 1.0f);
 	}
 	else
 	if (Wipe.Type == WIPE_FADE_TO_WHITE)
@@ -81,8 +81,8 @@ void DisplayWipe()
         AddLitQuad(LIGHTLIST_WIPE, &WhiteSprite, gxRGBA32(255, 255, 255, Alpha),
 			0,                    0,                       0.0f, 0.0f, 
 			(float)gxScreenWidth, 0,                       1.0f, 0.0f,
-			(float)gxScreenWidth, (float)gxScreenHeight,   1.0f, 1.0f, 
-			0,                    (float)gxScreenHeight,   0.0f, 1.0f);
+			(float)gxScreenWidth, (float)LitScreenHeight,  1.0f, 1.0f, 
+			0,                    (float)LitScreenHeight,  0.0f, 1.0f);
 	}
 }
 
