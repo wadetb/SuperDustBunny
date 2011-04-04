@@ -14,6 +14,7 @@
 @interface SettingsViewController : UIViewController {
 @private
     
+    UISegmentedControl *controlScheme;
     UISegmentedControl *tiltSensitivity;
     UISwitch *continuousJump;
     UISwitch *fallGracePeriod;
@@ -24,6 +25,7 @@
 
 @property (nonatomic, retain) IBOutlet SuperDustBunnyViewController *mainViewController;
 
+@property (nonatomic, retain) IBOutlet UISegmentedControl *controlScheme;
 @property (nonatomic, retain) IBOutlet UISegmentedControl *tiltSensitivity;
 @property (nonatomic, retain) IBOutlet UISwitch *continuousJump;
 @property (nonatomic, retain) IBOutlet UISwitch *fallGracePeriod;
@@ -32,6 +34,7 @@
 @property (nonatomic, retain) IBOutlet UISwitch *disableVacuum;
 
 - (IBAction)done:(id)sender;
+- (IBAction)controlSchemeChanged:(id)sender;
 - (IBAction)tiltSensitivityChanged:(id)sender;
 - (IBAction)continuousJumpChanged:(id)sender;
 - (IBAction)fallGracePeriodChanged:(id)sender;

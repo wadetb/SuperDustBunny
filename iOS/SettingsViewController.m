@@ -14,6 +14,7 @@
 @implementation SettingsViewController
 
 @synthesize mainViewController;
+@synthesize controlScheme;
 @synthesize tiltSensitivity;
 @synthesize continuousJump;
 @synthesize fallGracePeriod;
@@ -34,11 +35,11 @@
 {
     [tiltSensitivity release];
     [continuousJump release];
-    [continuousJump release];
     [fallGracePeriod release];
     [doubleJump release];
     [infiniteLives release];
     [disableVacuum release];
+    [controlScheme release];
     [super dealloc];
 }
 
@@ -75,6 +76,10 @@
     [[self mainViewController] hideSettings];
 }
 
+- (IBAction)controlSchemeChanged:(id)sender {
+    tiltSensitivity.enabled = controlScheme.selectedSegmentIndex == 0;
+}
+
 - (IBAction)tiltSensitivityChanged:(id)sender {
 }
 
@@ -98,6 +103,7 @@
 }
 
 - (void)transferSettingsToView {
+    controlScheme.selectedSegmentIndex = Settings.ControlStyle == CONTROL_TILT ? 0 : 1;
     tiltSensitivity.selectedSegmentIndex = Settings.TiltSensitivity;
     continuousJump.on = Settings.ContinuousJump;
     fallGracePeriod.on = Settings.FallGracePeriod;
@@ -109,6 +115,7 @@
 }
 
 - (void)transferSettingsFromView {
+    Settings.ControlStyle = controlScheme.selectedSegmentIndex == 0 ? CONTROL_TILT : CONTROL_SWIPE;
     Settings.TiltSensitivity = tiltSensitivity.selectedSegmentIndex;
     Settings.ContinuousJump = continuousJump.on;
     Settings.FallGracePeriod = fallGracePeriod.on;
