@@ -169,11 +169,9 @@ const char* ShadowVertexShaderSource =
 "\n"
 "SVertexOutput main(SVertexInput VertexInput)\n"
 "{\n"
-"	float2 ScreenScale = float2(1.0/768.0, 1.0/1024.0);\n"
-"\n"
 "	SVertexOutput VertexOutput;\n"
 "	float2 Position = VertexInput.Position + ShadowOffset;\n"
-"	VertexOutput.Position = float4(Position.x*ScreenScale.x*2-1, (1-Position.y*ScreenScale.y)*2-1, 0, 1);\n"
+"	VertexOutput.Position = float4(Position.x/768.0*2-1, (1-Position.y/1024)*2-1, 0, 1);\n"
 "	VertexOutput.TexCoord0 = VertexInput.TexCoord0;\n"
 "	return VertexOutput;\n"
 "}\n";
@@ -719,8 +717,15 @@ void InitShadows()
 	gxCreateRenderTarget(LitRenderTargetWidth/4, LitRenderTargetHeight/4, &ShadowPingRT, true);
 	gxCreateRenderTarget(LitRenderTargetWidth/4, LitRenderTargetHeight/4, &ShadowPongRT, true);
 
+#ifdef PLATFORM_WINDOWS
+	gxCreateRenderTarget(LitRenderTargetWidth, LitRenderTargetHeight, &ShadowForegroundRT, true);
+	gxCreateRenderTarget(LitRenderTargetWidth, LitRenderTargetHeight, &ShadowVacuumRT, true);
+#endif
+
+#ifdef PLATFORM_IPHONE
 	gxCreateRenderTarget(LitRenderTargetWidth/2, LitRenderTargetHeight/2, &ShadowForegroundRT, true);
 	gxCreateRenderTarget(LitRenderTargetWidth/2, LitRenderTargetHeight/2, &ShadowVacuumRT, true);
+#endif
 }
 
 void DrawShadows(ELightList List, gxSprite* FinalRT, float ShadowOffsetX, float ShadowOffsetY)
@@ -835,7 +840,7 @@ void RenderShadows(gxSprite* FinalRT)
 	_gxDrawQuad(0, 0, (float)gxScreenWidth, (float)gxScreenHeight, gxRGBA32(255,255,255,255), 0, 1, 1, 0);
 #endif
 #ifdef PLATFORM_WINDOWS
-	_gxDrawQuad(0, 0, (float)gxScreenWidth, (float)gxScreenHeight, gxRGBA32(255,255,255,255), 0, 0, 1, 1);
+	_gxDrawQuad(0, 0, (float)gxScreenWidth/2, (float)gxScreenHeight/2, gxRGBA32(255,255,255,255), 0, 0, 1, 1);
 #endif
 }
 
@@ -1012,6 +1017,9 @@ void InitLighting()
 #ifdef PLATFORM_WINDOWS
     LitRenderTargetWidth = 320;
     LitRenderTargetHeight = 480;
+	LitAspectScale = 1.0f;
+	LitAspectOffset = 0.0f;
+	LitScreenHeight = 1024;
     
 	gxDev->CreateVertexDeclaration(LitVertexElements, &LitVertexDecl);
     

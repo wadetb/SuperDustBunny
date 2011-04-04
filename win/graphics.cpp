@@ -733,6 +733,15 @@ void gxSetRenderTarget(gxSprite* Sprite)
 	}
 	gxDev->SetRenderTarget(0, Surf);
 	Surf->Release();
+
+	D3DVIEWPORT9 vp;
+	vp.X      = 0;
+	vp.Y      = 0;
+	vp.Width  = Sprite ? Sprite->width : gxScreenWidth;
+	vp.Height = Sprite ? Sprite->height : gxScreenHeight;
+	vp.MinZ   = 0.0f;
+	vp.MaxZ   = 1.0f;
+	gxDev->SetViewport(&vp);
 }
 
 void gxClearColor(unsigned int Color)
