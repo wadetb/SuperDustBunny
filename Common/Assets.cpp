@@ -314,7 +314,7 @@ void LoadSpriteAsset(const char* FileName, gxSprite* Sprite)
             Sprite->texHeight = SpriteAsset->TexHeight;
 
             char work[1024];
-            gxGetResourceFileName(SpriteAsset->RawFileName, work, sizeof(work));
+            GetAssetFileName(SpriteAsset->RawFileName, work, sizeof(work));
 
             gzFile RawFile = gzopen(work, "rb");
 
