@@ -9,10 +9,8 @@
 #include "Stapler.h"
 
 
-const float JumpPower = 18.0f;
-
-
 SDusty Dusty;
+SStapler Stapler;
 
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -233,7 +231,7 @@ void UpdateDusty_Stand()
     }
     else
     {
-        if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f, JumpPower) )
+        if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f, 10.0f) )
             return;
         
         if ( UpdateDusty_CheckSwipeDir(0.0f, 45.0f) )
@@ -381,7 +379,7 @@ void UpdateDusty_Jump()
         }
         else
         {
-            if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f, JumpPower) )
+            if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f, 10.0f) )
             {
                 Dusty.JumpGraceTimer = 0;
                 
@@ -507,7 +505,7 @@ void UpdateDusty_Hop()
     }
     else
     {
-        if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f, JumpPower) )
+        if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f, 10.0f) )
             return;
         
         float VX, VY;
@@ -624,8 +622,7 @@ void UpdateDusty_JumpCommon()
     {
         float dX, dY;
         GetInput_NextSwipeDir(&dX, &dY);
-
-#if 0
+        
         float L = sqrtf(dX*dX + dY*dY);
         if (L > 5.0f)
         {
@@ -634,17 +631,17 @@ void UpdateDusty_JumpCommon()
             if (fabsf(Dusty.FloatVelocityY) < 10)
                 Dusty.FloatVelocityY += dY / 20.0f;
         }
-#endif
-#if 1
-        if (dX < 0)
+        
+#if 0
+        if (VX < 0)
         {
             if (Dusty.FloatVelocityX >= -6)
-                Dusty.FloatVelocityX -= 1.0f;
+                Dusty.FloatVelocityX -= 3.0f;
         }
-        if (dX > 0)
+        if (VX > 0)
         {
             if (Dusty.FloatVelocityX <= 6)
-                Dusty.FloatVelocityX += 1.0f;
+                Dusty.FloatVelocityX += 3.0f;
         }
 #endif
     }
@@ -831,13 +828,13 @@ void UpdateDusty_WallJump()
 
         if ( Dusty.Direction == DIRECTION_RIGHT )
         {
-            if ( UpdateDusty_CheckSwipeJump(0.0f, 90.0f, JumpPower) )
+            if ( UpdateDusty_CheckSwipeJump(0.0f, 90.0f, 10.0f) )
                 return;
         }
         
         if ( Dusty.Direction == DIRECTION_LEFT )
         {
-            if ( UpdateDusty_CheckSwipeJump(180.0f, 90.0f, JumpPower) )
+            if ( UpdateDusty_CheckSwipeJump(180.0f, 90.0f, 10.0f) )
                 return;
             
         }
@@ -926,9 +923,9 @@ void UpdateDusty_CornerJump()
         // Get up and walk by pressing direction towards corner.
         if ( Dusty.Direction == DIRECTION_LEFT )
         {
-            if ( UpdateDusty_CheckSwipeJump(135.0f, 45.0f, JumpPower) )
+            if ( UpdateDusty_CheckSwipeJump(135.0f, 45.0f, 10.0f) )
                 return;
-            if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f, JumpPower) )
+            if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f, 10.0f) )
                 return;
             
             if ( UpdateDusty_CheckSwipeDir(225.0f, 45.0f) )
@@ -948,9 +945,9 @@ void UpdateDusty_CornerJump()
         }
         else
         {
-            if ( UpdateDusty_CheckSwipeJump(45.0f, 45.0f, JumpPower) )
+            if ( UpdateDusty_CheckSwipeJump(45.0f, 45.0f, 10.0f) )
                 return;
-            if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f, JumpPower) )
+            if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f, 10.0f) )
                 return;
             
             if ( UpdateDusty_CheckSwipeDir(-45.0f, 45.0f) )
@@ -1207,10 +1204,8 @@ void DisplayDusty_StaplerLaunch()
 
 void UpdateDusty_StaplerLaunch()
 {
-	//Dusty.FloatY += Dusty.FloatY * Stapler.PowerJump;
-
-	Dusty.FloatVelocityY += Dusty.FloatGravity * 0.75f;
-
+    Dusty.FloatVelocityY *= 0.99f;
+    
 	UpdateDusty_JumpCommon();
 }
 

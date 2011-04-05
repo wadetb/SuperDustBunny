@@ -41,6 +41,7 @@ void CreateStapler(int X, int Y)
 	Stapler->CollideWithTopSide = false;
 
 	Stapler->CanLaunch = true;
+	Stapler->TimerWait = 0;
 
     Stapler->State = STAPLERSTATE_WAIT;
 }
@@ -64,22 +65,20 @@ void DisplayStaplers()
         {
             AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &StaplerDownSprite, Stapler->X, Stapler->Y + ScrollY - 30, 1.0f, 0.0f);
             
-   //         switch(Stapler->PowerJumpCounter)
-   //         {
-   //         case 10: AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump1Sprite, Stapler->X + 50, Stapler->Y, 0, 0, 54, 63); break;
-   //         case 20: AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &PowerJump2Sprite, Stapler->X + 50, (Stapler->Y + 10), 1.0f, 0.0f); break;
-   //         case 30: AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &PowerJump3Sprite, Stapler->X + 50, (Stapler->Y + 20), 1.0f, 0.0f); break;
-   //         case 40: AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &PowerJump4Sprite, Stapler->X + 50, (Stapler->Y + 30), 1.0f, 0.0f); break;
-   //         case 50: AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &PowerJump5Sprite, Stapler->X + 50, (Stapler->Y + 40), 1.0f, 0.0f); break;
-   //         case 60: AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &PowerJump6Sprite, Stapler->X + 50, (Stapler->Y + 50), 1.0f, 0.0f); break;
-   //         case 70: AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &PowerJump7Sprite, Stapler->X + 50, (Stapler->Y + 60), 1.0f, 0.0f); break;
-   //         case 80: AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &PowerJump8Sprite, Stapler->X + 50, (Stapler->Y + 70), 1.0f, 0.0f); break;
-   //         case 90: AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &PowerJump9Sprite, Stapler->X + 50, (Stapler->Y + 80), 1.0f, 0.0f); break;
-   //         case 100: AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &PowerJump10Sprite, Stapler->X + 50, (Stapler->Y + 90), 1.0f, 0.0f); break;
-			//case 0:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 0, 0, 54, 63); break;        
-			//case 1:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 54, 0, 74, 63); break;
-   //         default: continue;
-   //         }
+            switch(Stapler->PowerJumpCounter)
+            {
+            case 10: AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump1Sprite, Stapler->X + 50, Stapler->Y, 2, 0, 13, 110); break;
+            case 20: AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump2Sprite, Stapler->X + 50, (Stapler->Y + 10), 14, 0, 26, 110); break;
+            case 30: AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump3Sprite, Stapler->X + 50, (Stapler->Y + 20), 27, 0, 40, 110); break;
+            case 40: AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump4Sprite, Stapler->X + 50, (Stapler->Y + 30), 40, 0, 53, 110); break;
+            case 50: AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump5Sprite, Stapler->X + 50, (Stapler->Y + 40), 54, 0, 65, 110); break;
+            case 60: AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump6Sprite, Stapler->X + 50, (Stapler->Y + 50), 67, 0, 78, 110); break;
+            case 70: AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump7Sprite, Stapler->X + 50, (Stapler->Y + 60), 80, 0, 92, 110); break;
+            case 80: AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump8Sprite, Stapler->X + 50, (Stapler->Y + 70), 93, 0, 104, 110); break;
+            case 90: AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump9Sprite, Stapler->X + 50, (Stapler->Y + 80), 106, 0, 118, 110); break;
+            case 100: AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump10Sprite, Stapler->X + 50, (Stapler->Y + 90), 119, 0, 130, 110); break;
+            default: continue;
+            }
         }
         else if (Stapler->State == STAPLERSTATE_LAUNCH)
         {
@@ -131,30 +130,41 @@ void UpdateStaplers()
             {
                 switch(Stapler->PowerJumpCounter)
                 {
-                case 10: Stapler->PowerJump = 20.0f; break;
+                case 10: Stapler->PowerJump = 10.0f; break;
                 case 20: Stapler->PowerJump = 20.0f; break;
-                case 30: Stapler->PowerJump = 20.0f; break;
-                case 40: Stapler->PowerJump = 20.0f; break;
-                case 50: Stapler->PowerJump = 20.0f; break;
-                case 60: Stapler->PowerJump = 20.0f; break;
-                case 70: Stapler->PowerJump = 20.0f; break;
-                case 80: Stapler->PowerJump = 20.0f; break;
-                case 90: Stapler->PowerJump = 20.0f; break;
-                case 100: Stapler->PowerJump = 20.0f; break;
+                case 30: Stapler->PowerJump = 30.0f; break;
+                case 40: Stapler->PowerJump = 40.0f; break;
+                case 50: Stapler->PowerJump = 50.0f; break;
+                case 60: Stapler->PowerJump = 60.0f; break;
+                case 70: Stapler->PowerJump = 70.0f; break;
+                case 80: Stapler->PowerJump = 80.0f; break;
+                case 90: Stapler->PowerJump = 90.0f; break;
+                case 100: Stapler->PowerJump = 100.0f; break;
                 default: break;
                 }
               
                 Stapler->State = STAPLERSTATE_LAUNCH; 
-            }
+            }        
+        }
         
-            if (Stapler->State == STAPLERSTATE_LAUNCH)
-            {
-                SetDustyState_StaplerLaunch();
-                Stapler->PowerJumpCounter = 0;
-                Stapler->PowerJump = 0;
-				Stapler->CanLaunch = false;
-            }      
-        }             
+        if (Stapler->State == STAPLERSTATE_LAUNCH)
+        {        
+            Stapler->State = STAPLERSTATE_WAIT;
+            Stapler->CanLaunch = false;
+            Stapler->TimerWait = 500;
+            Stapler->PowerJumpCounter = 0;
+            Stapler->PowerJump = 0;
+            SetDustyState_StaplerLaunch();      
+        }
+        
+        if (Stapler->TimerWait == 0)
+        {
+            Stapler->CanLaunch = true;
+        }
+        else
+        {
+            Stapler->TimerWait --;
+        }                    
     }  
 #endif
 }

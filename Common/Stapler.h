@@ -44,6 +44,8 @@ struct SStapler
 	bool CollideWithTopSide;
 
 	bool CanLaunch;
+	
+	int TimerWait;
 };
 
 void CreateStapler(int X, int Y);
