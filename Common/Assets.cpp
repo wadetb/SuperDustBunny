@@ -492,16 +492,16 @@ void LoadAssets()
     LoadSpriteAsset("Assets/staplerup.png", &StaplerUpSprite);
     LoadSpriteAsset("Assets/staplerdown.png", &StaplerDownSprite);
     
-    LoadSpriteAsset("Assets/powerjump1sprite.png", &PowerJump1Sprite);
-    LoadSpriteAsset("Assets/powerjump2sprite.png", &PowerJump2Sprite);
-    LoadSpriteAsset("Assets/powerjump3sprite.png", &PowerJump3Sprite);
-    LoadSpriteAsset("Assets/powerjump4sprite.png", &PowerJump4Sprite);
-    LoadSpriteAsset("Assets/powerjump5sprite.png", &PowerJump5Sprite);
-    LoadSpriteAsset("Assets/powerjump6sprite.png", &PowerJump6Sprite);
-    LoadSpriteAsset("Assets/powerjump7sprite.png", &PowerJump7Sprite);
-    LoadSpriteAsset("Assets/powerjump8sprite.png", &PowerJump8Sprite);
-    LoadSpriteAsset("Assets/powerjump9sprite.png", &PowerJump9Sprite);
-    LoadSpriteAsset("Assets/powerjump10sprite.png", &PowerJump10Sprite);
+    LoadSpriteAsset("Assets/power-jump.png", &PowerJump1Sprite);
+    LoadSpriteAsset("Assets/power-jump.png", &PowerJump2Sprite);
+    LoadSpriteAsset("Assets/power-jump.png", &PowerJump3Sprite);
+    LoadSpriteAsset("Assets/power-jump.png", &PowerJump4Sprite);
+    LoadSpriteAsset("Assets/power-jump.png", &PowerJump5Sprite);
+    LoadSpriteAsset("Assets/power-jump.png", &PowerJump6Sprite);
+    LoadSpriteAsset("Assets/power-jump.png", &PowerJump7Sprite);
+    LoadSpriteAsset("Assets/power-jump.png", &PowerJump8Sprite);
+    LoadSpriteAsset("Assets/power-jump.png", &PowerJump9Sprite);
+    LoadSpriteAsset("Assets/power-jump.png", &PowerJump10Sprite);
 
 	LoadSpriteAsset("Assets/dust-mote.png", &DustMoteSprite);
 	LoadSpriteAsset("Assets/dust-arrow.png", &DustArrowSprite);

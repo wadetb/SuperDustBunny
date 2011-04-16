@@ -767,6 +767,7 @@ void DisplayGame_Playing()
 	DisplayDebris();
 	DisplayStaplers();
 
+	
 	// Dusty Drawing
 	DisplayDusty();
 	
