@@ -149,7 +149,7 @@ void GetAssetFileName(const char* FileName, char* Buf, int BufSize)
 
 	CFRelease(url);
 
-	snprintf(Buf, sizeof(BufSize), "%s/%s", (char*)BundlePath, FileName);
+	snprintf(Buf, BufSize, "%s/%s", (char*)BundlePath, FileName);
 #endif
 
 #ifdef PLATFORM_WINDOWS
