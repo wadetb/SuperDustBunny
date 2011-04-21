@@ -1204,8 +1204,8 @@ void DisplayDusty_StaplerLaunch()
 
 void UpdateDusty_StaplerLaunch()
 {
-    Dusty.FloatY -= 40.0f;
-    Dusty.FloatVelocityY = -32.0f;
+    Dusty.FloatY -= 20.0f;
+    Dusty.FloatVelocityY = -16.0f;
     //Dusty.FloatVelocityY = Stapler.PowerJump;
 	UpdateDusty_JumpCommon();
 }
