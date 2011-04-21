@@ -82,26 +82,33 @@ void UpdateDusty_JumpCommon();
 
 bool UpdateDusty_CheckSwipeJump(float Angle, float Range, float Power)
 {
-    if ( GetInput_CheckSwipeDir( Angle, Range ) )
+    while (GetInput_SwipeValid())
     {
-        float dX, dY;
-        GetInput_NextSwipeDir(&dX, &dY);
+        if ( GetInput_CheckSwipeDir( Angle, Range ) )
+        {
+            float dX, dY;
+            GetInput_NextSwipeDir(&dX, &dY);
+            
+            float L = Length(dX, dY);
+            dX /= L;
+            dY /= L;
+            
+            dX *= Power;
+            dY *= Power;
+            
+            GetInput_ConsumeSwipe(Length(dX, dY));
+            
+            SetDustyState_JumpWithVelocity(dX, dY);
+            
+            AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle+Range))*100, Dusty.FloatY + -sinf(DegreesToRadians(Angle+Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
+            AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle-Range))*100, Dusty.FloatY + -sinf(DegreesToRadians(Angle-Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
+            
+            AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + dX*10, Dusty.FloatY + dY*10 + ScrollY, gxRGB32(192, 128, 128), 0.5f);
+            
+            return true;
+        }
         
-        float L = Length(dX, dY);
-        dX /= L;
-        dY /= L;
-        
-        dX *= Power;
-        dY *= Power;
-        
-        SetDustyState_JumpWithVelocity(dX, dY);
-
-        AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle+Range))*100, Dusty.FloatY + -sinf(DegreesToRadians(Angle+Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
-        AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle-Range))*100, Dusty.FloatY + -sinf(DegreesToRadians(Angle-Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
-        
-        AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + dX*10, Dusty.FloatY + dY*10 + ScrollY, gxRGB32(192, 128, 128), 0.5f);
-        
-        return true;
+        GetInput_ConsumeSwipeSegment();
     }
     
     return false;
@@ -231,7 +238,9 @@ void UpdateDusty_Stand()
     }
     else
     {
-        if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f, 10.0f) )
+        // WTB - Testing a version without hopping, just jumping.
+#ifdef ALLOW_HOP
+        if ( UpdateDusty_CheckSwipeJump(90.0f, 90.0f, 10.0f) )
             return;
         
         if ( UpdateDusty_CheckSwipeDir(0.0f, 45.0f) )
@@ -244,6 +253,10 @@ void UpdateDusty_Stand()
             SetDustyState_Hop(DIRECTION_LEFT);
             return;
         }
+#else
+        if ( UpdateDusty_CheckSwipeJump(90.0f, 180.0f, 10.0f) )
+            return;
+#endif
     }
     
 	if (Dusty.CollideWithBottomSide == false)
@@ -379,6 +392,7 @@ void UpdateDusty_Jump()
         }
         else
         {
+#ifdef ALLOW_HOP
             if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f, 10.0f) )
             {
                 Dusty.JumpGraceTimer = 0;
@@ -389,6 +403,7 @@ void UpdateDusty_Jump()
                 
                 return;
             }
+#endif
         }
     }
     
@@ -505,6 +520,7 @@ void UpdateDusty_Hop()
     }
     else
     {
+#ifdef ALLOW_HOP
         if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f, 10.0f) )
             return;
         
@@ -528,6 +544,7 @@ void UpdateDusty_Hop()
                 Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
             }
         }
+#endif
     }
 
 	// Update animation
@@ -632,18 +649,7 @@ void UpdateDusty_JumpCommon()
                 Dusty.FloatVelocityY += dY / 20.0f;
         }
         
-#if 0
-        if (VX < 0)
-        {
-            if (Dusty.FloatVelocityX >= -6)
-                Dusty.FloatVelocityX -= 3.0f;
-        }
-        if (VX > 0)
-        {
-            if (Dusty.FloatVelocityX <= 6)
-                Dusty.FloatVelocityX += 3.0f;
-        }
-#endif
+        GetInput_ConsumeSwipe(1.5f*Length(Dusty.FloatVelocityX, Dusty.FloatVelocityY));
     }
 
     if (Dusty.FloatVelocityX > 0)
@@ -819,13 +825,26 @@ void UpdateDusty_WallJump()
     }
     else
     {
+#ifdef ALLOW_HOP
         // Swipe down to fall.
         if ( UpdateDusty_CheckSwipeDir( -90.0f, 20.0f ) )
         {            
             SetDustyState_Fall();
             return;                
         }
-
+        
+        if ( Dusty.Direction == DIRECTION_RIGHT )
+        {
+            if ( UpdateDusty_CheckSwipeJump(0.0f, 45.0f, 10.0f) )
+                return;
+        }
+        
+        if ( Dusty.Direction == DIRECTION_LEFT )
+        {
+            if ( UpdateDusty_CheckSwipeJump(180.0f, 45.0f, 10.0f) )
+                return;
+        }
+#else
         if ( Dusty.Direction == DIRECTION_RIGHT )
         {
             if ( UpdateDusty_CheckSwipeJump(0.0f, 90.0f, 10.0f) )
@@ -836,8 +855,8 @@ void UpdateDusty_WallJump()
         {
             if ( UpdateDusty_CheckSwipeJump(180.0f, 90.0f, 10.0f) )
                 return;
-            
-        }
+        }        
+#endif
     }
 }	
 
@@ -922,7 +941,8 @@ void UpdateDusty_CornerJump()
         // Let go of wall by pressing direction away from corner.
         // Get up and walk by pressing direction towards corner.
         if ( Dusty.Direction == DIRECTION_LEFT )
-        {
+        {            
+#ifdef ALLOW_HOP
             if ( UpdateDusty_CheckSwipeJump(135.0f, 45.0f, 10.0f) )
                 return;
             if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f, 10.0f) )
@@ -942,9 +962,14 @@ void UpdateDusty_CornerJump()
                 SetDustyState_Hop(DIRECTION_RIGHT);
                 return;
             }
+#else
+            if ( UpdateDusty_CheckSwipeJump(135.0f, 135.0f, 10.0f) )
+                return;
+#endif
         }
         else
         {
+#ifdef ALLOW_HOP
             if ( UpdateDusty_CheckSwipeJump(45.0f, 45.0f, 10.0f) )
                 return;
             if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f, 10.0f) )
@@ -964,6 +989,10 @@ void UpdateDusty_CornerJump()
                 SetDustyState_Hop(DIRECTION_LEFT);
                 return;                
             }
+#else
+            if ( UpdateDusty_CheckSwipeJump(45.0f, 135.0f, 10.0f) )
+                return;
+#endif
         }
     }
 }	
@@ -996,6 +1025,8 @@ void DisplayDusty_PrepareLaunch()
 
 void UpdateDusty_PrepareLaunch()
 {
+    while (GetInput_SwipeValid())
+        GetInput_ConsumeSwipeSegment();
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -1204,8 +1235,8 @@ void DisplayDusty_StaplerLaunch()
 
 void UpdateDusty_StaplerLaunch()
 {
-    Dusty.FloatY -= 20.0f;
-    Dusty.FloatVelocityY = -16.0f;
+    Dusty.FloatY -= 40.0f;
+    Dusty.FloatVelocityY = -32.0f;
     //Dusty.FloatVelocityY = Stapler.PowerJump;
 	UpdateDusty_JumpCommon();
 }

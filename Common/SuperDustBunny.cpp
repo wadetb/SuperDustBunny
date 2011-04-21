@@ -138,7 +138,9 @@ void Exit()
 	sxDeinit();
 }
 
-
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                      Asset file loading (platform specific)                                             //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 void GetAssetFileName(const char* FileName, char* Buf, int BufSize)
 {
 #ifdef PLATFORM_IPHONE
@@ -172,6 +174,9 @@ FILE* OpenAssetFile(const char* FileName, const char* Mode)
 }
 
 
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                      Error handling (platform specific)                                                 //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
 #define MAX_ERROR_CONTEXT 10
 
@@ -493,21 +498,6 @@ void UpdateSwipe()
     if (Settings.ControlStyle != CONTROL_SWIPE)
         return;
 
-    // Consume old points.
-    if (Swipe.Valid)
-    {
-        for (int i = 0; i < Swipe.Count-1; i++)
-            SwipePoints[i] = SwipePoints[i+1];
-        
-        Swipe.Count--;
-        
-        if (Swipe.Count <= 1)
-        {
-            Swipe.Count = 0;
-            Swipe.Valid = false;
-        }
-    }
-    
     // Add new ones.
     if (!Swipe.Active)
     {
@@ -580,6 +570,65 @@ bool GetInput_CheckSwipeDir(float Angle, float Range)
     float cR = cosf(Range);
     
     return Dot >= cR;
+}
+
+void GetInput_ConsumeSwipe(float Dist)
+{
+    if (!Swipe.Valid)
+        return;
+    
+    while (Dist > 0 && Swipe.Count >= 2)
+    {
+        float Length = Distance(SwipePoints[0].X, SwipePoints[0].Y, SwipePoints[1].X, SwipePoints[1].Y);
+        
+        if (Dist >= Length)
+        {
+            for (int i = 0; i < Swipe.Count-1; i++)
+                SwipePoints[i] = SwipePoints[i+1];
+
+            Swipe.Count--;
+
+            Dist -= Length;
+
+            if (Swipe.Count <= 1)
+            {
+                Swipe.Count = 0;
+                Swipe.Valid = false;
+                break;
+            }                
+        }
+        else
+        {
+            SwipePoints[0].X = SwipePoints[0].X + (SwipePoints[1].X - SwipePoints[0].X) * Dist / Length;
+            SwipePoints[0].Y = SwipePoints[0].Y + (SwipePoints[1].Y - SwipePoints[0].Y) * Dist / Length;
+            
+            Dist = 0;
+        }
+    }
+}
+
+void GetInput_ConsumeSwipeSegment()
+{
+    if (!Swipe.Valid)
+        return;
+    
+    if (Swipe.Count >= 2)
+    {
+        for (int i = 0; i < Swipe.Count-1; i++)
+            SwipePoints[i] = SwipePoints[i+1];
+        
+        Swipe.Count--;
+        if (Swipe.Count <= 1)
+        {
+            Swipe.Count = 0;
+            Swipe.Valid = false;
+        }
+    }
+}
+
+bool GetInput_SwipeValid()
+{
+    return Swipe.Valid;
 }
 
 void DisplaySwipe()

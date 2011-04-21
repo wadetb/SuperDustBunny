@@ -242,7 +242,9 @@ bool GetInput_Jump();
 
 void GetInput_NextSwipeDir(float* dX, float* dY);
 bool GetInput_CheckSwipeDir(float Angle, float Range);
-void GetInput_UseSwipe();
+void GetInput_ConsumeSwipe(float Dist);
+void GetInput_ConsumeSwipeSegment();
+bool GetInput_SwipeValid();
 
 void SetGameState_StartScreen();
 void SetGameState_DieScreen();
