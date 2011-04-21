@@ -1010,17 +1010,7 @@ void SetDustyState_PrepareLaunch()
 
 void DisplayDusty_PrepareLaunch()
 {
-	if (Dusty.SpriteTransition <= 4)
-		DisplayDustySprite(&DustyHop5Sprite, -119, 18, -218);
-	else
-	{
-		if (Dusty.SpriteTransition % 40 < 10)
-			DisplayDustySprite(&DustyIdle1Sprite, -124, 5, -221);
-		else if (Dusty.SpriteTransition % 40 < 20)
-			DisplayDustySprite(&DustyIdle2Sprite, -124, 5, -221);
-		else
-			DisplayDustySprite(&DustyIdle2Sprite, -124, 5, -221);
-	}
+	DisplayDustySprite(&DustyHop5Sprite, -119, 18, -170);
 }
 
 void UpdateDusty_PrepareLaunch()
@@ -1223,23 +1213,32 @@ void UpdateDusty_Hurt()
 //                                                  DustyState_StaplerLaunch() Implementation                                              //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-void SetDustyState_StaplerLaunch()
-{
-	Dusty.State = DUSTYSTATE_STAPLERLAUNCH;
-}
-
-void DisplayDusty_StaplerLaunch()
-{
-	DisplayDusty_Jump();
-}
-
-void UpdateDusty_StaplerLaunch()
-{
-    Dusty.FloatY -= 40.0f;
-    Dusty.FloatVelocityY = -32.0f;
-    //Dusty.FloatVelocityY = Stapler.PowerJump;
-	UpdateDusty_JumpCommon();
-}
+//void SetDustyState_StaplerLaunch()
+//{
+//	Dusty.State = DUSTYSTATE_STAPLERLAUNCH;
+//	Dusty.FloatVelocityY = -32.0f;
+//	//Dusty.FloatVelocityY = Stapler.PowerJump;
+//	Dusty.FloatY -= 10;
+//}
+//
+//void DisplayDusty_StaplerLaunch()
+//{
+//	DisplayDusty_Jump();
+//}
+//
+//void UpdateDusty_StaplerLaunch()
+//{ 
+//    
+//	Dusty.FloatX += Dusty.FloatVelocityX;
+//	Dusty.FloatY += Dusty.FloatVelocityY;
+//	
+//	Dusty.FloatVelocityY += Dusty.FloatGravity * 0.75f; // Reduced gravity when launching.
+//
+//	if (Dusty.FloatVelocityY > 15.0f)
+//		Dusty.FloatVelocityY = 15.0f;
+//
+//	UpdateDusty_JumpCommon();
+//}
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                  UpdateDusty_Collision Implementation                                                   //
@@ -1461,7 +1460,7 @@ void DisplayDusty()
 	case DUSTYSTATE_DIE:				DisplayDusty_Die(); break;
 	case DUSTYSTATE_STUCK:				DisplayDusty_Stuck(); break;
 	case DUSTYSTATE_HURT:				DisplayDusty_Hurt(); break;
-	case DUSTYSTATE_STAPLERLAUNCH:		DisplayDusty_StaplerLaunch(); break;
+//	case DUSTYSTATE_STAPLERLAUNCH:		DisplayDusty_StaplerLaunch(); break;
 	}
 
 	if (DevMode)
@@ -1502,6 +1501,6 @@ void UpdateDusty()
 	case DUSTYSTATE_DIE:				UpdateDusty_Die(); break;
 	case DUSTYSTATE_STUCK:				UpdateDusty_Stuck(); break;
 	case DUSTYSTATE_HURT:				UpdateDusty_Hurt(); break;
-	case DUSTYSTATE_STAPLERLAUNCH:		UpdateDusty_StaplerLaunch(); break;
+//	case DUSTYSTATE_STAPLERLAUNCH:		UpdateDusty_StaplerLaunch(); break;
 	}
 }

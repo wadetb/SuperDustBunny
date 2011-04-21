@@ -29,9 +29,9 @@ void CreateStapler(int X, int Y)
     Stapler->X = (float)X + 32;
     Stapler->Y = (float)Y + 32;
 
-	Stapler->Left = -196;
-	Stapler->Right = 168;
-	Stapler->Top = -90;
+	Stapler->Left = -186;
+	Stapler->Right = 158;
+	Stapler->Top = -70;
 	Stapler->Bottom = 0;
     
     Stapler->PowerJump = 0;
@@ -41,7 +41,7 @@ void CreateStapler(int X, int Y)
 	Stapler->CollideWithTopSide = false;
 
 	Stapler->CanLaunch = true;
-	Stapler->TimerWait = 0;
+	Stapler->TimerWait = 30;
 
     Stapler->State = STAPLERSTATE_WAIT;
 }
@@ -149,82 +149,51 @@ void UpdateStaplers()
         
         if (Stapler->State == STAPLERSTATE_PRELAUNCH)
         {
-			SetDustyState_PrepareLaunch();
-
 			if (kbIsKeyDown(KB_SPACE))
             {
-                if (Stapler->PowerJumpCounter > 460)
-                {
-                    Stapler->PowerJumpCounter = 460;
-                }
+				SetDustyState_PrepareLaunch();
                 
                 Stapler->PowerJumpCounter += 1;    
             }
+			else
+			{
+				if (Stapler->CollideWithTopSide == false)
+				{
+					Stapler->State = STAPLERSTATE_WAIT;
+					Stapler->TimerWait = 30;
+				}
+			}
             
             if (!kbIsKeyDown(KB_SPACE) && kbWasKeyDown(KB_SPACE))//Check for release of spacebar
             {
-            
-                if (Stapler->PowerJumpCounter > 0)
-                {
-                    Stapler->PowerJump = 1.0f;
-                }
-                else if(Stapler->PowerJumpCounter > 15)
-                {
-                    Stapler->PowerJump = 2.0f;
-                }
-                else if(Stapler->PowerJumpCounter > 30)
-                {
-                    Stapler->PowerJump = 3.0f;
-                }
-                else if(Stapler->PowerJumpCounter > 45)
-                {
-                    Stapler->PowerJump = 4.0f;
-                }
-                else if(Stapler->PowerJumpCounter > 60)
-                {
-                    Stapler->PowerJump = 5.0f;
-                }
-                else if(Stapler->PowerJumpCounter > 75)
-                {
-                    Stapler->PowerJump = 6.0f;
-                }
-                else if(Stapler->PowerJumpCounter > 90)
-                {
-                    Stapler->PowerJump = 7.0f;
-                }
-                else if(Stapler->PowerJumpCounter > 105)
-                {
-                    Stapler->PowerJump = 8.0f;
-                }
-                else if(Stapler->PowerJumpCounter > 120)
-                {
-                    Stapler->PowerJump = 9.0f;
-                }
-                else if(Stapler->PowerJumpCounter > 135)
-                {
-                    Stapler->PowerJump = 10.0f;
-                }
-                             
-                Stapler->State = STAPLERSTATE_LAUNCH; 
+				Stapler->PowerJump = Remap(Stapler->PowerJumpCounter, 0, 135, 20, 28, true);
+
+				Stapler->State = STAPLERSTATE_LAUNCH; 
             }        
         }
         
         if (Stapler->State == STAPLERSTATE_LAUNCH)
         {        
             Stapler->State = STAPLERSTATE_WAIT;
-            Stapler->TimerWait = 500;
+            Stapler->TimerWait = 30;
             Stapler->PowerJumpCounter = 0;
-            SetDustyState_StaplerLaunch();      
+			Dusty.FloatY -= 10;
+			SetDustyState_Launch(0, -Stapler->PowerJump); 
         }
         
-        if (Stapler->TimerWait == 0)
-        {
-            Stapler->CanLaunch = true;
-        }
-        else
-        {
-            Stapler->TimerWait --;
-        }                    
+		if (Stapler->State == STAPLERSTATE_WAIT)
+		{
+			if (Stapler->TimerWait == 0)
+			{
+				Stapler->CanLaunch = true;
+			}
+			else
+			{
+				Stapler->TimerWait --;
+			}   
+		}
+
+
     }  
 #endif
 }
@@ -235,6 +204,10 @@ void UpdateStapler_Collision()
     {
         SStapler* Stapler = &Staplers[i];
 	
+		Stapler->CollideWithLeftSide = false;
+		Stapler->CollideWithRightSide = false;
+		Stapler->CollideWithTopSide = false;
+
 		if (Max(Dusty.FloatY + Dusty.Top, Stapler->Y + Stapler->Top) <= Min(Dusty.FloatY + Dusty.Bottom, Stapler->Y + Stapler->Bottom))
 		{
 			// Check to see if The Dusty rectangle also overlaps with the Stapler.
@@ -268,15 +241,11 @@ void UpdateStapler_Collision()
 						Dusty.FloatVelocityY = 0;
 				}
 				
-                if (Stapler->CollideWithTopSide && Stapler->CanLaunch)
+                if (Stapler->CollideWithTopSide && Dusty.CollideWithBottomSide && Stapler->CanLaunch)
                 {
                     Stapler->CanLaunch = false;
                     Stapler->State = STAPLERSTATE_PRELAUNCH;
                 }
-                else
-                {
-                    Stapler->State = STAPLERSTATE_WAIT;
-                } 
 			}
 		}
 	}
