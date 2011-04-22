@@ -62,6 +62,10 @@
 #include "Lighting.h"
 
 
+//#define SWIPE_DEBUG
+
+
+
 FILE* OpenAssetFile(const char* FileName, const char* Mode);
 void GetAssetFileName(const char* FileName, char* Buf, int BufSize);
 
@@ -244,6 +248,7 @@ void GetInput_NextSwipeDir(float* dX, float* dY);
 bool GetInput_CheckSwipeDir(float Angle, float Range);
 void GetInput_ConsumeSwipe(float Dist);
 void GetInput_ConsumeSwipeSegment();
+void GetInput_ConsumeAllSwipe();
 bool GetInput_SwipeValid();
 
 void SetGameState_StartScreen();

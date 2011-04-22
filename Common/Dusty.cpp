@@ -44,12 +44,16 @@ void InitDusty()
     Dusty.JumpGraceTimer = 0;
     Dusty.AirJumpCount = 0;
     
+    Dusty.LandTimer = 0;
+    
 	Dusty.GainLife = false;
 	
 	Dusty.CollideWithLeftSide = false;
 	Dusty.CollideWithRightSide = false;
 	Dusty.CollideWithTopSide = false;
 	Dusty.CollideWithBottomSide = false;
+    
+    Dusty.JumpPower = 18.0f;
 };
 
 void SetDustyPosition(float x, float y)
@@ -93,17 +97,19 @@ bool UpdateDusty_CheckSwipeJump(float Angle, float Range, float Power)
             dX /= L;
             dY /= L;
             
-            dX *= Power;
-            dY *= Power;
+            dX *= Dusty.JumpPower;
+            dY *= Dusty.JumpPower;
             
             GetInput_ConsumeSwipe(Length(dX, dY));
             
             SetDustyState_JumpWithVelocity(dX, dY);
             
+#ifdef SWIPE_DEBUG
             AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle+Range))*100, Dusty.FloatY + -sinf(DegreesToRadians(Angle+Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
             AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle-Range))*100, Dusty.FloatY + -sinf(DegreesToRadians(Angle-Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
             
             AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + dX*10, Dusty.FloatY + dY*10 + ScrollY, gxRGB32(192, 128, 128), 0.5f);
+#endif
             
             return true;
         }
@@ -311,6 +317,8 @@ void SetDustyState_Jump( bool OffWall )
 	Dusty.FloatVelocityY = -16.0f;
 	if (Dusty.Direction == DIRECTION_LEFT)
 		Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
+    
+    Dusty.LandTimer = 0;
 
 	Dusty.State = DUSTYSTATE_JUMP;
 }
@@ -325,7 +333,9 @@ void SetDustyState_JumpWithVelocity( float VX, float VY )
         Dusty.Direction = DIRECTION_LEFT;
     else
         Dusty.Direction = DIRECTION_RIGHT;
-    
+        
+    Dusty.LandTimer = 0;
+
 	Dusty.State = DUSTYSTATE_JUMP;
 }
 
@@ -620,6 +630,8 @@ void UpdateDusty_Hop()
 void UpdateDusty_JumpCommon()
 {  
 	Dusty.SpriteTransition++;
+    
+    Dusty.LandTimer++;
 
 	// Air control.
     if (Settings.ControlStyle == CONTROL_TILT)
@@ -641,12 +653,12 @@ void UpdateDusty_JumpCommon()
         GetInput_NextSwipeDir(&dX, &dY);
         
         float L = sqrtf(dX*dX + dY*dY);
-        if (L > 5.0f)
+        if (L > 1.0f)
         {
             if (fabsf(Dusty.FloatVelocityX) < 10)
-                Dusty.FloatVelocityX += dX / 20.0f;
+                Dusty.FloatVelocityX += dX >= 0 ? 1.0f : -1.0f;
             if (fabsf(Dusty.FloatVelocityY) < 10)
-                Dusty.FloatVelocityY += dY / 20.0f;
+                Dusty.FloatVelocityY += dY >= 0 ? 1.0f : -1.0f;
         }
         
         GetInput_ConsumeSwipe(1.5f*Length(Dusty.FloatVelocityX, Dusty.FloatVelocityY));
@@ -676,36 +688,39 @@ void UpdateDusty_JumpCommon()
 	// Wade: Currently this stuff is tweaked around as an experiment- he can only walljump again after a delay.
 	Dusty.WallJumpTimer++;
 
-	if (Dusty.CollideWithLeftSide && Dusty.Direction == DIRECTION_LEFT && (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_LEFT))
-	{
-		// Spawn some dust motes.
-		for (int i = 0; i < 6; i++)
-			MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);
-
-        SetDustyState_WallJump();
-        return;
-	}
-
-	if (Dusty.CollideWithRightSide && Dusty.Direction == DIRECTION_RIGHT && (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_RIGHT))
+    if (Dusty.LandTimer >= 20)
     {
-		// Spawn some dust motes.
-		for (int i = 0; i < 6; i++)
-			MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);
+        if (Dusty.CollideWithLeftSide && Dusty.Direction == DIRECTION_LEFT && (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_LEFT))
+        {
+            // Spawn some dust motes.
+            for (int i = 0; i < 6; i++)
+                MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);
 
-		SetDustyState_WallJump();
-        return;
+            SetDustyState_WallJump();
+            return;
+        }
+
+        if (Dusty.CollideWithRightSide && Dusty.Direction == DIRECTION_RIGHT && (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_RIGHT))
+        {
+            // Spawn some dust motes.
+            for (int i = 0; i < 6; i++)
+                MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);
+
+            SetDustyState_WallJump();
+            return;
+        }
+
+        // When landing on something, revert to standing.
+        if (Dusty.CollideWithBottomSide == true )
+        {	
+            // Spawn some dust motes.
+            for (int i = 0; i < 3; i++)
+                MakeDustMote(Dusty.FloatX, Dusty.FloatY);
+
+            SetDustyState_Stand();
+            return;
+        } 
     }
-
-	// When landing on something, revert to standing.
-	if (Dusty.CollideWithBottomSide == true )
-	{	
-		// Spawn some dust motes.
-		for (int i = 0; i < 3; i++)
-			MakeDustMote(Dusty.FloatX, Dusty.FloatY);
-
-		SetDustyState_Stand();
-		return;
-	} 
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//

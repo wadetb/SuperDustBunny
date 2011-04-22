@@ -52,6 +52,8 @@ struct SDusty
     int JumpGraceTimer;
     int AirJumpCount;
     
+    int LandTimer;
+    
 	int Lives;
 
 	bool GainLife;
@@ -68,6 +70,8 @@ struct SDusty
 	bool CollideWithBottomRightCorner;
 
 	int CollideMaterial;
+    
+    float JumpPower;
 };
 
 extern SDusty Dusty;

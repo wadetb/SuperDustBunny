@@ -37,7 +37,6 @@
 #include "WinScreen.h"
 #include "ChapterIntro.h"
 
-
 enum EGameState
 {
 	GAMESTATE_PLAYING,
@@ -504,21 +503,27 @@ void UpdateSwipe()
         if (msButton1)
         {
             Swipe.Active = true;
+            
+            // Reset swipe when new swipe is started.
+            Swipe.Count = 0;
+            Swipe.Valid = false;
         }
     }
     else
     {
         if (Swipe.Count < MAX_SWIPE_POINTS)
         {
+#ifdef SWIPE_DEBUG
             if (Swipe.Count > 0)
                 AddDebugLine(SwipePoints[Swipe.Count-1].X, SwipePoints[Swipe.Count-1].Y, (float)msX, (float)msY, gxRGBA32(192, 128, 128, 255), 1.0f/60.0f);
-        
+#endif
+            
             SwipePoints[Swipe.Count].X = (float)msX;
             SwipePoints[Swipe.Count].Y = (float)msY;
             
             Swipe.Count++;
             
-            if (!Swipe.Valid && Swipe.Count >= 3)
+            if (!Swipe.Valid && Swipe.Count >= 2)
                 Swipe.Valid = true;
         }
         
@@ -626,6 +631,12 @@ void GetInput_ConsumeSwipeSegment()
     }
 }
 
+void GetInput_ConsumeAllSwipe()
+{
+    Swipe.Count = 0;
+    Swipe.Valid = false;
+}
+
 bool GetInput_SwipeValid()
 {
     return Swipe.Valid;
@@ -633,12 +644,14 @@ bool GetInput_SwipeValid()
 
 void DisplaySwipe()
 {
+#ifdef SWIPE_DEBUG
     unsigned int color = Swipe.Valid ? gxRGBA32(192, 128, 128, 255) : gxRGBA32(128, 192, 128, 255);
     
     for (int i = 1; i < Swipe.Count; i++)
         DisplayDebugLine(SwipePoints[i-1].X, SwipePoints[i-1].Y, SwipePoints[i].X, SwipePoints[i].Y, 4.0f, color);
     
 	//gxDrawString(5, 37, 16, gxRGB32(255, 255, 255), "Active:%d Valid:%d Count:%d", Swipe.Active, Swipe.Valid, Swipe.Count);
+#endif
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -762,7 +775,9 @@ void SetGameState_Playing()
 	if (Tutorial.InitialDisplayed == false)
 	{    
 		SetGameState_Tutorial(TUTORIALSTATE_INITIAL);
-	}    
+	}  
+    
+    GetInput_ConsumeAllSwipe();
 }
 
 void DisplayPauseScreen()
@@ -883,7 +898,10 @@ void UpdateGame_Playing()
     if (msButton1 && !msOldButton1)
     {
         if (msX >= 384-150 && msX <= 384+150 && msY < 200)
+        {
             GamePause = !GamePause;
+            GetInput_ConsumeAllSwipe();
+        }
     }
 #endif
     
