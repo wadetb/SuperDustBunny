@@ -7,11 +7,12 @@
 #include "Recorder.h"
 #include "Settings.h"
 #include "Stapler.h"
+#include "PowerUp.h"
 
 
 SDusty Dusty;
 SStapler Stapler;
-SPowerUp PowerUp;
+SPowerUpToggle PowerUpToggle;
 
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -1449,7 +1450,7 @@ void DisplayDusty()
 	case DUSTYSTATE_HURT:				DisplayDusty_Hurt(); break;
 	}
 	
-    if (PowerUp.Jump)
+    if (PowerUpToggle.Jump)
     {
         DisplayPowerUp();
     }
@@ -1494,7 +1495,7 @@ void UpdateDusty()
 	case DUSTYSTATE_HURT:				UpdateDusty_Hurt(); break;
 	}
 	
-    if (PowerUp.Jump)
+    if (PowerUpToggle.Jump)
     {
         UpdatePowerUp();
     }

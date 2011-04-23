@@ -311,6 +311,10 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* FileName
                     {
                         Block->Type = BLOCKTYPE_STAPLER;
                     }
+                    else if (strcmp(Value, "powerup") == 0)
+                    {
+                        Block->Type = BLOCKTYPE_POWERUP;
+                    }
 				}
 				else if (strcmp(Name, "material") == 0)
 				{
@@ -797,6 +801,10 @@ void CreatePageObjects()
 					CreateStapler(x * 64, y * 64);
 					EraseBlock(x, y);
 					break;
+                case BLOCKTYPE_POWERUP:
+                    CreatePowerUp(x * 64, y * 64);
+                    EraseBlock(x, y);
+                    break;
 				}
 			}
 		}
@@ -807,7 +815,6 @@ void CreatePageObjects()
 
 	// Initialize global stuff for the page.
 	InitDusty();
-	InitPowerUp();
 	SetDustyPosition(Chapter.StartX, Chapter.StartY);
 
 	InitDust();

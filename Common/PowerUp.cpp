@@ -14,28 +14,40 @@
 #include "Tutorial.h"
 #include "GameScore.h"
 
-SPowerUp PowerUp;
+#define MAX_POWERUP 100
 
-void InitPowerUp()
+int NPowerUps = 0;
+SPowerUp PowerUps[MAX_POWERUP];
+
+void InitPowerUpToggle()
 {
-    PowerUp.Jump = false;
-
-    PowerUp.Duration = 0;
-    PowerUp.Value = 0;
-    
-    PowerUp.State = POWERUPSTATE_INACTIVE;
+    PowerUpToggle.Jump = false;
 }
 
 void SetPowerUp(int DefinedCounter)
 {
-    PowerUp.Duration = 500;
+    SPowerUp* PowerUp = &PowerUps[NPowerUps++];
     
-    PowerUp.Value = DefinedCounter;
+    PowerUp->Duration = 500;
     
+    PowerUp->Value = DefinedCounter;
     
-    
-    PowerUp.State = POWERUPSTATE_ACTIVE;
+    PowerUpToggle.Jump = true;
+        
+    PowerUp->State = POWERUPSTATE_ACTIVE;
+}
 
+void CreatePowerUp(int X, int Y)
+{
+    if (NPowerUps >= MAX_POWERUP)
+        ReportError("Exceeded the maximum of %d total PowerUps.", MAX_POWERUP);
+
+    SPowerUp* PowerUp = &PowerUps[NPowerUps++];
+
+    PowerUp->State = POWERUPSTATE_INACTIVE;
+    
+    PowerUp->X = (float)X + 32;
+    PowerUp->Y = (float)Y + 32;
 }
 
 void DisplayPowerUp()
@@ -45,24 +57,34 @@ void DisplayPowerUp()
 
 void UpdatePowerUp()
 {
-    if(PowerUp.State == POWERUPSTATE_INACTIVE)
+    for (int i = 0; i < NPowerUps; i++)
     {
-        
-    }
-    
-    if (PowerUp.State == POWERUPSTATE_ACTIVE)
-    {       
-        if (PowerUp.Duration == 0)
-        {
-            PowerUp.Jump = false;
-        }
-        else
-        {
-            PowerUp.Duration --;
-        }     
-    
-    
-    }
-    
+        SPowerUp* PowerUp = &PowerUps[i];
 
+        if (PowerUp->State == POWERUPSTATE_INACTIVE)
+        {
+            float Dist = Distance(Dusty.FloatX, Dusty.FloatY-50, PowerUp->X, PowerUp->Y);
+
+            if (Dist < 100)
+            {
+                SetPowerUp(18);
+            } 	                       	    
+        }
+        else if (PowerUp->State == POWERUPSTATE_ACTIVE)
+        {  
+            //Boost Dusty's overall performance     
+            Dusty.FloatVelocityX += PowerUp->Value;
+            Dusty.FloatVelocityY += PowerUp->Value;
+           
+            if (PowerUp->Duration == 0)
+            {
+                PowerUpToggle.Jump = false;
+                PowerUp->State = POWERUPSTATE_INACTIVE;
+            }
+            else
+            {
+                PowerUp->Duration --;
+            }     
+        }
+    }
 }

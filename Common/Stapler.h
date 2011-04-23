@@ -48,6 +48,8 @@ struct SStapler
 	int TimerWait;
 };
 
+extern SStapler Stapler;
+
 void CreateStapler(int X, int Y);
 void ClearStaplers();
 

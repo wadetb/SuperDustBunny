@@ -768,6 +768,7 @@ void SetGameState_Playing()
     
 	InitTutorial();
 	InitScore();
+	InitPowerUpToggle();
 
 	// Remove this to re-enable the tutorials when we are closer to a release.
 	// For now they just slow down development.
