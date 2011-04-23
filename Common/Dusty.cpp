@@ -11,6 +11,7 @@
 
 SDusty Dusty;
 SStapler Stapler;
+SPowerUp PowerUp;
 
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -1225,37 +1226,6 @@ void UpdateDusty_Hurt()
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                  DustyState_StaplerLaunch() Implementation                                              //
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-
-//void SetDustyState_StaplerLaunch()
-//{
-//	Dusty.State = DUSTYSTATE_STAPLERLAUNCH;
-//	Dusty.FloatVelocityY = -32.0f;
-//	//Dusty.FloatVelocityY = Stapler.PowerJump;
-//	Dusty.FloatY -= 10;
-//}
-//
-//void DisplayDusty_StaplerLaunch()
-//{
-//	DisplayDusty_Jump();
-//}
-//
-//void UpdateDusty_StaplerLaunch()
-//{ 
-//    
-//	Dusty.FloatX += Dusty.FloatVelocityX;
-//	Dusty.FloatY += Dusty.FloatVelocityY;
-//	
-//	Dusty.FloatVelocityY += Dusty.FloatGravity * 0.75f; // Reduced gravity when launching.
-//
-//	if (Dusty.FloatVelocityY > 15.0f)
-//		Dusty.FloatVelocityY = 15.0f;
-//
-//	UpdateDusty_JumpCommon();
-//}
-
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                  UpdateDusty_Collision Implementation                                                   //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
@@ -1463,6 +1433,8 @@ void UpdateDusty_Collision()
 
 void DisplayDusty()
 {
+   
+    
 	switch (Dusty.State)
 	{
 	case DUSTYSTATE_STAND:			    DisplayDusty_Stand(); break;
@@ -1475,9 +1447,13 @@ void DisplayDusty()
 	case DUSTYSTATE_DIE:				DisplayDusty_Die(); break;
 	case DUSTYSTATE_STUCK:				DisplayDusty_Stuck(); break;
 	case DUSTYSTATE_HURT:				DisplayDusty_Hurt(); break;
-//	case DUSTYSTATE_STAPLERLAUNCH:		DisplayDusty_StaplerLaunch(); break;
 	}
-
+	
+    if (PowerUp.Jump)
+    {
+        DisplayPowerUp();
+    }
+    
 	if (DevMode)
 	{
 		// Draw a yellow + at Dusty's root location.
@@ -1503,7 +1479,7 @@ void UpdateDusty()
 		AdvanceToNextPage();
 		return;
 	}
-
+	
 	switch (Dusty.State)
 	{
 	case DUSTYSTATE_STAND:			    UpdateDusty_Stand(); break;
@@ -1516,6 +1492,10 @@ void UpdateDusty()
 	case DUSTYSTATE_DIE:				UpdateDusty_Die(); break;
 	case DUSTYSTATE_STUCK:				UpdateDusty_Stuck(); break;
 	case DUSTYSTATE_HURT:				UpdateDusty_Hurt(); break;
-//	case DUSTYSTATE_STAPLERLAUNCH:		UpdateDusty_StaplerLaunch(); break;
 	}
+	
+    if (PowerUp.Jump)
+    {
+        UpdatePowerUp();
+    }
 }

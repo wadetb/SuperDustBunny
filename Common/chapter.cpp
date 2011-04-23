@@ -25,6 +25,7 @@
 #include "Lives.h"
 #include "Recorder.h"
 #include "Stapler.h"
+#include "PowerUp.h"
 
 #ifdef PLATFORM_WINDOWS
 #include <direct.h>
@@ -806,6 +807,7 @@ void CreatePageObjects()
 
 	// Initialize global stuff for the page.
 	InitDusty();
+	InitPowerUp();
 	SetDustyPosition(Chapter.StartX, Chapter.StartY);
 
 	InitDust();

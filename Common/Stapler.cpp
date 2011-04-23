@@ -128,16 +128,7 @@ void UpdateStaplers()
     for (int i = 0; i < NStaplers; i++)
     {
         SStapler* Stapler = &Staplers[i];
-			
-		/*if (Stapler->CollideWithTopSide && Stapler->CanLaunch)
-		{
-			Stapler->State = STAPLERSTATE_PRELAUNCH;
-		}
-		else
-		{
-			Stapler->State = STAPLERSTATE_WAIT;
-		} */
-		
+					
         /*if (Stapler->State == STAPLERSTATE_WAIT)
         {
                 if (Tutorial.StaplerDisplayed == false)

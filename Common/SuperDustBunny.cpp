@@ -29,6 +29,7 @@
 #include "Tutorial.h"
 #include "GameScore.h"
 #include "Settings.h"
+#include "PowerUp.h"
 
 #include "StartScreen.h"
 #include "HelpScreen.h"
@@ -841,6 +842,7 @@ void DisplayGame_Playing()
 	DisplayDust();
 	DisplayVacuum();
 	DisplayLives();
+	DisplayPowerUp();
 	
     // HUD Drawing - Score, etc.
     DisplayScore();
@@ -926,6 +928,7 @@ void UpdateGame_Playing()
         UpdateScore();		 
         UpdateLives();
         UpdateStaplers();
+        UpdatePowerUp();
     }
 
     UpdateDust();

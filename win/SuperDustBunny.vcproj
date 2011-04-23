@@ -360,6 +360,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Common\PowerUp.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Common\PowerUp.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Common\Recorder.cpp"
 				>
 			</File>
