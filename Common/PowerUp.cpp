@@ -19,9 +19,19 @@
 int NPowerUps = 0;
 SPowerUp PowerUps[MAX_POWERUP];
 
-void InitPowerUpToggle()
+void InitPowerUp()
 {
+    SPowerUp* PowerUp = &PowerUps[NPowerUps++];
+    
     PowerUpToggle.Jump = false;
+    
+    PowerUp->IncreaseJump = 18;
+    
+    PowerUp->Duration = 500;
+    
+    PowerUp->Value = 0;
+    
+    PowerUp->State = POWERUPSTATE_INACTIVE;
 }
 
 void SetPowerUp(int DefinedCounter)
@@ -35,6 +45,11 @@ void SetPowerUp(int DefinedCounter)
     PowerUpToggle.Jump = true;
         
     PowerUp->State = POWERUPSTATE_ACTIVE;
+}
+
+void ClearPowerUps()
+{
+    NPowerUps = 0;
 }
 
 void CreatePowerUp(int X, int Y)
@@ -67,7 +82,7 @@ void UpdatePowerUp()
 
             if (Dist < 100)
             {
-                SetPowerUp(18);
+                SetPowerUp(PowerUp->IncreaseJump);
             } 	                       	    
         }
         else if (PowerUp->State == POWERUPSTATE_ACTIVE)

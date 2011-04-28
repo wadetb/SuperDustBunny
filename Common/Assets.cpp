@@ -172,6 +172,8 @@ gxSprite TutorialWallJumpSprite;
 
 gxSprite ChapterTitle;
 
+gxSprite PowerUpSprite;
+
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 //                                                    Sound Assets                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
@@ -198,6 +200,7 @@ sxSound JelloSound;
 sxSound CoinVacuumedUpSound;
 sxSound GearGrindSound;
 sxSound TennisBallVacuumedUpSound;
+
 
 
 //-----------------------------------------------------------------------------------------------------------------------------------------//
@@ -547,6 +550,8 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/tutorial-walljump.png", &TutorialWallJumpSprite);
 	
     LoadSpriteAsset("Assets/chapter-title.png", &ChapterTitle);
+    
+    LoadSpriteAsset("Assets/powerup.png", &PowerUpSprite);
     
 
 	//-----------------------------------------------------------------------------------------------------------------------------------------//
