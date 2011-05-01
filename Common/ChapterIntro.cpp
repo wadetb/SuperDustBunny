@@ -12,48 +12,45 @@
 #include "ChapterIntro.h"
 #include "Vacuum.h"
 #include "Dusty.h"
+#include "Dust.h"
 #include "Settings.h"
 
 
 struct SChapterIntro
 {
-	int Timer;
+	float Y;
+	float VelocityY;
+	bool Tapped;
 };
 
 
 SChapterIntro ChapterIntro;
 
 
-void ChapterIntro_Advance();
-
 void InitChapterIntro()
 {
-    ChapterIntro.Timer = 0;
+	ChapterIntro.Tapped = false;
+	ChapterIntro.Y = -100;
+	ChapterIntro.VelocityY = 0;
+
+	Dusty.NoCollision = true;
+	Dusty.FloatX = Chapter.StartX - 350;
+	RemoteControl.MoveRight = true;
+	RemoteControl.Enabled = true;
+	SetDustyState_IntroStand();
+	Dusty.SpriteTransition = 10;
 
 	TurnOffVacuum();
-
-    if (Settings.ControlStyle == CONTROL_TILT)
-    {
-        SetDustyPosition(Chapter.StartX - 400, Chapter.StartY);
-        Dusty.NoCollision = true;
-        Dusty.CollideWithBottomSide = true;
-
-        RemoteControl.Enabled = true;
-        RemoteControl.MoveRight = true;
-
-        SetDustyState_Hop(DIRECTION_RIGHT);
-    }
 }
 
 void DisplayChapterIntro()
 {
-	if (ChapterIntro.Timer <= 40)
+	AddLitSprite(LIGHTLIST_VACUUM, &ChapterTitleSprite, 0, ChapterIntro.Y);
+	AddLitSprite(LIGHTLIST_VACUUM, &ChapterTextSprite, 220, ChapterIntro.Y+600);
+	int Chapter = 1;
+	switch (Chapter)
 	{
-		AddLitSprite( LIGHTLIST_VACUUM, &ChapterTitle, 0, -100);
-	}
-	else
-	{
-		AddLitSprite( LIGHTLIST_VACUUM, &ChapterTitle, 0, -100 - (20 * (float)(ChapterIntro.Timer - 40)));
+	case 1: AddLitSubSprite(LIGHTLIST_VACUUM, &ChapterNumbersSprite, 220+305, ChapterIntro.Y+600, 0, 0, 64, 64); break;
 	}
 }
 
@@ -61,34 +58,43 @@ void ChapterIntro_Advance()
 {
 	TurnOnVacuum();
 
-    if (Settings.ControlStyle == CONTROL_TILT)
-    {
-        RemoteControl.Enabled = false;
-        Dusty.NoCollision = false;
-    }
+	Dusty.NoCollision = false;
+	RemoteControl.Enabled = false;
 
 	SetGameState_Playing();
 }
 
 void UpdateChapterIntro()
 {
-	ChapterIntro.Timer += 1;
-	
-    if (Settings.ControlStyle == CONTROL_TILT)
-    {
-        UpdateDusty();
-
-        if (ChapterIntro.Timer == 40)
-        {
-            RemoteControl.MoveRight = false;
-        }
-    }
-
-	// Advance to playing state when Timer Expires.
-	if (ChapterIntro.Timer >= 100)
+#ifdef PLATFORM_WINDOWS
+	if (kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE))
 	{
-		ChapterIntro_Advance();
-		return;
+		ChapterIntro.Tapped = true;
 	}
-	
+#endif
+#ifdef PLATFORM_IPHONE
+	if (msButton1 && !msOldButton1)
+	{
+		ChapterIntro.Tapped = true;
+	}
+#endif
+
+	if (Dusty.FloatX >= Chapter.StartX)
+		RemoteControl.MoveRight = false;
+
+	UpdateDusty();
+	UpdateDust();
+
+	if ( ChapterIntro.Tapped )
+	{
+		ChapterIntro.Y += ChapterIntro.VelocityY;
+		ChapterIntro.VelocityY -= 1.0f;
+
+		// Advance to playing state when Timer Expires.
+		if (ChapterIntro.Y < -ChapterTitleSprite.height)
+		{
+			ChapterIntro_Advance();
+			return;
+		}
+	}
 }

@@ -78,6 +78,8 @@ void SetDustyState_WallJump();
 void SetDustyState_CornerJump();
 void SetDustyState_PrepareLaunch();
 void SetDustyState_Launch();
+void SetDustyState_IntroHop();
+void SetDustyState_IntroStand();
 
 
 void UpdateDusty_JumpCommon();
@@ -460,18 +462,6 @@ void SetDustyState_Hop(EDirection Direction)
 
 void DisplayDusty_Hop()
 {
-	float ScaleX, OffsetX;
-	if (Dusty.Direction == DIRECTION_RIGHT)
-	{
-		ScaleX = 1.0f;
-		OffsetX = 0.0f;
-	}
-	else
-	{
-		ScaleX = -1.0f;
-		OffsetX = 256.0f;
-	}
-
 	switch (Dusty.SpriteTransition)
 	{
 	case 0:    DisplayDustySprite(&DustyHop2Sprite, -122,  0, -201); break;
@@ -1240,6 +1230,99 @@ void UpdateDusty_Hurt()
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                  DUSTYSTATE_HOPIN Implementation                                                          //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+void SetDustyState_IntroHop(EDirection Direction)
+{
+	Dusty.Direction = Direction;
+
+	Dusty.SpriteTransition = 0;
+
+	Dusty.FloatVelocityY = 0;
+
+	Dusty.State = DUSTYSTATE_INTROHOP;
+}
+
+void UpdateDusty_IntroHop()
+{
+	// Set Velocity first.
+	float VelocitySign = Dusty.Direction == DIRECTION_LEFT ? -1.0f : 1.0f;
+
+	Dusty.FloatVelocityX = 8.25f * VelocitySign;
+
+	// Update animation
+	Dusty.SpriteTransition += 1;
+
+	// Check for end of hop animation.
+	if (Dusty.SpriteTransition == 24)
+	{
+		// Spawn some dust motes.
+		for (int i = 0; i < 6; i++)
+			MakeDustMote(Dusty.FloatX, Dusty.FloatY);
+
+		//// If still holding right, reset animation and continue hopping.
+		if ( ( Dusty.Direction == DIRECTION_RIGHT && RemoteControl.MoveRight ) || 
+			 ( Dusty.Direction == DIRECTION_LEFT  && RemoteControl.MoveLeft ) )
+		{
+			Dusty.FloatX += Dusty.FloatVelocityX*3;
+			Dusty.SpriteTransition = 0;
+		}
+		else  // If not, revert to stand.
+		{	
+			SetDustyState_IntroStand();
+			return;
+		}
+	}
+
+	// If we have not switched states, move Dusty.
+	if (Dusty.SpriteTransition == 18)
+	{
+		Dusty.FloatX += Dusty.FloatVelocityX*6;
+	}
+	else if (Dusty.SpriteTransition >= 0 && Dusty.SpriteTransition <= 17)
+	{
+		Dusty.FloatX += Dusty.FloatVelocityX;
+	}
+}
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                  DUSTYSTATE_INTROSTAND Implementation                                                   //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+void SetDustyState_IntroStand()
+{
+	Dusty.FloatVelocityY = 0;
+
+	Dusty.SpriteTransition = 0;	
+
+	Dusty.State = DUSTYSTATE_INTROSTAND;
+}
+
+void UpdateDusty_IntroStand()
+{
+	if (!RemoteControl.Enabled)
+	{
+		Dusty.State = DUSTYSTATE_STAND;
+		return;
+	}
+
+	if ( RemoteControl.MoveRight )
+	{
+		SetDustyState_IntroHop(DIRECTION_RIGHT);
+		return;
+	}
+
+	if ( RemoteControl.MoveLeft )
+	{
+		SetDustyState_IntroHop(DIRECTION_LEFT);
+		return;
+	}
+
+	Dusty.SpriteTransition += 1;
+}
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                  UpdateDusty_Collision Implementation                                                   //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
@@ -1468,7 +1551,8 @@ void DisplayDusty()
         case DUSTYSTATE_DIE:				DisplayDusty_Die(); break;
         case DUSTYSTATE_STUCK:				DisplayDusty_Stuck(); break;
         case DUSTYSTATE_HURT:				DisplayDusty_Hurt(); break;
-    //	case DUSTYSTATE_STAPLERLAUNCH:		DisplayDusty_StaplerLaunch(); break;
+		case DUSTYSTATE_INTROHOP:			DisplayDusty_Hop(); break;
+		case DUSTYSTATE_INTROSTAND:			DisplayDusty_Stand(); break;
         }
     }
         
@@ -1510,6 +1594,8 @@ void UpdateDusty()
 	case DUSTYSTATE_DIE:				UpdateDusty_Die(); break;
 	case DUSTYSTATE_STUCK:				UpdateDusty_Stuck(); break;
 	case DUSTYSTATE_HURT:				UpdateDusty_Hurt(); break;
+	case DUSTYSTATE_INTROHOP:			UpdateDusty_IntroHop(); break;
+	case DUSTYSTATE_INTROSTAND:			UpdateDusty_IntroStand(); break;
 	}
 	
     if (PowerUpToggle.Jump)

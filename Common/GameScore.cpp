@@ -45,7 +45,7 @@ void InitScore()
     Score.PageTime = 0;
 }
 
-void DisplayDigit(int Digit, int X, int Y)
+void DisplayDigit(int Digit, float X, float Y)
 {
     switch (Digit)
     {
@@ -63,7 +63,7 @@ void DisplayDigit(int Digit, int X, int Y)
     }    
 }
 
-void DisplayPeriod(int X, int Y)
+void DisplayPeriod(float X, float Y)
 {
 	AddLitSubSpriteScaled( LIGHTLIST_WIPE, &FullScoreSprite, X, Y, 55,  0, 74,  63, 0.5f, 0.5f/4.0f);
 }

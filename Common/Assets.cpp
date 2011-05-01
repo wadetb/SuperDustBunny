@@ -170,7 +170,9 @@ gxSprite TutorialBallSprite;
 gxSprite TutorialJumpSprite;
 gxSprite TutorialWallJumpSprite;
 
-gxSprite ChapterTitle;
+gxSprite ChapterTitleSprite;
+gxSprite ChapterTextSprite;
+gxSprite ChapterNumbersSprite;
 
 gxSprite PowerUpSprite;
 
@@ -549,7 +551,9 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/tutorial-jump.png", &TutorialJumpSprite);
 	LoadSpriteAsset("Assets/tutorial-walljump.png", &TutorialWallJumpSprite);
 	
-    LoadSpriteAsset("Assets/chapter-title.png", &ChapterTitle);
+	LoadSpriteAsset("Assets/chapter-title.png", &ChapterTitleSprite);
+	LoadSpriteAsset("Assets/chapter.png", &ChapterTextSprite);
+	LoadSpriteAsset("Assets/chapter_numbers.png", &ChapterNumbersSprite);
     
     LoadSpriteAsset("Assets/powerup.png", &PowerUpSprite);
     

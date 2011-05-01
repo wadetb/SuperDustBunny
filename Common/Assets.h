@@ -166,7 +166,9 @@ extern gxSprite TutorialBallSprite;
 extern gxSprite TutorialJumpSprite;
 extern gxSprite TutorialWallJumpSprite;
 
-extern gxSprite ChapterTitle;
+extern gxSprite ChapterTitleSprite;
+extern gxSprite ChapterTextSprite;
+extern gxSprite ChapterNumbersSprite;
 
 extern gxSprite PowerUpSprite;
 

@@ -20,7 +20,8 @@ enum EDustyState
 	DUSTYSTATE_DIE,
 	DUSTYSTATE_STUCK,
 	DUSTYSTATE_HURT,
-	DUSTYSTATE_STAPLERLAUNCH,
+	DUSTYSTATE_INTROHOP,
+	DUSTYSTATE_INTROSTAND,
 };
 
 struct SDusty
@@ -84,7 +85,6 @@ void InitDusty();
 
 void SetDustyPosition(float x, float y);
 
-void SetDustyState_Hop_On();
 void SetDustyState_PrepareLaunch();
 void SetDustyState_Launch(float VelocityX, float VelocityY);
 void SetDustyState_Die();
@@ -92,6 +92,8 @@ void SetDustyState_Stuck();
 void SetDustyState_Stand();
 void SetDustyState_Hop(EDirection Direction);
 void SetDustyState_StaplerLaunch();
+void SetDustyState_IntroHop(EDirection Direction);
+void SetDustyState_IntroStand();
 
 void DustyGainLife();
 
