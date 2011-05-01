@@ -1609,6 +1609,15 @@ void AddLitSubSprite(ELightList List, gxSprite* Sprite, float X, float Y, float 
 		X,               Y+(SubY2-SubY1), SubX1/Sprite->width, SubY2/Sprite->height);
 }
 
+void AddLitSubSpriteScaled(ELightList List, gxSprite* Sprite, float X, float Y, float SubX1, float SubY1, float SubX2, float SubY2, float ScaleX, float ScaleY)
+{
+	AddLitQuad(List, Sprite, gxRGBA32(255,255,255,255),
+		X,                      Y,                      SubX1/Sprite->width, SubY1/Sprite->height, 
+		X+(SubX2-SubX1)*ScaleX, Y,                      SubX2/Sprite->width, SubY1/Sprite->height,
+		X+(SubX2-SubX1)*ScaleX, Y+(SubY2-SubY1)*ScaleY, SubX2/Sprite->width, SubY2/Sprite->height, 
+		X,                      Y+(SubY2-SubY1)*ScaleY, SubX1/Sprite->width, SubY2/Sprite->height);
+}
+
 void AddLitSubSpriteCenteredScaledRotated(ELightList List, gxSprite* Sprite, float X, float Y, float SubX1, float SubY1, float SubX2, float SubY2, float Scale, float Angle)
 {
 	float ca = cosf(Angle);

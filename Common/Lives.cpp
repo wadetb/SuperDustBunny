@@ -14,15 +14,9 @@
 
 void DisplayLives()
 {
-	switch(Dusty.Lives)
+	for (int i = 0; i < Dusty.Lives; i++)
 	{
-	case 1:     AddLitSprite( LIGHTLIST_VACUUM, &CoinLife1Sprite, 640, -30); break;
-    case 2:     AddLitSprite( LIGHTLIST_VACUUM, &CoinLife2Sprite, 640, -30); break;
-    case 3:     AddLitSprite( LIGHTLIST_VACUUM, &CoinLife3Sprite, 640, -30); break;
-    case 4:     AddLitSprite( LIGHTLIST_VACUUM, &CoinLife4Sprite, 640, -30); break;
-    case 5:     AddLitSprite( LIGHTLIST_VACUUM, &CoinLife5Sprite, 640, -30); break;
-    case 6:     AddLitSprite( LIGHTLIST_VACUUM, &CoinLife6Sprite, 640, -30); break;
-    default:    break;	
+		AddLitSpriteScaled(LIGHTLIST_WIPE, &CoinSpin1Sprite, (float)gxScreenWidth - 100 - 45*i, -20, 0.65f, 0.65f);
 	}
 }
 
@@ -30,13 +24,11 @@ void UpdateLives()
 {
 	if (Dusty.GainLife)
 	{
-		Dusty.GainLife = false;
+ 		Dusty.GainLife = false;
 		Dusty.Lives += 1;
-		if (Dusty.Lives > 6)
+		if (Dusty.Lives > 5)
 		{
-			Dusty.Lives = 6;
+			Dusty.Lives = 5;
 		}
 	}
-
-
 }

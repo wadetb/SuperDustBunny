@@ -200,12 +200,12 @@ void DisplayDusty_Stand()
 			DisplayDustySprite(&DustyHop5Sprite, -119, 18, -218);
 		else
 		{
-			if (Dusty.SpriteTransition % 40 < 10)
+			if (Dusty.SpriteTransition % 45 < 10)
 				DisplayDustySprite(&DustyIdle1Sprite, -124, 5, -221);
-			else if (Dusty.SpriteTransition % 40 < 20)
+			else if (Dusty.SpriteTransition % 45 < 40)
 				DisplayDustySprite(&DustyIdle2Sprite, -124, 5, -221);
 			else
-				DisplayDustySprite(&DustyIdle2Sprite, -124, 5, -221);
+				DisplayDustySprite(&DustyIdle3Sprite, -124, 5, -221);
 		}
 	}
 }

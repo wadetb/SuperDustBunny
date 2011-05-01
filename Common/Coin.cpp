@@ -83,8 +83,6 @@ void UpdateCoins()
                 Score.Type = 5;
                 Score.Raise = true;
 
-				Dusty.GainLife = true;
-
 				sxPlaySound(&CoinVacuumedUpSound);  
 
 				if (Tutorial.CoinDisplayed == false)
@@ -118,10 +116,11 @@ void UpdateCoins()
 				Coin->FloatVelocityX -= 0.2f;
 			}
 
-			if (Coin->Y < 0 && Coin->X < 0)
+			if (Coin->Y + ScrollY < 0)
 			{
+				Dusty.GainLife = true;
+
 				Coin->State = COINSTATE_INACTIVE;
-				sxPlaySound(&VacuumClogSound);
 			}       
 		}
 				
