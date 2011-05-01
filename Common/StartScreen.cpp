@@ -64,7 +64,7 @@ SStartScreen StartScreen;
 void InitStartScreen()
 {
 	StartScreen.CurItem = STARTSCREEN_ITEM_START;
-	StartScreen.X = StartScreen.CurItem * 600.0f;
+	StartScreen.X = StartScreen.CurItem * 500.0f;
 	StartScreen.PrevX = StartScreen.X;
     StartScreen.PressedTime = 0.0f;
     StartScreen.ReleasedAtLeastOnce = false;
@@ -106,18 +106,18 @@ void DisplayStartScreen()
 
 	for (int i = 0; i < STARTSCREEN_ITEM_COUNT; i++)
 	{
-        float X = 384 + i*600 - StartScreen.X;
-        float Y = LitScreenHeight * 3/4;
+        float X = 384 + i*500 - StartScreen.X;
+        float Y = LitScreenHeight * 0.7f;
 
         if (i == StartScreen.CurItem)
         {
             float OverlayAlpha = SinWave(StartScreen.PressedTime, 1.0f);
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, StartScreenIcons[i], X, Y, 1.0, 1.0f);
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, StartScreenPressedIcons[i], X, Y, 1.0, OverlayAlpha);
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, StartScreenIcons[i], X, Y, 0.8f, 1.0f);
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, StartScreenPressedIcons[i], X, Y, 0.8f, OverlayAlpha);
         }
         else
         {
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, StartScreenIcons[i], X, Y, 1.0, 1.0f);
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, StartScreenIcons[i], X, Y, 0.8f, 1.0f);
         }
 	}
 
