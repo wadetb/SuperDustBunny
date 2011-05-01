@@ -61,10 +61,12 @@ struct SStartScreen
 SStartScreen StartScreen;
 
 
+const float StartScreenSpacing = 500.0f;
+
 void InitStartScreen()
 {
 	StartScreen.CurItem = STARTSCREEN_ITEM_START;
-	StartScreen.X = StartScreen.CurItem * 500.0f;
+	StartScreen.X = StartScreen.CurItem * StartScreenSpacing;
 	StartScreen.PrevX = StartScreen.X;
     StartScreen.PressedTime = 0.0f;
     StartScreen.ReleasedAtLeastOnce = false;
@@ -106,7 +108,7 @@ void DisplayStartScreen()
 
 	for (int i = 0; i < STARTSCREEN_ITEM_COUNT; i++)
 	{
-        float X = 384 + i*500 - StartScreen.X;
+        float X = 384 + i*StartScreenSpacing - StartScreen.X;
         float Y = LitScreenHeight * 0.7f;
 
         if (i == StartScreen.CurItem)
@@ -195,7 +197,7 @@ void UpdateStartScreen()
 			StartScreen.Dragging = false;
 			StartScreen.Pressed = false;
 
-            StartScreen.CurItem = (int)Round(StartScreen.X / 600.0f);
+            StartScreen.CurItem = (int)Round(StartScreen.X / StartScreenSpacing);
         }
 		else 
 		{
@@ -217,15 +219,15 @@ void UpdateStartScreen()
 		}
 		else 
 		{
-			StartScreen.X = StartScreen.X * 0.8f + StartScreen.CurItem * 600.0f * 0.2f;
+			StartScreen.X = StartScreen.X * 0.8f + StartScreen.CurItem * StartScreenSpacing * 0.2f;
 			StartScreen.X = StartScreen.X + (StartScreen.X-StartScreen.PrevX) * 0.25f;
 		}
 	}
 
     if (StartScreen.X < 0)
 		StartScreen.X = 0;
-	if (StartScreen.X >= (STARTSCREEN_ITEM_COUNT-1)*600)
-		StartScreen.X = (STARTSCREEN_ITEM_COUNT-1)*600;
+	if (StartScreen.X >= (STARTSCREEN_ITEM_COUNT-1)*StartScreenSpacing)
+		StartScreen.X = (STARTSCREEN_ITEM_COUNT-1)*StartScreenSpacing;
 
 	StartScreen.PrevX = StartScreen.X;
     
