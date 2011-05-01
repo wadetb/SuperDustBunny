@@ -102,7 +102,7 @@ void DisplayStartScreen()
 	AddLitSprite(LIGHTLIST_BACKGROUND, &BackgroundFridgeSprite, 0, 1024);
 
     float Scale = Lerp(StartScreen.StartupTime, 0.0f, 0.8f, 2.0f, 1.0f);
-    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &LogoSprite, 384, 220, Scale, 1.0f);
+    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &LogoSprite, 384, 280, Scale, 1.0f);
 
 	for (int i = 0; i < STARTSCREEN_ITEM_COUNT; i++)
 	{
@@ -125,6 +125,8 @@ void DisplayStartScreen()
     {
         float Alpha = Max(0, 1.0f - StartScreen.StartupTime);
         AddLitSpriteAlpha(LIGHTLIST_WIPE, &ScreenStart1Sprite, 0, LitScreenHeight/2 - ScreenStart1Sprite.height/2, Alpha);
+        AddLitSpriteAlpha(LIGHTLIST_WIPE, &ScreenStart1Sprite, 0, LitScreenHeight/2 - ScreenStart1Sprite.height/2-ScreenStart1Sprite.height, Alpha);
+        AddLitSpriteAlpha(LIGHTLIST_WIPE, &ScreenStart1Sprite, 0, LitScreenHeight/2 - ScreenStart1Sprite.height/2+ScreenStart1Sprite.height, Alpha);
     }
 }
 
@@ -243,6 +245,6 @@ void UpdateStartScreen()
     if (StartScreen.StartupTime >= 1.0f && !StartScreen.WelcomeDisplayed)
     {
         StartScreen.WelcomeDisplayed = true;
-        DisplayWelcomeAlert();
+        //DisplayWelcomeAlert();
     }
 }

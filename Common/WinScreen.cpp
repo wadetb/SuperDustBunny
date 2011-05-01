@@ -36,10 +36,12 @@ void DisplayWinScreen()
 	if (WinScreen.Pressed)
 	{
 		AddLitSprite(LIGHTLIST_BACKGROUND, &ScreenWin2Sprite, 0, 0);
+        AddLitSpriteSizedColor(LIGHTLIST_BACKGROUND, &WhiteSprite, 0, ScreenWin2Sprite.height, gxScreenWidth, 1000.0f, gxRGB32(0, 0, 0));
 	}
 	else
 	{
 		AddLitSprite(LIGHTLIST_BACKGROUND, &ScreenWin1Sprite, 0, 0);
+        AddLitSpriteSized(LIGHTLIST_BACKGROUND, &WhiteSprite, 0, ScreenWin2Sprite.height, gxScreenWidth, 1000.0f);
 	}
 }
 

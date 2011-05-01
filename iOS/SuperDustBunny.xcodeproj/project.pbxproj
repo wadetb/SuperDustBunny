@@ -69,6 +69,7 @@
 		08A8FC7613302F6300E45A98 /* TODO.txt in Resources */ = {isa = PBXBuildFile; fileRef = 08A8FC7513302F6300E45A98 /* TODO.txt */; };
 		08B5EE21133A7F37000D5116 /* Chapters in Resources */ = {isa = PBXBuildFile; fileRef = 08B5EE20133A7F37000D5116 /* Chapters */; };
 		08BF391713466F4E002C1A7B /* Converted in Resources */ = {isa = PBXBuildFile; fileRef = 08BF391613466F4E002C1A7B /* Converted */; };
+		08D2E1AB13660E0300AD31B8 /* PowerUp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D2E1A913660E0300AD31B8 /* PowerUp.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -178,6 +179,8 @@
 		08A8FC7513302F6300E45A98 /* TODO.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = TODO.txt; path = ../../Docs/TODO.txt; sourceTree = "<group>"; };
 		08B5EE20133A7F37000D5116 /* Chapters */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Chapters; path = ../../Chapters; sourceTree = "<group>"; };
 		08BF391613466F4E002C1A7B /* Converted */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Converted; path = ../../Converted; sourceTree = "<group>"; };
+		08D2E1A913660E0300AD31B8 /* PowerUp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PowerUp.cpp; sourceTree = "<group>"; };
+		08D2E1AA13660E0300AD31B8 /* PowerUp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PowerUp.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -314,6 +317,8 @@
 				085AAA39132C5B9F00DF32CA /* Lighting.h */,
 				085AAA3A132C5B9F00DF32CA /* Lives.cpp */,
 				085AAA3B132C5B9F00DF32CA /* Lives.h */,
+				08D2E1A913660E0300AD31B8 /* PowerUp.cpp */,
+				08D2E1AA13660E0300AD31B8 /* PowerUp.h */,
 				085AAA3C132C5B9F00DF32CA /* rapidxml */,
 				085AAA43132C5B9F00DF32CA /* Recorder.cpp */,
 				085AAA44132C5B9F00DF32CA /* Recorder.h */,
@@ -500,6 +505,7 @@
 				085AAA71132C5B9F00DF32CA /* Vacuum.cpp in Sources */,
 				085AAA72132C5B9F00DF32CA /* WinScreen.cpp in Sources */,
 				085AAA73132C5B9F00DF32CA /* Wipe.cpp in Sources */,
+				08D2E1AB13660E0300AD31B8 /* PowerUp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

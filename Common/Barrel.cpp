@@ -140,6 +140,7 @@ void UpdateBarrels()
 			    
 				Dusty.FloatX = (float)Barrel->X;
 				Dusty.FloatY = (float)Barrel->Y + 60;
+                Dusty.Hidden = true;
 				SetDustyState_PrepareLaunch();
 				
 				Barrel->State = BARRELSTATE_TURN;
@@ -162,8 +163,9 @@ void UpdateBarrels()
 			{
 				Barrel->Dir = Barrel->ToDir;
 				float Angle = DirectionToAngle(Barrel->Dir);
-				float Velocity = 20.0f;
+				float Velocity = 22.5f;
 				SetDustyState_Launch(Velocity*cosf(Angle), -Velocity*sinf(Angle));
+                Dusty.Hidden = false;
 				Barrel->Timer = 30;
 				Barrel->State = BARRELSTATE_LAUNCH;
 				

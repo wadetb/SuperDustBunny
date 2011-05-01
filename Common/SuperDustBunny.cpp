@@ -472,7 +472,7 @@ void DisplayDebug()
 //                                                        Swipe controls                                                                   //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   //
 
-#define MAX_SWIPE_POINTS 128
+#define MAX_SWIPE_POINTS 32
 
 
 struct SSwipe

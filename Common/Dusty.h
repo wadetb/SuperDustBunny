@@ -20,6 +20,7 @@ enum EDustyState
 	DUSTYSTATE_DIE,
 	DUSTYSTATE_STUCK,
 	DUSTYSTATE_HURT,
+	DUSTYSTATE_STAPLERLAUNCH,
 };
 
 struct SDusty
@@ -54,6 +55,8 @@ struct SDusty
     int LandTimer;
     
 	int Lives;
+    
+    bool Hidden;
 
 	bool GainLife;
 

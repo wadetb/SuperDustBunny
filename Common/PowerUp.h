@@ -38,7 +38,7 @@ extern SPowerUpToggle PowerUpToggle;
 
 void CreatePowerUp(int X, int Y);
 
-ClearPowerUps();
+void ClearPowerUps();
 
 void InitPowerUp();
 

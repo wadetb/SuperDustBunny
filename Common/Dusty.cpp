@@ -1,4 +1,4 @@
-﻿#include "Common.h"
+#include "Common.h"
 #include "Dusty.h"
 #include "Tutorial.h"
 #include "Chapter.h"
@@ -55,7 +55,7 @@ void InitDusty()
 	Dusty.CollideWithTopSide = false;
 	Dusty.CollideWithBottomSide = false;
     
-    Dusty.JumpPower = 18.0f;
+    Dusty.JumpPower = 27.5f;
 };
 
 void SetDustyPosition(float x, float y)
@@ -86,7 +86,7 @@ void UpdateDusty_JumpCommon();
 //                                                  General purpose control                                                                //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-bool UpdateDusty_CheckSwipeJump(float Angle, float Range, float Power)
+bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
 {
     while (GetInput_SwipeValid())
     {
@@ -175,6 +175,7 @@ void SetDustyState_Stand()
 	Dusty.SpriteTransition = 0;	
 
     Dusty.AirJumpCount = 0;
+    Dusty.LandTimer = 0;
 
 	Dusty.State = DUSTYSTATE_STAND;
 }
@@ -217,6 +218,10 @@ void UpdateDusty_Stand()
 		SetDustyState_Stuck();
 		return;
 	}
+    
+    Dusty.LandTimer++;
+    if (Dusty.LandTimer <= 5)
+        return;
 
 	if (Dusty.CollideMaterial == MATERIAL_ICE)
 	{
@@ -248,7 +253,7 @@ void UpdateDusty_Stand()
     {
         // WTB - Testing a version without hopping, just jumping.
 #ifdef ALLOW_HOP
-        if ( UpdateDusty_CheckSwipeJump(90.0f, 90.0f, 10.0f) )
+        if ( UpdateDusty_CheckSwipeJump(90.0f, 90.0f) )
             return;
         
         if ( UpdateDusty_CheckSwipeDir(0.0f, 45.0f) )
@@ -262,7 +267,7 @@ void UpdateDusty_Stand()
             return;
         }
 #else
-        if ( UpdateDusty_CheckSwipeJump(90.0f, 180.0f, 10.0f) )
+        if ( UpdateDusty_CheckSwipeJump(90.0f, 180.0f) )
             return;
 #endif
     }
@@ -375,14 +380,6 @@ void DisplayDusty_Jump()
 
 void UpdateDusty_Jump()
 {       
-	Dusty.FloatX = Dusty.FloatX + Dusty.FloatVelocityX;                                                   
-    Dusty.FloatY += Dusty.FloatVelocityY;
-      
-	Dusty.FloatVelocityY += Dusty.FloatGravity;
-   
-	if (Dusty.FloatVelocityY > 15.0f)
-		Dusty.FloatVelocityY = 15.0f;
-
     // Grace period jump.  Allows a midair jump within a few frames of falling.
     if (Settings.FallGracePeriod && Dusty.JumpGraceTimer > 0)
     {
@@ -533,7 +530,7 @@ void UpdateDusty_Hop()
     else
     {
 #ifdef ALLOW_HOP
-        if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f, 10.0f) )
+        if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f) )
             return;
         
         float VX, VY;
@@ -631,8 +628,27 @@ void UpdateDusty_Hop()
 
 void UpdateDusty_JumpCommon()
 {  
-	Dusty.SpriteTransition++;
+	Dusty.FloatX += Dusty.FloatVelocityX;                                                   
+    Dusty.FloatY += Dusty.FloatVelocityY;
     
+    if ( Dusty.State == DUSTYSTATE_LAUNCH )
+    {
+        // Reduced gravity when launching, and no friction.
+        Dusty.FloatVelocityY += Dusty.FloatGravity * 0.75f; 
+    }
+    else
+    {
+        Dusty.FloatVelocityY += Dusty.FloatGravity;        
+
+        Dusty.FloatVelocityX *= 0.98f;
+        Dusty.FloatVelocityY *= 0.98f;
+    }
+    
+	if (Dusty.FloatVelocityY > 15.0f)
+		Dusty.FloatVelocityY = 15.0f;
+    
+	Dusty.SpriteTransition++;
+
     Dusty.LandTimer++;
 
 	// Air control.
@@ -690,7 +706,7 @@ void UpdateDusty_JumpCommon()
 	// Wade: Currently this stuff is tweaked around as an experiment- he can only walljump again after a delay.
 	Dusty.WallJumpTimer++;
 
-    if (Dusty.LandTimer >= 20)
+    if (Dusty.LandTimer >= 5)
     {
         if (Dusty.CollideWithLeftSide && Dusty.Direction == DIRECTION_LEFT && (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_LEFT))
         {
@@ -748,6 +764,7 @@ void SetDustyState_WallJump()
 
 	Dusty.WallJumpTimer = 0;
     Dusty.AirJumpCount = 0;
+    Dusty.LandTimer = 0;
 
 	// Switch directions when entering a wall jump.
 	if (Dusty.Direction == DIRECTION_RIGHT)
@@ -784,6 +801,10 @@ void UpdateDusty_WallJump()
 		return;
 	}
 
+    Dusty.LandTimer++;
+    if (Dusty.LandTimer <= 5)
+        return;
+    
 	if (Dusty.WallStickTimer > 0)
 		Dusty.WallStickTimer--;
 
@@ -864,13 +885,13 @@ void UpdateDusty_WallJump()
 #else
         if ( Dusty.Direction == DIRECTION_RIGHT )
         {
-            if ( UpdateDusty_CheckSwipeJump(0.0f, 90.0f, 10.0f) )
+            if ( UpdateDusty_CheckSwipeJump(0.0f, 90.0f) )
                 return;
         }
         
         if ( Dusty.Direction == DIRECTION_LEFT )
         {
-            if ( UpdateDusty_CheckSwipeJump(180.0f, 90.0f, 10.0f) )
+            if ( UpdateDusty_CheckSwipeJump(180.0f, 90.0f) )
                 return;
         }        
 #endif
@@ -890,6 +911,7 @@ void SetDustyState_CornerJump()
 
 	Dusty.WallJumpTimer = 0;
     Dusty.AirJumpCount = 0;
+    Dusty.LandTimer = 0;
     
 	Dusty.SpriteTransition = 0;
 
@@ -908,12 +930,11 @@ void DisplayDusty_CornerJump()
 }
 
 void UpdateDusty_CornerJump()
-{                                 
-	// Force Dusty to pause in Corner jump for a few frames.
-	Dusty.SpriteTransition += 1;
-	if (Dusty.SpriteTransition <= 5)
+{
+    Dusty.LandTimer += 1;
+	if (Dusty.LandTimer <= 5)
 		return;
-
+    
 	// Jump off wall by pressing jump
     if (Settings.ControlStyle == CONTROL_TILT)
     {
@@ -980,7 +1001,7 @@ void UpdateDusty_CornerJump()
                 return;
             }
 #else
-            if ( UpdateDusty_CheckSwipeJump(135.0f, 135.0f, 10.0f) )
+            if ( UpdateDusty_CheckSwipeJump(135.0f, 135.0f) )
                 return;
 #endif
         }
@@ -1007,7 +1028,7 @@ void UpdateDusty_CornerJump()
                 return;                
             }
 #else
-            if ( UpdateDusty_CheckSwipeJump(45.0f, 135.0f, 10.0f) )
+            if ( UpdateDusty_CheckSwipeJump(45.0f, 135.0f) )
                 return;
 #endif
         }
@@ -1062,14 +1083,6 @@ void DisplayDusty_Launch()
 
 void UpdateDusty_Launch()
 {
-	Dusty.FloatX += Dusty.FloatVelocityX;
-	Dusty.FloatY += Dusty.FloatVelocityY;
-	
-	Dusty.FloatVelocityY += Dusty.FloatGravity * 0.75f; // Reduced gravity when launching.
-
-	if (Dusty.FloatVelocityY > 15.0f)
-		Dusty.FloatVelocityY = 15.0f;
-
 	UpdateDusty_JumpCommon();
 }
 
@@ -1266,7 +1279,14 @@ void UpdateDusty_Collision()
 		Dusty.CollideWithBottomSide = true;
 		Dusty.FloatY = (float)Chapter.PageHeight * 64 - (float)Dusty.Bottom;
 	} 
-
+    
+	//Collision with the top side of the screen
+	if (Dusty.FloatY + Dusty.Top <= 0 )
+	{	
+		Dusty.CollideWithTopSide = true;
+		Dusty.FloatY = -(float)Dusty.Top;
+	} 
+    
 	for (int y = 0; y < Chapter.PageHeight; y++)
 	{
 		for (int x = 0; x < Chapter.PageWidth; x++)
@@ -1434,27 +1454,24 @@ void UpdateDusty_Collision()
 
 void DisplayDusty()
 {
-   
-    
-	switch (Dusty.State)
-	{
-	case DUSTYSTATE_STAND:			    DisplayDusty_Stand(); break;
-	case DUSTYSTATE_JUMP:			    DisplayDusty_Jump(); break;
-	case DUSTYSTATE_HOP:			    DisplayDusty_Hop(); break;
-	case DUSTYSTATE_WALLJUMP:			DisplayDusty_WallJump(); break;
-	case DUSTYSTATE_CORNERJUMP:			DisplayDusty_CornerJump(); break;
-	case DUSTYSTATE_PREPARELAUNCH:      DisplayDusty_PrepareLaunch(); break;
-	case DUSTYSTATE_LAUNCH:             DisplayDusty_Launch(); break;	
-	case DUSTYSTATE_DIE:				DisplayDusty_Die(); break;
-	case DUSTYSTATE_STUCK:				DisplayDusty_Stuck(); break;
-	case DUSTYSTATE_HURT:				DisplayDusty_Hurt(); break;
-	}
-	
-    if (PowerUpToggle.Jump)
-    {
-        DisplayPowerUp();
+    if (!Dusty.Hidden)
+    {    
+        switch (Dusty.State)
+        {
+        case DUSTYSTATE_STAND:			    DisplayDusty_Stand(); break;
+        case DUSTYSTATE_JUMP:			    DisplayDusty_Jump(); break;
+        case DUSTYSTATE_HOP:			    DisplayDusty_Hop(); break;
+        case DUSTYSTATE_WALLJUMP:			DisplayDusty_WallJump(); break;
+        case DUSTYSTATE_CORNERJUMP:			DisplayDusty_CornerJump(); break;
+        case DUSTYSTATE_PREPARELAUNCH:      DisplayDusty_PrepareLaunch(); break;
+        case DUSTYSTATE_LAUNCH:             DisplayDusty_Launch(); break;	
+        case DUSTYSTATE_DIE:				DisplayDusty_Die(); break;
+        case DUSTYSTATE_STUCK:				DisplayDusty_Stuck(); break;
+        case DUSTYSTATE_HURT:				DisplayDusty_Hurt(); break;
+    //	case DUSTYSTATE_STAPLERLAUNCH:		DisplayDusty_StaplerLaunch(); break;
+        }
     }
-    
+        
 	if (DevMode)
 	{
 		// Draw a yellow + at Dusty's root location.
@@ -1480,7 +1497,7 @@ void UpdateDusty()
 		AdvanceToNextPage();
 		return;
 	}
-	
+
 	switch (Dusty.State)
 	{
 	case DUSTYSTATE_STAND:			    UpdateDusty_Stand(); break;
