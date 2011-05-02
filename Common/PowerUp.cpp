@@ -85,7 +85,8 @@ void UpdatePowerUp()
                 SetPowerUp(PowerUp->IncreaseJump);
             } 	                       	    
         }
-        else if (PowerUp->State == POWERUPSTATE_ACTIVE)
+        
+        if (PowerUp->State == POWERUPSTATE_ACTIVE)
         {  
             //Boost Dusty's overall performance     
             Dusty.FloatVelocityX += PowerUp->Value;
