@@ -12,11 +12,13 @@
 #include "Dusty.h"
 #include "Lives.h"
 
+float LivesScaleFactor = 0.85f;
+
 void DisplayLives()
 {
 	for (int i = 0; i < Dusty.Lives; i++)
 	{
-		AddLitSpriteScaled(LIGHTLIST_WIPE, &CoinSpin1Sprite, (float)gxScreenWidth - 100 - 45*i, -20, 0.65f, 0.65f);
+		AddLitSpriteScaled(LIGHTLIST_WIPE, &CoinSpin1Sprite, (float)gxScreenWidth - 100 - 70*LivesScaleFactor*i, -20, LivesScaleFactor, LivesScaleFactor);
 	}
 }
 

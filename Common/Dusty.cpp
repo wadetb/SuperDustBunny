@@ -114,8 +114,6 @@ bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
     
     if (Swipe.Valid)
     {
-        printf("Valid: Count=%d\n", Swipe.Count);
-
         float dX = SwipePoints[Swipe.ValidCount-1].X - SwipePoints[0].X;
         float dY = SwipePoints[Swipe.ValidCount-1].Y - SwipePoints[0].Y;
         
@@ -139,7 +137,7 @@ bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
                 dX = dX * Power * 0.8f;
                 dY = dY * ( dY > 0 ? Power * 0.8f : Power );
                 
-                printf("Jump: Count=%d MaxSpeed=%f L=%f Power=%f\n", Swipe.ValidCount, MaxSpeed, L, Power);
+                //printf("Jump: Count=%d MaxSpeed=%f L=%f Power=%f\n", Swipe.ValidCount, MaxSpeed, L, Power);
                 
                 GetInput_ConsumeSwipe(L * 1.5f);
                 
