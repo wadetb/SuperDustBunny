@@ -29,6 +29,8 @@
     
 	// Accelerometer info.
 	UIAccelerationValue accel[3];
+    
+    UITouch *currentTouch;
 }
 
 @property (nonatomic, retain) EAGLContext *context;

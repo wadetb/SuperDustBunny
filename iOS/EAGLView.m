@@ -22,6 +22,11 @@ extern GLuint _gxDefaultFrameBuffer;
 extern GLuint _gxDefaultFrameBufferWidth;
 extern GLuint _gxDefaultFrameBufferHeight;
 
+void GetInput_BeginSwipe(float X, float Y, double Time);
+void GetInput_AddToSwipe(float X, float Y, double Time);
+void GetInput_EndSwipe(float X, float Y, double Time);
+
+
 @interface EAGLView (PrivateMethods)
 - (void)createFramebuffer;
 - (void)deleteFramebuffer;
@@ -49,6 +54,8 @@ extern GLuint _gxDefaultFrameBufferHeight;
                                         [NSNumber numberWithBool:FALSE], kEAGLDrawablePropertyRetainedBacking,
                                         kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat,
                                         nil];
+        
+        currentTouch = NULL;
     }
     
     return self;
@@ -166,28 +173,32 @@ extern GLuint _gxDefaultFrameBufferHeight;
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
-	UITouch *touch = [[event allTouches] anyObject];
-    CGPoint touchPoint = [touch locationInView:self];
+	currentTouch = [[event allTouches] anyObject];
+    CGPoint touchPoint = [currentTouch locationInView:self];
 	_msNewX = touchPoint.x * 768 / framebufferWidth;
 	_msNewY = touchPoint.y * 1024 / framebufferHeight;
 	_msNewButton1 = 1;
+    
+    GetInput_BeginSwipe(_msNewX, _msNewY, event.timestamp);
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {
-	UITouch *touch = [[event allTouches] anyObject];
-    CGPoint touchPoint = [touch locationInView:self];
+    CGPoint touchPoint = [currentTouch locationInView:self];
 	_msNewX = touchPoint.x * 768 / framebufferWidth;
 	_msNewY = touchPoint.y * 1024 / framebufferHeight;
+    
+    GetInput_AddToSwipe(_msNewX, _msNewY, event.timestamp);
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
-	UITouch *touch = [[event allTouches] anyObject];
-    CGPoint touchPoint = [touch locationInView:self];
+    CGPoint touchPoint = [currentTouch locationInView:self];
 	_msNewX = touchPoint.x * 768 / framebufferWidth;
 	_msNewY = touchPoint.y * 1024 / framebufferHeight;
 	_msNewButton1 = 0;
+    
+    GetInput_EndSwipe(_msNewX, _msNewY, event.timestamp);
 }
 
 @end

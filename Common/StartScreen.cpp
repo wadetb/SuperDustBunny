@@ -61,7 +61,7 @@ struct SStartScreen
 SStartScreen StartScreen;
 
 
-const float StartScreenSpacing = 500.0f;
+const float StartScreenSpacing = 450.0f;
 
 void InitStartScreen()
 {
@@ -111,15 +111,17 @@ void DisplayStartScreen()
         float X = 384 + i*StartScreenSpacing - StartScreen.X;
         float Y = LitScreenHeight * 0.7f;
 
+        float Scale = Remap(fabsf(384-X), 0.0f, 500.0f, 0.9f, 0.6f, true);
+        
         if (i == StartScreen.CurItem)
         {
             float OverlayAlpha = SinWave(StartScreen.PressedTime, 1.0f);
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, StartScreenIcons[i], X, Y, 0.8f, 1.0f);
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, StartScreenPressedIcons[i], X, Y, 0.8f, OverlayAlpha);
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, StartScreenIcons[i], X, Y, Scale, 1.0f);
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, StartScreenPressedIcons[i], X, Y, Scale, OverlayAlpha);
         }
         else
         {
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, StartScreenIcons[i], X, Y, 0.8f, 1.0f);
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, StartScreenIcons[i], X, Y, Scale, 1.0f);
         }
 	}
 

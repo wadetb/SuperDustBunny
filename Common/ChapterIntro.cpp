@@ -80,7 +80,10 @@ void UpdateChapterIntro()
 #endif
 
 	if (Dusty.FloatX >= Chapter.StartX)
+    {
 		RemoteControl.MoveRight = false;
+        ChapterIntro.Tapped = true;
+    }
 
 	UpdateDusty();
 	UpdateDust();

@@ -48,6 +48,8 @@ void InitDusty()
     
     Dusty.LandTimer = 0;
     
+    Dusty.Hidden = false;
+    
 	Dusty.GainLife = false;
 	
 	Dusty.CollideWithLeftSide = false;
@@ -90,35 +92,69 @@ void UpdateDusty_JumpCommon();
 
 bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
 {
-    while (GetInput_SwipeValid())
+    float MaxSpeed = 0;
+    
+    if (Swipe.Count >= 2 && Swipe.Duration > 1.0f/20.0f)
     {
-        if ( GetInput_CheckSwipeDir( Angle, Range ) )
+        Swipe.Valid = true;
+        Swipe.ValidCount = Swipe.Count;
+        for (int i = 0; i < Swipe.Count; i++)
+            if (SwipePoints[i].Time > 1.0f/20.0f)
+                Swipe.ValidCount = i;
+        
+        for (int i = 1; i < Swipe.ValidCount; i++)
         {
-            float dX, dY;
-            GetInput_NextSwipeDir(&dX, &dY);
-            
-            float L = Length(dX, dY);
+            float Dist = Distance(SwipePoints[i-1].X, SwipePoints[i-1].Y, SwipePoints[i].X, SwipePoints[i].Y);
+            float Time = SwipePoints[i].Time - SwipePoints[i-1].Time;
+            float Speed = Dist / Time;
+            if (Speed > MaxSpeed)
+                MaxSpeed = Speed;
+        }
+    }
+    
+    if (Swipe.Valid)
+    {
+        printf("Valid: Count=%d\n", Swipe.Count);
+
+        float dX = SwipePoints[Swipe.ValidCount-1].X - SwipePoints[0].X;
+        float dY = SwipePoints[Swipe.ValidCount-1].Y - SwipePoints[0].Y;
+        
+        float L = Length(dX, dY);
+        if (L > 0)
+        {
             dX /= L;
             dY /= L;
             
-            dX *= Dusty.JumpPower;
-            dY *= Dusty.JumpPower;
+            float aX = cosf(DegreesToRadians(Angle));
+            float aY = -sinf(DegreesToRadians(Angle));
             
-            GetInput_ConsumeSwipe(Length(dX, dY));
+            float Dot = aX*dX + aY*dY;
+            float cR = cosf(Range);
             
-            SetDustyState_JumpWithVelocity(dX, dY);
-            
+            if ( Dot >= cR )
+            {
+                float Power = Dusty.JumpPower;
+                //float Power = Remap(L, 50.0f, 100.0f, Dusty.JumpPower/3, Dusty.JumpPower, true);
+                //float Power = Remap(MaxSpeed, 1000.0f, 3000.0f, Dusty.JumpPower/3, Dusty.JumpPower, true);
+                dX = dX * Power * 0.8f;
+                dY = dY * ( dY > 0 ? Power * 0.8f : Power );
+                
+                printf("Jump: Count=%d MaxSpeed=%f L=%f Power=%f\n", Swipe.ValidCount, MaxSpeed, L, Power);
+                
+                GetInput_ConsumeSwipe(L * 1.5f);
+                
+                SetDustyState_JumpWithVelocity(dX, dY);
+                
 #ifdef SWIPE_DEBUG
-            AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle+Range))*100, Dusty.FloatY + -sinf(DegreesToRadians(Angle+Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
-            AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle-Range))*100, Dusty.FloatY + -sinf(DegreesToRadians(Angle-Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
-            
-            AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + dX*10, Dusty.FloatY + dY*10 + ScrollY, gxRGB32(192, 128, 128), 0.5f);
+                AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle+Range))*100, Dusty.FloatY + -sinf(DegreesToRadians(Angle+Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
+                AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle-Range))*100, Dusty.FloatY + -sinf(DegreesToRadians(Angle-Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
+                
+                AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + dX*10, Dusty.FloatY + dY*10 + ScrollY, gxRGB32(192, 128, 128), 0.5f);
 #endif
-            
-            return true;
+                
+                return true;
+            }
         }
-        
-        GetInput_ConsumeSwipeSegment();
     }
     
     return false;
@@ -657,19 +693,35 @@ void UpdateDusty_JumpCommon()
     }
     else
     {
-        float dX, dY;
-        GetInput_NextSwipeDir(&dX, &dY);
-        
-        float L = sqrtf(dX*dX + dY*dY);
-        if (L > 1.0f)
+#if 0
+        if (msAccelX < -0.10f)
         {
-            if (fabsf(Dusty.FloatVelocityX) < 10)
-                Dusty.FloatVelocityX += dX >= 0 ? 1.0f : -1.0f;
-            if (fabsf(Dusty.FloatVelocityY) < 10)
-                Dusty.FloatVelocityY += dY >= 0 ? 1.0f : -1.0f;
+            if (Dusty.FloatVelocityX >= -6)
+                Dusty.FloatVelocityX -= 1.0f;
         }
-        
-        GetInput_ConsumeSwipe(1.5f*Length(Dusty.FloatVelocityX, Dusty.FloatVelocityY));
+        if (msAccelX > 0.10f)
+        {
+            if (Dusty.FloatVelocityX <= 6)
+                Dusty.FloatVelocityX += 1.0f;
+        }
+#elif 1
+        if ( Swipe.Count > 1 )
+        {
+            float dX = SwipePoints[1].X - SwipePoints[0].X;
+            float dY = SwipePoints[1].Y - SwipePoints[0].Y;
+            
+            float L = sqrtf(dX*dX + dY*dY);
+            if (L > 1.0f)
+            {
+                if (fabsf(Dusty.FloatVelocityX) < 10)
+                    Dusty.FloatVelocityX += dX >= 0 ? 1.0f : -1.0f;
+                if (fabsf(Dusty.FloatVelocityY) < 10)
+                    Dusty.FloatVelocityY += dY >= 0 ? 1.0f : -1.0f;
+            }
+            
+            GetInput_ConsumeSwipe(1.5f*Length(Dusty.FloatVelocityX, Dusty.FloatVelocityY));
+        }
+#endif
     }
 
     if (Dusty.FloatVelocityX > 0)
@@ -681,12 +733,14 @@ void UpdateDusty_JumpCommon()
 	if (Dusty.CollideWithBottomLeftCorner)
 	{
 		Dusty.Direction = DIRECTION_LEFT;
+        GetInput_ConsumeAllSwipe();
 		SetDustyState_CornerJump();
 		return;
 	}
 	if (Dusty.CollideWithBottomRightCorner)
 	{
 		Dusty.Direction = DIRECTION_RIGHT;
+        GetInput_ConsumeAllSwipe();
 		SetDustyState_CornerJump();
 		return;
 	}
@@ -704,6 +758,7 @@ void UpdateDusty_JumpCommon()
             for (int i = 0; i < 6; i++)
                 MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);
 
+            GetInput_ConsumeAllSwipe();
             SetDustyState_WallJump();
             return;
         }
@@ -714,6 +769,7 @@ void UpdateDusty_JumpCommon()
             for (int i = 0; i < 6; i++)
                 MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);
 
+            GetInput_ConsumeAllSwipe();
             SetDustyState_WallJump();
             return;
         }
@@ -725,6 +781,7 @@ void UpdateDusty_JumpCommon()
             for (int i = 0; i < 3; i++)
                 MakeDustMote(Dusty.FloatX, Dusty.FloatY);
 
+            GetInput_ConsumeAllSwipe();
             SetDustyState_Stand();
             return;
         } 
@@ -1043,8 +1100,7 @@ void DisplayDusty_PrepareLaunch()
 
 void UpdateDusty_PrepareLaunch()
 {
-    while (GetInput_SwipeValid())
-        GetInput_ConsumeSwipeSegment();
+    GetInput_ConsumeAllSwipe();
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -1434,7 +1490,7 @@ void UpdateDusty_Collision()
 					bool BlockCollideWithTopSide = false;
 					bool BlockCollideWithBottomSide = false;
 
-					int CornerThreshold = 32;
+					int CornerThreshold = 48;
 
 					// Prefer to collide with the side of the block that would push Dusty out the least distance.
 					// (Only consider sides that are not adjacent to another solid block).
