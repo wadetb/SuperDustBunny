@@ -353,7 +353,7 @@ void SetDustyState_Jump( bool OffWall )
 		//sxPlaySound( &DustyJumps );
 	}
 
-	Dusty.FloatY -= 40.0f;
+	Dusty.FloatY -= 50.0f;
 
 	Dusty.FloatVelocityX = 6.0f;
 	Dusty.FloatVelocityY = -16.0f;
