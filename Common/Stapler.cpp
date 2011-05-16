@@ -115,7 +115,7 @@ void DisplayStaplers()
                 AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump10Sprite, Stapler->X + 170, Stapler->Y + ScrollY - 160, 119, 0, 130, 110);
             }
         }
-        else if (Stapler->State == STAPLERSTATE_LAUNCH)
+        else if (Stapler->CanLaunch == false)
         {
             AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &StaplerExtendUpSprite, Stapler->X, Stapler->Y + ScrollY - 30, 1.0f, 0.0f);
         }            

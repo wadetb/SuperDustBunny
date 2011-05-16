@@ -25,26 +25,13 @@ void InitPowerUp()
     
     PowerUpToggle.Jump = false;
     
-    PowerUp->IncreaseJump = 18;
-    
+    PowerUp->IncreaseJump = 10.0f;
+        
     PowerUp->Duration = 500;
     
     PowerUp->Value = 0;
     
     PowerUp->State = POWERUPSTATE_INACTIVE;
-}
-
-void SetPowerUp(int DefinedCounter)
-{
-    SPowerUp* PowerUp = &PowerUps[NPowerUps++];
-    
-    PowerUp->Duration = 500;
-    
-    PowerUp->Value = DefinedCounter;
-    
-    PowerUpToggle.Jump = true;
-        
-    PowerUp->State = POWERUPSTATE_ACTIVE;
 }
 
 void ClearPowerUps()
@@ -63,11 +50,21 @@ void CreatePowerUp(int X, int Y)
     
     PowerUp->X = (float)X + 32;
     PowerUp->Y = (float)Y + 32;
+    PowerUp->FloatVelocityY = 0.0f;
+    PowerUp->FloatVelocityX = 0.0f;
 }
 
 void DisplayPowerUp()
 {
-
+    for (int i = 0; i < NPowerUps; i++)
+    {
+        SPowerUp* PowerUp = &PowerUps[i];
+        
+        if (PowerUp->State == POWERUPSTATE_ACTIVE)
+            continue;
+        
+        AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &PowerUpSprite, PowerUp->X, PowerUp->Y + ScrollY - 30, 1.0f, 0.0f);
+    }
 }
 
 void UpdatePowerUp()
@@ -82,18 +79,21 @@ void UpdatePowerUp()
 
             if (Dist < 100)
             {
-                SetPowerUp(PowerUp->IncreaseJump);
+                PowerUp->Duration = 750;
+                PowerUpToggle.Jump = true;
+
+                PowerUp->State = POWERUPSTATE_ACTIVE;             
             } 	                       	    
         }
         
+        //Boost Dusty's overall performance
         if (PowerUp->State == POWERUPSTATE_ACTIVE)
-        {  
-            //Boost Dusty's overall performance     
-            Dusty.FloatVelocityX += PowerUp->Value;
-            Dusty.FloatVelocityY += PowerUp->Value;
+        {
            
+                                          
             if (PowerUp->Duration == 0)
             {
+                PowerUp->X = -100;
                 PowerUpToggle.Jump = false;
                 PowerUp->State = POWERUPSTATE_INACTIVE;
             }

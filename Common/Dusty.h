@@ -86,6 +86,7 @@ void InitDusty();
 void SetDustyPosition(float x, float y);
 
 void SetDustyState_PrepareLaunch();
+void SetDustyState_JumpWithVelocity( float VX, float VY );
 void SetDustyState_Launch(float VelocityX, float VelocityY);
 void SetDustyState_Die();
 void SetDustyState_Stuck();

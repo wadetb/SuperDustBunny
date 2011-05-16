@@ -26,9 +26,11 @@ struct SPowerUp
 {  
     int Duration;
     int Value;
-    int IncreaseJump;
+    float IncreaseJump;
 
     float X, Y;
+    float FloatVelocityY;
+    float FloatVelocityX;
     
     EPowerUpState State;
 };
@@ -42,7 +44,6 @@ void ClearPowerUps();
 
 void InitPowerUp();
 
-void SetPowerUp(int DefinedCounter);
 void UpdatePowerUp();
 void DisplayPowerUp();
 

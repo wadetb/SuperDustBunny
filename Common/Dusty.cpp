@@ -142,7 +142,6 @@ bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
                 GetInput_ConsumeSwipe(L * 1.5f);
                 
                 SetDustyState_JumpWithVelocity(dX, dY);
-                
 #ifdef SWIPE_DEBUG
                 AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle+Range))*100, Dusty.FloatY + -sinf(DegreesToRadians(Angle+Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
                 AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle-Range))*100, Dusty.FloatY + -sinf(DegreesToRadians(Angle-Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
@@ -362,6 +361,16 @@ void SetDustyState_Jump( bool OffWall )
 		Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
     
     Dusty.LandTimer = 0;
+
+    if (PowerUpToggle.Jump)
+    {
+        Dusty.FloatY -= 60.0f;
+        
+        Dusty.FloatVelocityX = 12.0f;
+        Dusty.FloatVelocityY = - 24.0f;
+        if (Dusty.Direction == DIRECTION_LEFT)
+            Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
+    }
 
 	Dusty.State = DUSTYSTATE_JUMP;
 }
