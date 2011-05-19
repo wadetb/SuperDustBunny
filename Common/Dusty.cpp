@@ -355,8 +355,8 @@ void SetDustyState_Jump( bool OffWall )
 
 	Dusty.FloatY -= 50.0f;
 
-	Dusty.FloatVelocityX = 6.0f;
-	Dusty.FloatVelocityY = -16.0f;
+	Dusty.FloatVelocityX = 8.0f;
+	Dusty.FloatVelocityY = -20.0f;
 	if (Dusty.Direction == DIRECTION_LEFT)
 		Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
     
