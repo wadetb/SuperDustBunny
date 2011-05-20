@@ -396,6 +396,7 @@ void* LoadAssetFile(const char* FileName, void** Data, int* DataSize)
     int FileDataSize;
     char* FileData;
     
+#ifdef PLATFORM_IPHONE
     if ( Settings.LiveAssets )
     {
         if ( GetLiveAssetReplacement(FileName, (void**)&FileData, &FileDataSize) )
@@ -406,7 +407,8 @@ void* LoadAssetFile(const char* FileName, void** Data, int* DataSize)
             return FileData;
         }
     }
-    
+#endif
+
     FILE* F = OpenAssetFile(FileName, "rb");
     if (!F)
         return NULL;

@@ -1059,7 +1059,7 @@ bool Update()
 	if (kbIsKeyDown(KB_LCONTROL) && kbIsKeyDown(KB_E) && !kbWasKeyDown(KB_E))
 	{
 		char Work[1024];
-		snprintf(Work, sizeof(Work), "%s%s.tmx", ChapterNames[CurrentChapter], Chapter.Pages[Chapter.PageNum].Name);
+		snprintf(Work, sizeof(Work), "%s%s.tmx", Chapters[CurrentChapter].Name, Chapter.Pages[Chapter.PageNum].Name);
 		ShellExecute(NULL, NULL, "Tools\\Tiled\\Tiled.exe", Work, NULL, 0);
 	}
 

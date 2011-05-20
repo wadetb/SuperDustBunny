@@ -673,8 +673,11 @@ void UpdateDusty_JumpCommon()
     {
         Dusty.FloatVelocityY += Dusty.FloatGravity;        
 
-        Dusty.FloatVelocityX *= 0.98f;
-        Dusty.FloatVelocityY *= 0.98f;
+        if ( Settings.ControlStyle == CONTROL_SWIPE )
+        {
+            Dusty.FloatVelocityX *= 0.98f;
+            Dusty.FloatVelocityY *= 0.98f;
+        }
     }
     
 	if (Dusty.FloatVelocityY > 15.0f)

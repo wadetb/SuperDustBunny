@@ -75,7 +75,6 @@ enum gxAlphaMode
 
 void _gxSetAlpha( gxAlphaMode mode );
 void _gxSetTexture( gxSprite* spr );
-void _gxDrawQuad( float x, float y, float w, float h, unsigned int color = gxRGBA32(255,255,255,255), float u1 = 0.0f, float v1 = 0.0f, float u2 = 1.0f, float v2 = 1.0f );
 
 void gxCreateRenderTarget(int Width, int Height, gxSprite* Sprite, bool Alpha);
 void gxSetRenderTarget(gxSprite* Sprite);
@@ -100,24 +99,6 @@ void gxSetShaderConstant(gxShaderConstant Constant, float x, float y);
 void gxSetShaderConstant(gxShaderConstant Constant, float x, float y, float z);
 void gxSetShaderConstant(gxShaderConstant Constant, float x, float y, float z, float w);
 void gxSetShaderSampler(gxShaderConstant Constant, gxSprite* Sprite);
-
-struct gxPixelShader
-{
-	GLuint Shader;
-};
-
-void gxCreatePixelShader(const char* Source, gxPixelShader* Shader);
-void gxSetPixelShader(gxPixelShader* Shader);
-void gxSetPixelShaderConst(int Index, float x, float y=0.0f, float z=0.0f, float w=0.0f);
-
-struct gxVertexShader
-{
-	GLuint Shader;
-};
-
-void gxCreateVertexShader(const char* Source, gxVertexShader* Shader);
-void gxSetVertexShader(gxVertexShader* Shader);
-void gxSetVertexShaderConst(int Index, float x, float y=0.0f, float z=0.0f, float w=0.0f);
 
 void gxCopyRenderTarget(gxSprite* From, gxSprite* To);
 

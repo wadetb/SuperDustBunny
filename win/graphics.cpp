@@ -249,17 +249,6 @@ void gxDeinit()
 	gxD3D = NULL;
 }
 
-void gxSetClipRange( int x1, int y1, int x2, int y2 )
-{
-	gxViewX1 = x1;
-	gxViewY1 = y1;
-	gxViewX2 = x2;
-	gxViewY2 = y2;
-
-	RECT r = { x1, y1, x2, y2 };
-	gxDev->SetScissorRect( &r );
-}
-
 void _gxDrawQuad( float x, float y, float w, float h, unsigned int color, float u1, float v1, float u2, float v2 )
 {
 	gxSpriteVertex v[4];
@@ -278,51 +267,6 @@ void _gxDrawQuad( float x, float y, float w, float h, unsigned int color, float 
 	v[3].x = x+w; v[3].y = y+h; v[3].z = 0.0f; v[3].w = 1.0f;
 	v[3].color = color;
 	v[3].u = u2; v[3].v = v2;
-
-	gxDev->SetVertexShader(NULL);
-	gxDev->SetFVF( gxSpriteVertexFVF );
-	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v, sizeof(gxSpriteVertex) );
-}
-
-void _gxDrawQuad(
-	unsigned int Color,
-	float X0, float Y0, float U0, float V0, 
-	float X1, float Y1, float U1, float V1, 
-	float X2, float Y2, float U2, float V2, 
-	float X3, float Y3, float U3, float V3)
-{
-	gxSpriteVertex v[4];
-	v[0].x = X0; 
-	v[0].y = Y0; 
-	v[0].z = 0.0f; 
-	v[0].w = 1.0f;
-	v[0].color = Color;
-	v[0].u = U0; 
-	v[0].v = V0;
-
-	v[1].x = X1; 
-	v[1].y = Y1; 
-	v[1].z = 0.0f; 
-	v[1].w = 1.0f;
-	v[1].color = Color;
-	v[1].u = U1; 
-	v[1].v = V1;
-
-	v[3].x = X2; 
-	v[3].y = Y2; 
-	v[3].z = 0.0f; 
-	v[3].w = 1.0f;
-	v[3].color = Color;
-	v[3].u = U2; 
-	v[3].v = V2;
-
-	v[2].x = X3; 
-	v[2].y = Y3; 
-	v[2].z = 0.0f; 
-	v[2].w = 1.0f;
-	v[2].color = Color;
-	v[2].u = U3; 
-	v[2].v = V3;
 
 	gxDev->SetVertexShader(NULL);
 	gxDev->SetFVF( gxSpriteVertexFVF );
@@ -354,90 +298,6 @@ void _gxSetAlpha( gxAlphaMode mode )
 	}
 }
 
-void gxDrawSprite( int x, int y, gxSprite* p )
-{
-	gxDev->SetTexture( 0, p->tex );
-	gxDev->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
-	gxDev->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
-	gxDev->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
-	_gxDrawQuad( x, y, p->width, p->height );
-}
-
-void gxDrawSpriteScaled( int x, int y, float scalex, float scaley, gxSprite* p )
-{
-	gxDev->SetTexture( 0, p->tex );
-	gxDev->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
-	gxDev->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
-	gxDev->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
-	_gxDrawQuad( x, y, p->width*scalex, p->height*scaley );
-}
-
-void gxDrawSprite0( int x, int y, gxSprite* p )
-{
-	gxDev->SetTexture( 0, p->tex );
-	gxDev->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
-	gxDev->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
-	gxDev->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
-	_gxDrawQuad( x, y, p->width, p->height );
-}
-
-void gxDrawSpriteFilled( int x, int y, gxSprite* p, DWORD col )
-{
-	gxDev->SetTexture( 0, p->tex );
-	gxDev->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
-	gxDev->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
-	gxDev->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
-	_gxDrawQuad( x, y, p->width, p->height, col );
-}
-void gxDrawSpriteScaledFilled( int x, int y, gxSprite* p, int w, int h, DWORD col )
-{
-	gxDev->SetTexture( 0, p->tex );
-	gxDev->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
-	gxDev->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
-	gxDev->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
-	_gxDrawQuad( x, y, w, h, col );
-}
-
-void gxDrawSpriteAlpha( int x, int y, float alpha, gxSprite* p )
-{
-	gxDev->SetTexture( 0, p->tex );
-	gxDev->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
-	gxDev->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
-	gxDev->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
-	_gxDrawQuad( x, y, p->width, p->height, D3DCOLOR_RGBA(255, 255, 255, int(255*alpha)) );
-}
-
-void gxDrawSpriteAdd( int x, int y, gxSprite* p )
-{
-	gxDev->SetTexture( 0, p->tex );
-	gxDev->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
-	gxDev->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
-	gxDev->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ONE );
-	_gxDrawQuad( x, y, p->width, p->height );
-}
-
-void gxDrawSpriteClipped( int x, int y, gxSprite* p, int srcx, int srcy, int srcw, int srch )
-{
-	float u0 = float(srcx)/p->width;
-	float u1 = float(srcx + srcw)/p->width;
-	float v0 = float(srcy)/p->height;
-	float v1 = float(srcy + srch)/p->height;
-	gxDev->SetTexture( 0, p->tex );
-	gxDev->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
-	gxDev->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
-	gxDev->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
-	_gxDrawQuad( x, y, srcw, srch, D3DCOLOR_RGBA(255,255,255,255),u0,v0,u1,v1);
-}
-
-void gxDrawRectangleFilled( int x, int y, int width, int height, int col )
-{
-	gxDev->SetTexture( 0, NULL );
-	gxDev->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
-	gxDev->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
-	gxDev->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
-	_gxDrawQuad( x, y, width, height, col );
-}
-
 void gxLoadSprite( const char* name, gxSprite* spr )
 {
 	assert( gxDev && "If this assert fires, you need to call gxInit earlier." );
@@ -451,6 +311,10 @@ void gxLoadSprite( const char* name, gxSprite* spr )
 	spr->height = info.Height;
 	spr->texWidth = info.Width;
 	spr->texHeight = info.Height;
+    spr->left = 0;
+    spr->right = info.Width;
+    spr->top = 0;
+    spr->bottom = info.Height;
 }
 
 void gxDestroySprite( gxSprite* spr )
@@ -587,7 +451,6 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,  LPSTR lpCmdLi
 	return 0;
 }
 
-
 void gxCreateASCIIBlockSprite(gxSprite* Sprite, const char* Key)
 {
 	D3DXCreateTexture( gxDev, 64, 64, 1, D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &Sprite->tex );
@@ -629,95 +492,15 @@ void gxCreateASCIIBlockSprite(gxSprite* Sprite, const char* Key)
 	gxFontSprite.tex->UnlockRect(0);
 }
 
-
-void gxDrawSpriteCenteredRotated(int x, int y, float a, gxSprite* spr)
-{
-	gxDev->SetTexture( 0, spr->tex );
-	gxDev->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
-	gxDev->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
-	gxDev->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
-
-	float ca = cosf(a);
-	float sa = sinf(a);
-
-	float w = (float)spr->width * 0.5f;
-	float h = (float)spr->height * 0.5f;
-
-	gxSpriteVertex v[4];
-	v[0].x = x + (-w * ca) - (-h * sa); 
-	v[0].y = y + (-w * sa) + (-h * ca); 
-	v[0].z = 0.0f; 
-	v[0].w = 1.0f;
-	v[0].color = 0xffffffff;
-	v[0].u = 0.0f; 
-	v[0].v = 0.0f;
-
-	v[1].x = x + (+w * ca) - (-h * sa); 
-	v[1].y = y + (+w * sa) + (-h * ca); 
-	v[1].z = 0.0f; 
-	v[1].w = 1.0f;
-	v[1].color = 0xffffffff;
-	v[1].u = 1.0f; 
-	v[1].v = 0.0f;
-
-	v[2].x = x + (-w * ca) - (+h * sa); 
-	v[2].y = y + (-w * sa) + (+h * ca); 
-	v[2].z = 0.0f; 
-	v[2].w = 1.0f;
-	v[2].color = 0xffffffff;
-	v[2].u = 0.0f; 
-	v[2].v = 1.0f;
-
-	v[3].x = x + (+w * ca) - (+h * sa); 
-	v[3].y = y + (+w * sa) + (+h * ca); 
-	v[3].z = 0.0f; 
-	v[3].w = 1.0f;
-	v[3].color = 0xffffffff;
-	v[3].u = 1.0f; 
-	v[3].v = 1.0f;
-
-	gxDev->SetVertexShader(NULL);
-	gxDev->SetFVF( gxSpriteVertexFVF );
-	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v, sizeof(gxSpriteVertex) );
-}
-
-
-void gxDrawSpriteCenteredScaledAlphaAdd(int x, int y, float scalex, float scaley, float alpha, gxSprite* spr)
-{
-	gxDev->SetTexture( 0, spr->tex );
-	gxDev->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
-	gxDev->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
-	gxDev->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ONE );
-
-	unsigned int color = gxRGBA32(255, 255, 255, (int)(255.0f*alpha));
-
-	float w = spr->width * scalex;
-	float h = spr->height * scaley;
-
-	_gxDrawQuad( x - w/2, y - h/2, w, h, color );
-}
-
-void gxDrawSpriteSubRect(int x, int y, int x1, int y1, int x2, int y2, gxSprite* spr)
-{
-	gxDev->SetTexture( 0, spr->tex );
-	gxDev->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
-	gxDev->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
-	gxDev->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ONE );
-
-	float u0 = (float)x1 / (float)spr->width;
-	float u1 = (float)x2 / (float)spr->width;
-	float v0 = (float)y1 / (float)spr->height;
-	float v1 = (float)y2 / (float)spr->height;
-
-	_gxDrawQuad( x, y, x2-x1, y2-y1, gxRGBA32(255, 255, 255, 255), u0, v0, u1, v1 );
-}
-
-
 void gxCreateRenderTarget(int Width, int Height, gxSprite* Sprite, bool Alpha)
 {
 	Sprite->width = Sprite->texWidth = Width;
 	Sprite->height = Sprite->texHeight = Height;
 	D3DXCreateTexture(gxDev, Width, Height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &Sprite->tex);
+    Sprite->left = 0;
+    Sprite->top = 0;
+    Sprite->right = Sprite->width;
+    Sprite->bottom = Sprite->height;
 }
 
 void gxSetRenderTarget(gxSprite* Sprite)
@@ -749,116 +532,93 @@ void gxClearColor(unsigned int Color)
 	gxDev->Clear(0, NULL, D3DCLEAR_TARGET, Color, 0.0f, 0);
 }
 
-void gxCreatePixelShader(const char* Source, gxPixelShader* Shader)
+void gxCreateShader(const char* VertexSource, const char* PixelSource, gxShader* Shader)
 {
-	LPD3DXBUFFER CompiledShader;
 	LPD3DXBUFFER ErrorMsgs;
-	D3DXCompileShader(Source, strlen(Source), NULL, NULL, "main", "ps_3_0", 0, &CompiledShader, &ErrorMsgs, NULL);
 
-	if (CompiledShader)
+	D3DXCompileShader(VertexSource, strlen(VertexSource), NULL, NULL, "main", "vs_3_0", 0, &Shader->VertexCode, &ErrorMsgs, NULL);
+
+	if (Shader->VertexCode)
 	{
-		gxDev->CreatePixelShader((DWORD*)CompiledShader->GetBufferPointer(), &Shader->Shader);
-		CompiledShader->Release();
+		gxDev->CreateVertexShader((DWORD*)Shader->VertexCode->GetBufferPointer(), &Shader->VertexShader);
+        D3DXGetShaderConstantTable((DWORD*)Shader->VertexCode->GetBufferPointer(), &Shader->VertexConsts);
 	}
 	else
 	{
-		ReportError("Failed to compile shader:\n%s", ErrorMsgs->GetBufferPointer());
+		ReportError("Failed to compile vertex shader:\n%s", ErrorMsgs->GetBufferPointer());
+	}
+
+	if (ErrorMsgs)
+		ErrorMsgs->Release();
+
+	D3DXCompileShader(PixelSource, strlen(PixelSource), NULL, NULL, "main", "ps_3_0", 0, &Shader->PixelCode, &ErrorMsgs, NULL);
+
+	if (Shader->PixelCode)
+	{
+		gxDev->CreatePixelShader((DWORD*)Shader->PixelCode->GetBufferPointer(), &Shader->PixelShader);
+        D3DXGetShaderConstantTable((DWORD*)Shader->PixelCode->GetBufferPointer(), &Shader->PixelConsts);
+	}
+	else
+	{
+		ReportError("Failed to compile pixel shader:\n%s", ErrorMsgs->GetBufferPointer());
 	}
 
 	if (ErrorMsgs)
 		ErrorMsgs->Release();
 }
 
-void gxSetPixelShader(gxPixelShader* Shader)
+void gxSetShader(gxShader* Shader)
 {
-	gxDev->SetPixelShader(Shader->Shader);
+   	gxDev->SetVertexShader(Shader->VertexShader);
+   	gxDev->SetPixelShader(Shader->PixelShader);
 }
 
-void gxSetPixelShaderConst(int Index, float x, float y, float z, float w)
+gxShaderConstant gxGetShaderConstantByName(gxShader* Shader, const char* Name)
+{
+    gxShaderConstant Result = 0;
+
+    D3DXHANDLE Const;
+    D3DXCONSTANT_DESC Desc;
+    UINT Count;
+
+    Count = 1;
+    Const = Shader->VertexConsts->GetConstantByName(NULL, Name);
+    if ( Const )
+    {
+        Shader->VertexConsts->GetConstantDesc(Const, &Desc, &Count);
+        if ( Count )
+        {
+            Result |= 0x8000 | Desc.RegisterIndex;
+        }
+    }
+
+    Count = 1;
+    Const = Shader->PixelConsts->GetConstantByName(NULL, Name);
+    if ( Const )
+    {
+        Shader->PixelConsts->GetConstantDesc(Const, &Desc, &Count);
+        if ( Count )
+        {
+            Result |= ( 0x8000 | Desc.RegisterIndex ) << 16;
+        }
+    }
+
+    return Result;
+}
+
+void gxSetShaderConstant(gxShaderConstant Constant, float x, float y, float z, float w)
 {
 	float Floats[4] = {x, y, z, w};
-	gxDev->SetPixelShaderConstantF(Index, Floats, 1);
+    if ( Constant & 0x0000ffff )
+	    gxDev->SetVertexShaderConstantF(Constant & 0x00007fff, Floats, 1);
+    if ( Constant & 0xffff0000 )
+	    gxDev->SetPixelShaderConstantF((Constant >> 16) & 0x00007fff, Floats, 1);
 }
 
-void gxCreateVertexShader(const char* Source, gxVertexShader* Shader)
+void gxSetShaderSampler(gxShaderConstant Constant, gxSprite* Sprite)
 {
-	LPD3DXBUFFER CompiledShader;
-	LPD3DXBUFFER ErrorMsgs;
-	D3DXCompileShader(Source, strlen(Source), NULL, NULL, "main", "vs_3_0", 0, &CompiledShader, &ErrorMsgs, NULL);
-
-	if (CompiledShader)
-	{
-		gxDev->CreateVertexShader((DWORD*)CompiledShader->GetBufferPointer(), &Shader->Shader);
-		CompiledShader->Release();
-	}
-	else
-	{
-		ReportError("Failed to compile shader:\n%s", ErrorMsgs->GetBufferPointer());
-	}
-
-	if (ErrorMsgs)
-		ErrorMsgs->Release();
+    if ( Constant & 0x0000ffff )
+	    gxDev->SetTexture(Constant & 0x00007fff, Sprite->tex);
+    if ( Constant & 0xffff0000 )
+	    gxDev->SetTexture((Constant >> 16) & 0x00007fff, Sprite->tex);
 }
-
-void gxSetVertexShader(gxVertexShader* Shader)
-{
-	gxDev->SetVertexShader(Shader->Shader);
-}
-
-void gxSetVertexShaderConst(int Index, float x, float y, float z, float w)
-{
-	float Floats[4] = {x, y, z, w};
-	gxDev->SetVertexShaderConstantF(Index, Floats, 1);
-}
-
-void gxCopyRenderTarget(gxSprite* From, gxSprite* To)
-{
-	gxSetRenderTarget(To);
-
-	_gxSetAlpha( GXALPHA_NONE );
-	_gxSetTexture(From);
-
-	float HalfPixelX = -0.5f;
-	float HalfPixelY = -0.5f;
-
-	float HalfPixelU = 0.0f;
-	float HalfPixelV = 0.0f;
-
-	gxSpriteVertex v[4];
-	v[0].x = 0.0f + HalfPixelX; 
-	v[0].y = 0.0f + HalfPixelY; 
-	v[0].z = 0.0f; 
-	v[0].w = 1.0f;
-	v[0].color = gxRGBA32(255, 255, 255, 255);
-	v[0].u = 0.0f+HalfPixelU; 
-	v[0].v = 0.0f+HalfPixelV;
-
-	v[1].x = (float)To->width + HalfPixelX; 
-	v[1].y = 0.0f + HalfPixelY; 
-	v[1].z = 0.0f; 
-	v[1].w = 1.0f;
-	v[1].color = gxRGBA32(255, 255, 255, 255);
-	v[1].u = 1.0f+HalfPixelU; 
-	v[1].v = 0.0f+HalfPixelV;
-
-	v[3].x = (float)To->width + HalfPixelX; 
-	v[3].y = (float)To->height + HalfPixelY; 
-	v[3].z = 0.0f; 
-	v[3].w = 1.0f;
-	v[3].color = gxRGBA32(255, 255, 255, 255);
-	v[3].u = 1.0f+HalfPixelU; 
-	v[3].v = 1.0f+HalfPixelV;
-
-	v[2].x = 0.0f + HalfPixelX; 
-	v[2].y = (float)To->height + HalfPixelY; 
-	v[2].z = 0.0f; 
-	v[2].w = 1.0f;
-	v[2].color = gxRGBA32(255, 255, 255, 255);
-	v[2].u = 0.0f+HalfPixelU; 
-	v[2].v = 1.0f+HalfPixelV;
-
-	gxDev->SetVertexShader(NULL);
-	gxDev->SetFVF( gxSpriteVertexFVF );
-	gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v, sizeof(gxSpriteVertex) );
-}
-

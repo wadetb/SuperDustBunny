@@ -27,6 +27,11 @@ int BufferObjectIndex;
 GLuint LitVertsVBO[2];
 GLuint LitVertsIBO[2];
 
+GLuint ScreenVBO;
+
+SLitVertex* LitVerts;
+GLushort* LitVertIndices;
+
 SLitVertex ScreenVerts[4] =
 {
     { 0.0f,    0.0f,    0.0f, 1.0f, 0xffffffff },
@@ -35,14 +40,19 @@ SLitVertex ScreenVerts[4] =
     { 768.0f,  1024.0f, 1.0f, 0.0f, 0xffffffff },
 };
 
-GLuint ScreenVBO;
+#endif
 
-SLitVertex* LitVerts;
-GLushort* LitVertIndices;
-
-#else
+#ifdef PLATFORM_WINDOWS
 
 SLitVertex LitVerts[MAX_LIT_VERTS];
+
+SLitVertex ScreenVerts[4] =
+{
+    { 0.0f,    0.0f,    0.0f, 0.0f, 0xffffffff },
+    { 768.0f,  0.0f,    1.0f, 0.0f, 0xffffffff },
+    { 0.0f,    1024.0f, 0.0f, 1.0f, 0xffffffff },
+    { 768.0f,  1024.0f, 1.0f, 1.0f, 0xffffffff },
+};
 
 #endif
 
@@ -51,7 +61,6 @@ float LitAspectOffset;
 float LitAspectScale;
 
 float LitScreenHeight;
-
 
 // TODO: Move to SLighting.
 float LitSceneZoom = 1.0f;
@@ -137,7 +146,19 @@ const char* LitVertexShaderSource =
 "	return VertexOutput;\n"
 "}\n";
 
-gxVertexShader LitVertexShader;
+const char* LitShaderSource =
+"sampler Sampler0 : register(s0);\n"
+"\n"
+"struct SVertexOutput\n"
+"{\n"
+"	float2 TexCoord0 : TEXCOORD0;\n"
+"	float4 Color0 : COLOR0;\n"
+"};\n"
+"\n"
+"float4 main(SVertexOutput VertexOutput) : COLOR\n"
+"{\n"
+"	return tex2D(Sampler0, VertexOutput.TexCoord0) * VertexOutput.Color0;\n"
+"}\n";
 
 const char* ShadowVertexShaderSource =
 "float2 ShadowOffset : register(c0);\n"
@@ -164,25 +185,7 @@ const char* ShadowVertexShaderSource =
 "	return VertexOutput;\n"
 "}\n";
 
-gxVertexShader ShadowVertexShader;
-
-const char* TexturedColoredShaderSource =
-"sampler Sampler0 : register(s0);\n"
-"\n"
-"struct SVertexOutput\n"
-"{\n"
-"	float2 TexCoord0 : TEXCOORD0;\n"
-"	float4 Color0 : COLOR0;\n"
-"};\n"
-"\n"
-"float4 main(SVertexOutput VertexOutput) : COLOR\n"
-"{\n"
-"	return tex2D(Sampler0, VertexOutput.TexCoord0) * VertexOutput.Color0;\n"
-"}\n";
-
-gxPixelShader TexturedColoredShader;
-
-const char* TexturedShadowShaderSource =
+const char* ShadowShaderSource =
 "float ShadowAlpha : register(c0);\n"
 "sampler Sampler0 : register(s0);\n"
 "\n"
@@ -196,7 +199,29 @@ const char* TexturedShadowShaderSource =
 "	return float4(0, 0, 0, ShadowAlpha * tex2D(Sampler0, VertexOutput.TexCoord0).a);\n"
 "}\n";
 
-gxPixelShader TexturedShadowShader;
+const char* StandardVertexShaderSource =
+"struct SVertexInput\n"
+"{\n"
+"	float2 Position : POSITION;\n"
+"	float2 TexCoord0 : TEXCOORD0;\n"
+"	float4 Color0 : COLOR0;\n"
+"};\n"
+"\n"
+"struct SVertexOutput\n"
+"{\n"
+"	float4 Position : POSITION;\n"
+"	float2 TexCoord0 : TEXCOORD0;\n"
+"	float4 Color0 : COLOR0;\n"
+"};\n"
+"\n"
+"SVertexOutput main(SVertexInput VertexInput)\n"
+"{\n"
+"	SVertexOutput VertexOutput;\n"
+"	VertexOutput.Position = float4(VertexInput.Position.x/768.0*2-1, (1-VertexInput.Position.y/1024)*2-1, 0, 1);\n"
+"	VertexOutput.TexCoord0 = VertexInput.TexCoord0;\n"
+"	VertexOutput.Color0 = VertexInput.Color0;\n"
+"	return VertexOutput;\n"
+"}\n";
 
 const char* EffectsShaderSource =
 "sampler Sampler0 : register(s0);\n"
@@ -212,14 +237,9 @@ const char* EffectsShaderSource =
 "	return tex2D(Sampler0, VertexOutput.TexCoord0) * VertexOutput.Color0 * 2;\n"
 "}\n";
 
-gxPixelShader EffectsShader;
-
-
-
 const char* CombineShaderSource =
 "sampler ColorSampler : register(s0);\n"
-"sampler ColorBleedSampler : register(s1);\n"
-"sampler LightingSampler : register(s2);\n"
+"sampler LightingSampler : register(s1);\n"
 "\n"
 "struct SVertexOutput\n"
 "{\n"
@@ -229,12 +249,9 @@ const char* CombineShaderSource =
 "float4 main(SVertexOutput VertexOutput) : COLOR\n"
 "{\n"
 "	float4 Color = tex2D(ColorSampler, VertexOutput.TexCoord0);\n"
-"	float4 ColorBleed = tex2D(ColorBleedSampler, VertexOutput.TexCoord0);\n"
 "	float4 Lighting = tex2D(LightingSampler, VertexOutput.TexCoord0);\n"
-"   return (Lighting*2.0) * Color/* * saturate(ColorBleed*1.5)*/;\n"
+"   return (Lighting*2.0) * Color;\n"
 "}\n";
-
-gxPixelShader CombineShader;
 
 #endif
 
@@ -267,9 +284,6 @@ const char* LitShaderSource =
 "	gl_FragColor = texture2D(Sampler, TexCoordInterp) * ColorInterp;\n"
 "}\n";
 
-gxShader LitShader;
-
-
 const char* ShadowVertexShaderSource =
 "uniform vec2 ShadowOffset;\n"
 "\n"
@@ -299,13 +313,6 @@ const char* ShadowShaderSource =
 "	gl_FragColor = vec4(0.0, 0.0, 0.0, ColorInterp.a * ShadowAlpha * texture2D(Sampler, TexCoordInterp).a);\n"
 "}\n";
 
-gxShaderConstant ShadowShadowOffset;
-gxShaderConstant ShadowShadowAlpha;
-gxShaderConstant ShadowSampler;
-
-gxShader ShadowShader;
-
-
 const char* StandardVertexShaderSource =
 "attribute vec2 PositionAttr;\n"
 "attribute vec2 TexCoordAttr;\n"
@@ -321,22 +328,6 @@ const char* StandardVertexShaderSource =
 "	ColorInterp = ColorAttr;\n"
 "}\n";
 
-
-const char* ApplyShadowShaderSource =
-"uniform lowp sampler2D Sampler;\n"
-"\n"
-"varying lowp vec2 TexCoordInterp;\n"
-"\n"
-"void main()\n"
-"{\n"
-"	gl_FragColor = vec4(0.0, 0.0, 0.0, texture2D(Sampler, TexCoordInterp).a);\n"
-"}\n";
-
-gxShaderConstant ApplyShadowSampler;
-
-gxShader ApplyShadowShader;
-
-
 const char* EffectsShaderSource =
 "uniform lowp sampler2D Sampler;\n"
 "\n"
@@ -347,12 +338,6 @@ const char* EffectsShaderSource =
 "{\n"
 "	gl_FragColor = texture2D(Sampler, TexCoordInterp) * ColorInterp * 2.0;\n"
 "}\n";
-
-gxShaderConstant EffectsSampler;
-
-gxShader EffectsShader;
-
-
 
 const char* CombineShaderSource =
 "uniform lowp sampler2D ColorSampler;\n"
@@ -368,12 +353,25 @@ const char* CombineShaderSource =
 "   gl_FragColor = (Lighting*2.0) * Color;\n"
 "}\n";
 
+#endif
+
+
+gxShader LitShader;
+
+gxShaderConstant ShadowShadowOffset;
+gxShaderConstant ShadowShadowAlpha;
+gxShaderConstant ShadowSampler;
+
+gxShader ShadowShader;
+
+gxShaderConstant EffectsSampler;
+
+gxShader EffectsShader;
+
 gxShaderConstant CombineColorSampler;
 gxShaderConstant CombineLightingSampler;
 
 gxShader CombineShader;
-
-#endif
 
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -384,6 +382,9 @@ void DrawLightList(int List, gxShader* Shader, gxAlphaMode Alpha)
 {
     _gxSetAlpha(Alpha);
     
+    if (Shader)
+        gxSetShader(Shader);
+
 #ifdef PLATFORM_WINDOWS
     for (int i = 0; i < LightLists[List].NQuads; i++)
     {
@@ -397,9 +398,6 @@ void DrawLightList(int List, gxShader* Shader, gxAlphaMode Alpha)
 #endif
     
 #ifdef PLATFORM_IPHONE
-    if (Shader)
-        gxSetShader(Shader);
-    
     glBindBuffer(GL_ARRAY_BUFFER, LitVertsVBO[BufferObjectIndex]);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, LitVertsIBO[BufferObjectIndex]);
     
@@ -463,6 +461,12 @@ void DrawScreen(gxShader* Shader, gxAlphaMode Alpha)
     if (Shader)
         gxSetShader(Shader);
 
+#ifdef PLATFORM_WINDOWS
+    gxDev->SetVertexDeclaration( LitVertexDecl );
+    gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 4, ScreenVerts, sizeof(SLitVertex) );
+#endif
+
+#ifdef PLATFORM_IPHONE
     glBindBuffer(GL_ARRAY_BUFFER, ScreenVBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
@@ -486,6 +490,7 @@ void DrawScreen(gxShader* Shader, gxAlphaMode Alpha)
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+#endif
 }
 
 
@@ -514,52 +519,18 @@ void DrawShadows(ELightList List, gxSprite* FinalRT, float ShadowOffsetX, float 
         gxClearColor(gxRGBA32(0, 0, 0, 0));
     }
 
-#ifdef PLATFORM_WINDOWS
-	gxSetPixelShader(&TexturedShadowShader);
-	gxSetPixelShaderConst(0, 128.0f/255.0f);
-
-	gxSetVertexShader(&ShadowVertexShader);
-	gxSetVertexShaderConst(0, ShadowOffsetX, ShadowOffsetY);
-#endif
-
-#ifdef PLATFORM_IPHONE
-    if (gxOpenGLESVersion == 2)
-    {
-        gxSetShader(&ShadowShader);
-        gxSetShaderConstant(ShadowShadowOffset, ShadowOffsetX, ShadowOffsetY);
-        gxSetShaderConstant(ShadowShadowAlpha, 128.0f/255.0f);
-    }
-#endif
+    gxSetShader(&ShadowShader);
+    gxSetShaderConstant(ShadowShadowOffset, ShadowOffsetX, ShadowOffsetY);
+    gxSetShaderConstant(ShadowShadowAlpha, 128.0f/255.0f);
     
     DrawLightList(List, NULL, GXALPHA_BLEND);
 }
 
-void RenderShadows(gxSprite* FinalRT)
-{
-	_gxSetTexture(FinalRT);
-
-    DrawScreen(&ApplyShadowShader, GXALPHA_BLEND);
-}
-
 void RenderCombinedColor()
 {
-#ifdef PLATFORM_WINDOWS
-	gxSetPixelShader(&CombineShader);
-#endif
-
-#ifdef PLATFORM_WINDOWS
-	gxDev->SetTexture( 0, ColorRT.tex );
-	gxDev->SetTexture( 2, LightingRT.tex );
-#endif
-    
-#ifdef PLATFORM_IPHONE
-    if (gxOpenGLESVersion == 2)
-    {
-        gxSetShader(&CombineShader);
-        gxSetShaderSampler(CombineColorSampler, &ColorRT);
-        gxSetShaderSampler(CombineLightingSampler, &LightingRT);
-    }
-#endif
+    gxSetShader(&CombineShader);
+    gxSetShaderSampler(CombineColorSampler, &ColorRT);
+    gxSetShaderSampler(CombineLightingSampler, &LightingRT);
 	
     DrawScreen(NULL, GXALPHA_NONE);
 }
@@ -573,24 +544,27 @@ void InitLighting()
     double StartTime = GetCurrentTime();
     
 #ifdef PLATFORM_WINDOWS
-    LitRenderTargetWidth = 320;
-    LitRenderTargetHeight = 480;
+    LitRenderTargetWidth = 640;
+    LitRenderTargetHeight = 960;
 	LitAspectScale = 1.0f;
 	LitAspectOffset = 0.0f;
 	LitScreenHeight = 1024;
     
 	gxDev->CreateVertexDeclaration(LitVertexElements, &LitVertexDecl);
     
-	// Compile shaders.
-	gxCreateVertexShader(LitVertexShaderSource, &LitVertexShader);
-	gxCreateVertexShader(ShadowVertexShaderSource, &ShadowVertexShader);
+    gxCreateShader(LitVertexShaderSource, LitShaderSource, &LitShader);
+        
+    gxCreateShader(ShadowVertexShaderSource, ShadowShaderSource, &ShadowShader);
+    ShadowShadowOffset = gxGetShaderConstantByName(&ShadowShader, "ShadowOffset");
+    ShadowShadowAlpha = gxGetShaderConstantByName(&ShadowShader, "ShadowAlpha");
+    ShadowSampler = gxGetShaderConstantByName(&ShadowShader, "Sampler");
+        
+    gxCreateShader(StandardVertexShaderSource, EffectsShaderSource, &EffectsShader);
+    EffectsSampler = gxGetShaderConstantByName(&EffectsShader, "Sampler");
 
-	gxCreatePixelShader(TexturedColoredShaderSource, &TexturedColoredShader);
-	gxCreatePixelShader(TexturedShadowShaderSource, &TexturedShadowShader);
-
-	gxCreatePixelShader(EffectsShaderSource, &EffectsShader);
-
-	gxCreatePixelShader(CombineShaderSource, &CombineShader);
+    gxCreateShader(StandardVertexShaderSource, CombineShaderSource, &CombineShader);
+    CombineColorSampler = gxGetShaderConstantByName(&CombineShader, "ColorSampler");
+    CombineLightingSampler = gxGetShaderConstantByName(&CombineShader, "LightingSampler");
 #endif
 
 #ifdef PLATFORM_IPHONE
@@ -1064,7 +1038,6 @@ void AddLitSpriteCenteredScaledRotated(ELightList List, gxSprite* Sprite, float 
 		X + (+w * ca) - (+h * sa),    Y + (+w * sa) + (+h * ca),    1.0f, 1.0f, 
 		X + (-w * ca) - (+h * sa),    Y + (-w * sa) + (+h * ca),    0.0f, 1.0f);
 }
-
 
 void AddLitSpriteCenteredScaledRotatedAlpha(ELightList List, gxSprite* Sprite, float X, float Y, float Scale, float Angle, float Alpha)
 {

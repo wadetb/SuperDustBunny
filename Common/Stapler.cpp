@@ -141,7 +141,7 @@ void UpdateStaplers()
         
         if (Stapler->State == STAPLERSTATE_PRELAUNCH)
         {
-#ifdef PLATFORM_WINDOWS
+#if 0 //def PLATFORM_WINDOWS
 			if (kbIsKeyDown(KB_SPACE))
             {
 				SetDustyState_PrepareLaunch();
@@ -163,8 +163,7 @@ void UpdateStaplers()
 
 				Stapler->State = STAPLERSTATE_LAUNCH; 
             }        
-#endif
-#ifdef PLATFORM_IPHONE
+#else
             Stapler->PowerJumpCounter += 1;
             if (Stapler->PowerJumpCounter >= 10)
             {
