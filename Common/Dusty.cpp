@@ -1,3 +1,12 @@
+//-----------------------------------------------------------------------------------------------------------------------------------------//
+//                                                                                                                                         // 
+//                                                          Super Dust Bunny                                                               //
+//                                                                                                                                         //
+//                               Authors: Thomas Perry <perry.thomas.12@gmail.com> & Wade Brainerd <wadetb@gmail.com>                      //
+//                                      Copyright 2010 by Thomas Perry and Wade Brainerd. All rights reserved.                             //
+//                                                                                                                                         //
+//-----------------------------------------------------------------------------------------------------------------------------------------//
+
 #include "Common.h"
 #include "Dusty.h"
 #include "Tutorial.h"
@@ -27,7 +36,7 @@ void InitDusty()
 
 	Dusty.Left = -32;
 	Dusty.Right = 32;
-	Dusty.Top = -120;
+	Dusty.Top = -110;
 	Dusty.Bottom = 0;
 
 	Dusty.FloatVelocityX = 0.0f;
@@ -75,7 +84,7 @@ void SetDustyState_Stand();
 void SetDustyState_Jump( bool OffWall );
 void SetDustyState_JumpWithVelocity( float VX, float VY );
 void SetDustyState_Fall();
-void SetDustyState_Hop( EDirection Direction );
+void SetDustyState_Hop( EDustyDirection Direction );
 void SetDustyState_WallJump();
 void SetDustyState_CornerJump();
 void SetDustyState_PrepareLaunch();
@@ -133,7 +142,7 @@ bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
             {
                 float Power = Dusty.JumpPower;
                 //float Power = Remap(L, 50.0f, 100.0f, Dusty.JumpPower/3, Dusty.JumpPower, true);
-                //float Power = Remap(MaxSpeed, 1000.0f, 3000.0f, Dusty.JumpPower/3, Dusty.JumpPower, true);
+                //float Power = Remap(MaxSpeed, 2000.0f, 5000.0f, Dusty.JumpPower/3, Dusty.JumpPower, true);
                 dX = dX * Power * 0.8f;
                 dY = dY * ( dY > 0 ? Power * 0.8f : Power );
                 
@@ -142,6 +151,7 @@ bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
                 GetInput_ConsumeSwipe(L * 1.5f);
                 
                 SetDustyState_JumpWithVelocity(dX, dY);
+                
 #ifdef SWIPE_DEBUG
                 AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle+Range))*100, Dusty.FloatY + -sinf(DegreesToRadians(Angle+Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
                 AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle-Range))*100, Dusty.FloatY + -sinf(DegreesToRadians(Angle-Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
@@ -353,24 +363,14 @@ void SetDustyState_Jump( bool OffWall )
 		//sxPlaySound( &DustyJumps );
 	}
 
-	Dusty.FloatY -= 50.0f;
+	Dusty.FloatY -= 40.0f;
 
-	Dusty.FloatVelocityX = 8.0f;
-	Dusty.FloatVelocityY = -20.0f;
+	Dusty.FloatVelocityX = 6.0f;
+	Dusty.FloatVelocityY = -16.0f;
 	if (Dusty.Direction == DIRECTION_LEFT)
 		Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
     
     Dusty.LandTimer = 0;
-
-    if (PowerUpToggle.Jump)
-    {
-        Dusty.FloatY -= 60.0f;
-        
-        Dusty.FloatVelocityX = 12.0f;
-        Dusty.FloatVelocityY = - 24.0f;
-        if (Dusty.Direction == DIRECTION_LEFT)
-            Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
-    }
 
 	Dusty.State = DUSTYSTATE_JUMP;
 }
@@ -492,7 +492,7 @@ void UpdateDusty_Jump()
 //                                                  DUSTYSTATE_HOP Implementation                                                          //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-void SetDustyState_Hop(EDirection Direction)
+void SetDustyState_Hop(EDustyDirection Direction)
 {
 	Dusty.Direction = Direction;
 
@@ -723,10 +723,10 @@ void UpdateDusty_JumpCommon()
                 if (fabsf(Dusty.FloatVelocityX) < 10)
                     Dusty.FloatVelocityX += dX >= 0 ? 1.0f : -1.0f;
                 if (fabsf(Dusty.FloatVelocityY) < 10)
-                    Dusty.FloatVelocityY += dY >= 0 ? 1.0f : -1.0f;
+                    Dusty.FloatVelocityY += dY >= 0 ? 0.5f : -0.5f;
             }
             
-            GetInput_ConsumeSwipe(1.5f*Length(Dusty.FloatVelocityX, Dusty.FloatVelocityY));
+            GetInput_ConsumeSwipe(2.0f*Length(Dusty.FloatVelocityX, Dusty.FloatVelocityY));
         }
 #endif
     }
@@ -1010,7 +1010,7 @@ void UpdateDusty_CornerJump()
         if ( ( Dusty.Direction == DIRECTION_LEFT  && GetInput_MoveRight() ) ||
              ( Dusty.Direction == DIRECTION_RIGHT && GetInput_MoveLeft() ) )
         {
-            EDirection NewDirection;
+            EDustyDirection NewDirection;
 
             // Help him along to prevent going back into corner jump.
             if (Dusty.Direction == DIRECTION_LEFT)
@@ -1296,7 +1296,7 @@ void UpdateDusty_Hurt()
 //                                                  DUSTYSTATE_HOPIN Implementation                                                          //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-void SetDustyState_IntroHop(EDirection Direction)
+void SetDustyState_IntroHop(EDustyDirection Direction)
 {
 	Dusty.Direction = Direction;
 
@@ -1426,11 +1426,11 @@ void UpdateDusty_Collision()
 		Dusty.FloatY = (float)Chapter.PageHeight * 64 - (float)Dusty.Bottom;
 	} 
     
-	//Collision with the top side of the screen
-	if (Dusty.FloatY + Dusty.Top <= 0 )
+	//Collision with just above the top side of the screen
+	if (Dusty.FloatY + Dusty.Top <= -64 )
 	{	
 		Dusty.CollideWithTopSide = true;
-		Dusty.FloatY = -(float)Dusty.Top;
+		Dusty.FloatY = -64-(float)Dusty.Top;
 	} 
     
 	for (int y = 0; y < Chapter.PageHeight; y++)
@@ -1507,7 +1507,7 @@ void UpdateDusty_Collision()
 						Dusty.CollideWithRightSide = true;//Collision with Dusty's Right Side but the left side of the platform
 						Dusty.FloatX -= LeftDistance;
 
-						if (Dusty.FloatVelocityX > 0 && TopBlockIsEmpty && abs(UpDistance - LeftDistance) < CornerThreshold)
+						if (Dusty.FloatVelocityX >= -5 && TopBlockIsEmpty && abs(UpDistance - LeftDistance) < CornerThreshold)
 						{
  							Dusty.CollideWithBottomRightCorner = true;
 							Dusty.FloatY -= UpDistance;
@@ -1523,7 +1523,7 @@ void UpdateDusty_Collision()
 						Dusty.CollideWithLeftSide = true;//Collision with Dusty's Left Side but the right side of the platform
 						Dusty.FloatX += RightDistance;
 
-						if (Dusty.FloatVelocityX < 0 && TopBlockIsEmpty && abs(UpDistance - RightDistance) < CornerThreshold)
+						if (Dusty.FloatVelocityX <= 5 && TopBlockIsEmpty && abs(UpDistance - RightDistance) < CornerThreshold)
 						{
 							Dusty.CollideWithBottomLeftCorner = true;
 							Dusty.FloatY -= UpDistance;
@@ -1550,12 +1550,12 @@ void UpdateDusty_Collision()
 							Dusty.FloatVelocityY = 0;
 
 						// Top side corner jump is back in the game.
-						if (LeftBlockIsEmpty && abs(LeftDistance - UpDistance) < CornerThreshold)
+						if (Dusty.FloatVelocityY >= -5 && LeftBlockIsEmpty && abs(LeftDistance - UpDistance) < CornerThreshold)
 						{
 							Dusty.CollideWithBottomRightCorner = true;
 							Dusty.FloatX -= LeftDistance;
 						}
-						if (RightBlockIsEmpty && abs(RightDistance - UpDistance) < CornerThreshold)
+						if (Dusty.FloatVelocityY >= -5 && RightBlockIsEmpty && abs(RightDistance - UpDistance) < CornerThreshold)
 						{
 							Dusty.CollideWithBottomLeftCorner = true;
 							Dusty.FloatX += RightDistance;

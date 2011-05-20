@@ -19,8 +19,11 @@
 
 @interface SuperDustBunnyViewController : UIViewController <UIAlertViewDelegate> {
 @private
+    CADisplayLink *displayLink;
+    CFTimeInterval lastTimeStamp;
     EAGLContext *context;
     BOOL paused;
+    BOOL wasPaused;
 }
 
 @property (nonatomic, retain) EAGLContext *context;
@@ -28,7 +31,6 @@
 @property BOOL paused;
 
 - (void)drawFrame;
-- (void)mainLoop:(id)sender;
 
 - (void)showSettings;
 - (void)hideSettings;

@@ -108,6 +108,7 @@ void GetNextLine(FILE* File, char* Line, int LineSize)
 
 void InitPageProperties(SPageProperties* Props)
 {
+    Props->Background = BACKGROUND_STUDY;
 	Props->LightsOff = false;
 	Props->VacuumOff = false;
 	Props->VacuumDir = VACUUMDIR_UP;
@@ -122,7 +123,16 @@ void ParsePageProperties(SPageProperties* Props, rapidxml::xml_node<char>* Prope
 		const char* Name = PropertyNode->first_attribute("name")->value();
 		const char* Value = PropertyNode->first_attribute("value")->value();
 
-		if (strcmp(Name, "lights") == 0)
+		if (strcmp(Name, "background") == 0)
+		{
+			if (strcmp(Value, "study") == 0)
+				Props->Background = BACKGROUND_STUDY;
+			else if (strcmp(Value, "fridge") == 0)
+				Props->Background = BACKGROUND_FRIDGE;
+			else
+				ReportError("'%s' is not a valid value for the 'background' property.  The value must be 'study' or 'fridge'.  Fix this problem and re-save the TMX file.", Value);
+		}
+		else if (strcmp(Name, "lights") == 0)
 		{
 			if (strcmp(Value, "off") == 0)
 				Props->LightsOff = true;
@@ -385,20 +395,9 @@ void LoadTileSet(const char* FileName)
 {
 	PushErrorContext("While loading tileset '%s':\n", FileName);
 
-	FILE* BlocksFile = OpenAssetFile(FileName, "r");
-
-	if (!BlocksFile)
+    char* XML = (char*)LoadAssetFile(FileName, NULL, NULL);
+    if (!XML)
 		ReportError("Unable to open TSX file.  Check that all required files are present, and re-save the TMX file to fix.");
-
-	// Read the entire XML file into a text buffer.
-	fseek(BlocksFile, 0, SEEK_END);
-	int FileSize = ftell(BlocksFile);
-	rewind(BlocksFile);
-
-	char* XML = (char*)malloc(FileSize + 1);
-	fread(XML, FileSize, 1, BlocksFile);
-	fclose(BlocksFile);
-	XML[FileSize] = '\0';
 
 	// Parse the XML text buffer into a Document hierarchy.
 	rapidxml::xml_document<> Document;
@@ -419,22 +418,10 @@ void LoadPageFromTMX(const char* FileName)
 	PushErrorContext("While loading page '%s':\n", FileName);
 
 	// Open the TMX file.
-	FILE* PageFile = OpenAssetFile(FileName, "r");
-
-	if (!PageFile)
+    char* XML = (char*)LoadAssetFile(FileName, NULL, NULL);
+    if (!XML)
 		ReportError("Unable to open TMX file.  Check that all required files are present, and re-save the TMX file to fix.");
-
-	// Read the entire XML file into a text buffer.
-	fseek(PageFile, 0, SEEK_END);
-	int FileSize = ftell(PageFile);
-	rewind(PageFile);
-
-    // TODO: Check for allocation errors throughout.
-	char* XML = (char*)malloc(FileSize + 1);
-	fread(XML, FileSize, 1, PageFile);
-	fclose(PageFile);
-	XML[FileSize] = '\0';
-
+    
 	// Parse the XML text buffer into a Document hierarchy.
 	rapidxml::xml_document<> Document;
 	Document.parse<0>(XML);
@@ -483,7 +470,7 @@ void LoadPageFromTMX(const char* FileName)
 		{
             // It hasn't been loaded previously, so load the external tileset.
             char TileSetName[1024];
-            snprintf(TileSetName, sizeof(TileSetName), "%s/%s", CurrentChapterDir, TileSetSourceAttr->value());
+            snprintf(TileSetName, sizeof(TileSetName), "Chapters/%s/%s", CurrentChapterDir, TileSetSourceAttr->value());
             
 			// If the external tileset has been loaded already, just reference it.
 			for (int i = 0; i < Chapter.NTileSets; i++)
@@ -642,7 +629,7 @@ void LoadChapter(const char* ChapterDir)
 	CurrentChapterDir = ChapterDir;
 
 	char FileName[1024];
-	snprintf(FileName, sizeof(FileName), "%s/Chapter.txt", ChapterDir);
+	snprintf(FileName, sizeof(FileName), "Chapters/%s/Chapter.txt", ChapterDir);
 
 	FILE* ChapFile = OpenAssetFile(FileName, "r");
 
@@ -665,7 +652,7 @@ void LoadChapter(const char* ChapterDir)
 					break;
 
 				char FileName[1024];
-				snprintf(FileName, sizeof(FileName), "%s/%s.tmx", CurrentChapterDir, Line);
+				snprintf(FileName, sizeof(FileName), "Chapters/%s/%s.tmx", CurrentChapterDir, Line);
 				
 				LoadPageFromTMX(FileName);
 			}
@@ -805,6 +792,8 @@ void CreatePageObjects()
                 case BLOCKTYPE_POWERUP:
                     CreatePowerUp(x * 64, y * 64);
                     EraseBlock(x, y);
+                    break;
+                default:
                     break;
 				}
 			}

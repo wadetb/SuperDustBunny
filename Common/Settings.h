@@ -6,9 +6,9 @@
 //                                      Copyright 2010 by Thomas Perry and Wade Brainerd. All rights reserved.                             //
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
+
 #ifndef __SETTINGS_H__
 #define __SETTINGS_H__
-
 
 typedef enum
 {
@@ -27,6 +27,8 @@ typedef struct
     
     bool InfiniteLives;
     bool DisableVacuum;
+    
+    bool LiveAssets;
 } SSettings;
 
 

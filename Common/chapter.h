@@ -7,8 +7,9 @@
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
-#ifndef CHAPTER_H
-#define CHAPTER_H
+#ifndef CHAPTER_H 
+#define CHAPTER_H 
+
 
 #define MAX_PAGES			100
 #define MAX_BLOCKS			10000
@@ -80,8 +81,15 @@ struct SBlock
 	void* Properties;
 };
 
+enum EBackgroundType
+{
+    BACKGROUND_STUDY,
+    BACKGROUND_FRIDGE
+};
+
 struct SPageProperties
 {
+    EBackgroundType Background;
 	bool LightsOff;
 	bool VacuumOff;
 	int VacuumDir;

@@ -9,8 +9,8 @@
 
 #include "Common.h"
 #include "Flashlight.h"
-#include "Chapter.h"
 #include "Dusty.h"
+#include "Chapter.h"
 
 
 #define MAX_FLASHLIGHT_WAYPOINTS 50

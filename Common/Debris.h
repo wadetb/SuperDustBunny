@@ -6,6 +6,7 @@
 //                                      Copyright 2010 by Thomas Perry and Wade Brainerd. All rights reserved.                             //
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
+
 #ifndef __DEBRIS_H__
 #define __DEBRIS_H__
 

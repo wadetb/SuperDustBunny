@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0816B6D3137F8C1C00CE5DE4 /* Input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0816B6D1137F8C1B00CE5DE4 /* Input.cpp */; };
 		08562008134672D100F9EFBA /* Tilesets in Resources */ = {isa = PBXBuildFile; fileRef = 08562007134672D100F9EFBA /* Tilesets */; };
 		0856200F1346A40000F9EFBA /* Default-ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856200A1346A40000F9EFBA /* Default-ipad.png */; };
 		085620101346A40000F9EFBA /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856200B1346A40000F9EFBA /* Default.png */; };
@@ -73,6 +74,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0816B6D1137F8C1B00CE5DE4 /* Input.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Input.cpp; sourceTree = "<group>"; };
+		0816B6D2137F8C1C00CE5DE4 /* Input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Input.h; sourceTree = "<group>"; };
 		08562007134672D100F9EFBA /* Tilesets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Tilesets; path = ../../Tilesets; sourceTree = "<group>"; };
 		0856200A1346A40000F9EFBA /* Default-ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-ipad.png"; sourceTree = "<group>"; };
 		0856200B1346A40000F9EFBA /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
@@ -110,7 +113,7 @@
 		085AAA0D132C5ABC00DF32CA /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		085AAA10132C5B2E00DF32CA /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		085AAA12132C5B4800DF32CA /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
-		085AAA16132C5B9F00DF32CA /* Assets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Assets.cpp; sourceTree = "<group>"; };
+		085AAA16132C5B9F00DF32CA /* Assets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; path = Assets.cpp; sourceTree = "<group>"; };
 		085AAA17132C5B9F00DF32CA /* Assets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Assets.h; sourceTree = "<group>"; };
 		085AAA18132C5B9F00DF32CA /* Barrel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Barrel.cpp; sourceTree = "<group>"; };
 		085AAA19132C5B9F00DF32CA /* Barrel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Barrel.h; sourceTree = "<group>"; };
@@ -339,6 +342,8 @@
 				085AAA53132C5B9F00DF32CA /* WinScreen.h */,
 				085AAA54132C5B9F00DF32CA /* Wipe.cpp */,
 				085AAA55132C5B9F00DF32CA /* Wipe.h */,
+				0816B6D1137F8C1B00CE5DE4 /* Input.cpp */,
+				0816B6D2137F8C1C00CE5DE4 /* Input.h */,
 			);
 			name = Common;
 			path = ../Common;
@@ -382,8 +387,8 @@
 			buildPhases = (
 				085AA956132C572A00DF32CA /* Sources */,
 				085AA957132C572A00DF32CA /* Frameworks */,
-				085AA958132C572A00DF32CA /* Resources */,
 				085AAA7F132C65AD00DF32CA /* Convert Assets */,
+				085AA958132C572A00DF32CA /* Resources */,
 			);
 			buildRules = (
 			);
@@ -506,6 +511,7 @@
 				085AAA72132C5B9F00DF32CA /* WinScreen.cpp in Sources */,
 				085AAA73132C5B9F00DF32CA /* Wipe.cpp in Sources */,
 				08D2E1AB13660E0300AD31B8 /* PowerUp.cpp in Sources */,
+				0816B6D3137F8C1C00CE5DE4 /* Input.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -555,7 +561,9 @@
 				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SuperDustBunny-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "SuperDustBunny-Info.plist";
+				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -569,7 +577,9 @@
 				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SuperDustBunny-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "SuperDustBunny-Info.plist";
+				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;

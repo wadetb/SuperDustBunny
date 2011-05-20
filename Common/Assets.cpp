@@ -3,12 +3,14 @@
 //                                                          Super Dust Bunny                                                               //
 //                                                                                                                                         //
 //                               Authors: Thomas Perry <perry.thomas.12@gmail.com> & Wade Brainerd <wadetb@gmail.com>                      //
-//                                      Copyright 2010 by Thomas Perry and Wade Brainerd. All rights reserved.                              //
+//                                      Copyright 2010 by Thomas Perry and Wade Brainerd. All rights reserved.                             //
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
-#include "Common.h"
+#include "common.h"
+#include "Dusty.h"
 #include "Assets.h"
+#include "Settings.h"
 
 #ifdef PLATFORM_IPHONE
 #include <zlib.h>
@@ -222,6 +224,10 @@ struct SSpriteAsset
     int Height;
     int TexWidth;
     int TexHeight;
+    int Left;
+    int Right;
+    int Top;
+    int Bottom;
 };
 
 
@@ -296,13 +302,130 @@ void LoadAssetList(const char* FileName)
             ReportError("SpriteAsset is missing the texHeight property.  Re-building the XCode project may help.");
         SpriteAsset->TexHeight = atoi(TexHeight->value());
 		
+        rapidxml::xml_attribute<char>* Left = AssetNode->first_attribute("left");
+        if (!Left)
+            ReportError("SpriteAsset is missing the left property.  Re-building the XCode project may help.");
+        SpriteAsset->Left = atoi(Left->value());
+		
+        rapidxml::xml_attribute<char>* Right = AssetNode->first_attribute("right");
+        if (!Right)
+            ReportError("SpriteAsset is missing the right property.  Re-building the XCode project may help.");
+        SpriteAsset->Right = atoi(Right->value());
+		
+        rapidxml::xml_attribute<char>* Top = AssetNode->first_attribute("top");
+        if (!Top)
+            ReportError("SpriteAsset is missing the top property.  Re-building the XCode project may help.");
+        SpriteAsset->Top = atoi(Top->value());
+		
+        rapidxml::xml_attribute<char>* Bottom = AssetNode->first_attribute("bottom");
+        if (!Bottom)
+            ReportError("SpriteAsset is missing the bottom property.  Re-building the XCode project may help.");
+        SpriteAsset->Bottom = atoi(Bottom->value());
+		
 		AssetNode = AssetNode->next_sibling("SpriteAsset");
 	}
     
 	PopErrorContext();
 }
 
+bool GetLiveAssetReplacement(const char* FileName, void** Data, int* DataSize)
+{
+    NSURL *URL = [NSURL URLWithString:
+                  [NSString stringWithFormat:@"http://www.pluszerogames.com/sdb/live/%s", FileName]];
+    
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:10];
+
+    NSURLResponse *response;
+    NSError *error = [[NSError alloc] init];
+    NSData* result = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+    
+    if (result && [(NSHTTPURLResponse*)response statusCode] == 200)
+    {
+        *DataSize = [result length];
+        *Data = malloc(*DataSize + 1);
+        memcpy(*Data, [result bytes], *DataSize);
+        ((char*)*Data)[*DataSize] = 0;
+        return true;
+    }
+    else
+    {
+        *Data = NULL;
+        return false;
+    }
+}
+
 #endif
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                      Asset file loading (platform specific)                                             //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+void GetAssetFileName(const char* FileName, char* Buf, int BufSize)
+{
+#ifdef PLATFORM_IPHONE
+	CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+    
+	UInt8 BundlePath[1024];
+	CFURLGetFileSystemRepresentation(url, YES, BundlePath, sizeof(BundlePath));
+    
+	CFRelease(url);
+    
+	snprintf(Buf, BufSize, "%s/%s", (char*)BundlePath, FileName);
+#endif
+    
+#ifdef PLATFORM_WINDOWS
+	char ModulePath[1024];
+	GetModuleFileName(NULL, ModulePath, sizeof(ModulePath));
+	PathRemoveFileSpec(ModulePath);
+    
+	// Go from e.g. /SuperDustBunny/trunk/Build/win/ to /SuperDustBunny/trunk/
+	snprintf(Buf, BufSize, "%s/../../%s", ModulePath, FileName);
+#endif
+}
+
+FILE* OpenAssetFile(const char* FileName, const char* Mode)
+{
+	char Work[1024];
+    
+	GetAssetFileName(FileName, Work, sizeof(Work));
+    
+	return fopen(Work, Mode);
+}
+
+void* LoadAssetFile(const char* FileName, void** Data, int* DataSize)
+{
+    int FileDataSize;
+    char* FileData;
+    
+    if ( Settings.LiveAssets )
+    {
+        if ( GetLiveAssetReplacement(FileName, (void**)&FileData, &FileDataSize) )
+        {
+            if (Data) *Data = FileData;
+            if (DataSize) *DataSize = FileDataSize;
+            
+            return FileData;
+        }
+    }
+    
+    FILE* F = OpenAssetFile(FileName, "rb");
+    if (!F)
+        return NULL;
+
+    fseek(F, 0, SEEK_END);
+    FileDataSize = ftell(F);
+    fseek(F, 0, SEEK_SET);
+    
+    FileData = (char*)malloc(FileDataSize+1);
+    fread(FileData, 1, FileDataSize, F);
+    fclose(F);
+    
+    FileData[FileDataSize] = 0;
+    
+    if (Data) *Data = FileData;
+    if (DataSize) *DataSize = FileDataSize;
+    
+    return FileData;
+}
 
 void LoadSpriteAsset(const char* FileName, gxSprite* Sprite)
 {
@@ -317,21 +440,37 @@ void LoadSpriteAsset(const char* FileName, gxSprite* Sprite)
             Sprite->height = SpriteAsset->Height;
             Sprite->texWidth = SpriteAsset->TexWidth;
             Sprite->texHeight = SpriteAsset->TexHeight;
+            Sprite->top = SpriteAsset->Top;
+            Sprite->bottom = SpriteAsset->Bottom;
+            Sprite->left = SpriteAsset->Left;
+            Sprite->right = SpriteAsset->Right;
 
-            char work[1024];
-            GetAssetFileName(SpriteAsset->RawFileName, work, sizeof(work));
-
-            gzFile RawFile = gzopen(work, "rb");
-
-            if (!RawFile)
-                break;
-            
             int MaxFileSize = 1024 * 1024 * 4;
             
             char* Pixels = (char*)malloc(MaxFileSize);
-            int FileSize = gzread(RawFile, Pixels, MaxFileSize);
-            gzclose(RawFile);
+
+            void* Data;
+            int DataSize;
             
+            if (Settings.LiveAssets && GetLiveAssetReplacement(SpriteAsset->RawFileName, &Data, &DataSize))
+            {
+                uLongf UncompressedSize;
+                uncompress((Bytef*)Pixels, &UncompressedSize, (Bytef*)Data, DataSize);
+            }
+            else
+            {
+                char Work[1024];
+                GetAssetFileName(SpriteAsset->RawFileName, Work, sizeof(Work));
+                
+                gzFile RawFile = gzopen(Work, "rb");
+                
+                if (!RawFile)
+                    break;
+                
+                DataSize = gzread(RawFile, Pixels, MaxFileSize);
+                gzclose(RawFile);
+            }
+                        
             glGenTextures(1, &Sprite->tex);
             glBindTexture(GL_TEXTURE_2D, Sprite->tex);
 
@@ -366,7 +505,7 @@ void LoadSpriteAsset(const char* FileName, gxSprite* Sprite)
                 
                 DataOffset += DataSize;
                 
-            } while (DataOffset < FileSize);
+            } while (DataOffset < DataSize);
             
             free(Pixels);
 

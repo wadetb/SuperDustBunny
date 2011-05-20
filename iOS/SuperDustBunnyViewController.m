@@ -32,7 +32,6 @@ SuperDustBunnyViewController *theViewController;
 
 @synthesize context;
 @synthesize settingsViewController;
-@synthesize paused;
 
 - (void)awakeFromNib
 {
@@ -59,23 +58,23 @@ SuperDustBunnyViewController *theViewController;
     [(EAGLView *)self.view setContext:context];
     [(EAGLView *)self.view setFramebuffer];
     
-    [[UIAccelerometer sharedAccelerometer] setUpdateInterval:(1.0f/60.0f)];
-	[[UIAccelerometer sharedAccelerometer] setDelegate:(EAGLView *)self.view];	
-    
-    paused = FALSE;
-    
     Init();
     
-    [self drawFrame];
+    displayLink = [[UIScreen mainScreen] displayLinkWithTarget:self selector:@selector(displayLinkFrame)];
+    [displayLink setFrameInterval:1];
+    [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    
+    paused = FALSE;
+    wasPaused = TRUE;
+    
+    [self drawFrame]; 
 
-    // Likely cause of white flash:
-    [NSTimer scheduledTimerWithTimeInterval:(NSTimeInterval)(0) target:self selector:@selector(mainLoop:) userInfo:nil repeats:NO];
-    //[self mainLoop:nil];
 }
 
 - (void)dealloc
 {
-    // Tear down context.
+    [displayLink invalidate];
+
     if ([EAGLContext currentContext] == context)
         [EAGLContext setCurrentContext:nil];
     
@@ -94,11 +93,13 @@ SuperDustBunnyViewController *theViewController;
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    printf("viewWillAppear\n");
     [super viewWillAppear:animated];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
+    printf("viewWillDisappear\n");
     [super viewWillDisappear:animated];
 }
 
@@ -140,6 +141,9 @@ SuperDustBunnyViewController *theViewController;
 
 - (void)drawFrame
 {
+    if (paused)
+        return;
+    
     [(EAGLView *)self.view setFramebuffer];
    
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -150,60 +154,47 @@ SuperDustBunnyViewController *theViewController;
     [(EAGLView *)self.view presentFramebuffer];
 }
 
-- (void) mainLoop:(id)sender
+- (void)displayLinkFrame
 {
-	mach_timebase_info_data_t timerInfo;
-	mach_timebase_info(&timerInfo);
-	
-	const double TIMER_RATIO = ((double)timerInfo.numer / (double)timerInfo.denom);
-	const double RESOLUTION = 1000000000.0;	
-	const double TARGET_TIME = RESOLUTION / 60.0f;
-	
-	double lastUpdateTime = mach_absolute_time() * TIMER_RATIO - TARGET_TIME;
-	
-	for (;;)
-	{
-		NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-		
-        double now;
-        int result;
-        do 
-        {
-            result = CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0.001, TRUE);
-            now = mach_absolute_time() * TIMER_RATIO;
-        } while (paused || result == kCFRunLoopRunHandledSource /*|| now - lastUpdateTime < TARGET_TIME*/);
-        
-        if (result == kCFRunLoopRunStopped)
-        {
-            NSLog(@"Run loop stopped.\n");
-            [pool release];
-            break;
-        }
-            
-        if (now - lastUpdateTime >= 5 * TARGET_TIME)
-        {
-            lastUpdateTime = now;
-        }
-        
-        do 
-        {
-            Update();
-            lastUpdateTime += TARGET_TIME;
-        } while ( lastUpdateTime < now );
-		
-		[self drawFrame];
-
-		[pool release];
-	}
+    if (wasPaused)
+    {
+        lastTimeStamp = displayLink.timestamp;
+        wasPaused = FALSE;
+    }
+    
+    CFTimeInterval t = lastTimeStamp;
+    while (t < displayLink.timestamp + displayLink.duration)
+    {
+        Update();
+        t += displayLink.duration;
+    }
+    lastTimeStamp = t;
+    
+    [self drawFrame];    
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    paused = FALSE;
+    [self setPaused:FALSE];
     
     if (buttonIndex == 1) {
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://pluszerogames.com/sdb/feedback.html"]];
     }
+}
+
+- (void)setPaused:(BOOL)pause
+{
+    printf("setPaused:%d\n", pause);
+    
+    paused = pause;
+    displayLink.paused = pause;
+    if (pause)
+        wasPaused = TRUE;
+}
+
+- (BOOL)paused
+{
+    return paused;
 }
 
 @end

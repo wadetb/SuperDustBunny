@@ -6,6 +6,7 @@
 //                                      Copyright 2010 by Thomas Perry and Wade Brainerd. All rights reserved.                             //
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
+
 #ifndef __LIGHTING_H__
 #define __LIGHTING_H__
 

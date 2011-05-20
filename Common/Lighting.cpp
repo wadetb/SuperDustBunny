@@ -27,6 +27,16 @@ int BufferObjectIndex;
 GLuint LitVertsVBO[2];
 GLuint LitVertsIBO[2];
 
+SLitVertex ScreenVerts[4] =
+{
+    { 0.0f,    0.0f,    0.0f, 1.0f, 0xffffffff },
+    { 768.0f,  0.0f,    1.0f, 1.0f, 0xffffffff },
+    { 0.0f,    1024.0f, 0.0f, 0.0f, 0xffffffff },
+    { 768.0f,  1024.0f, 1.0f, 0.0f, 0xffffffff },
+};
+
+GLuint ScreenVBO;
+
 SLitVertex* LitVerts;
 GLushort* LitVertIndices;
 
@@ -93,30 +103,8 @@ gxSprite ColorRT;
 
 gxSprite LightingRT;
 
-
-gxSprite AmbientOcclusionDiv2RT;
-gxSprite AmbientOcclusionDiv4RT;
-gxSprite AmbientOcclusionPingRT;
-gxSprite AmbientOcclusionPongRT;
-
-gxSprite AmbientOcclusionForegroundRT;
-gxSprite AmbientOcclusionVacuumRT;
-
-
-gxSprite ShadowPingRT;
-gxSprite ShadowPongRT;
-
 gxSprite ShadowForegroundRT;
 gxSprite ShadowVacuumRT;
-
-
-gxSprite ColorBleedDiv2RT;
-gxSprite ColorBleedDiv4RT;
-gxSprite ColorBleedDiv8RT;
-gxSprite ColorBleedPingRT;
-gxSprite ColorBleedPongRT;
-
-gxSprite ColorBleedFinalRT;
 
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -226,71 +214,6 @@ const char* EffectsShaderSource =
 
 gxPixelShader EffectsShader;
 
-const char* Gaussian7ShaderSource =
-"float3 BlurOffsetScale0 : register(c0);\n"
-"float3 BlurOffsetScale1 : register(c1);\n"
-"float3 BlurOffsetScale2 : register(c2);\n"
-"float3 BlurOffsetScale3 : register(c3);\n"
-"\n"
-"sampler BlurSampler : register(s0);\n"
-"\n"
-"struct SVertexOutput\n"
-"{\n"
-"	float2 TexCoord0 : TEXCOORD0;\n"
-"};\n"
-"\n"
-"float4 main(SVertexOutput VertexOutput) : COLOR\n"
-"{\n"
-"	float4 color = float4(0,0,0,0);\n"
-"	color += tex2D(BlurSampler, VertexOutput.TexCoord0+BlurOffsetScale0.xy) * BlurOffsetScale0.z;\n"
-"	color += tex2D(BlurSampler, VertexOutput.TexCoord0+BlurOffsetScale1.xy) * BlurOffsetScale1.z;\n"
-"	color += tex2D(BlurSampler, VertexOutput.TexCoord0+BlurOffsetScale2.xy) * BlurOffsetScale2.z;\n"
-"	color += tex2D(BlurSampler, VertexOutput.TexCoord0                    ) * BlurOffsetScale3.z;\n"
-"	color += tex2D(BlurSampler, VertexOutput.TexCoord0-BlurOffsetScale2.xy) * BlurOffsetScale2.z;\n"
-"	color += tex2D(BlurSampler, VertexOutput.TexCoord0-BlurOffsetScale1.xy) * BlurOffsetScale1.z;\n"
-"	color += tex2D(BlurSampler, VertexOutput.TexCoord0-BlurOffsetScale0.xy) * BlurOffsetScale0.z;\n"
-"   return color;\n"
-"}\n";
-
-gxPixelShader Gaussian7Shader;
-
-
-const char* Gaussian13ShaderSource =
-"float3 BlurOffsetScale0 : register(c0);\n"
-"float3 BlurOffsetScale1 : register(c1);\n"
-"float3 BlurOffsetScale2 : register(c2);\n"
-"float3 BlurOffsetScale3 : register(c3);\n"
-"float3 BlurOffsetScale4 : register(c4);\n"
-"float3 BlurOffsetScale5 : register(c5);\n"
-"float3 BlurOffsetScale6 : register(c6);\n"
-"\n"
-"sampler BlurSampler : register(s0);\n"
-"\n"
-"struct SVertexOutput\n"
-"{\n"
-"	float2 TexCoord0 : TEXCOORD0;\n"
-"};\n"
-"\n"
-"float4 main(SVertexOutput VertexOutput) : COLOR\n"
-"{\n"
-"	float4 color = float4(0,0,0,0);\n"
-"	color += tex2D(BlurSampler, VertexOutput.TexCoord0+BlurOffsetScale0.xy) * BlurOffsetScale0.z;\n"
-"	color += tex2D(BlurSampler, VertexOutput.TexCoord0+BlurOffsetScale1.xy) * BlurOffsetScale1.z;\n"
-"	color += tex2D(BlurSampler, VertexOutput.TexCoord0+BlurOffsetScale2.xy) * BlurOffsetScale2.z;\n"
-"	color += tex2D(BlurSampler, VertexOutput.TexCoord0+BlurOffsetScale3.xy) * BlurOffsetScale3.z;\n"
-"	color += tex2D(BlurSampler, VertexOutput.TexCoord0+BlurOffsetScale4.xy) * BlurOffsetScale4.z;\n"
-"	color += tex2D(BlurSampler, VertexOutput.TexCoord0+BlurOffsetScale5.xy) * BlurOffsetScale5.z;\n"
-"	color += tex2D(BlurSampler, VertexOutput.TexCoord0                    ) * BlurOffsetScale6.z;\n"
-"	color += tex2D(BlurSampler, VertexOutput.TexCoord0-BlurOffsetScale5.xy) * BlurOffsetScale5.z;\n"
-"	color += tex2D(BlurSampler, VertexOutput.TexCoord0-BlurOffsetScale4.xy) * BlurOffsetScale4.z;\n"
-"	color += tex2D(BlurSampler, VertexOutput.TexCoord0-BlurOffsetScale3.xy) * BlurOffsetScale3.z;\n"
-"	color += tex2D(BlurSampler, VertexOutput.TexCoord0-BlurOffsetScale2.xy) * BlurOffsetScale2.z;\n"
-"	color += tex2D(BlurSampler, VertexOutput.TexCoord0-BlurOffsetScale1.xy) * BlurOffsetScale1.z;\n"
-"	color += tex2D(BlurSampler, VertexOutput.TexCoord0-BlurOffsetScale0.xy) * BlurOffsetScale0.z;\n"
-"   return color;\n"
-"}\n";
-
-gxPixelShader Gaussian13Shader;
 
 
 const char* CombineShaderSource =
@@ -319,8 +242,6 @@ gxPixelShader CombineShader;
 #ifdef PLATFORM_IPHONE
 
 const char* LitVertexShaderSource =
-"uniform vec2 Offset;\n"
-"\n"
 "attribute vec2 PositionAttr;\n"
 "attribute vec2 TexCoordAttr;\n"
 "attribute vec4 ColorAttr;\n"
@@ -330,12 +251,12 @@ const char* LitVertexShaderSource =
 "\n"
 "void main()\n"
 "{\n"
-"	gl_Position = vec4((PositionAttr.x+Offset.x)/768.0*2.0-1.0, (1.0-(PositionAttr.y+Offset.y)/1024.0)*2.0-1.0, 0, 1);\n"
+"	gl_Position = vec4(PositionAttr.x/768.0*2.0-1.0, (1.0-PositionAttr.y/1024.0)*2.0-1.0, 0, 1);\n"
 "	TexCoordInterp = TexCoordAttr;\n"
 "	ColorInterp = ColorAttr;\n"
 "}\n";
 
-const char* TexturedColoredShaderSource =
+const char* LitShaderSource =
 "uniform lowp sampler2D Sampler;\n"
 "\n"
 "varying lowp vec2 TexCoordInterp;\n"
@@ -349,15 +270,33 @@ const char* TexturedColoredShaderSource =
 gxShader LitShader;
 
 
+const char* ShadowVertexShaderSource =
+"uniform vec2 ShadowOffset;\n"
+"\n"
+"attribute vec2 PositionAttr;\n"
+"attribute vec2 TexCoordAttr;\n"
+"attribute vec4 ColorAttr;\n"
+"\n"
+"varying vec2 TexCoordInterp;\n"
+"varying vec4 ColorInterp;\n"
+"\n"
+"void main()\n"
+"{\n"
+"	gl_Position = vec4((PositionAttr.x+ShadowOffset.x)/768.0*2.0-1.0, (1.0-(PositionAttr.y+ShadowOffset.y)/1024.0)*2.0-1.0, 0, 1);\n"
+"	TexCoordInterp = TexCoordAttr;\n"
+"	ColorInterp = ColorAttr;\n"
+"}\n";
+
 const char* ShadowShaderSource =
 "uniform lowp float ShadowAlpha;\n"
 "uniform lowp sampler2D Sampler;\n"
 "\n"
 "varying lowp vec2 TexCoordInterp;\n"
+"varying lowp vec4 ColorInterp;\n"
 "\n"
 "void main()\n"
 "{\n"
-"	gl_FragColor = vec4(0.0, 0.0, 0.0, ShadowAlpha * texture2D(Sampler, TexCoordInterp).a);\n"
+"	gl_FragColor = vec4(0.0, 0.0, 0.0, ColorInterp.a * ShadowAlpha * texture2D(Sampler, TexCoordInterp).a);\n"
 "}\n";
 
 gxShaderConstant ShadowShadowOffset;
@@ -365,6 +304,22 @@ gxShaderConstant ShadowShadowAlpha;
 gxShaderConstant ShadowSampler;
 
 gxShader ShadowShader;
+
+
+const char* StandardVertexShaderSource =
+"attribute vec2 PositionAttr;\n"
+"attribute vec2 TexCoordAttr;\n"
+"attribute vec4 ColorAttr;\n"
+"\n"
+"varying vec2 TexCoordInterp;\n"
+"varying vec4 ColorInterp;\n"
+"\n"
+"void main()\n"
+"{\n"
+"	gl_Position = vec4(PositionAttr.x/768.0*2.0-1.0, (1.0-PositionAttr.y/1024.0)*2.0-1.0, 0, 1);\n"
+"	TexCoordInterp = TexCoordAttr;\n"
+"	ColorInterp = ColorAttr;\n"
+"}\n";
 
 
 const char* ApplyShadowShaderSource =
@@ -398,83 +353,6 @@ gxShaderConstant EffectsSampler;
 gxShader EffectsShader;
 
 
-const char* Gaussian7ShaderSource =
-"uniform lowp vec3 BlurOffsetScale0;\n"
-"uniform lowp vec3 BlurOffsetScale1;\n"
-"uniform lowp vec3 BlurOffsetScale2;\n"
-"uniform lowp vec3 BlurOffsetScale3;\n"
-"\n"
-"uniform lowp sampler2D BlurSampler;\n"
-"\n"
-"varying lowp vec2 TexCoordInterp;\n"
-"\n"
-"void main()\n"
-"{\n"
-"	lowp vec4 color = vec4(0.0,0.0,0.0,0.0);\n"
-"	color += texture2D(BlurSampler, TexCoordInterp+BlurOffsetScale0.xy) * BlurOffsetScale0.z;\n"
-"	color += texture2D(BlurSampler, TexCoordInterp+BlurOffsetScale1.xy) * BlurOffsetScale1.z;\n"
-"	color += texture2D(BlurSampler, TexCoordInterp+BlurOffsetScale2.xy) * BlurOffsetScale2.z;\n"
-"	color += texture2D(BlurSampler, TexCoordInterp                    ) * BlurOffsetScale3.z;\n"
-"	color += texture2D(BlurSampler, TexCoordInterp-BlurOffsetScale2.xy) * BlurOffsetScale2.z;\n"
-"	color += texture2D(BlurSampler, TexCoordInterp-BlurOffsetScale1.xy) * BlurOffsetScale1.z;\n"
-"	color += texture2D(BlurSampler, TexCoordInterp-BlurOffsetScale0.xy) * BlurOffsetScale0.z;\n"
-"   gl_FragColor = color;\n"
-"}\n";
-
-gxShaderConstant Gaussian7BlurOffsetScale0;
-gxShaderConstant Gaussian7BlurOffsetScale1;
-gxShaderConstant Gaussian7BlurOffsetScale2;
-gxShaderConstant Gaussian7BlurOffsetScale3;
-
-gxShaderConstant Gaussian7BlurSampler;
-
-gxShader Gaussian7Shader;
-
-
-const char* Gaussian13ShaderSource =
-"uniform lowp vec3 BlurOffsetScale0;\n"
-"uniform lowp vec3 BlurOffsetScale1;\n"
-"uniform lowp vec3 BlurOffsetScale2;\n"
-"uniform lowp vec3 BlurOffsetScale3;\n"
-"uniform lowp vec3 BlurOffsetScale4;\n"
-"uniform lowp vec3 BlurOffsetScale5;\n"
-"uniform lowp vec3 BlurOffsetScale6;\n"
-"\n"
-"uniform lowp sampler2D BlurSampler;\n"
-"\n"
-"varying lowp vec2 TexCoordInterp;\n"
-"\n"
-"void main()\n"
-"{\n"
-"	lowp vec4 color = vec4(0.0,0.0,0.0,0.0);\n"
-"	color += texture2D(BlurSampler, TexCoordInterp+BlurOffsetScale0.xy) * BlurOffsetScale0.z;\n"
-"	color += texture2D(BlurSampler, TexCoordInterp+BlurOffsetScale1.xy) * BlurOffsetScale1.z;\n"
-"	color += texture2D(BlurSampler, TexCoordInterp+BlurOffsetScale2.xy) * BlurOffsetScale2.z;\n"
-"	color += texture2D(BlurSampler, TexCoordInterp+BlurOffsetScale3.xy) * BlurOffsetScale3.z;\n"
-"	color += texture2D(BlurSampler, TexCoordInterp+BlurOffsetScale4.xy) * BlurOffsetScale4.z;\n"
-"	color += texture2D(BlurSampler, TexCoordInterp+BlurOffsetScale5.xy) * BlurOffsetScale5.z;\n"
-"	color += texture2D(BlurSampler, TexCoordInterp                    ) * BlurOffsetScale6.z;\n"
-"	color += texture2D(BlurSampler, TexCoordInterp-BlurOffsetScale5.xy) * BlurOffsetScale5.z;\n"
-"	color += texture2D(BlurSampler, TexCoordInterp-BlurOffsetScale4.xy) * BlurOffsetScale4.z;\n"
-"	color += texture2D(BlurSampler, TexCoordInterp-BlurOffsetScale3.xy) * BlurOffsetScale3.z;\n"
-"	color += texture2D(BlurSampler, TexCoordInterp-BlurOffsetScale2.xy) * BlurOffsetScale2.z;\n"
-"	color += texture2D(BlurSampler, TexCoordInterp-BlurOffsetScale1.xy) * BlurOffsetScale1.z;\n"
-"	color += texture2D(BlurSampler, TexCoordInterp-BlurOffsetScale0.xy) * BlurOffsetScale0.z;\n"
-"   gl_FragColor = color;\n"
-"}\n";
-
-gxShaderConstant Gaussian13BlurOffsetScale0;
-gxShaderConstant Gaussian13BlurOffsetScale1;
-gxShaderConstant Gaussian13BlurOffsetScale2;
-gxShaderConstant Gaussian13BlurOffsetScale3;
-gxShaderConstant Gaussian13BlurOffsetScale4;
-gxShaderConstant Gaussian13BlurOffsetScale5;
-gxShaderConstant Gaussian13BlurOffsetScale6;
-
-gxShaderConstant Gaussian13BlurSampler;
-
-gxShader Gaussian13Shader;
-
 
 const char* CombineShaderSource =
 "uniform lowp sampler2D ColorSampler;\n"
@@ -486,13 +364,11 @@ const char* CombineShaderSource =
 "void main()\n"
 "{\n"
 "	lowp vec4 Color = texture2D(ColorSampler, TexCoordInterp);\n"
-"	lowp vec4 ColorBleed = texture2D(ColorBleedSampler, TexCoordInterp);\n"
 "	lowp vec4 Lighting = texture2D(LightingSampler, TexCoordInterp);\n"
-"   gl_FragColor = (Lighting*2.0) * Color/* * saturate(ColorBleed*1.5)*/;\n"
+"   gl_FragColor = (Lighting*2.0) * Color;\n"
 "}\n";
 
 gxShaderConstant CombineColorSampler;
-gxShaderConstant CombineColorBleedSampler;
 gxShaderConstant CombineLightingSampler;
 
 gxShader CombineShader;
@@ -504,7 +380,7 @@ gxShader CombineShader;
 //                                                      Platform specific drawing                                                          //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-void DrawLightList(int List, gxAlphaMode Alpha)
+void DrawLightList(int List, gxShader* Shader, gxAlphaMode Alpha)
 {
     _gxSetAlpha(Alpha);
     
@@ -521,6 +397,9 @@ void DrawLightList(int List, gxAlphaMode Alpha)
 #endif
     
 #ifdef PLATFORM_IPHONE
+    if (Shader)
+        gxSetShader(Shader);
+    
     glBindBuffer(GL_ARRAY_BUFFER, LitVertsVBO[BufferObjectIndex]);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, LitVertsIBO[BufferObjectIndex]);
     
@@ -577,136 +456,38 @@ void DrawLightList(int List, gxAlphaMode Alpha)
 #endif
 }
 
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                      Ambient occlusion                                                                  //
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-
-void InitAmbientOcclusion()
+void DrawScreen(gxShader* Shader, gxAlphaMode Alpha)
 {
-	gxCreateRenderTarget(LitRenderTargetWidth/2, LitRenderTargetHeight/2, &AmbientOcclusionDiv2RT, true);
-	gxCreateRenderTarget(LitRenderTargetWidth/4, LitRenderTargetHeight/4, &AmbientOcclusionDiv4RT, true);
-	gxCreateRenderTarget(LitRenderTargetWidth/8, LitRenderTargetHeight/8, &AmbientOcclusionPingRT, true);
-	gxCreateRenderTarget(LitRenderTargetWidth/8, LitRenderTargetHeight/8, &AmbientOcclusionPongRT, true);
+    _gxSetAlpha(Alpha);
 
-	gxCreateRenderTarget(LitRenderTargetWidth/8, LitRenderTargetHeight/8, &AmbientOcclusionForegroundRT, true);
-	gxCreateRenderTarget(LitRenderTargetWidth/8, LitRenderTargetHeight/8, &AmbientOcclusionVacuumRT, true);
-}
+    if (Shader)
+        gxSetShader(Shader);
 
-void DrawAmbientOcclusion(ELightList List, gxSprite* FinalRT)
-{
-	gxSetRenderTarget(FinalRT);
-	gxClearColor(gxRGBA32(0, 0, 0, 0));
-    
-#ifdef PLATFORM_WINDOWS
-	gxSetPixelShader(&TexturedShadowShader);
-	gxSetPixelShaderConst(0, 200.0f/255.0f);
+    glBindBuffer(GL_ARRAY_BUFFER, ScreenVBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	gxSetVertexShader(&ShadowVertexShader);
-	gxSetVertexShaderConst(0, 0.0f, 0.0f);
-#endif
-    
-#ifdef PLATFORM_IPHONE
-    gxSetShader(&ShadowShader);
-    gxSetShaderConstant(ShadowShadowOffset, 0.0f, 0.0f, 0.0f, 0.0f);
-    gxSetShaderConstant(ShadowShadowAlpha, 192.0f/255.0f);
-#endif
-    
-    DrawLightList(List, GXALPHA_BLEND);
-}
-
-void BlurAmbientOcclusion(gxSprite* FinalRT)
-{
-	gxCopyRenderTarget(FinalRT, &AmbientOcclusionDiv2RT);
-	gxCopyRenderTarget(&AmbientOcclusionDiv2RT, &AmbientOcclusionDiv4RT);
-	gxCopyRenderTarget(&AmbientOcclusionDiv4RT, &AmbientOcclusionPingRT);
-
-#ifdef PLATFORM_WINDOWS
-	gxSetPixelShader(&Gaussian13Shader);
-#endif
-    
-#ifdef PLATFORM_IPHONE
-    gxSetShader(&Gaussian13Shader);
-#endif
-    
-	for (int i = 0; i < 4; i++)
-	{
-#ifdef PLATFORM_WINDOWS
-		gxSetPixelShaderConst(0, -6.0f/AmbientOcclusionPingRT.width, 0.0f, 1.0f/4096.0f);
-		gxSetPixelShaderConst(1, -5.0f/AmbientOcclusionPingRT.width, 0.0f, 12.0f/4096.0f);
-		gxSetPixelShaderConst(2, -4.0f/AmbientOcclusionPingRT.width, 0.0f, 66.0f/4096.0f);
-		gxSetPixelShaderConst(3, -3.0f/AmbientOcclusionPingRT.width, 0.0f, 220.0f/4096.0f);
-		gxSetPixelShaderConst(4, -2.0f/AmbientOcclusionPingRT.width, 0.0f, 495.0f/4096.0f);
-		gxSetPixelShaderConst(5, -1.0f/AmbientOcclusionPingRT.width, 0.0f, 792.0f/4096.0f);
-		gxSetPixelShaderConst(6,  0.0f/AmbientOcclusionPingRT.width, 0.0f, 924.0f/4096.0f);
-#endif
+    if (gxOpenGLESVersion == 2)
+    {
+        glEnableVertexAttribArray(GX_ATTRIB_VERTEX);
+        glEnableVertexAttribArray(GX_ATTRIB_TEXCOORD);
+        glEnableVertexAttribArray(GX_ATTRIB_COLOR);
         
-#ifdef PLATFORM_IPHONE
-		gxSetShaderConstant(Gaussian13BlurOffsetScale0, -6.0f/AmbientOcclusionPingRT.width, 0.0f, 1.0f/4096.0f);
-		gxSetShaderConstant(Gaussian13BlurOffsetScale1, -5.0f/AmbientOcclusionPingRT.width, 0.0f, 12.0f/4096.0f);
-		gxSetShaderConstant(Gaussian13BlurOffsetScale2, -4.0f/AmbientOcclusionPingRT.width, 0.0f, 66.0f/4096.0f);
-		gxSetShaderConstant(Gaussian13BlurOffsetScale3, -3.0f/AmbientOcclusionPingRT.width, 0.0f, 220.0f/4096.0f);
-		gxSetShaderConstant(Gaussian13BlurOffsetScale4, -2.0f/AmbientOcclusionPingRT.width, 0.0f, 495.0f/4096.0f);
-		gxSetShaderConstant(Gaussian13BlurOffsetScale5, -1.0f/AmbientOcclusionPingRT.width, 0.0f, 792.0f/4096.0f);
-		gxSetShaderConstant(Gaussian13BlurOffsetScale6,  0.0f/AmbientOcclusionPingRT.width, 0.0f, 924.0f/4096.0f);
-#endif
-        
-		gxCopyRenderTarget(&AmbientOcclusionPingRT, &AmbientOcclusionPongRT);
+        glVertexAttribPointer(GX_ATTRIB_VERTEX, 2, GL_FLOAT, 0, sizeof(SLitVertex), (void*)offsetof(SLitVertex, X));
+        glVertexAttribPointer(GX_ATTRIB_TEXCOORD, 2, GL_FLOAT, 0, sizeof(SLitVertex), (void*)offsetof(SLitVertex, U));
+        glVertexAttribPointer(GX_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, sizeof(SLitVertex), (void*)offsetof(SLitVertex, Color));
+    }
+    else
+    {
+        glVertexPointer(3, GL_FLOAT, sizeof(SLitVertex), (void*)offsetof(SLitVertex, X));
+        glTexCoordPointer(2, GL_FLOAT, sizeof(SLitVertex), (void*)offsetof(SLitVertex, U));
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(SLitVertex), (void*)offsetof(SLitVertex, Color));
+    }
 
-#ifdef PLATFORM_WINDOWS
-		gxSetPixelShaderConst(0, 0.0f, -6.0f/AmbientOcclusionPingRT.height, 1.0f/4096.0f);
-		gxSetPixelShaderConst(1, 0.0f, -5.0f/AmbientOcclusionPingRT.height, 12.0f/4096.0f);
-		gxSetPixelShaderConst(2, 0.0f, -4.0f/AmbientOcclusionPingRT.height, 66.0f/4096.0f);
-		gxSetPixelShaderConst(3, 0.0f, -3.0f/AmbientOcclusionPingRT.height, 220.0f/4096.0f);
-		gxSetPixelShaderConst(4, 0.0f, -2.0f/AmbientOcclusionPingRT.height, 495.0f/4096.0f);
-		gxSetPixelShaderConst(5, 0.0f, -1.0f/AmbientOcclusionPingRT.height, 792.0f/4096.0f);
-		gxSetPixelShaderConst(6, 0.0f,  0.0f/AmbientOcclusionPingRT.height, 924.0f/4096.0f);
-#endif
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-#ifdef PLATFORM_IPHONE
-		gxSetShaderConstant(Gaussian13BlurOffsetScale0, 0.0f, -6.0f/AmbientOcclusionPingRT.height, 1.0f/4096.0f);
-		gxSetShaderConstant(Gaussian13BlurOffsetScale1, 0.0f, -5.0f/AmbientOcclusionPingRT.height, 12.0f/4096.0f);
-		gxSetShaderConstant(Gaussian13BlurOffsetScale2, 0.0f, -4.0f/AmbientOcclusionPingRT.height, 66.0f/4096.0f);
-		gxSetShaderConstant(Gaussian13BlurOffsetScale3, 0.0f, -3.0f/AmbientOcclusionPingRT.height, 220.0f/4096.0f);
-		gxSetShaderConstant(Gaussian13BlurOffsetScale4, 0.0f, -2.0f/AmbientOcclusionPingRT.height, 495.0f/4096.0f);
-		gxSetShaderConstant(Gaussian13BlurOffsetScale5, 0.0f, -1.0f/AmbientOcclusionPingRT.height, 792.0f/4096.0f);
-		gxSetShaderConstant(Gaussian13BlurOffsetScale6, 0.0f,  0.0f/AmbientOcclusionPingRT.height, 924.0f/4096.0f);
-#endif
-        
-		gxCopyRenderTarget(&AmbientOcclusionPongRT, &AmbientOcclusionPingRT);
-	}
-
-#ifdef PLATFORM_WINDOWS
-	gxSetPixelShader(&TexturedColoredShader);
-#endif
-    
-#ifdef PLATFORM_IPHONE
-    gxSetShader(&LitShader);
-#endif
-    
-	gxCopyRenderTarget(&AmbientOcclusionPingRT, FinalRT);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void RenderAmbientOcclusion(gxSprite* FinalRT)
-{
-#ifdef PLATFORM_WINDOWS
-	gxSetPixelShader(&TexturedColoredShader);
-	gxSetVertexShader(&LitVertexShader);
-#endif
-
-#ifdef PLATFORM_IPHONE
-    gxSetShader(&ApplyShadowShader);
-#endif
-    
-	_gxSetAlpha(GXALPHA_BLEND);
-	_gxSetTexture(FinalRT);
-
-#ifdef PLATFORM_IPHONE
-	_gxDrawQuad(0, 0, (float)gxScreenWidth, (float)gxScreenHeight, gxRGBA32(255,255,255,255), 0, 1, 1, 0);
-#endif
-#ifdef PLATFORM_WINDOWS
-	_gxDrawQuad(0, 0, (float)gxScreenWidth, (float)gxScreenHeight, gxRGBA32(255,255,255,255), 0, 0, 1, 1);
-#endif
-}
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                      Shadows                                                                            //
@@ -714,9 +495,6 @@ void RenderAmbientOcclusion(gxSprite* FinalRT)
 
 void InitShadows()
 {
-	gxCreateRenderTarget(LitRenderTargetWidth/4, LitRenderTargetHeight/4, &ShadowPingRT, true);
-	gxCreateRenderTarget(LitRenderTargetWidth/4, LitRenderTargetHeight/4, &ShadowPongRT, true);
-
 #ifdef PLATFORM_WINDOWS
 	gxCreateRenderTarget(LitRenderTargetWidth, LitRenderTargetHeight, &ShadowForegroundRT, true);
 	gxCreateRenderTarget(LitRenderTargetWidth, LitRenderTargetHeight, &ShadowVacuumRT, true);
@@ -730,12 +508,15 @@ void InitShadows()
 
 void DrawShadows(ELightList List, gxSprite* FinalRT, float ShadowOffsetX, float ShadowOffsetY)
 {
-	gxSetRenderTarget(FinalRT);
-	gxClearColor(gxRGBA32(0, 0, 0, 0));
+    if (FinalRT != &ColorRT)
+    {
+        gxSetRenderTarget(FinalRT);
+        gxClearColor(gxRGBA32(0, 0, 0, 0));
+    }
 
 #ifdef PLATFORM_WINDOWS
 	gxSetPixelShader(&TexturedShadowShader);
-	gxSetPixelShaderConst(0, 192.0f/255.0f);
+	gxSetPixelShaderConst(0, 128.0f/255.0f);
 
 	gxSetVertexShader(&ShadowVertexShader);
 	gxSetVertexShaderConst(0, ShadowOffsetX, ShadowOffsetY);
@@ -746,211 +527,18 @@ void DrawShadows(ELightList List, gxSprite* FinalRT, float ShadowOffsetX, float 
     {
         gxSetShader(&ShadowShader);
         gxSetShaderConstant(ShadowShadowOffset, ShadowOffsetX, ShadowOffsetY);
-        gxSetShaderConstant(ShadowShadowAlpha, 192.0f/255.0f);
-    }
-    else
-    {
-        // ES1 TODO
+        gxSetShaderConstant(ShadowShadowAlpha, 128.0f/255.0f);
     }
 #endif
     
-    DrawLightList(List, GXALPHA_BLEND);
-}
-
-void BlurShadows(gxSprite* FinalRT)
-{
-	gxCopyRenderTarget(FinalRT, &ShadowPingRT);
-
-#ifdef PLATFORM_WINDOWS
-	gxSetPixelShader(&Gaussian7Shader);
-#endif
-    
-#ifdef PLATFORM_IPHONE
-    gxSetShader(&Gaussian7Shader);
-#endif
-    
-	for (int i = 0; i < 1; i++)
-	{
-#ifdef PLATFORM_WINDOWS
-		gxSetPixelShaderConst(0, -3.0f/ShadowPingRT.width, 0.0f, 1.0f/64.0f);
-		gxSetPixelShaderConst(1, -2.0f/ShadowPingRT.width, 0.0f, 6.0f/64.0f);
-		gxSetPixelShaderConst(2, -1.0f/ShadowPingRT.width, 0.0f, 15.0f/64.0f);
-		gxSetPixelShaderConst(3,  0.0f/ShadowPingRT.width, 0.0f, 20.0f/64.0f);
-#endif
-        
-#ifdef PLATFORM_IPHONE
-		gxSetShaderConstant(Gaussian7BlurOffsetScale0, -3.0f/ShadowPingRT.width, 0.0f, 1.0f/64.0f);
-		gxSetShaderConstant(Gaussian7BlurOffsetScale1, -2.0f/ShadowPingRT.width, 0.0f, 6.0f/64.0f);
-		gxSetShaderConstant(Gaussian7BlurOffsetScale2, -1.0f/ShadowPingRT.width, 0.0f, 15.0f/64.0f);
-		gxSetShaderConstant(Gaussian7BlurOffsetScale3,  0.0f/ShadowPingRT.width, 0.0f, 20.0f/64.0f);
-#endif
-        
-		gxCopyRenderTarget(&ShadowPingRT, &ShadowPongRT);
-
-#ifdef PLATFORM_WINDOWS
-		gxSetPixelShaderConst(0, 0.0f, -3.0f/ShadowPingRT.height, 1.0f/64.0f);
-		gxSetPixelShaderConst(1, 0.0f, -2.0f/ShadowPingRT.height, 6.0f/64.0f);
-		gxSetPixelShaderConst(2, 0.0f, -1.0f/ShadowPingRT.height, 15.0f/64.0f);
-		gxSetPixelShaderConst(3, 0.0f,  0.0f/ShadowPingRT.height, 20.0f/64.0f);
-#endif
-        
-#ifdef PLATFORM_IPHONE
-		gxSetShaderConstant(Gaussian7BlurOffsetScale0, 0.0f, -3.0f/ShadowPingRT.height, 1.0f/64.0f);
-		gxSetShaderConstant(Gaussian7BlurOffsetScale1, 0.0f, -2.0f/ShadowPingRT.height, 6.0f/64.0f);
-		gxSetShaderConstant(Gaussian7BlurOffsetScale2, 0.0f, -1.0f/ShadowPingRT.height, 15.0f/64.0f);
-		gxSetShaderConstant(Gaussian7BlurOffsetScale3, 0.0f,  0.0f/ShadowPingRT.height, 20.0f/64.0f);
-#endif
-        
-		gxCopyRenderTarget(&ShadowPongRT, &ShadowPingRT);
-	}
-
-#ifdef PLATFORM_WINDOWS
-	gxSetPixelShader(&TexturedColoredShader);
-#endif
-	
-#ifdef PLATFORM_IPHONE
-    gxSetShader(&LitShader);
-#endif
-    
-    gxCopyRenderTarget(&ShadowPingRT, FinalRT);
+    DrawLightList(List, NULL, GXALPHA_BLEND);
 }
 
 void RenderShadows(gxSprite* FinalRT)
 {
-#ifdef PLATFORM_WINDOWS
-	gxSetPixelShader(&TexturedColoredShader);
-	gxSetVertexShader(&LitVertexShader);
-#endif
-
-#ifdef PLATFORM_IPHONE
-    if (gxOpenGLESVersion == 2)
-    {
-        gxSetShader(&ApplyShadowShader);
-    }
-    else
-    {
-        // ES1 TODO
-    }
-#endif
-    
-	_gxSetAlpha(GXALPHA_BLEND);
 	_gxSetTexture(FinalRT);
 
-#ifdef PLATFORM_IPHONE
-	_gxDrawQuad(0, 0, (float)gxScreenWidth, (float)gxScreenHeight, gxRGBA32(255,255,255,255), 0, 1, 1, 0);
-#endif
-#ifdef PLATFORM_WINDOWS
-	_gxDrawQuad(0, 0, (float)gxScreenWidth/2, (float)gxScreenHeight/2, gxRGBA32(255,255,255,255), 0, 0, 1, 1);
-#endif
-}
-
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                      Ambient occlusion                                                                  //
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-
-void InitColorBleed()
-{
-	gxCreateRenderTarget(LitRenderTargetWidth/2,    LitRenderTargetHeight/2,    &ColorBleedDiv2RT, false);
-	gxCreateRenderTarget(LitRenderTargetWidth/4,    LitRenderTargetHeight/4,    &ColorBleedDiv4RT, false);
-	gxCreateRenderTarget(LitRenderTargetWidth/8,    LitRenderTargetHeight/8,    &ColorBleedDiv8RT, false);
-	gxCreateRenderTarget(LitRenderTargetWidth/16,   LitRenderTargetHeight/16,   &ColorBleedPingRT, false);
-	gxCreateRenderTarget(LitRenderTargetWidth/16,   LitRenderTargetHeight/16,   &ColorBleedPongRT, false);
-	gxCreateRenderTarget(LitRenderTargetWidth/16,   LitRenderTargetHeight/16,   &ColorBleedFinalRT, false);
-}
-
-void BuildColorBleed()
-{
-#ifdef PLATFORM_WINDOWS
-	gxSetPixelShader(&Gaussian13Shader);
-#endif
-    
-#ifdef PLATFORM_IPHONE
-    gxSetShader(&Gaussian13Shader);
-#endif
-
-	// TODO: These samples are nowhere near correct but it looks tolerable so whatever.
-	// Probably should make a Gaussian9 and just type in a 2D 131.
-#ifdef PLATFORM_WINDOWS
-	gxSetPixelShaderConst(0, -2.0f/ColorBleedPingRT.width, -2.0f/ColorBleedPingRT.width, 1.0f/4096.0f);
-	gxSetPixelShaderConst(1, -2.0f/ColorBleedPingRT.width, -1.0f/ColorBleedPingRT.width, 12.0f/4096.0f);
-	gxSetPixelShaderConst(2, -2.0f/ColorBleedPingRT.width,  0.0f/ColorBleedPingRT.width, 66.0f/4096.0f);
-	gxSetPixelShaderConst(3, -1.0f/ColorBleedPingRT.width, -2.0f/ColorBleedPingRT.width, 220.0f/4096.0f);
-	gxSetPixelShaderConst(4, -1.0f/ColorBleedPingRT.width, -1.0f/ColorBleedPingRT.width, 495.0f/4096.0f);
-	gxSetPixelShaderConst(5, -1.0f/ColorBleedPingRT.width,  0.0f/ColorBleedPingRT.width, 792.0f/4096.0f);
-	gxSetPixelShaderConst(6,  0.0f/ColorBleedPingRT.width,  0.0f/ColorBleedPingRT.width, 924.0f/4096.0f);
-#endif
-
-#ifdef PLATFORM_IPHONE
-	gxSetShaderConstant(Gaussian13BlurOffsetScale0, -2.0f/ColorBleedPingRT.width, -2.0f/ColorBleedPingRT.width, 1.0f/4096.0f);
-	gxSetShaderConstant(Gaussian13BlurOffsetScale1, -2.0f/ColorBleedPingRT.width, -1.0f/ColorBleedPingRT.width, 12.0f/4096.0f);
-	gxSetShaderConstant(Gaussian13BlurOffsetScale2, -2.0f/ColorBleedPingRT.width,  0.0f/ColorBleedPingRT.width, 66.0f/4096.0f);
-	gxSetShaderConstant(Gaussian13BlurOffsetScale3, -1.0f/ColorBleedPingRT.width, -2.0f/ColorBleedPingRT.width, 220.0f/4096.0f);
-	gxSetShaderConstant(Gaussian13BlurOffsetScale4, -1.0f/ColorBleedPingRT.width, -1.0f/ColorBleedPingRT.width, 495.0f/4096.0f);
-	gxSetShaderConstant(Gaussian13BlurOffsetScale5, -1.0f/ColorBleedPingRT.width,  0.0f/ColorBleedPingRT.width, 792.0f/4096.0f);
-	gxSetShaderConstant(Gaussian13BlurOffsetScale6,  0.0f/ColorBleedPingRT.width,  0.0f/ColorBleedPingRT.width, 924.0f/4096.0f);
-#endif
-
-	gxCopyRenderTarget(&ColorRT, &ColorBleedDiv2RT);
-	gxCopyRenderTarget(&ColorBleedDiv2RT, &ColorBleedDiv4RT);
-	gxCopyRenderTarget(&ColorBleedDiv4RT, &ColorBleedDiv8RT);
-	gxCopyRenderTarget(&ColorBleedDiv8RT, &ColorBleedPingRT);
-
-	for (int i = 0; i < 2; i++)
-	{
-#ifdef PLATFORM_WINDOWS
-		gxSetPixelShaderConst(0, -6.0f/ColorBleedPingRT.width, 0.0f, 1.0f/4096.0f);
-		gxSetPixelShaderConst(1, -5.0f/ColorBleedPingRT.width, 0.0f, 12.0f/4096.0f);
-		gxSetPixelShaderConst(2, -4.0f/ColorBleedPingRT.width, 0.0f, 66.0f/4096.0f);
-		gxSetPixelShaderConst(3, -3.0f/ColorBleedPingRT.width, 0.0f, 220.0f/4096.0f);
-		gxSetPixelShaderConst(4, -2.0f/ColorBleedPingRT.width, 0.0f, 495.0f/4096.0f);
-		gxSetPixelShaderConst(5, -1.0f/ColorBleedPingRT.width, 0.0f, 792.0f/4096.0f);
-		gxSetPixelShaderConst(6,  0.0f/ColorBleedPingRT.width, 0.0f, 924.0f/4096.0f);
-#endif
-
-#ifdef PLATFORM_IPHONE
-		gxSetShaderConstant(Gaussian13BlurOffsetScale0, -6.0f/ColorBleedPingRT.width, 0.0f, 1.0f/4096.0f);
-		gxSetShaderConstant(Gaussian13BlurOffsetScale1, -5.0f/ColorBleedPingRT.width, 0.0f, 12.0f/4096.0f);
-		gxSetShaderConstant(Gaussian13BlurOffsetScale2, -4.0f/ColorBleedPingRT.width, 0.0f, 66.0f/4096.0f);
-		gxSetShaderConstant(Gaussian13BlurOffsetScale3, -3.0f/ColorBleedPingRT.width, 0.0f, 220.0f/4096.0f);
-		gxSetShaderConstant(Gaussian13BlurOffsetScale4, -2.0f/ColorBleedPingRT.width, 0.0f, 495.0f/4096.0f);
-		gxSetShaderConstant(Gaussian13BlurOffsetScale5, -1.0f/ColorBleedPingRT.width, 0.0f, 792.0f/4096.0f);
-		gxSetShaderConstant(Gaussian13BlurOffsetScale6,  0.0f/ColorBleedPingRT.width, 0.0f, 924.0f/4096.0f);
-#endif
-
-		gxCopyRenderTarget(&ColorBleedPingRT, &ColorBleedPongRT);
-
-#ifdef PLATFORM_WINDOWS
-		gxSetPixelShaderConst(0, 0.0f, -6.0f/ColorBleedPingRT.height, 1.0f/4096.0f);
-		gxSetPixelShaderConst(1, 0.0f, -5.0f/ColorBleedPingRT.height, 12.0f/4096.0f);
-		gxSetPixelShaderConst(2, 0.0f, -4.0f/ColorBleedPingRT.height, 66.0f/4096.0f);
-		gxSetPixelShaderConst(3, 0.0f, -3.0f/ColorBleedPingRT.height, 220.0f/4096.0f);
-		gxSetPixelShaderConst(4, 0.0f, -2.0f/ColorBleedPingRT.height, 495.0f/4096.0f);
-		gxSetPixelShaderConst(5, 0.0f, -1.0f/ColorBleedPingRT.height, 792.0f/4096.0f);
-		gxSetPixelShaderConst(6, 0.0f,  0.0f/ColorBleedPingRT.height, 924.0f/4096.0f);
-#endif
-        
-#ifdef PLATFORM_IPHONE
-		gxSetShaderConstant(Gaussian13BlurOffsetScale0, 0.0f, -6.0f/ColorBleedPingRT.height, 1.0f/4096.0f);
-		gxSetShaderConstant(Gaussian13BlurOffsetScale1, 0.0f, -5.0f/ColorBleedPingRT.height, 12.0f/4096.0f);
-		gxSetShaderConstant(Gaussian13BlurOffsetScale2, 0.0f, -4.0f/ColorBleedPingRT.height, 66.0f/4096.0f);
-		gxSetShaderConstant(Gaussian13BlurOffsetScale3, 0.0f, -3.0f/ColorBleedPingRT.height, 220.0f/4096.0f);
-		gxSetShaderConstant(Gaussian13BlurOffsetScale4, 0.0f, -2.0f/ColorBleedPingRT.height, 495.0f/4096.0f);
-		gxSetShaderConstant(Gaussian13BlurOffsetScale5, 0.0f, -1.0f/ColorBleedPingRT.height, 792.0f/4096.0f);
-		gxSetShaderConstant(Gaussian13BlurOffsetScale6, 0.0f,  0.0f/ColorBleedPingRT.height, 924.0f/4096.0f);
-#endif
-        
-		gxCopyRenderTarget(&ColorBleedPongRT, &ColorBleedPingRT);
-	}
-
-#ifdef PLATFORM_WINDOWS
-	gxSetPixelShader(&TexturedColoredShader);
-#endif
-    
-#ifdef PLATFORM_IPHONE
-    gxSetShader(&LitShader);
-#endif
-    
-	gxCopyRenderTarget(&ColorBleedPingRT, &ColorBleedFinalRT);
+    DrawScreen(&ApplyShadowShader, GXALPHA_BLEND);
 }
 
 void RenderCombinedColor()
@@ -959,51 +547,21 @@ void RenderCombinedColor()
 	gxSetPixelShader(&CombineShader);
 #endif
 
-#ifdef PLATFORM_IPHONE
-    if (gxOpenGLESVersion == 2)
-    {
-        gxSetShader(&CombineShader);
-    }
-    else
-    {
-        // ES1 TODO
-    }
-#endif
-    
-	_gxSetAlpha(GXALPHA_NONE);
-    
 #ifdef PLATFORM_WINDOWS
 	gxDev->SetTexture( 0, ColorRT.tex );
-	gxDev->SetTexture( 1, ColorBleedFinalRT.tex );
 	gxDev->SetTexture( 2, LightingRT.tex );
 #endif
     
 #ifdef PLATFORM_IPHONE
     if (gxOpenGLESVersion == 2)
     {
+        gxSetShader(&CombineShader);
         gxSetShaderSampler(CombineColorSampler, &ColorRT);
-    //    gxSetShaderSampler(CombineColorBleedSampler, &ColorBleedFinalRT);
         gxSetShaderSampler(CombineLightingSampler, &LightingRT);
     }
 #endif
 	
-#ifdef PLATFORM_IPHONE
-    _gxDrawQuad(0, 0, (float)gxScreenWidth, (float)gxScreenHeight, gxRGBA32(255,255,255,255), 0, 1, 1, 0);
-#endif
-#ifdef PLATFORM_WINDOWS
-	_gxDrawQuad(0, 0, (float)gxScreenWidth, (float)gxScreenHeight, gxRGBA32(255,255,255,255), 0, 0, 1, 1);
-#endif
-    
-#ifdef PLATFORM_WINDOWS
-	gxSetPixelShader(&TexturedColoredShader);
-#endif
-    
-#ifdef PLATFORM_IPHONE
-    if (gxOpenGLESVersion == 2)
-    {
-        gxSetShader(&LitShader);
-    }
-#endif
+    DrawScreen(NULL, GXALPHA_NONE);
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -1031,9 +589,6 @@ void InitLighting()
 	gxCreatePixelShader(TexturedShadowShaderSource, &TexturedShadowShader);
 
 	gxCreatePixelShader(EffectsShaderSource, &EffectsShader);
-
-	gxCreatePixelShader(Gaussian7ShaderSource, &Gaussian7Shader);
-	gxCreatePixelShader(Gaussian13ShaderSource, &Gaussian13Shader);
 
 	gxCreatePixelShader(CombineShaderSource, &CombineShader);
 #endif
@@ -1080,42 +635,28 @@ void InitLighting()
     
     BufferObjectIndex = 0;
     
+    glGenBuffers(1, &ScreenVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, ScreenVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(SLitVertex) * 4, ScreenVerts, GL_STATIC_DRAW);
+
     // Create shaders.
     if (gxOpenGLESVersion == 2)
     {
-        gxCreateShader(LitVertexShaderSource, TexturedColoredShaderSource, &LitShader);
-
-        gxCreateShader(LitVertexShaderSource, ShadowShaderSource, &ShadowShader);
-        ShadowShadowOffset = gxGetShaderConstantByName(&ShadowShader, "Offset");
+        gxCreateShader(LitVertexShaderSource, LitShaderSource, &LitShader);
+        
+        gxCreateShader(ShadowVertexShaderSource, ShadowShaderSource, &ShadowShader);
+        ShadowShadowOffset = gxGetShaderConstantByName(&ShadowShader, "ShadowOffset");
         ShadowShadowAlpha = gxGetShaderConstantByName(&ShadowShader, "ShadowAlpha");
         ShadowSampler = gxGetShaderConstantByName(&ShadowShader, "Sampler");
         
-        gxCreateShader(LitVertexShaderSource, ApplyShadowShaderSource, &ApplyShadowShader);
+        gxCreateShader(StandardVertexShaderSource, ApplyShadowShaderSource, &ApplyShadowShader);
         ApplyShadowSampler = gxGetShaderConstantByName(&ApplyShadowShader, "Sampler");
         
-        gxCreateShader(LitVertexShaderSource, EffectsShaderSource, &EffectsShader);
+        gxCreateShader(StandardVertexShaderSource, EffectsShaderSource, &EffectsShader);
         EffectsSampler = gxGetShaderConstantByName(&EffectsShader, "Sampler");
-        
-        gxCreateShader(LitVertexShaderSource, Gaussian7ShaderSource, &Gaussian7Shader);
-        Gaussian7BlurOffsetScale0 = gxGetShaderConstantByName(&Gaussian7Shader, "BlurOffsetScale0");
-        Gaussian7BlurOffsetScale1 = gxGetShaderConstantByName(&Gaussian7Shader, "BlurOffsetScale1");
-        Gaussian7BlurOffsetScale2 = gxGetShaderConstantByName(&Gaussian7Shader, "BlurOffsetScale2");
-        Gaussian7BlurOffsetScale3 = gxGetShaderConstantByName(&Gaussian7Shader, "BlurOffsetScale3");
-        Gaussian7BlurSampler = gxGetShaderConstantByName(&Gaussian7Shader, "BlurSampler");
-        
-        gxCreateShader(LitVertexShaderSource, Gaussian13ShaderSource, &Gaussian13Shader);
-        Gaussian13BlurOffsetScale0 = gxGetShaderConstantByName(&Gaussian13Shader, "BlurOffsetScale0");
-        Gaussian13BlurOffsetScale1 = gxGetShaderConstantByName(&Gaussian13Shader, "BlurOffsetScale1");
-        Gaussian13BlurOffsetScale2 = gxGetShaderConstantByName(&Gaussian13Shader, "BlurOffsetScale2");
-        Gaussian13BlurOffsetScale3 = gxGetShaderConstantByName(&Gaussian13Shader, "BlurOffsetScale3");
-        Gaussian13BlurOffsetScale4 = gxGetShaderConstantByName(&Gaussian13Shader, "BlurOffsetScale4");
-        Gaussian13BlurOffsetScale5 = gxGetShaderConstantByName(&Gaussian13Shader, "BlurOffsetScale5");
-        Gaussian13BlurOffsetScale6 = gxGetShaderConstantByName(&Gaussian13Shader, "BlurOffsetScale6");
-        Gaussian13BlurSampler = gxGetShaderConstantByName(&Gaussian13Shader, "BlurSampler");
 
-        gxCreateShader(LitVertexShaderSource, CombineShaderSource, &CombineShader);
+        gxCreateShader(StandardVertexShaderSource, CombineShaderSource, &CombineShader);
         CombineColorSampler = gxGetShaderConstantByName(&CombineShader, "ColorSampler");
-        CombineColorBleedSampler = gxGetShaderConstantByName(&CombineShader, "ColorBleedSampler");
         CombineLightingSampler = gxGetShaderConstantByName(&CombineShader, "LightingSampler");
     }
 #endif
@@ -1128,9 +669,7 @@ void InitLighting()
         gxCreateRenderTarget(LitRenderTargetWidth, LitRenderTargetHeight, &ColorRT, false);
         gxCreateRenderTarget(LitRenderTargetHeight, LitRenderTargetHeight, &LightingRT, false);
 
-        InitAmbientOcclusion();
         InitShadows();
-        //InitColorBleed();
     }
     
     double EndTime = GetCurrentTime();
@@ -1179,7 +718,6 @@ void RenderLighting()
     LitVertIndices = NULL;
 #endif
     
-    
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
     //                                                   Set up lighting globals                                                               //
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -1213,15 +751,15 @@ void RenderLighting()
         // Black background - useful for testing fireworks.
         //gxClearColor(gxRGBA32(0, 0, 0, 255));
         
-        DrawLightList(LIGHTLIST_BACKGROUND, GXALPHA_NONE);
-        //DrawLightListShadow(LIGHTLIST_FOREGROUND, GXALPHA_BLEND);        
-        DrawLightList(LIGHTLIST_DUST, GXALPHA_BLEND);
-        DrawLightList(LIGHTLIST_FOREGROUND, GXALPHA_BLEND);
-        DrawLightList(LIGHTLIST_FOREGROUND_NO_SHADOW, GXALPHA_BLEND);        
-        //DrawLightListShadow(LIGHTLIST_VACUUM, GXALPHA_BLEND);        
-        DrawLightList(LIGHTLIST_VACUUM, GXALPHA_BLEND);
-        DrawLightList(LIGHTLIST_EFFECTS, GXALPHA_ADD);
-        DrawLightList(LIGHTLIST_WIPE, GXALPHA_BLEND);
+        DrawLightList(LIGHTLIST_BACKGROUND, NULL, GXALPHA_NONE);
+        //DrawLightListShadow(LIGHTLIST_FOREGROUND, NULL, GXALPHA_BLEND);        
+        DrawLightList(LIGHTLIST_DUST, NULL, GXALPHA_BLEND);
+        DrawLightList(LIGHTLIST_FOREGROUND, NULL, GXALPHA_BLEND);
+        DrawLightList(LIGHTLIST_FOREGROUND_NO_SHADOW, NULL, GXALPHA_BLEND);        
+        //DrawLightListShadow(LIGHTLIST_VACUUM, NULL, GXALPHA_BLEND);        
+        DrawLightList(LIGHTLIST_VACUUM, NULL, GXALPHA_BLEND);
+        DrawLightList(LIGHTLIST_EFFECTS, NULL, GXALPHA_ADD);
+        DrawLightList(LIGHTLIST_WIPE, NULL, GXALPHA_BLEND);
     }
     else
 #endif
@@ -1230,48 +768,12 @@ void RenderLighting()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
     {
         // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-        //                                                   Build shadows and ambient occlusion                                                   //
-        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-        _gxSetAlpha(GXALPHA_BLEND);
-        
-        //DrawAmbientOcclusion(LIGHTLIST_FOREGROUND, &AmbientOcclusionForegroundRT);
-        //DrawAmbientOcclusion(LIGHTLIST_VACUUM, &AmbientOcclusionVacuumRT);
-        
-        DrawShadows(LIGHTLIST_FOREGROUND, &ShadowForegroundRT, 30, 20);
-        DrawShadows(LIGHTLIST_VACUUM, &ShadowVacuumRT, 30, 20);
-        
-        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
         //                                                   Build lighting                                                                        //
         // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-#ifdef PLATFORM_WINDOWS
-        gxSetPixelShader(&TexturedColoredShader);
-        gxSetVertexShader(&LitVertexShader);
-#endif
-        
-#ifdef PLATFORM_IPHONE
-        if (gxOpenGLESVersion == 2)
-        {
-            gxSetShader(&LitShader);
-        }
-        else
-        {
-            // ES1 TODO (consider passing shader to DrawLightList?)
-        }
-#endif
-        
         gxSetRenderTarget(&LightingRT);
         gxClearColor(LightState.AmbientColor);
         
-        DrawLightList(LIGHTLIST_LIGHTING, GXALPHA_ADD);
-        
-        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-        //                                                   Blur shadows and ambient occlusion                                                    //
-        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-        //BlurAmbientOcclusion(&AmbientOcclusionForegroundRT);
-        //BlurAmbientOcclusion(&AmbientOcclusionVacuumRT);
-        
-        //BlurShadows(&ShadowForegroundRT);
-        //BlurShadows(&ShadowVacuumRT);
+        DrawLightList(LIGHTLIST_LIGHTING, &LitShader, GXALPHA_ADD);
         
         // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
         //                                                   Draw layers                                                                           //
@@ -1285,130 +787,40 @@ void RenderLighting()
         //gxClearColor(gxRGBA32(0, 0, 0, 255));
         
         // Real background.
-#ifdef PLATFORM_WINDOWS
-        gxSetPixelShader(&TexturedColoredShader);
-        gxSetVertexShader(&LitVertexShader);
-#endif
+        DrawLightList(LIGHTLIST_BACKGROUND, &LitShader, GXALPHA_NONE);
         
-#ifdef PLATFORM_IPHONE
-        if (gxOpenGLESVersion == 2)
-        {
-            gxSetShader(&LitShader);
-        }
-        else
-        {
-            // ES1 TODO
-        }
-#endif
+        // Foreground shadows.
+        DrawShadows(LIGHTLIST_FOREGROUND, &ColorRT, 30, 20);
         
-        DrawLightList(LIGHTLIST_BACKGROUND, GXALPHA_NONE);
+        // Dust layer.        
+        DrawLightList(LIGHTLIST_DUST, &LitShader, GXALPHA_BLEND);
+        DrawLightList(LIGHTLIST_FOREGROUND, &LitShader, GXALPHA_BLEND);
+        DrawLightList(LIGHTLIST_FOREGROUND_NO_SHADOW, &LitShader, GXALPHA_BLEND);
         
-        // Foreground ambient occlusion & shadows.
-        //RenderAmbientOcclusion(&AmbientOcclusionForegroundRT);
-        RenderShadows(&ShadowForegroundRT);
-        
-        // Dust layer.
-#ifdef PLATFORM_WINDOWS
-        gxSetPixelShader(&TexturedColoredShader);
-        gxSetVertexShader(&LitVertexShader);
-#endif
-        
-#ifdef PLATFORM_IPHONE
-        if (gxOpenGLESVersion == 2)
-        {
-            gxSetShader(&LitShader);
-        }
-        else
-        {
-            // ES1 TODO
-        }
-#endif
-        
-        DrawLightList(LIGHTLIST_DUST, GXALPHA_BLEND);
-        DrawLightList(LIGHTLIST_FOREGROUND, GXALPHA_BLEND);
-        DrawLightList(LIGHTLIST_FOREGROUND_NO_SHADOW, GXALPHA_BLEND);
-        
-        // Vacuum ambient occlusion & shadows.
-        //RenderAmbientOcclusion(&AmbientOcclusionVacuumRT);
-        RenderShadows(&ShadowVacuumRT);
-        
-#ifdef PLATFORM_WINDOWS
-        gxSetPixelShader(&TexturedColoredShader);
-        gxSetVertexShader(&LitVertexShader);
-#endif
-        
-#ifdef PLATFORM_IPHONE
-        if (gxOpenGLESVersion == 2)
-        {
-            gxSetShader(&LitShader);        
-        }
-        else
-        {
-            // ES1 TODO
-        }
-#endif
+        // Vacuum shadows.
+        DrawShadows(LIGHTLIST_VACUUM, &ColorRT, 30, 20);
         
         // Vacuum.
-        DrawLightList(LIGHTLIST_VACUUM, GXALPHA_BLEND);
-        
-        // Color bleeding - Adds color and bleed color into framebuffer.
-        //BuildColorBleed();
+        DrawLightList(LIGHTLIST_VACUUM, &LitShader, GXALPHA_BLEND);
         
         // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
         //                                                   Combine layers into frame                                                             //
         // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
         
         // Combine everything into the final output.
-#ifdef PLATFORM_IPHONE
-        if (gxOpenGLESVersion == 2)
-#endif
-        {
-            gxSetRenderTarget(NULL);
-            RenderCombinedColor();
-        }
+        gxSetRenderTarget(NULL);
+        RenderCombinedColor();
         
         // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
         //                                                   Draw effects on top                                                                   //
-        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-#ifdef PLATFORM_WINDOWS
-        gxSetPixelShader(&EffectsShader);
-        gxSetVertexShader(&LitVertexShader);
-#endif
-        
-#ifdef PLATFORM_IPHONE
-        if (gxOpenGLESVersion == 2)
-        {
-            gxSetShader(&EffectsShader);
-        }
-        else
-        {
-            // ES1 TODO
-        }
-#endif
-        
-        DrawLightList(LIGHTLIST_EFFECTS, GXALPHA_ADD);
+        // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//       
+        DrawLightList(LIGHTLIST_EFFECTS, &EffectsShader, GXALPHA_ADD);
         
         // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
         //                                                   Draw screen wipes                                                                     //
         // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
         // Screen wipe.
-#ifdef PLATFORM_WINDOWS
-        gxSetPixelShader(&TexturedColoredShader);
-        gxSetVertexShader(&LitVertexShader);
-#endif
-        
-#ifdef PLATFORM_IPHONE
-        if (gxOpenGLESVersion == 2)
-        {
-            gxSetShader(&LitShader);
-        }
-        else
-        {
-            // ES1 TODO
-        }
-#endif
-        
-        DrawLightList(LIGHTLIST_WIPE, GXALPHA_BLEND);
+        DrawLightList(LIGHTLIST_WIPE, &LitShader, GXALPHA_BLEND);
     }
 }
 
@@ -1533,11 +945,16 @@ SLitVertex* AddLitQuad(ELightList List, gxSprite* Sprite, int NVerts)
 
 void AddLitSprite(ELightList List, gxSprite* Sprite, float X, float Y)
 {
+    float LeftU = (float)Sprite->left / Sprite->width;
+    float RightU = (float)Sprite->right / Sprite->width;
+    float TopV = (float)Sprite->top / Sprite->height;
+    float BottomV = (float)Sprite->bottom / Sprite->height;
+    
 	AddLitQuad(List, Sprite, gxRGBA32(255,255,255,255),
-		X,               Y,                0.0f, 0.0f, 
-		X+Sprite->width, Y,                1.0f, 0.0f,
-		X+Sprite->width, Y+Sprite->height, 1.0f, 1.0f, 
-		X,               Y+Sprite->height, 0.0f, 1.0f);
+		X+Sprite->left,  Y+Sprite->top,    LeftU,  TopV, 
+		X+Sprite->right, Y+Sprite->top,    RightU, TopV,
+		X+Sprite->right, Y+Sprite->bottom, RightU, BottomV, 
+		X+Sprite->left,  Y+Sprite->bottom, LeftU,  BottomV);
 }
 
 void AddLitSpriteScaled(ELightList List, gxSprite* Sprite, float X, float Y, float ScaleX, float ScaleY)

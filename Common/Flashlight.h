@@ -6,16 +6,14 @@
 //                                      Copyright 2010 by Thomas Perry and Wade Brainerd. All rights reserved.                             //
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
+
 #ifndef __FLASHLIGHT_H__
 #define __FLASHLIGHT_H__
-
-
 
 struct SFlashlightWaypointProperties
 {
 	float Delay;
 };
-
 
 struct SFlashlight
 {
@@ -23,7 +21,6 @@ struct SFlashlight
 	int CurWaypoint;
 	float Timer;
 };
-
 
 
 extern SFlashlight Flashlight;

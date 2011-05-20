@@ -29,8 +29,8 @@ void CreateStapler(int X, int Y)
     Stapler->X = (float)X + 32;
     Stapler->Y = (float)Y + 32;
 
-	Stapler->Left = -186;
-	Stapler->Right = 158;
+	Stapler->Left = -160;
+	Stapler->Right = 160;
 	Stapler->Top = -70;
 	Stapler->Bottom = 0;
     
@@ -59,12 +59,13 @@ void DisplayStaplers()
 
         if (Stapler->State == STAPLERSTATE_WAIT)
         {
-            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &StaplerUpSprite, Stapler->X, Stapler->Y + ScrollY - 30, 1.0f, 0.0f);
+            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &StaplerUpSprite, Stapler->X, Stapler->Y + ScrollY - 50, 1.0f, 0.0f);
         }
         else if (Stapler->State == STAPLERSTATE_PRELAUNCH)
         {
-            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &StaplerDownSprite, Stapler->X, Stapler->Y + ScrollY - 30, 1.0f, 0.0f);
+            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &StaplerDownSprite, Stapler->X, Stapler->Y + ScrollY - 50, 1.0f, 0.0f);
             
+#ifdef PLATFORM_WINDOWS
             if (Stapler->PowerJumpCounter > 0)
             {
                 AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump1Sprite, Stapler->X + 80, Stapler->Y + ScrollY - 160, 2, 0, 13, 110);
@@ -114,17 +115,17 @@ void DisplayStaplers()
             {
                 AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump10Sprite, Stapler->X + 170, Stapler->Y + ScrollY - 160, 119, 0, 130, 110);
             }
+#endif
         }
         else if (Stapler->CanLaunch == false)
         {
-            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &StaplerExtendUpSprite, Stapler->X, Stapler->Y + ScrollY - 30, 1.0f, 0.0f);
+            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &StaplerExtendUpSprite, Stapler->X, Stapler->Y + ScrollY - 50, 1.0f, 0.0f);
         }            
     }
 }
 
 void UpdateStaplers()
 {
-#ifdef PLATFORM_WINDOWS
     for (int i = 0; i < NStaplers; i++)
     {
         SStapler* Stapler = &Staplers[i];
@@ -140,6 +141,7 @@ void UpdateStaplers()
         
         if (Stapler->State == STAPLERSTATE_PRELAUNCH)
         {
+#ifdef PLATFORM_WINDOWS
 			if (kbIsKeyDown(KB_SPACE))
             {
 				SetDustyState_PrepareLaunch();
@@ -161,15 +163,30 @@ void UpdateStaplers()
 
 				Stapler->State = STAPLERSTATE_LAUNCH; 
             }        
+#endif
+#ifdef PLATFORM_IPHONE
+            Stapler->PowerJumpCounter += 1;
+            if (Stapler->PowerJumpCounter >= 10)
+            {
+                Stapler->PowerJumpCounter = 0;
+                Stapler->PowerJump = 27;
+                Stapler->State = STAPLERSTATE_LAUNCH; 
+                Dusty.FloatY -= 10;
+                SetDustyState_Launch(0, -Stapler->PowerJump); 
+                return;
+            }
+#endif
         }
         
         if (Stapler->State == STAPLERSTATE_LAUNCH)
         {        
-            Stapler->State = STAPLERSTATE_WAIT;
-            Stapler->TimerWait = 30;
-            Stapler->PowerJumpCounter = 0;
-			Dusty.FloatY -= 10;
-			SetDustyState_Launch(0, -Stapler->PowerJump); 
+            Stapler->PowerJumpCounter += 1;
+            if (Stapler->PowerJumpCounter >= 10)
+            {
+                Stapler->State = STAPLERSTATE_WAIT;
+                Stapler->TimerWait = 30;
+            }
+
         }
         
 		if (Stapler->State == STAPLERSTATE_WAIT)
@@ -183,10 +200,7 @@ void UpdateStaplers()
 				Stapler->TimerWait --;
 			}   
 		}
-
-
     }  
-#endif
 }
 
 void UpdateStapler_Collision()
@@ -207,23 +221,28 @@ void UpdateStapler_Collision()
 				// Calculate the distance Dusty would have to be pushed in each possible direction to get him out of intersecting the Stapler.
 				float LeftDistance	= (Dusty.FloatX + Dusty.Right)  - (Stapler->X + Stapler->Left);
 				float RightDistance	= (Stapler->X + Stapler->Right) - (Dusty.FloatX +  Dusty.Left);
-				float DownDistance	= (Stapler->Y + Stapler->Bottom)- (Dusty.FloatY +  Dusty.Top);
 				float UpDistance	= (Dusty.FloatY + Dusty.Bottom) - (Stapler->Y + Stapler->Top);
 
 				// Prefer to collide with the side of the Stapler that would push Dusty out the least distance.
-				if (LeftDistance < RightDistance && LeftDistance < DownDistance && LeftDistance < UpDistance)
+				if (LeftDistance < RightDistance && LeftDistance < UpDistance)
 				{
 					Stapler->CollideWithLeftSide = true;//Collision with Dusty's Right Side but the left side of the Stapler
+                    Dusty.CollideWithRightSide = true;
 					Dusty.FloatX -= LeftDistance;
+                    if (Dusty.FloatVelocityX > 0)
+                        Dusty.FloatVelocityX = 0;
 				}
 
-				if (RightDistance < LeftDistance && RightDistance < DownDistance && RightDistance < UpDistance)
+				if (RightDistance < LeftDistance && RightDistance < UpDistance)
 				{
 					Stapler->CollideWithRightSide = true;//Collision with Dusty's Left Side but the right side of the Stapler
+                    Dusty.CollideWithLeftSide = true;
 					Dusty.FloatX += RightDistance;
+                    if (Dusty.FloatVelocityX < 0)
+                        Dusty.FloatVelocityX = 0;
 				}
 
-				if (UpDistance < RightDistance && UpDistance < DownDistance && UpDistance < LeftDistance)
+				if (UpDistance < RightDistance && UpDistance < LeftDistance)
 				{
 					Stapler->CollideWithTopSide = true;//Collision with Dusty's Bottom Side but the Top side of the Stapler.
 					Dusty.CollideWithBottomSide = true;
@@ -236,6 +255,9 @@ void UpdateStapler_Collision()
                 {
                     Stapler->CanLaunch = false;
                     Stapler->State = STAPLERSTATE_PRELAUNCH;
+                    Stapler->PowerJumpCounter = 0;
+                    SetDustyState_PrepareLaunch();
+                    Dusty.FloatY -= 35;
                 }
 			}
 		}

@@ -14,6 +14,12 @@
 //                                                    Sprite Assets                                                                        //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
+enum ETest
+{
+    TEST_BLAH = 0,
+    TEST_FOO = 1
+};
+
 extern gxSprite WhiteSprite;
 
 extern gxSprite WipeDiagonalSprite;
@@ -206,5 +212,12 @@ extern sxSound TennisBallVacuumedUpSound;
 void LoadAssets();
 
 void LoadSpriteAsset(const char* FileName, gxSprite* Sprite);
+
+void GetAssetFileName(const char* FileName, char* Buf, int BufSize);
+FILE* OpenAssetFile(const char* FileName, const char* Mode);
+
+void* LoadAssetFile(const char* FileName, void** Data, int* DataSize);
+
+
 
 #endif

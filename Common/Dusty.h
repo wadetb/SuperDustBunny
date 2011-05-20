@@ -1,7 +1,16 @@
-﻿#ifndef DUSTY_H
-#define DUSTY_H
+//-----------------------------------------------------------------------------------------------------------------------------------------//
+//                                                                                                                                         // 
+//                                                          Super Dust Bunny                                                               //
+//                                                                                                                                         //
+//                               Authors: Thomas Perry <perry.thomas.12@gmail.com> & Wade Brainerd <wadetb@gmail.com>                      //
+//                                      Copyright 2010 by Thomas Perry and Wade Brainerd. All rights reserved.                             //
+//                                                                                                                                         //
+//-----------------------------------------------------------------------------------------------------------------------------------------//
 
-enum EDirection
+#ifndef __DUSTY_H__
+#define __DUSTY_H__
+
+enum EDustyDirection
 {
 	DIRECTION_NONE,
 	DIRECTION_LEFT,
@@ -33,7 +42,7 @@ struct SDusty
 	int Top;
 	int Bottom;
 
-	EDirection Direction;
+	EDustyDirection Direction;
 
 	float FloatX;
 	float FloatY;
@@ -44,7 +53,7 @@ struct SDusty
 	int SpriteTransition;
 
 	int WallStickTimer;
-	EDirection LastWall;
+	EDustyDirection LastWall;
 	int WallJumpTimer;
 
 	int StuckJumpCount;
@@ -91,9 +100,9 @@ void SetDustyState_Launch(float VelocityX, float VelocityY);
 void SetDustyState_Die();
 void SetDustyState_Stuck();
 void SetDustyState_Stand();
-void SetDustyState_Hop(EDirection Direction);
+void SetDustyState_Hop(EDustyDirection Direction);
 void SetDustyState_StaplerLaunch();
-void SetDustyState_IntroHop(EDirection Direction);
+void SetDustyState_IntroHop(EDustyDirection Direction);
 void SetDustyState_IntroStand();
 
 void DustyGainLife();

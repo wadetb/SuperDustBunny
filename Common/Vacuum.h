@@ -6,6 +6,7 @@
 //                                      Copyright 2010 by Thomas Perry and Wade Brainerd. All rights reserved.                             //
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
+
 #ifndef __VACUUM_H__
 #define __VACUUM_H__
 

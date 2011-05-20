@@ -9,8 +9,8 @@
 
 #include "Common.h"
 #include "Barrel.h"
-#include "Chapter.h"
 #include "Dusty.h"
+#include "Chapter.h"
 #include "Tutorial.h"
 #include "GameScore.h"
 

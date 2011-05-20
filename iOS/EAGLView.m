@@ -174,31 +174,37 @@ void GetInput_EndSwipe(float X, float Y, double Time);
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
 	currentTouch = [[event allTouches] anyObject];
-    CGPoint touchPoint = [currentTouch locationInView:self];
-	_msNewX = touchPoint.x * 768 / framebufferWidth;
-	_msNewY = touchPoint.y * 1024 / framebufferHeight;
-	_msNewButton1 = 1;
-    
-    GetInput_BeginSwipe(_msNewX, _msNewY, event.timestamp);
+    if (currentTouch) {
+        CGPoint touchPoint = [currentTouch locationInView:self];
+        _msNewX = touchPoint.x * 768 / framebufferWidth;
+        _msNewY = touchPoint.y * 1024 / framebufferHeight;
+        _msNewButton1 = 1;
+        
+        GetInput_BeginSwipe(_msNewX, _msNewY, event.timestamp);
+    }
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    CGPoint touchPoint = [currentTouch locationInView:self];
-	_msNewX = touchPoint.x * 768 / framebufferWidth;
-	_msNewY = touchPoint.y * 1024 / framebufferHeight;
-    
-    GetInput_AddToSwipe(_msNewX, _msNewY, event.timestamp);
+    if (currentTouch) {
+        CGPoint touchPoint = [currentTouch locationInView:self];
+        _msNewX = touchPoint.x * 768 / framebufferWidth;
+        _msNewY = touchPoint.y * 1024 / framebufferHeight;
+        
+        GetInput_AddToSwipe(_msNewX, _msNewY, event.timestamp);
+    }
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    CGPoint touchPoint = [currentTouch locationInView:self];
-	_msNewX = touchPoint.x * 768 / framebufferWidth;
-	_msNewY = touchPoint.y * 1024 / framebufferHeight;
-	_msNewButton1 = 0;
-    
-    GetInput_EndSwipe(_msNewX, _msNewY, event.timestamp);
+    if (currentTouch) {
+        CGPoint touchPoint = [currentTouch locationInView:self];
+        _msNewX = touchPoint.x * 768 / framebufferWidth;
+        _msNewY = touchPoint.y * 1024 / framebufferHeight;
+        _msNewButton1 = 0;
+        
+        GetInput_EndSwipe(_msNewX, _msNewY, event.timestamp);
+    }
 }
 
 @end

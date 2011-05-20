@@ -21,6 +21,7 @@
     UISwitch *doubleJump;
     UISwitch *infiniteLives;
     UISwitch *disableVacuum;
+    UISwitch *liveAssets;
 }
 
 @property (nonatomic, retain) IBOutlet SuperDustBunnyViewController *mainViewController;
@@ -32,6 +33,7 @@
 @property (nonatomic, retain) IBOutlet UISwitch *doubleJump;
 @property (nonatomic, retain) IBOutlet UISwitch *infiniteLives;
 @property (nonatomic, retain) IBOutlet UISwitch *disableVacuum;
+@property (nonatomic, retain) IBOutlet UISwitch *liveAssets;
 
 - (IBAction)done:(id)sender;
 - (IBAction)controlSchemeChanged:(id)sender;

@@ -3,10 +3,10 @@
 
 #include <stdio.h>
 
-#import <OpenGLES/ES1/gl.h>
-#import <OpenGLES/ES1/glext.h>
-#import <OpenGLES/ES2/gl.h>
-#import <OpenGLES/ES2/glext.h>
+#include <OpenGLES/ES1/gl.h>
+#include <OpenGLES/ES1/glext.h>
+#include <OpenGLES/ES2/gl.h>
+#include <OpenGLES/ES2/glext.h>
 
 #define gxRGBA32(r,g,b,a) (((b)<<16)|((g)<<8)|((r)<<0)|((a)<<24))
 #define gxRGB32(r,g,b)    gxRGBA32(r,g,b,255)
@@ -29,6 +29,10 @@ struct gxSprite
 	int height;
 	int texWidth;
 	int texHeight;
+    int left;
+    int top;
+    int right;
+    int bottom;
 };
 
 enum gxDisplayType

@@ -8,6 +8,7 @@
 
 #import "SettingsViewController.h"
 #import "SuperDustBunnyViewController.h"
+#import "EAGLView.h"
 
 #include "../Common/Settings.h"
 
@@ -21,6 +22,7 @@
 @synthesize doubleJump;
 @synthesize infiniteLives;
 @synthesize disableVacuum;
+@synthesize liveAssets;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -40,6 +42,8 @@
     [infiniteLives release];
     [disableVacuum release];
     [controlScheme release];
+    [liveAssets release];
+    [liveAssets release];
     [super dealloc];
 }
 
@@ -78,6 +82,18 @@
 
 - (IBAction)controlSchemeChanged:(id)sender {
     tiltSensitivity.enabled = controlScheme.selectedSegmentIndex == 0;
+    
+    EAGLView *view = (EAGLView*)theViewController.view;
+    
+    if (controlScheme.selectedSegmentIndex == 0)
+    {
+        [[UIAccelerometer sharedAccelerometer] setDelegate:view];	
+        [[UIAccelerometer sharedAccelerometer] setUpdateInterval:(1.0f/30.0f)];
+    }
+    else
+    {
+        [[UIAccelerometer sharedAccelerometer] setDelegate:nil]; 
+    }
 }
 
 - (IBAction)tiltSensitivityChanged:(id)sender {
@@ -110,6 +126,7 @@
     doubleJump.on = Settings.DoubleJump;
     infiniteLives.on = Settings.InfiniteLives;
     disableVacuum.on = Settings.DisableVacuum;
+    liveAssets.on = Settings.LiveAssets;
     
     doubleJump.enabled = !continuousJump.on;
 }
@@ -122,6 +139,7 @@
     Settings.DoubleJump = doubleJump.on;
     Settings.InfiniteLives = infiniteLives.on;
     Settings.DisableVacuum = disableVacuum.on;
+    Settings.LiveAssets = liveAssets.on;
 }
 
 @end

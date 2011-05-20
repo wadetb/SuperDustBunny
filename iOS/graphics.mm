@@ -225,6 +225,11 @@ void gxLoadSprite(const char* filename, gxSprite* sprite)
 	while (sprite->texHeight < sprite->height) 
 		sprite->texHeight *= 2;
 	
+    sprite->left = 0;
+    sprite->top = 0;
+    sprite->right = sprite->width;
+    sprite->bottom = sprite->bottom;
+    
 	void* pixels = calloc(sprite->texWidth * sprite->texHeight * 4, 1);
 	CGColorSpaceRef colorSpace = CGImageGetColorSpace(image);
 	CGContextRef context = CGBitmapContextCreate(pixels, sprite->texWidth, sprite->texHeight, 8, 4 * sprite->texWidth, colorSpace, kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
@@ -255,6 +260,8 @@ void gxDestroySprite(gxSprite* sprite)
 
 void _gxDrawQuad( float x, float y, float w, float h, unsigned int color, float u1, float v1, float u2, float v2 )
 {
+    return;
+    
     gxSpriteVertex v[4];
 	
     v[0].x = x; v[0].y = y;
@@ -291,6 +298,8 @@ void _gxDrawQuad( float x, float y, float w, float h, unsigned int color, float 
 
 void gxDrawRectangleFilled(int x, int y, int width, int height, unsigned int color)
 {
+    return;
+    
     if (gxOpenGLESVersion == 2)
     {
         gxSetShader(&gxSpriteShader);
@@ -307,6 +316,8 @@ void gxDrawRectangleFilled(int x, int y, int width, int height, unsigned int col
 
 void gxDrawString( int x, int y, int ptsize, int color, const char* text, ... )
 {
+    return;
+    
 	char work[16384];
 	
 	va_list args;

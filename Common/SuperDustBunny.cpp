@@ -30,6 +30,7 @@
 #include "GameScore.h"
 #include "Settings.h"
 #include "PowerUp.h"
+#include "Input.h"
 
 #include "StartScreen.h"
 #include "HelpScreen.h"
@@ -57,19 +58,13 @@ EGameTransition GameTransition;
 
 #define MAX_CHAPTERS 10
 
-const char* ChapterNames[MAX_CHAPTERS] =
+struct SChapterListEntry
 {
-	"Chapters/01-Study",
-	"Chapters/02-Fridge",
-	"Chapters/Wade1",
-	"Chapters/Thomas1",
-	"",
-	"",
-	"",
-	"",
-	"",
-	""
+    char* Name;
 };
+
+int NChapters;
+SChapterListEntry Chapters[MAX_CHAPTERS];
 
 int CurrentChapter = 0;
 
@@ -91,6 +86,55 @@ int BackgroundMusic = 1;
 
 float FPS;
 
+void ClearChapterList()
+{
+    for (int i = 0; i < NChapters; i++)
+    {
+        free(Chapters[i].Name);
+    }
+    
+    NChapters = 0;
+}
+
+void LoadChapterList()
+{
+	PushErrorContext("While loading the list of chapters:\n");
+    
+    char* XML = (char*)LoadAssetFile("Chapters/ChapterList.xml", NULL, NULL);
+    if (!XML)
+		ReportError("Unable to open chapter list file Chapters/ChapterList.xml.  Check that all required files are present.");
+    
+	// Parse the XML text buffer into a Document hierarchy.
+	rapidxml::xml_document<> Document;
+	Document.parse<0>(XML);
+    
+	// Get the <map> node and validate everything extensively :)
+	rapidxml::xml_node<char>* ChapterListNode = Document.first_node("ChapterList");
+	if (ChapterListNode == NULL)
+		ReportError("Missing <ChapterList> node.  Check for errors in the XML.");
+    
+	rapidxml::xml_node<char>* ChapterNode = ChapterListNode->first_node("Chapter");
+    
+	while (ChapterNode != NULL)
+	{
+        rapidxml::xml_attribute<char>* NameAttr = ChapterNode->first_attribute("Name");
+        if (NameAttr == NULL)
+            ReportError("Chapter is missing the Name attribute.  Check for errors in the XML.");
+            
+        if (NChapters >= MAX_CHAPTERS)
+            ReportError("Exceeded the maximum of %d chapters.", MAX_CHAPTERS);
+
+        SChapterListEntry* Chapter = &Chapters[NChapters];
+        Chapter->Name = strdup(NameAttr->value());
+        NChapters++;
+        
+		ChapterNode = ChapterNode->next_sibling("Chapter");
+	}
+    
+	PopErrorContext();
+
+}
+                           
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                      Initialization functions                                                           //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -137,42 +181,6 @@ void Exit()
 	
 	sxDeinit();
 }
-
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                      Asset file loading (platform specific)                                             //
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-void GetAssetFileName(const char* FileName, char* Buf, int BufSize)
-{
-#ifdef PLATFORM_IPHONE
-	CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
-
-	UInt8 BundlePath[1024];
-	CFURLGetFileSystemRepresentation(url, YES, BundlePath, sizeof(BundlePath));
-
-	CFRelease(url);
-
-	snprintf(Buf, BufSize, "%s/%s", (char*)BundlePath, FileName);
-#endif
-
-#ifdef PLATFORM_WINDOWS
-	char ModulePath[1024];
-	GetModuleFileName(NULL, ModulePath, sizeof(ModulePath));
-	PathRemoveFileSpec(ModulePath);
-
-	// Go from e.g. /SuperDustBunny/trunk/Build/win/ to /SuperDustBunny/trunk/
-	snprintf(Buf, BufSize, "%s/../../%s", ModulePath, FileName);
-#endif
-}
-
-FILE* OpenAssetFile(const char* FileName, const char* Mode)
-{
-	char Work[1024];
-
-	GetAssetFileName(FileName, Work, sizeof(Work));
-
-	return fopen(Work, Mode);
-}
-
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                      Error handling (platform specific)                                                 //
@@ -291,105 +299,6 @@ void DisplayAlert(const char* Title, const char* AlertMessage, ...)
 #endif
 }
 
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                             Input functions
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-
-SRemoteControl RemoteControl;
-
-
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                         Tilt controls                                                                   //
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   //
-
-
-float AccelThreshold[3] = { 0.20f, 0.15f, 0.10f };
-
-
-bool GetInput_MoveLeft()
-{
-    if (Settings.ControlStyle != CONTROL_TILT)
-        ReportError("Tilt controls queried when a different control style was in use.");
-    
-	if (IsPlaybackActive())
-		return Recorder.MoveLeft;
-
-	if (RemoteControl.Enabled)
-		return RemoteControl.MoveLeft;
-
-#ifdef PLATFORM_WINDOWS
-	return kbIsKeyDown(KB_A);
-#endif
-#ifdef PLATFORM_IPHONE
-	return msAccelX < -AccelThreshold[Settings.TiltSensitivity];
-#endif
-}
-
-bool GetInput_MoveRight()
-{
-    if (Settings.ControlStyle != CONTROL_TILT)
-        ReportError("Tilt controls queried while a different control style was in use.");
-    
-	if (IsPlaybackActive())
-		return Recorder.MoveRight;
-
-	if (RemoteControl.Enabled)
-		return RemoteControl.MoveRight;
-
-#ifdef PLATFORM_WINDOWS
-	return kbIsKeyDown(KB_D);
-#endif
-#ifdef PLATFORM_IPHONE
-	return msAccelX > AccelThreshold[Settings.TiltSensitivity];
-#endif
-}
-
-bool GetInput_Jump()
-{
-    if (Settings.ControlStyle != CONTROL_TILT)
-        ReportError("Tilt controls queried while a different control style was in use.");
-    
-	if (IsPlaybackActive())
-		return Recorder.Jump;
-
-	if (RemoteControl.Enabled)
-		return RemoteControl.Jump;
-
-	// Jump inhibitor is used to make the game ignore the jump key until it's released.
-	if (Tutorial.JumpInhibit)
-	{
-#ifdef PLATFORM_WINDOWS
-		if (!kbIsKeyDown(KB_SPACE))
-			Tutorial.JumpInhibit = false;
-#endif
-#ifdef PLATFORM_IPHONE
-		if (!msButton1)
-			Tutorial.JumpInhibit = false;
-#endif
-	}
-	if (Tutorial.JumpInhibit)
-		return false;
-
-    if (Settings.ContinuousJump)
-    {
-#ifdef PLATFORM_WINDOWS
-        return kbIsKeyDown(KB_SPACE);
-#endif
-#ifdef PLATFORM_IPHONE
-        return msButton1;
-#endif	
-    }
-    else
-    {
-#ifdef PLATFORM_WINDOWS
-        return kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE);
-#endif
-#ifdef PLATFORM_IPHONE
-        return msButton1 && !msOldButton1;
-#endif	
-    }
-}
-
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                        Debug lines                                                                      //
@@ -469,168 +378,6 @@ void DisplayDebug()
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                        Swipe controls                                                                   //
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   //
-
-//#define SWIPE_DEBUG
-
-
-SSwipe Swipe;
-
-SSwipePoint SwipePoints[MAX_SWIPE_POINTS];
-
-
-void UpdateSwipe()
-{
-}
-
-void GetInput_BeginSwipe(float X, float Y, double Time)
-{
-    Swipe.Active = true;
-    Swipe.Valid = false;
-    Swipe.Count = 1;
-    SwipePoints[0].X = X;
-    SwipePoints[0].Y = Y;
-    SwipePoints[0].Time = 0;
-    Swipe.StartTime = Time;
-    Swipe.ValidCount = 0;
-}
-
-void GetInput_AddToSwipe(float X, float Y, double Time)
-{
-    SwipePoints[Swipe.Count].X = (float)msX;
-    SwipePoints[Swipe.Count].Y = (float)msY;
-    SwipePoints[Swipe.Count].Time = (float)(Time - Swipe.StartTime);
-    Swipe.Count++;
-    Swipe.Duration = Time - Swipe.StartTime;
-}
-
-void GetInput_EndSwipe(float X, float Y, double Time)
-{
-    SwipePoints[Swipe.Count].X = (float)msX;
-    SwipePoints[Swipe.Count].Y = (float)msY;
-    SwipePoints[Swipe.Count].Time = (float)(Time - Swipe.StartTime);
-    Swipe.Count++;    
-    Swipe.Duration = Time - Swipe.StartTime;
-    Swipe.Valid = true;
-}
-
-void GetInput_NextSwipeDir(float* dX, float* dY)
-{
-    if (Settings.ControlStyle != CONTROL_SWIPE)
-        ReportError("Swipe controls queried while a different control style was in use.");
-    
-    if (!Swipe.Valid)
-    {
-        *dX = 0;
-        *dY = 0;
-        return;
-    }
-    
-    *dX = SwipePoints[1].X - SwipePoints[0].X;
-    *dY = SwipePoints[1].Y - SwipePoints[0].Y;
-}
-
-void GetInput_AverageSwipeDir(float* dX, float* dY)
-{
-    if (Settings.ControlStyle != CONTROL_SWIPE)
-        ReportError("Swipe controls queried while a different control style was in use.");
-    
-    if (!Swipe.Valid)
-    {
-        *dX = 0;
-        *dY = 0;
-        return;
-    }
-    
-    *dX = SwipePoints[Swipe.Count-1].X - SwipePoints[0].X;
-    *dY = SwipePoints[Swipe.Count-1].Y - SwipePoints[0].Y;
-}
-
-bool GetInput_CheckSwipeDir(float Angle, float Range)
-{
-    return false;
-    
-    if (Settings.ControlStyle != CONTROL_SWIPE)
-        ReportError("Swipe controls queried while a different control style was in use.");
-    
-    if (!Swipe.Valid)
-        return false;
-    
-    float dX, dY;
-    GetInput_NextSwipeDir(&dX, &dY);
-    
-    float L = sqrtf(dX*dX + dY*dY);
-    if (L < 10.0f)
-        return false;
-    
-    dX /= L;
-    dY /= L;
-    
-    float aX = cosf(DegreesToRadians(Angle));
-    float aY = -sinf(DegreesToRadians(Angle));
-    
-    float Dot = aX*dX + aY*dY;
-    float cR = cosf(Range);
-    
-    return Dot >= cR;
-}
-
-void GetInput_ConsumeSwipe(float Dist)
-{
-    while (Dist > 0 && Swipe.Count > 1)
-    {
-        float Length = Distance(SwipePoints[0].X, SwipePoints[0].Y, SwipePoints[1].X, SwipePoints[1].Y);
-        
-        if (Dist >= Length)
-        {
-            for (int i = 0; i < Swipe.Count-1; i++)
-                SwipePoints[i] = SwipePoints[i+1];
-
-            Swipe.Count--;
-
-            Dist -= Length;
-
-            if (Swipe.Count <= 1)
-            {
-                Swipe.Count = 0;
-                Swipe.Valid = false;
-                break;
-            }                
-        }
-        else
-        {
-            SwipePoints[0].X = SwipePoints[0].X + (SwipePoints[1].X - SwipePoints[0].X) * Dist / Length;
-            SwipePoints[0].Y = SwipePoints[0].Y + (SwipePoints[1].Y - SwipePoints[0].Y) * Dist / Length;
-            
-            Dist = 0;
-        }
-    }
-}
-
-void GetInput_ConsumeAllSwipe()
-{
-    Swipe.Count = 0;
-    Swipe.Valid = false;
-}
-
-bool GetInput_SwipeValid()
-{
-    return Swipe.Valid;
-}
-
-void DisplaySwipe()
-{
-#ifdef SWIPE_DEBUG
-    for (int i = 1; i < Swipe.Count; i++)
-        DisplayDebugLine(SwipePoints[i-1].X, SwipePoints[i-1].Y, SwipePoints[i].X, SwipePoints[i].Y, 4.0f, 
-                         i < Swipe.ValidCount ? gxRGBA32(192, 128, 128, 255) : gxRGBA32(128, 192, 128, 255));
-    
-	//gxDrawString(5, 37, 16, gxRGB32(255, 255, 255), "Active:%d Valid:%d Count:%d", Swipe.Active, Swipe.Valid, Swipe.Count);
-#endif
-}
-
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   Frames per second tracking                                                            //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   //
 
@@ -671,10 +418,10 @@ void LoadCurrentChapter()
 
 	ClearChapter();
 
-	if (CurrentChapter < 0 || CurrentChapter >= MAX_CHAPTERS)
+	if (CurrentChapter < 0 || CurrentChapter >= NChapters)
 		CurrentChapter = 0;
 
-	LoadChapter(ChapterNames[CurrentChapter]);
+	LoadChapter(Chapters[CurrentChapter].Name);
 }
 
 void AdvanceToNextPage()
@@ -699,6 +446,9 @@ void SetGameState_StartScreen()
 {
 	GameState = GAMESTATE_START_SCREEN;
 
+    ClearChapterList();
+    LoadChapterList();
+    
 	InitStartScreen();
 }
 
@@ -785,20 +535,31 @@ void UpdatePauseScreen()
     }
 }
 
+void DisplayBackground()
+{
+    gxSprite* BackgroundSprite;
+    
+    switch (Chapter.PageProps.Background)
+    {
+        case BACKGROUND_STUDY:  BackgroundSprite = &BackgroundPaperSprite; break;
+        case BACKGROUND_FRIDGE: BackgroundSprite = &BackgroundFridgeSprite; break;
+    }
+    
+	int y = 0;
+	while (y < Chapter.PageHeight*64)
+	{
+		AddLitSprite(LIGHTLIST_BACKGROUND, BackgroundSprite, 0, (float)y+ScrollY);
+		y += 1024;
+	}
+}
+
 void DisplayGame_Playing()
 {	
 	// Calculate scrolling.
 	CalculateScrollY();
 
-	// Repeating background.
-	int y = 0;
-	while (y < Chapter.PageHeight*64)
-	{
-		AddLitSprite(LIGHTLIST_BACKGROUND, &BackgroundPaperSprite, 0, (float)y+ScrollY);
-		y += 1024;
-	}
-
 	// Chapter Drawing - Everything here is behind Dusty
+    DisplayBackground();
 	DisplayChapter();
 	DisplayBarrels_BeforeDusty();
 	DisplayCoins();
@@ -1205,9 +966,6 @@ bool Update()
 
 	// Recorder must be updated immediately after the devices are queried, before UpdateSwipe or any GetInput_Xyz calls.
 	UpdateRecorder();
-
-    // UpdatSwipe must be called before any GetInput_Xyz calls.
-    UpdateSwipe();
     
 #ifdef PLATFORM_WINDOWS
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
