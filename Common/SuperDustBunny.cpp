@@ -56,18 +56,6 @@ EGameState GameState = GAMESTATE_START_SCREEN;
 
 EGameTransition GameTransition;
 
-#define MAX_CHAPTERS 10
-
-struct SChapterListEntry
-{
-    char* Name;
-};
-
-int NChapters;
-SChapterListEntry Chapters[MAX_CHAPTERS];
-
-int CurrentChapter = 0;
-
 bool NextPageButtonPressed = false;
 
 bool DisplayHelp = false;
@@ -86,55 +74,6 @@ int BackgroundMusic = 1;
 
 float FPS;
 
-void ClearChapterList()
-{
-    for (int i = 0; i < NChapters; i++)
-    {
-        free(Chapters[i].Name);
-    }
-    
-    NChapters = 0;
-}
-
-void LoadChapterList()
-{
-	PushErrorContext("While loading the list of chapters:\n");
-    
-    char* XML = (char*)LoadAssetFile("Chapters/ChapterList.xml", NULL, NULL);
-    if (!XML)
-		ReportError("Unable to open chapter list file Chapters/ChapterList.xml.  Check that all required files are present.");
-    
-	// Parse the XML text buffer into a Document hierarchy.
-	rapidxml::xml_document<> Document;
-	Document.parse<0>(XML);
-    
-	// Get the <map> node and validate everything extensively :)
-	rapidxml::xml_node<char>* ChapterListNode = Document.first_node("ChapterList");
-	if (ChapterListNode == NULL)
-		ReportError("Missing <ChapterList> node.  Check for errors in the XML.");
-    
-	rapidxml::xml_node<char>* ChapterNode = ChapterListNode->first_node("Chapter");
-    
-	while (ChapterNode != NULL)
-	{
-        rapidxml::xml_attribute<char>* NameAttr = ChapterNode->first_attribute("Name");
-        if (NameAttr == NULL)
-            ReportError("Chapter is missing the Name attribute.  Check for errors in the XML.");
-            
-        if (NChapters >= MAX_CHAPTERS)
-            ReportError("Exceeded the maximum of %d chapters.", MAX_CHAPTERS);
-
-        SChapterListEntry* Chapter = &Chapters[NChapters];
-        Chapter->Name = strdup(NameAttr->value());
-        NChapters++;
-        
-		ChapterNode = ChapterNode->next_sibling("Chapter");
-	}
-    
-	PopErrorContext();
-
-}
-                           
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                      Initialization functions                                                           //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//

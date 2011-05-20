@@ -62,10 +62,6 @@ void gxDrawRectangleFilled(int x, int y, int width, int height, unsigned int col
 
 void gxDrawString(int x, int y, int ptsize, int color, const char* text, ...);
 
-void gxGetResourceFileName(const char* relativePath, char* buffer, int bufferSize);
-
-FILE* gxOpenFile(const char* relativePath, const char* mode);
-
 enum gxAlphaMode
 {
 	GXALPHA_NONE,

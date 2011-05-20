@@ -11,6 +11,7 @@
 #define CHAPTER_H 
 
 
+#define MAX_CHAPTERS        10
 #define MAX_PAGES			100
 #define MAX_BLOCKS			10000
 #define MAX_TILESETS		100
@@ -132,8 +133,17 @@ struct SChapter
 	int PageHeight;
 };
 
-extern SChapter Chapter;
+struct SChapterListEntry
+{
+    char* Name;
+};
 
+
+extern int NChapters;
+extern SChapterListEntry Chapters[MAX_CHAPTERS];
+extern int CurrentChapter;
+
+extern SChapter Chapter;
 
 extern int ScrollY;
 
@@ -152,5 +162,8 @@ bool IsBlockEmpty(int x, int y);
 bool IsBlockSolid(int x, int y);
 
 void EraseBlock(int x, int y);
+
+void ClearChapterList();
+void LoadChapterList();
 
 #endif

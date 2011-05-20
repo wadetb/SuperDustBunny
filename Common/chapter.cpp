@@ -31,6 +31,11 @@
 #include <direct.h>
 #endif
 
+int NChapters;
+SChapterListEntry Chapters[MAX_CHAPTERS];
+
+int CurrentChapter = 0;
+
 SChapter Chapter;
 
 int ScrollY;
@@ -617,7 +622,7 @@ void LoadChapter(const char* ChapterDir)
 	if (Chapter.NBlocks > 0 || Chapter.NPages > 0 || Chapter.NTileSets > 0)
 		ReportError("Attempted to load a chapter without clearing it first.");
 
-	Chapter.EndX = 0;
+    Chapter.EndX = 0;
 	Chapter.EndY = 0;
 
 	Chapter.NBlocks = 0;
@@ -629,39 +634,36 @@ void LoadChapter(const char* ChapterDir)
 	CurrentChapterDir = ChapterDir;
 
 	char FileName[1024];
-	snprintf(FileName, sizeof(FileName), "Chapters/%s/Chapter.txt", ChapterDir);
+	snprintf(FileName, sizeof(FileName), "Chapters/%s/Chapter.xml", ChapterDir);
 
-	FILE* ChapFile = OpenAssetFile(FileName, "r");
+    char* XML = (char*)LoadAssetFile(FileName, NULL, NULL);
+    if (!XML)
+		ReportError("Unable to open chapter file %s.  Check that all required files are present.", FileName);
+    
+    // Parse the XML text buffer into a Document hierarchy.
+	rapidxml::xml_document<> Document;
+	Document.parse<0>(XML);
+    
+  	// Get the <Chapter> node and valiate.
+	rapidxml::xml_node<char>* ChapterNode = Document.first_node("Chapter");
+	if (ChapterNode == NULL)
+		ReportError("Missing <Chapter> node.  Check for errors in the XML.");
+    
+   	rapidxml::xml_node<char>* PageNode = ChapterNode->first_node("Page");
 
-	if (!ChapFile)
-		ReportError("Chapter.txt is missing.");
-
-	while (!feof(ChapFile))
+    while (PageNode != NULL)
 	{
-		char Line[1024];
-		
-		GetNextLine(ChapFile, Line, sizeof(Line)-1);
+        rapidxml::xml_attribute<char>* NameAttr = PageNode->first_attribute("Name");
+        if (NameAttr == NULL)
+            ReportError("Page is missing the Name attribute.  Check for errors in the XML.");
+     
+		char FileName[1024];
+		snprintf(FileName, sizeof(FileName), "Chapters/%s/%s.tmx", CurrentChapterDir, NameAttr->value());
 
-		if (strstr(Line, "PAGES") != NULL)
-		{
-			while (!feof(ChapFile))
-			{
-				GetNextLine(ChapFile, Line, sizeof(Line));
+        LoadPageFromTMX(FileName);
 
-				if (strstr(Line, "END OF PAGES") != NULL)
-					break;
-
-				char FileName[1024];
-				snprintf(FileName, sizeof(FileName), "Chapters/%s/%s.tmx", CurrentChapterDir, Line);
-				
-				LoadPageFromTMX(FileName);
-			}
-
-			continue;
-		}		
-	}
-
-	fclose(ChapFile);
+     	PageNode = PageNode->next_sibling("Page");
+    }
 
 	if (!Chapter.NPages)
 		ReportError("Chapter contains no pages.");
@@ -959,3 +961,53 @@ void EraseBlock(int x, int y)
 
 	Chapter.PageBlocks[y * Chapter.PageWidth + x] = SPECIALBLOCKID_BLANK;
 }
+
+
+void ClearChapterList()
+{
+    for (int i = 0; i < NChapters; i++)
+    {
+        free(Chapters[i].Name);
+    }
+    
+    NChapters = 0;
+}
+
+void LoadChapterList()
+{
+	PushErrorContext("While loading the list of chapters:\n");
+    
+    char* XML = (char*)LoadAssetFile("Chapters/ChapterList.xml", NULL, NULL);
+    if (!XML)
+		ReportError("Unable to open chapter list file Chapters/ChapterList.xml.  Check that all required files are present.");
+    
+	// Parse the XML text buffer into a Document hierarchy.
+	rapidxml::xml_document<> Document;
+	Document.parse<0>(XML);
+    
+	// Get the <ChapterList> node.
+	rapidxml::xml_node<char>* ChapterListNode = Document.first_node("ChapterList");
+	if (ChapterListNode == NULL)
+		ReportError("Missing <ChapterList> node.  Check for errors in the XML.");
+    
+	rapidxml::xml_node<char>* ChapterNode = ChapterListNode->first_node("Chapter");
+    
+	while (ChapterNode != NULL)
+	{
+        rapidxml::xml_attribute<char>* NameAttr = ChapterNode->first_attribute("Name");
+        if (NameAttr == NULL)
+            ReportError("Chapter is missing the Name attribute.  Check for errors in the XML.");
+            
+        if (NChapters >= MAX_CHAPTERS)
+            ReportError("Exceeded the maximum of %d chapters.", MAX_CHAPTERS);
+
+        SChapterListEntry* Chapter = &Chapters[NChapters];
+        Chapter->Name = strdup(NameAttr->value());
+        NChapters++;
+        
+		ChapterNode = ChapterNode->next_sibling("Chapter");
+	}
+    
+	PopErrorContext();
+}
+                           
