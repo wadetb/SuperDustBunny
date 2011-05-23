@@ -28,7 +28,8 @@ void InitSettings()
     Settings.DoubleJump = false;
     Settings.InfiniteLives = false;
     Settings.DisableVacuum = false;
-    Settings.LiveAssets = false;
+    Settings.LiveAssets = true;
+    Settings.LiveAssetSlot = 1;
 }
 
 void LoadSettings()

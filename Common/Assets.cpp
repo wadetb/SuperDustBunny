@@ -207,19 +207,13 @@ sxSound TennisBallVacuumedUpSound;
 
 
 
-//-----------------------------------------------------------------------------------------------------------------------------------------//
-//                                                    iOS Compressed Sprite Loading                                                        //
-//-----------------------------------------------------------------------------------------------------------------------------------------//
-
 #ifdef PLATFORM_IPHONE
 
-#define MAX_SPRITE_ASSETS 512
+#define MAX_ASSETS   512
 
 
 struct SSpriteAsset
 {
-    char* SourceFileName;
-    char* RawFileName;
     int Width;
     int Height;
     int TexWidth;
@@ -230,128 +224,371 @@ struct SSpriteAsset
     int Bottom;
 };
 
-
-int NSpriteAssets = 0;
-SSpriteAsset SpriteAssets[MAX_SPRITE_ASSETS];
-
-
-void LoadAssetList(const char* FileName)
+struct SRawAsset
 {
-	PushErrorContext("While loading asset list '%s':\n", FileName);
+};
+
+struct SAsset
+{
+    char* SourceFileName;
+    char* RawFileName;
+    float ModTime; 
     
-	FILE* AssetFile = OpenAssetFile(FileName, "r");    
-	if (!AssetFile)
-        return;
-    //ReportError("Unable to open asset list file.  Check that all required files and tools are present, and re-build the XCode project to fix.");
+    union
+    {
+        SSpriteAsset Sprite;
+        SRawAsset Raw;
+    };
+};
+
+struct SAssetList
+{
+    char* RootDirectory;
     
-	// Read the entire XML file into a text buffer.
-	fseek(AssetFile, 0, SEEK_END);
-	int FileSize = ftell(AssetFile);
-	rewind(AssetFile);
+    int NAssets;
+    SAsset Assets[MAX_ASSETS];
+};
+
+
+SAssetList BundleAssets;
+SAssetList CacheAssets;
+SAssetList OldCacheAssets;
+
+#endif
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------//
+//                                                          Loading Entire Files                                                           //
+//-----------------------------------------------------------------------------------------------------------------------------------------//
+
+void* LoadFileData(const char* FileName, void** Data=NULL, int* DataSize=NULL)
+{
+    int FileDataSize;
+    char* FileData;
     
-	char* XML = (char*)malloc(FileSize + 1);
-	fread(XML, FileSize, 1, AssetFile);
-	fclose(AssetFile);
-	XML[FileSize] = '\0';
+    FILE* F = fopen(FileName, "rb");
+    if (!F)
+        return NULL;
+    
+    fseek(F, 0, SEEK_END);
+    FileDataSize = ftell(F);
+    fseek(F, 0, SEEK_SET);
+    
+    FileData = (char*)malloc(FileDataSize+1);
+    fread(FileData, 1, FileDataSize, F);
+    fclose(F);
+    
+    FileData[FileDataSize] = 0;
+    
+    if (Data) *Data = FileData;
+    if (DataSize) *DataSize = FileDataSize;
+    
+    return FileData;    
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------//
+//                                                          Asset Lists                                                                    //
+//-----------------------------------------------------------------------------------------------------------------------------------------//
+
+#ifdef PLATFORM_IPHONE
+
+void ClearAssetList(SAssetList* AssetList)
+{
+    free(AssetList->RootDirectory);
+    
+    for (int i = 0; i < AssetList->NAssets; i++)
+    {
+        SAsset* Asset = &AssetList->Assets[i];
+        if (Asset->SourceFileName) 
+        {
+            free(Asset->SourceFileName);
+            Asset->SourceFileName = NULL;
+        }        
+        if (Asset->RawFileName) 
+        {
+            free(Asset->RawFileName);
+            Asset->RawFileName = NULL;
+        }
+    }
+    
+    AssetList->NAssets = 0;
+}
+
+bool LoadAssetList(char* FileName, SAssetList* AssetList)
+{
+    AssetList->NAssets = 0;
+    
+    char* XML = (char*)LoadFileData(FileName);
+    if (!XML)
+        return false;
+    
+    NSString* rootDirectory = [[[NSString stringWithUTF8String:FileName] stringByDeletingLastPathComponent] stringByDeletingLastPathComponent];
+    AssetList->RootDirectory = strdup([rootDirectory UTF8String]);
     
 	// Parse the XML text buffer into a Document hierarchy.
 	rapidxml::xml_document<> Document;
 	Document.parse<0>(XML);
-
+    
     // Get the root <assets> node.
 	rapidxml::xml_node<char>* AssetsNode = Document.first_node("Assets");
 	if (AssetsNode == NULL)
-		ReportError("Missing <assets> node.  Re-building the XCode project may help.");
+		return false;
     
-    // Iterate over all the <asset> nodes.
-	rapidxml::xml_node<char>* AssetNode = AssetsNode->first_node("SpriteAsset");
-	while (AssetNode)
+    // Iterate over all the <SpriteAsset> nodes.
+	for (rapidxml::xml_node<char>* AssetNode = AssetsNode->first_node("SpriteAsset"); AssetNode; AssetNode = AssetNode->next_sibling("SpriteAsset"))
 	{
-        if (NSpriteAssets >= MAX_SPRITE_ASSETS)
-            ReportError("Exceeded the limit of %d sprite assets.", MAX_SPRITE_ASSETS);
+        if (AssetList->NAssets >= MAX_ASSETS)
+            break;
         
-        SSpriteAsset* SpriteAsset = &SpriteAssets[NSpriteAssets++];
+        SAsset* SpriteAsset = &AssetList->Assets[AssetList->NAssets];
         
+        rapidxml::xml_attribute<char>* Width = AssetNode->first_attribute("width");
+        if (!Width)
+            continue;
+        SpriteAsset->Sprite.Width = atoi(Width->value());
+        
+        rapidxml::xml_attribute<char>* Height = AssetNode->first_attribute("height");
+        if (!Height)
+            continue;
+        SpriteAsset->Sprite.Height = atoi(Height->value());
+        
+        rapidxml::xml_attribute<char>* TexWidth = AssetNode->first_attribute("texWidth");
+        if (!TexWidth)
+            continue;
+        SpriteAsset->Sprite.TexWidth = atoi(TexWidth->value());
+        
+        rapidxml::xml_attribute<char>* TexHeight = AssetNode->first_attribute("texHeight");
+        if (!TexHeight)
+            continue;
+        SpriteAsset->Sprite.TexHeight = atoi(TexHeight->value());
+		
+        rapidxml::xml_attribute<char>* Left = AssetNode->first_attribute("left");
+        if (!Left)
+            continue;
+        SpriteAsset->Sprite.Left = atoi(Left->value());
+		
+        rapidxml::xml_attribute<char>* Right = AssetNode->first_attribute("right");
+        if (!Right)
+            continue;
+        SpriteAsset->Sprite.Right = atoi(Right->value());
+		
+        rapidxml::xml_attribute<char>* Top = AssetNode->first_attribute("top");
+        if (!Top)
+            continue;
+        SpriteAsset->Sprite.Top = atoi(Top->value());
+		
+        rapidxml::xml_attribute<char>* Bottom = AssetNode->first_attribute("bottom");
+        if (!Bottom)
+            continue;
+        SpriteAsset->Sprite.Bottom = atoi(Bottom->value());
+		
+        rapidxml::xml_attribute<char>* ModTime = AssetNode->first_attribute("modTime");
+        if (!ModTime)
+            continue;
+        SpriteAsset->ModTime = atof(ModTime->value());
+		
         rapidxml::xml_attribute<char>* Name = AssetNode->first_attribute("name");
         if (!Name)
-            ReportError("SpriteAsset is missing the Name property.  Re-building the XCode project may help.");
+            continue;
         SpriteAsset->SourceFileName = strdup(Name->value());
         
         rapidxml::xml_attribute<char>* TexName = AssetNode->first_attribute("texName");
         if (!TexName)
-            ReportError("SpriteAsset is missing the texName property.  Re-building the XCode project may help.");
+        {
+            free(SpriteAsset->SourceFileName);
+            SpriteAsset->SourceFileName = NULL;
+            continue;
+        }
+        
         SpriteAsset->RawFileName = strdup(TexName->value());
-        
-        rapidxml::xml_attribute<char>* Width = AssetNode->first_attribute("width");
-        if (!Width)
-            ReportError("SpriteAsset is missing the width property.  Re-building the XCode project may help.");
-        SpriteAsset->Width = atoi(Width->value());
-        
-        rapidxml::xml_attribute<char>* Height = AssetNode->first_attribute("height");
-        if (!Height)
-            ReportError("SpriteAsset is missing the height property.  Re-building the XCode project may help.");
-        SpriteAsset->Height = atoi(Height->value());
-        
-        rapidxml::xml_attribute<char>* TexWidth = AssetNode->first_attribute("texWidth");
-        if (!TexWidth)
-            ReportError("SpriteAsset is missing the texWidth property.  Re-building the XCode project may help.");
-        SpriteAsset->TexWidth = atoi(TexWidth->value());
-        
-        rapidxml::xml_attribute<char>* TexHeight = AssetNode->first_attribute("texHeight");
-        if (!TexHeight)
-            ReportError("SpriteAsset is missing the texHeight property.  Re-building the XCode project may help.");
-        SpriteAsset->TexHeight = atoi(TexHeight->value());
-		
-        rapidxml::xml_attribute<char>* Left = AssetNode->first_attribute("left");
-        if (!Left)
-            ReportError("SpriteAsset is missing the left property.  Re-building the XCode project may help.");
-        SpriteAsset->Left = atoi(Left->value());
-		
-        rapidxml::xml_attribute<char>* Right = AssetNode->first_attribute("right");
-        if (!Right)
-            ReportError("SpriteAsset is missing the right property.  Re-building the XCode project may help.");
-        SpriteAsset->Right = atoi(Right->value());
-		
-        rapidxml::xml_attribute<char>* Top = AssetNode->first_attribute("top");
-        if (!Top)
-            ReportError("SpriteAsset is missing the top property.  Re-building the XCode project may help.");
-        SpriteAsset->Top = atoi(Top->value());
-		
-        rapidxml::xml_attribute<char>* Bottom = AssetNode->first_attribute("bottom");
-        if (!Bottom)
-            ReportError("SpriteAsset is missing the bottom property.  Re-building the XCode project may help.");
-        SpriteAsset->Bottom = atoi(Bottom->value());
-		
-		AssetNode = AssetNode->next_sibling("SpriteAsset");
+
+        AssetList->NAssets++;
 	}
     
-	PopErrorContext();
+    // Iterate over all the <RawAsset> nodes.
+	for (rapidxml::xml_node<char>* AssetNode = AssetsNode->first_node("RawAsset"); AssetNode; AssetNode = AssetNode->next_sibling("RawAsset"))
+	{
+        if (AssetList->NAssets >= MAX_ASSETS)
+            break;
+        
+        SAsset* RawAsset = &AssetList->Assets[AssetList->NAssets];
+        
+        rapidxml::xml_attribute<char>* ModTime = AssetNode->first_attribute("modTime");
+        if (!ModTime)
+            continue;
+        RawAsset->ModTime = atof(ModTime->value());
+
+        rapidxml::xml_attribute<char>* Name = AssetNode->first_attribute("name");
+        if (!Name)
+            continue;
+        RawAsset->SourceFileName = strdup(Name->value());
+        
+        rapidxml::xml_attribute<char>* RawName = AssetNode->first_attribute("rawName");
+        if (!RawName)
+        {
+            free(RawAsset->SourceFileName);
+            continue;
+        }
+        RawAsset->RawFileName = strdup(RawName->value());
+		
+        AssetList->NAssets++;
+	}
+    
+    return AssetList->NAssets > 0;
 }
 
-bool GetLiveAssetReplacement(const char* FileName, void** Data, int* DataSize)
-{
-    NSURL *URL = [NSURL URLWithString:
-                  [NSString stringWithFormat:@"http://www.pluszerogames.com/sdb/live/%s", FileName]];
-    
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:10];
 
+SAsset* GetAssetFromAssetList(const char* FileName, SAssetList* AssetList)
+{
+    for (int i = 0; i < AssetList->NAssets; i++)
+    {
+        SAsset* Asset = &AssetList->Assets[i];
+        if (strcmp(Asset->SourceFileName, FileName) == 0)
+            return Asset;
+    }
+    return NULL;
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------//
+//                                                          Live Assets                                                                    //
+//-----------------------------------------------------------------------------------------------------------------------------------------//
+
+void GetLiveAssetFileName(const char* FileName, char* Buf, int BufSize)
+{
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    NSString *cacheDirectory = [paths objectAtIndex:0];
+    
+    NSString *cachedFileName = [NSString stringWithFormat:@"%@/%s", cacheDirectory, FileName];
+    
+	snprintf(Buf, BufSize, "%s", [cachedFileName UTF8String]);
+}
+
+bool DownloadLiveAssetFile(const char* FileName)
+{
+    NSString* URLString = [NSString stringWithFormat:@"http://pluszerogames.com/sdb/live/%d/%s", Settings.LiveAssetSlot, FileName];
+    NSURL *URL = [NSURL URLWithString:URLString];
+    
+    NSLog(@"DOWNLOAD '%@'...", URLString);
+
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:10];
+    
     NSURLResponse *response;
     NSError *error = [[NSError alloc] init];
     NSData* result = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-    
+        
     if (result && [(NSHTTPURLResponse*)response statusCode] == 200)
     {
-        *DataSize = [result length];
-        *Data = malloc(*DataSize + 1);
-        memcpy(*Data, [result bytes], *DataSize);
-        ((char*)*Data)[*DataSize] = 0;
+        NSLog(@"DONE...");
+
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        NSString *cacheDirectory = [paths objectAtIndex:0];
+        
+        NSString *cachedFileName = [NSString stringWithFormat:@"%@/%s", cacheDirectory, FileName];
+        
+        NSString *cachedPath = [cachedFileName stringByDeletingLastPathComponent];
+        if (![[NSFileManager defaultManager] fileExistsAtPath:cachedPath])
+        {
+            NSLog(@"MKDIR '%@'...", cachedPath);
+            [[NSFileManager defaultManager] createDirectoryAtPath:cachedPath withIntermediateDirectories:YES attributes:nil error:&error];
+        }
+        
+        [result writeToFile:cachedFileName atomically:TRUE];
+        NSLog(@"SAVED '%@'.\n", cachedFileName);
+
         return true;
     }
-    else
+
+    NSLog(@"FAIL\n");
+
+    return false;
+}
+
+void UpdateLiveAssetCache()
+{
+    double StartTime = GetCurrentTime();
+
+    ClearAssetList(&CacheAssets);
+    
+    char Work[1024];
+    GetLiveAssetFileName("Converted/Assets.xml", Work, sizeof(Work));
+    LoadAssetList(Work, &CacheAssets);
+
+    bool LiveAssetsAvailable = DownloadLiveAssetFile("Converted/Assets.xml");
+    
+    if (LiveAssetsAvailable)
     {
-        *Data = NULL;
-        return false;
+        SAssetList NewCacheAssets;        
+        LoadAssetList(Work, &NewCacheAssets);
+        
+        for (int i = 0; i < NewCacheAssets.NAssets; i++)
+        {
+            SAsset* NewAsset = &NewCacheAssets.Assets[i];
+            
+            SAsset* OldAsset = GetAssetFromAssetList(NewAsset->SourceFileName, &CacheAssets);
+            
+            bool Download = false;
+            
+            if (!OldAsset)
+            {
+                printf("Downloading '%s', new asset.\n", NewAsset->SourceFileName);
+                Download = true;
+            }
+            
+            if (!Download && OldAsset && OldAsset->ModTime != NewAsset->ModTime)
+            {
+                printf("Downloading '%s', different file date.\n", NewAsset->SourceFileName);
+                Download = true;
+            }
+            
+            char Work[1024];
+            snprintf(Work, sizeof(Work), "%s/%s", NewCacheAssets.RootDirectory, NewAsset->RawFileName);
+            if (!Download && ![[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithUTF8String:Work]])
+            {
+                printf("Downloading '%s', cache file is missing.\n", NewAsset->SourceFileName);
+                Download = true;
+            }
+            
+            if (Download)
+            {
+                DownloadLiveAssetFile(NewAsset->RawFileName);
+            }
+        }
+
+        ClearAssetList(&CacheAssets);
+        ClearAssetList(&NewCacheAssets);
+
+        LoadAssetList(Work, &CacheAssets);
     }
+    
+    double EndTime = GetCurrentTime();
+    LogMessage("Live asset cache update took %.1f seconds.\n", EndTime-StartTime);
+}
+
+void GetAsset(const char* FileName, SAssetList** AssetList, SAsset** Asset)
+{
+    SAsset* BundleAsset = GetAssetFromAssetList(FileName, &BundleAssets);
+    
+    if (Settings.LiveAssets)
+    {
+        SAsset* LiveAsset = GetAssetFromAssetList(FileName, &CacheAssets);
+        
+        if (LiveAsset)
+        {
+            if (BundleAsset == NULL || LiveAsset->ModTime >= BundleAsset->ModTime)
+            {
+                //printf("Using live asset '%s'.\n", LiveAsset->RawFileName);
+                *AssetList = &CacheAssets;
+                *Asset = LiveAsset;   
+                return;
+            }
+        }
+    }
+
+    //if (BundleAsset)
+    //    printf("Using bundled asset '%s'.\n", BundleAsset->RawFileName);
+    
+    *AssetList = &BundleAssets;
+    *Asset = BundleAsset;
 }
 
 #endif
@@ -359,7 +596,7 @@ bool GetLiveAssetReplacement(const char* FileName, void** Data, int* DataSize)
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                      Asset file loading (platform specific)                                             //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-void GetAssetFileName(const char* FileName, char* Buf, int BufSize)
+void GetBundleFileName(const char* FileName, char* Buf, int BufSize)
 {
 #ifdef PLATFORM_IPHONE
 	CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
@@ -382,145 +619,116 @@ void GetAssetFileName(const char* FileName, char* Buf, int BufSize)
 #endif
 }
 
-FILE* OpenAssetFile(const char* FileName, const char* Mode)
-{
-	char Work[1024];
-    
-	GetAssetFileName(FileName, Work, sizeof(Work));
-    
-	return fopen(Work, Mode);
-}
-
 void* LoadAssetFile(const char* FileName, void** Data, int* DataSize)
 {
-    int FileDataSize;
-    char* FileData;
-    
 #ifdef PLATFORM_IPHONE
-    if ( Settings.LiveAssets )
+    SAssetList* AssetList;
+    SAsset* Asset;
+    GetAsset(FileName, &AssetList, &Asset);
+    
+    if (Asset)
     {
-        if ( GetLiveAssetReplacement(FileName, (void**)&FileData, &FileDataSize) )
-        {
-            if (Data) *Data = FileData;
-            if (DataSize) *DataSize = FileDataSize;
-            
-            return FileData;
-        }
+        char Work[1024];
+        snprintf(Work, sizeof(Work), "%s/%s", AssetList->RootDirectory, Asset->RawFileName);
+        return LoadFileData(Work, Data, DataSize);
+    }
+    else
+    {
+        if (Data) *Data = NULL;
+        if (Data) *DataSize = 0;
+        return NULL;
     }
 #endif
-
-    FILE* F = OpenAssetFile(FileName, "rb");
-    if (!F)
-        return NULL;
-
-    fseek(F, 0, SEEK_END);
-    FileDataSize = ftell(F);
-    fseek(F, 0, SEEK_SET);
     
-    FileData = (char*)malloc(FileDataSize+1);
-    fread(FileData, 1, FileDataSize, F);
-    fclose(F);
+#ifdef PLATFORM_WINDOWS
+    char Work[1024];
+    GetBundleFileName(FileName, Work, sizeof(Work));
     
-    FileData[FileDataSize] = 0;
-    
-    if (Data) *Data = FileData;
-    if (DataSize) *DataSize = FileDataSize;
-    
-    return FileData;
+    return LoadFileData(Work, Data, DataSize);
+#endif
 }
 
 void LoadSpriteAsset(const char* FileName, gxSprite* Sprite)
 {
 #ifdef PLATFORM_IPHONE
-    for (int i = 0; i < NSpriteAssets; i++)
-    {
-        SSpriteAsset* SpriteAsset = &SpriteAssets[i];
-        
-        if (strcmp(FileName, SpriteAsset->SourceFileName) == 0)
-        {
-            Sprite->width = SpriteAsset->Width;
-            Sprite->height = SpriteAsset->Height;
-            Sprite->texWidth = SpriteAsset->TexWidth;
-            Sprite->texHeight = SpriteAsset->TexHeight;
-            Sprite->top = SpriteAsset->Top;
-            Sprite->bottom = SpriteAsset->Bottom;
-            Sprite->left = SpriteAsset->Left;
-            Sprite->right = SpriteAsset->Right;
-
-            int MaxFileSize = 1024 * 1024 * 4;
-            
-            char* Pixels = (char*)malloc(MaxFileSize);
-
-            void* Data;
-            int DataSize;
-            
-            if (Settings.LiveAssets && GetLiveAssetReplacement(SpriteAsset->RawFileName, &Data, &DataSize))
-            {
-                uLongf UncompressedSize;
-                uncompress((Bytef*)Pixels, &UncompressedSize, (Bytef*)Data, DataSize);
-            }
-            else
-            {
-                char Work[1024];
-                GetAssetFileName(SpriteAsset->RawFileName, Work, sizeof(Work));
-                
-                gzFile RawFile = gzopen(Work, "rb");
-                
-                if (!RawFile)
-                    break;
-                
-                DataSize = gzread(RawFile, Pixels, MaxFileSize);
-                gzclose(RawFile);
-            }
-                        
-            glGenTextures(1, &Sprite->tex);
-            glBindTexture(GL_TEXTURE_2D, Sprite->tex);
-
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            
-            int BPP = 4;
-            bool HasAlpha = true;
-            
-            GLenum Format;
-            if (HasAlpha) 
-                Format = (BPP == 4) ? GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG : GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG;
-            else
-                Format = (BPP == 4) ? GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG : GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG;
-
-            int MipLevel = 0;
-            int MipWidth = Sprite->texWidth;
-            int MipHeight = Sprite->texHeight;
-            int DataOffset = 0;
-            
-            do
-            {
-                GLsizei DataSize = MipWidth * MipHeight * BPP / 8;
-                if (DataSize < 32) 
-                    DataSize = 32;
-                
-                glCompressedTexImage2D(GL_TEXTURE_2D, MipLevel, Format, MipWidth, MipHeight, 0, DataSize, Pixels + DataOffset);
-                
-                MipLevel++;
-                MipWidth /= 2;
-                MipHeight /= 2;
-                
-                DataOffset += DataSize;
-                
-            } while (DataOffset < DataSize);
-            
-            free(Pixels);
-
-            return;
-        }
-    }
+    if (Sprite->tex)
+        gxDestroySprite(Sprite);
     
-    gxLoadSprite(FileName, Sprite);
+    SAssetList* AssetList;
+    SAsset* SpriteAsset;
+    GetAsset(FileName, &AssetList, &SpriteAsset);
+
+    if (SpriteAsset)
+    {
+        Sprite->width = SpriteAsset->Sprite.Width;
+        Sprite->height = SpriteAsset->Sprite.Height;
+        Sprite->texWidth = SpriteAsset->Sprite.TexWidth;
+        Sprite->texHeight = SpriteAsset->Sprite.TexHeight;
+        Sprite->top = SpriteAsset->Sprite.Top;
+        Sprite->bottom = SpriteAsset->Sprite.Bottom;
+        Sprite->left = SpriteAsset->Sprite.Left;
+        Sprite->right = SpriteAsset->Sprite.Right;
+
+        char Work[1024];
+        snprintf(Work, sizeof(Work), "%s/%s", AssetList->RootDirectory, SpriteAsset->RawFileName);
+
+        gzFile F = gzopen(Work, "rb");
+        if (!F)
+            return;
+                
+        int MaxFileSize = 1024 * 1024 * 4;
+        
+        char* Pixels = (char*)malloc(MaxFileSize);
+        int UncompressedSize = gzread(F, Pixels, MaxFileSize);
+        gzclose(F);
+        
+        glGenTextures(1, &Sprite->tex);
+        glBindTexture(GL_TEXTURE_2D, Sprite->tex);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        
+        int BPP = 4;
+        bool HasAlpha = true;
+        
+        GLenum Format;
+        if (HasAlpha) 
+            Format = (BPP == 4) ? GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG : GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG;
+        else
+            Format = (BPP == 4) ? GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG : GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG;
+
+        int MipLevel = 0;
+        int MipWidth = Sprite->texWidth;
+        int MipHeight = Sprite->texHeight;
+        int DataOffset = 0;
+        
+        do
+        {
+            GLsizei DataSize = MipWidth * MipHeight * BPP / 8;
+            if (DataSize < 32) 
+                DataSize = 32;
+            
+            glCompressedTexImage2D(GL_TEXTURE_2D, MipLevel, Format, MipWidth, MipHeight, 0, DataSize, Pixels + DataOffset);
+            
+            MipLevel++;
+            MipWidth /= 2;
+            MipHeight /= 2;
+            
+            DataOffset += DataSize;
+            
+        } while (DataOffset < UncompressedSize);
+        
+        free(Pixels);
+    }
+    else
+    {
+        gxLoadSprite(FileName, Sprite);
+    }
 #endif
     
 #ifdef PLATFORM_WINDOWS
 	char Work[1024];
-	GetAssetFileName(FileName, Work, sizeof(Work));
+	GetBundleFileName(FileName, Work, sizeof(Work));
 
     gxLoadSprite(Work, Sprite);
 #endif
@@ -533,8 +741,10 @@ void LoadAssets()
 	//-----------------------------------------------------------------------------------------------------------------------------------------//
 	//                                                    Assets List                                                                          //
 	//-----------------------------------------------------------------------------------------------------------------------------------------//
-#ifdef PLATFORM_IPHONE    
-    LoadAssetList("Converted/Assets.xml");
+#ifdef PLATFORM_IPHONE  
+    char Work[1024];
+    GetBundleFileName("Converted/Assets.xml", Work, sizeof(Work));
+    LoadAssetList(Work, &BundleAssets);
 #endif    
     
 	//-----------------------------------------------------------------------------------------------------------------------------------------//

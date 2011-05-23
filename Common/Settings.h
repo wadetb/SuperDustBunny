@@ -29,6 +29,7 @@ typedef struct
     bool DisableVacuum;
     
     bool LiveAssets;
+    int LiveAssetSlot;
 } SSettings;
 
 

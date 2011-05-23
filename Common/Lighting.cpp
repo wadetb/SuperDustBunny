@@ -623,9 +623,6 @@ void InitLighting()
         ShadowShadowAlpha = gxGetShaderConstantByName(&ShadowShader, "ShadowAlpha");
         ShadowSampler = gxGetShaderConstantByName(&ShadowShader, "Sampler");
         
-        gxCreateShader(StandardVertexShaderSource, ApplyShadowShaderSource, &ApplyShadowShader);
-        ApplyShadowSampler = gxGetShaderConstantByName(&ApplyShadowShader, "Sampler");
-        
         gxCreateShader(StandardVertexShaderSource, EffectsShaderSource, &EffectsShader);
         EffectsSampler = gxGetShaderConstantByName(&EffectsShader, "Sampler");
 

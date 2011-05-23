@@ -475,7 +475,11 @@ void LoadPageFromTMX(const char* FileName)
 		{
             // It hasn't been loaded previously, so load the external tileset.
             char TileSetName[1024];
-            snprintf(TileSetName, sizeof(TileSetName), "Chapters/%s/%s", CurrentChapterDir, TileSetSourceAttr->value());
+            
+            if (strncmp(TileSetSourceAttr->value(), "../../", 6) == 0)
+                snprintf(TileSetName, sizeof(TileSetName), "%s", TileSetSourceAttr->value()+6);
+            else
+                snprintf(TileSetName, sizeof(TileSetName), "Chapters/%s/%s", CurrentChapterDir, TileSetSourceAttr->value());
             
 			// If the external tileset has been loaded already, just reference it.
 			for (int i = 0; i < Chapter.NTileSets; i++)

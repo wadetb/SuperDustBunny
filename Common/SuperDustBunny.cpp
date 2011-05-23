@@ -101,8 +101,6 @@ void Init()
     InitSettings();
 	InitLighting();
 
-	LoadAssets();
-	
 	SetGameState_StartScreen();
 }
 
@@ -384,6 +382,11 @@ void AdvanceToNextPage()
 void SetGameState_StartScreen()
 {
 	GameState = GAMESTATE_START_SCREEN;
+
+    if (Settings.LiveAssets)
+        UpdateLiveAssetCache();
+    
+    LoadAssets();
 
     ClearChapterList();
     LoadChapterList();
