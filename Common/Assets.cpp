@@ -742,6 +742,8 @@ void LoadAssets()
 	//                                                    Assets List                                                                          //
 	//-----------------------------------------------------------------------------------------------------------------------------------------//
 #ifdef PLATFORM_IPHONE  
+    ClearAssetList(&BundleAssets);
+
     char Work[1024];
     GetBundleFileName("Converted/Assets.xml", Work, sizeof(Work));
     LoadAssetList(Work, &BundleAssets);
