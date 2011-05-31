@@ -61,7 +61,7 @@ struct SStartScreen
 SStartScreen StartScreen;
 
 
-const float StartScreenSpacing = 450.0f;
+const float StartScreenSpacing = 470.0f;
 
 void InitStartScreen()
 {

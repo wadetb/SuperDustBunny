@@ -39,6 +39,10 @@
 #include "WinScreen.h"
 #include "ChapterIntro.h"
 
+#ifdef PLATFORM_IPHONE
+#import "SuperDustBunnyViewController.h"
+#endif
+
 enum EGameState
 {
 	GAMESTATE_PLAYING,
@@ -98,6 +102,8 @@ void Init()
 	msInit();
 #endif	
 	
+    LoadBundleAssetList();
+
     InitSettings();
 	InitLighting();
 
@@ -185,7 +191,23 @@ void ReportError(const char* ErrorMessage, ...)
 
 #ifdef PLATFORM_IPHONE
 	printf("SuperDustBunny Error: %s\n", Work);
-    DisplayAlert("SuperDustBunny Error", Work);
+    
+    theViewController.paused = TRUE;
+
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"SuperDustBunny Error"
+                                                    message:[NSString stringWithUTF8String:Work]
+                                                   delegate:theViewController
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+    [alert release];
+    
+    while (theViewController.paused)
+    {
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
+    }
+    
+    exit(255);
 #endif
 }
 
@@ -212,27 +234,6 @@ double GetCurrentTime()
 
 #ifdef PLATFORM_WINDOWS
     return 0;
-#endif
-}
-
-
-void DisplayAlert(const char* Title, const char* AlertMessage, ...)
-{
-	char Work[1024];
-    
-	va_list args;
-	va_start(args, AlertMessage);
-	vsnprintf(Work, sizeof(Work), AlertMessage, args);
-	va_end(args);
-    
-#ifdef PLATFORM_IPHONE
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithUTF8String:Title]
-                                                    message:[NSString stringWithUTF8String:Work]
-                                                   delegate:nil
-                                          cancelButtonTitle:@"OK"
-                                          otherButtonTitles:nil];
-    [alert show];
-    [alert release];
 #endif
 }
 

@@ -232,7 +232,7 @@ struct SAsset
 {
     char* SourceFileName;
     char* RawFileName;
-    float ModTime; 
+    char* MD5; 
     
     union
     {
@@ -382,19 +382,25 @@ bool LoadAssetList(char* FileName, SAssetList* AssetList)
             continue;
         SpriteAsset->Sprite.Bottom = atoi(Bottom->value());
 		
-        rapidxml::xml_attribute<char>* ModTime = AssetNode->first_attribute("modTime");
-        if (!ModTime)
+        rapidxml::xml_attribute<char>* MD5 = AssetNode->first_attribute("md5");
+        if (!MD5)
             continue;
-        SpriteAsset->ModTime = atof(ModTime->value());
+        SpriteAsset->MD5 = strdup(MD5->value());
 		
         rapidxml::xml_attribute<char>* Name = AssetNode->first_attribute("name");
         if (!Name)
+        {
+            free(SpriteAsset->MD5);
+            SpriteAsset->MD5 = NULL;
             continue;
+        }
         SpriteAsset->SourceFileName = strdup(Name->value());
         
         rapidxml::xml_attribute<char>* TexName = AssetNode->first_attribute("texName");
         if (!TexName)
         {
+            free(SpriteAsset->MD5);
+            SpriteAsset->MD5 = NULL;
             free(SpriteAsset->SourceFileName);
             SpriteAsset->SourceFileName = NULL;
             continue;
@@ -413,19 +419,25 @@ bool LoadAssetList(char* FileName, SAssetList* AssetList)
         
         SAsset* RawAsset = &AssetList->Assets[AssetList->NAssets];
         
-        rapidxml::xml_attribute<char>* ModTime = AssetNode->first_attribute("modTime");
-        if (!ModTime)
+        rapidxml::xml_attribute<char>* MD5 = AssetNode->first_attribute("md5");
+        if (!MD5)
             continue;
-        RawAsset->ModTime = atof(ModTime->value());
+        RawAsset->MD5 = strdup(MD5->value());
 
         rapidxml::xml_attribute<char>* Name = AssetNode->first_attribute("name");
         if (!Name)
+        {
+            free(RawAsset->MD5);
+            RawAsset->MD5 = NULL;
             continue;
+        }
         RawAsset->SourceFileName = strdup(Name->value());
         
         rapidxml::xml_attribute<char>* RawName = AssetNode->first_attribute("rawName");
         if (!RawName)
         {
+            free(RawAsset->MD5);
+            RawAsset->MD5 = NULL;
             free(RawAsset->SourceFileName);
             continue;
         }
@@ -525,21 +537,23 @@ void UpdateLiveAssetCache()
             SAsset* NewAsset = &NewCacheAssets.Assets[i];
             
             SAsset* OldAsset = GetAssetFromAssetList(NewAsset->SourceFileName, &CacheAssets);
+            SAsset* BundleAsset = GetAssetFromAssetList(NewAsset->SourceFileName, &BundleAssets);
             
             bool Download = false;
             
-            if (!OldAsset)
+            if (!BundleAsset && !OldAsset)
             {
                 printf("Downloading '%s', new asset.\n", NewAsset->SourceFileName);
                 Download = true;
             }
             
-            if (!Download && OldAsset && OldAsset->ModTime != NewAsset->ModTime)
+            if (!Download && (OldAsset && strcmp(OldAsset->MD5, NewAsset->MD5)) || (BundleAsset && strcmp(BundleAsset->MD5, NewAsset->MD5)))
             {
                 printf("Downloading '%s', different file date.\n", NewAsset->SourceFileName);
                 Download = true;
             }
             
+            /*
             char Work[1024];
             snprintf(Work, sizeof(Work), "%s/%s", NewCacheAssets.RootDirectory, NewAsset->RawFileName);
             if (!Download && ![[NSFileManager defaultManager] fileExistsAtPath:[NSString stringWithUTF8String:Work]])
@@ -547,6 +561,7 @@ void UpdateLiveAssetCache()
                 printf("Downloading '%s', cache file is missing.\n", NewAsset->SourceFileName);
                 Download = true;
             }
+            */
             
             if (Download)
             {
@@ -574,7 +589,7 @@ void GetAsset(const char* FileName, SAssetList** AssetList, SAsset** Asset)
         
         if (LiveAsset)
         {
-            if (BundleAsset == NULL || LiveAsset->ModTime >= BundleAsset->ModTime)
+            if (BundleAsset == NULL || strcmp(LiveAsset->MD5, BundleAsset->MD5))
             {
                 //printf("Using live asset '%s'.\n", LiveAsset->RawFileName);
                 *AssetList = &CacheAssets;
@@ -734,20 +749,18 @@ void LoadSpriteAsset(const char* FileName, gxSprite* Sprite)
 #endif
 }
 
-void LoadAssets()
+void LoadBundleAssetList()
 {
-    double StartTime = GetCurrentTime();
-    
-	//-----------------------------------------------------------------------------------------------------------------------------------------//
-	//                                                    Assets List                                                                          //
-	//-----------------------------------------------------------------------------------------------------------------------------------------//
 #ifdef PLATFORM_IPHONE  
-    ClearAssetList(&BundleAssets);
-
     char Work[1024];
     GetBundleFileName("Converted/Assets.xml", Work, sizeof(Work));
     LoadAssetList(Work, &BundleAssets);
 #endif    
+}
+
+void LoadAssets()
+{
+    double StartTime = GetCurrentTime();
     
 	//-----------------------------------------------------------------------------------------------------------------------------------------//
 	//                                                    Sprite Assets                                                                        //

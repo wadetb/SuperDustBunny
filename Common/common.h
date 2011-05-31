@@ -212,9 +212,6 @@ void ReportError(const char* ErrorMessage, ...);
 // Print something to the application log.
 void LogMessage(const char* LogMessage, ...);
 
-// Display a popup dialog on screen.
-void DisplayAlert(const char* Title, const char* AlertMessage, ...);
-
 // Misc ObjC function exports.
 void DisplayWelcomeAlert();
 void HTTPPost(const char* URL, const void* Data, int DataSize);
