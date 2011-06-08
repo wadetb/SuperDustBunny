@@ -385,13 +385,20 @@ void SetGameState_StartScreen()
 	GameState = GAMESTATE_START_SCREEN;
 
     if (Settings.LiveAssets)
+#ifdef PLATFORM_IPHONE
         UpdateLiveAssetCache();
+#endif
     
     LoadAssets();
 
     ClearChapterList();
     LoadChapterList();
     
+    if (Settings.LiveAssets)
+#ifdef PLATFORM_IPHONE
+        UpdateLiveAssetCache();
+#endif
+       
 	InitStartScreen();
 }
 

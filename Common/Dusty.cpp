@@ -372,6 +372,16 @@ void SetDustyState_Jump( bool OffWall )
     
     Dusty.LandTimer = 0;
 
+	if (PowerUpToggle.Jump)
+	{
+		Dusty.FloatY -= 60.0f;
+
+		Dusty.FloatVelocityX = 12.0f;
+		Dusty.FloatVelocityY = - 24.0f;
+		if (Dusty.Direction == DIRECTION_LEFT)
+			Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
+	}
+
 	Dusty.State = DUSTYSTATE_JUMP;
 }
 

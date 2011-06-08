@@ -514,6 +514,31 @@ bool DownloadLiveAssetFile(const char* FileName)
 
     return false;
 }
+#ifdef PLATFORM_IPHONE
+void UpdateLiveAssetCache()
+{
+    double StartTime = GetCurrentTime();
+
+    ClearAssetList(&CacheAssets);
+    
+    char Work[1024];
+    GetLiveAssetFileName("Converted/Assets.xml", Work, sizeof(Work));
+    LoadAssetList(Work, &CacheAssets);
+
+    bool LiveAssetsAvailable = DownloadLiveAssetFile("Converted/Assets.xml");
+    
+    if (LiveAssetsAvailable)
+    {
+        SAssetList NewCacheAssets;        
+        LoadAssetList(Work, &NewCacheAssets);
+        
+        for (int i = 0; i < NewCacheAssets.NAssets; i++)
+        {
+            SAsset* NewAsset = &NewCacheAssets.Assets[i];
+            if (!RawFile)
+                break;
+    return false;
+}
 
 void UpdateLiveAssetCache()
 {
@@ -569,6 +594,38 @@ void UpdateLiveAssetCache()
             }
         }
 
+<<<<<<< .mine
+        ClearAssetList(&CacheAssets);
+        ClearAssetList(&NewCacheAssets);
+
+        LoadAssetList(Work, &CacheAssets);
+    }
+    
+    double EndTime = GetCurrentTime();
+    LogMessage("Live asset cache update took %.1f seconds.\n", EndTime-StartTime);
+}
+
+#endif
+
+void GetAsset(const char* FileName, SAssetList** AssetList, SAsset** Asset)
+{
+    SAsset* BundleAsset = GetAssetFromAssetList(FileName, &BundleAssets);
+    
+    if (Settings.LiveAssets)
+    {
+        SAsset* LiveAsset = GetAssetFromAssetList(FileName, &CacheAssets);
+        
+        if (LiveAsset)
+        {
+            if (BundleAsset == NULL || strcmp(LiveAsset->MD5, BundleAsset->MD5))
+            {
+                //printf("Using live asset '%s'.\n", LiveAsset->RawFileName);
+                *AssetList = &CacheAssets;
+                *Asset = LiveAsset;   
+                return;
+            }
+            return;
+=======
         ClearAssetList(&CacheAssets);
         ClearAssetList(&NewCacheAssets);
 
@@ -596,6 +653,7 @@ void GetAsset(const char* FileName, SAssetList** AssetList, SAsset** Asset)
                 *Asset = LiveAsset;   
                 return;
             }
+>>>>>>> .r839
         }
     }
 
