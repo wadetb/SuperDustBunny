@@ -117,7 +117,7 @@ bool GetInput_Jump()
 //                                                        Swipe controls                                                                   //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   //
 
-//#define SWIPE_DEBUG
+#define SWIPE_DEBUG
 
 
 SSwipe Swipe;
@@ -259,6 +259,8 @@ bool GetInput_SwipeValid()
 {
     return Swipe.Valid;
 }
+
+void DisplayDebugLine(float X1, float Y1, float X2, float Y2, float Width, unsigned int Color);
 
 void DisplaySwipe()
 {

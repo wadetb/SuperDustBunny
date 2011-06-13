@@ -514,31 +514,6 @@ bool DownloadLiveAssetFile(const char* FileName)
 
     return false;
 }
-#ifdef PLATFORM_IPHONE
-void UpdateLiveAssetCache()
-{
-    double StartTime = GetCurrentTime();
-
-    ClearAssetList(&CacheAssets);
-    
-    char Work[1024];
-    GetLiveAssetFileName("Converted/Assets.xml", Work, sizeof(Work));
-    LoadAssetList(Work, &CacheAssets);
-
-    bool LiveAssetsAvailable = DownloadLiveAssetFile("Converted/Assets.xml");
-    
-    if (LiveAssetsAvailable)
-    {
-        SAssetList NewCacheAssets;        
-        LoadAssetList(Work, &NewCacheAssets);
-        
-        for (int i = 0; i < NewCacheAssets.NAssets; i++)
-        {
-            SAsset* NewAsset = &NewCacheAssets.Assets[i];
-            if (!RawFile)
-                break;
-    return false;
-}
 
 void UpdateLiveAssetCache()
 {
@@ -572,10 +547,27 @@ void UpdateLiveAssetCache()
                 Download = true;
             }
             
-            if (!Download && (OldAsset && strcmp(OldAsset->MD5, NewAsset->MD5)) || (BundleAsset && strcmp(BundleAsset->MD5, NewAsset->MD5)))
+            if (!Download)
             {
-                printf("Downloading '%s', different file date.\n", NewAsset->SourceFileName);
-                Download = true;
+                if (OldAsset)
+                {
+                    if (strcmp(OldAsset->MD5, NewAsset->MD5))
+                    {
+                        printf("Downloading '%s', MD5 differs from cache.\n", NewAsset->SourceFileName);
+                        Download = true;
+                    }
+                }
+                else
+                {
+                    if (BundleAsset)
+                    {
+                        if (strcmp(BundleAsset->MD5, NewAsset->MD5))
+                        {
+                            printf("Downloading '%s', MD5 differs from bundle.\n", NewAsset->SourceFileName);
+                            Download = true;
+                        }
+                    }
+                }
             }
             
             /*
@@ -594,7 +586,6 @@ void UpdateLiveAssetCache()
             }
         }
 
-<<<<<<< .mine
         ClearAssetList(&CacheAssets);
         ClearAssetList(&NewCacheAssets);
 
@@ -604,8 +595,6 @@ void UpdateLiveAssetCache()
     double EndTime = GetCurrentTime();
     LogMessage("Live asset cache update took %.1f seconds.\n", EndTime-StartTime);
 }
-
-#endif
 
 void GetAsset(const char* FileName, SAssetList** AssetList, SAsset** Asset)
 {
@@ -625,35 +614,6 @@ void GetAsset(const char* FileName, SAssetList** AssetList, SAsset** Asset)
                 return;
             }
             return;
-=======
-        ClearAssetList(&CacheAssets);
-        ClearAssetList(&NewCacheAssets);
-
-        LoadAssetList(Work, &CacheAssets);
-    }
-    
-    double EndTime = GetCurrentTime();
-    LogMessage("Live asset cache update took %.1f seconds.\n", EndTime-StartTime);
-}
-
-void GetAsset(const char* FileName, SAssetList** AssetList, SAsset** Asset)
-{
-    SAsset* BundleAsset = GetAssetFromAssetList(FileName, &BundleAssets);
-    
-    if (Settings.LiveAssets)
-    {
-        SAsset* LiveAsset = GetAssetFromAssetList(FileName, &CacheAssets);
-        
-        if (LiveAsset)
-        {
-            if (BundleAsset == NULL || strcmp(LiveAsset->MD5, BundleAsset->MD5))
-            {
-                //printf("Using live asset '%s'.\n", LiveAsset->RawFileName);
-                *AssetList = &CacheAssets;
-                *Asset = LiveAsset;   
-                return;
-            }
->>>>>>> .r839
         }
     }
 

@@ -103,6 +103,8 @@ bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
 {
     float MaxSpeed = 0;
     
+    printf("Swipe.Count=%d Swipe.Duration=%f\n", Swipe.Count, Swipe.Duration);
+    
     if (Swipe.Count >= 2 && Swipe.Duration > 1.0f/20.0f)
     {
         Swipe.Valid = true;
