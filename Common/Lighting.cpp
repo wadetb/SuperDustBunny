@@ -761,7 +761,7 @@ void RenderLighting()
         DrawLightList(LIGHTLIST_BACKGROUND, &LitShader, GXALPHA_NONE);
         
         // Foreground shadows.
-        //DrawShadows(LIGHTLIST_FOREGROUND, &ColorRT, 30, 20);
+        DrawShadows(LIGHTLIST_FOREGROUND, &ColorRT, 30, 20);
         
         // Dust layer.        
         DrawLightList(LIGHTLIST_DUST, &LitShader, GXALPHA_BLEND);
@@ -769,7 +769,7 @@ void RenderLighting()
         DrawLightList(LIGHTLIST_FOREGROUND_NO_SHADOW, &LitShader, GXALPHA_BLEND);
         
         // Vacuum shadows.
-        //DrawShadows(LIGHTLIST_VACUUM, &ColorRT, 30, 20);
+        DrawShadows(LIGHTLIST_VACUUM, &ColorRT, 30, 20);
         
         // Vacuum.
         DrawLightList(LIGHTLIST_VACUUM, &LitShader, GXALPHA_BLEND);

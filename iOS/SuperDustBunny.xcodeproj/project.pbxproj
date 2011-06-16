@@ -313,6 +313,8 @@
 				085AAA35132C5B9F00DF32CA /* Gear.h */,
 				085AAA36132C5B9F00DF32CA /* HelpScreen.cpp */,
 				085AAA37132C5B9F00DF32CA /* HelpScreen.h */,
+				0816B6D1137F8C1B00CE5DE4 /* Input.cpp */,
+				0816B6D2137F8C1C00CE5DE4 /* Input.h */,
 				085AAA38132C5B9F00DF32CA /* Lighting.cpp */,
 				085AAA39132C5B9F00DF32CA /* Lighting.h */,
 				085AAA3A132C5B9F00DF32CA /* Lives.cpp */,
@@ -339,8 +341,6 @@
 				085AAA53132C5B9F00DF32CA /* WinScreen.h */,
 				085AAA54132C5B9F00DF32CA /* Wipe.cpp */,
 				085AAA55132C5B9F00DF32CA /* Wipe.h */,
-				0816B6D1137F8C1B00CE5DE4 /* Input.cpp */,
-				0816B6D2137F8C1C00CE5DE4 /* Input.h */,
 			);
 			name = Common;
 			path = ../Common;

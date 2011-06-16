@@ -64,6 +64,11 @@ SuperDustBunnyViewController *theViewController;
     [displayLink setFrameInterval:1];
     [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(volumeChanged:) 
+                                                 name:@"AVSystemController_SystemVolumeDidChangeNotification" 
+                                               object:nil];
+    
     paused = FALSE;
     wasPaused = TRUE;
     
@@ -81,6 +86,11 @@ SuperDustBunnyViewController *theViewController;
     [context release];
     
     [super dealloc];
+}
+
+- (void) volumeChanged:(NSNotification *)notify
+{  
+    NSLog(@"Volume changed.\n");
 }
 
 - (void)didReceiveMemoryWarning

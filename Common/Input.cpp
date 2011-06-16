@@ -14,19 +14,38 @@
 #include "Tutorial.h"
 
 
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-//                                                             Input functions
-// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+#define MAX_SWIPE_POINTS 256
+
+#define SWIPE_DEBUG
+
+
+struct SSwipe
+{
+    int Count;
+    double StartTime;
+    double Duration;
+    double Current;
+};
+
+struct SSwipePoint
+{
+    float X, Y;
+    float Time;
+};
+
 
 SRemoteControl RemoteControl;
+
+float AccelThreshold[3] = { 0.20f, 0.15f, 0.10f };
+
+SSwipe Swipe;
+
+SSwipePoint SwipePoints[MAX_SWIPE_POINTS];
 
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                         Tilt controls                                                                   //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   //
-
-
-float AccelThreshold[3] = { 0.20f, 0.15f, 0.10f };
 
 
 bool GetInput_MoveLeft()
@@ -117,157 +136,123 @@ bool GetInput_Jump()
 //                                                        Swipe controls                                                                   //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   //
 
-#define SWIPE_DEBUG
-
-
-SSwipe Swipe;
-
-SSwipePoint SwipePoints[MAX_SWIPE_POINTS];
-
-
 void GetInput_BeginSwipe(float X, float Y, double Time)
 {
-    Swipe.Active = true;
-    Swipe.Valid = false;
     Swipe.Count = 1;
     SwipePoints[0].X = X;
     SwipePoints[0].Y = Y;
     SwipePoints[0].Time = 0;
     Swipe.StartTime = Time;
-    Swipe.ValidCount = 0;
+    Swipe.Current = 0;
 }
 
 void GetInput_AddToSwipe(float X, float Y, double Time)
 {
-    SwipePoints[Swipe.Count].X = (float)msX;
-    SwipePoints[Swipe.Count].Y = (float)msY;
-    SwipePoints[Swipe.Count].Time = (float)(Time - Swipe.StartTime);
-    Swipe.Count++;
-    Swipe.Duration = Time - Swipe.StartTime;
+    if ( Swipe.Count < MAX_SWIPE_POINTS )
+    {
+        SwipePoints[Swipe.Count].X = X;
+        SwipePoints[Swipe.Count].Y = Y;
+        SwipePoints[Swipe.Count].Time = (float)(Time - Swipe.StartTime);
+        Swipe.Count++;
+        Swipe.Duration = Time - Swipe.StartTime;
+    }
 }
 
 void GetInput_EndSwipe(float X, float Y, double Time)
 {
-    SwipePoints[Swipe.Count].X = (float)msX;
-    SwipePoints[Swipe.Count].Y = (float)msY;
-    SwipePoints[Swipe.Count].Time = (float)(Time - Swipe.StartTime);
-    Swipe.Count++;    
-    Swipe.Duration = Time - Swipe.StartTime;
-    Swipe.Valid = true;
+    if ( Swipe.Count < MAX_SWIPE_POINTS )
+    {
+        SwipePoints[Swipe.Count].X = X;
+        SwipePoints[Swipe.Count].Y = Y;
+        SwipePoints[Swipe.Count].Time = (float)(Time - Swipe.StartTime);
+        Swipe.Count++;    
+        Swipe.Duration = Time - Swipe.StartTime;
+    }
 }
 
-void GetInput_NextSwipeDir(float* dX, float* dY)
+float GetInput_GetSwipeTimeLeft()
+{
+    return Swipe.Duration - Swipe.Current;
+}
+
+float GetInput_GetSwipeCurrent()
+{
+    return Swipe.Current;
+}
+
+void GetInput_GetSwipePosAtTime(float* X, float* Y, double Time)
 {
     if (Settings.ControlStyle != CONTROL_SWIPE)
         ReportError("Swipe controls queried while a different control style was in use.");
     
-    if (!Swipe.Valid)
+    if (Swipe.Count < 1)
     {
-        *dX = 0;
-        *dY = 0;
+        ReportError("Swipe controls queried when no valid swipe existed.");
         return;
     }
     
-    *dX = SwipePoints[1].X - SwipePoints[0].X;
-    *dY = SwipePoints[1].Y - SwipePoints[0].Y;
-}
-
-void GetInput_AverageSwipeDir(float* dX, float* dY)
-{
-    if (Settings.ControlStyle != CONTROL_SWIPE)
-        ReportError("Swipe controls queried while a different control style was in use.");
-    
-    if (!Swipe.Valid)
+    if (Swipe.Count < 2)
     {
-        *dX = 0;
-        *dY = 0;
+        *X = SwipePoints[0].X;
+        *Y = SwipePoints[0].X;
         return;
     }
-    
-    *dX = SwipePoints[Swipe.Count-1].X - SwipePoints[0].X;
-    *dY = SwipePoints[Swipe.Count-1].Y - SwipePoints[0].Y;
-}
 
-bool GetInput_CheckSwipeDir(float Angle, float Range)
-{
-    return false;
-    
-    if (Settings.ControlStyle != CONTROL_SWIPE)
-        ReportError("Swipe controls queried while a different control style was in use.");
-    
-    if (!Swipe.Valid)
-        return false;
-    
-    float dX, dY;
-    GetInput_NextSwipeDir(&dX, &dY);
-    
-    float L = sqrtf(dX*dX + dY*dY);
-    if (L < 10.0f)
-        return false;
-    
-    dX /= L;
-    dY /= L;
-    
-    float aX = cosf(DegreesToRadians(Angle));
-    float aY = -sinf(DegreesToRadians(Angle));
-    
-    float Dot = aX*dX + aY*dY;
-    float cR = cosf(Range);
-    
-    return Dot >= cR;
-}
-
-void GetInput_ConsumeSwipe(float Dist)
-{
-    while (Dist > 0 && Swipe.Count > 1)
+    int Index = 0;
+    while (Index < Swipe.Count-1)
     {
-        float Length = Distance(SwipePoints[0].X, SwipePoints[0].Y, SwipePoints[1].X, SwipePoints[1].Y);
-        
-        if (Dist >= Length)
-        {
-            for (int i = 0; i < Swipe.Count-1; i++)
-                SwipePoints[i] = SwipePoints[i+1];
-            
-            Swipe.Count--;
-            
-            Dist -= Length;
-            
-            if (Swipe.Count <= 1)
-            {
-                Swipe.Count = 0;
-                Swipe.Valid = false;
-                break;
-            }                
-        }
-        else
-        {
-            SwipePoints[0].X = SwipePoints[0].X + (SwipePoints[1].X - SwipePoints[0].X) * Dist / Length;
-            SwipePoints[0].Y = SwipePoints[0].Y + (SwipePoints[1].Y - SwipePoints[0].Y) * Dist / Length;
-            
-            Dist = 0;
-        }
+        if (SwipePoints[Index+1].Time > Time)
+            break;
+        Index++;
     }
+    
+    double Start = SwipePoints[Index].Time;
+    double Duration = SwipePoints[Index+1].Time - Start;
+    
+    double Ratio = (Time - Start) / Duration;
+    *X = SwipePoints[Index].X + (SwipePoints[Index+1].X - SwipePoints[Index].X) * Ratio;
+    *Y = SwipePoints[Index].Y + (SwipePoints[Index+1].Y - SwipePoints[Index].Y) * Ratio;
+}
+
+void GetInput_ConsumeSwipe(float Time)
+{
+    Swipe.Current += Time;
 }
 
 void GetInput_ConsumeAllSwipe()
 {
-    Swipe.Count = 0;
-    Swipe.Valid = false;
+    Swipe.Current = Swipe.Duration;
 }
-
-bool GetInput_SwipeValid()
-{
-    return Swipe.Valid;
-}
-
-void DisplayDebugLine(float X1, float Y1, float X2, float Y2, float Width, unsigned int Color);
 
 void DisplaySwipe()
 {
 #ifdef SWIPE_DEBUG
-    for (int i = 1; i < Swipe.Count; i++)
-        DisplayDebugLine(SwipePoints[i-1].X, SwipePoints[i-1].Y, SwipePoints[i].X, SwipePoints[i].Y, 4.0f, 
-                         i < Swipe.ValidCount ? gxRGBA32(192, 128, 128, 255) : gxRGBA32(128, 192, 128, 255));
+    for (int i = 0; i < Swipe.Count-1; i++)
+    {        
+        if ( Swipe.Current < SwipePoints[i].Time )
+        {
+            DisplayDebugLine(SwipePoints[i].X, SwipePoints[i].Y, SwipePoints[i+1].X, SwipePoints[i+1].Y, 4.0f, gxRGBA32(128, 128, 192, 255));
+        }
+        else if ( Swipe.Current < SwipePoints[i+1].Time )
+        {
+            float Duration = SwipePoints[i+1].Time - SwipePoints[i].Time;
+            float Ratio = ( Swipe.Current - SwipePoints[i].Time ) / Duration;
+            
+            DisplayDebugLine(SwipePoints[i].X, SwipePoints[i].Y,
+                             SwipePoints[i].X + ( SwipePoints[i+1].X - SwipePoints[i].X ) * Ratio, 
+                             SwipePoints[i].Y + ( SwipePoints[i+1].Y - SwipePoints[i].Y ) * Ratio, 
+                             4.0f, gxRGBA32(128, 192, 128, 255));            
+
+            DisplayDebugLine(SwipePoints[i].X + ( SwipePoints[i+1].X - SwipePoints[i].X ) * Ratio, 
+                             SwipePoints[i].Y + ( SwipePoints[i+1].Y - SwipePoints[i].Y ) * Ratio, 
+                             SwipePoints[i+1].X, SwipePoints[i+1].Y,
+                             4.0f, gxRGBA32(128, 128, 192, 255));            
+        }
+        else
+        {
+            DisplayDebugLine(SwipePoints[i].X, SwipePoints[i].Y, SwipePoints[i+1].X, SwipePoints[i+1].Y, 4.0f, gxRGBA32(128, 192, 128, 255));            
+        }
+    }
     
 	//gxDrawString(5, 37, 16, gxRGB32(255, 255, 255), "Active:%d Valid:%d Count:%d", Swipe.Active, Swipe.Valid, Swipe.Count);
 #endif

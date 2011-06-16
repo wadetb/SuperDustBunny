@@ -222,6 +222,8 @@ void ShowSettings();
 double GetCurrentTime();
 
 void AddDebugLine(float X1, float Y1, float X2, float Y2, unsigned int Color, float Time);
+void DisplayDebugLine(float X1, float Y1, float X2, float Y2, float Width, unsigned int Color);
+
 
 struct SRemoteControl
 {
@@ -235,43 +237,9 @@ extern SRemoteControl RemoteControl;
 
 
 
-#define MAX_SWIPE_POINTS 32
-
-struct SSwipe
-{
-    bool Active;
-    bool Valid;
-    int ValidCount;
-    int Count;
-    double StartTime;
-    double Duration;
-};
-
-struct SSwipePoint
-{
-    float X, Y;
-    float Time;
-};
-
-extern SSwipe Swipe;
-
-extern SSwipePoint SwipePoints[MAX_SWIPE_POINTS];
-
-
 bool GetInput_MoveLeft();
 bool GetInput_MoveRight();
 bool GetInput_Jump();
-
-void GetInput_NextSwipeDir(float* dX, float* dY);
-void GetInput_AverageSwipeDir(float* dX, float* dY);
-bool GetInput_CheckSwipeDir(float Angle, float Range);
-void GetInput_ConsumeSwipe(float Dist);
-void GetInput_ConsumeSwipeSegment();
-void GetInput_ConsumeAllSwipe();
-bool GetInput_SwipeValid();
-
-void GetInput_BeginSwipe(float X, float Y);
-void GetInput_AddToSwipe(float X, float Y);
 
 void SetGameState_StartScreen();
 void SetGameState_DieScreen();

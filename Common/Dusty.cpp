@@ -9,6 +9,7 @@
 
 #include "Common.h"
 #include "Dusty.h"
+#include "Input.h"
 #include "Tutorial.h"
 #include "Chapter.h"
 #include "Dust.h"
@@ -101,32 +102,18 @@ void UpdateDusty_JumpCommon();
 
 bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
 {
-    float MaxSpeed = 0;
-    
-    printf("Swipe.Count=%d Swipe.Duration=%f\n", Swipe.Count, Swipe.Duration);
-    
-    if (Swipe.Count >= 2 && Swipe.Duration > 1.0f/20.0f)
+    if (GetInput_GetSwipeTimeLeft() >= 1.0f/20.0f)
     {
-        Swipe.Valid = true;
-        Swipe.ValidCount = Swipe.Count;
-        for (int i = 0; i < Swipe.Count; i++)
-            if (SwipePoints[i].Time > 1.0f/20.0f)
-                Swipe.ValidCount = i;
+        float Current = GetInput_GetSwipeCurrent();
         
-        for (int i = 1; i < Swipe.ValidCount; i++)
-        {
-            float Dist = Distance(SwipePoints[i-1].X, SwipePoints[i-1].Y, SwipePoints[i].X, SwipePoints[i].Y);
-            float Time = SwipePoints[i].Time - SwipePoints[i-1].Time;
-            float Speed = Dist / Time;
-            if (Speed > MaxSpeed)
-                MaxSpeed = Speed;
-        }
-    }
-    
-    if (Swipe.Valid)
-    {
-        float dX = SwipePoints[Swipe.ValidCount-1].X - SwipePoints[0].X;
-        float dY = SwipePoints[Swipe.ValidCount-1].Y - SwipePoints[0].Y;
+        float StartX, StartY;
+        GetInput_GetSwipePosAtTime(&StartX, &StartY, Current - 1.0f/20.0f);
+
+        float EndX, EndY;
+        GetInput_GetSwipePosAtTime(&EndX, &EndY, Current);
+        
+        float dX = (EndX - StartX);
+        float dY = (EndY - StartY);
         
         float L = Length(dX, dY);
         if (L > 0)
@@ -150,40 +137,25 @@ bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
                 
                 //printf("Jump: Count=%d MaxSpeed=%f L=%f Power=%f\n", Swipe.ValidCount, MaxSpeed, L, Power);
                 
-                GetInput_ConsumeSwipe(L * 1.5f);
-                
                 SetDustyState_JumpWithVelocity(dX, dY);
                 
-#ifdef SWIPE_DEBUG
+                GetInput_ConsumeSwipe(1.0f / 60.0f);
+                
+//#ifdef SWIPE_DEBUG
                 AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle+Range))*100, Dusty.FloatY + -sinf(DegreesToRadians(Angle+Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
                 AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle-Range))*100, Dusty.FloatY + -sinf(DegreesToRadians(Angle-Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
                 
                 AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + dX*10, Dusty.FloatY + dY*10 + ScrollY, gxRGB32(192, 128, 128), 0.5f);
-#endif
+//#endif
                 
                 return true;
             }
         }
     }
     
+
     return false;
 }
-
-bool UpdateDusty_CheckSwipeDir(float Angle, float Range)
-{
-    if ( GetInput_CheckSwipeDir( Angle, Range ) )
-    {
-        AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle+Range))*100, Dusty.FloatY + -sinf(DegreesToRadians(Angle+Range))*100 + ScrollY, gxRGB32(128, 128, 192), 0.5f);
-        AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle-Range))*100, Dusty.FloatY + -sinf(DegreesToRadians(Angle-Range))*100 + ScrollY, gxRGB32(128, 128, 192), 0.5f);
-        
-        //AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + dX*10, Dusty.FloatY + dY*10 + ScrollY, gxRGB32(128, 128, 192), 0.5f);
-        
-        return true;
-    }
-    
-    return false;
-}
-
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                  General purpose display                                                                //
@@ -298,25 +270,8 @@ void UpdateDusty_Stand()
     }
     else
     {
-        // WTB - Testing a version without hopping, just jumping.
-#ifdef ALLOW_HOP
-        if ( UpdateDusty_CheckSwipeJump(90.0f, 90.0f) )
-            return;
-        
-        if ( UpdateDusty_CheckSwipeDir(0.0f, 45.0f) )
-        {
-            SetDustyState_Hop(DIRECTION_RIGHT);
-            return;
-        }
-        if ( UpdateDusty_CheckSwipeDir(180.0f, 45.0f) )
-        {
-            SetDustyState_Hop(DIRECTION_LEFT);
-            return;
-        }
-#else
         if ( UpdateDusty_CheckSwipeJump(90.0f, 180.0f) )
             return;
-#endif
     }
     
 	if (Dusty.CollideWithBottomSide == false)
@@ -456,21 +411,6 @@ void UpdateDusty_Jump()
                 return;
             }
         }
-        else
-        {
-#ifdef ALLOW_HOP
-            if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f, 10.0f) )
-            {
-                Dusty.JumpGraceTimer = 0;
-                
-                // Spawn some dust motes.
-                for (int i = 0; i < 10; i++)
-                    MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);                    
-                
-                return;
-            }
-#endif
-        }
     }
     
     // A single mid-air double jump.
@@ -571,34 +511,6 @@ void UpdateDusty_Hop()
         {
             SetDustyState_Jump( false );
         }
-    }
-    else
-    {
-#ifdef ALLOW_HOP
-        if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f) )
-            return;
-        
-        float VX, VY;
-        GetInput_NextSwipeDir(&VX, &VY);
-
-        // Change hop direction.
-        if ( Dusty.Direction == DIRECTION_LEFT )
-        {
-            if (UpdateDusty_CheckSwipeDir(0.0f, 45.0f))
-            {
-                Dusty.Direction = DIRECTION_RIGHT;
-                Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
-            }
-        }
-        if ( Dusty.Direction == DIRECTION_RIGHT )
-        {
-            if (UpdateDusty_CheckSwipeDir(180.0f, 45.0f))
-            {
-                Dusty.Direction = DIRECTION_LEFT;
-                Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
-            }
-        }
-#endif
     }
 
 	// Update animation
@@ -727,10 +639,18 @@ void UpdateDusty_JumpCommon()
                 Dusty.FloatVelocityX += 1.0f;
         }
 #elif 1
-        if ( Swipe.Count > 1 )
+        if (GetInput_GetSwipeTimeLeft() >= 1.0f/20.0f)
         {
-            float dX = SwipePoints[1].X - SwipePoints[0].X;
-            float dY = SwipePoints[1].Y - SwipePoints[0].Y;
+            float Current = GetInput_GetSwipeCurrent();
+            
+            float StartX, StartY;
+            GetInput_GetSwipePosAtTime(&StartX, &StartY, Current - 1.0f/20.0f);
+            
+            float EndX, EndY;
+            GetInput_GetSwipePosAtTime(&EndX, &EndY, Current);
+            
+            float dX = EndX - StartX;
+            float dY = EndY - StartY;
             
             float L = sqrtf(dX*dX + dY*dY);
             if (L > 1.0f)
@@ -741,7 +661,7 @@ void UpdateDusty_JumpCommon()
                     Dusty.FloatVelocityY += dY >= 0 ? 0.5f : -0.5f;
             }
             
-            GetInput_ConsumeSwipe(2.0f*Length(Dusty.FloatVelocityX, Dusty.FloatVelocityY));
+            GetInput_ConsumeSwipe(1.5f/60.0f);
         }
 #endif
     }
@@ -932,38 +852,16 @@ void UpdateDusty_WallJump()
     }
     else
     {
-#ifdef ALLOW_HOP
-        // Swipe down to fall.
-        if ( UpdateDusty_CheckSwipeDir( -90.0f, 20.0f ) )
-        {            
-            SetDustyState_Fall();
-            return;                
-        }
-        
-        if ( Dusty.Direction == DIRECTION_RIGHT )
-        {
-            if ( UpdateDusty_CheckSwipeJump(0.0f, 45.0f, 10.0f) )
-                return;
-        }
-        
-        if ( Dusty.Direction == DIRECTION_LEFT )
-        {
-            if ( UpdateDusty_CheckSwipeJump(180.0f, 45.0f, 10.0f) )
-                return;
-        }
-#else
         if ( Dusty.Direction == DIRECTION_RIGHT )
         {
             if ( UpdateDusty_CheckSwipeJump(0.0f, 90.0f) )
                 return;
         }
-        
-        if ( Dusty.Direction == DIRECTION_LEFT )
+        else
         {
             if ( UpdateDusty_CheckSwipeJump(180.0f, 90.0f) )
                 return;
         }        
-#endif
     }
 }	
 
@@ -1045,61 +943,15 @@ void UpdateDusty_CornerJump()
     }
     else
     {
-        // Let go of wall by pressing direction away from corner.
-        // Get up and walk by pressing direction towards corner.
         if ( Dusty.Direction == DIRECTION_LEFT )
         {            
-#ifdef ALLOW_HOP
-            if ( UpdateDusty_CheckSwipeJump(135.0f, 45.0f, 10.0f) )
-                return;
-            if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f, 10.0f) )
-                return;
-            
-            if ( UpdateDusty_CheckSwipeDir(225.0f, 45.0f) )
-            {
-                Dusty.FloatVelocityX = -5;
-                
-                SetDustyState_Fall();
-                return;                
-            }
-            if (UpdateDusty_CheckSwipeDir(0.0f, 45.0f) )
-            {
-                Dusty.FloatX += 48;                
-                
-                SetDustyState_Hop(DIRECTION_RIGHT);
-                return;
-            }
-#else
             if ( UpdateDusty_CheckSwipeJump(135.0f, 135.0f) )
                 return;
-#endif
         }
         else
         {
-#ifdef ALLOW_HOP
-            if ( UpdateDusty_CheckSwipeJump(45.0f, 45.0f, 10.0f) )
-                return;
-            if ( UpdateDusty_CheckSwipeJump(90.0f, 45.0f, 10.0f) )
-                return;
-            
-            if ( UpdateDusty_CheckSwipeDir(-45.0f, 45.0f) )
-            {
-                Dusty.FloatVelocityX = 5;
-                
-                SetDustyState_Fall();
-                return;                                
-            }
-            if ( UpdateDusty_CheckSwipeDir(180.0f, 45.0f) )
-            {
-                Dusty.FloatX -= 48;                
-                
-                SetDustyState_Hop(DIRECTION_LEFT);
-                return;                
-            }
-#else
             if ( UpdateDusty_CheckSwipeJump(45.0f, 135.0f) )
                 return;
-#endif
         }
     }
 }	
