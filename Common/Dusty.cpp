@@ -1191,7 +1191,7 @@ void UpdateDusty_IntroHop()
 		for (int i = 0; i < 6; i++)
 			MakeDustMote(Dusty.FloatX, Dusty.FloatY);
 
-		//// If still holding right, reset animation and continue hopping.
+		// If still holding right, reset animation and continue hopping.
 		if ( ( Dusty.Direction == DIRECTION_RIGHT && RemoteControl.MoveRight ) || 
 			 ( Dusty.Direction == DIRECTION_LEFT  && RemoteControl.MoveLeft ) )
 		{

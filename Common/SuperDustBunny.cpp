@@ -78,6 +78,9 @@ int BackgroundMusic = 1;
 
 float FPS;
 
+int PlaybackID = 2207;
+
+
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                      Initialization functions                                                           //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -107,7 +110,7 @@ void Init()
     InitSettings();
 	InitLighting();
 
-	SetGameState_StartScreen();
+    SetGameState_StartScreen();
 }
 
 void Exit()
@@ -376,6 +379,41 @@ void AdvanceToNextPage()
 	}
 }
 
+void LoadRecordingChapterAndPage()
+{
+    char* ChapterName = GetRecordingChapterName();
+    
+    CurrentChapter = -1;
+    for (int i = 0; i < NChapters; i++)
+    {
+        if (strcmp(ChapterName, Chapters[i].Name) == 0)
+        {
+            CurrentChapter = i;
+            break;
+        }
+    }
+    if (CurrentChapter == -1)
+        ReportError("Chapter '%s' required by recording %d does not exist.", ChapterName, PlaybackID);
+    
+    LoadCurrentChapter();
+    
+    char* PageName = GetRecordingPageName();
+    
+    int PageNum = -1;
+    for (int i = 0; i < Chapter.NPages; i++)
+    {
+        if (strcmp(PageName, Chapter.Pages[i].Name) == 0)
+        {
+            PageNum = i;
+            break;
+        }
+    }
+    if (PageNum == -1)
+        ReportError("Page '%s' required by recording %d does not exist.", PageName, PlaybackID);
+    
+    SetCurrentPage(PageNum);
+}
+
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                   SetGameState functions for screens                                                    //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -584,7 +622,6 @@ void UpdateGame_Playing()
         if (msX >= 384-150 && msX <= 384+150 && msY < 200)
         {
             GamePause = !GamePause;
-            GetInput_ConsumeAllSwipe();
         }
     }
 #endif
@@ -595,6 +632,11 @@ void UpdateGame_Playing()
         UpdatePauseScreen();
         return;
     }
+
+    if (Recorder.RecordingActive && Settings.ControlStyle == CONTROL_TILT)
+        RecordTiltEvents();
+    
+    UpdateRecorder();
     
     UpdateDusty();
         
@@ -653,6 +695,10 @@ void SetGameState_Transition(EGameTransition Type)
 	{
 		StartWipe(WIPE_FADE_TO_WHITE, 3.0f);
 	}
+    else if (GameTransition == GAMETRANSITION_PLAY_RECORDING)
+    {
+		StartWipe(WIPE_FADE_TO_BLACK, 2.0f);
+    }
 
 	GameState = GAMESTATE_TRANSITION;
 }
@@ -667,6 +713,7 @@ void UpdateGame_Transition()
 		{
 			LoadCurrentChapter();
 			InitChapterIntro();
+            Dusty.Lives = 3;            
 			Wipe.Middle = false;
 		}
 
@@ -729,6 +776,32 @@ void UpdateGame_Transition()
 			SetGameState_DieScreen();
 		}
 	}
+    else if (GameTransition == GAMETRANSITION_PLAY_RECORDING)
+    {
+		UpdateWipe();
+        
+		if (Wipe.Middle)
+		{
+            DownloadRecording(PlaybackID);
+
+            LoadRecordingChapterAndPage();
+
+			if (Chapter.PageNum == 0)
+                InitChapterIntro();
+            
+			Wipe.Middle = false;
+		}
+        
+		if (Wipe.Finished)
+		{
+            StartPlayback();
+            
+            if (Chapter.PageNum == 0)
+                SetGameState_ChapterIntro();
+            else
+                SetGameState_Playing();
+		}
+    }
 }
 
 void DisplayGame_Transition()
@@ -767,6 +840,18 @@ void DisplayGame_Transition()
 		}
 		DisplayWipe();
 	}
+    else if (GameTransition == GAMETRANSITION_PLAY_RECORDING)
+    {
+		if (Wipe.T < 0.5f)
+		{
+			DisplayStartScreen();
+		}
+		else
+		{
+			DisplayGame_Playing();
+		}
+		DisplayWipe();
+    }
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -828,7 +913,6 @@ void Display()
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "     Super Dust Bunny Keyboard Commands      ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Enter  - Dismiss start / win / lose screen  ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " S      - Skip all tutorials                 ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " F1     - Toggle help                        ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " F2     - Emulate iPhone display size        ");
@@ -844,9 +928,7 @@ void Display()
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Chapters:                                   ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 1      - Wade1                              ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 2      - Thomas1                            ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " 1-9    - Jump to chapter by number          ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " PgUp   - Previous page                      ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " PgDn   - Next page                          ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Ctrl+E - Edit current page                  ");
@@ -909,9 +991,6 @@ bool Update()
 	msUpdateMouse();
 #endif
 
-	// Recorder must be updated immediately after the devices are queried, before UpdateSwipe or any GetInput_Xyz calls.
-	UpdateRecorder();
-    
 #ifdef PLATFORM_WINDOWS
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Slow Motion Update                                                                    //
@@ -948,13 +1027,6 @@ bool Update()
 		DevMode = !DevMode;
 	}
 
-	// Pressing S skips all tutorials.
-	// RECORDER FIXME
-    if (kbIsKeyDown(KB_S))
-    {
-		SkipTutorials();
-    }
-	
 	// Pressing escape quits the program.
 	if (kbIsKeyDown(KB_ESCAPE))
 	{
@@ -978,28 +1050,7 @@ bool Update()
 	{
 		gxEmulateDisplaySize(GXDISPLAY_IPAD_PORTRAIT);
 	}
-
-	// PgUp and PgDown advance and retreat pages.
-	// RECORDER FIXME
-	if (kbIsKeyDown(KB_PRIOR) && !kbWasKeyDown(KB_PRIOR))
-	{
-		if (Chapter.NPages > 0)
-		{
-			StopRecording(RESULT_NONE);
-			SetCurrentPage((Chapter.PageNum+Chapter.NPages-1) % Chapter.NPages);
-			StartRecording();
-		}
-	}
-	if (kbIsKeyDown(KB_NEXT) && !kbWasKeyDown(KB_NEXT))
-	{
-		if (Chapter.NPages > 0)
-		{
-			StopRecording(RESULT_NONE);
-			SetCurrentPage((Chapter.PageNum+1) % Chapter.NPages);
-			StartRecording();
-		}
-	}
-
+    
 	// Ctrl+E key launches Tiled on the current page.
 	if (kbIsKeyDown(KB_LCONTROL) && kbIsKeyDown(KB_E) && !kbWasKeyDown(KB_E))
 	{
@@ -1008,68 +1059,40 @@ bool Update()
 		ShellExecute(NULL, NULL, "Tools\\Tiled\\Tiled.exe", Work, NULL, 0);
 	}
 
-	// Number keys switch chapters
-	// RECORDER FIXME
-	if (kbIsKeyDown(KB_1) && !kbWasKeyDown(KB_1))
-	{
-		CurrentChapter = 0;
-		LoadCurrentChapter();
-		SetGameState_Playing();
-	}
-	if (kbIsKeyDown(KB_2) && !kbWasKeyDown(KB_2))
-	{
-		CurrentChapter = 1;
-		LoadCurrentChapter();
-		SetGameState_Playing();
-	}
-	if (kbIsKeyDown(KB_3) && !kbWasKeyDown(KB_3))
-	{
-		CurrentChapter = 2;
-		LoadCurrentChapter();
-		SetGameState_Playing();
-	}
-	if (kbIsKeyDown(KB_4) && !kbWasKeyDown(KB_4))
-	{
-		CurrentChapter = 3;
-		LoadCurrentChapter();
-	    SetGameState_Playing();
-	}
-    if (kbIsKeyDown(KB_5) && !kbWasKeyDown(KB_5))
-	{
-		CurrentChapter = 4;
-		LoadCurrentChapter();
-	    SetGameState_Playing();
-	}
-	if (kbIsKeyDown(KB_6) && !kbWasKeyDown(KB_6))
-	{
-		CurrentChapter = 5;
-		LoadCurrentChapter();
-	    SetGameState_Playing();
-	}
-	if (kbIsKeyDown(KB_7) && !kbWasKeyDown(KB_7))
-	{
-		CurrentChapter = 6;
-		LoadCurrentChapter();
-	    SetGameState_Playing();
-	}
-	if (kbIsKeyDown(KB_8) && !kbWasKeyDown(KB_8))
-	{
-		CurrentChapter = 7;
-		LoadCurrentChapter();
-	    SetGameState_Playing();
-	}
-	if (kbIsKeyDown(KB_9) && !kbWasKeyDown(KB_9))
-	{
-		CurrentChapter = 8;
-		LoadCurrentChapter();
-	    SetGameState_Playing();
-	}
-	if (kbIsKeyDown(KB_0) && !kbWasKeyDown(KB_0))
-	{
-		CurrentChapter = 9;
-		LoadCurrentChapter();
-		SetGameState_Playing();
-	}
+	if (!Recorder.PlaybackActive)  // Chapter jumping currently disallowed during playback.
+    {
+        // PgUp and PgDown advance and retreat pages.
+        if (kbIsKeyDown(KB_PRIOR) && !kbWasKeyDown(KB_PRIOR))
+        {
+            if (Chapter.NPages > 0)
+            {
+                StopRecording(RESULT_NONE);
+                SetCurrentPage((Chapter.PageNum+Chapter.NPages-1) % Chapter.NPages);
+                StartRecording();
+            }
+        }
+        if (kbIsKeyDown(KB_NEXT) && !kbWasKeyDown(KB_NEXT))
+        {
+            if (Chapter.NPages > 0)
+            {
+                StopRecording(RESULT_NONE);
+                SetCurrentPage((Chapter.PageNum+1) % Chapter.NPages);
+                StartRecording();
+            }
+        }
+
+        // Number keys switch chapters
+        for (int i = KB_1; i <= KB_9; i++)
+        {
+            if (kbIsKeyDown(i) && !kbWasKeyDown(i))
+            {
+                StopRecording(RESULT_NONE);
+                CurrentChapter = i-1;
+                LoadCurrentChapter();
+                SetGameState_Playing();
+            }
+        }
+    }
 #endif
     
 #ifdef PLATFORM_IPHONE

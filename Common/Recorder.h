@@ -20,6 +20,15 @@ enum ERecordingEndType
 	RESULT_QUIT,
 };
 
+enum ERecordingEventType
+{
+    EVENT_TILT           = 0,
+    
+    EVENT_SWIPE_BEGIN    = 1,
+    EVENT_SWIPE_POINT    = 2,
+    EVENT_SWIPE_END      = 3
+};
+
 struct SRecorder
 {
 	bool RecordingActive;
@@ -46,5 +55,15 @@ void StartPlayback();
 void StopPlayback();
 
 void UpdateRecorder();
+
+void RecordSwipeEvent(int Type, float X, float Y, float Time);
+void RecordTiltEvents();
+
+void UploadRecording();
+void DownloadRecording(int id);
+
+char* GetRecordingChapterName();
+char* GetRecordingPageName();
+int GetRecordingStartLives();
 
 #endif

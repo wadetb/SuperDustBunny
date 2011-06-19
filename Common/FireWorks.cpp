@@ -60,8 +60,8 @@ struct SFireWorkTrail
 
 SFireWorkTrail FireWorkTrails[MAX_FIREWORK_TRAILS];
 
-int FirstInactiveFireWorkTrail = -1;
-int FirstActiveFireWorkTrail = -1;
+int FirstInactiveFireWorkTrail = MAX_FIREWORK_TRAILS;
+int FirstActiveFireWorkTrail = MAX_FIREWORK_TRAILS;
 
 
 unsigned int FireWorkColors[] =

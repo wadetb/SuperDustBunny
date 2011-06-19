@@ -60,8 +60,8 @@ struct SStartScreen
 
 SStartScreen StartScreen;
 
-
 const float StartScreenSpacing = 470.0f;
+
 
 void InitStartScreen()
 {
@@ -81,9 +81,11 @@ void StartScreen_Advance()
     
 	if (StartScreen.CurItem == STARTSCREEN_ITEM_START)
 	{
-		Dusty.Lives = 3;
-
-		SetGameState_Transition(GAMETRANSITION_FIRST_PAGE);
+        extern int PlaybackID;
+        if (PlaybackID >= 0)
+            SetGameState_Transition(GAMETRANSITION_PLAY_RECORDING);
+        else
+            SetGameState_Transition(GAMETRANSITION_FIRST_PAGE);
 	}
 	else if (StartScreen.CurItem == STARTSCREEN_ITEM_HELP)
 	{

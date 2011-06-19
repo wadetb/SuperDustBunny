@@ -144,6 +144,9 @@ void GetInput_BeginSwipe(float X, float Y, double Time)
     SwipePoints[0].Time = 0;
     Swipe.StartTime = Time;
     Swipe.Current = 0;
+    
+    if ( Recorder.RecordingActive )
+        RecordSwipeEvent(EVENT_SWIPE_BEGIN, X, Y, 0);
 }
 
 void GetInput_AddToSwipe(float X, float Y, double Time)
@@ -155,6 +158,9 @@ void GetInput_AddToSwipe(float X, float Y, double Time)
         SwipePoints[Swipe.Count].Time = (float)(Time - Swipe.StartTime);
         Swipe.Count++;
         Swipe.Duration = Time - Swipe.StartTime;
+
+        if ( Recorder.RecordingActive )
+            RecordSwipeEvent(EVENT_SWIPE_POINT, X, Y, (float)(Time - Swipe.StartTime));
     }
 }
 
@@ -167,6 +173,9 @@ void GetInput_EndSwipe(float X, float Y, double Time)
         SwipePoints[Swipe.Count].Time = (float)(Time - Swipe.StartTime);
         Swipe.Count++;    
         Swipe.Duration = Time - Swipe.StartTime;
+        
+        if ( Recorder.RecordingActive )
+            RecordSwipeEvent(EVENT_SWIPE_END, X, Y, (float)(Time - Swipe.StartTime));
     }
 }
 
