@@ -158,24 +158,47 @@ void DownloadRecording(int id)
     if (Recorder.RecordingActive || Recorder.PlaybackActive)
 		ReportError("Cannot download recording when recording or playback is active.");
 
-    const void* Data = NULL;
+#ifdef PLATFORM_WINDOWS
+    void* Data = NULL;
     int DataSize = 0;
     
-#ifdef PLATFORM_WINDOWS
+    wchar_t URL[1024];
+    _snwprintf(URL, sizeof(URL), L"/sdb/getrecording.php?id=%d", id);
+
 	DWORD dwBytesWritten = 0;
 	HINTERNET hSession = WinHttpOpen(L"Super Dust Bunny", WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
 	HINTERNET hConnect = WinHttpConnect(hSession, L"pluszerogames.com", INTERNET_DEFAULT_HTTP_PORT, 0);
-	HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"POST", L"/sdb/recording.php", NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, 0);
+	HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"GET", URL, NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, 0);
     
-	WinHttpSendRequest(hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, Data, DataSize, DataSize, 0);
-	WinHttpReceiveResponse(hRequest, NULL);
+	if (!WinHttpSendRequest(hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, NULL, 0, 0, 0))
+        ReportError("Recorder download failed.  Win32 error code: 0x%x", GetLastError());
+
+	if (!WinHttpReceiveResponse(hRequest, NULL))
+        ReportError("Recorder download failed.  Win32 error code: 0x%x", GetLastError());
     
+    DWORD dwBytesAvailable;
+    if (!WinHttpQueryDataAvailable(hRequest, &dwBytesAvailable))
+        ReportError("Recorder download failed.  Win32 error code: 0x%x", GetLastError());
+
+    LPVOID lpBytes;
+    lpBytes = malloc(dwBytesAvailable);
+
+    DWORD dwBytesRead;
+    if (!WinHttpReadData(hRequest, lpBytes, dwBytesAvailable, &dwBytesRead))
+        ReportError("Recorder download failed.  Win32 error code: 0x%x", GetLastError());
+
+    Data = lpBytes;
+    DataSize = dwBytesRead;
+
 	WinHttpCloseHandle(hRequest);
 	WinHttpCloseHandle(hConnect);
 	WinHttpCloseHandle(hSession);
 #endif
     
 #ifdef PLATFORM_IPHONE
+    const void* Data = NULL;
+    int DataSize = 0;
+    
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:
                                     [NSURL URLWithString:
                                      [NSString stringWithFormat: @"http://www.pluszerogames.com/sdb/getrecording.php?id=%d", id]]];
@@ -185,11 +208,11 @@ void DownloadRecording(int id)
     NSURLResponse *response;
     NSData* result = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil];
     
-    if (result)
-    {
-        Data = [result bytes];
-        DataSize = [result length];
-    }
+    if (!result)
+        ReportError("Recorder download failed.");
+
+    Data = [result bytes];
+    DataSize = [result length];
 #endif
 
     if (DataSize < sizeof(SRecorderHeader))
@@ -202,6 +225,10 @@ void DownloadRecording(int id)
     memcpy(RecorderEventBuffer, (char*)Data + sizeof(SRecorderHeader), DataSize - sizeof(SRecorderHeader));
     
     // TODO: Additional checking of downloaded data, CRC or size.
+
+#ifdef PLATFORM_WINDOWS
+    free(Data);
+#endif
 }
 
 void StartRecording()
