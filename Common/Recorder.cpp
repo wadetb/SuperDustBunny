@@ -142,12 +142,12 @@ void UploadRecording()
     [request setHTTPBody:data];
     
     // Asynchronnous:
-    //[NSURLConnection connectionWithRequest:request delegate:nil];
+    [NSURLConnection connectionWithRequest:request delegate:nil];
     
     // Synchronous, for testing:
-    NSURLResponse *response;
-    NSData* result = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil];
-    NSLog(@"HTTP post response:\n%@\n\n", [[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding]);
+    //NSURLResponse *response;
+    //NSData* result = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil];
+    //NSLog(@"HTTP post response:\n%@\n\n", [[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding]);
 #endif
     
 	free(Data);

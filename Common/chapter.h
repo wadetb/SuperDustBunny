@@ -136,6 +136,8 @@ struct SChapter
 struct SChapterListEntry
 {
     char* Name;
+    bool HasBackground;
+    gxSprite BackgroundSprite;
 };
 
 

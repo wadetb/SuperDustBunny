@@ -10,6 +10,7 @@
 #include "Common.h"
 #include "StartScreen.h"
 #include "Dusty.h"
+#include "Chapter.h"
 
 #ifdef PLATFORM_IPHONE
 #import "SuperDustBunnyViewController.h"
@@ -19,34 +20,24 @@
 enum 
 {
 	STARTSCREEN_ITEM_HELP,
-	STARTSCREEN_ITEM_START,
 	STARTSCREEN_ITEM_CREDITS,
-	STARTSCREEN_ITEM_COUNT
-};
-
-gxSprite* StartScreenIcons[STARTSCREEN_ITEM_COUNT] =
-{
-	&IconHelp1Sprite,
-	&IconStart1Sprite,
-	&IconCredits1Sprite,
-};
-
-gxSprite* StartScreenPressedIcons[STARTSCREEN_ITEM_COUNT] =
-{
-	&IconHelp2Sprite,
-	&IconStart2Sprite,
-	&IconCredits2Sprite
+    STARTSCREEN_ITEM_NON_CHAPTER_COUNT,
+    
+	STARTSCREEN_ITEM_FIRST_CHAPTER = STARTSCREEN_ITEM_NON_CHAPTER_COUNT,
 };
 
 
 struct SStartScreen
 {
 	int CurItem;
+    int PrevItem;
 	
-	float X;
-	float PrevX;
 	float DragX;
+	float DragStartX;
+    float DisplayX;
 
+    float BackgroundFadeAlpha;
+    
 	bool Dragging;
 	bool Pressed;
     
@@ -61,13 +52,58 @@ struct SStartScreen
 SStartScreen StartScreen;
 
 const float StartScreenSpacing = 470.0f;
+const float StartScreenDragSpacing = 235.0f;
 
+
+gxSprite* GetStartScreenIcon(int Item)
+{
+    if (Item == STARTSCREEN_ITEM_HELP)
+        return &IconHelp1Sprite;
+    
+    if (Item == STARTSCREEN_ITEM_CREDITS)
+        return &IconCredits1Sprite;
+    
+	return &IconStart1Sprite;
+}
+
+gxSprite* GetStartScreenPressedIcon(int Item)
+{
+    if (Item == STARTSCREEN_ITEM_HELP)
+        return &IconHelp2Sprite;
+    
+    if (Item == STARTSCREEN_ITEM_CREDITS)
+        return &IconCredits2Sprite;
+    
+	return &IconStart2Sprite;
+}
+
+gxSprite* GetStartScreenBackground(int Item)
+{
+    if (Item == STARTSCREEN_ITEM_HELP)
+        return &BackgroundFridgeSprite;
+    
+    if (Item == STARTSCREEN_ITEM_CREDITS)
+        return &BackgroundFridgeSprite;
+    
+    SChapterListEntry* Chapter = &Chapters[Item - STARTSCREEN_ITEM_FIRST_CHAPTER];
+    if (Chapter->HasBackground)
+        return &Chapter->BackgroundSprite;
+    else
+        return &BackgroundFridgeSprite;
+}
+
+int GetStartScreenItemCount()
+{
+    return STARTSCREEN_ITEM_NON_CHAPTER_COUNT + NChapters;
+}
 
 void InitStartScreen()
 {
-	StartScreen.CurItem = STARTSCREEN_ITEM_START;
-	StartScreen.X = StartScreen.CurItem * StartScreenSpacing;
-	StartScreen.PrevX = StartScreen.X;
+	StartScreen.CurItem = STARTSCREEN_ITEM_FIRST_CHAPTER + CurrentChapter;
+    StartScreen.PrevItem = StartScreen.CurItem;
+    StartScreen.BackgroundFadeAlpha = 0.0f;
+	StartScreen.DragX = StartScreen.CurItem * StartScreenDragSpacing;
+	StartScreen.DisplayX = StartScreen.CurItem * StartScreenSpacing;
     StartScreen.PressedTime = 0.0f;
     StartScreen.ReleasedAtLeastOnce = false;
 }
@@ -79,8 +115,9 @@ void StartScreen_Advance()
     StartScreen.PressedTime = 0.0f;
     StartScreen.ReleasedAtLeastOnce = false;
     
-	if (StartScreen.CurItem == STARTSCREEN_ITEM_START)
+	if (StartScreen.CurItem >= STARTSCREEN_ITEM_FIRST_CHAPTER)
 	{
+        CurrentChapter = StartScreen.CurItem - STARTSCREEN_ITEM_FIRST_CHAPTER;
         extern int PlaybackID;
         if (PlaybackID >= 0)
             SetGameState_Transition(GAMETRANSITION_PLAY_RECORDING);
@@ -102,15 +139,15 @@ void StartScreen_Advance()
 
 void DisplayStartScreen()
 {
-	AddLitSprite(LIGHTLIST_BACKGROUND, &BackgroundFridgeSprite, 0, 0);
-	AddLitSprite(LIGHTLIST_BACKGROUND, &BackgroundFridgeSprite, 0, 1024);
+	AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, GetStartScreenBackground(StartScreen.CurItem), -384, -256, 1152, 1536, 1.0f-StartScreen.BackgroundFadeAlpha);
+	AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, GetStartScreenBackground(StartScreen.PrevItem), -384, -256 , 1152, 1536, StartScreen.BackgroundFadeAlpha);
 
     float Scale = Lerp(StartScreen.StartupTime, 0.0f, 0.8f, 2.0f, 1.0f);
     AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &LogoSprite, 384, 280, Scale, 1.0f);
 
-	for (int i = 0; i < STARTSCREEN_ITEM_COUNT; i++)
+	for (int i = 0; i < GetStartScreenItemCount(); i++)
 	{
-        float X = 384 + i*StartScreenSpacing - StartScreen.X;
+        float X = 384 + i*StartScreenSpacing - StartScreen.DisplayX;
         float Y = LitScreenHeight * 0.7f;
 
         float Scale = Remap(fabsf(384-X), 0.0f, 500.0f, 0.9f, 0.6f, true);
@@ -118,12 +155,12 @@ void DisplayStartScreen()
         if (i == StartScreen.CurItem)
         {
             float OverlayAlpha = SinWave(StartScreen.PressedTime, 1.0f);
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, StartScreenIcons[i], X, Y, Scale, 1.0f);
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, StartScreenPressedIcons[i], X, Y, Scale, OverlayAlpha);
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, GetStartScreenIcon(i), X, Y, Scale, 1.0f);
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, GetStartScreenPressedIcon(i), X, Y, Scale, OverlayAlpha);
         }
         else
         {
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, StartScreenIcons[i], X, Y, Scale, 1.0f);
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, GetStartScreenIcon(i), X, Y, Scale, 1.0f);
         }
 	}
 
@@ -176,11 +213,11 @@ void UpdateStartScreen()
 
 	if (kbIsKeyDown(KB_A))
 	{
-		StartScreen.X -= 100;
+		StartScreen.DragX -= 100;
 	}
 	if (kbIsKeyDown(KB_D))
 	{
-		StartScreen.X += 100;
+		StartScreen.DragX += 100;
 	}
 #endif
 
@@ -200,16 +237,14 @@ void UpdateStartScreen()
 
 			StartScreen.Dragging = false;
 			StartScreen.Pressed = false;
-
-            StartScreen.CurItem = (int)Round(StartScreen.X / StartScreenSpacing);
         }
 		else 
 		{
-			if (abs(msX - StartScreen.DragX) > 10)
+			if (abs(msX - StartScreen.DragStartX) > 10)
 				StartScreen.Pressed = false;
 
-			StartScreen.X += StartScreen.DragX - msX;
-			StartScreen.DragX = (float)msX;
+			StartScreen.DragX += StartScreen.DragStartX - msX;
+			StartScreen.DragStartX = (float)msX;
 		}        
 	}
 	else
@@ -218,22 +253,27 @@ void UpdateStartScreen()
 		{
 			StartScreen.Pressed = true;
 			StartScreen.Dragging = true;
-			StartScreen.DragX = (float)msX;
+			StartScreen.DragStartX = (float)msX;
             StartScreen.PressedTime = 0.0f;
-		}
-		else 
-		{
-			StartScreen.X = StartScreen.X * 0.8f + StartScreen.CurItem * StartScreenSpacing * 0.2f;
-			StartScreen.X = StartScreen.X + (StartScreen.X-StartScreen.PrevX) * 0.25f;
 		}
 	}
 
-    if (StartScreen.X < 0)
-		StartScreen.X = 0;
-	if (StartScreen.X >= (STARTSCREEN_ITEM_COUNT-1)*StartScreenSpacing)
-		StartScreen.X = (STARTSCREEN_ITEM_COUNT-1)*StartScreenSpacing;
+    if (StartScreen.DragX < 0)
+		StartScreen.DragX = 0;
+	if (StartScreen.DragX >= (GetStartScreenItemCount()-1)*StartScreenDragSpacing)
+		StartScreen.DragX = (GetStartScreenItemCount()-1)*StartScreenDragSpacing;
 
-	StartScreen.PrevX = StartScreen.X;
+    int NewItem = (int)Round(StartScreen.DragX / StartScreenDragSpacing);
+    if (NewItem != StartScreen.CurItem)
+    {
+        StartScreen.PrevItem = StartScreen.CurItem;
+        StartScreen.CurItem = NewItem;
+        StartScreen.BackgroundFadeAlpha = 1.0f;
+    }
+    
+    StartScreen.BackgroundFadeAlpha *= 0.9f;
+    
+    StartScreen.DisplayX = ( StartScreen.CurItem * StartScreenSpacing ) * 0.1f + StartScreen.DisplayX * 0.9f;
     
     if (StartScreen.Pressed)
     {

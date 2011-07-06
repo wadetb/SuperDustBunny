@@ -166,6 +166,9 @@ SuperDustBunnyViewController *theViewController;
 
 - (void)displayLinkFrame
 {
+    if (paused)
+        return;
+    
     if (wasPaused)
     {
         lastTimeStamp = displayLink.timestamp;

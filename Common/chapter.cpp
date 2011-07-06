@@ -1001,12 +1001,23 @@ void LoadChapterList()
         rapidxml::xml_attribute<char>* NameAttr = ChapterNode->first_attribute("Name");
         if (NameAttr == NULL)
             ReportError("Chapter is missing the Name attribute.  Check for errors in the XML.");
-            
+        
         if (NChapters >= MAX_CHAPTERS)
             ReportError("Exceeded the maximum of %d chapters.", MAX_CHAPTERS);
 
         SChapterListEntry* Chapter = &Chapters[NChapters];
+        
         Chapter->Name = strdup(NameAttr->value());
+        
+        rapidxml::xml_attribute<char>* BackgroundAttr = ChapterNode->first_attribute("Background");
+        if (BackgroundAttr)
+        {
+            LoadSpriteAsset(BackgroundAttr->value(), &Chapter->BackgroundSprite);
+            Chapter->HasBackground = true;
+        }
+        else
+            Chapter->HasBackground = false;
+
         NChapters++;
         
 		ChapterNode = ChapterNode->next_sibling("Chapter");

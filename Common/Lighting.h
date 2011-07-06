@@ -62,8 +62,10 @@ SLitVertex* AddLitQuad(ELightList List, gxSprite* Sprite, int NVerts);
 void AddLitSprite(ELightList List, gxSprite* Sprite, float X, float Y);
 void AddLitSpriteScaled(ELightList List, gxSprite* Sprite, float X, float Y, float ScaleX, float ScaleY);
 void AddLitSpriteAlpha(ELightList List, gxSprite* Sprite, float X, float Y, float Alpha);
+void AddLitSpriteScaledAlpha(ELightList List, gxSprite* Sprite, float X, float Y, float ScaleX, float ScaleY, float Alpha);
 
 void AddLitSpriteSized(ELightList List, gxSprite* Sprite, float X, float Y, float SizeX, float SizeY);
+void AddLitSpriteSizedAlpha(ELightList List, gxSprite* Sprite, float X, float Y, float SizeX, float SizeY, float Alpha);
 void AddLitSpriteSizedColor(ELightList List, gxSprite* Sprite, float X, float Y, float SizeX, float SizeY, unsigned int Color);
 
 void AddLitSpriteCenteredScaledAlpha(ELightList List, gxSprite* Sprite, float X, float Y, float Scale, float Alpha);

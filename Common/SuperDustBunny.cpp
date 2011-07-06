@@ -193,12 +193,12 @@ void ReportError(const char* ErrorMessage, ...)
 #endif
 
 #ifdef PLATFORM_IPHONE
-	printf("SuperDustBunny Error: %s\n", Work);
+	printf("SuperDustBunny Error: %s\n", TotalMessage);
     
     theViewController.paused = TRUE;
 
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"SuperDustBunny Error"
-                                                    message:[NSString stringWithUTF8String:Work]
+                                                    message:[NSString stringWithUTF8String:TotalMessage]
                                                    delegate:theViewController
                                           cancelButtonTitle:@"OK"
                                           otherButtonTitles:nil];
