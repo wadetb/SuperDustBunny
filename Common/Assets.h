@@ -79,24 +79,6 @@ extern gxSprite CoinSpin4Sprite;
 extern gxSprite CoinSpin5Sprite;
 extern gxSprite CoinSpin6Sprite;
 
-extern gxSprite CoinLife1Sprite;
-extern gxSprite CoinLife2Sprite;
-extern gxSprite CoinLife3Sprite;
-extern gxSprite CoinLife4Sprite;
-extern gxSprite CoinLife5Sprite;
-extern gxSprite CoinLife6Sprite;
-
-extern gxSprite ScoreNumber0Sprite;
-extern gxSprite ScoreNumber1Sprite;
-extern gxSprite ScoreNumber2Sprite;
-extern gxSprite ScoreNumber3Sprite;
-extern gxSprite ScoreNumber4Sprite;
-extern gxSprite ScoreNumber5Sprite;
-extern gxSprite ScoreNumber6Sprite;
-extern gxSprite ScoreNumber7Sprite;
-extern gxSprite ScoreNumber8Sprite;
-extern gxSprite ScoreNumber9Sprite;
-
 extern gxSprite FullScoreSprite;
 
 extern gxSprite ButtonPauseSprite;
@@ -134,10 +116,10 @@ extern gxSprite DustArrowSprite;
 
 extern gxSprite FireWorkRocketSprite;
 
-extern gxSprite VacuumFrontSprite;
 extern gxSprite Vacuum1Sprite;
 extern gxSprite Vacuum2Sprite;
 extern gxSprite Vacuum3Sprite;
+extern gxSprite VacuumSmokeSprite;
 
 extern gxSprite ScreenStart1Sprite;
 extern gxSprite ScreenStart2Sprite;

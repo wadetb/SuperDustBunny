@@ -176,9 +176,13 @@ SuperDustBunnyViewController *theViewController;
     }
     
     CFTimeInterval t = lastTimeStamp;
+    int count = 0;
+    
     while (t < displayLink.timestamp + displayLink.duration)
     {
-        Update();
+        if (count < 3)
+            Update();
+        count++;
         t += displayLink.duration;
     }
     lastTimeStamp = t;

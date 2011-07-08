@@ -79,24 +79,6 @@ gxSprite CoinSpin4Sprite;
 gxSprite CoinSpin5Sprite;
 gxSprite CoinSpin6Sprite;
 
-gxSprite CoinLife1Sprite;
-gxSprite CoinLife2Sprite;
-gxSprite CoinLife3Sprite;
-gxSprite CoinLife4Sprite;
-gxSprite CoinLife5Sprite;
-gxSprite CoinLife6Sprite;
-
-gxSprite ScoreNumber0Sprite;
-gxSprite ScoreNumber1Sprite;
-gxSprite ScoreNumber2Sprite;
-gxSprite ScoreNumber3Sprite;
-gxSprite ScoreNumber4Sprite;
-gxSprite ScoreNumber5Sprite;
-gxSprite ScoreNumber6Sprite;
-gxSprite ScoreNumber7Sprite;
-gxSprite ScoreNumber8Sprite;
-gxSprite ScoreNumber9Sprite;
-
 gxSprite FullScoreSprite;
 
 gxSprite ButtonPauseSprite;
@@ -134,10 +116,10 @@ gxSprite DustArrowSprite;
 
 gxSprite FireWorkRocketSprite;
 
-gxSprite VacuumFrontSprite;
 gxSprite Vacuum1Sprite;
 gxSprite Vacuum2Sprite;
 gxSprite Vacuum3Sprite;
+gxSprite VacuumSmokeSprite;
 
 gxSprite ScreenStart1Sprite;
 gxSprite ScreenStart2Sprite;
@@ -842,24 +824,6 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/coin-spin-5.png", &CoinSpin5Sprite);
 	LoadSpriteAsset("Assets/coin-spin-6.png", &CoinSpin6Sprite);
 
-	LoadSpriteAsset("Assets/coin-lives-1.png", &CoinLife1Sprite);
-	LoadSpriteAsset("Assets/coin-lives-2.png", &CoinLife2Sprite);
-	LoadSpriteAsset("Assets/coin-lives-3.png", &CoinLife3Sprite);
-	LoadSpriteAsset("Assets/coin-lives-4.png", &CoinLife4Sprite);
-	LoadSpriteAsset("Assets/coin-lives-5.png", &CoinLife5Sprite);
-	LoadSpriteAsset("Assets/coin-lives-6.png", &CoinLife6Sprite);
-	
-    LoadSpriteAsset("Assets/number-0.png", &ScoreNumber0Sprite);
-    LoadSpriteAsset("Assets/number-1.png", &ScoreNumber1Sprite);
-    LoadSpriteAsset("Assets/number-2.png", &ScoreNumber2Sprite);
-    LoadSpriteAsset("Assets/number-3.png", &ScoreNumber3Sprite);
-    LoadSpriteAsset("Assets/number-4.png", &ScoreNumber4Sprite);
-    LoadSpriteAsset("Assets/number-5.png", &ScoreNumber5Sprite);
-    LoadSpriteAsset("Assets/number-6.png", &ScoreNumber6Sprite);
-    LoadSpriteAsset("Assets/number-7.png", &ScoreNumber7Sprite);
-    LoadSpriteAsset("Assets/number-8.png", &ScoreNumber8Sprite);
-    LoadSpriteAsset("Assets/number-9.png", &ScoreNumber9Sprite);
-    
     LoadSpriteAsset("Assets/full-score.png", &FullScoreSprite);
 	
     LoadSpriteAsset("Assets/button-pause.png", &ButtonPauseSprite);
@@ -897,10 +861,10 @@ void LoadAssets()
 
 	LoadSpriteAsset("Assets/firework-rocket.png", &FireWorkRocketSprite);
 
-	LoadSpriteAsset("Assets/vacuum-front.png", &VacuumFrontSprite);
 	LoadSpriteAsset("Assets/vacuum-1.png", &Vacuum1Sprite);
 	LoadSpriteAsset("Assets/vacuum-2.png", &Vacuum2Sprite);
 	LoadSpriteAsset("Assets/vacuum-3.png", &Vacuum3Sprite);
+	LoadSpriteAsset("Assets/vacuum-smoke.png", &VacuumSmokeSprite);
 
 	LoadSpriteAsset("Assets/screen-start-1.png", &ScreenStart1Sprite);
 	LoadSpriteAsset("Assets/screen-start-2.png", &ScreenStart2Sprite);

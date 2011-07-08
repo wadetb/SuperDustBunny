@@ -1059,8 +1059,8 @@ void AddLitSpriteCenteredScaledRotatedAlpha(ELightList List, gxSprite* Sprite, f
 	float ca = cosf(Angle);
 	float sa = sinf(Angle);
 
-	float w = (float)Sprite->width * 0.5f;
-	float h = (float)Sprite->height * 0.5f;
+	float w = Scale * (float)Sprite->width * 0.5f;
+	float h = Scale * (float)Sprite->height * 0.5f;
 
 	AddLitQuad(List, Sprite, gxRGBA32(255,255,255,(int)(255*Alpha)),
 		X + (-w * ca) - (-h * sa),    Y + (-w * sa) + (-h * ca),    0.0f, 0.0f, 

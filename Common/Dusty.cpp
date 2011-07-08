@@ -1433,11 +1433,13 @@ void UpdateDusty_Collision()
 					if (BlockID < SPECIALBLOCKID_FIRST)
 					{			
 						SBlock* Block = &Chapter.Blocks[BlockID];
-												        						
+
+#ifndef PLATFORM_IPHONE
 						if (Dusty.CollideMaterial == MATERIAL_NORMAL)
 						{
 							Dusty.CollideMaterial = Block->Material;
 						}
+#endif
 
 						if (Block->Type == BLOCKTYPE_NAIL && Dusty.State != DUSTYSTATE_HURT)
 						{

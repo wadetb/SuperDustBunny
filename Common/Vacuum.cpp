@@ -23,6 +23,105 @@ const int VACUUM_UNJAM_TIME   = 1*60;
 const float VacuumYOffset = 100;
 
 
+#define MAX_VACUUM_SMOKE 150
+
+
+struct SVacuumSmoke
+{
+    float Age;
+    float Life;
+    float Birth;
+    float Alpha;
+    float X, Y;
+    float Scale;
+    float Angle;
+    float VX, VY;
+    float VScale;
+    float VAngle;
+};
+
+
+SVacuumSmoke VacuumSmoke[MAX_VACUUM_SMOKE];
+
+int NextVacuumSmoke = 0;
+
+void InitVacuumSmoke()
+{
+    memset(VacuumSmoke, 0, sizeof(VacuumSmoke));    
+}
+
+void DisplayVacuumSmoke()
+{
+    for (int i = 0; i < MAX_VACUUM_SMOKE; i++)
+    {
+        SVacuumSmoke* Smoke = &VacuumSmoke[i];
+        
+        if (Smoke->Age >= Smoke->Life)
+            continue;
+        
+        float Alpha = Smoke->Alpha;
+        Alpha *= Remap(Smoke->Age, 0, Smoke->Life*1.0f/3.0f, 0.0f, 1.0f, true);
+        Alpha *= Remap(Smoke->Age, Smoke->Life*2.0f/3.0f, Smoke->Life, 1.0f, 0.0f, true);
+    
+        AddLitSpriteCenteredScaledRotatedAlpha(LIGHTLIST_DUST, &VacuumSmokeSprite, Smoke->X, Smoke->Y + ScrollY, Smoke->Scale, Smoke->Angle, Alpha);
+    }
+}
+
+void UpdateVacuumSmoke()
+{
+    for (int i = 0; i < MAX_VACUUM_SMOKE; i++)
+    {
+        SVacuumSmoke* Smoke = &VacuumSmoke[i];
+        
+        Smoke->Age += 1.0f/15.0f;
+
+        if (Smoke->Age >= Smoke->Life)
+            continue;
+        
+        Smoke->X += Smoke->VX;
+        Smoke->Y += Smoke->VY;
+        Smoke->Scale += Smoke->VScale;
+        Smoke->Angle += Smoke->VAngle;
+        
+        if (Smoke->Scale > 1.5f)
+            Smoke->Scale = 1.5f;
+        
+        Smoke->VX *= 0.95f;
+        Smoke->VY *= 0.95f;
+        Smoke->VAngle *= 0.99f;
+    }
+}
+
+void CreateVacuumSmoke(int Count)
+{
+    for (int i = 0; i < Count; i++)
+    {
+        SVacuumSmoke* Smoke = &VacuumSmoke[NextVacuumSmoke];
+        
+        NextVacuumSmoke++;
+        if (NextVacuumSmoke >= MAX_VACUUM_SMOKE)
+            NextVacuumSmoke = 0;
+        
+        Smoke->Age = 0.0f;
+        Smoke->Life = Random(9.0f, 10.0f);
+        Smoke->Birth = Random(0.0f, 0.25f);
+        
+        Smoke->Alpha = 0.65f;
+        
+        Smoke->X = Random(384.0f - 75.0f, 384.0f + 75.0f);
+        Smoke->Y = Random(Vacuum.Y + 150.0f, Vacuum.Y + 200.0f);
+        Smoke->VX = Random(-5.0f, 5.0f);
+        Smoke->VY = Random(-5.0f, -10.0f);
+        
+        Smoke->Scale = Random(0.75f, 1.25f);
+        Smoke->VScale = Random(0.002f, 0.01f);
+        
+        Smoke->Angle = Random(DegreesToRadians(0), DegreesToRadians(360.0f));
+        Smoke->VAngle = Random(DegreesToRadians(-1), DegreesToRadians(1));
+    }
+    
+}
+
 void InitVacuum()
 {
 	Vacuum.Dir = (EVacuumDir)Chapter.PageProps.VacuumDir;
@@ -45,16 +144,22 @@ void DisplayVacuum()
 	if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
         gxSprite* Sprite;
-        switch (Vacuum.BlinkTimer/6)
-        {
-            case 0: Sprite = &Vacuum1Sprite; break;
-            case 1: Sprite = &Vacuum2Sprite; break;
-            case 2: Sprite = &Vacuum3Sprite; break;
-            case 3: Sprite = &Vacuum2Sprite; break;
-            case 4: Sprite = &Vacuum1Sprite; break;
-            default: Sprite = &Vacuum1Sprite; break;
-        }
         
+        if (Vacuum.State == VACUUMSTATE_RETREAT)
+            Sprite = &Vacuum3Sprite;
+        else
+        {
+            switch (Vacuum.BlinkTimer/6)
+            {
+                case 0: Sprite = &Vacuum1Sprite; break;
+                case 1: Sprite = &Vacuum2Sprite; break;
+                case 2: Sprite = &Vacuum3Sprite; break;
+                case 3: Sprite = &Vacuum2Sprite; break;
+                case 4: Sprite = &Vacuum1Sprite; break;
+                default: Sprite = &Vacuum1Sprite; break;
+            }
+        }
+            
 		if (Vacuum.Dir == VACUUMDIR_UP)
 			AddLitSpriteScaled(LIGHTLIST_VACUUM, Sprite, 0, Vacuum.Y + ScrollY - VacuumYOffset, 1.0f, 1.0f);
 		else
@@ -69,6 +174,8 @@ void DisplayVacuum()
 		}
 	}
 
+    DisplayVacuumSmoke();
+    
 	if (DevMode)
 	{
 		gxDrawString(5, 64, 16, 0xffffffff, "Vacuum State=%d Timer=%d y=%d\n      [On%02d Jam%02d TOn%02d TOff%02d]", 
@@ -143,6 +250,8 @@ void UpdateVacuum()
 	if (Chapter.PageProps.VacuumOff || Settings.DisableVacuum)
 		return;
 
+    UpdateVacuumSmoke();
+    
 	if (Vacuum.State == VACUUMSTATE_FAR)
 	{
 		// Place the vacuum far off screen for dust purposes.
@@ -198,6 +307,9 @@ void UpdateVacuum()
 	{
 		Vacuum.Timer--;
 
+        if ((Vacuum.Timer % 20 == 0))
+            CreateVacuumSmoke(1);
+
 		// Move the vacuum back down the screen.
 		if (Vacuum.Dir == VACUUMDIR_UP)
 			Vacuum.Y += 5;
@@ -226,6 +338,12 @@ void UpdateVacuum()
         LitSceneOffsetY = Clamp(LitSceneOffsetY + (rand() % 13) - 6, -10, 10);
         TargetZoom = 1.1f;
     }
+    else if (Vacuum.State == VACUUMSTATE_RETREAT && Vacuum.Timer >= VACUUM_RETREAT_TIME - 60 && Dusty.State != DUSTYSTATE_DIE)
+    {
+        LitSceneOffsetX = Clamp(LitSceneOffsetX + (rand() % 21) - 10, -10, 10);
+        LitSceneOffsetY = Clamp(LitSceneOffsetY + (rand() % 21) - 10, -10, 10);
+        TargetZoom = 1.0f;
+    }
     else
     {
         LitSceneOffsetX = 0.0f;
@@ -237,6 +355,8 @@ void UpdateVacuum()
 
 void JamVacuum()
 {
+    CreateVacuumSmoke(2);
+    
 	if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
 		Vacuum.State = VACUUMSTATE_RETREAT;
