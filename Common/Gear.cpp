@@ -13,6 +13,7 @@
 #include "Tutorial.h"
 #include "Vacuum.h"
 #include "GameScore.h"
+#include "Chapter.h"
 
 #define MAX_GEARS 100
 
@@ -52,7 +53,7 @@ void DisplayGear()
         if (Gear->State == GEARSTATE_INACTIVE)
             continue;
 
-		AddLitSpriteCenteredScaledRotated(LIGHTLIST_VACUUM, &GearSprite, Gear->X, Gear->Y + ScrollY, 1.0f, Gear->Angle);
+		AddLitSpriteCenteredScaledRotated(LIGHTLIST_VACUUM, &GearSprite, Gear->X + ScrollX, Gear->Y + ScrollY, 1.0f, Gear->Angle);
     }    
 }
 
@@ -103,9 +104,9 @@ void UpdateGear()
 
 			Gear->Angle += Gear->AngularVelocity;
 			
-			if (Gear->X + 50 > gxScreenWidth)
+			if (Gear->X + 50 > Chapter.PageWidth*64)
 			{
-				Gear->X = (float)gxScreenWidth - 50;
+				Gear->X = (float)Chapter.PageWidth*64 - 50;
 				Gear->FloatVelocityX = -Gear->FloatVelocityX;
 			}
 			if (Gear->X - 50 < 0)

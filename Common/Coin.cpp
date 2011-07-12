@@ -62,7 +62,7 @@ void DisplayCoins()
 			&CoinSpin6Sprite,
 		};
 
-		AddLitSpriteCenteredScaledRotated( LIGHTLIST_VACUUM, CoinSprites[Coin->Sprite], Coin->X, Coin->Y + ScrollY, 1.0f, 0.0f );
+		AddLitSpriteCenteredScaledRotated( LIGHTLIST_VACUUM, CoinSprites[Coin->Sprite], Coin->X + ScrollX, Coin->Y + ScrollY, 1.0f, 0.0f );
     }
 }
 

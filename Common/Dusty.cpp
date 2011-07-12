@@ -142,10 +142,10 @@ bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
                 GetInput_ConsumeSwipe(1.0f / 60.0f);
                 
 //#ifdef SWIPE_DEBUG
-                AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle+Range))*100, Dusty.FloatY + -sinf(DegreesToRadians(Angle+Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
-                AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle-Range))*100, Dusty.FloatY + -sinf(DegreesToRadians(Angle-Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
+                AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle+Range))*100 + ScrollX, Dusty.FloatY + -sinf(DegreesToRadians(Angle+Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
+                AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle-Range))*100 + ScrollX, Dusty.FloatY + -sinf(DegreesToRadians(Angle-Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
                 
-                AddDebugLine(Dusty.FloatX, Dusty.FloatY + ScrollY, Dusty.FloatX + dX*10, Dusty.FloatY + dY*10 + ScrollY, gxRGB32(192, 128, 128), 0.5f);
+                AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + dX*10 + ScrollX, Dusty.FloatY + dY*10 + ScrollY, gxRGB32(192, 128, 128), 0.5f);
 //#endif
                 
                 return true;
@@ -175,7 +175,7 @@ void DisplayDustySprite(gxSprite* Sprite, float XAdj = 0.0f, float XMirrorAdj = 
 		OffsetX = 256.0f;
 	}
 
-	AddLitSpriteScaled(LIGHTLIST_FOREGROUND, Sprite, Dusty.FloatX + OffsetX + XAdj + XMirrorAdj*ScaleX, Dusty.FloatY + YAdj + ScrollY, ScaleX, 1.0f);
+	AddLitSpriteScaled(LIGHTLIST_FOREGROUND, Sprite, Dusty.FloatX + OffsetX + XAdj + XMirrorAdj*ScaleX + ScrollX, Dusty.FloatY + YAdj + ScrollY, ScaleX, 1.0f);
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -1012,7 +1012,7 @@ void UpdateDusty_Launch()
 
 void SetDustyState_Die()
 {
-	Dusty.FloatVelocityX = Dusty.FloatX > (float)gxScreenWidth/2 ? -15.0f : 15.0f;
+	Dusty.FloatVelocityX = Dusty.FloatX > Vacuum.X ? -15.0f : 15.0f;
 	Dusty.FloatVelocityY = -30;
 
 	Dusty.SpriteTransition = 0;
@@ -1046,7 +1046,7 @@ void UpdateDusty_Die()
 	Dusty.FloatVelocityX *= 0.99f;
 	Dusty.FloatVelocityY *= 0.99f;
 
-	if (Distance(Dusty.FloatX, Dusty.FloatY, (float)gxScreenWidth/2, Vacuum.Y) < 40.0f)
+	if (Distance(Dusty.FloatX, Dusty.FloatY, Vacuum.X, Vacuum.Y) < 40.0f)
 	{
 		if (Dusty.Lives > 0) //Check before the Die Screen Transition
 		{
@@ -1273,10 +1273,10 @@ void UpdateDusty_Collision()
 	Dusty.CollideMaterial = MATERIAL_NORMAL;
 
 	// Collision with right side of the right screen and Dusty's right Side
-	if (Dusty.FloatX + Dusty.Right >= gxScreenWidth)
+	if (Dusty.FloatX + Dusty.Right >= (float)Chapter.PageWidth * 64)
 	{
 		Dusty.CollideWithRightSide = true;
-		Dusty.FloatX = (float)gxScreenWidth - (float)Dusty.Right;	
+		Dusty.FloatX = (float)Chapter.PageWidth * 64 - (float)Dusty.Right;	
 	} 
 
 	//Collision with the left side of the screen    
@@ -1287,7 +1287,7 @@ void UpdateDusty_Collision()
 	}
 
 	//Collision with the bottom side of the screen
-	if (Dusty.FloatY + Dusty.Bottom >= Chapter.PageHeight * 64 )
+	if (Dusty.FloatY + Dusty.Bottom >= Chapter.PageHeight * 64)
 	{	
 		Dusty.CollideWithBottomSide = true;
 		Dusty.FloatY = (float)Chapter.PageHeight * 64 - (float)Dusty.Bottom;
@@ -1491,13 +1491,13 @@ void DisplayDusty()
 	if (DevMode)
 	{
 		// Draw a yellow + at Dusty's root location.
-		gxDrawString((int)Dusty.FloatX-4, (int)Dusty.FloatY-4 + ScrollY, 8, gxRGB32(255, 255, 0), "+");
+		gxDrawString((int)Dusty.FloatX-4 + ScrollX, (int)Dusty.FloatY-4 + ScrollY, 8, gxRGB32(255, 255, 0), "+");
 
 		// Draw a red + at all four corners of Dusty.
-		gxDrawString((int)Dusty.FloatX + Dusty.Left,  (int)Dusty.FloatY + Dusty.Top    + ScrollY, 8, gxRGB32(255, 0, 0), "+");//Upper Left
-		gxDrawString((int)Dusty.FloatX + Dusty.Right, (int)Dusty.FloatY + Dusty.Top    + ScrollY, 8, gxRGB32(255, 0, 0), "+");//Upper Right
-		gxDrawString((int)Dusty.FloatX + Dusty.Left,  (int)Dusty.FloatY + Dusty.Bottom + ScrollY, 8, gxRGB32(255, 0, 0), "+");//Lower Left
-		gxDrawString((int)Dusty.FloatX + Dusty.Right, (int)Dusty.FloatY + Dusty.Bottom + ScrollY, 8, gxRGB32(255, 0, 0), "+");//Lower Right
+		gxDrawString((int)Dusty.FloatX + Dusty.Left + ScrollX,  (int)Dusty.FloatY + Dusty.Top    + ScrollY, 8, gxRGB32(255, 0, 0), "+");//Upper Left
+		gxDrawString((int)Dusty.FloatX + Dusty.Right + ScrollX, (int)Dusty.FloatY + Dusty.Top    + ScrollY, 8, gxRGB32(255, 0, 0), "+");//Upper Right
+		gxDrawString((int)Dusty.FloatX + Dusty.Left + ScrollX,  (int)Dusty.FloatY + Dusty.Bottom + ScrollY, 8, gxRGB32(255, 0, 0), "+");//Lower Left
+		gxDrawString((int)Dusty.FloatX + Dusty.Right + ScrollX, (int)Dusty.FloatY + Dusty.Bottom + ScrollY, 8, gxRGB32(255, 0, 0), "+");//Lower Right
 	}
 }
 

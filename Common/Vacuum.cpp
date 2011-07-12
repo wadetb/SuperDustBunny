@@ -63,7 +63,7 @@ void DisplayVacuumSmoke()
         Alpha *= Remap(Smoke->Age, 0, Smoke->Life*1.0f/3.0f, 0.0f, 1.0f, true);
         Alpha *= Remap(Smoke->Age, Smoke->Life*2.0f/3.0f, Smoke->Life, 1.0f, 0.0f, true);
     
-        AddLitSpriteCenteredScaledRotatedAlpha(LIGHTLIST_DUST, &VacuumSmokeSprite, Smoke->X, Smoke->Y + ScrollY, Smoke->Scale, Smoke->Angle, Alpha);
+        AddLitSpriteCenteredScaledRotatedAlpha(LIGHTLIST_DUST, &VacuumSmokeSprite, Smoke->X + ScrollX, Smoke->Y + ScrollY, Smoke->Scale, Smoke->Angle, Alpha);
     }
 }
 
@@ -124,6 +124,8 @@ void CreateVacuumSmoke(int Count)
 
 void InitVacuum()
 {
+    Vacuum.X = 384;
+    
 	Vacuum.Dir = (EVacuumDir)Chapter.PageProps.VacuumDir;
 	Vacuum.State = VACUUMSTATE_OFF;
 	Vacuum.Volume = 0.5f;
@@ -159,17 +161,17 @@ void DisplayVacuum()
                 default: Sprite = &Vacuum1Sprite; break;
             }
         }
-            
+        
 		if (Vacuum.Dir == VACUUMDIR_UP)
-			AddLitSpriteScaled(LIGHTLIST_VACUUM, Sprite, 0, Vacuum.Y + ScrollY - VacuumYOffset, 1.0f, 1.0f);
+			AddLitSpriteScaled(LIGHTLIST_VACUUM, Sprite, Vacuum.X - Sprite->width/2 + ScrollX, Vacuum.Y + ScrollY - VacuumYOffset, 1.0f, 1.0f);
 		else
-			AddLitSpriteScaled(LIGHTLIST_VACUUM, Sprite, 0, Vacuum.Y + ScrollY + VacuumYOffset, 1.0f, -1.0f);
+			AddLitSpriteScaled(LIGHTLIST_VACUUM, Sprite, Vacuum.X - Sprite->width/2 + ScrollX, Vacuum.Y + ScrollY + VacuumYOffset, 1.0f, -1.0f);
 
 		if (Chapter.PageProps.LightsOff)
 		{
 			if (Vacuum.Dir == VACUUMDIR_UP)
 			{
-				AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightVacuumSprite, 384, Vacuum.Y + ScrollY - 384, 1.0f, 1.0f);
+				AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightVacuumSprite, Vacuum.X + ScrollX, Vacuum.Y + ScrollY - 384, 1.0f, 1.0f);
 			}
 		}
 	}
@@ -250,6 +252,8 @@ void UpdateVacuum()
 	if (Chapter.PageProps.VacuumOff || Settings.DisableVacuum)
 		return;
 
+    Vacuum.X = 384 - ScrollX;
+    
     UpdateVacuumSmoke();
     
 	if (Vacuum.State == VACUUMSTATE_FAR)
@@ -415,7 +419,7 @@ void GetVacuumForce(float X, float Y, float* VX, float* VY, float Strength)
 		return;
 	}
 
-	float DirX = (float)gxScreenWidth/2 - X;
+	float DirX = Vacuum.X - X;
 	float DirY = Vacuum.Y - Y;
 	
 	float Length = sqrtf(DirX*DirX + DirY*DirY);

@@ -39,6 +39,8 @@ int CurrentChapter = 0;
 SChapter Chapter;
 
 int ScrollY;
+int ScrollX;
+
 
 const char* CurrentChapterDir;
 
@@ -215,16 +217,21 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* FileName
 	*Slash = 0;
 
 	// Load the tileset image sprite.
+    // It hasn't been loaded previously, so load the external tileset.
 	char ImageFileName[1024];
-	snprintf(ImageFileName, sizeof(ImageFileName), "%s/%s", CurrentDirectory, ImageSourceAttr->value());
+    
+    if (strncmp(ImageSourceAttr->value(), "../../", 6) == 0)
+        snprintf(ImageFileName, sizeof(ImageFileName), "%s", ImageSourceAttr->value()+6);
+    else
+        snprintf(ImageFileName, sizeof(ImageFileName), "%s/%s", CurrentDirectory, ImageSourceAttr->value());
 
 	LoadSpriteAsset(ImageFileName, &TileSet->Sprite);
 
 	if (TileSet->Sprite.width == 0 || TileSet->Sprite.height == 0)
-		ReportError("Invalid tileset image '%s'.  Fix this problem and re-save the TSX or TMX file.", FileName);
+		ReportError("Invalid tileset image '%s'.  Fix this problem and re-save the TSX or TMX file.", ImageFileName);
 
 	if (TileSet->Sprite.width % 64 || TileSet->Sprite.height % 64)
-		ReportError("Tileset image '%s' width and height must be multiples of 64.  Fix this problem and re-save the TSX or TMX file.", FileName);
+		ReportError("Tileset image '%s' width and height must be multiples of 64.  Fix this problem and re-save the TSX or TMX file.", ImageFileName);
 
 	// Slice the image up into blocks.
 	int BlocksX = TileSet->Sprite.width/64;
@@ -442,8 +449,8 @@ void LoadPageFromTMX(const char* FileName)
 	if (strcmp(MapNode->first_attribute("orientation")->value(), "orthogonal") != 0)
 		ReportError("Map orientation must be orthogonal.  Fix this problem and re-save the TMX file.");
 	
-	if (atoi(MapNode->first_attribute("width")->value()) != 12)
-		ReportError("Map width must be 12.  Fix this problem and re-save the TMX file.");
+	if (atoi(MapNode->first_attribute("width")->value()) < 12)
+		ReportError("Map width must be at least 12.  Fix this problem and re-save the TMX file.");
 	
 	if (atoi(MapNode->first_attribute("height")->value()) < 1)
 		ReportError("Invalid map height.  Fix this problem and re-save the TMX file.");
@@ -546,8 +553,8 @@ void LoadPageFromTMX(const char* FileName)
 	Page->Width = atoi(LayerNode->first_attribute("width")->value());
 	Page->Height = atoi(LayerNode->first_attribute("height")->value());
 	
-	if (Page->Width != 12)
-		ReportError("Layer width must be 12.  Fix this problem and re-save the TMX file.");
+	if (Page->Width < 12)
+		ReportError("Layer width must be at least 12.  Fix this problem and re-save the TMX file.");
 
 	if (Page->Height < 1)
 		ReportError("Invalid layer height.  Fix this problem and re-save the TMX file.");
@@ -806,7 +813,8 @@ void CreatePageObjects()
 		}
 	}
 
-	// Set initial ScrollY.
+	// Set initial scrolling.
+    ScrollX = 0;
 	ScrollY = -(Chapter.PageHeight * 64 - LitScreenHeight);
 
 	// Initialize global stuff for the page.
@@ -847,7 +855,7 @@ void SetCurrentPage(int PageNum)
 	PopErrorContext();
 }
 
-void CalculateScrollY()
+void CalculateScroll()
 {
 	// If Dusty is dead, freeze scrolling while he falls off the screen.
 	if (Dusty.State == DUSTYSTATE_DIE)
@@ -875,6 +883,26 @@ void CalculateScrollY()
 	if (ScrollY > 0)
 	{
 		ScrollY = 0;
+	}
+
+	if (Dusty.FloatX + ScrollX < 400)
+	{
+		ScrollX = 400 - (int)Dusty.FloatX;
+	}
+    
+	if (Dusty.FloatX + ScrollX > 768 - 400)
+	{
+		ScrollX = (768 - 400) - (int)Dusty.FloatX;
+	}
+    
+	if (ScrollX < -(Chapter.PageWidth * 64 - 768))
+	{
+		ScrollX = -(Chapter.PageWidth * 64 - 768);
+	} 
+    
+	if (ScrollX > 0)
+	{
+		ScrollX = 0;
 	}
 }
 
@@ -908,7 +936,7 @@ void DisplayChapter()
 				int SubX = Block->SubX;
 				int SubY = Block->SubY;
 
-				AddLitSubSprite(LIGHTLIST_FOREGROUND, &TileSet->Sprite, (float)x*64, (float)y*64 + ScrollY, (float)SubX, (float)SubY, (float)SubX + 64, (float)SubY + 64);
+				AddLitSubSprite(LIGHTLIST_FOREGROUND, &TileSet->Sprite, (float)x*64 + ScrollX, (float)y*64 + ScrollY, (float)SubX, (float)SubY, (float)SubX + 64, (float)SubY + 64);
 			}
 		}
 	}
@@ -921,7 +949,7 @@ void DisplayChapter()
         {
             float Alpha = (float)i / 5.0f;
             float Angle = Chapter.PortalAngle - (1.0f-Alpha);
-            AddLitSpriteCenteredScaledRotatedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &PortalSprite, Chapter.EndX, Chapter.EndY - 50 + ScrollY, 1.0f, Angle, Alpha);
+            AddLitSpriteCenteredScaledRotatedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &PortalSprite, Chapter.EndX + ScrollX, Chapter.EndY - 50 + ScrollY, 1.0f, Angle, Alpha);
         }
     }
 }

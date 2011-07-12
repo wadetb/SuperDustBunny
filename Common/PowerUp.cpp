@@ -63,7 +63,7 @@ void DisplayPowerUp()
         if (PowerUp->State == POWERUPSTATE_ACTIVE)
             continue;
         
-        AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &PowerUpSprite, PowerUp->X, PowerUp->Y + ScrollY - 30, 1.0f, 0.0f);
+        AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &PowerUpSprite, PowerUp->X + ScrollX, PowerUp->Y + ScrollY - 30, 1.0f, 0.0f);
     }
 }
 

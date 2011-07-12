@@ -20,9 +20,6 @@ void Exit();
 void Update();
 void Display();
 
-extern int gxScreenWidth;
-extern int gxScreenHeight;
-
 extern GLuint gxOpenGLESVersion;
 
 SuperDustBunnyViewController *theViewController;

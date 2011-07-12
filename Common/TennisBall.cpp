@@ -59,22 +59,22 @@ void DisplayBall()
 
         if (Ball->Sprite == 1) 
         {
-			AddLitSpriteCenteredScaledRotated(LIGHTLIST_VACUUM, &TennisBallSpin1Sprite, Ball->X, Ball->Y + ScrollY, 1.0f, 0.0f);
+			AddLitSpriteCenteredScaledRotated(LIGHTLIST_VACUUM, &TennisBallSpin1Sprite, Ball->X + ScrollX, Ball->Y + ScrollY, 1.0f, 0.0f);
         } 
 
         if (Ball->Sprite == 2)
         {
-			AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &TennisBallSpin2Sprite, Ball->X, Ball->Y + ScrollY, 1.0f, 0.0f);
+			AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &TennisBallSpin2Sprite, Ball->X + ScrollX, Ball->Y + ScrollY, 1.0f, 0.0f);
         } 
 
         if (Ball->Sprite == 3)
         {
-			AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &TennisBallSpin3Sprite, Ball->X, Ball->Y + ScrollY, 1.0f, 0.0f);
+			AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &TennisBallSpin3Sprite, Ball->X + ScrollX, Ball->Y + ScrollY, 1.0f, 0.0f);
         }
 
         if (Ball->Sprite == 4)
         {
-			AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &TennisBallSpin4Sprite, Ball->X, Ball->Y + ScrollY, 1.0f, 0.0f);
+			AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &TennisBallSpin4Sprite, Ball->X + ScrollX, Ball->Y + ScrollY, 1.0f, 0.0f);
         }   
     }    
 }

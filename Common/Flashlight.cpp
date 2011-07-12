@@ -127,6 +127,6 @@ void UpdateFlashlight()
 void DisplayFlashlight()
 {
 	if (Chapter.PageProps.LightsOff)
-		AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightFlashlightSprite, Flashlight.X, Flashlight.Y + ScrollY, 1.5f, 0.8f);
+		AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightFlashlightSprite, Flashlight.X + ScrollX, Flashlight.Y + ScrollY, 1.5f, 0.8f);
 }
 

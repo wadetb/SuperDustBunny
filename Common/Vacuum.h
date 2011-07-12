@@ -31,6 +31,8 @@ struct SVacuum
 	EVacuumState State;
 
 	int Timer;
+    
+    float X;
 	float Y;
 
 	float Volume;

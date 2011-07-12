@@ -209,14 +209,14 @@ void DisplayFireWorkTrails()
 
 				unsigned int AlphaColor = gxRGBA32(0,0,0,(int)(255*Alpha));
 
-				Verts->X = Trail->CenterX + X0 - PerpX;
+				Verts->X = Trail->CenterX + X0 - PerpX + ScrollX;
 				Verts->Y = Trail->CenterY + Y0 - PerpY + ScrollY;
 				Verts->U = U;
 				Verts->V = 0.0f;
 				Verts->Color = Color | AlphaColor;
 				Verts++;
 
-				Verts->X = Trail->CenterX + X0 + PerpX;
+				Verts->X = Trail->CenterX + X0 + PerpX + ScrollX;
 				Verts->Y = Trail->CenterY + Y0 + PerpY + ScrollY;
 				Verts->U = U;
 				Verts->V = 1.0f;
@@ -358,7 +358,7 @@ void DisplayFireWorks()
 		
 		if (FireWork->State == FIREWORKSTATE_WAIT || FireWork->State == FIREWORKSTATE_FUSE || FireWork->State == FIREWORKSTATE_LAUNCH)
 		{
-			AddLitSpriteCenteredScaledRotated(LIGHTLIST_VACUUM, &FireWorkRocketSprite, FireWork->X, FireWork->Y + ScrollY, 1.0f, DegreesToRadians((float)FireWork->FlightDir));
+			AddLitSpriteCenteredScaledRotated(LIGHTLIST_VACUUM, &FireWorkRocketSprite, FireWork->X + ScrollX, FireWork->Y + ScrollY, 1.0f, DegreesToRadians((float)FireWork->FlightDir));
 		}
 		if (FireWork->State == FIREWORKSTATE_EXPLODE)
 		{
@@ -367,7 +367,7 @@ void DisplayFireWorks()
 				float Alpha = 0.5f;
 				Alpha *= Lerp((float)FireWork->Timer, 90.0f, 0.0f, 1.0f, 0.0f);
 				Alpha *= Lerp((float)FireWork->Timer, 180.0f, 160.0f, 0.0f, 1.0f);
-				AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightFlashlightSprite, FireWork->X, FireWork->Y + ScrollY, 1.3f, Alpha);
+				AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightFlashlightSprite, FireWork->X + ScrollX, FireWork->Y + ScrollY, 1.3f, Alpha);
 			}
 		}
 	}

@@ -266,6 +266,8 @@ void AdvanceToNextPage();
 void DisplayGame_Playing();
 
 extern bool DevMode;
+
+extern int ScrollX;
 extern int ScrollY;
 
 extern bool ChapterIntroDisplayed;

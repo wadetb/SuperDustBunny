@@ -11,55 +11,11 @@
 #include "Dust.h"
 #include "Dusty.h"
 #include "Vacuum.h"
+#include "Chapter.h"
 
 
 SDustMote DustMotes[MAX_DUST_MOTES];
 
-
-enum EWindDirection
-{
-	WD_N,
-	WD_NE,
-	WD_E,
-	WD_SE,
-	WD_S,
-	WD_SW,
-	WD_W,
-	WD_NW
-};
-
-
-#define WIND_WIDTH		5
-#define WIND_HEIGHT		10
-
-
-EWindDirection WindDir[WIND_HEIGHT * WIND_WIDTH] =
-{
-	WD_S,  WD_S,  WD_S,  WD_S,  WD_S,
-	WD_S,  WD_S,  WD_S,  WD_S,  WD_S,
-	WD_S,  WD_S,  WD_S,  WD_S,  WD_S,
-	WD_S,  WD_S,  WD_S,  WD_S,  WD_S,
-	WD_SE, WD_S,  WD_S,  WD_S,  WD_SW,
-	WD_SE, WD_S,  WD_S,  WD_S,  WD_SW,
-	WD_SE, WD_S,  WD_S,  WD_S,  WD_SW,
-	WD_SE, WD_S,  WD_S,  WD_S,  WD_SW,
-	WD_SE, WD_S,  WD_S,  WD_S,  WD_SW,
-	WD_SE, WD_S,  WD_S,  WD_S,  WD_SW,
-};
-
-int WindStrength[WIND_HEIGHT * WIND_WIDTH] =
-{
-	3,     3,     3,     3,     3,    
-	3,     5,     5,     5,     1,    
-	3,     5,     5,     5,     1,    
-	5,     7,     7,     7,     5,    
-	5,     7,     10,     7,     5,    
-	5,     7,     10,     7,     5,    
-	5,     7,     10,     7,     5,    
-	5,     7,     10,     7,     5,    
-	7,     7,     10,     7,     7,    
-	7,     7,     10,     7,     7,     
-};
 
 void InitDust()
 {
@@ -74,21 +30,6 @@ void InitDust()
 
 void DisplayDust()
 {
-	if (DevMode)
-	{
-		float StepX = (float)gxScreenWidth / WIND_WIDTH;
-		float StepY = (float)LitScreenHeight / WIND_HEIGHT;
-
-		for (int x = 0; x < WIND_WIDTH; x++)
-		{
-			for (int y = 0; y < WIND_HEIGHT; y++)
-			{
-				float Dir = (WindDir[y * WIND_WIDTH + x] * 45) * PI / 180.0f;
-				AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &DustArrowSprite, (x+0.5f) * StepX, (y+0.5f) * StepY, 1.0f, Dir);
-			}
-		}
-	}
-
 	for (int i = 0; i < MAX_DUST_MOTES; i++)
 	{
 		SDustMote* Mote = &DustMotes[i];
@@ -99,7 +40,7 @@ void DisplayDust()
 		if (Mote->Time > Mote->Life - 1.0f)
 			Alpha *= Remap(Mote->Time, Mote->Life-0.25f, Mote->Life, 1.0f, 0.0f, true);
 
-		AddLitSpriteCenteredScaledColor(LIGHTLIST_DUST, &DustMoteSprite, Mote->X, Mote->Y + ScrollY*Mote->Depth, Mote->Size, gxRGBA32(192,192,192,(int)(255*Alpha)));
+		AddLitSpriteCenteredScaledColor(LIGHTLIST_DUST, &DustMoteSprite, Mote->X + ScrollX, Mote->Y + ScrollY*Mote->Depth, Mote->Size, gxRGBA32(192,192,192,(int)(255*Alpha)));
 	}
 }
 
@@ -119,8 +60,8 @@ void UpdateDust()
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		//                                                   Dusty Wind Effects                                                                    //
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		float XDist = (float)(Dusty.FloatX - Mote->X);
-		float YDist = (float)((Dusty.FloatY-50 + ScrollY) - (Mote->Y + ScrollY*Mote->Size));
+		float XDist = (float)(Dusty.FloatX + ScrollX) - Mote->X;
+		float YDist = (float)(Dusty.FloatY-50 + ScrollY) - Mote->Y;
 		float Dist = sqrtf(XDist*XDist + YDist*YDist);
 
 		if (Dist < 150)
@@ -142,24 +83,6 @@ void UpdateDust()
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		float VacuumStrength = 1.0f;
 
-		// Map mote position onto wind grid.
-		//int WindX = (int)(Mote->X / gxScreenWidth * WIND_WIDTH);
-		//int WindY = (int)((Mote->Y + ScrollY*Mote->Depth) / LitScreenHeight * WIND_HEIGHT);
-
-		//if (WindX < 0) WindX = 0;
-		//if (WindX >= WIND_WIDTH) WindX = WIND_WIDTH-1;
-		//if (WindY < 0) WindY = 0;
-		//if (WindY >= WIND_HEIGHT) WindY = WIND_HEIGHT-1;
-
-		//EWindDirection Dir = WindDir[WindY * WIND_WIDTH + WindX];
-		//float Strength = VacuumStrength *  WindStrength[WindY * WIND_WIDTH + WindX] / 50.0f;
-
-		//if (Strength > 0)
-		//{
-		//	Mote->VX += cosf(DirectionToAngle(Dir * 45.0f)) * Strength;
-		//	Mote->VY += -sinf(DirectionToAngle(Dir * 45.0f)) * Strength;
-		//}
-
 		float DirX, DirY;
 		GetVacuumForce(Mote->X, Mote->Y, &DirX, &DirY, VacuumStrength * 0.1f);
 		Mote->VX += DirX;
@@ -174,7 +97,7 @@ void UpdateDust()
 		bool Recycle = false;
 
 		// If it's expired or gone off the side of the screen, reintroduce it somewhere random.
-		if (Mote->Time >= Mote->Life || Mote->X >= gxScreenWidth || Mote->X < 0 )
+		if (Mote->Time >= Mote->Life || Mote->X >= Chapter.PageWidth*64 || Mote->X < 0 )
 		{
 			Recycle = true;
 			Mote->Y = Random(0.0f, (float)LitScreenHeight) - (float)ScrollY;
@@ -197,7 +120,7 @@ void UpdateDust()
 		// Recycle this dust mote with new parameters if requested.
 		if (Recycle)
 		{
-			Mote->X = Random(0.0f, (float)gxScreenWidth);
+			Mote->X = Random(0.0f, (float)Chapter.PageWidth*64);
 
 			Mote->VX = Random(-0.3f, 0.3f);
 			Mote->VY = Random(-0.3f, 0.3f);

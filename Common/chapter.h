@@ -147,6 +147,7 @@ extern int CurrentChapter;
 
 extern SChapter Chapter;
 
+extern int ScrollX;
 extern int ScrollY;
 
 void LoadChapter(const char* filename);
@@ -156,7 +157,7 @@ void SetCurrentPage(int PageNum);
 
 void DisplayChapter();
 
-void CalculateScrollY();
+void CalculateScroll();
 
 int GetBlockID(int x, int y);
 

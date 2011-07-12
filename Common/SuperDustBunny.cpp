@@ -528,18 +528,27 @@ void DisplayBackground()
         case BACKGROUND_FRIDGE: BackgroundSprite = &BackgroundFridgeSprite; break;
     }
     
+    if (!BackgroundSprite || !BackgroundSprite->width || !BackgroundSprite->height)
+        return;
+    
 	int y = 0;
 	while (y < Chapter.PageHeight*64)
 	{
-		AddLitSprite(LIGHTLIST_BACKGROUND, BackgroundSprite, 0, (float)y+ScrollY);
-		y += 1024;
+        int x = 0;
+        while (x < Chapter.PageWidth*64)
+        {
+            AddLitSprite(LIGHTLIST_BACKGROUND, BackgroundSprite, x + ScrollX, (float)y+ScrollY);
+            x += BackgroundSprite->width;
+        }
+        
+		y += BackgroundSprite->height;
 	}
 }
 
 void DisplayGame_Playing()
 {	
 	// Calculate scrolling.
-	CalculateScrollY();
+	CalculateScroll();
 
 	// Chapter Drawing - Everything here is behind Dusty
     DisplayBackground();

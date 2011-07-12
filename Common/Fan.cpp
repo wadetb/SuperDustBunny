@@ -71,10 +71,10 @@ void DisplayFans()
 	{
 		SFan* Fan = &Fans[i];
 
-		AddLitSpriteCenteredScaledRotated(LIGHTLIST_VACUUM, &FanSprite, Fan->X, Fan->Y + ScrollY, 1.0f, 0.0f);
+		AddLitSpriteCenteredScaledRotated(LIGHTLIST_VACUUM, &FanSprite, Fan->X + ScrollX, Fan->Y + ScrollY, 1.0f, 0.0f);
 
 		// Debug rendering of fan area.
-		//gxDrawRectangleFilled((int)(Fan->X - 200), (int)(Fan->Y - 1000 + ScrollY), 400, 1000, gxRGBA32(255, 255, 255, 32));
+		//gxDrawRectangleFilled((int)(Fan->X - 200 + ScrollX), (int)(Fan->Y - 1000 + ScrollY), 400, 1000, gxRGBA32(255, 255, 255, 32));
 	}
 }
 

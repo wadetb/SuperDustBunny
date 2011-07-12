@@ -105,7 +105,7 @@ void DisplayDebris()
 			int SubX = Block->SubX;
 			int SubY = Block->SubY;
 
-			AddLitSubSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &TileSet->Sprite, Deb->X, Deb->Y + ScrollY, (float)SubX, (float)SubY, (float)SubX + 64, (float)SubY + 64, 1.0f, Deb->Angle);
+			AddLitSubSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &TileSet->Sprite, Deb->X + ScrollX, Deb->Y + ScrollY, (float)SubX, (float)SubY, (float)SubX + 64, (float)SubY + 64, 1.0f, Deb->Angle);
 		}
 	}
 }
@@ -131,7 +131,7 @@ void UpdateDebris()
 		Deb->Y += Deb->VY;
 		Deb->Angle += Deb->VAngle;
 
-		if (Deb->Y + ScrollY >= LitScreenHeight || Distance(Deb->X, Deb->Y, (float)gxScreenWidth/2, Vacuum.Y) < 100.0f)
+		if (Deb->Y + ScrollY >= LitScreenHeight || Distance(Deb->X, Deb->Y, Vacuum.X, Vacuum.Y) < 100.0f)
 		{
 			Deb->Used = false;
 		}

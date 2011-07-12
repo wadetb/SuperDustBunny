@@ -59,67 +59,67 @@ void DisplayStaplers()
 
         if (Stapler->State == STAPLERSTATE_WAIT)
         {
-            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &StaplerUpSprite, Stapler->X, Stapler->Y + ScrollY - 50, 1.0f, 0.0f);
+            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &StaplerUpSprite, Stapler->X + ScrollX, Stapler->Y + ScrollY - 50, 1.0f, 0.0f);
         }
         else if (Stapler->State == STAPLERSTATE_PRELAUNCH)
         {
-            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &StaplerDownSprite, Stapler->X, Stapler->Y + ScrollY - 50, 1.0f, 0.0f);
+            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &StaplerDownSprite, Stapler->X + ScrollX, Stapler->Y + ScrollY - 50, 1.0f, 0.0f);
             
 #ifdef PLATFORM_WINDOWS
             if (Stapler->PowerJumpCounter > 0)
             {
-                AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump1Sprite, Stapler->X + 80, Stapler->Y + ScrollY - 160, 2, 0, 13, 110);
+                AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump1Sprite, Stapler->X + 80 + ScrollX, Stapler->Y + ScrollY - 160, 2, 0, 13, 110);
             }
             
             if (Stapler->PowerJumpCounter > 15)
             {
-                AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump2Sprite, Stapler->X + 90, Stapler->Y + ScrollY - 160, 14, 0, 26, 110); 
+                AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump2Sprite, Stapler->X + 90 + ScrollX, Stapler->Y + ScrollY - 160, 14, 0, 26, 110); 
             }
             
             if (Stapler->PowerJumpCounter > 30)
             {
-               AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump3Sprite, Stapler->X + 100, Stapler->Y + ScrollY - 160, 27, 0, 40, 110);
+               AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump3Sprite, Stapler->X + 100 + ScrollX, Stapler->Y + ScrollY - 160, 27, 0, 40, 110);
             }
             
             if (Stapler->PowerJumpCounter > 45)
             {
-               AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump4Sprite, Stapler->X + 110, Stapler->Y + ScrollY - 160, 40, 0, 53, 110);
+               AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump4Sprite, Stapler->X + 110 + ScrollX, Stapler->Y + ScrollY - 160, 40, 0, 53, 110);
             }
             
             if (Stapler->PowerJumpCounter > 60)
             {
-                AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump5Sprite, Stapler->X + 120, Stapler->Y + ScrollY - 160, 54, 0, 65, 110); 
+                AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump5Sprite, Stapler->X + 120 + ScrollX, Stapler->Y + ScrollY - 160, 54, 0, 65, 110); 
             }
             
             if (Stapler->PowerJumpCounter > 75)
             {
-                AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump6Sprite, Stapler->X + 130, Stapler->Y + ScrollY - 160, 67, 0, 78, 110);
+                AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump6Sprite, Stapler->X + 130 + ScrollX, Stapler->Y + ScrollY - 160, 67, 0, 78, 110);
             }
             
             if (Stapler->PowerJumpCounter > 90)
             {
-                AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump7Sprite, Stapler->X + 140, Stapler->Y + ScrollY - 160, 80, 0, 92, 110);
+                AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump7Sprite, Stapler->X + 140 + ScrollX, Stapler->Y + ScrollY - 160, 80, 0, 92, 110);
             }
             
             if (Stapler->PowerJumpCounter > 105)
             {
-                AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump8Sprite, Stapler->X + 150, Stapler->Y + ScrollY - 160, 93, 0, 104, 110);
+                AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump8Sprite, Stapler->X + 150 + ScrollX, Stapler->Y + ScrollY - 160, 93, 0, 104, 110);
             }
             
             if (Stapler->PowerJumpCounter > 120)
             {
-                AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump9Sprite, Stapler->X + 160, Stapler->Y + ScrollY - 160, 106, 0, 118, 110);
+                AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump9Sprite, Stapler->X + 160 + ScrollX, Stapler->Y + ScrollY - 160, 106, 0, 118, 110);
             }
             
             if (Stapler->PowerJumpCounter > 135)
             {
-                AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump10Sprite, Stapler->X + 170, Stapler->Y + ScrollY - 160, 119, 0, 130, 110);
+                AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump10Sprite, Stapler->X + 170 + ScrollX, Stapler->Y + ScrollY - 160, 119, 0, 130, 110);
             }
 #endif
         }
         else if (Stapler->CanLaunch == false)
         {
-            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &StaplerExtendUpSprite, Stapler->X, Stapler->Y + ScrollY - 50, 1.0f, 0.0f);
+            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &StaplerExtendUpSprite, Stapler->X + ScrollX, Stapler->Y + ScrollY - 50, 1.0f, 0.0f);
         }            
     }
 }
