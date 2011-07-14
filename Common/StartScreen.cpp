@@ -211,13 +211,13 @@ void UpdateStartScreen()
 		return;
 	}
 
-	if (kbIsKeyDown(KB_A))
+	if (kbIsKeyDown(KB_A) && !kbWasKeyDown(KB_A))
 	{
-		StartScreen.DragX -= 100;
+		StartScreen.DragX -= StartScreenDragSpacing;
 	}
-	if (kbIsKeyDown(KB_D))
+	if (kbIsKeyDown(KB_D) && !kbWasKeyDown(KB_D))
 	{
-		StartScreen.DragX += 100;
+		StartScreen.DragX += StartScreenDragSpacing;
 	}
 #endif
 

@@ -1046,7 +1046,7 @@ void UpdateDusty_Die()
 	Dusty.FloatVelocityX *= 0.99f;
 	Dusty.FloatVelocityY *= 0.99f;
 
-	if (Distance(Dusty.FloatX, Dusty.FloatY, Vacuum.X, Vacuum.Y) < 40.0f)
+	if (Dusty.SpriteTransition > 120 && Distance(Dusty.FloatX, Dusty.FloatY, Vacuum.X, Vacuum.Y) < 40.0f)
 	{
 		if (Dusty.Lives > 0) //Check before the Die Screen Transition
 		{
