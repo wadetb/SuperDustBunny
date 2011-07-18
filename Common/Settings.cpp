@@ -30,13 +30,52 @@ void InitSettings()
     Settings.DisableVacuum = false;
     Settings.LiveAssets = false;
     Settings.LiveAssetSlot = 1;
+    
+#ifdef PLATFORM_IPHONE
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary *appDefaults = [NSDictionary
+                                 dictionaryWithObjectsAndKeys:
+                                 [NSNumber numberWithInt: Settings.ControlStyle], @"ControlStyle", 
+                                 [NSNumber numberWithInt: Settings.TiltSensitivity], @"TiltSensitivity", 
+                                 [NSNumber numberWithBool: Settings.ContinuousJump], @"ContinuousJump", 
+                                 [NSNumber numberWithBool: Settings.FallGracePeriod], @"FallGracePeriod", 
+                                 [NSNumber numberWithBool: Settings.DoubleJump], @"DoubleJump", 
+                                 [NSNumber numberWithBool: Settings.InfiniteLives], @"InfiniteLives", 
+                                 [NSNumber numberWithBool: Settings.LiveAssets], @"LiveAssets", 
+                                 [NSNumber numberWithBool: Settings.LiveAssetSlot], @"LiveAssetSlot", 
+                                 nil];
+    
+    [defaults registerDefaults:appDefaults];
+#endif
 }
 
 void LoadSettings()
 {
+#ifdef PLATFORM_IPHONE
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    Settings.ControlStyle = (EControlStyle)[defaults integerForKey:@"ControlStyle"];
+    Settings.TiltSensitivity = (EControlStyle)[defaults integerForKey:@"TiltSensitivity"];
+    Settings.ContinuousJump = (EControlStyle)[defaults boolForKey:@"ContinuousJump"];
+    Settings.FallGracePeriod = (EControlStyle)[defaults boolForKey:@"FallGracePeriod"];
+    Settings.DoubleJump = (EControlStyle)[defaults boolForKey:@"DoubleJump"];
+    Settings.InfiniteLives = (EControlStyle)[defaults boolForKey:@"InfiniteLives"];
+    Settings.LiveAssets = (EControlStyle)[defaults boolForKey:@"LiveAssets"];
+    Settings.LiveAssetSlot = (EControlStyle)[defaults integerForKey:@"LiveAssetSlot"];
+#endif
 }
 
 void SaveSettings()
 {
+#ifdef PLATFORM_IPHONE
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:[NSNumber numberWithInt:Settings.ControlStyle] forKey:@"ControlStyle"];
+    [defaults setObject:[NSNumber numberWithInt:Settings.TiltSensitivity] forKey:@"TiltSensitivity"];
+    [defaults setObject:[NSNumber numberWithBool:Settings.ContinuousJump] forKey:@"ContinuousJump"];
+    [defaults setObject:[NSNumber numberWithBool:Settings.FallGracePeriod] forKey:@"FallGracePeriod"];
+    [defaults setObject:[NSNumber numberWithBool:Settings.DoubleJump] forKey:@"DoubleJump"];
+    [defaults setObject:[NSNumber numberWithBool:Settings.InfiniteLives] forKey:@"InfiniteLives"];
+    [defaults setObject:[NSNumber numberWithBool:Settings.LiveAssets] forKey:@"LiveAssets"];
+    [defaults setObject:[NSNumber numberWithInt:Settings.LiveAssetSlot] forKey:@"LiveAssetSlot"];
+#endif
 }
 
