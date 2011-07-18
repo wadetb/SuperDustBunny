@@ -9,6 +9,8 @@
 
 #include "Common.h"
 #include "WinScreen.h"
+#include "Chapter.h"
+#include "GameScore.h"
 
 #ifdef PLATFORM_IPHONE
 #import "SuperDustBunnyViewController.h"
@@ -32,7 +34,7 @@ void InitWinScreen()
 }
 
 void DisplayWinScreen()
-{
+{    
 	if (WinScreen.Pressed)
 	{
 		AddLitSprite(LIGHTLIST_BACKGROUND, &ScreenWin2Sprite, 0, 0);
@@ -43,6 +45,22 @@ void DisplayWinScreen()
 		AddLitSprite(LIGHTLIST_BACKGROUND, &ScreenWin1Sprite, 0, 0);
         AddLitSpriteSized(LIGHTLIST_BACKGROUND, &WhiteSprite, 0, ScreenWin2Sprite.height, gxScreenWidth, 1000.0f);
 	}
+    
+	AddLitSprite(LIGHTLIST_VACUUM, &ChapterTitleSprite, 0, -400);
+	AddLitSprite(LIGHTLIST_VACUUM, &ChapterTextSprite, 220, 200);
+
+    int CurrentY = 300;
+    
+    for (int i = 0; i < Chapter.NPages; i++)
+    {
+        DisplayTime(200, CurrentY, 0.75f, Score.PageTime[i]);
+        CurrentY += 40;
+    }
+    
+    CurrentY += 100;
+    
+    DisplayTime(200, CurrentY, 1.0f, Score.ChapterTime);
+    CurrentY += 60;
 }
 
 void WinScreen_Advance()

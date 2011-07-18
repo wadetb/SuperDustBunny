@@ -355,18 +355,20 @@ void UpdateFPS()
 
 void LoadCurrentChapter()
 {
-	ResetScore();
-
 	ClearChapter();
 
 	if (CurrentChapter < 0 || CurrentChapter >= NChapters)
 		CurrentChapter = 0;
 
 	LoadChapter(Chapters[CurrentChapter].Name);
+
+	ResetScore();
 }
 
 void AdvanceToNextPage()
 {
+    RecordPageScore(Chapter.PageNum);
+
 	if (Chapter.PageNum < Chapter.NPages-1)
 	{
 		StopRecording(RESULT_NEXT_PAGE);

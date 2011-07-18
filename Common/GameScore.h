@@ -10,6 +10,8 @@
 #ifndef GAMESCORE_H
 #define GAMESCORE_H
 
+#define MAX_PAGE_TIMES 20
+
 struct SScore
 {
     int CounterSingle;
@@ -30,7 +32,10 @@ struct SScore
     bool Thousand;
     bool TenThousand;  
     
-    int PageTime;
+    int CurrentPageTime;
+    
+    int PageTime[MAX_PAGE_TIMES];
+    int ChapterTime;
 };
 
 extern SScore Score;
@@ -40,5 +45,9 @@ void DisplayScore();
 void UpdateScore();
 
 void ResetScore();
+
+void RecordPageScore(int Page);
+
+void DisplayTime(float X, float Y, float ScaleFactor, int Time);
 
 #endif

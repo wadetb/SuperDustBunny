@@ -41,48 +41,53 @@ void InitScore()
     Score.Thousand = false;
     Score.TenThousand = false;
     
-    Score.PageTime = 0;
+    ResetScore();
 }
 
 float TimeX = 40;
 float TimeY = 10;
 float TimeScaleFactor = 0.65f;
 
-void DisplayTimeDigit(int Digit, float X, float Y)
+void DisplayTimeDigit(int Digit, float BaseX, float BaseY, float ScaleFactor, float X, float Y)
 {
-    X = TimeX + X * 64 * TimeScaleFactor;
-    Y = TimeY + Y * 64 * TimeScaleFactor;
+    X = BaseX + X * 64 * ScaleFactor;
+    Y = BaseY + Y * 64 * ScaleFactor;
     switch (Digit)
     {
-        case 0:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 1,   0, 54,  63, TimeScaleFactor, TimeScaleFactor); break;        
-        case 1:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X+10, Y, 55,  0, 74,  63, TimeScaleFactor, TimeScaleFactor); break;
-        case 2:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 76,  0, 131, 63, TimeScaleFactor, TimeScaleFactor); break;
-        case 3:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 133, 0, 187, 63, TimeScaleFactor, TimeScaleFactor); break;
-        case 4:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 189, 0, 242, 63, TimeScaleFactor, TimeScaleFactor); break;
-        case 5:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 243, 0, 296, 63, TimeScaleFactor, TimeScaleFactor); break;
-        case 6:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 298, 0, 353, 63, TimeScaleFactor, TimeScaleFactor); break;
-        case 7:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 354, 0, 406, 63, TimeScaleFactor, TimeScaleFactor); break;
-        case 8:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 408, 0, 462, 63, TimeScaleFactor, TimeScaleFactor); break;
-        case 9:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 463, 0, 520, 63, TimeScaleFactor, TimeScaleFactor); break;
-        case 10:   AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 55,  0, 74,  63, TimeScaleFactor, TimeScaleFactor/4.0f); break;
+        case 0:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 1,   0, 54,  63, ScaleFactor, ScaleFactor); break;        
+        case 1:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X+10, Y, 55,  0, 74,  63, ScaleFactor, ScaleFactor); break;
+        case 2:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 76,  0, 131, 63, ScaleFactor, ScaleFactor); break;
+        case 3:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 133, 0, 187, 63, ScaleFactor, ScaleFactor); break;
+        case 4:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 189, 0, 242, 63, ScaleFactor, ScaleFactor); break;
+        case 5:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 243, 0, 296, 63, ScaleFactor, ScaleFactor); break;
+        case 6:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 298, 0, 353, 63, ScaleFactor, ScaleFactor); break;
+        case 7:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 354, 0, 406, 63, ScaleFactor, ScaleFactor); break;
+        case 8:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 408, 0, 462, 63, ScaleFactor, ScaleFactor); break;
+        case 9:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 463, 0, 520, 63, ScaleFactor, ScaleFactor); break;
+        case 10:   AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 55,  0, 74,  63, ScaleFactor, ScaleFactor/4.0f); break;
         default:   break;   
     }    
 }
 
+void DisplayTime(float X, float Y, float ScaleFactor, int Time)
+{
+    int Minutes = ( Time / 60 ) / 60;
+    int Seconds = ( Time / 60 ) % 60;
+    int Hundredths = ( Time % 60 ) * 60 / 100;
+    
+	DisplayTimeDigit(Minutes,         X, Y, ScaleFactor, 0,    0);
+	DisplayTimeDigit(10,              X, Y, ScaleFactor, 1,    0.25f);
+	DisplayTimeDigit(10,              X, Y, ScaleFactor, 1,    0.75f);
+	DisplayTimeDigit(Seconds/10,      X, Y, ScaleFactor, 1.5f, 0);
+	DisplayTimeDigit(Seconds%10,      X, Y, ScaleFactor, 2.5f, 0);
+	DisplayTimeDigit(10,              X, Y, ScaleFactor, 3.5f, 0.75f);
+    DisplayTimeDigit(Hundredths/10,   X, Y, ScaleFactor, 4,    0);
+    DisplayTimeDigit(Hundredths%10,   X, Y, ScaleFactor, 5,    0);
+}
+
 void DisplayScore()
 {
-    int Minutes = ( Score.PageTime / 60 ) / 60;
-    int Seconds = ( Score.PageTime / 60 ) % 60;
-    int Hundredths = ( Score.PageTime % 60 ) * 60 / 100;
-    
-	DisplayTimeDigit(Minutes,         0,    0);
-	DisplayTimeDigit(10,              1,    0.25f);
-	DisplayTimeDigit(10,              1,    0.75f);
-	DisplayTimeDigit(Seconds/10,      1.5f, 0);
-	DisplayTimeDigit(Seconds%10,      2.5f, 0);
-	DisplayTimeDigit(10,              3.5f, 0.75f);
-    DisplayTimeDigit(Hundredths/10,   4,    0);
-    DisplayTimeDigit(Hundredths%10,   5,    0);
+    DisplayTime(TimeX, TimeY, TimeScaleFactor, Score.CurrentPageTime);
     
 #if 0
     if (Score.Single)
@@ -179,7 +184,12 @@ void DisplayScore()
 
 void ResetScore()
 {    
-    Score.PageTime = 0;
+    Score.CurrentPageTime = 0;
+    
+    for (int i = 0; i < MAX_PAGE_TIMES; i++)
+        Score.PageTime[i] = 0;
+    
+    Score.ChapterTime = 0;
 
 #if 0
     Score.Single = true;
@@ -196,9 +206,18 @@ void ResetScore()
 #endif
 }
 
+void RecordPageScore(int Page)
+{
+    if (Page < 0 || Page > MAX_PAGE_TIMES)
+        ReportError("Invalid page number %d for scorekeeping.  Maximum is %d.", Page, MAX_PAGE_TIMES);
+    
+    Score.PageTime[Page] = Score.CurrentPageTime;
+    Score.ChapterTime += Score.CurrentPageTime;
+}
+
 void UpdateScore()
 {    
-    Score.PageTime++;
+    Score.CurrentPageTime++;
     
 #if 0
     switch (Score.Type)
