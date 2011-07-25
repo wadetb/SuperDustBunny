@@ -160,6 +160,15 @@ gxSprite TutorialWallJumpSprite;
 gxSprite ChapterTitleSprite;
 gxSprite ChapterTextSprite;
 gxSprite ChapterNumbersSprite;
+gxSprite ChapterCompleteSprite;
+gxSprite ChapterTimeSprite;
+gxSprite ChapterBonusSprite;
+gxSprite ChapterNewSprite;
+gxSprite ChapterNewRecordSprite;
+gxSprite ChapterRecordSprite;
+gxSprite ChapterTotalTimeSprite;
+
+gxSprite TapToContinueSprite;
 
 gxSprite PowerUpSprite;
 
@@ -908,7 +917,16 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/chapter-title.png", &ChapterTitleSprite);
 	LoadSpriteAsset("Assets/chapter.png", &ChapterTextSprite);
 	LoadSpriteAsset("Assets/chapter_numbers.png", &ChapterNumbersSprite);
-    
+	LoadSpriteAsset("Assets/chapter-complete.png", &ChapterCompleteSprite);
+	LoadSpriteAsset("Assets/chapter-time.png", &ChapterTimeSprite);
+	LoadSpriteAsset("Assets/chapter-bonus.png", &ChapterBonusSprite);
+	LoadSpriteAsset("Assets/chapter-new.png", &ChapterNewSprite);
+	LoadSpriteAsset("Assets/chapter-new-record.png", &ChapterNewRecordSprite);
+	LoadSpriteAsset("Assets/chapter-record.png", &ChapterRecordSprite);
+	LoadSpriteAsset("Assets/chapter-total-time.png", &ChapterTotalTimeSprite);
+
+    LoadSpriteAsset("Assets/tap-to-continue.png", &TapToContinueSprite);
+
     LoadSpriteAsset("Assets/powerup.png", &PowerUpSprite);
     
 

@@ -160,6 +160,15 @@ extern gxSprite TutorialWallJumpSprite;
 extern gxSprite ChapterTitleSprite;
 extern gxSprite ChapterTextSprite;
 extern gxSprite ChapterNumbersSprite;
+extern gxSprite ChapterCompleteSprite;
+extern gxSprite ChapterTimeSprite;
+extern gxSprite ChapterBonusSprite;
+extern gxSprite ChapterNewSprite;
+extern gxSprite ChapterNewRecordSprite;
+extern gxSprite ChapterRecordSprite;
+extern gxSprite ChapterTotalTimeSprite;
+
+extern gxSprite TapToContinueSprite;
 
 extern gxSprite PowerUpSprite;
 
