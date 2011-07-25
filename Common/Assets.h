@@ -116,6 +116,9 @@ extern gxSprite DustArrowSprite;
 
 extern gxSprite FireWorkRocketSprite;
 
+extern gxSprite Flame1Sprite;
+extern gxSprite Flame2Sprite;
+
 extern gxSprite Vacuum1Sprite;
 extern gxSprite Vacuum2Sprite;
 extern gxSprite Vacuum3Sprite;

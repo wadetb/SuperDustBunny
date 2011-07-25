@@ -168,9 +168,6 @@ void UpdateBarrels()
                 Dusty.Hidden = false;
 				Barrel->Timer = 30;
 				Barrel->State = BARRELSTATE_LAUNCH;
-				
-                Score.Type = 3;
-                Score.Raise = true;
 			}
 		}
 		else if (Barrel->State == BARRELSTATE_LAUNCH)

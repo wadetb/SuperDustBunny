@@ -96,8 +96,7 @@ void UpdateBall()
             {
                 Ball->State = BALLSTATE_FALLING;
                 
-                Score.Type = 2;
-                Score.Raise = true;        
+                AwardBonus();
 
                 sxPlaySound( &VacuumClogSound );  
 

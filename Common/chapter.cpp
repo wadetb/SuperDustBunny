@@ -17,6 +17,7 @@
 #include "Crumb.h"
 #include "Gear.h"
 #include "Dust.h"
+#include "Flame.h"
 #include "Flashlight.h"
 #include "Vacuum.h"
 #include "Fan.h"
@@ -328,6 +329,10 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* FileName
 					else if (strcmp(Value, "flashlight_waypoint") == 0)
 					{
 						Block->Type = BLOCKTYPE_FLASHLIGHT_WAYPOINT;
+					}
+					else if (strcmp(Value, "flame") == 0)
+					{
+						Block->Type = BLOCKTYPE_FLAME;
 					}
                     else if (strcmp(Value, "stapler") == 0)
                     {
@@ -732,6 +737,7 @@ void ClearPageObjects()
 	ClearBalls();
 	ClearGears();
 	ClearStaplers();
+	ClearFlames();
 	ClearFlashlightWaypoints();
 	ClearPowerUps();
 
@@ -794,6 +800,10 @@ void CreatePageObjects()
 					CreateFan(x * 64, y * 64, (SFanProperties*)Block->Properties);
 					EraseBlock(x, y);
 					break;
+                case BLOCKTYPE_FLAME:
+                    CreateFlame(x * 64, y * 64);
+                    EraseBlock(x, y);
+                    break;
 				case BLOCKTYPE_FLASHLIGHT_WAYPOINT:
 					CreateFlashlightWaypoint(x * 64, y * 64, (SFlashlightWaypointProperties*)Block->Properties);
 					EraseBlock(x, y);

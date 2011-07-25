@@ -72,8 +72,7 @@ void UpdateGear()
 				Gear->State = GEARSTATE_FALLING;
 				sxPlaySound( &GearGrindSound );
 				
-                Score.Type = 1;
-                Score.Raise = true;
+                AwardBonus();
 				
 				if (Dusty.FloatVelocityX < 0)
 				{

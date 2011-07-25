@@ -35,6 +35,7 @@ void InitWinScreen()
 
 void DisplayWinScreen()
 {    
+/*
 	if (WinScreen.Pressed)
 	{
 		AddLitSprite(LIGHTLIST_BACKGROUND, &ScreenWin2Sprite, 0, 0);
@@ -48,23 +49,27 @@ void DisplayWinScreen()
     
 	AddLitSprite(LIGHTLIST_VACUUM, &ChapterTitleSprite, 0, -400);
 	AddLitSprite(LIGHTLIST_VACUUM, &ChapterTextSprite, 220, 200);
-
+*/
+    
     int CurrentY = 300;
     
     for (int i = 0; i < Chapter.NPages; i++)
     {
-        DisplayTime(200, CurrentY, 0.75f, Score.PageTime[i]);
-        CurrentY += 40;
+        DisplayTime(100, CurrentY, 0.75f, Score.PageTime[i]);
+        DisplayTimeDigit(Score.PageBonus[i], 490, CurrentY, 0.75f, 0, 0);
+        DisplayTimeDigit(Score.NewRecord[i], 620, CurrentY, 0.75f, 0, 0);
+        CurrentY += 75;
     }
     
-    CurrentY += 100;
+    CurrentY += 200;
     
     DisplayTime(200, CurrentY, 1.0f, Score.ChapterTime);
-    CurrentY += 60;
+    CurrentY += 100;
+    DisplayTimeDigit(Score.NewChapterRecord, 370, CurrentY, 1.0f, 0, 0);
 }
 
 void WinScreen_Advance()
-{
+{    
 	SetGameState_StartScreen();
 }
 

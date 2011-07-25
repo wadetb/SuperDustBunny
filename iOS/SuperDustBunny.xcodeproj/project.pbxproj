@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		0816B6D3137F8C1C00CE5DE4 /* Input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0816B6D1137F8C1B00CE5DE4 /* Input.cpp */; };
-		082C46E613958FFC001D22F6 /* Tilesets in Resources */ = {isa = PBXBuildFile; fileRef = 082C46E513958FFC001D22F6 /* Tilesets */; };
 		0856200F1346A40000F9EFBA /* Default-ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856200A1346A40000F9EFBA /* Default-ipad.png */; };
 		085620101346A40000F9EFBA /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856200B1346A40000F9EFBA /* Default.png */; };
 		085620111346A40000F9EFBA /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856200C1346A40000F9EFBA /* Default@2x.png */; };
@@ -67,6 +66,7 @@
 		085AAA75132C5C9E00DF32CA /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 085AAA74132C5C9E00DF32CA /* QuartzCore.framework */; };
 		085AAA8A132D0E8F00DF32CA /* Converter.py in Resources */ = {isa = PBXBuildFile; fileRef = 085AAA89132D0E8F00DF32CA /* Converter.py */; };
 		085AAA8C132D169700DF32CA /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 085AAA8B132D169700DF32CA /* libz.dylib */; };
+		0877CB0F13DCA16E002800D2 /* Flame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0877CB0E13DCA16D002800D2 /* Flame.cpp */; };
 		08A8FC7613302F6300E45A98 /* TODO.txt in Resources */ = {isa = PBXBuildFile; fileRef = 08A8FC7513302F6300E45A98 /* TODO.txt */; };
 		08BF391713466F4E002C1A7B /* Converted in Resources */ = {isa = PBXBuildFile; fileRef = 08BF391613466F4E002C1A7B /* Converted */; };
 		08D2E1AB13660E0300AD31B8 /* PowerUp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D2E1A913660E0300AD31B8 /* PowerUp.cpp */; };
@@ -75,7 +75,6 @@
 /* Begin PBXFileReference section */
 		0816B6D1137F8C1B00CE5DE4 /* Input.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Input.cpp; sourceTree = "<group>"; };
 		0816B6D2137F8C1C00CE5DE4 /* Input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Input.h; sourceTree = "<group>"; };
-		082C46E513958FFC001D22F6 /* Tilesets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Tilesets; path = ../../Tilesets; sourceTree = "<group>"; };
 		0856200A1346A40000F9EFBA /* Default-ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-ipad.png"; sourceTree = "<group>"; };
 		0856200B1346A40000F9EFBA /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		0856200C1346A40000F9EFBA /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
@@ -178,6 +177,8 @@
 		085AAA74132C5C9E00DF32CA /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		085AAA89132D0E8F00DF32CA /* Converter.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = Converter.py; path = ../../Tools/Converter/Converter.py; sourceTree = "<group>"; };
 		085AAA8B132D169700DF32CA /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		0877CB0E13DCA16D002800D2 /* Flame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Flame.cpp; sourceTree = "<group>"; };
+		0877CB1113DCA17A002800D2 /* Flame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flame.h; sourceTree = "<group>"; };
 		08A8FC7513302F6300E45A98 /* TODO.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = TODO.txt; path = ../../Docs/TODO.txt; sourceTree = "<group>"; };
 		08BF391613466F4E002C1A7B /* Converted */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Converted; path = ../../Converted; sourceTree = "<group>"; };
 		08D2E1A913660E0300AD31B8 /* PowerUp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PowerUp.cpp; sourceTree = "<group>"; };
@@ -206,7 +207,6 @@
 		085AA94F132C572A00DF32CA = {
 			isa = PBXGroup;
 			children = (
-				082C46E513958FFC001D22F6 /* Tilesets */,
 				08BF391613466F4E002C1A7B /* Converted */,
 				08A8FC7313302BB300E45A98 /* Documentation */,
 				085AAA88132D0E7100DF32CA /* Converter */,
@@ -305,6 +305,8 @@
 				085AAA2D132C5B9F00DF32CA /* Fan.h */,
 				085AAA2E132C5B9F00DF32CA /* FireWorks.cpp */,
 				085AAA2F132C5B9F00DF32CA /* FireWorks.h */,
+				0877CB0E13DCA16D002800D2 /* Flame.cpp */,
+				0877CB1113DCA17A002800D2 /* Flame.h */,
 				085AAA30132C5B9F00DF32CA /* Flashlight.cpp */,
 				085AAA31132C5B9F00DF32CA /* Flashlight.h */,
 				085AAA32132C5B9F00DF32CA /* GameScore.cpp */,
@@ -440,7 +442,6 @@
 				085620111346A40000F9EFBA /* Default@2x.png in Resources */,
 				085620121346A40000F9EFBA /* Icon.png in Resources */,
 				085620131346A40000F9EFBA /* Icon@2x.png in Resources */,
-				082C46E613958FFC001D22F6 /* Tilesets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -490,6 +491,7 @@
 				085AAA73132C5B9F00DF32CA /* Wipe.cpp in Sources */,
 				08D2E1AB13660E0300AD31B8 /* PowerUp.cpp in Sources */,
 				0816B6D3137F8C1C00CE5DE4 /* Input.cpp in Sources */,
+				0877CB0F13DCA16E002800D2 /* Flame.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

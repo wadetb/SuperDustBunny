@@ -21,6 +21,7 @@
 #include "Crumb.h"
 #include "Gear.h"
 #include "Wipe.h"
+#include "Flame.h"
 #include "Flashlight.h"
 #include "Debris.h"
 #include "Lives.h"
@@ -362,7 +363,7 @@ void LoadCurrentChapter()
 
 	LoadChapter(Chapters[CurrentChapter].Name);
 
-	ResetScore();
+    LoadChapterScores(Chapters[CurrentChapter].Name);
 }
 
 void AdvanceToNextPage()
@@ -372,11 +373,15 @@ void AdvanceToNextPage()
 	if (Chapter.PageNum < Chapter.NPages-1)
 	{
 		StopRecording(RESULT_NEXT_PAGE);
+        
 		SetGameState_Transition(GAMETRANSITION_NEXT_PAGE);
 	}
 	else
 	{
 		StopRecording(RESULT_CHAPTER_END);
+        
+        SaveChapterScores(Chapters[CurrentChapter].Name);        
+        
 		SetGameState_WinScreen();
 	}
 }
@@ -477,7 +482,6 @@ void SetGameState_Playing()
     GamePause = false;
     
 	InitTutorial();
-	InitScore();
 	InitPowerUp();
 
 	// Remove this to re-enable the tutorials when we are closer to a release.
@@ -560,6 +564,7 @@ void DisplayGame_Playing()
     DisplayGear();
     DisplayBall();
 	DisplayFireWorks();
+    DisplayFlames();
 	DisplayDebris();
 	DisplayStaplers();
 
@@ -659,6 +664,7 @@ void UpdateGame_Playing()
         UpdateBall();  
         UpdateGear();  
         UpdateFireWorks();
+        UpdateFlames();
         UpdateFlashlight();
         UpdateScore();		 
         UpdateLives();

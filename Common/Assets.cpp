@@ -116,6 +116,9 @@ gxSprite DustArrowSprite;
 
 gxSprite FireWorkRocketSprite;
 
+gxSprite Flame1Sprite;
+gxSprite Flame2Sprite;
+
 gxSprite Vacuum1Sprite;
 gxSprite Vacuum2Sprite;
 gxSprite Vacuum3Sprite;
@@ -860,6 +863,9 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/dust-arrow.png", &DustArrowSprite);
 
 	LoadSpriteAsset("Assets/firework-rocket.png", &FireWorkRocketSprite);
+
+    LoadSpriteAsset("Assets/flame-1.png", &Flame1Sprite);
+	LoadSpriteAsset("Assets/flame-2.png", &Flame2Sprite);
 
 	LoadSpriteAsset("Assets/vacuum-1.png", &Vacuum1Sprite);
 	LoadSpriteAsset("Assets/vacuum-2.png", &Vacuum2Sprite);

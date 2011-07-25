@@ -496,9 +496,6 @@ void UpdateFireWorks()
 			{
 				FireWork->Timer = 180;
 				FireWork->State = FIREWORKSTATE_EXPLODE;
-				
-                Score.Type = 4;
-                Score.Raise = true;
 
 				ExplodeFireWork(FireWork->X, FireWork->Y, FireWork->ExplosionSize);
 			}    	          

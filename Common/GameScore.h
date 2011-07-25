@@ -14,39 +14,35 @@
 
 struct SScore
 {
-    int CounterSingle;
-    int CounterTen;
-    int CounterHundred;
-    int CounterThousand;
-    int CounterTenThousand;
-    
-    int Type;
-    
-    int ToRaise;
-    int Left;
-    
-    bool Raise;
-    bool Single;
-    bool Ten;
-    bool Hundred;
-    bool Thousand;
-    bool TenThousand;  
-    
     int CurrentPageTime;
+    int CurrentBonus;
     
     int PageTime[MAX_PAGE_TIMES];
+    int PageBonus[MAX_PAGE_TIMES];
+
+    bool NewRecord[MAX_PAGE_TIMES];
+    int BestPageTime[MAX_PAGE_TIMES];
+
     int ChapterTime;
+
+    bool NewChapterRecord;
+    int BestChapterTime;
 };
 
 extern SScore Score;
 
-void InitScore();
 void DisplayScore();
 void UpdateScore();
 
 void ResetScore();
 
+void AwardBonus();
+
+void LoadChapterScores(char* ChapterName);
+void SaveChapterScores(char* ChapterName);
 void RecordPageScore(int Page);
+
+void DisplayTimeDigit(int Digit, float BaseX, float BaseY, float ScaleFactor, float X, float Y);
 
 void DisplayTime(float X, float Y, float ScaleFactor, int Time);
 

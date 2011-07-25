@@ -19,30 +19,9 @@
 #include "Gear.h"
 #include "Debris.h"
 #include "Lives.h"
+#include "Chapter.h"
 
 SScore Score;
-
-void InitScore()
-{
-    Score.CounterSingle = 5;
-    Score.CounterTen = 0;
-    Score.CounterHundred = 0;
-    Score.CounterThousand = 0;
-    Score.CounterTenThousand = 0;
-    
-    Score.Type = 0;
-    Score.ToRaise = 0;
-    Score.Left = 0;
-    
-    Score.Raise = false;
-    Score.Single = true;
-    Score.Ten = false;
-    Score.Hundred = false;
-    Score.Thousand = false;
-    Score.TenThousand = false;
-    
-    ResetScore();
-}
 
 float TimeX = 40;
 float TimeY = 10;
@@ -88,98 +67,6 @@ void DisplayTime(float X, float Y, float ScaleFactor, int Time)
 void DisplayScore()
 {
     DisplayTime(TimeX, TimeY, TimeScaleFactor, Score.CurrentPageTime);
-    
-#if 0
-    if (Score.Single)
-    {
-        switch (Score.CounterSingle)
-        {
-        case 0:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 0, 0, 54, 63); break;        
-        case 1:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 54, 0, 74, 63); break;
-        case 2:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 74, 0, 131, 63); break;
-        case 3:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 131, 0, 187, 63); break;
-        case 4:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 187, 0, 242, 63); break;
-        case 5:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 242, 0, 296, 63); break;
-        case 6:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 296, 0, 353, 63); break;
-        case 7:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 353, 0, 406, 63); break;
-        case 8:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 406, 0, 462, 63); break;
-        case 9:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 462, 0, 520, 63); break;
-        default:   break;   
-        }
-    }
-
-    if (Score.Ten)
-    {
-        switch (Score.CounterTen)
-        {
-        case 0:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 0, 0, 54, 63); break;        
-        case 1:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 54, 0, 74, 63); break;
-        case 2:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 74, 0, 131, 63); break;
-        case 3:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 131, 0, 187, 63); break;
-        case 4:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 187, 0, 242, 63); break;
-        case 5:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 242, 0, 296, 63); break;
-        case 6:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 296, 0, 353, 63); break;
-        case 7:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 353, 0, 406, 63); break;
-        case 8:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 406, 0, 462, 63); break;
-        case 9:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 462, 0, 520, 63); break;
-        default:   break;   
-        }
-    }
-
-    if (Score.Hundred)
-    {
-        switch (Score.CounterHundred)
-        {
-        case 0:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 0, 0, 54, 63); break;        
-        case 1:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 54, 0, 74, 63); break;
-        case 2:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 74, 0, 131, 63); break;
-        case 3:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 131, 0, 187, 63); break;
-        case 4:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 187, 0, 242, 63); break;
-        case 5:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 242, 0, 296, 63); break;
-        case 6:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 296, 0, 353, 63); break;
-        case 7:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 353, 0, 406, 63); break;
-        case 8:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 406, 0, 462, 63); break;
-        case 9:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 462, 0, 520, 63); break;
-        default:   break;   
-        }
-    }
-
-    if (Score.Thousand)
-    {
-        switch (Score.CounterThousand)
-        {
-        case 0:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 0, 0, 54, 63); break;        
-        case 1:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 54, 0, 74, 63); break;
-        case 2:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 74, 0, 131, 63); break;
-        case 3:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 131, 0, 187, 63); break;
-        case 4:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 187, 0, 242, 63); break;
-        case 5:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 242, 0, 296, 63); break;
-        case 6:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 296, 0, 353, 63); break;
-        case 7:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 353, 0, 406, 63); break;
-        case 8:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 406, 0, 462, 63); break;
-        case 9:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 462, 0, 520, 63); break;
-        default:   break;   
-        }
-    }
-
-    if (Score.TenThousand)
-    {
-        switch (Score.CounterTenThousand)
-        {
-        case 0:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 0, 0, 54, 63); break;   
-        case 1:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 54, 0, 74, 63); break;
-        case 2:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 74, 0, 131, 63); break;
-        case 3:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 131, 0, 187, 63); break;
-        case 4:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 187, 0, 242, 63); break;
-        case 5:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 242, 0, 296, 63); break;
-        case 6:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 296, 0, 353, 63); break;
-        case 7:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 353, 0, 406, 63); break;
-        case 8:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 406, 0, 462, 63); break;
-        case 9:    AddLitSubSprite( LIGHTLIST_FOREGROUND, &FullScoreSprite, 280, 5, 462, 0, 520, 63); break;
-        default:   break;   
-        }
-    }                      
-#endif
 }
 
 void ResetScore()
@@ -187,23 +74,17 @@ void ResetScore()
     Score.CurrentPageTime = 0;
     
     for (int i = 0; i < MAX_PAGE_TIMES; i++)
+    {
         Score.PageTime[i] = 0;
+        Score.PageBonus[i] = 0;
+        
+        Score.NewRecord[i] = false;
+        Score.BestPageTime[i] = INT_MAX;
+    }
     
     Score.ChapterTime = 0;
-
-#if 0
-    Score.Single = true;
-    Score.Ten = false;
-    Score.Hundred = false;
-    Score.Thousand = false;
-    Score.TenThousand = false;
-
-    Score.CounterSingle = 0;
-    Score.CounterTen = 0;
-    Score.CounterHundred = 0;
-    Score.CounterThousand = 0;
-    Score.CounterTenThousand = 0;    
-#endif
+    Score.NewChapterRecord = false;
+    Score.BestChapterTime = INT_MAX;
 }
 
 void RecordPageScore(int Page)
@@ -211,70 +92,90 @@ void RecordPageScore(int Page)
     if (Page < 0 || Page > MAX_PAGE_TIMES)
         ReportError("Invalid page number %d for scorekeeping.  Maximum is %d.", Page, MAX_PAGE_TIMES);
     
+    Score.CurrentPageTime -= Score.CurrentBonus;
+    
     Score.PageTime[Page] = Score.CurrentPageTime;
+    Score.PageBonus[Page] = Score.CurrentBonus;
+    
     Score.ChapterTime += Score.CurrentPageTime;
+    
+    if ( Score.CurrentPageTime < Score.BestPageTime[Page] )
+    {
+        Score.BestPageTime[Page] = Score.CurrentPageTime;
+        Score.NewRecord[Page] = true;
+    }
+    
+    if ( Page == Chapter.NPages - 1 )
+    {
+        if ( Score.ChapterTime < Score.BestChapterTime )
+        {
+            Score.BestChapterTime = Score.ChapterTime;
+            Score.NewChapterRecord = true;
+        }
+    }
+    
+    Score.CurrentPageTime = 0;
+    Score.CurrentBonus = 0;
+}
+
+void AwardBonus()
+{
+    // TODO: On screen representation.
+    Score.CurrentBonus++;
+}
+
+void LoadChapterScores(char* ChapterName)
+{
+    ResetScore();
+
+#ifdef PLATFORM_IPHONE
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *fileName = [[NSString stringWithUTF8String:ChapterName] stringByAppendingPathExtension:@"scores"];
+    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:fileName];
+
+    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:filePath];
+    if ( !dict )
+        return;
+    
+    NSNumber *version = [dict objectForKey:@"version"];
+    if ( [version intValue] != 1 )
+        return;
+    
+    NSArray *pageTimes = [dict objectForKey:@"pageTimes"];
+    if ( [pageTimes count] != Chapter.NPages )
+        return;
+
+    NSNumber *chapterTime = [dict objectForKey:@"chapterTime"];
+    Score.BestChapterTime = [chapterTime intValue];
+    
+    for (int i = 0; i < [pageTimes count]; i++)
+        Score.BestPageTime[i] = [[pageTimes objectAtIndex:i] intValue];
+#endif
+}
+
+void SaveChapterScores(char* ChapterName)
+{
+#ifdef PLATFORM_IPHONE
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *fileName = [[NSString stringWithUTF8String:ChapterName] stringByAppendingPathExtension:@"scores"];
+    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:fileName];
+    
+    NSMutableArray *array = [[NSMutableArray alloc] init];
+    for (int i = 0; i < Chapter.NPages; i++)
+        [array addObject:[NSNumber numberWithInt:Score.BestPageTime[i]]];
+    
+    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                          [NSNumber numberWithInt:1], @"version",
+                          [NSNumber numberWithInt:Score.BestChapterTime], @"chapterTime",
+                          array, @"pageTimes", nil];
+    
+    [dict writeToFile:filePath atomically:YES];
+#endif
 }
 
 void UpdateScore()
 {    
     Score.CurrentPageTime++;
-    
-#if 0
-    switch (Score.Type)
-    {
-    case 0:    return;
-    case 1:    Score.ToRaise = 1; break;
-    case 2:    Score.ToRaise = 2; break;
-    case 3:    Score.ToRaise = 3; break;
-    case 4:    Score.ToRaise = 4; break;
-    case 5:    Score.ToRaise = 5; break;
-    default:   break;   
-    }
-
-    if (Score.Raise)
-    {    
-        if (Score.Left == Score.ToRaise)
-        {
-            Score.Raise = false;
-            Score.Type = 0;
-            Score.Left = 0;
-        }
-        
-        Score.CounterSingle += 1;
-        Score.Left += 1;
-        
-        if (Score.CounterSingle > 9)
-        {
-            Score.CounterSingle = (Score.CounterSingle - 10);
-            Score.CounterTen += 1;        
-            Score.Ten = true;
-        }
-
-        if (Score.CounterTen > 9)
-        {
-            Score.CounterTen = (Score.CounterTen - 10);
-            Score.CounterHundred += 1;
-            Score.Hundred = true;   
-        }
-
-        if (Score.CounterHundred > 9)
-        {
-            Score.CounterHundred = (Score.CounterHundred - 10);
-            Score.CounterThousand += 1;
-            Score.Thousand = true;
-        }
-
-        if (Score.CounterThousand > 9)
-        {
-            Score.CounterThousand = (Score.CounterThousand - 10);
-            Score.CounterTenThousand += 1;
-            Score.TenThousand = true;
-        }
-
-        if (Score.CounterTenThousand > 9)
-        {
-            Score.CounterTenThousand = (Score.TenThousand - 10);
-        }                  
-    } 
-#endif
 }

@@ -80,9 +80,8 @@ void UpdateCoins()
 			{
 				Coin->State = COINSTATE_COLLECTED;
 				
-                Score.Type = 5;
-                Score.Raise = true;
-
+                AwardBonus();
+                
 				sxPlaySound(&CoinVacuumedUpSound);  
 
 				if (Tutorial.CoinDisplayed == false)

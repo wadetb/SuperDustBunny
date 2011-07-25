@@ -204,7 +204,7 @@ gxDisplayType gxGetDisplayType()
 
 void gxLoadSprite(const char* filename, gxSprite* sprite)
 {
-	NSString* nsname = [[NSString alloc] initWithCString:filename];
+	NSString* nsname = [[NSString alloc] initWithUTF8String:filename];
 	CGImageRef image = [[[UIImage imageNamed:nsname] retain] CGImage];
 	if (image == nil)
 	{
