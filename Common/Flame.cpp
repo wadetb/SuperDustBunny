@@ -59,6 +59,7 @@ void UpdateFlames()
             float Dist = Distance(Dusty.FloatX, Dusty.FloatY-50, Flame->X, Flame->Y - 64);
             if (Dist < 100)
             {
+                Dusty.OnFireTimer = 60;
                 SetDustyState_Hurt();
                 Dusty.FloatVelocityX = Dusty.FloatX > Flame->X ? 10.0f : -10.0f;
                 Dusty.FloatVelocityY = -10;

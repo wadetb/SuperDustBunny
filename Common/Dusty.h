@@ -68,6 +68,8 @@ struct SDusty
     
     bool Hidden;
 
+    int OnFireTimer;
+
 	bool GainLife;
 
 	bool NoCollision;
@@ -105,7 +107,5 @@ void SetDustyState_Hop(EDustyDirection Direction);
 void SetDustyState_StaplerLaunch();
 void SetDustyState_IntroHop(EDustyDirection Direction);
 void SetDustyState_IntroStand();
-
-void DustyGainLife();
 
 #endif

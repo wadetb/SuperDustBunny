@@ -18,6 +18,7 @@
 #include "Settings.h"
 #include "Stapler.h"
 #include "PowerUp.h"
+#include "Smoke.h"
 
 
 SDusty Dusty;
@@ -59,6 +60,8 @@ void InitDusty()
     Dusty.LandTimer = 0;
     
     Dusty.Hidden = false;
+    
+    Dusty.OnFireTimer = 0;
     
 	Dusty.GainLife = false;
 	
@@ -1533,5 +1536,11 @@ void UpdateDusty()
     if (PowerUpToggle.Jump)
     {
         UpdatePowerUp();
+    }
+    
+    if (Dusty.OnFireTimer > 0)
+    {
+        Dusty.OnFireTimer--;
+        CreateSmallSmoke(Dusty.FloatX, Dusty.FloatY);
     }
 }

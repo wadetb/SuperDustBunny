@@ -124,6 +124,36 @@ void CreateSmoke(float X, float Y, int Count)
     }
 }
 
+void CreateSmallSmoke(float X, float Y)
+{
+    SSmoke* Smoke = &AllSmoke[NextSmoke];
+    
+    NextSmoke++;
+    if (NextSmoke >= MAX_SMOKE)
+        NextSmoke = 0;
+    
+    Smoke->Active = true;
+    
+    Smoke->Sprite = &VacuumSmokeSprite;
+    
+    Smoke->Age = 0.0f;
+    Smoke->Life = Random(9.0f, 10.0f);
+    Smoke->Birth = Random(0.0f, 0.25f);
+    
+    Smoke->Alpha = 0.65f;
+    
+    Smoke->X = Random(X - 15.0f, X + 15.0f);
+    Smoke->Y = Random(Y - 15.0f, Y + 15.0f);
+    Smoke->VX = Random(-5.0f, 5.0f);
+    Smoke->VY = Random(-5.0f, -10.0f);
+    
+    Smoke->Scale = Random(0.3f, 0.35f);
+    Smoke->VScale = Random(0.0005f, 0.001f);
+    
+    Smoke->Angle = Random(DegreesToRadians(0), DegreesToRadians(360.0f));
+    Smoke->VAngle = Random(DegreesToRadians(-1), DegreesToRadians(1));
+}
+
 void CreateBonus(float X, float Y)
 {
     SSmoke* Smoke = &AllSmoke[NextSmoke];

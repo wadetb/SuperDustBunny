@@ -14,6 +14,7 @@ void DisplaySmoke();
 void UpdateSmoke();
 
 void CreateSmoke(float X, float Y, int Count);
+void CreateSmallSmoke(float X, float Y);
 void CreateBonus(float X, float Y);
 
 #endif
