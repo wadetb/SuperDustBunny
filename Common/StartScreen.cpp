@@ -62,8 +62,12 @@ gxSprite* GetStartScreenIcon(int Item)
     
     if (Item == STARTSCREEN_ITEM_CREDITS)
         return &IconCredits1Sprite;
-    
-	return &IconStart1Sprite;
+
+    SChapterListEntry* Chapter = &Chapters[Item - STARTSCREEN_ITEM_FIRST_CHAPTER];
+    if (Chapter->Unlocked)
+        return &IconStart1Sprite;
+    else
+        return &IconLockedSprite;
 }
 
 gxSprite* GetStartScreenPressedIcon(int Item)
@@ -74,7 +78,11 @@ gxSprite* GetStartScreenPressedIcon(int Item)
     if (Item == STARTSCREEN_ITEM_CREDITS)
         return &IconCredits2Sprite;
     
-	return &IconStart2Sprite;
+    SChapterListEntry* Chapter = &Chapters[Item - STARTSCREEN_ITEM_FIRST_CHAPTER];
+    if (Chapter->Unlocked)
+        return &IconStart2Sprite;
+    else
+        return &IconLockedSprite;
 }
 
 gxSprite* GetStartScreenBackground(int Item)
@@ -90,6 +98,18 @@ gxSprite* GetStartScreenBackground(int Item)
         return &Chapter->BackgroundSprite;
     else
         return &BackgroundFridgeSprite;
+}
+
+bool GetStartScreenLocked(int Item)
+{
+    if (Item == STARTSCREEN_ITEM_HELP)
+        return false;
+    
+    if (Item == STARTSCREEN_ITEM_CREDITS)
+        return false;
+    
+    SChapterListEntry* Chapter = &Chapters[Item - STARTSCREEN_ITEM_FIRST_CHAPTER];
+    return !Chapter->Unlocked;
 }
 
 int GetStartScreenItemCount()
@@ -232,7 +252,10 @@ void UpdateStartScreen()
 		{
 			if (StartScreen.Pressed)
 			{
-				StartScreen_Advance();
+                if ( !GetStartScreenLocked(StartScreen.CurItem) )
+                {
+                    StartScreen_Advance();
+                }
 			}
 
 			StartScreen.Dragging = false;
@@ -251,9 +274,9 @@ void UpdateStartScreen()
 	{
 		if (msButton1)
 		{
-			StartScreen.Pressed = true;
-			StartScreen.Dragging = true;
-			StartScreen.DragStartX = (float)msX;
+            StartScreen.Pressed = true;
+            StartScreen.Dragging = true;
+            StartScreen.DragStartX = (float)msX;
             StartScreen.PressedTime = 0.0f;
 		}
 	}

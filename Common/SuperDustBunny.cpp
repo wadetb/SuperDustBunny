@@ -32,6 +32,7 @@
 #include "Settings.h"
 #include "PowerUp.h"
 #include "Input.h"
+#include "Smoke.h"
 
 #include "StartScreen.h"
 #include "HelpScreen.h"
@@ -380,7 +381,8 @@ void AdvanceToNextPage()
 	{
 		StopRecording(RESULT_CHAPTER_END);
         
-        SaveChapterScores(Chapters[CurrentChapter].Name);        
+        SaveChapterScores(Chapters[CurrentChapter].Name);
+        SaveChapterUnlocks();
         
 		SetGameState_WinScreen();
 	}
@@ -568,7 +570,6 @@ void DisplayGame_Playing()
 	DisplayDebris();
 	DisplayStaplers();
 
-	
 	// Dusty Drawing
 	DisplayDusty();
 	
@@ -577,6 +578,7 @@ void DisplayGame_Playing()
 	DisplayBarrels_AfterDusty();
 	DisplayDust();
 	DisplayVacuum();
+    DisplaySmoke();
 	DisplayLives();
 	DisplayPowerUp();
 	
@@ -675,6 +677,7 @@ void UpdateGame_Playing()
     UpdateDust();
     UpdateDebris();
     UpdateVacuum(); 
+    UpdateSmoke();
 }
 
 void SetGameState_Tutorial(int State)

@@ -134,11 +134,31 @@ struct SChapter
 	int PageHeight;
 };
 
+enum EMedalType
+{
+    MEDAL_BRONZE,
+    MEDAL_SILVER,
+    MEDAL_GOLD
+};
+
 struct SChapterListEntry
 {
     char* Name;
+    
     bool HasBackground;
     gxSprite BackgroundSprite;
+
+    int BronzeTime;
+    int SilverTime;
+    int GoldTime;
+    
+    char* UnlockedBy;
+    bool EndOfGame;
+    
+    bool Unlocked;
+    bool Played;
+    bool Completed;
+    int BestTime;
 };
 
 
@@ -169,5 +189,8 @@ void EraseBlock(int x, int y);
 
 void ClearChapterList();
 void LoadChapterList();
+
+void LoadChapterUnlocks();
+void SaveChapterUnlocks();
 
 #endif

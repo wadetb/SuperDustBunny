@@ -51,6 +51,9 @@ void DisplayWinScreen()
 	AddLitSprite(LIGHTLIST_VACUUM, &ChapterTextSprite, 220, 200);
 */
 
+    AddLitSprite(LIGHTLIST_BACKGROUND, &BackgroundFridgeSprite, 0, 0);
+    AddLitSprite(LIGHTLIST_BACKGROUND, &BackgroundFridgeSprite, 0, 1024);
+
     int CurrentY = 75;
     
     AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterCompleteSprite, 384, CurrentY, 1.0f, 1.0f);
@@ -69,7 +72,7 @@ void DisplayWinScreen()
         CurrentY += 75;
     }
     
-    CurrentY += 100;
+    CurrentY += 75;
     
     AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterTotalTimeSprite, 384, CurrentY, 1.0f, 1.0f);
     CurrentY += 75;
@@ -84,22 +87,8 @@ void DisplayWinScreen()
 }
 
 void WinScreen_Advance()
-{    
-	SetGameState_StartScreen();
-}
-
-void UpdateWinScreen()
 {
-#ifdef PLATFORM_WINDOWS
-	bool Pressed = kbIsKeyDown(KB_RETURN) || msButton1;
-#endif
-#ifdef PLATFORM_IPHONE
-	bool Pressed = msButton1;
-#endif
-
-    WinScreen.Timer++;
-
-    if (WinScreen.Timer == 120)
+    if (Chapters[CurrentChapter].EndOfGame)
     {
 #ifdef PLATFORM_IPHONE
         theViewController.paused = TRUE;
@@ -121,8 +110,29 @@ void UpdateWinScreen()
         [alert show];
         [alert release];
 #endif
+        
+        CurrentChapter = 0;
+    }
+    else
+    {
+        if (CurrentChapter < NChapters)
+            CurrentChapter++;
     }
     
+	SetGameState_StartScreen();
+}
+
+void UpdateWinScreen()
+{
+#ifdef PLATFORM_WINDOWS
+	bool Pressed = kbIsKeyDown(KB_RETURN) || msButton1;
+#endif
+#ifdef PLATFORM_IPHONE
+	bool Pressed = msButton1;
+#endif
+
+    WinScreen.Timer++;
+
 	// Advance to playing state when button is released.
 	if (WinScreen.Timer > 130)
     { 

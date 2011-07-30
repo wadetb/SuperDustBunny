@@ -137,6 +137,9 @@ extern gxSprite IconHelp1Sprite;
 extern gxSprite IconHelp2Sprite;
 extern gxSprite IconCredits1Sprite;
 extern gxSprite IconCredits2Sprite;
+extern gxSprite IconLockedSprite;
+
+extern gxSprite IconBonusSprite;
 
 extern gxSprite ScreenLose1Sprite;
 extern gxSprite ScreenLose2Sprite;

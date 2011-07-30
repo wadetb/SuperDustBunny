@@ -80,8 +80,6 @@ void UpdateCoins()
 			{
 				Coin->State = COINSTATE_COLLECTED;
 				
-                AwardBonus();
-                
 				sxPlaySound(&CoinVacuumedUpSound);  
 
 				if (Tutorial.CoinDisplayed == false)

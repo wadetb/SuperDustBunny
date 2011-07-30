@@ -67,6 +67,7 @@
 		085AAA8A132D0E8F00DF32CA /* Converter.py in Resources */ = {isa = PBXBuildFile; fileRef = 085AAA89132D0E8F00DF32CA /* Converter.py */; };
 		085AAA8C132D169700DF32CA /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 085AAA8B132D169700DF32CA /* libz.dylib */; };
 		0877CB0F13DCA16E002800D2 /* Flame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0877CB0E13DCA16D002800D2 /* Flame.cpp */; };
+		0877CB1313E43FB5002800D2 /* Smoke.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0877CB1213E43FB4002800D2 /* Smoke.cpp */; };
 		08A8FC7613302F6300E45A98 /* TODO.txt in Resources */ = {isa = PBXBuildFile; fileRef = 08A8FC7513302F6300E45A98 /* TODO.txt */; };
 		08BF391713466F4E002C1A7B /* Converted in Resources */ = {isa = PBXBuildFile; fileRef = 08BF391613466F4E002C1A7B /* Converted */; };
 		08D2E1AB13660E0300AD31B8 /* PowerUp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D2E1A913660E0300AD31B8 /* PowerUp.cpp */; };
@@ -179,6 +180,8 @@
 		085AAA8B132D169700DF32CA /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		0877CB0E13DCA16D002800D2 /* Flame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Flame.cpp; sourceTree = "<group>"; };
 		0877CB1113DCA17A002800D2 /* Flame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flame.h; sourceTree = "<group>"; };
+		0877CB1213E43FB4002800D2 /* Smoke.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Smoke.cpp; sourceTree = "<group>"; };
+		0877CB1413E43FE1002800D2 /* Smoke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Smoke.h; sourceTree = "<group>"; };
 		08A8FC7513302F6300E45A98 /* TODO.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = TODO.txt; path = ../../Docs/TODO.txt; sourceTree = "<group>"; };
 		08BF391613466F4E002C1A7B /* Converted */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Converted; path = ../../Converted; sourceTree = "<group>"; };
 		08D2E1A913660E0300AD31B8 /* PowerUp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PowerUp.cpp; sourceTree = "<group>"; };
@@ -328,6 +331,8 @@
 				085AAA44132C5B9F00DF32CA /* Recorder.h */,
 				085AAA45132C5B9F00DF32CA /* Settings.cpp */,
 				085AAA46132C5B9F00DF32CA /* Settings.h */,
+				0877CB1213E43FB4002800D2 /* Smoke.cpp */,
+				0877CB1413E43FE1002800D2 /* Smoke.h */,
 				085AAA47132C5B9F00DF32CA /* Stapler.cpp */,
 				085AAA48132C5B9F00DF32CA /* Stapler.h */,
 				085AAA49132C5B9F00DF32CA /* StartScreen.cpp */,
@@ -492,6 +497,7 @@
 				08D2E1AB13660E0300AD31B8 /* PowerUp.cpp in Sources */,
 				0816B6D3137F8C1C00CE5DE4 /* Input.cpp in Sources */,
 				0877CB0F13DCA16E002800D2 /* Flame.cpp in Sources */,
+				0877CB1313E43FB5002800D2 /* Smoke.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

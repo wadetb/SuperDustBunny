@@ -36,7 +36,7 @@ void UpdateScore();
 
 void ResetScore();
 
-void AwardBonus();
+void AwardBonus(float X, float Y);
 
 void LoadChapterScores(char* ChapterName);
 void SaveChapterScores(char* ChapterName);

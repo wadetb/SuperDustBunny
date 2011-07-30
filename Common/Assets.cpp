@@ -137,6 +137,9 @@ gxSprite IconHelp1Sprite;
 gxSprite IconHelp2Sprite;
 gxSprite IconCredits1Sprite;
 gxSprite IconCredits2Sprite;
+gxSprite IconLockedSprite;
+
+gxSprite IconBonusSprite;
 
 gxSprite ScreenLose1Sprite;
 gxSprite ScreenLose2Sprite;
@@ -894,6 +897,9 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/icon-help-2.png", &IconHelp2Sprite);
 	LoadSpriteAsset("Assets/icon-credits-1.png", &IconCredits1Sprite);
 	LoadSpriteAsset("Assets/icon-credits-2.png", &IconCredits2Sprite);
+	LoadSpriteAsset("Assets/icon-locked.png", &IconLockedSprite);
+
+    LoadSpriteAsset("Assets/icon-bonus.png", &IconBonusSprite);
 
 	LoadSpriteAsset("Assets/screen-lose-1.png", &ScreenLose1Sprite);
 	LoadSpriteAsset("Assets/screen-lose-2.png", &ScreenLose2Sprite);

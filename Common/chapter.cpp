@@ -1010,6 +1010,9 @@ void ClearChapterList()
     for (int i = 0; i < NChapters; i++)
     {
         free(Chapters[i].Name);
+        
+        if (Chapters[i].UnlockedBy)
+            free(Chapters[i].UnlockedBy);
     }
     
     NChapters = 0;
@@ -1055,7 +1058,46 @@ void LoadChapterList()
         }
         else
             Chapter->HasBackground = false;
+        
+        rapidxml::xml_attribute<char>* BronzeTimeAttr = ChapterNode->first_attribute("BronzeTime");
+        if (BronzeTimeAttr)
+            Chapter->BronzeTime = atoi(BronzeTimeAttr->value());
+        else
+            Chapter->BronzeTime = INT_MAX;
+        
+        rapidxml::xml_attribute<char>* SilverTimeAttr = ChapterNode->first_attribute("SilverTime");
+        if (SilverTimeAttr)
+            Chapter->SilverTime = atoi(SilverTimeAttr->value());
+        else
+            Chapter->SilverTime = INT_MAX;
+        
+        rapidxml::xml_attribute<char>* GoldTimeAttr = ChapterNode->first_attribute("GoldTime");
+        if (GoldTimeAttr)
+            Chapter->GoldTime = atoi(GoldTimeAttr->value());
+        else
+            Chapter->GoldTime = INT_MAX;
 
+        rapidxml::xml_attribute<char>* UnlockedByAttr = ChapterNode->first_attribute("UnlockedBy");
+        if (UnlockedByAttr)
+            Chapter->UnlockedBy = strdup(UnlockedByAttr->value());
+        else
+            Chapter->UnlockedBy = NULL;
+        
+        rapidxml::xml_attribute<char>* EndOfGameAttr = ChapterNode->first_attribute("EndOfGame");
+        if (EndOfGameAttr)
+            Chapter->EndOfGame = atoi(EndOfGameAttr->value());
+        else
+            Chapter->EndOfGame = false;
+
+        // Chapters are locked by default if another chapter unlocks them.
+        if (Chapter->UnlockedBy == NULL)
+            Chapter->Unlocked = true;
+        else
+            Chapter->Unlocked = false;
+        
+        Chapter->Completed = false;
+        Chapter->BestTime = INT_MAX;
+        
         NChapters++;
         
 		ChapterNode = ChapterNode->next_sibling("Chapter");
@@ -1064,3 +1106,104 @@ void LoadChapterList()
 	PopErrorContext();
 }
                            
+void LoadChapterUnlocks()
+{
+    PushErrorContext("While loading chapter unlocks:");
+
+    for (int i = 0; i < NChapters; i++)
+    {
+        SChapterListEntry* Chapter = &Chapters[i];
+        Chapter->Unlocked = false;
+        Chapter->BestTime = INT_MAX;
+    }
+    
+#ifdef PLATFORM_IPHONE
+    @try
+    {
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *documentsDirectory = [paths objectAtIndex:0];
+        NSString *filePath = [documentsDirectory stringByAppendingPathComponent:@"chapter.unlocks"];
+        
+        NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:filePath];
+        if ( !dict )
+        {
+            PopErrorContext();
+            return;
+        }
+        
+        NSNumber *version = [dict objectForKey:@"version"];
+        if ( [version intValue] != 1 )
+        {
+            PopErrorContext();
+            return;
+        }
+        
+        NSArray *chapters = [dict objectForKey:@"chapters"];
+        
+        for (int i = 0; i < [chapters count]; i++)
+        {
+            NSDictionary *savedChapter = [chapters objectAtIndex:i];
+            
+            NSString *savedName = [[savedChapter objectForKey:@"name"] stringValue];
+            
+            SChapterListEntry* ChapterList = NULL;
+            for (int j = 0; j < NChapters; j++)
+            {
+                if ([savedName isEqualToString:[NSString stringWithUTF8String:Chapters[j].Name]])
+                {
+                    ChapterList = &Chapters[j];
+                    break;
+                }
+            }
+            
+            if (ChapterList)
+            {
+                ChapterList->Unlocked = [[savedChapter objectForKey:@"unlocked"] boolValue];
+                ChapterList->Played = [[savedChapter objectForKey:@"played"] boolValue];
+                ChapterList->Completed = [[savedChapter objectForKey:@"completed"] boolValue];
+                ChapterList->BestTime = [[savedChapter objectForKey:@"bestTime"] intValue];
+            }
+        }
+    }
+    @catch (NSException *e)
+    {
+    }
+#endif
+    
+    PopErrorContext();
+
+}
+
+void SaveChapterUnlocks()
+{
+    PushErrorContext("While saving chapter unlocks:\n");
+    
+#ifdef PLATFORM_IPHONE
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:@"chapter.unlocks"];
+    
+    NSMutableArray *chapters = [[NSMutableArray alloc] init];
+    for (int i = 0; i < Chapter.NPages; i++)
+    {
+        SChapterListEntry* ChapterList = &Chapters[i];
+        
+        NSDictionary *chapter = [NSDictionary dictionaryWithObjectsAndKeys:
+                                 [NSString stringWithUTF8String:ChapterList->Name], @"name",
+                                 [NSNumber numberWithBool:ChapterList->Unlocked], @"unlocked",
+                                 [NSNumber numberWithBool:ChapterList->Played], @"played",
+                                 [NSNumber numberWithBool:ChapterList->Completed], @"completed",
+                                 [NSNumber numberWithInt:ChapterList->BestTime], @"bestTime", nil];
+        [chapters addObject:chapter];
+    }
+    
+    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                          [NSNumber numberWithInt:1], @"version",
+                          chapters, @"chapters", nil];
+    
+    [dict writeToFile:filePath atomically:YES];
+#endif
+    
+    PopErrorContext();
+
+}

@@ -20,6 +20,7 @@
 #include "Debris.h"
 #include "Lives.h"
 #include "Chapter.h"
+#include "Smoke.h"
 
 SScore Score;
 
@@ -112,67 +113,137 @@ void RecordPageScore(int Page)
             Score.BestChapterTime = Score.ChapterTime;
             Score.NewChapterRecord = true;
         }
+    
+        Chapters[CurrentChapter].Completed = true;
+        Chapters[CurrentChapter].BestTime = Score.BestChapterTime;
+
+        for (int i = 0; i < NChapters; i++)
+        {
+            if (Chapters[i].UnlockedBy)
+            {
+                if (strcmp(Chapters[i].UnlockedBy, Chapters[CurrentChapter].Name) == 0)
+                {
+                    if (Chapters[i].Unlocked == false)
+                    {
+                        Chapters[i].Unlocked = true;
+                        SaveChapterUnlocks();
+                    }
+                }
+            }
+        }
+    }
+    
+    if (Chapters[CurrentChapter].Played == false)
+    {
+        Chapters[CurrentChapter].Played = true;
+        SaveChapterUnlocks();
     }
     
     Score.CurrentPageTime = 0;
     Score.CurrentBonus = 0;
 }
 
-void AwardBonus()
+void AwardBonus(float X, float Y)
 {
-    // TODO: On screen representation.
+    CreateBonus(X, Y);
+    
     Score.CurrentBonus++;
 }
 
 void LoadChapterScores(char* ChapterName)
 {
+    PushErrorContext("While loading scores for chapter '%s':\n", ChapterName);
+    
     ResetScore();
 
 #ifdef PLATFORM_IPHONE
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *fileName = [[NSString stringWithUTF8String:ChapterName] stringByAppendingPathExtension:@"scores"];
-    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:fileName];
+    @try
+    {
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *documentsDirectory = [paths objectAtIndex:0];
+        NSString *fileName = [[NSString stringWithUTF8String:ChapterName] stringByAppendingPathExtension:@"scores"];
+        NSString *filePath = [documentsDirectory stringByAppendingPathComponent:fileName];
 
-    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:filePath];
-    if ( !dict )
-        return;
-    
-    NSNumber *version = [dict objectForKey:@"version"];
-    if ( [version intValue] != 1 )
-        return;
-    
-    NSArray *pageTimes = [dict objectForKey:@"pageTimes"];
-    if ( [pageTimes count] != Chapter.NPages )
-        return;
+        NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:filePath];
+        if ( !dict )
+        {
+            PopErrorContext();
+            return;
+        }
+        
+        NSNumber *version = [dict objectForKey:@"version"];
+        if ( [version intValue] != 1 )
+        {
+            PopErrorContext();
+            return;
+        }
+        
+        NSArray *pages = [dict objectForKey:@"pageTimes"];
 
-    NSNumber *chapterTime = [dict objectForKey:@"chapterTime"];
-    Score.BestChapterTime = [chapterTime intValue];
-    
-    for (int i = 0; i < [pageTimes count]; i++)
-        Score.BestPageTime[i] = [[pageTimes objectAtIndex:i] intValue];
+        for (int i = 0; i < [pages count]; i++)
+        {
+            NSDictionary *page = [pages objectAtIndex:i];
+            
+            NSString *name = [page objectForKey:@"name"];
+            
+            for (int j = 0; j < Chapter.NPages; j++)
+            {
+                if ([name isEqualToString:[NSString stringWithUTF8String:Chapter.Pages[j].Name]])
+                {
+                    Score.BestPageTime[j] = [[page objectForKey:@"time"] intValue];
+                    break;
+                }
+            }
+        }
+
+        Score.BestChapterTime = [[dict objectForKey:@"chapterTime"] intValue];
+    }
+    @catch (NSException *exception) 
+    {
+        for (int i = 0; i < Chapter.NPages; i++)
+            Score.BestPageTime[i] = INT_MAX;
+        
+        Score.BestChapterTime = INT_MAX;
+    }
 #endif
+    
+    PopErrorContext();
 }
 
 void SaveChapterScores(char* ChapterName)
 {
+    PushErrorContext("While saving scores for chapter '%s':\n", ChapterName);
+
 #ifdef PLATFORM_IPHONE
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *fileName = [[NSString stringWithUTF8String:ChapterName] stringByAppendingPathExtension:@"scores"];
-    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:fileName];
-    
-    NSMutableArray *array = [[NSMutableArray alloc] init];
-    for (int i = 0; i < Chapter.NPages; i++)
-        [array addObject:[NSNumber numberWithInt:Score.BestPageTime[i]]];
-    
-    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                          [NSNumber numberWithInt:1], @"version",
-                          [NSNumber numberWithInt:Score.BestChapterTime], @"chapterTime",
-                          array, @"pageTimes", nil];
-    
-    [dict writeToFile:filePath atomically:YES];
+    @try
+    {
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *documentsDirectory = [paths objectAtIndex:0];
+        NSString *fileName = [[NSString stringWithUTF8String:ChapterName] stringByAppendingPathExtension:@"scores"];
+        NSString *filePath = [documentsDirectory stringByAppendingPathComponent:fileName];
+        
+        NSMutableArray *pages = [[NSMutableArray alloc] init];
+        for (int i = 0; i < Chapter.NPages; i++)
+        {
+            NSDictionary *page = [NSDictionary dictionaryWithObjectsAndKeys:
+                                  [NSString stringWithUTF8String:Chapter.Pages[i].Name], @"name",
+                                  [NSNumber numberWithInt:Score.BestPageTime[i]], @"time", nil];
+            [pages addObject:page];
+        }
+        
+        NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                              [NSNumber numberWithInt:1], @"version",
+                              [NSNumber numberWithInt:Score.BestChapterTime], @"chapterTime",
+                              pages, @"pageTimes", nil];
+        
+        [dict writeToFile:filePath atomically:YES];
+    }
+    @catch (NSException *e)
+    {
+    }
 #endif
+    
+    PopErrorContext();
 }
 
 void UpdateScore()

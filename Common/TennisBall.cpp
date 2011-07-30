@@ -96,7 +96,7 @@ void UpdateBall()
             {
                 Ball->State = BALLSTATE_FALLING;
                 
-                AwardBonus();
+                AwardBonus(Ball->X, Ball->Y - 100);
 
                 sxPlaySound( &VacuumClogSound );  
 

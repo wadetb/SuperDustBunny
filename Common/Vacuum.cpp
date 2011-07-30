@@ -12,6 +12,7 @@
 #include "Dusty.h"
 #include "Chapter.h"
 #include "Settings.h"
+#include "Smoke.h"
 
 
 SVacuum Vacuum;
@@ -25,102 +26,6 @@ const float VacuumYOffset = 100;
 
 #define MAX_VACUUM_SMOKE 150
 
-
-struct SVacuumSmoke
-{
-    float Age;
-    float Life;
-    float Birth;
-    float Alpha;
-    float X, Y;
-    float Scale;
-    float Angle;
-    float VX, VY;
-    float VScale;
-    float VAngle;
-};
-
-
-SVacuumSmoke VacuumSmoke[MAX_VACUUM_SMOKE];
-
-int NextVacuumSmoke = 0;
-
-void InitVacuumSmoke()
-{
-    memset(VacuumSmoke, 0, sizeof(VacuumSmoke));    
-}
-
-void DisplayVacuumSmoke()
-{
-    for (int i = 0; i < MAX_VACUUM_SMOKE; i++)
-    {
-        SVacuumSmoke* Smoke = &VacuumSmoke[i];
-        
-        if (Smoke->Age >= Smoke->Life)
-            continue;
-        
-        float Alpha = Smoke->Alpha;
-        Alpha *= Remap(Smoke->Age, 0, Smoke->Life*1.0f/3.0f, 0.0f, 1.0f, true);
-        Alpha *= Remap(Smoke->Age, Smoke->Life*2.0f/3.0f, Smoke->Life, 1.0f, 0.0f, true);
-    
-        AddLitSpriteCenteredScaledRotatedAlpha(LIGHTLIST_DUST, &VacuumSmokeSprite, Smoke->X + ScrollX, Smoke->Y + ScrollY, Smoke->Scale, Smoke->Angle, Alpha);
-    }
-}
-
-void UpdateVacuumSmoke()
-{
-    for (int i = 0; i < MAX_VACUUM_SMOKE; i++)
-    {
-        SVacuumSmoke* Smoke = &VacuumSmoke[i];
-        
-        Smoke->Age += 1.0f/15.0f;
-
-        if (Smoke->Age >= Smoke->Life)
-            continue;
-        
-        Smoke->X += Smoke->VX;
-        Smoke->Y += Smoke->VY;
-        Smoke->Scale += Smoke->VScale;
-        Smoke->Angle += Smoke->VAngle;
-        
-        if (Smoke->Scale > 1.5f)
-            Smoke->Scale = 1.5f;
-        
-        Smoke->VX *= 0.95f;
-        Smoke->VY *= 0.95f;
-        Smoke->VAngle *= 0.99f;
-    }
-}
-
-void CreateVacuumSmoke(int Count)
-{
-    for (int i = 0; i < Count; i++)
-    {
-        SVacuumSmoke* Smoke = &VacuumSmoke[NextVacuumSmoke];
-        
-        NextVacuumSmoke++;
-        if (NextVacuumSmoke >= MAX_VACUUM_SMOKE)
-            NextVacuumSmoke = 0;
-        
-        Smoke->Age = 0.0f;
-        Smoke->Life = Random(9.0f, 10.0f);
-        Smoke->Birth = Random(0.0f, 0.25f);
-        
-        Smoke->Alpha = 0.65f;
-        
-        Smoke->X = Random(384.0f - 75.0f, 384.0f + 75.0f);
-        Smoke->Y = Random(Vacuum.Y + 150.0f, Vacuum.Y + 200.0f);
-        Smoke->VX = Random(-5.0f, 5.0f);
-        Smoke->VY = Random(-5.0f, -10.0f);
-        
-        Smoke->Scale = Random(0.75f, 1.25f);
-        Smoke->VScale = Random(0.002f, 0.01f);
-        
-        Smoke->Angle = Random(DegreesToRadians(0), DegreesToRadians(360.0f));
-        Smoke->VAngle = Random(DegreesToRadians(-1), DegreesToRadians(1));
-    }
-    
-}
 
 void InitVacuum()
 {
@@ -175,8 +80,6 @@ void DisplayVacuum()
 			}
 		}
 	}
-
-    DisplayVacuumSmoke();
     
 	if (DevMode)
 	{
@@ -234,6 +137,17 @@ void UpdateVacuumSound()
 	}
 }
 
+void CreateVacuumSmoke(int Count)
+{
+    
+    // Always spawn smoke on screen or just off screen, for quick feedback.
+    float SmokeY = Vacuum.Y + 150.0f;
+    if (SmokeY + ScrollY > LitScreenHeight + 100.0f)
+        SmokeY = ( LitScreenHeight + 100.0f ) - ScrollY;
+    
+    CreateSmoke(384.0f, SmokeY, Count);
+}
+
 void UpdateVacuum()
 {
 #ifdef PLATFORM_WINDOWS
@@ -253,8 +167,6 @@ void UpdateVacuum()
 		return;
 
     Vacuum.X = 384 - ScrollX;
-    
-    UpdateVacuumSmoke();
     
 	if (Vacuum.State == VACUUMSTATE_FAR)
 	{
@@ -342,11 +254,11 @@ void UpdateVacuum()
         LitSceneOffsetY = Clamp(LitSceneOffsetY + (rand() % 13) - 6, -10, 10);
         TargetZoom = 1.1f;
     }
-    else if (Vacuum.State == VACUUMSTATE_RETREAT && Vacuum.Timer >= VACUUM_RETREAT_TIME - 60 && Dusty.State != DUSTYSTATE_DIE)
+    else if (Vacuum.State == VACUUMSTATE_RETREAT && Vacuum.Timer >= VACUUM_RETREAT_TIME - 120 && Dusty.State != DUSTYSTATE_DIE)
     {
-        LitSceneOffsetX = Clamp(LitSceneOffsetX + (rand() % 21) - 10, -10, 10);
-        LitSceneOffsetY = Clamp(LitSceneOffsetY + (rand() % 21) - 10, -10, 10);
-        TargetZoom = 1.0f;
+        LitSceneOffsetX = Clamp(LitSceneOffsetX + (rand() % 13) - 6, -10, 10);
+        LitSceneOffsetY = Clamp(LitSceneOffsetY + (rand() % 13) - 6, -10, 10);
+        TargetZoom = 1.1f;
     }
     else
     {
