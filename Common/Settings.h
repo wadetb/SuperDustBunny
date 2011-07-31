@@ -30,6 +30,8 @@ typedef struct
     
     bool LiveAssets;
     int LiveAssetSlot;
+    
+    bool ChapterSkip;
 } SSettings;
 
 

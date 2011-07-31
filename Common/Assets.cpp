@@ -112,7 +112,6 @@ gxSprite PowerJump9Sprite;
 gxSprite PowerJump10Sprite; 
 
 gxSprite DustMoteSprite;
-gxSprite DustArrowSprite;
 
 gxSprite FireWorkRocketSprite;
 
@@ -688,72 +687,68 @@ void LoadSpriteAsset(const char* FileName, gxSprite* Sprite)
     SAsset* SpriteAsset;
     GetAsset(FileName, &AssetList, &SpriteAsset);
 
-    if (SpriteAsset)
-    {
-        Sprite->width = SpriteAsset->Sprite.Width;
-        Sprite->height = SpriteAsset->Sprite.Height;
-        Sprite->texWidth = SpriteAsset->Sprite.TexWidth;
-        Sprite->texHeight = SpriteAsset->Sprite.TexHeight;
-        Sprite->top = SpriteAsset->Sprite.Top;
-        Sprite->bottom = SpriteAsset->Sprite.Bottom;
-        Sprite->left = SpriteAsset->Sprite.Left;
-        Sprite->right = SpriteAsset->Sprite.Right;
+    if (!SpriteAsset)
+        ReportError("Could not find sprite asset '%s'.", FileName);
 
-        char Work[1024];
-        snprintf(Work, sizeof(Work), "%s/%s", AssetList->RootDirectory, SpriteAsset->RawFileName);
+    Sprite->width = SpriteAsset->Sprite.Width;
+    Sprite->height = SpriteAsset->Sprite.Height;
+    Sprite->texWidth = SpriteAsset->Sprite.TexWidth;
+    Sprite->texHeight = SpriteAsset->Sprite.TexHeight;
+    Sprite->top = SpriteAsset->Sprite.Top;
+    Sprite->bottom = SpriteAsset->Sprite.Bottom;
+    Sprite->left = SpriteAsset->Sprite.Left;
+    Sprite->right = SpriteAsset->Sprite.Right;
 
-        gzFile F = gzopen(Work, "rb");
-        if (!F)
-            return;
-                
-        int MaxFileSize = 1024 * 1024 * 4;
-        
-        char* Pixels = (char*)malloc(MaxFileSize);
-        int UncompressedSize = gzread(F, Pixels, MaxFileSize);
-        gzclose(F);
-        
-        glGenTextures(1, &Sprite->tex);
-        glBindTexture(GL_TEXTURE_2D, Sprite->tex);
+    char Work[1024];
+    snprintf(Work, sizeof(Work), "%s/%s", AssetList->RootDirectory, SpriteAsset->RawFileName);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        
-        int BPP = 4;
-        bool HasAlpha = true;
-        
-        GLenum Format;
-        if (HasAlpha) 
-            Format = (BPP == 4) ? GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG : GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG;
-        else
-            Format = (BPP == 4) ? GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG : GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG;
+    gzFile F = gzopen(Work, "rb");
+    if (!F)
+        return;
+            
+    int MaxFileSize = 1024 * 1024 * 4;
+    
+    char* Pixels = (char*)malloc(MaxFileSize);
+    int UncompressedSize = gzread(F, Pixels, MaxFileSize);
+    gzclose(F);
+    
+    glGenTextures(1, &Sprite->tex);
+    glBindTexture(GL_TEXTURE_2D, Sprite->tex);
 
-        int MipLevel = 0;
-        int MipWidth = Sprite->texWidth;
-        int MipHeight = Sprite->texHeight;
-        int DataOffset = 0;
-        
-        do
-        {
-            GLsizei DataSize = MipWidth * MipHeight * BPP / 8;
-            if (DataSize < 32) 
-                DataSize = 32;
-            
-            glCompressedTexImage2D(GL_TEXTURE_2D, MipLevel, Format, MipWidth, MipHeight, 0, DataSize, Pixels + DataOffset);
-            
-            MipLevel++;
-            MipWidth /= 2;
-            MipHeight /= 2;
-            
-            DataOffset += DataSize;
-            
-        } while (DataOffset < UncompressedSize);
-        
-        free(Pixels);
-    }
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    
+    int BPP = 4;
+    bool HasAlpha = true;
+    
+    GLenum Format;
+    if (HasAlpha) 
+        Format = (BPP == 4) ? GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG : GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG;
     else
+        Format = (BPP == 4) ? GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG : GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG;
+
+    int MipLevel = 0;
+    int MipWidth = Sprite->texWidth;
+    int MipHeight = Sprite->texHeight;
+    int DataOffset = 0;
+    
+    do
     {
-        gxLoadSprite(FileName, Sprite);
-    }
+        GLsizei DataSize = MipWidth * MipHeight * BPP / 8;
+        if (DataSize < 32) 
+            DataSize = 32;
+        
+        glCompressedTexImage2D(GL_TEXTURE_2D, MipLevel, Format, MipWidth, MipHeight, 0, DataSize, Pixels + DataOffset);
+        
+        MipLevel++;
+        MipWidth /= 2;
+        MipHeight /= 2;
+        
+        DataOffset += DataSize;
+        
+    } while (DataOffset < UncompressedSize);
+    
+    free(Pixels);
 #endif
     
 #ifdef PLATFORM_WINDOWS
@@ -872,7 +867,6 @@ void LoadAssets()
     LoadSpriteAsset("Assets/power-jump.png", &PowerJump10Sprite);
 
 	LoadSpriteAsset("Assets/dust-mote.png", &DustMoteSprite);
-	LoadSpriteAsset("Assets/dust-arrow.png", &DustArrowSprite);
 
 	LoadSpriteAsset("Assets/firework-rocket.png", &FireWorkRocketSprite);
 

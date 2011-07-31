@@ -388,6 +388,20 @@ void AdvanceToNextPage()
 	}
 }
 
+void SkipToNextPage()
+{
+    StopRecording(RESULT_NONE);
+    SetCurrentPage((Chapter.PageNum+Chapter.NPages-1) % Chapter.NPages);
+    StartRecording();
+}
+
+void SkipToPreviousPage()
+{
+    StopRecording(RESULT_NONE);
+    SetCurrentPage((Chapter.PageNum+1) % Chapter.NPages);
+    StartRecording();    
+}
+
 void LoadRecordingChapterAndPage()
 {
     char* ChapterName = GetRecordingChapterName();
@@ -506,6 +520,12 @@ void DisplayPauseScreen()
         AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonUnmuteSprite, 768-192, 500, 1.0f, 1.0f);
     else
         AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonMuteSprite, 768-192, 500, 1.0f, 1.0f);        
+
+    if (Settings.ChapterSkip)
+    {
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonPlaySprite, 192+16, 850, -2.0f, 2.0f);
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonPlaySprite, 768-192-16, 850, 2.0f, 1.0f);        
+    }
 }
 
 void UpdatePauseScreen()
@@ -522,6 +542,18 @@ void UpdatePauseScreen()
             GamePause = false;
 			StopRecording(RESULT_RESTART_PAGE);
             SetGameState_StartScreen();
+        }
+
+        if (Settings.ChapterSkip)
+        {
+            if (msX < 384-64 && msY >= 700 && msY <= 1000)
+            {
+                SkipToPreviousPage();
+            }
+            if (msX > 384+64 && msY >= 700 && msY <= 1000)
+            {
+                SkipToNextPage();
+            }
         }
     }
 }
@@ -1086,18 +1118,14 @@ bool Update()
         {
             if (Chapter.NPages > 0)
             {
-                StopRecording(RESULT_NONE);
-                SetCurrentPage((Chapter.PageNum+Chapter.NPages-1) % Chapter.NPages);
-                StartRecording();
+                SkipToPreviousPage();
             }
         }
         if (kbIsKeyDown(KB_NEXT) && !kbWasKeyDown(KB_NEXT))
         {
             if (Chapter.NPages > 0)
             {
-                StopRecording(RESULT_NONE);
-                SetCurrentPage((Chapter.PageNum+1) % Chapter.NPages);
-                StartRecording();
+                SkipToNextPage();
             }
         }
 

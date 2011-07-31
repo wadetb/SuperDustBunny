@@ -112,7 +112,6 @@ extern gxSprite PowerJump9Sprite;
 extern gxSprite PowerJump10Sprite; 
 
 extern gxSprite DustMoteSprite;
-extern gxSprite DustArrowSprite;
 
 extern gxSprite FireWorkRocketSprite;
 

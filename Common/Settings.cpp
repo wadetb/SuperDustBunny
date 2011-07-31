@@ -30,6 +30,7 @@ void InitSettings()
     Settings.DisableVacuum = false;
     Settings.LiveAssets = false;
     Settings.LiveAssetSlot = 1;
+    Settings.ChapterSkip = true;
     
 #ifdef PLATFORM_IPHONE
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -42,7 +43,8 @@ void InitSettings()
                                  [NSNumber numberWithBool: Settings.DoubleJump], @"DoubleJump", 
                                  [NSNumber numberWithBool: Settings.InfiniteLives], @"InfiniteLives", 
                                  [NSNumber numberWithBool: Settings.LiveAssets], @"LiveAssets", 
-                                 [NSNumber numberWithBool: Settings.LiveAssetSlot], @"LiveAssetSlot", 
+                                 [NSNumber numberWithInt: Settings.LiveAssetSlot], @"LiveAssetSlot", 
+                                 [NSNumber numberWithBool: Settings.ChapterSkip], @"ChapterSkip", 
                                  nil];
     
     [defaults registerDefaults:appDefaults];
@@ -54,13 +56,14 @@ void LoadSettings()
 #ifdef PLATFORM_IPHONE
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     Settings.ControlStyle = (EControlStyle)[defaults integerForKey:@"ControlStyle"];
-    Settings.TiltSensitivity = (EControlStyle)[defaults integerForKey:@"TiltSensitivity"];
-    Settings.ContinuousJump = (EControlStyle)[defaults boolForKey:@"ContinuousJump"];
-    Settings.FallGracePeriod = (EControlStyle)[defaults boolForKey:@"FallGracePeriod"];
-    Settings.DoubleJump = (EControlStyle)[defaults boolForKey:@"DoubleJump"];
-    Settings.InfiniteLives = (EControlStyle)[defaults boolForKey:@"InfiniteLives"];
-    Settings.LiveAssets = (EControlStyle)[defaults boolForKey:@"LiveAssets"];
-    Settings.LiveAssetSlot = (EControlStyle)[defaults integerForKey:@"LiveAssetSlot"];
+    Settings.TiltSensitivity = [defaults integerForKey:@"TiltSensitivity"];
+    Settings.ContinuousJump = [defaults boolForKey:@"ContinuousJump"];
+    Settings.FallGracePeriod = [defaults boolForKey:@"FallGracePeriod"];
+    Settings.DoubleJump = [defaults boolForKey:@"DoubleJump"];
+    Settings.InfiniteLives = [defaults boolForKey:@"InfiniteLives"];
+    Settings.LiveAssets = [defaults boolForKey:@"LiveAssets"];
+    Settings.LiveAssetSlot = [defaults integerForKey:@"LiveAssetSlot"];
+    Settings.ChapterSkip = [defaults boolForKey:@"ChapterSkip"];
 #endif
 }
 
@@ -76,6 +79,7 @@ void SaveSettings()
     [defaults setObject:[NSNumber numberWithBool:Settings.InfiniteLives] forKey:@"InfiniteLives"];
     [defaults setObject:[NSNumber numberWithBool:Settings.LiveAssets] forKey:@"LiveAssets"];
     [defaults setObject:[NSNumber numberWithInt:Settings.LiveAssetSlot] forKey:@"LiveAssetSlot"];
+    [defaults setObject:[NSNumber numberWithBool:Settings.ChapterSkip] forKey:@"ChapterSkip"];
 #endif
 }
 
