@@ -47,6 +47,8 @@ struct SStartScreen
     float StartupTime;
     
     bool WelcomeDisplayed;
+    
+    float WiggleTime;
 };
 
 SStartScreen StartScreen;
@@ -174,6 +176,9 @@ void DisplayStartScreen()
         
         if (i == StartScreen.CurItem)
         {
+            X += cosf(StartScreen.WiggleTime*4.0f) * 2.5f + cosf(StartScreen.WiggleTime*1.0f/3.0f) * 2.5f;
+            Y += sinf(StartScreen.WiggleTime*4.0f) * 2.5f + sinf(StartScreen.WiggleTime*1.0f/3.0f) * 2.5f;
+            
             float OverlayAlpha = SinWave(StartScreen.PressedTime, 1.0f);
             AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, GetStartScreenIcon(i), X, Y, Scale, 1.0f);
             AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, GetStartScreenPressedIcon(i), X, Y, Scale, OverlayAlpha);
@@ -316,4 +321,6 @@ void UpdateStartScreen()
         StartScreen.WelcomeDisplayed = true;
         //DisplayWelcomeAlert();
     }
+    
+    StartScreen.WiggleTime += 1.0f/60.0f;
 }
