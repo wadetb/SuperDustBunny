@@ -35,7 +35,7 @@
 int NChapters;
 SChapterListEntry Chapters[MAX_CHAPTERS];
 
-int CurrentChapter = 0;
+int CurrentChapter = -1;
 
 SChapter Chapter;
 
@@ -1109,13 +1109,6 @@ void LoadChapterList()
 void LoadChapterUnlocks()
 {
     PushErrorContext("While loading chapter unlocks:");
-
-    for (int i = 0; i < NChapters; i++)
-    {
-        SChapterListEntry* Chapter = &Chapters[i];
-        Chapter->Unlocked = false;
-        Chapter->BestTime = INT_MAX;
-    }
     
 #ifdef PLATFORM_IPHONE
     @try
@@ -1144,7 +1137,7 @@ void LoadChapterUnlocks()
         {
             NSDictionary *savedChapter = [chapters objectAtIndex:i];
             
-            NSString *savedName = [[savedChapter objectForKey:@"name"] stringValue];
+            NSString *savedName = [savedChapter objectForKey:@"name"];
             
             SChapterListEntry* ChapterList = NULL;
             for (int j = 0; j < NChapters; j++)
@@ -1167,6 +1160,7 @@ void LoadChapterUnlocks()
     }
     @catch (NSException *e)
     {
+        NSLog(@"Caught exception while loading chapter unlocks: %@\n", e);
     }
 #endif
     
@@ -1184,7 +1178,7 @@ void SaveChapterUnlocks()
     NSString *filePath = [documentsDirectory stringByAppendingPathComponent:@"chapter.unlocks"];
     
     NSMutableArray *chapters = [[NSMutableArray alloc] init];
-    for (int i = 0; i < Chapter.NPages; i++)
+    for (int i = 0; i < NChapters; i++)
     {
         SChapterListEntry* ChapterList = &Chapters[i];
         

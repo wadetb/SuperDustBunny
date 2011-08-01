@@ -20,7 +20,8 @@
 struct SWinScreen
 {
 	bool Pressed;
-    int Timer;
+    float Timer;
+    float SlideIn;
 };
 
 
@@ -31,6 +32,7 @@ void InitWinScreen()
 {
 	WinScreen.Pressed = false;
     WinScreen.Timer = 0;
+    WinScreen.SlideIn = 1.0f;
 }
 
 void DisplayWinScreen()
@@ -54,6 +56,7 @@ void DisplayWinScreen()
     AddLitSprite(LIGHTLIST_BACKGROUND, &BackgroundFridgeSprite, 0, 0);
     AddLitSprite(LIGHTLIST_BACKGROUND, &BackgroundFridgeSprite, 0, 1024);
 
+    
     int CurrentY = 75;
     
     AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterCompleteSprite, 384, CurrentY, 1.0f, 1.0f);
@@ -65,25 +68,29 @@ void DisplayWinScreen()
     
     for (int i = 0; i < Chapter.NPages; i++)
     {
-        DisplayTime(80, CurrentY, 0.75f, Score.PageTime[i]);
-        DisplayTimeDigit(Score.PageBonus[i], 450, CurrentY, 0.75f, 0, 0);
+        DisplayTime(80 - (i+1)*300*WinScreen.SlideIn, CurrentY, 0.75f, Score.PageTime[i]);
+        DisplayTimeDigit(Score.PageBonus[i], 450 - (i+1)*300*WinScreen.SlideIn, CurrentY, 0.75f, 0, 0);
         if (Score.NewRecord[i])
-            AddLitSprite(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterNewSprite, 550, CurrentY);
+            AddLitSprite(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterNewSprite, 550 + i*WinScreen.SlideIn*300, CurrentY);
         CurrentY += 75;
     }
     
     CurrentY += 75;
     
-    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterTotalTimeSprite, 384, CurrentY, 1.0f, 1.0f);
+    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterTotalTimeSprite, 384 + 2000*WinScreen.SlideIn, CurrentY, 1.0f, 1.0f);
     CurrentY += 75;
 
     DisplayTime(200, CurrentY, 1.0f, Score.ChapterTime);
     CurrentY += 150;
     
     if (Score.NewChapterRecord)
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterNewRecordSprite, 384, CurrentY, 1.0f, 1.0f);
+    {
+        float NewRecordScale = 1.0f + SinWave(WinScreen.Timer, 0.75f) * 0.30f;
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterNewRecordSprite, 384, CurrentY, NewRecordScale, 1.0f);
+    }
 
-    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &TapToContinueSprite, 384, LitScreenHeight - 75, 1.0f, 1.0f);
+    float TapScape = 1.0f + SinWave(WinScreen.Timer, 0.5f) * 0.05f;
+    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &TapToContinueSprite, 384, LitScreenHeight - 75, TapScape, 1.0f);
 }
 
 void WinScreen_Advance()
@@ -131,10 +138,10 @@ void UpdateWinScreen()
 	bool Pressed = msButton1;
 #endif
 
-    WinScreen.Timer++;
+    WinScreen.Timer += 1.0f/60.0f;
 
 	// Advance to playing state when button is released.
-	if (WinScreen.Timer > 130)
+	if (WinScreen.Timer > 130.0f/60.0f)
     { 
         if (!Pressed && WinScreen.Pressed)
         {
@@ -144,5 +151,7 @@ void UpdateWinScreen()
         
         WinScreen.Pressed = Pressed;
     }
+    
+    WinScreen.SlideIn *= 0.9f;
 }
 

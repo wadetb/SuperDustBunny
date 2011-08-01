@@ -454,7 +454,18 @@ void SetGameState_StartScreen()
 
     ClearChapterList();
     LoadChapterList();
+    LoadChapterUnlocks();
     
+    // Advance to first unlocked chapter.
+    if (CurrentChapter < 0)
+    {
+        CurrentChapter = 0;
+        while (Chapters[CurrentChapter].Unlocked)
+            CurrentChapter++;
+        if (CurrentChapter > 0) 
+            CurrentChapter--;
+    }
+
 	InitStartScreen();
 }
 
