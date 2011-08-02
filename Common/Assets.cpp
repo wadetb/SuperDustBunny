@@ -706,7 +706,7 @@ void LoadSpriteAsset(const char* FileName, gxSprite* Sprite)
     if (!F)
         return;
             
-    int MaxFileSize = 1024 * 1024 * 4;
+    int MaxFileSize = 1024 * 1024 * 16;
     
     char* Pixels = (char*)malloc(MaxFileSize);
     int UncompressedSize = gzread(F, Pixels, MaxFileSize);
@@ -732,13 +732,36 @@ void LoadSpriteAsset(const char* FileName, gxSprite* Sprite)
     int MipHeight = Sprite->texHeight;
     int DataOffset = 0;
     
+    int MaxTextureSize;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &MaxTextureSize);
+    
+    if (MipWidth > MaxTextureSize || MipHeight > MaxTextureSize)
+    {
+        while (MipWidth > MaxTextureSize || MipHeight > MaxTextureSize)
+        {
+            GLsizei DataSize = MipWidth * MipHeight * BPP / 8;
+            if (DataSize < 32) 
+                DataSize = 32;
+            
+            MipWidth /= 2;
+            MipHeight /= 2;
+
+            DataOffset += DataSize;
+        }
+
+        NSLog(@"Texture '%s' exceeds the maximum size for this device.  Resizing to %d x %d.\n", FileName, MipWidth, MipHeight);
+    }
+
+    if (DataOffset >= UncompressedSize)
+        ReportError("Texture '%s' exceeds the maximum size for this device, and does not have enough mip levels to be resized.\n", FileName);
+
     do
     {
         GLsizei DataSize = MipWidth * MipHeight * BPP / 8;
         if (DataSize < 32) 
             DataSize = 32;
         
-        glCompressedTexImage2D(GL_TEXTURE_2D, MipLevel, Format, MipWidth, MipHeight, 0, DataSize, Pixels + DataOffset);
+        glCompressedTexImage2D(GL_TEXTURE_2D, MipLevel, Format, MipWidth, MipHeight, 0, DataSize, Pixels + DataOffset);            
         
         MipLevel++;
         MipWidth /= 2;
