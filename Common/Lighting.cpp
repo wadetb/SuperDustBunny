@@ -728,6 +728,7 @@ void RenderLighting()
         DrawLightList(LIGHTLIST_FOREGROUND, NULL, GXALPHA_BLEND);
         DrawLightList(LIGHTLIST_FOREGROUND_NO_SHADOW, NULL, GXALPHA_BLEND);        
         //DrawLightListShadow(LIGHTLIST_VACUUM, NULL, GXALPHA_BLEND);        
+        DrawLightList(LIGHTLIST_SMOKE, NULL, GXALPHA_BLEND);
         DrawLightList(LIGHTLIST_VACUUM, NULL, GXALPHA_BLEND);
         DrawLightList(LIGHTLIST_EFFECTS, NULL, GXALPHA_ADD);
         DrawLightList(LIGHTLIST_WIPE, NULL, GXALPHA_BLEND);
@@ -771,6 +772,9 @@ void RenderLighting()
         // Vacuum shadows.
         DrawShadows(LIGHTLIST_VACUUM, &ColorRT, 30, 20);
         
+        // Smoke.
+        DrawLightList(LIGHTLIST_SMOKE, &LitShader, GXALPHA_BLEND);
+
         // Vacuum.
         DrawLightList(LIGHTLIST_VACUUM, &LitShader, GXALPHA_BLEND);
         

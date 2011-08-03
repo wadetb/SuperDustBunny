@@ -28,6 +28,8 @@ struct SSmoke
     float VX, VY;
     float VScale;
     float VAngle;
+    float FX, FY;
+    float FAngle;
 };
 
 
@@ -56,7 +58,7 @@ void DisplaySmoke()
         Alpha *= Remap(Smoke->Age, 0, Smoke->Life*1.0f/3.0f, 0.0f, 1.0f, true);
         Alpha *= Remap(Smoke->Age, Smoke->Life*2.0f/3.0f, Smoke->Life, 1.0f, 0.0f, true);
         
-        AddLitSpriteCenteredScaledRotatedAlpha(LIGHTLIST_DUST, Smoke->Sprite, Smoke->X + ScrollX, Smoke->Y + ScrollY, Smoke->Scale, Smoke->Angle, Alpha);
+        AddLitSpriteCenteredScaledRotatedAlpha(LIGHTLIST_SMOKE, Smoke->Sprite, Smoke->X + ScrollX, Smoke->Y + ScrollY, Smoke->Scale, Smoke->Angle, Alpha);
     }
 }
 
@@ -85,9 +87,9 @@ void UpdateSmoke()
         if (Smoke->Scale > 1.5f)
             Smoke->Scale = 1.5f;
         
-        Smoke->VX *= 0.95f;
-        Smoke->VY *= 0.95f;
-        Smoke->VAngle *= 0.99f;
+        Smoke->VX *= Smoke->FX;
+        Smoke->VY *= Smoke->FY;
+        Smoke->VAngle *= Smoke->FAngle;
     }
 }
 
@@ -121,6 +123,10 @@ void CreateSmoke(float X, float Y, int Count)
         
         Smoke->Angle = Random(DegreesToRadians(0), DegreesToRadians(360.0f));
         Smoke->VAngle = Random(DegreesToRadians(-1), DegreesToRadians(1));
+        
+        Smoke->FX = 0.95f;
+        Smoke->FY = 0.95f;
+        Smoke->FAngle = 0.99f;
     }
 }
 
@@ -152,6 +158,10 @@ void CreateSmallSmoke(float X, float Y)
     
     Smoke->Angle = Random(DegreesToRadians(0), DegreesToRadians(360.0f));
     Smoke->VAngle = Random(DegreesToRadians(-1), DegreesToRadians(1));
+    
+    Smoke->FX = 0.95f;
+    Smoke->FY = 0.95f;
+    Smoke->FAngle = 0.99f;
 }
 
 void CreateBonus(float X, float Y)
@@ -177,9 +187,13 @@ void CreateBonus(float X, float Y)
     Smoke->VX = 0;
     Smoke->VY = -2.0f;
     
-    Smoke->Scale = 0.3f;
+    Smoke->Scale = 0.4f;
     Smoke->VScale = 0.0f;
     
     Smoke->Angle = 0.0f;
     Smoke->VAngle = 0.0f;
+    
+    Smoke->FX = 0.0f;
+    Smoke->FY = 0.99f;
+    Smoke->FAngle = 0.0f;
 }
