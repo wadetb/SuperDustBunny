@@ -83,15 +83,8 @@ struct SBlock
 	void* Properties;
 };
 
-enum EBackgroundType
-{
-    BACKGROUND_STUDY,
-    BACKGROUND_FRIDGE
-};
-
 struct SPageProperties
 {
-    EBackgroundType Background;
 	bool LightsOff;
 	bool VacuumOff;
 	int VacuumDir;
@@ -113,6 +106,9 @@ struct SChapter
 {
 	const char* Name;
 
+    bool HasBackground;
+    gxSprite BackgroundSprite;
+    
 	float StartX, StartY;
 	float EndX, EndY;
     

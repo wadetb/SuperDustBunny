@@ -71,52 +71,8 @@ void ParseNailProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode
 	Block->Properties = NailProperties;
 }
 
-void GetNextLine(FILE* File, char* Line, int LineSize)
-{
-	*Line = '\0';
-	
-	while (!feof(File))
-	{
-		fgets(Line, LineSize-1, File);
-
-		// Remove comments up to the end of the line.
-		char* Comment = Line;
-		while (*Comment)
-		{
-			if (Comment[0] == '/' && Comment[1] == '/')
-			{
-				*Comment = '\0';
-				break;
-			}
-			Comment++;
-		}
-		
-		// Remove whitespace from the end of the line.
-		char* End = Line + strlen(Line)-1;
-		while (End > Line && isspace(*End))
-		{
-			End--;
-		}
-		End[1] = '\0';
-		
-		// Remove whitespace from the beginning of the line.
-		char* Begin = Line;
-		while (isspace(*Begin))
-		{
-			Begin++;
-		}
-		memmove(Line, Begin, strlen(Begin)+1);
-		
-		// If the resulting line is not empty, return it.
-		// Otherwise, loop around and get another one.
-		if (*Line)
-			return;
-	}
-}
-
 void InitPageProperties(SPageProperties* Props)
 {
-    Props->Background = BACKGROUND_STUDY;
 	Props->LightsOff = false;
 	Props->VacuumOff = false;
 	Props->VacuumDir = VACUUMDIR_UP;
@@ -131,16 +87,7 @@ void ParsePageProperties(SPageProperties* Props, rapidxml::xml_node<char>* Prope
 		const char* Name = PropertyNode->first_attribute("name")->value();
 		const char* Value = PropertyNode->first_attribute("value")->value();
 
-		if (strcmp(Name, "background") == 0)
-		{
-			if (strcmp(Value, "study") == 0)
-				Props->Background = BACKGROUND_STUDY;
-			else if (strcmp(Value, "fridge") == 0)
-				Props->Background = BACKGROUND_FRIDGE;
-			else
-				ReportError("'%s' is not a valid value for the 'background' property.  The value must be 'study' or 'fridge'.  Fix this problem and re-save the TMX file.", Value);
-		}
-		else if (strcmp(Name, "lights") == 0)
+		if (strcmp(Name, "lights") == 0)
 		{
 			if (strcmp(Value, "off") == 0)
 				Props->LightsOff = true;
@@ -641,6 +588,8 @@ void LoadChapter(const char* ChapterDir)
     Chapter.EndX = 0;
 	Chapter.EndY = 0;
 
+    Chapter.HasBackground = false;
+    
 	Chapter.NBlocks = 0;
 	Chapter.NPages = 0;
 	Chapter.NTileSets = 0;
@@ -664,6 +613,15 @@ void LoadChapter(const char* ChapterDir)
 	rapidxml::xml_node<char>* ChapterNode = Document.first_node("Chapter");
 	if (ChapterNode == NULL)
 		ReportError("Missing <Chapter> node.  Check for errors in the XML.");
+    
+    rapidxml::xml_attribute<char>* BackgroundAttr = ChapterNode->first_attribute("Background");
+    if (BackgroundAttr)
+    {
+        Chapter.HasBackground = true;
+        LoadSpriteAsset(BackgroundAttr->value(), &Chapter.BackgroundSprite);
+    }
+    else
+        Chapter.HasBackground = false;
     
    	rapidxml::xml_node<char>* PageNode = ChapterNode->first_node("Page");
 
@@ -700,6 +658,9 @@ void ClearChapter()
 	free((void*)Chapter.Name);
 	Chapter.Name = NULL;
 
+    if (Chapter.HasBackground)
+        gxDestroySprite(&Chapter.BackgroundSprite);
+    
 	for (int i = 0; i < Chapter.NPages; i++)
 	{
 		free(Chapter.Pages[i].Name);

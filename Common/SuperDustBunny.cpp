@@ -573,11 +573,10 @@ void DisplayBackground()
 {
     gxSprite* BackgroundSprite;
     
-    switch (Chapter.PageProps.Background)
-    {
-        case BACKGROUND_STUDY:  BackgroundSprite = &BackgroundPaperSprite; break;
-        case BACKGROUND_FRIDGE: BackgroundSprite = &BackgroundFridgeSprite; break;
-    }
+    if (Chapter.HasBackground)
+        BackgroundSprite = &Chapter.BackgroundSprite;
+    else
+        BackgroundSprite = &BackgroundPaperSprite;
     
     if (!BackgroundSprite || !BackgroundSprite->width || !BackgroundSprite->height)
         return;
