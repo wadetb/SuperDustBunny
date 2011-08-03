@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0816B6D3137F8C1C00CE5DE4 /* Input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0816B6D1137F8C1B00CE5DE4 /* Input.cpp */; };
+		082C9B8013E8D97400586EDB /* Icon-ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 082C9B7F13E8D97400586EDB /* Icon-ipad.png */; };
 		0856200F1346A40000F9EFBA /* Default-ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856200A1346A40000F9EFBA /* Default-ipad.png */; };
 		085620101346A40000F9EFBA /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856200B1346A40000F9EFBA /* Default.png */; };
 		085620111346A40000F9EFBA /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856200C1346A40000F9EFBA /* Default@2x.png */; };
@@ -76,6 +77,7 @@
 /* Begin PBXFileReference section */
 		0816B6D1137F8C1B00CE5DE4 /* Input.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Input.cpp; sourceTree = "<group>"; };
 		0816B6D2137F8C1C00CE5DE4 /* Input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Input.h; sourceTree = "<group>"; };
+		082C9B7F13E8D97400586EDB /* Icon-ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-ipad.png"; sourceTree = "<group>"; };
 		0856200A1346A40000F9EFBA /* Default-ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-ipad.png"; sourceTree = "<group>"; };
 		0856200B1346A40000F9EFBA /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		0856200C1346A40000F9EFBA /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
@@ -210,6 +212,7 @@
 		085AA94F132C572A00DF32CA = {
 			isa = PBXGroup;
 			children = (
+				082C9B7F13E8D97400586EDB /* Icon-ipad.png */,
 				08BF391613466F4E002C1A7B /* Converted */,
 				08A8FC7313302BB300E45A98 /* Documentation */,
 				085AAA88132D0E7100DF32CA /* Converter */,
@@ -447,6 +450,7 @@
 				085620111346A40000F9EFBA /* Default@2x.png in Resources */,
 				085620121346A40000F9EFBA /* Icon.png in Resources */,
 				085620131346A40000F9EFBA /* Icon@2x.png in Resources */,
+				082C9B8013E8D97400586EDB /* Icon-ipad.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -507,7 +511,10 @@
 		085AA97E132C572A00DF32CA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = (
+					armv6,
+					"$(ARCHS_STANDARD_32_BIT)",
+				);
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -525,7 +532,10 @@
 		085AA97F132C572A00DF32CA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = (
+					armv6,
+					"$(ARCHS_STANDARD_32_BIT)",
+				);
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
