@@ -67,7 +67,12 @@ gxSprite* GetStartScreenIcon(int Item)
 
     SChapterListEntry* Chapter = &Chapters[Item - STARTSCREEN_ITEM_FIRST_CHAPTER];
     if (Chapter->Unlocked)
-        return &IconStart1Sprite;
+    {
+        if (Chapter->HasIcon)
+            return &Chapter->IconSprite;
+        else
+            return &IconStart1Sprite;
+    }
     else
         return &IconLockedSprite;
 }
@@ -82,7 +87,12 @@ gxSprite* GetStartScreenPressedIcon(int Item)
     
     SChapterListEntry* Chapter = &Chapters[Item - STARTSCREEN_ITEM_FIRST_CHAPTER];
     if (Chapter->Unlocked)
-        return &IconStart2Sprite;
+    {
+        if (Chapter->HasIcon)
+            return &Chapter->IconSprite;
+        else
+            return &IconStart2Sprite;
+    }
     else
         return &IconLockedSprite;
 }

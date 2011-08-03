@@ -147,6 +147,9 @@ struct SChapterListEntry
     
     bool HasBackground;
     gxSprite BackgroundSprite;
+    
+    bool HasIcon;
+    gxSprite IconSprite;
 
     int BronzeTime;
     int SilverTime;

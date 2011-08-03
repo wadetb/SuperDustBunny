@@ -1011,6 +1011,12 @@ void ClearChapterList()
     {
         free(Chapters[i].Name);
         
+        if (Chapters[i].HasBackground)
+            gxDestroySprite(&Chapters[i].BackgroundSprite);
+        
+        if (Chapters[i].HasIcon)
+            gxDestroySprite(&Chapters[i].IconSprite);
+        
         if (Chapters[i].UnlockedBy)
             free(Chapters[i].UnlockedBy);
     }
@@ -1058,6 +1064,15 @@ void LoadChapterList()
         }
         else
             Chapter->HasBackground = false;
+        
+        rapidxml::xml_attribute<char>* IconAttr = ChapterNode->first_attribute("Icon");
+        if (IconAttr)
+        {
+            LoadSpriteAsset(IconAttr->value(), &Chapter->IconSprite);
+            Chapter->HasIcon = true;
+        }
+        else
+            Chapter->HasIcon = false;
         
         rapidxml::xml_attribute<char>* BronzeTimeAttr = ChapterNode->first_attribute("BronzeTime");
         if (BronzeTimeAttr)
