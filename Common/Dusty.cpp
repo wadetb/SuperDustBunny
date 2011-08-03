@@ -144,12 +144,12 @@ bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
                 
                 GetInput_ConsumeSwipe(1.0f / 60.0f);
                 
-//#ifdef SWIPE_DEBUG
+#ifdef SWIPE_DEBUG
                 AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle+Range))*100 + ScrollX, Dusty.FloatY + -sinf(DegreesToRadians(Angle+Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
                 AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle-Range))*100 + ScrollX, Dusty.FloatY + -sinf(DegreesToRadians(Angle-Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
                 
                 AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + dX*10 + ScrollX, Dusty.FloatY + dY*10 + ScrollY, gxRGB32(192, 128, 128), 0.5f);
-//#endif
+#endif
                 
                 return true;
             }

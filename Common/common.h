@@ -62,9 +62,6 @@
 #include "Assets.h"
 #include "Lighting.h"
 
-//#define SWIPE_DEBUG
-
-
 
 static const float PI = acosf(-1.0f);
 

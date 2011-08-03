@@ -16,8 +16,6 @@
 
 #define MAX_SWIPE_POINTS 256
 
-#define SWIPE_DEBUG
-
 
 struct SSwipe
 {
