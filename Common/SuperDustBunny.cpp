@@ -523,8 +523,8 @@ void DisplayPauseScreen()
 
     if (Settings.ChapterSkip)
     {
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonPlaySprite, 192+16, 850, -2.0f, 2.0f);
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonPlaySprite, 768-192-16, 850, 2.0f, 1.0f);        
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 192+16, 850, -2.0f, 2.0f);
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 768-192-16, 850, 2.0f, 1.0f);        
     }
 }
 

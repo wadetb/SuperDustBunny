@@ -88,6 +88,7 @@ extern gxSprite ButtonPlaySprite;
 extern gxSprite ButtonMuteSprite;
 extern gxSprite ButtonUnmuteSprite;
 extern gxSprite ButtonHomeSprite;
+extern gxSprite ButtonFastForwardSprite;
 
 extern gxSprite PortalSprite;
 
