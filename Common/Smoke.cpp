@@ -174,7 +174,7 @@ void CreateBonus(float X, float Y)
     
     Smoke->Active = true;
     
-    Smoke->Sprite = &IconBonusSprite;
+    Smoke->Sprite = &TextMinus1SecSprite;
     
     Smoke->Age = 0.0f;
     Smoke->Life = 10.0f;

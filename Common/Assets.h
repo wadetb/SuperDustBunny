@@ -140,8 +140,6 @@ extern gxSprite IconCredits1Sprite;
 extern gxSprite IconCredits2Sprite;
 extern gxSprite IconLockedSprite;
 
-extern gxSprite IconBonusSprite;
-
 extern gxSprite ScreenLose1Sprite;
 extern gxSprite ScreenLose2Sprite;
 
@@ -152,7 +150,9 @@ extern gxSprite ScreenLoseGrave2Sprite;
 extern gxSprite ScreenWin1Sprite;
 extern gxSprite ScreenWin2Sprite;
 
-extern gxSprite FlickToJumpSprite;
+extern gxSprite TextMinus1SecSprite;
+extern gxSprite TextFlickToJumpSprite;
+extern gxSprite TextBonusSprite;
 
 extern gxSprite ChapterTitleSprite;
 extern gxSprite ChapterTextSprite;

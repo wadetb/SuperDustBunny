@@ -18,6 +18,7 @@ enum EGearState
     GEARSTATE_INACTIVE,
 };
 
+
 struct SGear
 {
     EGearState State;
@@ -30,15 +31,15 @@ struct SGear
 	float Angle;
 };
 
-extern SGear Gear;
+
+extern int NGears;
+extern SGear Gears[];
+
 
 void CreateGear(int X, int Y);
 void ClearGears();
 
 void UpdateGear();
 void DisplayGear();
-
-extern int NGears;
-extern SGear Gears[];
 
 #endif

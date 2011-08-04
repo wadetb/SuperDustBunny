@@ -140,8 +140,6 @@ gxSprite IconCredits1Sprite;
 gxSprite IconCredits2Sprite;
 gxSprite IconLockedSprite;
 
-gxSprite IconBonusSprite;
-
 gxSprite ScreenLose1Sprite;
 gxSprite ScreenLose2Sprite;
 
@@ -152,7 +150,9 @@ gxSprite ScreenLoseGrave2Sprite;
 gxSprite ScreenWin1Sprite;
 gxSprite ScreenWin2Sprite;
 
-gxSprite FlickToJumpSprite;
+gxSprite TextMinus1SecSprite;
+gxSprite TextFlickToJumpSprite;
+gxSprite TextBonusSprite;
 
 gxSprite ChapterTitleSprite;
 gxSprite ChapterTextSprite;
@@ -913,8 +913,6 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/icon-credits-2.png", &IconCredits2Sprite);
 	LoadSpriteAsset("Assets/icon-locked.png", &IconLockedSprite);
 
-    LoadSpriteAsset("Assets/icon-bonus.png", &IconBonusSprite);
-
 	LoadSpriteAsset("Assets/screen-lose-1.png", &ScreenLose1Sprite);
 	LoadSpriteAsset("Assets/screen-lose-2.png", &ScreenLose2Sprite);
 	
@@ -925,7 +923,9 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/screen-win-1.png", &ScreenWin1Sprite);
 	LoadSpriteAsset("Assets/screen-win-2.png", &ScreenWin2Sprite);
 
-	LoadSpriteAsset("Assets/text-flick-to-jump.png", &FlickToJumpSprite);
+    LoadSpriteAsset("Assets/text-minus-1-sec.png", &TextMinus1SecSprite);
+	LoadSpriteAsset("Assets/text-flick-to-jump.png", &TextFlickToJumpSprite);
+	LoadSpriteAsset("Assets/text-bonus.png", &TextBonusSprite);
 	
 	LoadSpriteAsset("Assets/chapter-title.png", &ChapterTitleSprite);
 	LoadSpriteAsset("Assets/chapter.png", &ChapterTextSprite);

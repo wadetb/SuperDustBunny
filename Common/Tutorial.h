@@ -10,15 +10,6 @@
 #ifndef TUTORIAL_H
 #define TUTORIAL_H
 
-struct STutorial
-{
-    float X, Y;
-    float Timer;
-    float WiggleTimer;
-};
-
-extern STutorial Tutorial;
-
 void InitTutorial();
 void UpdateTutorial();
 void DisplayTutorial();

@@ -27,6 +27,7 @@
 #include "Recorder.h"
 #include "Stapler.h"
 #include "PowerUp.h"
+#include "Tutorial.h"
 
 #ifdef PLATFORM_WINDOWS
 #include <direct.h>
@@ -795,7 +796,8 @@ void CreatePageObjects()
 	InitDust();
 	InitDebris();
 	InitFlashlight();
-
+    InitTutorial();
+    
 	InitVacuum();
 	TurnOnVacuum();
 }
