@@ -57,6 +57,20 @@ const float StartScreenSpacing = 470.0f;
 const float StartScreenDragSpacing = 235.0f;
 
 
+gxSprite* GetStartScreenBadge(int Item)
+{
+    if (Item >= STARTSCREEN_ITEM_FIRST_CHAPTER)
+    {
+        SChapterListEntry* Chapter = &Chapters[Item - STARTSCREEN_ITEM_FIRST_CHAPTER];
+        
+        if (Chapter->Unlocked && !Chapter->Played)
+            return &NewUnlockSprite;
+    }
+    
+    return NULL;
+}
+
+
 gxSprite* GetStartScreenIcon(int Item)
 {
     if (Item == STARTSCREEN_ITEM_HELP)
@@ -197,7 +211,11 @@ void DisplayStartScreen()
         {
             AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, GetStartScreenIcon(i), X, Y, Scale, 1.0f);
         }
-	}
+
+        gxSprite* BadgeSprite = GetStartScreenBadge(i);
+        if (BadgeSprite)
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, BadgeSprite, X+150, Y-150, Scale, 1.0f);                
+    }
 
     if (StartScreen.StartupTime < 1.0f)
     {

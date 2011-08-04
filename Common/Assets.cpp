@@ -58,6 +58,8 @@ gxSprite DustyDeathSprite;
 
 gxSprite LogoSprite;
 
+gxSprite NewUnlockSprite;
+
 gxSprite BackgroundCardboardSprite;
 gxSprite BackgroundPaperSprite;
 gxSprite BackgroundFridgeSprite;
@@ -835,6 +837,8 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/dusty-die.png", &DustyDeathSprite);
 
     LoadSpriteAsset("Assets/logo.png", &LogoSprite);
+    
+    LoadSpriteAsset("Assets/new-unlock.png", &NewUnlockSprite);
     
 	LoadSpriteAsset("Assets/background-cardboard.png", &BackgroundCardboardSprite);
 	LoadSpriteAsset("Assets/background-paper.png", &BackgroundPaperSprite);

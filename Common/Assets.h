@@ -58,6 +58,8 @@ extern gxSprite DustyDeathSprite;
 
 extern gxSprite LogoSprite;
 
+extern gxSprite NewUnlockSprite;
+
 extern gxSprite BackgroundCardboardSprite;
 extern gxSprite BackgroundPaperSprite;
 extern gxSprite BackgroundFridgeSprite;
