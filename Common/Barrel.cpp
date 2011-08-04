@@ -11,7 +11,6 @@
 #include "Barrel.h"
 #include "Dusty.h"
 #include "Chapter.h"
-#include "Tutorial.h"
 #include "GameScore.h"
 
 #define MAX_BARRELS 100
@@ -132,12 +131,6 @@ void UpdateBarrels()
 			
 			if (Dist < 25)
 			{
-			    if (Tutorial.BarrelDisplayed == false)
-			    {
-			        SetGameState_Tutorial(TUTORIALSTATE_BARREL);
-			        return;
-			    }
-			    
 				Dusty.FloatX = (float)Barrel->X;
 				Dusty.FloatY = (float)Barrel->Y + 60;
                 Dusty.Hidden = true;

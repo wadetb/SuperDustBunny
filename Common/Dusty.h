@@ -70,6 +70,7 @@ struct SDusty
 
     int OnFireTimer;
 
+    bool HasJumped;
 	bool GainLife;
 
 	bool NoCollision;

@@ -11,7 +11,6 @@
 #include "Stapler.h"
 #include "Chapter.h"
 #include "Dusty.h"
-#include "Tutorial.h"
 #include "GameScore.h"
 
 #define MAX_STAPLERS 100
@@ -130,15 +129,6 @@ void UpdateStaplers()
     {
         SStapler* Stapler = &Staplers[i];
 					
-        /*if (Stapler->State == STAPLERSTATE_WAIT)
-        {
-                if (Tutorial.StaplerDisplayed == false)
-                {
-                    SetGameState_Tutorial(TUTORIALSTATE_STAPLER);
-                    return;
-                }        
-        }*/
-        
         if (Stapler->State == STAPLERSTATE_PRELAUNCH)
         {
 #if 0 //def PLATFORM_WINDOWS

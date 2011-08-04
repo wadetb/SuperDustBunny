@@ -10,7 +10,6 @@
 #include "Common.h"
 #include "TennisBall.h"
 #include "Dusty.h"
-#include "Tutorial.h"
 #include "Vacuum.h"
 #include "GameScore.h"
 
@@ -99,12 +98,6 @@ void UpdateBall()
                 AwardBonus(Ball->X, Ball->Y - 100);
 
                 sxPlaySound( &VacuumClogSound );  
-
-                if (Tutorial.BallDisplayed == false)
-                {
-                    SetGameState_Tutorial(TUTORIALSTATE_BALL);
-                    return;
-                }
             }      
         }
         else if (Ball->State == BALLSTATE_FALLING)

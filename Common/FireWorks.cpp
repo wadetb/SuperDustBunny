@@ -10,7 +10,6 @@
 #include "Common.h"
 #include "FireWorks.h"
 #include "Dusty.h"
-#include "Tutorial.h"
 #include "chapter.h"
 #include "Coin.h"
 #include "Gear.h"
@@ -464,12 +463,6 @@ void UpdateFireWorks()
 
 			if (Dist < 125)
 			{
-			    if (Tutorial.FireworkDisplayed == false)
-			    {
-			        SetGameState_Tutorial(TUTORIALSTATE_FIREWORK);
-			        return;
-			    }
-		        		        
 				FireWork->State = FIREWORKSTATE_FUSE;
 			}
 		}

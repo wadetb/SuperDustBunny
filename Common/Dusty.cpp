@@ -10,7 +10,6 @@
 #include "Common.h"
 #include "Dusty.h"
 #include "Input.h"
-#include "Tutorial.h"
 #include "Chapter.h"
 #include "Dust.h"
 #include "Vacuum.h"
@@ -62,6 +61,8 @@ void InitDusty()
     Dusty.Hidden = false;
     
     Dusty.OnFireTimer = 0;
+    
+    Dusty.HasJumped = false;
     
 	Dusty.GainLife = false;
 	
@@ -308,12 +309,6 @@ void UpdateDusty_Stand()
 
 void SetDustyState_Jump( bool OffWall )
 {
-	// Jump tutorial is kind of distracting right now.
-	//if (Tutorial.JumpDisplayed == false)
-	//{
-	//	SetGameState_Crumb(TUTORIALSTATE_JUMP);
-	//}
-
 	if ( OffWall )
 	{
 		sxPlaySound( &DustyWallJumpSound );
@@ -342,6 +337,8 @@ void SetDustyState_Jump( bool OffWall )
 			Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
 	}
 
+    Dusty.HasJumped = true;
+    
 	Dusty.State = DUSTYSTATE_JUMP;
 }
 
@@ -358,12 +355,16 @@ void SetDustyState_JumpWithVelocity( float VX, float VY )
         
     Dusty.LandTimer = 0;
 
+    Dusty.HasJumped = true;
+    
 	Dusty.State = DUSTYSTATE_JUMP;
 }
 
 // This is a specialized way to get into the Jump state, without the initial velocity boost.
 void SetDustyState_Fall()
 {
+    Dusty.HasJumped = true;
+    
 	Dusty.State = DUSTYSTATE_JUMP;
     
     Dusty.JumpGraceTimer = 20;
@@ -739,11 +740,6 @@ void UpdateDusty_JumpCommon()
 
 void SetDustyState_WallJump()
 {   	
-	if (Tutorial.WallJumpDisplayed == false)
-	{
-		SetGameState_Tutorial(TUTORIALSTATE_WALLJUMP);
-	}
-
 	if (Dusty.CollideMaterial == MATERIAL_ICE)
 		Dusty.WallStickTimer = 0;
 	else

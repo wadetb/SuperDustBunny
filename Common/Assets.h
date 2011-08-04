@@ -152,14 +152,7 @@ extern gxSprite ScreenLoseGrave2Sprite;
 extern gxSprite ScreenWin1Sprite;
 extern gxSprite ScreenWin2Sprite;
 
-extern gxSprite TutorialInitialSprite;
-extern gxSprite TutorialBarrelSprite;
-extern gxSprite TutorialCoinSprite;
-extern gxSprite TutorialFireWorkSprite;
-extern gxSprite TutorialGearSprite;
-extern gxSprite TutorialBallSprite;
-extern gxSprite TutorialJumpSprite;
-extern gxSprite TutorialWallJumpSprite;
+extern gxSprite FlickToJumpSprite;
 
 extern gxSprite ChapterTitleSprite;
 extern gxSprite ChapterTextSprite;

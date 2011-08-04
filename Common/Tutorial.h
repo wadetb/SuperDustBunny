@@ -10,40 +10,16 @@
 #ifndef TUTORIAL_H
 #define TUTORIAL_H
 
-enum ETutorialState
-{
-	TUTORIALSTATE_NONE,
-	TUTORIALSTATE_INITIAL,
-	TUTORIALSTATE_COIN,
-	TUTORIALSTATE_BALL,
-	TUTORIALSTATE_FIREWORK,
-	TUTORIALSTATE_BARREL,
-	TUTORIALSTATE_WALLJUMP,
-	TUTORIALSTATE_JUMP,
-	TUTORIALSTATE_GEAR,
-};
-
 struct STutorial
 {
-	ETutorialState State;
-
-	bool CoinDisplayed;
-	bool FireworkDisplayed;
-	bool BallDisplayed;
-	bool BarrelDisplayed;
-	bool WallJumpDisplayed;
-	bool InitialDisplayed;
-	bool JumpDisplayed;
-	bool GearDisplayed;
-
-	// Causes the game to ignore the jump key until it's released.
-	bool JumpInhibit;
+    float X, Y;
+    float Timer;
+    float WiggleTimer;
 };
 
 extern STutorial Tutorial;
 
 void InitTutorial();
-void SkipTutorials();
 void UpdateTutorial();
 void DisplayTutorial();
 

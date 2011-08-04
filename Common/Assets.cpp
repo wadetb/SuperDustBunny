@@ -152,14 +152,7 @@ gxSprite ScreenLoseGrave2Sprite;
 gxSprite ScreenWin1Sprite;
 gxSprite ScreenWin2Sprite;
 
-gxSprite TutorialInitialSprite;
-gxSprite TutorialBarrelSprite;
-gxSprite TutorialCoinSprite;
-gxSprite TutorialFireWorkSprite;
-gxSprite TutorialGearSprite;
-gxSprite TutorialBallSprite;
-gxSprite TutorialJumpSprite;
-gxSprite TutorialWallJumpSprite;
+gxSprite FlickToJumpSprite;
 
 gxSprite ChapterTitleSprite;
 gxSprite ChapterTextSprite;
@@ -932,14 +925,7 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/screen-win-1.png", &ScreenWin1Sprite);
 	LoadSpriteAsset("Assets/screen-win-2.png", &ScreenWin2Sprite);
 
-	LoadSpriteAsset("Assets/tutorial-initial.png", &TutorialInitialSprite);
-	LoadSpriteAsset("Assets/tutorial-barrel.png", &TutorialBarrelSprite);
-	LoadSpriteAsset("Assets/tutorial-coin.png", &TutorialCoinSprite);
-	LoadSpriteAsset("Assets/tutorial-firework.png", &TutorialFireWorkSprite);
-	LoadSpriteAsset("Assets/tutorial-gear.png", &TutorialGearSprite);
-	LoadSpriteAsset("Assets/tutorial-tennisball.png", &TutorialBallSprite);
-	LoadSpriteAsset("Assets/tutorial-jump.png", &TutorialJumpSprite);
-	LoadSpriteAsset("Assets/tutorial-walljump.png", &TutorialWallJumpSprite);
+	LoadSpriteAsset("Assets/text-flick-to-jump.png", &FlickToJumpSprite);
 	
 	LoadSpriteAsset("Assets/chapter-title.png", &ChapterTitleSprite);
 	LoadSpriteAsset("Assets/chapter.png", &ChapterTextSprite);

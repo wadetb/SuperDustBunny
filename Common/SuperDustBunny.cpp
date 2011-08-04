@@ -27,12 +27,12 @@
 #include "Lives.h"
 #include "Stapler.h"
 #include "Recorder.h"
-#include "Tutorial.h"
 #include "GameScore.h"
 #include "Settings.h"
 #include "PowerUp.h"
 #include "Input.h"
 #include "Smoke.h"
+#include "Tutorial.h"
 
 #include "StartScreen.h"
 #include "HelpScreen.h"
@@ -54,7 +54,6 @@ enum EGameState
 	GAMESTATE_WIN_SCREEN,
 	GAMESTATE_HELP_SCREEN,
 	GAMESTATE_CREDITS_SCREEN,
-	GAMESTATE_TUTORIAL,
 	GAMESTATE_CHAPTER_INTRO,
 };
 
@@ -508,18 +507,8 @@ void SetGameState_Playing()
 
     GamePause = false;
     
-	InitTutorial();
 	InitPowerUp();
 
-	// Remove this to re-enable the tutorials when we are closer to a release.
-	// For now they just slow down development.
-	SkipTutorials();
-
-	if (Tutorial.InitialDisplayed == false)
-	{    
-		SetGameState_Tutorial(TUTORIALSTATE_INITIAL);
-	}  
-    
     GetInput_ConsumeAllSwipe();
 }
 
@@ -623,6 +612,7 @@ void DisplayGame_Playing()
     DisplaySmoke();
 	DisplayLives();
 	DisplayPowerUp();
+    DisplayTutorial();
 	
     // HUD Drawing - Score, etc.
     DisplayScore();
@@ -720,13 +710,7 @@ void UpdateGame_Playing()
     UpdateDebris();
     UpdateVacuum(); 
     UpdateSmoke();
-}
-
-void SetGameState_Tutorial(int State)
-{
-    Tutorial.State = (ETutorialState)State;
-    
-    GameState = GAMESTATE_TUTORIAL;
+    UpdateTutorial();
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -952,11 +936,6 @@ void Display()
 	{
 		DisplayGame_Transition();
 	}
-	else if (GameState == GAMESTATE_TUTORIAL)
-	{
-		DisplayGame_Playing();
-	    DisplayTutorial();
-	}
 	else if (GameState == GAMESTATE_CHAPTER_INTRO)
 	{
 		DisplayGame_Playing();
@@ -998,8 +977,7 @@ void Display()
 	}
 	else
 	{
-		if (GameState != GAMESTATE_TUTORIAL)
-			gxDrawString(20, gxScreenHeight - 32, 16, gxRGB32(255, 255, 255), "Press F1 for help");
+        gxDrawString(20, gxScreenHeight - 32, 16, gxRGB32(255, 255, 255), "Press F1 for help");
 	}
 #endif	
 
@@ -1187,10 +1165,6 @@ bool Update()
 	else if (GameState == GAMESTATE_TRANSITION)
 	{
 		UpdateGame_Transition();
-	}
-	else if (GameState == GAMESTATE_TUTORIAL)
-	{
-	    UpdateTutorial();
 	}
 	else if (GameState == GAMESTATE_CHAPTER_INTRO)
 	{

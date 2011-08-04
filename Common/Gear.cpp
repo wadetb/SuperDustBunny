@@ -10,7 +10,6 @@
 #include "Common.h"
 #include "Gear.h"
 #include "Dusty.h"
-#include "Tutorial.h"
 #include "Vacuum.h"
 #include "GameScore.h"
 #include "Chapter.h"
@@ -86,12 +85,6 @@ void UpdateGear()
 				}
 				
 				Gear->FloatVelocityY = -2;
-
-				if (Tutorial.GearDisplayed == false)
-				{
-					SetGameState_Tutorial(TUTORIALSTATE_GEAR);
-					return;
-				}
 			}
 		}
 		else if (Gear->State == GEARSTATE_FALLING)

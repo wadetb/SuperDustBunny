@@ -11,7 +11,6 @@
 #include "Input.h"
 #include "Settings.h"
 #include "Recorder.h"
-#include "Tutorial.h"
 
 
 #define MAX_SWIPE_POINTS 256
@@ -94,21 +93,6 @@ bool GetInput_Jump()
     
 	if (RemoteControl.Enabled)
 		return RemoteControl.Jump;
-    
-	// Jump inhibitor is used to make the game ignore the jump key until it's released.
-	if (Tutorial.JumpInhibit)
-	{
-#ifdef PLATFORM_WINDOWS
-		if (!kbIsKeyDown(KB_SPACE))
-			Tutorial.JumpInhibit = false;
-#endif
-#ifdef PLATFORM_IPHONE
-		if (!msButton1)
-			Tutorial.JumpInhibit = false;
-#endif
-	}
-	if (Tutorial.JumpInhibit)
-		return false;
     
     if (Settings.ContinuousJump)
     {

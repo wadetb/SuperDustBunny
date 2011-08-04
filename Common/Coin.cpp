@@ -10,7 +10,6 @@
 #include "Common.h"
 #include "Coin.h"
 #include "Dusty.h"
-#include "Tutorial.h"
 #include "Vacuum.h"
 #include "Chapter.h"
 #include "GameScore.h"
@@ -81,12 +80,6 @@ void UpdateCoins()
 				Coin->State = COINSTATE_COLLECTED;
 				
 				sxPlaySound(&CoinVacuumedUpSound);  
-
-				if (Tutorial.CoinDisplayed == false)
-				{
-					SetGameState_Tutorial(TUTORIALSTATE_COIN);
-					return;
-				}
 			} 	                       	    
 		}
 		else if (Coin->State == COINSTATE_COLLECTED)

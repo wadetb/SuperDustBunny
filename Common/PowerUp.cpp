@@ -11,7 +11,6 @@
 #include "PowerUp.h"
 #include "Chapter.h"
 #include "Dusty.h"
-#include "Tutorial.h"
 #include "GameScore.h"
 
 #define MAX_POWERUP 100
