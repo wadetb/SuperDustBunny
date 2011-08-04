@@ -440,16 +440,28 @@ void LoadRecordingChapterAndPage()
 //                                                   SetGameState functions for screens                                                    //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
+bool AssetsLoaded = false;
+
 void SetGameState_StartScreen()
 {
 	GameState = GAMESTATE_START_SCREEN;
 
+    LitSceneZoom = 1.0f;
+
 #ifdef PLATFORM_IPHONE
     if (Settings.LiveAssets)
+    {
         UpdateLiveAssetCache();
+        LoadAssets();
+        AssetsLoaded = true;
+    }
 #endif
     
-    LoadAssets();
+    if (!AssetsLoaded)
+    {
+        LoadAssets();
+        AssetsLoaded = true;
+    }
 
     ClearChapterList();
     LoadChapterList();
@@ -485,11 +497,15 @@ void SetGameState_Credits()
 void SetGameState_DieScreen()
 {
 	GameState = GAMESTATE_DIE_SCREEN;
+
+    LitSceneZoom = 1.0f;
 }
 
 void SetGameState_WinScreen()
 {
 	GameState = GAMESTATE_WIN_SCREEN;
+
+    LitSceneZoom = 1.0f;
 
 	TurnOffVacuum();
 
