@@ -100,18 +100,22 @@ void RecordPageScore(int Page)
     
     Score.ChapterTime += Score.CurrentPageTime;
     
-    if ( Score.CurrentPageTime < Score.BestPageTime[Page] )
+    if (Score.CurrentPageTime < Score.BestPageTime[Page])
     {
+        if (Score.BestPageTime[Page] != INT_MAX)
+            Score.NewRecord[Page] = true;
+
         Score.BestPageTime[Page] = Score.CurrentPageTime;
-        Score.NewRecord[Page] = true;
     }
     
-    if ( Page == Chapter.NPages - 1 )
+    if (Page == Chapter.NPages - 1)
     {
-        if ( Score.ChapterTime < Score.BestChapterTime )
+        if (Score.ChapterTime < Score.BestChapterTime)
         {
+            if (Score.BestChapterTime != INT_MAX)
+                Score.NewChapterRecord = true;
+
             Score.BestChapterTime = Score.ChapterTime;
-            Score.NewChapterRecord = true;
         }
     
         Chapters[CurrentChapter].Completed = true;

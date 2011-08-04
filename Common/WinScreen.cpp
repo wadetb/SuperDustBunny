@@ -62,16 +62,30 @@ void DisplayWinScreen()
     AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterCompleteSprite, 384, CurrentY, 1.0f, 1.0f);
     CurrentY += 100;
     
-    AddLitSprite(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterTimeSprite, 100, CurrentY);
-    AddLitSprite(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterBonusSprite, 350, CurrentY);
+    bool AnyNewRecords = false;
+    for (int i = 0; i < Chapter.NPages; i++)
+    {
+        if (Score.NewRecord[i])
+        {
+            AnyNewRecords = true;
+            break;
+        }
+    }
+
+    int XOffset = AnyNewRecords ? 0 : 90;
+    
+    AddLitSprite(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterTimeSprite, XOffset + 60, CurrentY);
+    AddLitSprite(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterBonusSprite, XOffset + 350, CurrentY);
     CurrentY += 100;
     
     for (int i = 0; i < Chapter.NPages; i++)
     {
-        DisplayTime(80 - (i+1)*300*WinScreen.SlideIn, CurrentY, 0.75f, Score.PageTime[i]);
-        DisplayTimeDigit(Score.PageBonus[i], 450 - (i+1)*300*WinScreen.SlideIn, CurrentY, 0.75f, 0, 0);
+        DisplayTime(XOffset + 80 - (i+1)*300*WinScreen.SlideIn, CurrentY, 0.75f, Score.PageTime[i]);
+        DisplayTimeDigit(Score.PageBonus[i], XOffset + 450 - (i+1)*300*WinScreen.SlideIn, CurrentY, 0.75f, 0, 0);
+        
         if (Score.NewRecord[i])
-            AddLitSprite(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterNewSprite, 550 + i*WinScreen.SlideIn*300, CurrentY);
+            AddLitSprite(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterNewSprite, XOffset + 550 + i*WinScreen.SlideIn*300, CurrentY);
+        
         CurrentY += 75;
     }
     
