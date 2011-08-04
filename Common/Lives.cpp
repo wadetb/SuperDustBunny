@@ -10,11 +10,17 @@
 #include "Common.h"
 #include "Dusty.h"
 #include "Lives.h"
+#include "Chapter.h"
+
 
 float LivesScaleFactor = 0.85f;
 
+
 void DisplayLives()
 {
+    if (CurrentChapter == 0 && Chapter.PageNum == 0)
+        return;
+
 	for (int i = 0; i < Dusty.Lives; i++)
 	{
 		AddLitSpriteScaled(LIGHTLIST_WIPE, &CoinSpin1Sprite, (float)gxScreenWidth - 100 - 70*LivesScaleFactor*i, -20, LivesScaleFactor, LivesScaleFactor);

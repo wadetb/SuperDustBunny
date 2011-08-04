@@ -67,6 +67,9 @@ void DisplayTime(float X, float Y, float ScaleFactor, int Time)
 
 void DisplayScore()
 {
+    if (CurrentChapter == 0 && Chapter.PageNum == 0)
+        return;
+    
     DisplayTime(TimeX, TimeY, TimeScaleFactor, Score.CurrentPageTime);
 }
 
