@@ -1533,7 +1533,7 @@ void UpdateDusty()
     {
         UpdatePowerUp();
     }
-    
+
     if (Dusty.OnFireTimer > 0)
     {
         Dusty.OnFireTimer--;

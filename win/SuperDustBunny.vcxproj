@@ -95,6 +95,7 @@
   <ItemGroup>
     <ClCompile Include="..\Common\Flame.cpp" />
     <ClCompile Include="..\Common\Input.cpp" />
+    <ClCompile Include="..\Common\Smoke.cpp" />
     <ClCompile Include="graphics.cpp" />
     <ClCompile Include="keyboard.cpp" />
     <ClCompile Include="mouse.cpp" />
@@ -132,6 +133,7 @@
   <ItemGroup>
     <ClInclude Include="..\Common\Flame.h" />
     <ClInclude Include="..\Common\Input.h" />
+    <ClInclude Include="..\Common\Smoke.h" />
     <ClInclude Include="graphics.h" />
     <ClInclude Include="keyboard.h" />
     <ClInclude Include="mouse.h" />
