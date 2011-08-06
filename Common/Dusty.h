@@ -69,6 +69,7 @@ struct SDusty
     bool Hidden;
 
     int OnFireTimer;
+    int PowerUpTimer;
 
     bool HasJumped;
 	bool GainLife;

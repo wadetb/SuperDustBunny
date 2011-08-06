@@ -959,6 +959,15 @@ void AddLitSpriteScaledAlpha(ELightList List, gxSprite* Sprite, float X, float Y
                X,                      Y+Sprite->height*ScaleY, 0.0f, 1.0f);
 }
 
+void AddLitSpriteScaledColor(ELightList List, gxSprite* Sprite, float X, float Y, float ScaleX, float ScaleY, unsigned int Color)
+{
+	AddLitQuad(List, Sprite, Color,
+               X,                      Y,                       0.0f, 0.0f, 
+               X+Sprite->width*ScaleX, Y,                       1.0f, 0.0f,
+               X+Sprite->width*ScaleX, Y+Sprite->height*ScaleY, 1.0f, 1.0f, 
+               X,                      Y+Sprite->height*ScaleY, 0.0f, 1.0f);
+}
+
 void AddLitSpriteSized(ELightList List, gxSprite* Sprite, float X, float Y, float SizeX, float SizeY)
 {
 	AddLitQuad(List, Sprite, gxRGBA32(255,255,255,255),

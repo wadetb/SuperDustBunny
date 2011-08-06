@@ -20,17 +20,6 @@ SPowerUp PowerUps[MAX_POWERUP];
 
 void InitPowerUp()
 {
-    SPowerUp* PowerUp = &PowerUps[NPowerUps++];
-    
-    PowerUpToggle.Jump = false;
-    
-    PowerUp->IncreaseJump = 10.0f;
-        
-    PowerUp->Duration = 500;
-    
-    PowerUp->Value = 0;
-    
-    PowerUp->State = POWERUPSTATE_INACTIVE;
 }
 
 void ClearPowerUps()
@@ -45,12 +34,12 @@ void CreatePowerUp(int X, int Y)
 
     SPowerUp* PowerUp = &PowerUps[NPowerUps++];
 
-    PowerUp->State = POWERUPSTATE_INACTIVE;
+    PowerUp->State = POWERUPSTATE_ACTIVE;
     
     PowerUp->X = (float)X + 32;
     PowerUp->Y = (float)Y + 32;
-    PowerUp->FloatVelocityY = 0.0f;
-    PowerUp->FloatVelocityX = 0.0f;
+
+    PowerUp->PulseTimer = 0;
 }
 
 void DisplayPowerUp()
@@ -60,9 +49,19 @@ void DisplayPowerUp()
         SPowerUp* PowerUp = &PowerUps[i];
         
         if (PowerUp->State == POWERUPSTATE_ACTIVE)
-            continue;
+        {
+            float Scale = SinWave(PowerUp->PulseTimer, 0.75f, 0.25f) + 1.25f;
+            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &PowerUpSprite, PowerUp->X + ScrollX, PowerUp->Y + ScrollY, Scale, 0.0f);
+        }
         
-        AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &PowerUpSprite, PowerUp->X + ScrollX, PowerUp->Y + ScrollY - 30, 1.0f, 0.0f);
+        if (PowerUp->State == POWERUPSTATE_INACTIVE)
+        {
+            float Scale = 1.5f + (1.0f+PowerUp->PulseTimer)*(1.0f+PowerUp->PulseTimer);
+            float Alpha = Remap(PowerUp->PulseTimer, 0.0f, 0.5f, 1.0f, 0.0f, true);
+
+            if (Alpha > 0.01f)
+                AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &PowerUpSprite, PowerUp->X + ScrollX, PowerUp->Y + ScrollY, Scale, Alpha);
+        }
     }
 }
 
@@ -72,34 +71,21 @@ void UpdatePowerUp()
     {
         SPowerUp* PowerUp = &PowerUps[i];
 
-        if (PowerUp->State == POWERUPSTATE_INACTIVE)
+        if (PowerUp->State == POWERUPSTATE_ACTIVE)
         {
             float Dist = Distance(Dusty.FloatX, Dusty.FloatY-50, PowerUp->X, PowerUp->Y);
 
             if (Dist < 100)
             {
-                PowerUp->Duration = 750;
-                PowerUpToggle.Jump = true;
+                Dusty.PowerUpTimer = 60 * 10;
+                Dusty.FloatVelocityX *= 1.5f;
+                Dusty.FloatVelocityY *= 1.5f;
 
-                PowerUp->State = POWERUPSTATE_ACTIVE;             
+                PowerUp->State = POWERUPSTATE_INACTIVE;   
+                PowerUp->PulseTimer = 0.0f;
             } 	                       	    
         }
-        
-        //Boost Dusty's overall performance
-        if (PowerUp->State == POWERUPSTATE_ACTIVE)
-        {
-           
-                                          
-            if (PowerUp->Duration == 0)
-            {
-                PowerUp->X = -100;
-                PowerUpToggle.Jump = false;
-                PowerUp->State = POWERUPSTATE_INACTIVE;
-            }
-            else
-            {
-                PowerUp->Duration --;
-            }     
-        }
+
+        PowerUp->PulseTimer += 1.0f/60.0f;
     }
 }

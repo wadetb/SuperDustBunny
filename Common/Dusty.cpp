@@ -21,8 +21,20 @@
 
 
 SDusty Dusty;
-SStapler Stapler;
-SPowerUpToggle PowerUpToggle;
+
+
+#define MAX_DUSTY_TRAIL 30
+
+struct SDustyTrail
+{
+    float X;
+    float Y;
+    float ScaleX;
+    gxSprite* Sprite;
+    float Alpha;
+};
+
+SDustyTrail DustyTrail[MAX_DUSTY_TRAIL];
 
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -61,6 +73,7 @@ void InitDusty()
     Dusty.Hidden = false;
     
     Dusty.OnFireTimer = 0;
+    Dusty.PowerUpTimer = 0;
     
     Dusty.HasJumped = false;
     
@@ -72,6 +85,8 @@ void InitDusty()
 	Dusty.CollideWithBottomSide = false;
     
     Dusty.JumpPower = 27.5f;
+
+    memset(DustyTrail, 0, sizeof(DustyTrail));
 };
 
 void SetDustyPosition(float x, float y)
@@ -179,7 +194,32 @@ void DisplayDustySprite(gxSprite* Sprite, float XAdj = 0.0f, float XMirrorAdj = 
 		OffsetX = 256.0f;
 	}
 
-	AddLitSpriteScaled(LIGHTLIST_FOREGROUND, Sprite, Dusty.FloatX + OffsetX + XAdj + XMirrorAdj*ScaleX + ScrollX, Dusty.FloatY + YAdj + ScrollY, ScaleX, 1.0f);
+    float X = Dusty.FloatX + OffsetX + XAdj + XMirrorAdj*ScaleX;
+    float Y = Dusty.FloatY + YAdj;
+
+    // Display trail.
+    for (int i = 0; i < MAX_DUSTY_TRAIL; i++)
+    {
+        SDustyTrail* Trail = &DustyTrail[i];
+
+        if (Trail->Sprite && Trail->Alpha > 0.1f)
+        {
+            unsigned int Color = gxRGBA32(0x40, 0x40, 0x40, (int)(255*Trail->Alpha));
+	        AddLitSpriteScaledColor(LIGHTLIST_DUST, Trail->Sprite, Trail->X + ScrollX, Trail->Y + ScrollY, Trail->ScaleX, 1.0f, Color);
+        }
+    }
+
+    // Add to trail.
+    if (Dusty.PowerUpTimer > 0)
+    {
+        SDustyTrail* Trail = &DustyTrail[0];
+        Trail->X = X;
+        Trail->Y = Y;
+        Trail->ScaleX = ScaleX;
+        Trail->Sprite = Sprite;
+    }
+
+	AddLitSpriteScaled(LIGHTLIST_FOREGROUND, Sprite, X + ScrollX, Y + ScrollY, ScaleX, 1.0f);
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -318,24 +358,24 @@ void SetDustyState_Jump( bool OffWall )
 		//sxPlaySound( &DustyJumps );
 	}
 
-	Dusty.FloatY -= 40.0f;
-
-	Dusty.FloatVelocityX = 6.0f;
-	Dusty.FloatVelocityY = -16.0f;
-	if (Dusty.Direction == DIRECTION_LEFT)
-		Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
-    
-    Dusty.LandTimer = 0;
-
-	if (PowerUpToggle.Jump)
+    if (Dusty.PowerUpTimer > 0)
 	{
 		Dusty.FloatY -= 60.0f;
-
 		Dusty.FloatVelocityX = 12.0f;
-		Dusty.FloatVelocityY = - 24.0f;
+		Dusty.FloatVelocityY = -24.0f;
 		if (Dusty.Direction == DIRECTION_LEFT)
 			Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
 	}
+    else
+    {
+    	Dusty.FloatY -= 40.0f;
+	    Dusty.FloatVelocityX = 6.0f;
+	    Dusty.FloatVelocityY = -16.0f;
+	    if (Dusty.Direction == DIRECTION_LEFT)
+		    Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
+    }
+    
+    Dusty.LandTimer = 0;
 
     Dusty.HasJumped = true;
     
@@ -346,8 +386,17 @@ void SetDustyState_JumpWithVelocity( float VX, float VY )
 {
 	Dusty.FloatY -= 40.0f;
     
-	Dusty.FloatVelocityX = VX;
-	Dusty.FloatVelocityY = VY;
+    if (Dusty.PowerUpTimer > 0)
+    {
+	    Dusty.FloatVelocityX = VX * 1.5f;
+	    Dusty.FloatVelocityY = VY * 1.5f;
+    }
+    else
+    {
+	    Dusty.FloatVelocityX = VX;
+	    Dusty.FloatVelocityY = VY;
+    }
+
     if (Dusty.FloatVelocityX < 0)
         Dusty.Direction = DIRECTION_LEFT;
     else
@@ -1462,6 +1511,36 @@ void UpdateDusty_Collision()
 	}
 }
 
+void UpdateDusty_OnFire()
+{
+    if (Dusty.OnFireTimer > 0)
+    {
+        Dusty.OnFireTimer--;
+        CreateSmallSmoke(Dusty.FloatX, Dusty.FloatY);
+    }
+}
+
+void UpdateDusty_PowerUp()
+{
+    if (Dusty.PowerUpTimer > 0)
+    {
+        Dusty.PowerUpTimer--;
+
+        // Rotate trail.
+        if ((Dusty.PowerUpTimer % 4) == 0)
+        {
+            for (int i = MAX_DUSTY_TRAIL-1; i > 0; i--)
+                DustyTrail[i] = DustyTrail[i-1];
+            DustyTrail[0].Sprite = NULL;
+            DustyTrail[0].Alpha = 1.0f;
+        }
+    }
+
+    // Fade out trail.
+    for (int i = 0; i < MAX_DUSTY_TRAIL; i++)
+        DustyTrail[i].Alpha -= 1.0f/MAX_DUSTY_TRAIL;
+}
+
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                  Dusty Display & Update Implementation                                                  //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -1528,15 +1607,7 @@ void UpdateDusty()
 	case DUSTYSTATE_INTROHOP:			UpdateDusty_IntroHop(); break;
 	case DUSTYSTATE_INTROSTAND:			UpdateDusty_IntroStand(); break;
 	}
-	
-    if (PowerUpToggle.Jump)
-    {
-        UpdatePowerUp();
-    }
 
-    if (Dusty.OnFireTimer > 0)
-    {
-        Dusty.OnFireTimer--;
-        CreateSmallSmoke(Dusty.FloatX, Dusty.FloatY);
-    }
+    UpdateDusty_OnFire();
+    UpdateDusty_PowerUp();
 }

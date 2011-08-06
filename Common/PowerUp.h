@@ -16,27 +16,14 @@ enum EPowerUpState
     POWERUPSTATE_ACTIVE,
 };
 
-struct SPowerUpToggle
-{
-    bool Jump;
-    
-};
-
 struct SPowerUp
 {  
-    int Duration;
-    int Value;
-    float IncreaseJump;
-
     float X, Y;
-    float FloatVelocityY;
-    float FloatVelocityX;
-    
+    float PulseTimer;
     EPowerUpState State;
 };
 
 extern SPowerUp PowerUp;
-extern SPowerUpToggle PowerUpToggle;
 
 void CreatePowerUp(int X, int Y);
 
