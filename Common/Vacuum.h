@@ -38,6 +38,10 @@ struct SVacuum
 	float Volume;
     
     int BlinkTimer;
+
+    int* ForceMap;
+    int ForceMapWidth;
+    int ForceMapHeight;
 };
 
 extern SVacuum Vacuum;
@@ -53,6 +57,6 @@ void JamVacuum();
 
 bool IsInVacuum(float Y);
 
-void GetVacuumForce(float X, float Y, float* VX, float* VY, float Strength);
+void GetVacuumForce(float X, float Y, float* VX, float* VY, float Strength, bool FollowLevel);
 
 #endif

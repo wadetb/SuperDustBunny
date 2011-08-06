@@ -15,6 +15,20 @@
 #include "Smoke.h"
 
 
+#define MAX_VACUUM_QUEUE_NODES 100
+
+
+struct SVacuumQueueNode
+{
+    int X, Y;
+    int Force;
+    int Next;
+};
+
+
+SVacuumQueueNode VacuumQueue[MAX_VACUUM_QUEUE_NODES];
+int VacuumFreeHead;
+
 SVacuum Vacuum;
 
 const int VACUUM_INITIAL_TIME = 5*60;
@@ -24,7 +38,7 @@ const int VACUUM_UNJAM_TIME   = 1*60;
 const float VacuumYOffset = 100;
 
 
-#define MAX_VACUUM_SMOKE 150
+void UpdateVacuumForceMap();
 
 
 void InitVacuum()
@@ -34,6 +48,20 @@ void InitVacuum()
 	Vacuum.Dir = (EVacuumDir)Chapter.PageProps.VacuumDir;
 	Vacuum.State = VACUUMSTATE_OFF;
 	Vacuum.Volume = 0.5f;
+
+    if (Vacuum.ForceMap)
+        free(Vacuum.ForceMap);
+
+    Vacuum.ForceMapWidth = Chapter.PageWidth;
+    Vacuum.ForceMapHeight = Chapter.PageHeight;
+    Vacuum.ForceMap = (int*)malloc(Chapter.PageWidth * Chapter.PageHeight * sizeof(int));
+
+    for (int Offset = 0; Offset < Vacuum.ForceMapWidth * Vacuum.ForceMapHeight; Offset++)
+        Vacuum.ForceMap[Offset] = (Chapter.PageBlocks[Offset] == SPECIALBLOCKID_BLANK) ? 0 : 0xffffffff;
+
+    for (int i = 0; i < MAX_VACUUM_QUEUE_NODES; i++)
+        VacuumQueue[i].Next = i+1;
+    VacuumFreeHead = 0;
 
 	// These two sounds loop continuously.
 	sxSetSoundVolume(&VacuumOnSound, 0);
@@ -269,6 +297,9 @@ void UpdateVacuum()
         TargetZoom = 1.0f;
     }
     LitSceneZoom = LitSceneZoom * 0.9f + TargetZoom * 0.1f;
+
+    // Process vacuum forces.
+    UpdateVacuumForceMap();
 }
 
 void JamVacuum()
@@ -323,33 +354,178 @@ bool IsInVacuum(float Y)
 		return Y <= Vacuum.Y;
 }
 
-void GetVacuumForce(float X, float Y, float* VX, float* VY, float Strength)
+#ifdef PLATFORM_WINDOWS
+#pragma optimize("gt", on)
+#endif
+
+void UpdateVacuumForceMap()
+{
+    for (int Offset = 0; Offset < Vacuum.ForceMapWidth * Vacuum.ForceMapHeight; Offset++)
+        Vacuum.ForceMap[Offset] = (Chapter.PageBlocks[Offset] == SPECIALBLOCKID_BLANK) ? 0 : 0xffffffff;
+
+    int CurX = (int)(Vacuum.X / 64 + 0.5f);
+    int CurY = (int)(Vacuum.Y / 64 + 0.5f);
+
+    if (CurX < 0) CurX = 0;
+    if (CurY < 0) CurY = 0;
+    if (CurX >= Vacuum.ForceMapWidth) CurX = Vacuum.ForceMapWidth-1;
+    if (CurY >= Vacuum.ForceMapHeight) CurY = Vacuum.ForceMapHeight-1;
+
+    int NextVacuumFreeHead = VacuumQueue[VacuumFreeHead].Next;
+
+    VacuumQueue[VacuumFreeHead].X = CurX;
+    VacuumQueue[VacuumFreeHead].Y = CurY;
+    VacuumQueue[VacuumFreeHead].Force = 30;
+    VacuumQueue[VacuumFreeHead].Next = -1;
+
+    int QueueHead = VacuumFreeHead;
+    int QueueTail = VacuumFreeHead;
+
+    VacuumFreeHead = NextVacuumFreeHead;
+
+    while (QueueHead >= 0)
+    {
+        SVacuumQueueNode* Node = &VacuumQueue[QueueHead];
+
+        CurX = Node->X;
+        CurY = Node->Y;
+
+        Vacuum.ForceMap[CurY * Vacuum.ForceMapWidth + CurX] = Node->Force;
+
+        unsigned int NewForce = Node->Force-1;
+        if (NewForce > 0)
+        {
+            for (int X = -1; X <= 1; X++)
+            {
+                int NewX = CurX + X;
+                if (NewX < 0 || NewX >= Vacuum.ForceMapWidth)
+                    continue;
+
+                for (int Y = -1; Y <= 1; Y++)
+                {
+                    if (X == 0 && Y == 0)
+                        continue;
+
+                    int NewY = CurY + Y;
+                    if (NewY < 0 || NewY >= Vacuum.ForceMapHeight)
+                        continue;
+
+                    if (IsBlockSolid(NewX, NewY))
+                    {
+                        Vacuum.ForceMap[NewY * Vacuum.ForceMapWidth + NewX] = 0xffffffff;
+                        continue;
+                    }
+
+                    unsigned int OldForce = Vacuum.ForceMap[NewY * Vacuum.ForceMapWidth + NewX];
+                    if (OldForce != 0 && OldForce >= NewForce )
+                        continue;
+
+                    if (VacuumFreeHead == -1)
+                        continue;
+
+                    SVacuumQueueNode* NewNode = &VacuumQueue[VacuumFreeHead];
+                    NewNode->X = NewX;
+                    NewNode->Y = NewY;
+                    NewNode->Force = NewForce;
+
+                    VacuumQueue[QueueTail].Next = VacuumFreeHead;
+                    QueueTail = VacuumFreeHead;
+                    VacuumFreeHead = NewNode->Next;
+                    NewNode->Next = -1;
+                }
+            }
+        }
+
+        int NextQueueHead = Node->Next;
+
+        Node->Next = VacuumFreeHead;
+        VacuumFreeHead = QueueHead;
+
+        QueueHead = NextQueueHead;
+    }
+}
+
+void GetVacuumForce(float X, float Y, float* VX, float* VY, float Strength, bool FollowLevel)
 {
 	// If the vacuum is disabled for this page, no vacuum forces.
-	if (Chapter.PageProps.VacuumOff || Settings.DisableVacuum)
+	if (Chapter.PageProps.VacuumOff || Settings.DisableVacuum || Vacuum.State != VACUUMSTATE_ONSCREEN)
 	{
 		*VX = 0;
 		*VY = 0;
 		return;
 	}
 
-	float DirX = Vacuum.X - X;
-	float DirY = Vacuum.Y - Y;
+    if (FollowLevel)
+    {
+        // Cheap solution, not accurate.
+        float TotalVX, TotalVY;
+        float TotalWeight;
+
+        int CurX = (int)((X+32)/64);
+        int CurY = (int)((Y+32)/64);
+
+        TotalVX = 0;
+        TotalVY = 0;
+        TotalWeight = 0;
+
+        for (int TX = CurX-1; TX <= CurX+1; TX++)
+        {
+            if (TX < 0 || TX >= Vacuum.ForceMapWidth)
+                continue;
+
+            for (int TY = CurY-1; TY <= CurY+1; TY++)
+            {
+                if (TY < 0 || TY >= Vacuum.ForceMapHeight)
+                    continue;
+
+                if (TX == 0 && TY == 0)
+                    continue;
+            
+                int Force = Vacuum.ForceMap[TY * Vacuum.ForceMapWidth + TX];
+                if (Force == 0xffffffff)
+                    continue;
+                
+                float DirX = TX - CurX;
+                float DirY = TY - CurY;
+
+                TotalVX += DirX * Force;
+                TotalVY += DirY * Force;
+            }
+        }
+
+        float TotalLength = sqrtf(TotalVX*TotalVX + TotalVY*TotalVY);
+        if (TotalLength > 0.001f)
+        {
+            TotalVX /= TotalLength;
+            TotalVY /= TotalLength;
+            *VX = TotalVX * Strength;
+            *VY = TotalVY * Strength;
+            return;
+        }
+
+        *VX = 0;
+        *VY = 0;
+    }
+    else
+    {
+	    float DirX = Vacuum.X - X;
+	    float DirY = Vacuum.Y - Y;
 	
-	float Length = sqrtf(DirX*DirX + DirY*DirY);
+	    float Length = sqrtf(DirX*DirX + DirY*DirY);
 
-	if (Length >= 1000)
-	{
-		*VX = 0;
-		*VY = 0;
-		return;
-	}
+	    if (Length >= 1000)
+	    {
+		    *VX = 0;
+		    *VY = 0;
+		    return;
+	    }
 
-	DirX /= Length;
-	DirY /= Length;
+	    DirX /= Length;
+	    DirY /= Length;
 
-	float AttenuatedStrength = Strength * Lerp(Length, 1000, 200, 1.5f, 20.0f); 
+	    float AttenuatedStrength = Strength * Lerp(Length, 1000, 200, 1.5f, 20.0f); 
 
-	*VX = DirX * AttenuatedStrength;
-	*VY = DirY * AttenuatedStrength;
+	    *VX = DirX * AttenuatedStrength;
+	    *VY = DirY * AttenuatedStrength;
+    }
 }

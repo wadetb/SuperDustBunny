@@ -120,7 +120,7 @@ void UpdateDebris()
 			continue;
 
 		float DirX, DirY;
-		GetVacuumForce(Deb->X, Deb->Y, &DirX, &DirY, 0.1f);
+		GetVacuumForce(Deb->X, Deb->Y, &DirX, &DirY, 0.1f, false);
 
 		Deb->VX += DirX;
 		Deb->VY += DirY;

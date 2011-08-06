@@ -1087,7 +1087,7 @@ void UpdateDusty_Die()
 	Dusty.FloatVelocityY += Dusty.FloatGravity;
 
 	float DirX, DirY;
-	GetVacuumForce(Dusty.FloatX, Dusty.FloatY, &DirX, &DirY, (float)Dusty.SpriteTransition/400.0f);
+	GetVacuumForce(Dusty.FloatX, Dusty.FloatY, &DirX, &DirY, (float)Dusty.SpriteTransition/400.0f, false);
 	Dusty.FloatVelocityX += DirX;
 	Dusty.FloatVelocityY += DirY;
 

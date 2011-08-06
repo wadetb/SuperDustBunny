@@ -81,10 +81,10 @@ void UpdateDust()
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		//                                                   Vacuum Wind Effects                                                                   //
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		float VacuumStrength = 1.0f;
+		float VacuumStrength = 1.5f;
 
 		float DirX, DirY;
-		GetVacuumForce(Mote->X, Mote->Y, &DirX, &DirY, VacuumStrength * 0.1f);
+		GetVacuumForce(Mote->X, Mote->Y, &DirX, &DirY, VacuumStrength, true);
 		Mote->VX += DirX;
 		Mote->VY += DirY;
 
