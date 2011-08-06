@@ -924,8 +924,8 @@ void DisplayChapterLayer(ELightList LightList, int* Blocks)
         int CurX = ScrollX;
 		for (int x = 0; x < Chapter.PageWidth; x++, CurX += 64)
 		{
-		    if (CurX > gxScreenWidth || CurX+64 < 0)
-			    continue;
+		    //if (CurX > gxScreenWidth || CurX+64 < 0)
+			   // continue;
 
             int ID = Blocks[y * Chapter.PageWidth + x];
             int BlockID = ID & SPECIALBLOCKID_MASK;

@@ -88,6 +88,19 @@ void UpdateDust()
 		Mote->VX += DirX;
 		Mote->VY += DirY;
 
+		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+		//                                                   Landing on stuff                                                                      //
+		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+        int BlockX = (int)(Mote->X / 64.0f);
+        int BlockY = (int)(Mote->Y / 64.0f);
+        if (Vacuum.State != VACUUMSTATE_ONSCREEN && BlockX > 0 && BlockX < Chapter.PageWidth && BlockY > 0 && BlockY > Chapter.PageWidth)
+        {
+            if (Chapter.PageBlocks[BlockY*Chapter.PageWidth+BlockX] != SPECIALBLOCKID_BLANK)
+            {
+                Mote->VX = 0;
+                Mote->VY = 0;
+            }
+        }
 
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		//                                                   Dust Mote Recycling                                                                   //
@@ -127,7 +140,7 @@ void UpdateDust()
 
 			Mote->Size = Random(0.75f, 1.75f);
 			Mote->Depth = 1.0f; //Random(0.999f, 1.001f);
-			Mote->Life = Random(2.0f, 3.0f);
+			Mote->Life = Random(8.0f, 10.0f);
 
 			Mote->Alpha = 1.0f;
 			Mote->Time = 0;
