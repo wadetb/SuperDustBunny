@@ -396,7 +396,7 @@ void ExplodeFireWork(float X, float Y, int Size)
 					if (Distance(X, Y, (float)x*64+32, (float)y*64+32) < Size*64)
 					{ 
 						sxPlaySound( &BlockBreakSound );
-						Chapter.PageBlocks[y * Chapter.PageWidth + x] = SPECIALBLOCKID_BLANK;
+                        EraseBlock(x, y);
 
 						CreateDebris((float)x*64+32, (float)y*64+32, 0.0f, BlockID);
 					}

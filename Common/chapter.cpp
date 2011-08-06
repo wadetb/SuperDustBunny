@@ -394,7 +394,7 @@ void ParseCSVData(rapidxml::xml_node<char>* DataNode, int Width, int Height, int
 			if (Data >= DataEnd)
 				ReportError("Unexpected end of tile data.  Re-saving the TMX file may help.");
 			
-			int ID = strtol(Data, &Data, 0);
+			unsigned int ID = strtoul(Data, &Data, 0);
 			if (ID < 0)
 				ReportError("Invalid tile data.  Re-saving the TMX file may help.");
 			
@@ -405,8 +405,14 @@ void ParseCSVData(rapidxml::xml_node<char>* DataNode, int Width, int Height, int
 				Data++;
 			}
 
+            unsigned int FlipX = ID & SPECIALBLOCKID_FLIP_X;
+            unsigned int FlipY = ID & SPECIALBLOCKID_FLIP_Y;
+            ID &= SPECIALBLOCKID_MASK;
+
 			if (ID == 0)
-				ID = SPECIALBLOCKID_BLANK;
+            {
+                Blocks[y*Width + x] = SPECIALBLOCKID_BLANK;
+            }
 			else
 			{
 				int TileSetInfoIndex = -1;
@@ -423,9 +429,9 @@ void ParseCSVData(rapidxml::xml_node<char>* DataNode, int Width, int Height, int
 					ReportError("Tile data format is invalid.  Re-saving the TMX file may help.");
 
 				ID = ID - TileSetInfo[TileSetInfoIndex].FirstGID + TileSetInfo[TileSetInfoIndex].TileSet->FirstBlock;
-			}
 
-			Blocks[y*Width + x] = ID;
+                Blocks[y*Width + x] = ID | FlipX | FlipY;
+			}
 		}
 		
 		if (*Data != '\n')
@@ -749,6 +755,7 @@ void CreatePageObjects()
 		for (int x = 0; x < Chapter.PageWidth; x++)
 		{
 			int BlockID = Chapter.PageBlocks[y * Chapter.PageWidth + x];
+            BlockID &= SPECIALBLOCKID_MASK;
 
 			if (BlockID < SPECIALBLOCKID_FIRST)
 			{
@@ -907,15 +914,21 @@ void CalculateScroll()
 
 void DisplayChapterLayer(ELightList LightList, int* Blocks)
 {
-	for (int y = 0; y < Chapter.PageHeight; y++)
+    int CurY = ScrollY;
+	for (int y = 0; y < Chapter.PageHeight; y++, CurY += 64)
 	{
 		// Skip rows of tiles that cannot be on screen.
-		if (y*64 + ScrollY > LitScreenHeight || (y+1)*64 + ScrollY < 0)
+		if (CurY > LitScreenHeight || CurY+64 < 0)
 			continue;
 
-		for (int x = 0; x < Chapter.PageWidth; x++)
+        int CurX = ScrollX;
+		for (int x = 0; x < Chapter.PageWidth; x++, CurX += 64)
 		{
-			int BlockID = Blocks[y * Chapter.PageWidth + x];
+		    if (CurX > gxScreenWidth || CurX+64 < 0)
+			    continue;
+
+            int ID = Blocks[y * Chapter.PageWidth + x];
+            int BlockID = ID & SPECIALBLOCKID_MASK;
 
 			if (BlockID >= SPECIALBLOCKID_FIRST)
 			{
@@ -932,10 +945,26 @@ void DisplayChapterLayer(ELightList LightList, int* Blocks)
 
 				STileSet* TileSet = &Chapter.TileSets[Block->TileSet];
 
-				int SubX = Block->SubX;
-				int SubY = Block->SubY;
+				float SubX0 = Block->SubX;
+				float SubY0 = Block->SubY;
+				float SubX1 = Block->SubX + 64;
+				float SubY1 = Block->SubY + 64;
 
-				AddLitSubSprite(LIGHTLIST_FOREGROUND, &TileSet->Sprite, (float)x*64 + ScrollX, (float)y*64 + ScrollY, (float)SubX, (float)SubY, (float)SubX + 64, (float)SubY + 64);
+                if (ID & SPECIALBLOCKID_FLIP_X)
+                {
+                    float Temp = SubX0;
+                    SubX0 = SubX1;
+                    SubX1 = Temp;
+                }
+
+                if (ID & SPECIALBLOCKID_FLIP_Y)
+                {
+                    float Temp = SubY0;
+                    SubY0 = SubY1;
+                    SubY1 = Temp;
+                }
+
+				AddLitSubSpriteSized(LIGHTLIST_FOREGROUND, &TileSet->Sprite, (float)CurX, (float)CurY, SubX0, SubY0, SubX1, SubY1, 64, 64);
 			}
 		}
 	}
@@ -977,7 +1006,7 @@ int GetBlockID(int x, int y)
 	if (y < 0 || y >= Chapter.PageHeight)
 		return SPECIALBLOCKID_OUTOFBOUNDS;
 
-	return Chapter.PageBlocks[y * Chapter.PageWidth + x];
+	return Chapter.PageBlocks[y * Chapter.PageWidth + x] & SPECIALBLOCKID_MASK;
 }
 
 bool IsBlockEmpty(int x, int y)
@@ -1008,7 +1037,6 @@ void EraseBlock(int x, int y)
 
 	Chapter.PageBlocks[y * Chapter.PageWidth + x] = SPECIALBLOCKID_BLANK;
 }
-
 
 void ClearChapterList()
 {

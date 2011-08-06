@@ -25,6 +25,10 @@ enum ESpecialBlockID
 	SPECIALBLOCKID_FIRST			= 10000,
 	SPECIALBLOCKID_OUTOFBOUNDS      = SPECIALBLOCKID_FIRST,
 	SPECIALBLOCKID_BLANK,
+
+    SPECIALBLOCKID_FLIP_Y           = 1 << 30,
+    SPECIALBLOCKID_FLIP_X           = 1 << 31,
+    SPECIALBLOCKID_MASK             = 0xfffffff, // One nibble reserved for flags.
 };
 
 enum EBlockType
@@ -64,7 +68,7 @@ struct STileSet
 struct STileSetInfo
 {
 	STileSet* TileSet;
-	int FirstGID;
+	unsigned int FirstGID;
 };
 
 struct SNailProperties

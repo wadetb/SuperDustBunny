@@ -1019,6 +1019,15 @@ void AddLitSubSprite(ELightList List, gxSprite* Sprite, float X, float Y, float 
 		X,               Y+(SubY2-SubY1), SubX1/Sprite->width, SubY2/Sprite->height);
 }
 
+void AddLitSubSpriteSized(ELightList List, gxSprite* Sprite, float X, float Y, float SubX1, float SubY1, float SubX2, float SubY2, float SizeX, float SizeY)
+{
+	AddLitQuad(List, Sprite, gxRGBA32(255,255,255,255),
+		X,       Y,       SubX1/Sprite->width, SubY1/Sprite->height, 
+		X+SizeX, Y,       SubX2/Sprite->width, SubY1/Sprite->height,
+		X+SizeX, Y+SizeY, SubX2/Sprite->width, SubY2/Sprite->height, 
+		X,       Y+SizeY, SubX1/Sprite->width, SubY2/Sprite->height);
+}
+
 void AddLitSubSpriteScaled(ELightList List, gxSprite* Sprite, float X, float Y, float SubX1, float SubY1, float SubX2, float SubY2, float ScaleX, float ScaleY)
 {
 	AddLitQuad(List, Sprite, gxRGBA32(255,255,255,255),
