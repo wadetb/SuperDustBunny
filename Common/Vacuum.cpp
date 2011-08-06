@@ -52,6 +52,8 @@ void DisplayVacuum()
 	{
         gxSprite* Sprite;
         
+        float LightsAlpha = 1.0f;
+
         if (Vacuum.State == VACUUMSTATE_RETREAT)
             Sprite = &Vacuum3Sprite;
         else
@@ -59,9 +61,9 @@ void DisplayVacuum()
             switch (Vacuum.BlinkTimer/6)
             {
                 case 0: Sprite = &Vacuum1Sprite; break;
-                case 1: Sprite = &Vacuum2Sprite; break;
-                case 2: Sprite = &Vacuum3Sprite; break;
-                case 3: Sprite = &Vacuum2Sprite; break;
+                case 1: Sprite = &Vacuum2Sprite; LightsAlpha = 0.75f; break;
+                case 2: Sprite = &Vacuum3Sprite; LightsAlpha = 0.5f; break;
+                case 3: Sprite = &Vacuum2Sprite; LightsAlpha = 0.75f; break;
                 case 4: Sprite = &Vacuum1Sprite; break;
                 default: Sprite = &Vacuum1Sprite; break;
             }
@@ -76,7 +78,7 @@ void DisplayVacuum()
 		{
 			if (Vacuum.Dir == VACUUMDIR_UP)
 			{
-				AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightVacuumSprite, Vacuum.X + ScrollX, Vacuum.Y + ScrollY - 384, 1.0f, 1.0f);
+				AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightVacuumSprite, Vacuum.X + ScrollX, Vacuum.Y + ScrollY - 384, 1.0f, LightsAlpha);
 			}
 		}
 	}
@@ -181,7 +183,7 @@ void UpdateVacuum()
 		{
 			Vacuum.State = VACUUMSTATE_ONSCREEN;
 			
-			int LightsOffset = Chapter.PageProps.LightsOff ? 512 : 0;
+			int LightsOffset = Chapter.PageProps.LightsOff ? 768 : 0;
 
 			// Vacuum.Y is the leading edge of the vacuum.
 			if (Vacuum.Dir == VACUUMDIR_UP)

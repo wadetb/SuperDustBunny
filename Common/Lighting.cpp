@@ -638,7 +638,7 @@ void InitLighting()
 #endif
     {
         gxCreateRenderTarget(LitRenderTargetWidth, LitRenderTargetHeight, &ColorRT, false);
-        gxCreateRenderTarget(LitRenderTargetHeight, LitRenderTargetHeight, &LightingRT, false);
+        gxCreateRenderTarget(LitRenderTargetWidth, LitRenderTargetHeight, &LightingRT, false);
 
         InitShadows();
     }

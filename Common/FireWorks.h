@@ -33,6 +33,7 @@ struct SFireWork
 
 	float X, Y;
 	float OriginalX, OriginalY;
+    float ExplodeX, ExplodeY;
 	float VelocityX, VelocityY;
 
 	int FlightDistance;
