@@ -12,11 +12,13 @@
 
 
 #define MAX_CHAPTERS        10
-#define MAX_PAGES			100
+#define MAX_PAGES			25
 #define MAX_BLOCKS			10000
 #define MAX_TILESETS		100
 #define MAX_PAGE_TILESETS	10
-
+#define MAX_PAGE_LAYERS     10
+#define MIN_PAGE_WIDTH      12
+#define MIN_PAGE_HEIGHT     10
 
 enum ESpecialBlockID
 {
@@ -90,6 +92,11 @@ struct SPageProperties
 	int VacuumDir;
 };
 
+struct SPageLayer
+{
+    int* Blocks;
+};
+
 struct SPage
 {
 	char* Name;
@@ -98,6 +105,9 @@ struct SPage
 
 	int Width;
 	int Height;
+
+    int NLayers;
+    SPageLayer Layers[MAX_PAGE_LAYERS];
 
 	SPageProperties Props;
 };
@@ -175,7 +185,10 @@ void ClearChapter();
 
 void SetCurrentPage(int PageNum);
 
-void DisplayChapter();
+void DisplayPortal();
+
+void DisplayChapterBaseLayer();
+void DisplayChapterExtraLayers();
 
 void CalculateScroll();
 

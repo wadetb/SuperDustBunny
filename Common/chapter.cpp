@@ -33,6 +33,7 @@
 #include <direct.h>
 #endif
 
+
 int NChapters;
 SChapterListEntry Chapters[MAX_CHAPTERS];
 
@@ -42,7 +43,6 @@ SChapter Chapter;
 
 int ScrollY;
 int ScrollX;
-
 
 const char* CurrentChapterDir;
 
@@ -378,6 +378,62 @@ void LoadTileSet(const char* FileName)
 	PopErrorContext();
 }
 
+void ParseCSVData(rapidxml::xml_node<char>* DataNode, int Width, int Height, int NTileSetInfos, STileSetInfo* TileSetInfo, int* Blocks)
+{
+	rapidxml::xml_attribute<char>* DataEncodingAttr = DataNode->first_attribute("encoding");
+	if (DataEncodingAttr == NULL || strcmp(DataEncodingAttr->value(), "csv") != 0)
+		ReportError("Wrong map encoding.  Set encoding to CSV in the Tiled preferences and re-save the TMX file.");
+
+	char* Data = DataNode->value();
+	char* DataEnd = Data + DataNode->value_size();
+	
+	for (int y = 0; y < Height; y++)
+	{
+		for (int x = 0; x < Width; x++)
+		{
+			if (Data >= DataEnd)
+				ReportError("Unexpected end of tile data.  Re-saving the TMX file may help.");
+			
+			int ID = strtol(Data, &Data, 0);
+			if (ID < 0)
+				ReportError("Invalid tile data.  Re-saving the TMX file may help.");
+			
+			if (x < Width-1 || y < Height-1)
+			{
+				if (*Data != ',')
+					ReportError("Tile data format is invalid.  Re-saving the TMX file may help.");
+				Data++;
+			}
+
+			if (ID == 0)
+				ID = SPECIALBLOCKID_BLANK;
+			else
+			{
+				int TileSetInfoIndex = -1;
+				for (int i = NTileSetInfos - 1; i >= 0; i--)
+				{
+					if (ID >= TileSetInfo[i].FirstGID)
+					{
+						TileSetInfoIndex = i;
+						break;
+					}
+				}
+
+				if (TileSetInfoIndex == -1)
+					ReportError("Tile data format is invalid.  Re-saving the TMX file may help.");
+
+				ID = ID - TileSetInfo[TileSetInfoIndex].FirstGID + TileSetInfo[TileSetInfoIndex].TileSet->FirstBlock;
+			}
+
+			Blocks[y*Width + x] = ID;
+		}
+		
+		if (*Data != '\n')
+			ReportError("Tile data format is invalid (but I'm being picky).  Re-saving the TMX file may help.");
+		Data++;
+	}
+}
+
 void LoadPageFromTMX(const char* FileName)
 {
 	PushErrorContext("While loading page '%s':\n", FileName);
@@ -420,7 +476,7 @@ void LoadPageFromTMX(const char* FileName)
 	while (TileSetNode)
 	{
 		if (NTileSetInfos >= MAX_PAGE_TILESETS)
-			ReportError("Too many tilesets. The maximum number of tilesets per page is 10.  Re-saving the TMX file may help.");
+			ReportError("Too many tilesets. The maximum number of tilesets per page is %d.  Re-saving the TMX file may help.", MAX_PAGE_TILESETS);
 
 		int TileSetIndex = -1;
 
@@ -471,22 +527,15 @@ void LoadPageFromTMX(const char* FileName)
 	if (LayerNode == NULL)
 		ReportError("Missing <layer> node.");
 	
-	if (LayerNode->next_sibling("layer") != NULL)
-		ReportError("Cannot have more than one layer.  Fix this problem and re-save the TMX file.");
-	
 	// Get the <data> node and validate.
 	rapidxml::xml_node<char>* DataNode = LayerNode->first_node("data");
 	
 	if (DataNode == NULL)
 		ReportError("Missing <data> node.");
 
-	rapidxml::xml_attribute<char>* DataEncodingAttr = DataNode->first_attribute("encoding");
-	if (DataEncodingAttr == NULL || strcmp(DataEncodingAttr->value(), "csv") != 0)
-		ReportError("Wrong map encoding.  Set encoding to CSV in the Tiled preferences and re-save the TMX file.");
-
 	// Build the SPage structure.
 	if (Chapter.NPages >= MAX_PAGES)
-		ReportError("Exceeded the maximum of %d total pages.", MAX_PAGES);
+		ReportError("Exceeded the maximum of %d total pages per chapter.", MAX_PAGES);
 
 	SPage* Page = &Chapter.Pages[Chapter.NPages++];
 	
@@ -507,63 +556,42 @@ void LoadPageFromTMX(const char* FileName)
 	Page->Height = atoi(LayerNode->first_attribute("height")->value());
 	
 	if (Page->Width < 12)
-		ReportError("Layer width must be at least 12.  Fix this problem and re-save the TMX file.");
+		ReportError("Page width is %d, must be at least %d.  Fix this problem and re-save the TMX file.", Page->Width, MIN_PAGE_WIDTH);
 
 	if (Page->Height < 1)
-		ReportError("Invalid layer height.  Fix this problem and re-save the TMX file.");
+		ReportError("Page height is %d, must be at least %d.  Fix this problem and re-save the TMX file.", Page->Height, MIN_PAGE_HEIGHT);
 
-	// Allocate the Blocks buffer.
+	// Allocate and fill the Blocks buffer.
 	Page->Blocks = (int*)malloc(Page->Width * Page->Height * sizeof(int));
-	
-	// Parse the CSV data into the Blocks buffer.
-	char* Data = DataNode->value();
-	char* DataEnd = Data + DataNode->value_size();
-	
-	for (int y = 0; y < Page->Height; y++)
-	{
-		for (int x = 0; x < Page->Width; x++)
-		{
-			if (Data >= DataEnd)
-				ReportError("Unexpected end of tile data.  Re-saving the TMX file may help.");
-			
-			int ID = strtol(Data, &Data, 0);
-			if (ID < 0)
-				ReportError("Invalid tile data.  Re-saving the TMX file may help.");
-			
-			if (x < Page->Width-1 || y < Page->Height-1)
-			{
-				if (*Data != ',')
-					ReportError("Tile data format is invalid.  Re-saving the TMX file may help.");
-				Data++;
-			}
 
-			if (ID == 0)
-				ID = SPECIALBLOCKID_BLANK;
-			else
-			{
-				int TileSetInfoIndex = -1;
-				for (int i = NTileSetInfos - 1; i >= 0; i--)
-				{
-					if (ID >= TileSetInfo[i].FirstGID)
-					{
-						TileSetInfoIndex = i;
-						break;
-					}
-				}
+    ParseCSVData(DataNode, Page->Width, Page->Height, NTileSetInfos, TileSetInfo, Page->Blocks);
 
-				if (TileSetInfoIndex == -1)
-					ReportError("Tile data format is invalid.  Re-saving the TMX file may help.");
+    // Load additional layers.
+    Page->NLayers = 0;
 
-				ID = ID - TileSetInfo[TileSetInfoIndex].FirstGID + TileSetInfo[TileSetInfoIndex].TileSet->FirstBlock;
-			}
+	while (LayerNode->next_sibling("layer") != NULL)
+    {
+        LayerNode = LayerNode->next_sibling("layer");
 
-			Page->Blocks[y*Page->Width + x] = ID;
-		}
-		
-		if (*Data != '\n')
-			ReportError("Tile data format is invalid (but I'm being picky).  Re-saving the TMX file may help.");
-		Data++;
-	}
+        DataNode = LayerNode->first_node("data");
+	    if (DataNode == NULL)
+		    ReportError("Missing <data> node.");
+
+	    if (atoi(LayerNode->first_attribute("width")->value()) != Page->Width)
+            ReportError("Layer width does not match page width.  Fix this problem and re-save the TMX file.");
+
+	    if (atoi(LayerNode->first_attribute("height")->value()) != Page->Height)
+            ReportError("Layer height does not match page height.  Fix this problem and re-save the TMX file.");
+
+        if (Page->NLayers >= MAX_PAGE_LAYERS)
+            ReportError("Exceeded the maximum of %d extra layers per page.  Fix this problem and re-save the TMX file.", MAX_PAGE_LAYERS);
+
+        SPageLayer* Layer = &Page->Layers[Page->NLayers++];
+
+        Layer->Blocks = (int*)malloc(Page->Width * Page->Height * sizeof(int));
+
+        ParseCSVData(DataNode, Page->Width, Page->Height, NTileSetInfos, TileSetInfo, Layer->Blocks);
+    }
 	
 	// Scan the properties.
 	InitPageProperties(&Page->Props);
@@ -666,6 +694,9 @@ void ClearChapter()
 	{
 		free(Chapter.Pages[i].Name);
 		free(Chapter.Pages[i].Blocks);
+
+        for (int j = 0; j < Chapter.Pages[i].NLayers; j++)
+            free(Chapter.Pages[i].Layers[j].Blocks);
 	}
 	Chapter.NPages = 0;
 
@@ -874,7 +905,7 @@ void CalculateScroll()
 	}
 }
 
-void DisplayChapter()
+void DisplayChapterLayer(ELightList LightList, int* Blocks)
 {
 	for (int y = 0; y < Chapter.PageHeight; y++)
 	{
@@ -884,7 +915,7 @@ void DisplayChapter()
 
 		for (int x = 0; x < Chapter.PageWidth; x++)
 		{
-			int BlockID = Chapter.PageBlocks[y * Chapter.PageWidth + x];
+			int BlockID = Blocks[y * Chapter.PageWidth + x];
 
 			if (BlockID >= SPECIALBLOCKID_FIRST)
 			{
@@ -908,8 +939,11 @@ void DisplayChapter()
 			}
 		}
 	}
-    
-    if (Chapter.EndX + 256 + ScrollY >= 0 && 
+}
+
+void DisplayPortal()
+{
+    if (Chapter.EndY + 256 + ScrollY >= 0 && 
         Chapter.EndY - 256 + ScrollY <= LitScreenHeight)
     {
         Chapter.PortalAngle += 2.0f*PI / 60.0f * 0.1f; 
@@ -920,6 +954,19 @@ void DisplayChapter()
             AddLitSpriteCenteredScaledRotatedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &PortalSprite, Chapter.EndX + ScrollX, Chapter.EndY - 50 + ScrollY, 1.0f, Angle, Alpha);
         }
     }
+}
+
+void DisplayChapterBaseLayer()
+{
+    DisplayChapterLayer(LIGHTLIST_FOREGROUND, Chapter.PageBlocks);
+}
+
+void DisplayChapterExtraLayers()
+{
+    SPage* Page = &Chapter.Pages[Chapter.PageNum];
+
+    for (int i = 0; i < Page->NLayers; i++)
+        DisplayChapterLayer(LIGHTLIST_FOREGROUND, Page->Layers[i].Blocks);
 }
 
 int GetBlockID(int x, int y)
@@ -1058,7 +1105,7 @@ void LoadChapterList()
         
         rapidxml::xml_attribute<char>* EndOfGameAttr = ChapterNode->first_attribute("EndOfGame");
         if (EndOfGameAttr)
-            Chapter->EndOfGame = atoi(EndOfGameAttr->value());
+            Chapter->EndOfGame = atoi(EndOfGameAttr->value()) != 0;
         else
             Chapter->EndOfGame = false;
 

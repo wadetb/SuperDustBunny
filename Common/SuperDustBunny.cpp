@@ -607,7 +607,7 @@ void DisplayGame_Playing()
 
 	// Chapter Drawing - Everything here is behind Dusty
     DisplayBackground();
-	DisplayChapter();
+	DisplayChapterBaseLayer();
 	DisplayBarrels_BeforeDusty();
 	DisplayCoins();
     DisplayGear();
@@ -621,6 +621,8 @@ void DisplayGame_Playing()
 	DisplayDusty();
 	
 	// More Chapter Drawing - Everything here is on top of Dusty
+	DisplayChapterExtraLayers();
+    DisplayPortal();
 	DisplayFans();
 	DisplayBarrels_AfterDusty();
 	DisplayDust();
