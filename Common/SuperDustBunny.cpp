@@ -390,14 +390,14 @@ void AdvanceToNextPage()
 void SkipToNextPage()
 {
     StopRecording(RESULT_NONE);
-    SetCurrentPage((Chapter.PageNum+Chapter.NPages-1) % Chapter.NPages);
+    SetCurrentPage((Chapter.PageNum+1) % Chapter.NPages);
     StartRecording();
 }
 
 void SkipToPreviousPage()
 {
     StopRecording(RESULT_NONE);
-    SetCurrentPage((Chapter.PageNum+1) % Chapter.NPages);
+    SetCurrentPage((Chapter.PageNum+Chapter.NPages-1) % Chapter.NPages);
     StartRecording();    
 }
 
@@ -1124,14 +1124,14 @@ bool Update()
         {
             if (Chapter.NPages > 0)
             {
-                SkipToPreviousPage();
+                SkipToNextPage();
             }
         }
         if (kbIsKeyDown(KB_NEXT) && !kbWasKeyDown(KB_NEXT))
         {
             if (Chapter.NPages > 0)
             {
-                SkipToNextPage();
+                SkipToPreviousPage();
             }
         }
 
