@@ -12,6 +12,7 @@
 #include "Chapter.h"
 #include "Dusty.h"
 #include "Gear.h"
+#include "Coin.h"
 
 
 enum ETutorialState
@@ -19,6 +20,7 @@ enum ETutorialState
     TUTORIAL_INACTIVE,
     TUTORIAL_FLICK_TO_JUMP,
     TUTORIAL_BONUS,
+    TUTORIAL_EXTRA_LIFE,
 };
 
 
@@ -38,7 +40,9 @@ void InitTutorial()
 {
     if (CurrentChapter == 0 && Chapter.PageNum == 0)
         Tutorial.State = TUTORIAL_FLICK_TO_JUMP;
-    else if (CurrentChapter == 0 && Chapter.PageNum == 1 && NGears > 0)
+    else if (CurrentChapter == 0 && Chapter.PageNum == 1 && NCoins > 0)
+        Tutorial.State = TUTORIAL_EXTRA_LIFE;
+    else if (CurrentChapter == 0 && Chapter.PageNum == 2 && NGears > 0)
         Tutorial.State = TUTORIAL_BONUS;
     else
         Tutorial.State = TUTORIAL_INACTIVE;
@@ -68,6 +72,10 @@ void DisplayTutorial()
         {
             AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &TextFlickToJumpSprite, X + ScrollX, Y + ScrollY, 1.0f, Alpha);
         }
+        else if (Tutorial.State == TUTORIAL_EXTRA_LIFE)
+        {
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &TextExtraLifeSprite, X + ScrollX, Y + ScrollY, 1.0f, Alpha);            
+        }
         else if (Tutorial.State == TUTORIAL_BONUS)
         {
             AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &TextBonusSprite, X + ScrollX, Y + ScrollY, 1.0f, Alpha);            
@@ -90,6 +98,20 @@ void UpdateTutorial()
         {
             Tutorial.X = Dusty.FloatX + 175;
             Tutorial.Y = Dusty.FloatY - 350;
+        }
+    }
+    else if (Tutorial.State == TUTORIAL_EXTRA_LIFE)
+    {
+        SCoin* LastCoin = &Coins[NCoins-1];
+        
+        if (LastCoin->State != COINSTATE_ACTIVE)
+        {
+            Tutorial.FadeOutTimer += 1.0f/60.0f;
+        }
+        else
+        {
+            Tutorial.X = LastCoin->X - 160;
+            Tutorial.Y = LastCoin->Y - 200;
         }
     }
     else if (Tutorial.State == TUTORIAL_BONUS)

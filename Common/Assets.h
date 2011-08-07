@@ -14,12 +14,6 @@
 //                                                    Sprite Assets                                                                        //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
-enum ETest
-{
-    TEST_BLAH = 0,
-    TEST_FOO = 1
-};
-
 extern gxSprite WhiteSprite;
 
 extern gxSprite WipeDiagonalSprite;
@@ -154,6 +148,7 @@ extern gxSprite ScreenWin2Sprite;
 extern gxSprite TextMinus1SecSprite;
 extern gxSprite TextFlickToJumpSprite;
 extern gxSprite TextBonusSprite;
+extern gxSprite TextExtraLifeSprite;
 
 extern gxSprite ChapterTitleSprite;
 extern gxSprite ChapterTextSprite;

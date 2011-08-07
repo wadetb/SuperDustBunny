@@ -154,6 +154,7 @@ gxSprite ScreenWin2Sprite;
 gxSprite TextMinus1SecSprite;
 gxSprite TextFlickToJumpSprite;
 gxSprite TextBonusSprite;
+gxSprite TextExtraLifeSprite;
 
 gxSprite ChapterTitleSprite;
 gxSprite ChapterTextSprite;
@@ -928,6 +929,7 @@ void LoadAssets()
     LoadSpriteAsset("Assets/text-minus-1-sec.png", &TextMinus1SecSprite);
 	LoadSpriteAsset("Assets/text-flick-to-jump.png", &TextFlickToJumpSprite);
 	LoadSpriteAsset("Assets/text-bonus.png", &TextBonusSprite);
+	LoadSpriteAsset("Assets/text-extra-life.png", &TextExtraLifeSprite);
 	
 	LoadSpriteAsset("Assets/chapter-title.png", &ChapterTitleSprite);
 	LoadSpriteAsset("Assets/chapter.png", &ChapterTextSprite);

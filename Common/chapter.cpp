@@ -395,8 +395,6 @@ void ParseCSVData(rapidxml::xml_node<char>* DataNode, int Width, int Height, int
 				ReportError("Unexpected end of tile data.  Re-saving the TMX file may help.");
 			
 			unsigned int ID = strtoul(Data, &Data, 0);
-			if (ID < 0)
-				ReportError("Invalid tile data.  Re-saving the TMX file may help.");
 			
 			if (x < Width-1 || y < Height-1)
 			{
