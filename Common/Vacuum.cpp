@@ -43,9 +43,14 @@ void UpdateVacuumForceMap();
 
 void InitVacuum()
 {
-    Vacuum.X = 384;
-    
 	Vacuum.Dir = (EVacuumDir)Chapter.PageProps.VacuumDir;
+
+    Vacuum.X = 384;
+    if (Vacuum.Dir == VACUUMDIR_UP)
+        Vacuum.Y = Chapter.PageHeight*64 + LitScreenHeight*2;
+    else
+        Vacuum.Y = -LitScreenHeight*2;
+    
 	Vacuum.State = VACUUMSTATE_OFF;
 	Vacuum.Volume = 0.5f;
 
@@ -61,6 +66,7 @@ void InitVacuum()
 
     for (int i = 0; i < MAX_VACUUM_QUEUE_NODES; i++)
         VacuumQueue[i].Next = i+1;
+    VacuumQueue[MAX_VACUUM_QUEUE_NODES-1].Next = -1;
     VacuumFreeHead = 0;
 
 	// These two sounds loop continuously.
@@ -257,10 +263,13 @@ void UpdateVacuum()
             CreateVacuumSmoke(1);
 
 		// Move the vacuum back down the screen.
-		if (Vacuum.Dir == VACUUMDIR_UP)
-			Vacuum.Y += 5;
-		else
-			Vacuum.Y -= 5;
+        if (Vacuum.Timer < VACUUM_RETREAT_TIME - 60)
+        {
+            if (Vacuum.Dir == VACUUMDIR_UP)
+                Vacuum.Y += 5;
+            else
+                Vacuum.Y -= 5;
+        }
 
 		if (Vacuum.Timer <= 0)
 		{
@@ -348,6 +357,9 @@ void TurnOnVacuum()
 
 bool IsInVacuum(float Y)
 {
+    if (Vacuum.State != VACUUMSTATE_ONSCREEN)
+        return false;
+    
 	if (Vacuum.Dir == VACUUMDIR_UP)
 		return Y >= Vacuum.Y;
 	else
