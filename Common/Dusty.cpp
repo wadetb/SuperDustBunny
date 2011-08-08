@@ -1323,14 +1323,14 @@ void UpdateDusty_Collision()
 	// Collision with right side of the right screen and Dusty's right Side
 	if (Dusty.FloatX + Dusty.Right >= (float)Chapter.PageWidth * 64)
 	{
-		Dusty.CollideWithRightSide = true;
+        Dusty.FloatVelocityX *= -0.25f;
 		Dusty.FloatX = (float)Chapter.PageWidth * 64 - (float)Dusty.Right;	
 	} 
 
 	//Collision with the left side of the screen    
 	if (Dusty.FloatX + Dusty.Left <= 0)
 	{
-		Dusty.CollideWithLeftSide = true;
+        Dusty.FloatVelocityX *= -0.25f;
 		Dusty.FloatX = -(float)Dusty.Left;
 	}
 
