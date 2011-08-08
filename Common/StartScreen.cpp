@@ -230,11 +230,11 @@ void DisplayStartScreen()
 
         gxSprite* BadgeSprite = GetStartScreenBadge(i);
         if (BadgeSprite)
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, BadgeSprite, X+150, Y-150, Scale, 1.0f);                
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, BadgeSprite, X+150*Scale, Y-150*Scale, Scale, 1.0f);                
         
         gxSprite* MedalSprite = GetStartScreenMedal(i);
         if (MedalSprite)
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, MedalSprite, X+10, Y-135, Scale*2, 1.0f);                
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, MedalSprite, X+10*Scale, Y-150*Scale, Scale*2, 1.0f);                
     }
 
     if (StartScreen.StartupTime < 1.0f)
