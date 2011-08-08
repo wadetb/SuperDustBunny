@@ -1107,21 +1107,21 @@ void LoadChapterList()
         
         rapidxml::xml_attribute<char>* BronzeTimeAttr = ChapterNode->first_attribute("BronzeTime");
         if (BronzeTimeAttr)
-            Chapter->BronzeTime = atoi(BronzeTimeAttr->value());
+            Chapter->BronzeTime = (int)(atof(BronzeTimeAttr->value())*60.0f);
         else
-            Chapter->BronzeTime = INT_MAX;
+            Chapter->BronzeTime = 0;
         
         rapidxml::xml_attribute<char>* SilverTimeAttr = ChapterNode->first_attribute("SilverTime");
         if (SilverTimeAttr)
-            Chapter->SilverTime = atoi(SilverTimeAttr->value());
+            Chapter->SilverTime = (int)(atof(SilverTimeAttr->value())*60.0f);
         else
-            Chapter->SilverTime = INT_MAX;
+            Chapter->SilverTime = 0;
         
         rapidxml::xml_attribute<char>* GoldTimeAttr = ChapterNode->first_attribute("GoldTime");
         if (GoldTimeAttr)
-            Chapter->GoldTime = atoi(GoldTimeAttr->value());
+            Chapter->GoldTime = (int)(atof(GoldTimeAttr->value())*60.0f);
         else
-            Chapter->GoldTime = INT_MAX;
+            Chapter->GoldTime = 0;
 
         rapidxml::xml_attribute<char>* UnlockedByAttr = ChapterNode->first_attribute("UnlockedBy");
         if (UnlockedByAttr)

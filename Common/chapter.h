@@ -144,13 +144,6 @@ struct SChapter
 	int PageHeight;
 };
 
-enum EMedalType
-{
-    MEDAL_BRONZE,
-    MEDAL_SILVER,
-    MEDAL_GOLD
-};
-
 struct SChapterListEntry
 {
     char* Name;

@@ -60,6 +60,10 @@ gxSprite LogoSprite;
 
 gxSprite NewUnlockSprite;
 
+gxSprite BronzeMedalSprite;
+gxSprite SilverMedalSprite;
+gxSprite GoldMedalSprite;
+
 gxSprite BackgroundCardboardSprite;
 gxSprite BackgroundPaperSprite;
 gxSprite BackgroundFridgeSprite;
@@ -834,6 +838,10 @@ void LoadAssets()
     LoadSpriteAsset("Assets/logo.png", &LogoSprite);
     
     LoadSpriteAsset("Assets/new-unlock.png", &NewUnlockSprite);
+    
+    LoadSpriteAsset("Assets/METAL_Small_BRONZE.png", &BronzeMedalSprite);
+    LoadSpriteAsset("Assets/METAL_Small_SILVER.png", &SilverMedalSprite);
+    LoadSpriteAsset("Assets/METAL_Small_GOLD.png", &GoldMedalSprite);
     
 	LoadSpriteAsset("Assets/background-cardboard.png", &BackgroundCardboardSprite);
 	LoadSpriteAsset("Assets/background-paper.png", &BackgroundPaperSprite);

@@ -17,19 +17,88 @@
 #endif
 
 
+#define MEDAL_FRAMES 8
+
+
+enum EWinScreenState
+{
+    WINSCREEN_MEDAL,
+    WINSCREEN_TIMES
+};
+
 struct SWinScreen
 {
+    EWinScreenState State;
+    
 	bool Pressed;
     float Timer;
     float SlideIn;
+    
+    int MedalFrame;
 };
 
 
 SWinScreen WinScreen;
 
 
+gxSprite MedalFrames[MEDAL_FRAMES];
+
+const char* BronzeMedalNames[MEDAL_FRAMES] =
+{
+    "Assets/METAL_BRONZE_1.png",
+    "Assets/METAL_BRONZE_2.png",
+    "Assets/METAL_BRONZE_3.png",
+    "Assets/METAL_BRONZE_4.png",
+    "Assets/METAL_BRONZE_5.png",
+    "Assets/METAL_BRONZE_6.png",
+    "Assets/METAL_BRONZE_7.png",
+    "Assets/METAL_BRONZE_8.png",
+};
+
+const char* SilverMedalNames[MEDAL_FRAMES] =
+{
+    "Assets/METAL_SILVER_1.png",
+    "Assets/METAL_SILVER_2.png",
+    "Assets/METAL_SILVER_3.png",
+    "Assets/METAL_SILVER_4.png",
+    "Assets/METAL_SILVER_5.png",
+    "Assets/METAL_SILVER_6.png",
+    "Assets/METAL_SILVER_7.png",
+    "Assets/METAL_SILVER_8.png",
+};
+
+const char* GoldMedalNames[MEDAL_FRAMES] =
+{
+    "Assets/METAL_GOLD_1.png",
+    "Assets/METAL_GOLD_2.png",
+    "Assets/METAL_GOLD_3.png",
+    "Assets/METAL_GOLD_4.png",
+    "Assets/METAL_GOLD_5.png",
+    "Assets/METAL_GOLD_6.png",
+    "Assets/METAL_GOLD_7.png",
+    "Assets/METAL_GOLD_8.png",
+};
+
 void InitWinScreen()
 {
+    if (Score.Medal != MEDAL_NONE)
+    {
+        WinScreen.State = WINSCREEN_MEDAL;
+        
+        const char** MedalNames;
+        if (Score.Medal == MEDAL_BRONZE)
+            MedalNames = BronzeMedalNames;
+        else if (Score.Medal == MEDAL_SILVER)
+            MedalNames = SilverMedalNames;
+        else 
+            MedalNames = GoldMedalNames;
+        
+        for (int i = 0; i < MEDAL_FRAMES; i++)
+            LoadSpriteAsset(MedalNames[i], &MedalFrames[i]);
+    }
+    else
+        WinScreen.State = WINSCREEN_TIMES;
+    
 	WinScreen.Pressed = false;
     WinScreen.Timer = 0;
     WinScreen.SlideIn = 1.0f;
@@ -37,78 +106,76 @@ void InitWinScreen()
 
 void DisplayWinScreen()
 {    
-/*
-	if (WinScreen.Pressed)
-	{
-		AddLitSprite(LIGHTLIST_BACKGROUND, &ScreenWin2Sprite, 0, 0);
-        AddLitSpriteSizedColor(LIGHTLIST_BACKGROUND, &WhiteSprite, 0, ScreenWin2Sprite.height, gxScreenWidth, 1000.0f, gxRGB32(0, 0, 0));
-	}
-	else
-	{
-		AddLitSprite(LIGHTLIST_BACKGROUND, &ScreenWin1Sprite, 0, 0);
-        AddLitSpriteSized(LIGHTLIST_BACKGROUND, &WhiteSprite, 0, ScreenWin2Sprite.height, gxScreenWidth, 1000.0f);
-	}
-    
-	AddLitSprite(LIGHTLIST_VACUUM, &ChapterTitleSprite, 0, -400);
-	AddLitSprite(LIGHTLIST_VACUUM, &ChapterTextSprite, 220, 200);
-*/
-
     AddLitSprite(LIGHTLIST_BACKGROUND, &BackgroundFridgeSprite, 0, 0);
     AddLitSprite(LIGHTLIST_BACKGROUND, &BackgroundFridgeSprite, 0, 1024);
-
     
-    int CurrentY = 75;
-    
-    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterCompleteSprite, 384, CurrentY, 1.0f, 1.0f);
-    CurrentY += 100;
-    
-    bool AnyNewRecords = false;
-    for (int i = 0; i < Chapter.NPages; i++)
+    if (WinScreen.State == WINSCREEN_MEDAL)
     {
-        if (Score.NewRecord[i])
-        {
-            AnyNewRecords = true;
-            break;
-        }
+        if (Score.Medal != MEDAL_NONE)
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, &MedalFrames[(WinScreen.MedalFrame/8)%MEDAL_FRAMES], 384, 650, 0.8f, 1.0f);                
     }
-
-    int XOffset = AnyNewRecords ? 0 : 90;
     
-    AddLitSprite(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterTimeSprite, XOffset + 60, CurrentY);
-    AddLitSprite(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterBonusSprite, XOffset + 350, CurrentY);
-    CurrentY += 100;
-    
-    for (int i = 0; i < Chapter.NPages; i++)
+    if (WinScreen.State == WINSCREEN_TIMES)
     {
-        DisplayTime(XOffset + 80 - (i+1)*300*WinScreen.SlideIn, CurrentY, 0.75f, Score.PageTime[i]);
-        DisplayTimeDigit(Score.PageBonus[i], XOffset + 450 - (i+1)*300*WinScreen.SlideIn, CurrentY, 0.75f, 0, 0);
+        if (Score.Medal != MEDAL_NONE)
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, &MedalFrames[0], 384, 650, 0.8f, 1.0f);        
         
-        if (Score.NewRecord[i])
-            AddLitSprite(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterNewSprite, XOffset + 550 + i*WinScreen.SlideIn*300, CurrentY);
+        int CurrentY = 75;
+        
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterCompleteSprite, 384, CurrentY, 1.0f, 1.0f);
+        CurrentY += 100;
+        
+        bool AnyNewRecords = false;
+        for (int i = 0; i < Chapter.NPages; i++)
+        {
+            if (Score.NewRecord[i])
+            {
+                AnyNewRecords = true;
+                break;
+            }
+        }
+
+        int XOffset = AnyNewRecords ? 0 : 90;
+        
+        AddLitSprite(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterTimeSprite, XOffset + 60, CurrentY);
+        AddLitSprite(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterBonusSprite, XOffset + 350, CurrentY);
+        CurrentY += 100;
+        
+        for (int i = 0; i < Chapter.NPages; i++)
+        {
+            DisplayTime(XOffset + 80 - (i+1)*300*WinScreen.SlideIn, CurrentY, 0.75f, Score.PageTime[i]);
+            DisplayTimeDigit(Score.PageBonus[i], XOffset + 450 - (i+1)*300*WinScreen.SlideIn, CurrentY, 0.75f, 0, 0);
+            
+            if (Score.NewRecord[i])
+                AddLitSprite(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterNewSprite, XOffset + 550 + i*WinScreen.SlideIn*300, CurrentY);
+            
+            CurrentY += 75;
+        }
         
         CurrentY += 75;
-    }
-    
-    CurrentY += 75;
-    
-    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterTotalTimeSprite, 384 + 2000*WinScreen.SlideIn, CurrentY, 1.0f, 1.0f);
-    CurrentY += 75;
+        
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterTotalTimeSprite, 384 + 2000*WinScreen.SlideIn, CurrentY, 1.0f, 1.0f);
+        CurrentY += 75;
 
-    DisplayTime(200, CurrentY, 1.0f, Score.ChapterTime);
-    CurrentY += 150;
-    
-    if (Score.NewChapterRecord)
-    {
-        float NewRecordScale = 1.0f + SinWave(WinScreen.Timer, 0.75f) * 0.30f;
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterNewRecordSprite, 384, CurrentY, NewRecordScale, 1.0f);
-    }
+        DisplayTime(200, CurrentY, 1.0f, Score.ChapterTime);
+        CurrentY += 150;
+        
+        if (Score.NewChapterRecord)
+        {
+            float NewRecordScale = 1.0f + SinWave(WinScreen.Timer, 0.75f) * 0.30f;
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterNewRecordSprite, 384, CurrentY, NewRecordScale, 1.0f);
+        }
 
-    float TapScape = 1.0f + SinWave(WinScreen.Timer, 0.5f) * 0.05f;
-    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &TapToContinueSprite, 384, LitScreenHeight - 75, TapScape, 1.0f);
+        float TapScape = 1.0f + SinWave(WinScreen.Timer, 0.5f) * 0.05f;
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &TapToContinueSprite, 384, LitScreenHeight - 75, TapScape, 1.0f);
+    }
 }
 
 void WinScreen_Advance()
 {
+    for (int i = 0; i < MEDAL_FRAMES; i++)
+        gxDestroySprite(&MedalFrames[i]);
+    
     if (Chapters[CurrentChapter].EndOfGame)
     {
 #ifdef PLATFORM_IPHONE
@@ -153,19 +220,32 @@ void UpdateWinScreen()
 #endif
 
     WinScreen.Timer += 1.0f/60.0f;
-
+    
 	// Advance to playing state when button is released.
-	if (WinScreen.Timer > 130.0f/60.0f)
+	if (WinScreen.Timer > 2.0f)
     { 
         if (!Pressed && WinScreen.Pressed)
         {
-            WinScreen_Advance();
-            return;
+            if (WinScreen.State == WINSCREEN_MEDAL)
+            {
+                WinScreen.State = WINSCREEN_TIMES;
+                WinScreen.Timer = 0;
+            }
+            else
+            {
+                WinScreen_Advance();
+                return;
+            }
         }
         
         WinScreen.Pressed = Pressed;
     }
-    
-    WinScreen.SlideIn *= 0.9f;
+
+    WinScreen.MedalFrame++;
+
+    if (WinScreen.State == WINSCREEN_TIMES)
+    {
+        WinScreen.SlideIn *= 0.9f;
+    }
 }
 

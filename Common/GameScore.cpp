@@ -89,6 +89,8 @@ void ResetScore()
     Score.ChapterTime = 0;
     Score.NewChapterRecord = false;
     Score.BestChapterTime = INT_MAX;
+    
+    Score.Medal = MEDAL_NONE;
 }
 
 void RecordPageScore(int Page)
@@ -138,6 +140,14 @@ void RecordPageScore(int Page)
                 }
             }
         }
+        
+        Score.Medal = MEDAL_NONE;
+        if (Score.ChapterTime <= Chapters[CurrentChapter].BronzeTime)
+            Score.Medal = MEDAL_BRONZE;
+        if (Score.ChapterTime <= Chapters[CurrentChapter].SilverTime)
+            Score.Medal = MEDAL_SILVER;
+        if (Score.ChapterTime <= Chapters[CurrentChapter].GoldTime)
+            Score.Medal = MEDAL_GOLD;
     }
     
     if (Chapters[CurrentChapter].Played == false)

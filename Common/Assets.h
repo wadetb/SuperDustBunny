@@ -54,6 +54,10 @@ extern gxSprite LogoSprite;
 
 extern gxSprite NewUnlockSprite;
 
+extern gxSprite BronzeMedalSprite;
+extern gxSprite SilverMedalSprite;
+extern gxSprite GoldMedalSprite;
+
 extern gxSprite BackgroundCardboardSprite;
 extern gxSprite BackgroundPaperSprite;
 extern gxSprite BackgroundFridgeSprite;

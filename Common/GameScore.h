@@ -12,6 +12,15 @@
 
 #define MAX_PAGE_TIMES 20
 
+
+enum EMedalType
+{
+    MEDAL_NONE,
+    MEDAL_BRONZE,
+    MEDAL_SILVER,
+    MEDAL_GOLD
+};
+
 struct SScore
 {
     int CurrentPageTime;
@@ -27,6 +36,8 @@ struct SScore
 
     bool NewChapterRecord;
     int BestChapterTime;
+    
+    EMedalType Medal;
 };
 
 extern SScore Score;

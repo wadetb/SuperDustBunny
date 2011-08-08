@@ -57,6 +57,23 @@ const float StartScreenSpacing = 470.0f;
 const float StartScreenDragSpacing = 235.0f;
 
 
+gxSprite* GetStartScreenMedal(int Item)
+{
+    if (Item >= STARTSCREEN_ITEM_FIRST_CHAPTER)
+    {
+        SChapterListEntry* Chapter = &Chapters[Item - STARTSCREEN_ITEM_FIRST_CHAPTER];
+        
+        if (Chapter->BestTime <= Chapter->GoldTime)
+            return &GoldMedalSprite;
+        if (Chapter->BestTime <= Chapter->SilverTime)
+            return &SilverMedalSprite;
+        if (Chapter->BestTime <= Chapter->SilverTime)
+            return &BronzeMedalSprite;
+    }
+    
+    return NULL;
+}
+
 gxSprite* GetStartScreenBadge(int Item)
 {
     if (Item >= STARTSCREEN_ITEM_FIRST_CHAPTER)
@@ -69,7 +86,6 @@ gxSprite* GetStartScreenBadge(int Item)
     
     return NULL;
 }
-
 
 gxSprite* GetStartScreenIcon(int Item)
 {
@@ -215,6 +231,10 @@ void DisplayStartScreen()
         gxSprite* BadgeSprite = GetStartScreenBadge(i);
         if (BadgeSprite)
             AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, BadgeSprite, X+150, Y-150, Scale, 1.0f);                
+        
+        gxSprite* MedalSprite = GetStartScreenMedal(i);
+        if (MedalSprite)
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, MedalSprite, X+10, Y-135, Scale*2, 1.0f);                
     }
 
     if (StartScreen.StartupTime < 1.0f)
