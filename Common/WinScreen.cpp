@@ -243,15 +243,17 @@ void DisplayWinScreen()
     {
         if (Score.Medal != MEDAL_NONE)
         {
+            float MedalScale = 1.5f + SinWave(WinScreen.Timer, 0.75f) * 0.25f;
+
             const char* MedalString;
             if (Score.Medal == MEDAL_BRONZE) MedalString = "bronze";
             if (Score.Medal == MEDAL_SILVER) MedalString = "silver";
             if (Score.Medal == MEDAL_GOLD) MedalString = "gold";
             
-            DisplayString(LIGHTLIST_FOREGROUND_NO_SHADOW, MedalString, 384, 75, 1.5f, FORMAT_CENTER_X);
-            DisplayString(LIGHTLIST_FOREGROUND_NO_SHADOW, "medal!", 384, 175, 1.5f, FORMAT_CENTER_X);
+            DisplayString(LIGHTLIST_FOREGROUND_NO_SHADOW, MedalString, 384 + 600*WinScreen.SlideIn, 75, MedalScale, FORMAT_CENTER_X);
+            DisplayString(LIGHTLIST_FOREGROUND_NO_SHADOW, "medal!", 384 - 600*WinScreen.SlideIn, 175, MedalScale, FORMAT_CENTER_X);
             
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, &MedalFrames[(WinScreen.MedalFrame/8)%MEDAL_FRAMES], 384, 675, 0.8f, 1.0f);                
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, &MedalFrames[(WinScreen.MedalFrame/8)%MEDAL_FRAMES], 384, 665 + 300*WinScreen.SlideIn, 0.8f, 1.0f);                
         }
     }
     
@@ -305,10 +307,10 @@ void DisplayWinScreen()
             float NewRecordScale = 1.0f + SinWave(WinScreen.Timer, 0.75f) * 0.30f;
             AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterNewRecordSprite, 384, CurrentY, NewRecordScale, 1.0f);
         }
-
-        float TapScape = 1.0f + SinWave(WinScreen.Timer, 0.5f) * 0.05f;
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &TapToContinueSprite, 384, LitScreenHeight - 75, TapScape, 1.0f);
     }
+    
+    float TapScape = 1.0f + SinWave(WinScreen.Timer, 0.5f) * 0.05f;
+    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &TapToContinueSprite, 384, LitScreenHeight - 75 + 300*WinScreen.SlideIn, TapScape, 1.0f);
 }
 
 void WinScreen_Advance()
@@ -361,6 +363,10 @@ void UpdateWinScreen()
 
     WinScreen.Timer += 1.0f/60.0f;
     
+    WinScreen.SlideIn *= 0.9f;
+
+    WinScreen.MedalFrame++;
+    
 	// Advance to playing state when button is released.
 	if (WinScreen.Timer > 2.0f)
     { 
@@ -370,6 +376,7 @@ void UpdateWinScreen()
             {
                 WinScreen.State = WINSCREEN_TIMES;
                 WinScreen.Timer = 0;
+                WinScreen.SlideIn = 1.0f;
             }
             else
             {
@@ -379,13 +386,6 @@ void UpdateWinScreen()
         }
         
         WinScreen.Pressed = Pressed;
-    }
-
-    WinScreen.MedalFrame++;
-
-    if (WinScreen.State == WINSCREEN_TIMES)
-    {
-        WinScreen.SlideIn *= 0.9f;
     }
 }
 
