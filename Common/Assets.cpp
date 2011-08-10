@@ -931,7 +931,7 @@ void LoadAssets()
 
 	LoadSpriteAsset("Assets/chapter-title.png", &ChapterTitleSprite);
 	LoadSpriteAsset("Assets/chapter.png", &ChapterTextSprite);
-	LoadSpriteAsset("Assets/chapter_numbers.png", &ChapterNumbersSprite);
+	LoadSpriteAsset("Assets/chapter-numbers.png", &ChapterNumbersSprite);
 	LoadSpriteAsset("Assets/chapter-complete.png", &ChapterCompleteSprite);
 	LoadSpriteAsset("Assets/chapter-time.png", &ChapterTimeSprite);
 	LoadSpriteAsset("Assets/chapter-bonus.png", &ChapterBonusSprite);
