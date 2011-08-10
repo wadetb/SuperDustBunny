@@ -78,8 +78,6 @@ gxSprite BarrelNailSprite;
 
 gxSprite FanSprite;
 
-gxSprite CrumbStandSprite;
-
 gxSprite CoinSpin1Sprite;
 gxSprite CoinSpin2Sprite;
 gxSprite CoinSpin3Sprite;
@@ -853,13 +851,11 @@ void LoadAssets()
 
 	LoadSpriteAsset("Assets/tile-wtf.png", &TileUnknownSprite);
 	
-	LoadSpriteAsset("Assets/barrel-back.png", &BarrelBackSprite);
-	LoadSpriteAsset("Assets/barrel-front.png", &BarrelFrontSprite);
+	LoadSpriteAsset("Assets/barrel-beans-back.png", &BarrelBackSprite);
+	LoadSpriteAsset("Assets/barrel-beans-front.png", &BarrelFrontSprite);
 	LoadSpriteAsset("Assets/barrel-nail.png", &BarrelNailSprite);
 
 	LoadSpriteAsset("Assets/fan.png", &FanSprite);
-
-	LoadSpriteAsset("Assets/crumb-stand.png", &CrumbStandSprite);
 
 	LoadSpriteAsset("Assets/coin-spin-1.png", &CoinSpin1Sprite);
 	LoadSpriteAsset("Assets/coin-spin-2.png", &CoinSpin2Sprite);
@@ -886,21 +882,10 @@ void LoadAssets()
 
 	LoadSpriteAsset("Assets/gear.png", &GearSprite);
 	
-    LoadSpriteAsset("Assets/staplerextendup.png", &StaplerExtendUpSprite);
-    LoadSpriteAsset("Assets/staplerup.png", &StaplerUpSprite);
-    LoadSpriteAsset("Assets/staplerdown.png", &StaplerDownSprite);
+    LoadSpriteAsset("Assets/stapler-1.png", &StaplerUpSprite);
+    LoadSpriteAsset("Assets/stapler-2.png", &StaplerDownSprite);
+    LoadSpriteAsset("Assets/stapler-3.png", &StaplerExtendUpSprite);
     
-    LoadSpriteAsset("Assets/power-jump.png", &PowerJump1Sprite);
-    LoadSpriteAsset("Assets/power-jump.png", &PowerJump2Sprite);
-    LoadSpriteAsset("Assets/power-jump.png", &PowerJump3Sprite);
-    LoadSpriteAsset("Assets/power-jump.png", &PowerJump4Sprite);
-    LoadSpriteAsset("Assets/power-jump.png", &PowerJump5Sprite);
-    LoadSpriteAsset("Assets/power-jump.png", &PowerJump6Sprite);
-    LoadSpriteAsset("Assets/power-jump.png", &PowerJump7Sprite);
-    LoadSpriteAsset("Assets/power-jump.png", &PowerJump8Sprite);
-    LoadSpriteAsset("Assets/power-jump.png", &PowerJump9Sprite);
-    LoadSpriteAsset("Assets/power-jump.png", &PowerJump10Sprite);
-
 	LoadSpriteAsset("Assets/dust-mote.png", &DustMoteSprite);
 
 	LoadSpriteAsset("Assets/firework-rocket.png", &FireWorkRocketSprite);
@@ -940,9 +925,10 @@ void LoadAssets()
 
     LoadSpriteAsset("Assets/text-minus-1-sec.png", &TextMinus1SecSprite);
 	LoadSpriteAsset("Assets/text-flick-to-jump.png", &TextFlickToJumpSprite);
-	LoadSpriteAsset("Assets/text-bonus.png", &TextBonusSprite);
 	LoadSpriteAsset("Assets/text-extra-life.png", &TextExtraLifeSprite);
-	
+
+    LoadSpriteAsset("Assets/bubble-bonus.png", &TextBonusSprite);
+
 	LoadSpriteAsset("Assets/chapter-title.png", &ChapterTitleSprite);
 	LoadSpriteAsset("Assets/chapter.png", &ChapterTextSprite);
 	LoadSpriteAsset("Assets/chapter_numbers.png", &ChapterNumbersSprite);
@@ -954,7 +940,7 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/chapter-record.png", &ChapterRecordSprite);
 	LoadSpriteAsset("Assets/chapter-total-time.png", &ChapterTotalTimeSprite);
 
-    LoadSpriteAsset("Assets/tap-to-continue.png", &TapToContinueSprite);
+    LoadSpriteAsset("Assets/text-tap-to-continue.png", &TapToContinueSprite);
 
     LoadSpriteAsset("Assets/powerup.png", &PowerUpSprite);
     

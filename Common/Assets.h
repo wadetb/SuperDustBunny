@@ -72,8 +72,6 @@ extern gxSprite BarrelNailSprite;
 
 extern gxSprite FanSprite;
 
-extern gxSprite CrumbStandSprite;
-
 extern gxSprite CoinSpin1Sprite;
 extern gxSprite CoinSpin2Sprite;
 extern gxSprite CoinSpin3Sprite;
