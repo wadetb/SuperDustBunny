@@ -201,8 +201,8 @@ void StartScreen_Advance()
 
 void DisplayStartScreen()
 {
-	AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, GetStartScreenBackground(StartScreen.CurItem), -384, -256, 1152, 1536, 1.0f-StartScreen.BackgroundFadeAlpha);
-	AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, GetStartScreenBackground(StartScreen.PrevItem), -384, -256 , 1152, 1536, StartScreen.BackgroundFadeAlpha);
+	AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, GetStartScreenBackground(StartScreen.CurItem), 0, 0, 768, LitScreenHeight, 1.0f-StartScreen.BackgroundFadeAlpha);
+	AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, GetStartScreenBackground(StartScreen.PrevItem), 0, 0 , 768, LitScreenHeight, StartScreen.BackgroundFadeAlpha);
 
     float Scale = Lerp(StartScreen.StartupTime, 0.0f, 0.8f, 2.0f, 1.0f);
     AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &LogoSprite, 384, 280, Scale, 1.0f);
