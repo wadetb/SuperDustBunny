@@ -153,10 +153,12 @@ gxSprite ScreenLoseGrave2Sprite;
 gxSprite ScreenWin1Sprite;
 gxSprite ScreenWin2Sprite;
 
-gxSprite TextMinus1SecSprite;
 gxSprite TextFlickToJumpSprite;
-gxSprite TextBonusSprite;
 gxSprite TextExtraLifeSprite;
+gxSprite TextBonusSprite;
+
+gxSprite BubbleMinus1SecSprite;
+gxSprite Bubble1UpSprite;
 
 gxSprite ChapterTitleSprite;
 gxSprite ChapterTextSprite;
@@ -930,11 +932,12 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/screen-win-1.png", &ScreenWin1Sprite);
 	LoadSpriteAsset("Assets/screen-win-2.png", &ScreenWin2Sprite);
 
-    LoadSpriteAsset("Assets/text-minus-1-sec.png", &TextMinus1SecSprite);
 	LoadSpriteAsset("Assets/text-flick-to-jump.png", &TextFlickToJumpSprite);
 	LoadSpriteAsset("Assets/text-extra-life.png", &TextExtraLifeSprite);
+    LoadSpriteAsset("Assets/text-bonus.png", &TextBonusSprite);
 
-    LoadSpriteAsset("Assets/bubble-bonus.png", &TextBonusSprite);
+    LoadSpriteAsset("Assets/bubble-minus-1-sec.png", &BubbleMinus1SecSprite);
+    LoadSpriteAsset("Assets/bubble-1up.png", &Bubble1UpSprite);
 
 	LoadSpriteAsset("Assets/chapter-title.png", &ChapterTitleSprite);
 	LoadSpriteAsset("Assets/chapter.png", &ChapterTextSprite);

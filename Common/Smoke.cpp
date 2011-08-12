@@ -174,7 +174,7 @@ void CreateBonus(float X, float Y)
     
     Smoke->Active = true;
     
-    Smoke->Sprite = &TextMinus1SecSprite;
+    Smoke->Sprite = &BubbleMinus1SecSprite;
     
     Smoke->Age = 0.0f;
     Smoke->Life = 10.0f;
@@ -197,3 +197,38 @@ void CreateBonus(float X, float Y)
     Smoke->FY = 0.99f;
     Smoke->FAngle = 0.0f;
 }
+
+void Create1UpBubble(float X, float Y)
+{
+    SSmoke* Smoke = &AllSmoke[NextSmoke];
+    
+    NextSmoke++;
+    if (NextSmoke >= MAX_SMOKE)
+        NextSmoke = 0;
+    
+    Smoke->Active = true;
+    
+    Smoke->Sprite = &Bubble1UpSprite;
+    
+    Smoke->Age = 0.0f;
+    Smoke->Life = 10.0f;
+    Smoke->Birth = 0.0f;
+    
+    Smoke->Alpha = 1.0f;
+    
+    Smoke->X = X;
+    Smoke->Y = Y;
+    Smoke->VX = 0;
+    Smoke->VY = -2.0f;
+    
+    Smoke->Scale = 0.4f;
+    Smoke->VScale = 0.0f;
+    
+    Smoke->Angle = 0.0f;
+    Smoke->VAngle = 0.0f;
+    
+    Smoke->FX = 0.0f;
+    Smoke->FY = 0.99f;
+    Smoke->FAngle = 0.0f;
+}
+

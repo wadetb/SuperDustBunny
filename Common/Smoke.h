@@ -16,5 +16,6 @@ void UpdateSmoke();
 void CreateSmoke(float X, float Y, int Count);
 void CreateSmallSmoke(float X, float Y);
 void CreateBonus(float X, float Y);
+void Create1UpBubble(float X, float Y);
 
 #endif

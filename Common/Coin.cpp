@@ -13,11 +13,15 @@
 #include "Vacuum.h"
 #include "Chapter.h"
 #include "GameScore.h"
+#include "Smoke.h"
+
 
 #define MAX_COINS 100
 
+
 int NCoins = 0;
 SCoin Coins[MAX_COINS];
+
 
 void CreateCoin(int X, int Y)
 {
@@ -79,6 +83,8 @@ void UpdateCoins()
 			{
 				Coin->State = COINSTATE_COLLECTED;
 				
+                Create1UpBubble(Coin->X, Coin->Y);
+
 				sxPlaySound(&CoinVacuumedUpSound);  
 			} 	                       	    
 		}

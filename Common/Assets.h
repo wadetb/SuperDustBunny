@@ -147,10 +147,12 @@ extern gxSprite ScreenLoseGrave2Sprite;
 extern gxSprite ScreenWin1Sprite;
 extern gxSprite ScreenWin2Sprite;
 
-extern gxSprite TextMinus1SecSprite;
 extern gxSprite TextFlickToJumpSprite;
-extern gxSprite TextBonusSprite;
 extern gxSprite TextExtraLifeSprite;
+extern gxSprite TextBonusSprite;
+
+extern gxSprite BubbleMinus1SecSprite;
+extern gxSprite Bubble1UpSprite;
 
 extern gxSprite ChapterTitleSprite;
 extern gxSprite ChapterTextSprite;
