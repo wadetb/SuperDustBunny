@@ -10,12 +10,17 @@
 #ifndef STAPLER_H
 #define STAPLER_H
 
+enum EStaplerType
+{
+    STAPLER_STAPLER,
+    STAPLER_JELLO,
+    STAPLER_CLOTHESPIN,
+};
+
 enum EStaplerState
 {
     STAPLERSTATE_WAIT,
-    STAPLERSTATE_PRELAUNCH,
     STAPLERSTATE_LAUNCH,
-    STAPLERSTATE_RESET,
 };
 
 struct SStaplerProperties
@@ -32,25 +37,19 @@ struct SStapler
 	float Right;
 	float Bottom;
 	float Top;
-
+    
+    EStaplerType Type;
     EStaplerState State;
 
     int Timer;
-    float PowerJump;
-    int PowerJumpCounter;
 
 	bool CollideWithLeftSide;
 	bool CollideWithRightSide;
 	bool CollideWithTopSide;
-
-	bool CanLaunch;
-	
-	int TimerWait;
 };
 
-extern SStapler Stapler;
 
-void CreateStapler(int X, int Y);
+void CreateStapler(int X, int Y, EStaplerType Type);
 void ClearStaplers();
 
 void UpdateStaplers();

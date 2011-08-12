@@ -103,20 +103,18 @@ gxSprite TennisBallSpin4Sprite;
 
 gxSprite GearSprite;
 
-gxSprite StaplerExtendUpSprite;
-gxSprite StaplerUpSprite;
-gxSprite StaplerDownSprite;
+gxSprite Stapler1Sprite;
+gxSprite Stapler2Sprite;
+gxSprite Stapler3Sprite;
 
-gxSprite PowerJump1Sprite; 
-gxSprite PowerJump2Sprite; 
-gxSprite PowerJump3Sprite; 
-gxSprite PowerJump4Sprite; 
-gxSprite PowerJump5Sprite; 
-gxSprite PowerJump6Sprite; 
-gxSprite PowerJump7Sprite; 
-gxSprite PowerJump8Sprite; 
-gxSprite PowerJump9Sprite; 
-gxSprite PowerJump10Sprite; 
+gxSprite Jello1Sprite;
+gxSprite Jello2Sprite;
+gxSprite Jello3Sprite;
+gxSprite Jello4Sprite;
+gxSprite Jello5Sprite;
+
+gxSprite Clothespin1Sprite;
+gxSprite Clothespin2Sprite;
 
 gxSprite DustMoteSprite;
 
@@ -882,9 +880,18 @@ void LoadAssets()
 
 	LoadSpriteAsset("Assets/gear.png", &GearSprite);
 	
-    LoadSpriteAsset("Assets/stapler-1.png", &StaplerUpSprite);
-    LoadSpriteAsset("Assets/stapler-2.png", &StaplerDownSprite);
-    LoadSpriteAsset("Assets/stapler-3.png", &StaplerExtendUpSprite);
+    LoadSpriteAsset("Assets/stapler-1.png", &Stapler1Sprite);
+    LoadSpriteAsset("Assets/stapler-2.png", &Stapler2Sprite);
+    LoadSpriteAsset("Assets/stapler-3.png", &Stapler3Sprite);
+    
+    LoadSpriteAsset("Assets/jello-1.png", &Jello1Sprite);
+    LoadSpriteAsset("Assets/jello-2.png", &Jello2Sprite);
+    LoadSpriteAsset("Assets/jello-3.png", &Jello3Sprite);
+    LoadSpriteAsset("Assets/jello-4.png", &Jello4Sprite);
+    LoadSpriteAsset("Assets/jello-5.png", &Jello5Sprite);
+    
+    LoadSpriteAsset("Assets/clothespin-1.png", &Clothespin1Sprite);
+    LoadSpriteAsset("Assets/clothespin-2.png", &Clothespin2Sprite);
     
 	LoadSpriteAsset("Assets/dust-mote.png", &DustMoteSprite);
 

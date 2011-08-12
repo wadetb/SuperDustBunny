@@ -18,7 +18,7 @@
 int NStaplers = 0;
 SStapler Staplers[MAX_STAPLERS];
 
-void CreateStapler(int X, int Y)
+void CreateStapler(int X, int Y, EStaplerType Type)
 {
     if (NStaplers >= MAX_STAPLERS)
         ReportError("Exceeded the maximum of %d total Staplers.", MAX_STAPLERS);
@@ -28,19 +28,31 @@ void CreateStapler(int X, int Y)
     Stapler->X = (float)X + 32;
     Stapler->Y = (float)Y + 32;
 
-	Stapler->Left = -160;
-	Stapler->Right = 160;
-	Stapler->Top = -70;
-	Stapler->Bottom = 0;
+    Stapler->Type = Type;
+
+    switch (Stapler->Type)
+    {
+    default:
+    case STAPLER_STAPLER:
+    case STAPLER_CLOTHESPIN:
+        Stapler->Left = -160;
+        Stapler->Right = 160;
+        Stapler->Top = -70;
+        Stapler->Bottom = 0;
+        break;
+    case STAPLER_JELLO:
+        Stapler->Left = -100;
+        Stapler->Right = 100;
+        Stapler->Top = -85;
+        Stapler->Bottom = 0;
+        break;
+    }
     
-    Stapler->PowerJump = 0;
+    Stapler->Timer = 0;
 
 	Stapler->CollideWithLeftSide = false;
 	Stapler->CollideWithRightSide = false;
 	Stapler->CollideWithTopSide = false;
-
-	Stapler->CanLaunch = true;
-	Stapler->TimerWait = 30;
 
     Stapler->State = STAPLERSTATE_WAIT;
 }
@@ -50,76 +62,71 @@ void ClearStaplers()
     NStaplers = 0;
 }
 
+gxSprite* StaplerSprites[] =
+{
+    &Stapler1Sprite,
+    &Stapler1Sprite,
+    &Stapler2Sprite,
+    &Stapler3Sprite,
+    &Stapler1Sprite,
+};
+
+gxSprite* JelloSprites[] =
+{
+    &Jello1Sprite,
+    &Jello1Sprite,
+    &Jello2Sprite,
+    &Jello3Sprite,
+    &Jello4Sprite,
+    &Jello5Sprite,
+    &Jello2Sprite,
+    &Jello5Sprite,
+    &Jello1Sprite,
+};
+
+gxSprite* ClothespinSprites[] = 
+{
+    &Clothespin1Sprite,
+    &Clothespin1Sprite,
+    &Clothespin2Sprite,
+    &Clothespin1Sprite,
+};
+
 void DisplayStaplers()
 {
     for (int i = 0; i < NStaplers; i++)
     {
         SStapler* Stapler = &Staplers[i];
 
-        if (Stapler->State == STAPLERSTATE_WAIT)
+        int FrameCount;
+        gxSprite** Frames;
+        
+        switch (Stapler->Type)
         {
-            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &StaplerUpSprite, Stapler->X + ScrollX, Stapler->Y + ScrollY - 50, 1.0f, 0.0f);
+        default:
+        case STAPLER_STAPLER: 
+            Frames = StaplerSprites; 
+            FrameCount = sizeof(StaplerSprites)/sizeof(gxSprite*); 
+            break;
+        case STAPLER_JELLO: 
+            Frames = JelloSprites; 
+            FrameCount = sizeof(JelloSprites)/sizeof(gxSprite*); 
+            break;
+        case STAPLER_CLOTHESPIN: 
+            Frames = ClothespinSprites; 
+            FrameCount = sizeof(ClothespinSprites)/sizeof(gxSprite*); 
+            break;
         }
-        else if (Stapler->State == STAPLERSTATE_PRELAUNCH)
+        
+        if (Stapler->State == STAPLERSTATE_LAUNCH)
         {
-            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &StaplerDownSprite, Stapler->X + ScrollX, Stapler->Y + ScrollY - 50, 1.0f, 0.0f);
-            
-#ifdef PLATFORM_WINDOWS
-            if (Stapler->PowerJumpCounter > 0)
-            {
-                AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump1Sprite, Stapler->X + 80 + ScrollX, Stapler->Y + ScrollY - 160, 2, 0, 13, 110);
-            }
-            
-            if (Stapler->PowerJumpCounter > 15)
-            {
-                AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump2Sprite, Stapler->X + 90 + ScrollX, Stapler->Y + ScrollY - 160, 14, 0, 26, 110); 
-            }
-            
-            if (Stapler->PowerJumpCounter > 30)
-            {
-               AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump3Sprite, Stapler->X + 100 + ScrollX, Stapler->Y + ScrollY - 160, 27, 0, 40, 110);
-            }
-            
-            if (Stapler->PowerJumpCounter > 45)
-            {
-               AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump4Sprite, Stapler->X + 110 + ScrollX, Stapler->Y + ScrollY - 160, 40, 0, 53, 110);
-            }
-            
-            if (Stapler->PowerJumpCounter > 60)
-            {
-                AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump5Sprite, Stapler->X + 120 + ScrollX, Stapler->Y + ScrollY - 160, 54, 0, 65, 110); 
-            }
-            
-            if (Stapler->PowerJumpCounter > 75)
-            {
-                AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump6Sprite, Stapler->X + 130 + ScrollX, Stapler->Y + ScrollY - 160, 67, 0, 78, 110);
-            }
-            
-            if (Stapler->PowerJumpCounter > 90)
-            {
-                AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump7Sprite, Stapler->X + 140 + ScrollX, Stapler->Y + ScrollY - 160, 80, 0, 92, 110);
-            }
-            
-            if (Stapler->PowerJumpCounter > 105)
-            {
-                AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump8Sprite, Stapler->X + 150 + ScrollX, Stapler->Y + ScrollY - 160, 93, 0, 104, 110);
-            }
-            
-            if (Stapler->PowerJumpCounter > 120)
-            {
-                AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump9Sprite, Stapler->X + 160 + ScrollX, Stapler->Y + ScrollY - 160, 106, 0, 118, 110);
-            }
-            
-            if (Stapler->PowerJumpCounter > 135)
-            {
-                AddLitSubSprite(LIGHTLIST_FOREGROUND, &PowerJump10Sprite, Stapler->X + 170 + ScrollX, Stapler->Y + ScrollY - 160, 119, 0, 130, 110);
-            }
-#endif
+            int Frame = 1+Stapler->Timer/5;
+            if (Frame >= FrameCount) 
+                Frame = FrameCount-1;
+            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, Frames[Frame], Stapler->X + ScrollX, Stapler->Y + ScrollY - 50, 1.0f, 0.0f);
         }
-        else if (Stapler->CanLaunch == false)
-        {
-            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &StaplerExtendUpSprite, Stapler->X + ScrollX, Stapler->Y + ScrollY - 50, 1.0f, 0.0f);
-        }            
+        else
+            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, Frames[0], Stapler->X + ScrollX, Stapler->Y + ScrollY - 50, 1.0f, 0.0f);            
     }
 }
 
@@ -129,66 +136,25 @@ void UpdateStaplers()
     {
         SStapler* Stapler = &Staplers[i];
 					
-        if (Stapler->State == STAPLERSTATE_PRELAUNCH)
+        if (Stapler->State == STAPLERSTATE_LAUNCH)
         {
-#if 0 //def PLATFORM_WINDOWS
-			if (kbIsKeyDown(KB_SPACE))
+            Stapler->Timer++;
+            if (Stapler->Timer == 10)
             {
-				SetDustyState_PrepareLaunch();
-                
-                Stapler->PowerJumpCounter += 1;    
-            }
-			else
-			{
-				if (Stapler->CollideWithTopSide == false)
-				{
-					Stapler->State = STAPLERSTATE_WAIT;
-					Stapler->TimerWait = 30;
-				}
-			}
-            
-            if (!kbIsKeyDown(KB_SPACE) && kbWasKeyDown(KB_SPACE))//Check for release of spacebar
-            {
-				Stapler->PowerJump = Remap(Stapler->PowerJumpCounter, 0, 135, 20, 28, true);
-
-				Stapler->State = STAPLERSTATE_LAUNCH; 
-            }        
-#else
-            Stapler->PowerJumpCounter += 1;
-            if (Stapler->PowerJumpCounter >= 10)
-            {
-                Stapler->PowerJumpCounter = 0;
-                Stapler->PowerJump = 27;
-                Stapler->State = STAPLERSTATE_LAUNCH; 
                 Dusty.FloatY -= 10;
-                SetDustyState_Launch(0, -Stapler->PowerJump); 
+                SetDustyState_Launch(0, -27); 
+            }
+            if (Stapler->Timer >= 100)
+            {
+                Stapler->State = STAPLERSTATE_WAIT; 
                 return;
             }
-#endif
-        }
-        
-        if (Stapler->State == STAPLERSTATE_LAUNCH)
-        {        
-            Stapler->PowerJumpCounter += 1;
-            if (Stapler->PowerJumpCounter >= 10)
-            {
-                Stapler->State = STAPLERSTATE_WAIT;
-                Stapler->TimerWait = 30;
-            }
-
         }
         
 		if (Stapler->State == STAPLERSTATE_WAIT)
 		{
-			if (Stapler->TimerWait == 0)
-			{
-				Stapler->CanLaunch = true;
-			}
-			else
-			{
-				Stapler->TimerWait --;
-			}   
-		}
+            Stapler->Timer++;
+        }
     }  
 }
 
@@ -240,11 +206,10 @@ void UpdateStapler_Collision()
 						Dusty.FloatVelocityY = 0;
 				}
 				
-                if (Stapler->CollideWithTopSide && Dusty.CollideWithBottomSide && Stapler->CanLaunch)
+                if (Stapler->CollideWithTopSide && Dusty.CollideWithBottomSide && Stapler->State == STAPLERSTATE_WAIT)
                 {
-                    Stapler->CanLaunch = false;
-                    Stapler->State = STAPLERSTATE_PRELAUNCH;
-                    Stapler->PowerJumpCounter = 0;
+                    Stapler->State = STAPLERSTATE_LAUNCH;
+                    Stapler->Timer = 0;
                     SetDustyState_PrepareLaunch();
                     Dusty.FloatY -= 35;
                 }

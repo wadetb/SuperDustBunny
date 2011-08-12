@@ -97,20 +97,18 @@ extern gxSprite TennisBallSpin4Sprite;
 
 extern gxSprite GearSprite;
 
-extern gxSprite StaplerExtendUpSprite;
-extern gxSprite StaplerUpSprite;
-extern gxSprite StaplerDownSprite;
+extern gxSprite Stapler1Sprite;
+extern gxSprite Stapler2Sprite;
+extern gxSprite Stapler3Sprite;
 
-extern gxSprite PowerJump1Sprite; 
-extern gxSprite PowerJump2Sprite; 
-extern gxSprite PowerJump3Sprite; 
-extern gxSprite PowerJump4Sprite; 
-extern gxSprite PowerJump5Sprite; 
-extern gxSprite PowerJump6Sprite; 
-extern gxSprite PowerJump7Sprite; 
-extern gxSprite PowerJump8Sprite; 
-extern gxSprite PowerJump9Sprite; 
-extern gxSprite PowerJump10Sprite; 
+extern gxSprite Jello1Sprite;
+extern gxSprite Jello2Sprite;
+extern gxSprite Jello3Sprite;
+extern gxSprite Jello4Sprite;
+extern gxSprite Jello5Sprite;
+
+extern gxSprite Clothespin1Sprite;
+extern gxSprite Clothespin2Sprite;
 
 extern gxSprite DustMoteSprite;
 

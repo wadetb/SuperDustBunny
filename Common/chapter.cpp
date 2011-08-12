@@ -286,6 +286,14 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* FileName
                     {
                         Block->Type = BLOCKTYPE_STAPLER;
                     }
+                    else if (strcmp(Value, "jello") == 0)
+                    {
+                        Block->Type = BLOCKTYPE_JELLO;
+                    }
+                    else if (strcmp(Value, "clothespin") == 0)
+                    {
+                        Block->Type = BLOCKTYPE_CLOTHESPIN;
+                    }
                     else if (strcmp(Value, "powerup") == 0)
                     {
                         Block->Type = BLOCKTYPE_POWERUP;
@@ -806,10 +814,18 @@ void CreatePageObjects()
 					CreateFlashlightWaypoint(x * 64, y * 64, (SFlashlightWaypointProperties*)Block->Properties);
 					EraseBlock(x, y);
 					break;
-				case BLOCKTYPE_STAPLER:
-					CreateStapler(x * 64, y * 64);
-					EraseBlock(x, y);
-					break;
+                case BLOCKTYPE_STAPLER:
+                    CreateStapler(x * 64, y * 64, STAPLER_STAPLER);
+                    EraseBlock(x, y);
+                    break;
+                case BLOCKTYPE_JELLO:
+                    CreateStapler(x * 64, y * 64, STAPLER_JELLO);
+                    EraseBlock(x, y);
+                    break;
+                case BLOCKTYPE_CLOTHESPIN:
+                    CreateStapler(x * 64, y * 64, STAPLER_CLOTHESPIN);
+                    EraseBlock(x, y);
+                    break;
                 case BLOCKTYPE_POWERUP:
                     CreatePowerUp(x * 64, y * 64);
                     EraseBlock(x, y);
