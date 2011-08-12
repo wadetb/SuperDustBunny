@@ -79,7 +79,7 @@ int BackgroundMusic = 1;
 
 float FPS;
 
-int PlaybackID = -1; //2207;
+int PlaybackID = 4331;
 
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -372,13 +372,15 @@ void AdvanceToNextPage()
 
 	if (Chapter.PageNum < Chapter.NPages-1)
 	{
-		StopRecording(RESULT_NEXT_PAGE);
+        if (IsRecordingActive())
+    		StopRecording(RESULT_NEXT_PAGE);
         
 		SetGameState_Transition(GAMETRANSITION_NEXT_PAGE);
 	}
 	else
 	{
-		StopRecording(RESULT_CHAPTER_END);
+        if (IsRecordingActive())
+    		StopRecording(RESULT_CHAPTER_END);
         
         SaveChapterScores(Chapters[CurrentChapter].Name);
         SaveChapterUnlocks();
@@ -389,14 +391,16 @@ void AdvanceToNextPage()
 
 void SkipToNextPage()
 {
-    StopRecording(RESULT_NONE);
+    if (IsRecordingActive())
+        StopRecording(RESULT_NONE);
     SetCurrentPage((Chapter.PageNum+1) % Chapter.NPages);
     StartRecording();
 }
 
 void SkipToPreviousPage()
 {
-    StopRecording(RESULT_NONE);
+    if (IsRecordingActive())
+        StopRecording(RESULT_NONE);
     SetCurrentPage((Chapter.PageNum+Chapter.NPages-1) % Chapter.NPages);
     StartRecording();    
 }
@@ -556,7 +560,8 @@ void UpdatePauseScreen()
         if (msX < 384-64 && msY >= 300 && msY <= 600)
         {
             GamePause = false;
-			StopRecording(RESULT_RESTART_PAGE);
+            if (IsRecordingActive())
+			    StopRecording(RESULT_RESTART_PAGE);
             SetGameState_StartScreen();
         }
 
@@ -1140,7 +1145,8 @@ bool Update()
         {
             if (kbIsKeyDown(i) && !kbWasKeyDown(i))
             {
-                StopRecording(RESULT_NONE);
+                if (IsRecordingActive())
+                    StopRecording(RESULT_NONE);
                 CurrentChapter = i-1;
                 LoadCurrentChapter();
                 SetGameState_Playing();

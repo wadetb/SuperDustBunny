@@ -1100,12 +1100,14 @@ void UpdateDusty_Die()
 		{
             if (!Settings.InfiniteLives)
                 Dusty.Lives -= 1;
-			StopRecording(RESULT_RESTART_PAGE);
+            if (IsRecordingActive())
+    			StopRecording(RESULT_RESTART_PAGE);
 			SetGameState_Transition(GAMETRANSITION_RESTART_PAGE);
 		}
 		else
 		{
-			StopRecording(RESULT_DIE);
+            if (IsRecordingActive())
+			    StopRecording(RESULT_DIE);
 			SetGameState_Transition(GAMETRANSITION_DIE_SCREEN);
 		}
 		return;
