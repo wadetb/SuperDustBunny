@@ -79,7 +79,7 @@ int BackgroundMusic = 1;
 
 float FPS;
 
-int PlaybackID = 4331;
+int PlaybackID = -1;
 
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//

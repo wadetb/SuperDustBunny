@@ -96,6 +96,8 @@ struct SPageProperties
 	bool LightsOff;
 	bool VacuumOff;
 	int VacuumDir;
+    int VacuumStart;
+    float VacuumSpeed;
 };
 
 struct SPageLayer

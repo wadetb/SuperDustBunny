@@ -212,21 +212,24 @@ void UpdateVacuum()
 		else
 			Vacuum.Y = (float)-ScrollY - 1500;
 
-		Vacuum.Timer--;
-		if (Vacuum.Timer <= 0)
-		{
-			Vacuum.State = VACUUMSTATE_ONSCREEN;
-			
-			int LightsOffset = Chapter.PageProps.LightsOff ? 768 : 0;
+        if (Dusty.FloatY <= Chapter.PageProps.VacuumStart)
+        {
+            Vacuum.Timer--;
+            if (Vacuum.Timer <= 0)
+            {
+                Vacuum.State = VACUUMSTATE_ONSCREEN;
+                
+                int LightsOffset = Chapter.PageProps.LightsOff ? 768 : 0;
 
-			// Vacuum.Y is the leading edge of the vacuum.
-			if (Vacuum.Dir == VACUUMDIR_UP)
-				Vacuum.Y = (float)-ScrollY + (float)LitScreenHeight + VacuumYOffset + LightsOffset;
-			else
-				Vacuum.Y = (float)-ScrollY - VacuumYOffset - LightsOffset;
+                // Vacuum.Y is the leading edge of the vacuum.
+                if (Vacuum.Dir == VACUUMDIR_UP)
+                    Vacuum.Y = (float)-ScrollY + (float)LitScreenHeight + VacuumYOffset + LightsOffset;
+                else
+                    Vacuum.Y = (float)-ScrollY - VacuumYOffset - LightsOffset;
 
-			Vacuum.Timer = 0;
-		}
+                Vacuum.Timer = 0;
+            }
+        }
 	}
 	else if (Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
@@ -235,11 +238,11 @@ void UpdateVacuum()
 			// The vacuum gets faster the longer it stays unclogged.
 			float VacuumSpeed;
 			if (Vacuum.Timer < 4*60)
-				VacuumSpeed = 3;
+				VacuumSpeed = 3 * Chapter.PageProps.VacuumSpeed;
 			else if (Vacuum.Timer < 8*60)
-				VacuumSpeed = 3.5;
+				VacuumSpeed = 3.5 * Chapter.PageProps.VacuumSpeed;
 			else
-				VacuumSpeed = 6;
+				VacuumSpeed = 6 * Chapter.PageProps.VacuumSpeed;
 
 			Vacuum.Timer++;
 
