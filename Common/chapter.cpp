@@ -860,7 +860,9 @@ void CreatePageObjects()
     InitTutorial();
     
 	InitVacuum();
-	TurnOnVacuum();
+    
+    if (!Chapter.PageProps.VacuumOff)
+        TurnOnVacuum();
 }
 
 void SetCurrentPage(int PageNum)
