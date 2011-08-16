@@ -130,7 +130,6 @@
 		085AAA20132C5B9F00DF32CA /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		085AAA21132C5B9F00DF32CA /* CreditsScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CreditsScreen.cpp; sourceTree = "<group>"; };
 		085AAA22132C5B9F00DF32CA /* CreditsScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreditsScreen.h; sourceTree = "<group>"; };
-		085AAA23132C5B9F00DF32CA /* Crumb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Crumb.h; sourceTree = "<group>"; };
 		085AAA24132C5B9F00DF32CA /* Debris.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Debris.cpp; sourceTree = "<group>"; };
 		085AAA25132C5B9F00DF32CA /* Debris.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Debris.h; sourceTree = "<group>"; };
 		085AAA26132C5B9F00DF32CA /* DieScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DieScreen.cpp; sourceTree = "<group>"; };
@@ -301,7 +300,6 @@
 				085AAA20132C5B9F00DF32CA /* common.h */,
 				085AAA21132C5B9F00DF32CA /* CreditsScreen.cpp */,
 				085AAA22132C5B9F00DF32CA /* CreditsScreen.h */,
-				085AAA23132C5B9F00DF32CA /* Crumb.h */,
 				085AAA24132C5B9F00DF32CA /* Debris.cpp */,
 				085AAA25132C5B9F00DF32CA /* Debris.h */,
 				085AAA26132C5B9F00DF32CA /* DieScreen.cpp */,

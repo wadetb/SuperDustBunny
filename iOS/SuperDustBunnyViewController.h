@@ -24,6 +24,7 @@
     EAGLContext *context;
     BOOL paused;
     BOOL wasPaused;
+    int slowFactor;
 }
 
 @property (nonatomic, retain) EAGLContext *context;

@@ -10,7 +10,7 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-//#define SWIPE_DEBUG
+#define SWIPE_DEBUG
 
 
 void GetInput_BeginSwipe(float X, float Y, double Time);
@@ -23,6 +23,7 @@ void GetInput_GetSwipePosAtTime(float* X, float* Y, double Time);
 
 void GetInput_ConsumeSwipe(float Dist);
 void GetInput_ConsumeAllSwipe();
+void GetInput_ClearSwipe();
 
 void DisplaySwipe();
 

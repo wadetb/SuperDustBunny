@@ -170,8 +170,9 @@ bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
                 return true;
             }
         }
+        
+        GetInput_ConsumeSwipe(0.5f / 60.0f);
     }
-    
 
     return false;
 }
@@ -241,6 +242,8 @@ void SetDustyState_Stand()
     Dusty.LandTimer = 0;
 
 	Dusty.State = DUSTYSTATE_STAND;
+    
+    GetInput_ClearSwipe();
 }
 
 void DisplayDusty_Stand()
@@ -714,7 +717,7 @@ void UpdateDusty_JumpCommon()
                     Dusty.FloatVelocityY += dY >= 0 ? 0.5f : -0.5f;
             }
             
-            GetInput_ConsumeSwipe(1.5f/60.0f);
+            GetInput_ConsumeSwipe(1.0f/60.0f);
         }
 #endif
     }
@@ -728,14 +731,12 @@ void UpdateDusty_JumpCommon()
 	if (Dusty.CollideWithBottomLeftCorner)
 	{
 		Dusty.Direction = DIRECTION_LEFT;
-        GetInput_ConsumeAllSwipe();
 		SetDustyState_CornerJump();
 		return;
 	}
 	if (Dusty.CollideWithBottomRightCorner)
 	{
 		Dusty.Direction = DIRECTION_RIGHT;
-        GetInput_ConsumeAllSwipe();
 		SetDustyState_CornerJump();
 		return;
 	}
@@ -745,7 +746,7 @@ void UpdateDusty_JumpCommon()
 	// Wade: Currently this stuff is tweaked around as an experiment- he can only walljump again after a delay.
 	Dusty.WallJumpTimer++;
 
-    if (Dusty.LandTimer >= 5)
+    if (Dusty.LandTimer >= 1)
     {
         if (Dusty.CollideWithLeftSide && Dusty.Direction == DIRECTION_LEFT && (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_LEFT))
         {
@@ -753,7 +754,6 @@ void UpdateDusty_JumpCommon()
             for (int i = 0; i < 6; i++)
                 MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);
 
-            GetInput_ConsumeAllSwipe();
             SetDustyState_WallJump();
             return;
         }
@@ -764,7 +764,6 @@ void UpdateDusty_JumpCommon()
             for (int i = 0; i < 6; i++)
                 MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);
 
-            GetInput_ConsumeAllSwipe();
             SetDustyState_WallJump();
             return;
         }
@@ -776,7 +775,6 @@ void UpdateDusty_JumpCommon()
             for (int i = 0; i < 3; i++)
                 MakeDustMote(Dusty.FloatX, Dusty.FloatY);
 
-            GetInput_ConsumeAllSwipe();
             SetDustyState_Stand();
             return;
         } 
@@ -810,6 +808,8 @@ void SetDustyState_WallJump()
 		Dusty.Direction = DIRECTION_RIGHT;
 
 	Dusty.State = DUSTYSTATE_WALLJUMP;
+    
+    GetInput_ClearSwipe();
 }
 
 void DisplayDusty_WallJump()
@@ -937,6 +937,8 @@ void SetDustyState_CornerJump()
 		Dusty.Direction = DIRECTION_RIGHT;
 
 	Dusty.State = DUSTYSTATE_CORNERJUMP;
+    
+    GetInput_ClearSwipe();
 }
 
 void DisplayDusty_CornerJump()

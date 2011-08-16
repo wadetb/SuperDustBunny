@@ -55,10 +55,12 @@ SuperDustBunnyViewController *theViewController;
     [(EAGLView *)self.view setContext:context];
     [(EAGLView *)self.view setFramebuffer];
     
+    slowFactor = 2;
+    
     Init();
     
     displayLink = [[UIScreen mainScreen] displayLinkWithTarget:self selector:@selector(displayLinkFrame)];
-    [displayLink setFrameInterval:1];
+    [displayLink setFrameInterval:slowFactor];
     [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -175,12 +177,12 @@ SuperDustBunnyViewController *theViewController;
     CFTimeInterval t = lastTimeStamp;
     int count = 0;
     
-    while (t < displayLink.timestamp + displayLink.duration)
+    while (t < displayLink.timestamp + displayLink.duration*slowFactor)
     {
         if (count < 3)
             Update();
         count++;
-        t += displayLink.duration;
+        t += displayLink.duration*slowFactor;
     }
     lastTimeStamp = t;
     

@@ -215,6 +215,14 @@ void GetInput_ConsumeAllSwipe()
     Swipe.Current = Swipe.Duration;
 }
 
+void GetInput_ClearSwipe()
+{
+    float X, Y;
+    GetInput_GetSwipePosAtTime(&X, &Y, Swipe.Current);
+    
+    GetInput_BeginSwipe(X, Y, Swipe.StartTime + Swipe.Current);
+}
+
 void DisplaySwipe()
 {
 #ifdef SWIPE_DEBUG
