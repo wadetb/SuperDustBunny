@@ -61,6 +61,7 @@
 
 #include "Assets.h"
 #include "Lighting.h"
+#include "Debug.h"
 
 
 static const float PI = acosf(-1.0f);
@@ -217,10 +218,6 @@ void ShowSettings();
 // Returns current time in seconds.  ONLY to be used for logging prints and non-final profiling code.
 #undef GetCurrentTime
 double GetCurrentTime();
-
-void AddDebugLine(float X1, float Y1, float X2, float Y2, unsigned int Color, float Time);
-void DisplayDebugLine(float X1, float Y1, float X2, float Y2, float Width, unsigned int Color);
-
 
 struct SRemoteControl
 {

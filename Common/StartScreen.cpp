@@ -54,7 +54,7 @@ struct SStartScreen
 SStartScreen StartScreen;
 
 const float StartScreenSpacing = 470.0f;
-const float StartScreenDragSpacing = 235.0f;
+const float StartScreenDragSpacing = 300.0f;
 
 
 gxSprite* GetStartScreenMedal(int Item)

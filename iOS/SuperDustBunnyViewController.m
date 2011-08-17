@@ -55,7 +55,7 @@ SuperDustBunnyViewController *theViewController;
     [(EAGLView *)self.view setContext:context];
     [(EAGLView *)self.view setFramebuffer];
     
-    slowFactor = 2;
+    slowFactor = 1;
     
     Init();
     

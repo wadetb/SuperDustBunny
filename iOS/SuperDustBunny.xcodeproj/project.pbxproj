@@ -73,6 +73,7 @@
 		08A8FC7613302F6300E45A98 /* TODO.txt in Resources */ = {isa = PBXBuildFile; fileRef = 08A8FC7513302F6300E45A98 /* TODO.txt */; };
 		08BF391713466F4E002C1A7B /* Converted in Resources */ = {isa = PBXBuildFile; fileRef = 08BF391613466F4E002C1A7B /* Converted */; };
 		08D2E1AB13660E0300AD31B8 /* PowerUp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D2E1A913660E0300AD31B8 /* PowerUp.cpp */; };
+		08F44AD013FB694D00991708 /* Debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08F44ACF13FB694D00991708 /* Debug.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -190,6 +191,8 @@
 		08BF391613466F4E002C1A7B /* Converted */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Converted; path = ../../Converted; sourceTree = "<group>"; };
 		08D2E1A913660E0300AD31B8 /* PowerUp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PowerUp.cpp; sourceTree = "<group>"; };
 		08D2E1AA13660E0300AD31B8 /* PowerUp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PowerUp.h; sourceTree = "<group>"; };
+		08F44ACD13FB694300991708 /* Debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Debug.h; sourceTree = "<group>"; };
+		08F44ACF13FB694D00991708 /* Debug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Debug.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -302,6 +305,8 @@
 				085AAA22132C5B9F00DF32CA /* CreditsScreen.h */,
 				085AAA24132C5B9F00DF32CA /* Debris.cpp */,
 				085AAA25132C5B9F00DF32CA /* Debris.h */,
+				08F44ACF13FB694D00991708 /* Debug.cpp */,
+				08F44ACD13FB694300991708 /* Debug.h */,
 				085AAA26132C5B9F00DF32CA /* DieScreen.cpp */,
 				085AAA27132C5B9F00DF32CA /* DieScreen.h */,
 				085AAA28132C5B9F00DF32CA /* Dust.cpp */,
@@ -506,6 +511,7 @@
 				0877CB0F13DCA16E002800D2 /* Flame.cpp in Sources */,
 				0877CB1313E43FB5002800D2 /* Smoke.cpp in Sources */,
 				0844B73913F9F0A500092ECE /* Text.cpp in Sources */,
+				08F44AD013FB694D00991708 /* Debug.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

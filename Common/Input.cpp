@@ -129,10 +129,21 @@ void GetInput_BeginSwipe(float X, float Y, double Time)
     
     if ( Recorder.RecordingActive )
         RecordSwipeEvent(EVENT_SWIPE_BEGIN, X, Y, 0);
+    
+#ifdef SWIPE_DEBUG
+    printf("Begin swipe- %f %f\n", X, Y);
+#endif
 }
 
 void GetInput_AddToSwipe(float X, float Y, double Time)
 {
+    // This occurs when the swipe is cleared in the middle.
+    if ( Swipe.Count == 0 )
+    {
+        GetInput_BeginSwipe(X, Y, Time);
+        return;
+    }
+    
     if ( Swipe.Count < MAX_SWIPE_POINTS )
     {
         SwipePoints[Swipe.Count].X = X;
@@ -143,11 +154,19 @@ void GetInput_AddToSwipe(float X, float Y, double Time)
 
         if ( Recorder.RecordingActive )
             RecordSwipeEvent(EVENT_SWIPE_POINT, X, Y, (float)(Time - Swipe.StartTime));
+
+#ifdef SWIPE_DEBUG
+        printf("Add swipe- %f %f\n", X, Y);
+#endif
     }
 }
 
 void GetInput_EndSwipe(float X, float Y, double Time)
 {
+    // This occurs when the swipe is cleared in the middle.
+    if ( Swipe.Count == 0 )
+        return;
+    
     if ( Swipe.Count < MAX_SWIPE_POINTS )
     {
         SwipePoints[Swipe.Count].X = X;
@@ -158,6 +177,10 @@ void GetInput_EndSwipe(float X, float Y, double Time)
         
         if ( Recorder.RecordingActive )
             RecordSwipeEvent(EVENT_SWIPE_END, X, Y, (float)(Time - Swipe.StartTime));
+
+#ifdef SWIPE_DEBUG
+        printf("End swipe- %f %f\n", X, Y);
+#endif
     }
 }
 
@@ -217,10 +240,14 @@ void GetInput_ConsumeAllSwipe()
 
 void GetInput_ClearSwipe()
 {
-    float X, Y;
-    GetInput_GetSwipePosAtTime(&X, &Y, Swipe.Current);
-    
-    GetInput_BeginSwipe(X, Y, Swipe.StartTime + Swipe.Current);
+    // Swipe clear on landing is currently disabled.  
+    // Probably need to reenable this and remove the calls from Dusty instead, since this will be needed by menus etc.
+#if 0
+    Swipe.Count = 0;
+    Swipe.StartTime = 0;
+    Swipe.Current = 0;
+    Swipe.Duration = 0;
+#endif
 }
 
 void DisplaySwipe()

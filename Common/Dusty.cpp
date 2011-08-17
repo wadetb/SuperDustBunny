@@ -144,7 +144,7 @@ bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
             float aY = -sinf(DegreesToRadians(Angle));
             
             float Dot = aX*dX + aY*dY;
-            float cR = cosf(Range);
+            float cR = cosf(DegreesToRadians(Range));
             
             if ( Dot >= cR )
             {
@@ -157,9 +157,7 @@ bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
                 //printf("Jump: Count=%d MaxSpeed=%f L=%f Power=%f\n", Swipe.ValidCount, MaxSpeed, L, Power);
                 
                 SetDustyState_JumpWithVelocity(dX, dY);
-                
-                GetInput_ConsumeSwipe(1.0f / 60.0f);
-                
+
 #ifdef SWIPE_DEBUG
                 AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle+Range))*100 + ScrollX, Dusty.FloatY + -sinf(DegreesToRadians(Angle+Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
                 AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle-Range))*100 + ScrollX, Dusty.FloatY + -sinf(DegreesToRadians(Angle-Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
@@ -170,8 +168,6 @@ bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
                 return true;
             }
         }
-        
-        GetInput_ConsumeSwipe(0.5f / 60.0f);
     }
 
     return false;
@@ -285,9 +281,9 @@ void UpdateDusty_Stand()
 		return;
 	}
     
-    Dusty.LandTimer++;
-    if (Dusty.LandTimer <= 5)
-        return;
+//    Dusty.LandTimer++;
+//    if (Dusty.LandTimer <= 5)
+//        return;
 
 	if (Dusty.CollideMaterial == MATERIAL_ICE)
 	{
@@ -317,7 +313,7 @@ void UpdateDusty_Stand()
     }
     else
     {
-        if ( UpdateDusty_CheckSwipeJump(90.0f, 180.0f) )
+        if ( UpdateDusty_CheckSwipeJump(90.0f, 130.0f) )
             return;
     }
     
@@ -716,8 +712,6 @@ void UpdateDusty_JumpCommon()
                 if (fabsf(Dusty.FloatVelocityY) < 10)
                     Dusty.FloatVelocityY += dY >= 0 ? 0.5f : -0.5f;
             }
-            
-            GetInput_ConsumeSwipe(1.0f/60.0f);
         }
 #endif
     }
@@ -748,7 +742,7 @@ void UpdateDusty_JumpCommon()
 
     if (Dusty.LandTimer >= 1)
     {
-        if (Dusty.CollideWithLeftSide && Dusty.Direction == DIRECTION_LEFT && (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_LEFT))
+        if (Dusty.CollideWithLeftSide && Dusty.Direction == DIRECTION_LEFT /*&& (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_LEFT)*/)
         {
             // Spawn some dust motes.
             for (int i = 0; i < 6; i++)
@@ -758,7 +752,7 @@ void UpdateDusty_JumpCommon()
             return;
         }
 
-        if (Dusty.CollideWithRightSide && Dusty.Direction == DIRECTION_RIGHT && (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_RIGHT))
+        if (Dusty.CollideWithRightSide && Dusty.Direction == DIRECTION_RIGHT /*&& (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_RIGHT)*/)
         {
             // Spawn some dust motes.
             for (int i = 0; i < 6; i++)
@@ -1569,18 +1563,16 @@ void DisplayDusty()
 		case DUSTYSTATE_INTROSTAND:			DisplayDusty_Stand(); break;
         }
     }
-        
-	if (DevMode)
-	{
-		// Draw a yellow + at Dusty's root location.
-		gxDrawString((int)Dusty.FloatX-4 + ScrollX, (int)Dusty.FloatY-4 + ScrollY, 8, gxRGB32(255, 255, 0), "+");
 
-		// Draw a red + at all four corners of Dusty.
-		gxDrawString((int)Dusty.FloatX + Dusty.Left + ScrollX,  (int)Dusty.FloatY + Dusty.Top    + ScrollY, 8, gxRGB32(255, 0, 0), "+");//Upper Left
-		gxDrawString((int)Dusty.FloatX + Dusty.Right + ScrollX, (int)Dusty.FloatY + Dusty.Top    + ScrollY, 8, gxRGB32(255, 0, 0), "+");//Upper Right
-		gxDrawString((int)Dusty.FloatX + Dusty.Left + ScrollX,  (int)Dusty.FloatY + Dusty.Bottom + ScrollY, 8, gxRGB32(255, 0, 0), "+");//Lower Left
-		gxDrawString((int)Dusty.FloatX + Dusty.Right + ScrollX, (int)Dusty.FloatY + Dusty.Bottom + ScrollY, 8, gxRGB32(255, 0, 0), "+");//Lower Right
-	}
+#ifdef SWIPE_DEBUG
+    DisplayDebugLine(Dusty.FloatX + Dusty.Left  + ScrollX, Dusty.FloatY + Dusty.Top    + ScrollY, Dusty.FloatX + Dusty.Right + ScrollX, Dusty.FloatY + Dusty.Top    + ScrollY, 2.0f, gxRGB32(255, 0, 0));
+    DisplayDebugLine(Dusty.FloatX + Dusty.Left  + ScrollX, Dusty.FloatY + Dusty.Bottom + ScrollY, Dusty.FloatX + Dusty.Right + ScrollX, Dusty.FloatY + Dusty.Bottom + ScrollY, 2.0f, gxRGB32(255, 0, 0));
+    DisplayDebugLine(Dusty.FloatX + Dusty.Left  + ScrollX, Dusty.FloatY + Dusty.Top    + ScrollY, Dusty.FloatX + Dusty.Left  + ScrollX, Dusty.FloatY + Dusty.Bottom + ScrollY, 2.0f, gxRGB32(255, 0, 0));
+    DisplayDebugLine(Dusty.FloatX + Dusty.Right + ScrollX, Dusty.FloatY + Dusty.Top    + ScrollY, Dusty.FloatX + Dusty.Right + ScrollX, Dusty.FloatY + Dusty.Bottom + ScrollY, 2.0f, gxRGB32(255, 0, 0));
+
+    DisplayDebugLine(Dusty.FloatX - 4 + ScrollX, Dusty.FloatY     + ScrollY, Dusty.FloatX + 4 + ScrollX, Dusty.FloatY     + ScrollY, 2.0f, gxRGB32(255, 255, 0));
+    DisplayDebugLine(Dusty.FloatX     + ScrollX, Dusty.FloatY - 4 + ScrollY, Dusty.FloatX     + ScrollX, Dusty.FloatY + 4 + ScrollY, 2.0f, gxRGB32(255, 255, 0));
+#endif
 }
 
 void UpdateDusty()
@@ -1614,4 +1606,7 @@ void UpdateDusty()
 
     UpdateDusty_OnFire();
     UpdateDusty_PowerUp();
+    
+    if (GetInput_GetSwipeTimeLeft() >= 1.0f/20.0f)
+        GetInput_ConsumeSwipe(1.0f/60.0f);
 }
