@@ -33,6 +33,19 @@ enum EDustyState
 	DUSTYSTATE_INTROSTAND,
 };
 
+enum ENearbyBlock
+{
+    NEARBY_UP_LEFT        = 1<<0,
+    NEARBY_UP_CENTER      = 1<<1,
+    NEARBY_UP_RIGHT       = 1<<2,
+    NEARBY_CENTER_LEFT    = 1<<3,
+    NEARBY_CENTER_CENTER  = 1<<4,
+    NEARBY_CENTER_RIGHT   = 1<<5,
+    NEARBY_DOWN_LEFT      = 1<<6,
+    NEARBY_DOWN_CENTER    = 1<<7,
+    NEARBY_DOWN_RIGHT     = 1<<8
+};
+
 struct SDusty
 {
 	EDustyState State;
@@ -88,6 +101,10 @@ struct SDusty
 	int CollideMaterial;
     
     float JumpPower;
+    
+    int BlockX, BlockY;
+    float XInBlock, YInBlock;
+    unsigned int NearbyBlocks;
 };
 
 extern SDusty Dusty;

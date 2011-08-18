@@ -119,6 +119,26 @@ void UpdateDusty_JumpCommon();
 //                                                  General purpose control                                                                //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
+void UpdateDusty_GetNearbyBlocks()
+{
+    Dusty.NearbyBlocks = 0;
+    
+    Dusty.BlockX = ( Dusty.FloatX + (Dusty.Left+Dusty.Right)/2 ) / 64;
+    Dusty.BlockY = ( Dusty.FloatY + (Dusty.Top+Dusty.Bottom)/2 ) / 64;
+    
+    for (int i = 0; i <= 2; i++)
+        for (int j = 0; j <= 2; j++)
+            Dusty.NearbyBlocks |= IsBlockSolid(Dusty.BlockX+i-1, Dusty.BlockY+j-1) * (1<<(j*3+i));
+    
+    Dusty.XInBlock = Dusty.FloatX - Dusty.BlockX*64;
+    Dusty.YInBlock = Dusty.FloatY - Dusty.BlockY*64;
+}
+
+bool UpdateDusty_NearbyBlocksAreClear(unsigned int Mask)
+{
+    return (Dusty.NearbyBlocks & Mask) == 0;
+}
+
 bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
 {
     if (GetInput_GetSwipeTimeLeft() >= 1.0f/20.0f)
@@ -313,8 +333,56 @@ void UpdateDusty_Stand()
     }
     else
     {
-        if ( UpdateDusty_CheckSwipeJump(90.0f, 130.0f) )
-            return;
+        // Diagonal up and away into clear space.
+        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_UP_LEFT | NEARBY_UP_CENTER | NEARBY_CENTER_LEFT))
+        {
+            if ( UpdateDusty_CheckSwipeJump(135.0f, 45.0f) )
+                return;
+        }
+        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_UP_RIGHT | NEARBY_UP_CENTER | NEARBY_CENTER_RIGHT))
+        {
+            if ( UpdateDusty_CheckSwipeJump(45.0f, 45.0f) )
+                return;
+        }
+        // Angle down and away - dropping off ledge.  Consider special boost and/or anim.  Or could go directly into corner jump.
+        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_LEFT | NEARBY_DOWN_LEFT))
+        {
+            if ( UpdateDusty_CheckSwipeJump(180.0f+22.5f, 22.5f) )
+                return;
+        }
+        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_RIGHT | NEARBY_DOWN_RIGHT))
+        {
+            if ( UpdateDusty_CheckSwipeJump(0.0f-22.5f, 22.5f) )
+                return;
+        }
+        // Angle up and away - hopping over adjacent block.  Consider special boost or anim.  Or could go directly into corner jump.
+        if (!UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_LEFT) && UpdateDusty_NearbyBlocksAreClear(NEARBY_UP_LEFT | NEARBY_UP_CENTER))
+        {
+            if ( UpdateDusty_CheckSwipeJump(90.0f+45.0f, 45.0f) )
+                return;
+        }
+        if (!UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_RIGHT) && UpdateDusty_NearbyBlocksAreClear(NEARBY_UP_RIGHT | NEARBY_UP_CENTER))
+        {
+            if ( UpdateDusty_CheckSwipeJump(90.0f-45.0f, 45.0f) )
+                return;
+        }
+        // Straight up only.
+        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_UP_CENTER))
+        {
+            if ( UpdateDusty_CheckSwipeJump(90.0f, 22.5f) )
+                return;
+        }
+        // Straight left or right only.  Should consider angle assist.
+        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_LEFT))
+        {
+            if ( UpdateDusty_CheckSwipeJump(180.0f, 22.5f) )
+                return;
+        }
+        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_RIGHT))
+        {
+            if ( UpdateDusty_CheckSwipeJump(0.0f, 22.5f) )
+                return;
+        }
     }
     
 	if (Dusty.CollideWithBottomSide == false)
@@ -894,14 +962,62 @@ void UpdateDusty_WallJump()
     }
     else
     {
-        if ( Dusty.Direction == DIRECTION_RIGHT )
+        // Diagonal up and away into clear space.
+        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_UP_LEFT | NEARBY_UP_CENTER | NEARBY_CENTER_LEFT))
         {
-            if ( UpdateDusty_CheckSwipeJump(0.0f, 90.0f) )
+            if ( UpdateDusty_CheckSwipeJump(135.0f, 45.0f) )
                 return;
         }
-        else
+        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_UP_RIGHT | NEARBY_UP_CENTER | NEARBY_CENTER_RIGHT))
         {
-            if ( UpdateDusty_CheckSwipeJump(180.0f, 90.0f) )
+            if ( UpdateDusty_CheckSwipeJump(45.0f, 45.0f) )
+                return;
+        }
+        // Diagonal down and away into clear space.  
+        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_LEFT | NEARBY_DOWN_CENTER | NEARBY_DOWN_LEFT))
+        {
+            if ( UpdateDusty_CheckSwipeJump(225.0f, 45.0f) )
+                return;
+        }
+        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_RIGHT | NEARBY_DOWN_CENTER| NEARBY_DOWN_RIGHT))
+        {
+            if ( UpdateDusty_CheckSwipeJump(-45.5f, 45.0f) )
+                return;
+        }
+        // Angle up and away - hopping over adjacent block.  Consider special boost or anim.  Or could go directly into corner jump.
+        if (!UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_LEFT) && UpdateDusty_NearbyBlocksAreClear(NEARBY_UP_LEFT | NEARBY_UP_CENTER))
+        {
+            if ( UpdateDusty_CheckSwipeJump(90.0f+45.0f, 45.0f) )
+                return;
+        }
+        if (!UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_RIGHT) && UpdateDusty_NearbyBlocksAreClear(NEARBY_UP_RIGHT | NEARBY_UP_CENTER))
+        {
+            if ( UpdateDusty_CheckSwipeJump(90.0f-45.0f, 45.0f) )
+                return;
+        }
+        // Straight up only.
+        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_UP_CENTER))
+        {
+            if (Dusty.Direction == DIRECTION_LEFT)
+            {
+                if ( UpdateDusty_CheckSwipeJump(90.0f+22.5f, 22.5f) )
+                    return;
+            }
+            else
+            {
+                if ( UpdateDusty_CheckSwipeJump(90.0f-22.5f, 22.5f) )
+                    return;
+            }
+        }
+        // Straight left or right only.  Should consider angle assist.
+        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_LEFT))
+        {
+            if ( UpdateDusty_CheckSwipeJump(180.0f, 22.5f) )
+                return;
+        }
+        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_RIGHT))
+        {
+            if ( UpdateDusty_CheckSwipeJump(0.0f, 22.5f) )
                 return;
         }        
     }
@@ -1410,7 +1526,7 @@ void UpdateDusty_Collision()
 					bool BlockCollideWithTopSide = false;
 					bool BlockCollideWithBottomSide = false;
 
-					int CornerThreshold = 48;
+					int CornerThreshold = 32;
 
 					// Prefer to collide with the side of the block that would push Dusty out the least distance.
 					// (Only consider sides that are not adjacent to another solid block).
@@ -1420,7 +1536,7 @@ void UpdateDusty_Collision()
 						Dusty.CollideWithRightSide = true;//Collision with Dusty's Right Side but the left side of the platform
 						Dusty.FloatX -= LeftDistance;
 
-						if (Dusty.FloatVelocityX >= -5 && TopBlockIsEmpty && abs(UpDistance - LeftDistance) < CornerThreshold)
+						if (TopBlockIsEmpty && abs(UpDistance - LeftDistance) < CornerThreshold)
 						{
  							Dusty.CollideWithBottomRightCorner = true;
 							Dusty.FloatY -= UpDistance;
@@ -1436,7 +1552,7 @@ void UpdateDusty_Collision()
 						Dusty.CollideWithLeftSide = true;//Collision with Dusty's Left Side but the right side of the platform
 						Dusty.FloatX += RightDistance;
 
-						if (Dusty.FloatVelocityX <= 5 && TopBlockIsEmpty && abs(UpDistance - RightDistance) < CornerThreshold)
+						if (TopBlockIsEmpty && abs(UpDistance - RightDistance) < CornerThreshold)
 						{
 							Dusty.CollideWithBottomLeftCorner = true;
 							Dusty.FloatY -= UpDistance;
@@ -1463,12 +1579,12 @@ void UpdateDusty_Collision()
 							Dusty.FloatVelocityY = 0;
 
 						// Top side corner jump is back in the game.
-						if (Dusty.FloatVelocityY >= -5 && LeftBlockIsEmpty && abs(LeftDistance - UpDistance) < CornerThreshold)
+						if (LeftBlockIsEmpty && abs(LeftDistance - UpDistance) < CornerThreshold)
 						{
 							Dusty.CollideWithBottomRightCorner = true;
 							Dusty.FloatX -= LeftDistance;
 						}
-						if (Dusty.FloatVelocityY >= -5 && RightBlockIsEmpty && abs(RightDistance - UpDistance) < CornerThreshold)
+						if (RightBlockIsEmpty && abs(RightDistance - UpDistance) < CornerThreshold)
 						{
 							Dusty.CollideWithBottomLeftCorner = true;
 							Dusty.FloatX += RightDistance;
@@ -1572,6 +1688,18 @@ void DisplayDusty()
 
     DisplayDebugLine(Dusty.FloatX - 4 + ScrollX, Dusty.FloatY     + ScrollY, Dusty.FloatX + 4 + ScrollX, Dusty.FloatY     + ScrollY, 2.0f, gxRGB32(255, 255, 0));
     DisplayDebugLine(Dusty.FloatX     + ScrollX, Dusty.FloatY - 4 + ScrollY, Dusty.FloatX     + ScrollX, Dusty.FloatY + 4 + ScrollY, 2.0f, gxRGB32(255, 255, 0));
+    
+    for (int i = 0; i <= 2; i++)
+    {
+        for (int j = 0; j <= 2; j++)
+        {
+            if (Dusty.NearbyBlocks & (1<<(j*3+i)))
+                DisplayDebugLine((Dusty.BlockX-1+i)*64 + ScrollX,    (Dusty.BlockY-1+j)*64+32+ScrollY, 
+                                 (Dusty.BlockX-1+i)*64+64 + ScrollX, (Dusty.BlockY-1+j)*64+32+ScrollY, 32.0f, gxRGBA32(255, 255, 128, 128));
+        }
+    }
+    DisplayDebugLine(Dusty.BlockX*64 + ScrollX,    Dusty.BlockY*64+32+ScrollY, 
+                     Dusty.BlockX*64+64 + ScrollX, Dusty.BlockY*64+32+ScrollY, 32.0f, gxRGBA32(255, 128, 128, 128));
 #endif
 }
 
@@ -1581,6 +1709,8 @@ void UpdateDusty()
 	{
 		UpdateDusty_Collision();
 	}
+    
+    UpdateDusty_GetNearbyBlocks();
 		
 	if (Dusty.State != DUSTYSTATE_DIE && Distance(Dusty.FloatX, Dusty.FloatY, Chapter.EndX, Chapter.EndY) < 100)
 	{
