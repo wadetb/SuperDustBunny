@@ -22,6 +22,7 @@ struct SSwipe
     double StartTime;
     double Duration;
     double Current;
+    bool Used;
 };
 
 struct SSwipePoint
@@ -126,6 +127,7 @@ void GetInput_BeginSwipe(float X, float Y, double Time)
     SwipePoints[0].Time = 0;
     Swipe.StartTime = Time;
     Swipe.Current = 0;
+    Swipe.Used = false;
     
     if ( Recorder.RecordingActive )
         RecordSwipeEvent(EVENT_SWIPE_BEGIN, X, Y, 0);
@@ -228,6 +230,58 @@ void GetInput_GetSwipePosAtTime(float* X, float* Y, double Time)
     *Y = SwipePoints[Index].Y + (SwipePoints[Index+1].Y - SwipePoints[Index].Y) * Ratio;
 }
 
+bool GetInput_CheckSwipeStraightness(float StartTime, float EndTime, float MaxAngle)
+{
+    int StartIndex = 0;
+    while (StartIndex < Swipe.Count-1)
+    {
+        if (SwipePoints[StartIndex+1].Time > StartTime)
+            break;
+        StartIndex++;
+    }
+    
+    int EndIndex = StartIndex;
+    while (EndIndex < Swipe.Count-1)
+    {
+        if (SwipePoints[EndIndex+1].Time > EndTime)
+            break;
+        EndIndex++;
+    }
+    
+    float CosMaxAngle = cosf(DegreesToRadians(MaxAngle));
+    
+    if (EndIndex - StartIndex < 2)
+        return true;
+    
+    for (int i = StartIndex; i <= EndIndex-2; i++)
+    {
+        float DX1 = SwipePoints[i+1].X - SwipePoints[i].X;
+        float DY1 = SwipePoints[i+1].Y - SwipePoints[i].Y;
+        float L1 = sqrtf(DX1*DX1 + DY1*DY1);
+        if (L1 >= 0.0001f)
+        {
+            DX1 /= L1;
+            DY1 /= L1;
+        }
+
+        float DX2 = SwipePoints[i+2].X - SwipePoints[i+1].X;
+        float DY2 = SwipePoints[i+2].Y - SwipePoints[i+1].Y;
+        float L2 = sqrtf(DX2*DX2 + DY2*DY2);
+        if (L1 >= 0.0001f)
+        {
+            DX2 /= L2;
+            DY2 /= L2;
+        }
+        
+        float CosAngle = DX1*DX2 + DY1*DY2;
+        
+        if (CosAngle < CosMaxAngle)
+            return false;
+    }
+    
+    return true;
+}
+
 void GetInput_ConsumeSwipe(float Time)
 {
     Swipe.Current += Time;
@@ -248,6 +302,16 @@ void GetInput_ClearSwipe()
     Swipe.Current = 0;
     Swipe.Duration = 0;
 #endif
+}
+
+void GetInput_SetSwipeUsed()
+{
+    Swipe.Used = true;
+}
+
+bool GetInput_IsSwipedUsed()
+{
+    return Swipe.Used;
 }
 
 void DisplaySwipe()

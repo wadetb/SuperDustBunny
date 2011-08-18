@@ -141,53 +141,61 @@ bool UpdateDusty_NearbyBlocksAreClear(unsigned int Mask)
 
 bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
 {
-    if (GetInput_GetSwipeTimeLeft() >= 1.0f/20.0f)
-    {
-        float Current = GetInput_GetSwipeCurrent();
+    if (GetInput_IsSwipedUsed())
+        return false;
+    
+    if (GetInput_GetSwipeTimeLeft() < 1.0f/20.0f)
+        return false;
+    
+    float Current = GetInput_GetSwipeCurrent();
         
-        float StartX, StartY;
-        GetInput_GetSwipePosAtTime(&StartX, &StartY, Current - 1.0f/20.0f);
+//    if (!GetInput_CheckSwipeStraightness(Current - 1.0f/20.0f, Current, 15.0f))
+//        return false;
+    
+    float StartX, StartY;
+    GetInput_GetSwipePosAtTime(&StartX, &StartY, Current - 1.0f/20.0f);
 
-        float EndX, EndY;
-        GetInput_GetSwipePosAtTime(&EndX, &EndY, Current);
+    float EndX, EndY;
+    GetInput_GetSwipePosAtTime(&EndX, &EndY, Current);
+    
+    float dX = (EndX - StartX);
+    float dY = (EndY - StartY);
+    
+    float L = Length(dX, dY);
+    if (L < 0.0001f)
+        return false;
+    
+    dX /= L;
+    dY /= L;
+    
+    float aX = cosf(DegreesToRadians(Angle));
+    float aY = -sinf(DegreesToRadians(Angle));
+    
+    float Dot = aX*dX + aY*dY;
+    float cR = cosf(DegreesToRadians(Range));
+    
+    if ( Dot >= cR )
+    {
+        float Power = Dusty.JumpPower;
+        //float Power = Remap(L, 50.0f, 100.0f, Dusty.JumpPower/3, Dusty.JumpPower, true);
+        //float Power = Remap(MaxSpeed, 2000.0f, 5000.0f, Dusty.JumpPower/3, Dusty.JumpPower, true);
+        dX = dX * Power * 0.8f;
+        dY = dY * ( dY > 0 ? Power * 0.8f : Power );
         
-        float dX = (EndX - StartX);
-        float dY = (EndY - StartY);
+        //printf("Jump: Count=%d MaxSpeed=%f L=%f Power=%f\n", Swipe.ValidCount, MaxSpeed, L, Power);
         
-        float L = Length(dX, dY);
-        if (L > 0)
-        {
-            dX /= L;
-            dY /= L;
-            
-            float aX = cosf(DegreesToRadians(Angle));
-            float aY = -sinf(DegreesToRadians(Angle));
-            
-            float Dot = aX*dX + aY*dY;
-            float cR = cosf(DegreesToRadians(Range));
-            
-            if ( Dot >= cR )
-            {
-                float Power = Dusty.JumpPower;
-                //float Power = Remap(L, 50.0f, 100.0f, Dusty.JumpPower/3, Dusty.JumpPower, true);
-                //float Power = Remap(MaxSpeed, 2000.0f, 5000.0f, Dusty.JumpPower/3, Dusty.JumpPower, true);
-                dX = dX * Power * 0.8f;
-                dY = dY * ( dY > 0 ? Power * 0.8f : Power );
-                
-                //printf("Jump: Count=%d MaxSpeed=%f L=%f Power=%f\n", Swipe.ValidCount, MaxSpeed, L, Power);
-                
-                SetDustyState_JumpWithVelocity(dX, dY);
+        SetDustyState_JumpWithVelocity(dX, dY);
 
 #ifdef SWIPE_DEBUG
-                AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle+Range))*100 + ScrollX, Dusty.FloatY + -sinf(DegreesToRadians(Angle+Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
-                AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle-Range))*100 + ScrollX, Dusty.FloatY + -sinf(DegreesToRadians(Angle-Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
-                
-                AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + dX*10 + ScrollX, Dusty.FloatY + dY*10 + ScrollY, gxRGB32(192, 128, 128), 0.5f);
+        AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle+Range))*100 + ScrollX, Dusty.FloatY + -sinf(DegreesToRadians(Angle+Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
+        AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle-Range))*100 + ScrollX, Dusty.FloatY + -sinf(DegreesToRadians(Angle-Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
+        
+        AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + dX*10 + ScrollX, Dusty.FloatY + dY*10 + ScrollY, gxRGB32(192, 128, 128), 0.5f);
 #endif
-                
-                return true;
-            }
-        }
+        
+        GetInput_SetSwipeUsed();
+        
+        return true;
     }
 
     return false;

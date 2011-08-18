@@ -21,9 +21,14 @@ float GetInput_GetSwipeTimeLeft();
 float GetInput_GetSwipeCurrent();
 void GetInput_GetSwipePosAtTime(float* X, float* Y, double Time);
 
+bool GetInput_CheckSwipeStraightness(float StartTime, float EndTime, float MaxAngle);
+
 void GetInput_ConsumeSwipe(float Dist);
 void GetInput_ConsumeAllSwipe();
 void GetInput_ClearSwipe();
+
+void GetInput_SetSwipeUsed();
+bool GetInput_IsSwipedUsed();
 
 void DisplaySwipe();
 
