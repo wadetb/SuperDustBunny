@@ -79,6 +79,8 @@ void AddLitSubSpriteScaled(ELightList List, gxSprite* Sprite, float X, float Y, 
 void AddLitSubSpriteScaledAlpha(ELightList List, gxSprite* Sprite, float X, float Y, float SubX1, float SubY1, float SubX2, float SubY2, float ScaleX, float ScaleY, float Alpha);
 void AddLitSubSpriteCenteredScaledRotated(ELightList List, gxSprite* Sprite, float X, float Y, float SubX1, float SubY1, float SubX2, float SubY2, float Scale, float Angle);
 
+void AddLitSpriteUV(ELightList List, gxSprite* Sprite, float X, float Y, float SizeX, float SizeY, float U0, float V0, float U1, float V1, float U2, float V2, float U3, float V3);
+
 void AddLitSpriteCenteredScaledRotated(ELightList List, gxSprite* Sprite, float X, float Y, float Scale, float Angle);
 void AddLitSpriteCenteredScaledRotatedAlpha(ELightList List, gxSprite* Sprite, float X, float Y, float Scale, float Angle, float Alpha);
 void AddLitSpriteCenteredScaledRotatedAdditive(ELightList List, gxSprite* Sprite, float X, float Y, float Scale, float Angle, float Alpha);

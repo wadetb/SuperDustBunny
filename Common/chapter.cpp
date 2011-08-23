@@ -421,6 +421,7 @@ void ParseCSVData(rapidxml::xml_node<char>* DataNode, int Width, int Height, int
 
             unsigned int FlipX = ID & SPECIALBLOCKID_FLIP_X;
             unsigned int FlipY = ID & SPECIALBLOCKID_FLIP_Y;
+            unsigned int FlipDiagonal = ID & SPECIALBLOCKID_FLIP_DIAGONAL;
             ID &= SPECIALBLOCKID_MASK;
 
 			if (ID == 0)
@@ -444,7 +445,7 @@ void ParseCSVData(rapidxml::xml_node<char>* DataNode, int Width, int Height, int
 
 				ID = ID - TileSetInfo[TileSetInfoIndex].FirstGID + TileSetInfo[TileSetInfoIndex].TileSet->FirstBlock;
 
-                Blocks[y*Width + x] = ID | FlipX | FlipY;
+                Blocks[y*Width + x] = ID | FlipX | FlipY | FlipDiagonal;
 			}
 		}
 		
@@ -936,6 +937,28 @@ void CalculateScroll()
 	}
 }
 
+void DisplayPortal()
+{
+    if (Chapter.EndY + 256 + ScrollY >= 0 && 
+        Chapter.EndY - 256 + ScrollY <= LitScreenHeight)
+    {
+        Chapter.PortalAngle += 2.0f*PI / 60.0f * 0.1f; 
+        for (int i = 5; i > 0; i--)
+        {
+            float Alpha = (float)i / 5.0f;
+            float Angle = Chapter.PortalAngle - (1.0f-Alpha);
+            AddLitSpriteCenteredScaledRotatedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &PortalSprite, Chapter.EndX + ScrollX, Chapter.EndY - 50 + ScrollY, 1.0f, Angle, Alpha);
+        }
+    }
+}
+
+void Swap(float* A, float* B)
+{
+    float Temp = *A;
+    *A = *B;
+    *B = Temp;
+}
+
 void DisplayChapterLayer(ELightList LightList, int* Blocks)
 {
     int CurY = ScrollY;
@@ -969,44 +992,38 @@ void DisplayChapterLayer(ELightList LightList, int* Blocks)
 
 				STileSet* TileSet = &Chapter.TileSets[Block->TileSet];
 
-				float SubX0 = Block->SubX;
-				float SubY0 = Block->SubY;
-				float SubX1 = Block->SubX + 64;
-				float SubY1 = Block->SubY + 64;
+				float U0 = (float)(Block->SubX) / TileSet->Sprite.width;
+				float U1 = (float)(Block->SubX + 64) / TileSet->Sprite.width;
+				float U2 = (float)(Block->SubX + 64) / TileSet->Sprite.width;
+				float U3 = (float)(Block->SubX) / TileSet->Sprite.width;
 
+				float V0 = (float)(Block->SubY) / TileSet->Sprite.height;
+				float V1 = (float)(Block->SubY) / TileSet->Sprite.height;
+				float V2 = (float)(Block->SubY + 64) / TileSet->Sprite.height;
+				float V3 = (float)(Block->SubY + 64) / TileSet->Sprite.height;
+                
+                if (ID & SPECIALBLOCKID_FLIP_DIAGONAL)
+                {
+                    Swap(&U0, &U3);
+                    Swap(&V0, &V3);
+                }
+                
                 if (ID & SPECIALBLOCKID_FLIP_X)
                 {
-                    float Temp = SubX0;
-                    SubX0 = SubX1;
-                    SubX1 = Temp;
+                    Swap(&U0, &U1);
+                    Swap(&U2, &U3);
                 }
 
                 if (ID & SPECIALBLOCKID_FLIP_Y)
                 {
-                    float Temp = SubY0;
-                    SubY0 = SubY1;
-                    SubY1 = Temp;
+                    Swap(&V0, &V2);
+                    Swap(&V1, &V3);
                 }
 
-				AddLitSubSpriteSized(LIGHTLIST_FOREGROUND, &TileSet->Sprite, (float)CurX, (float)CurY, SubX0, SubY0, SubX1, SubY1, 64, 64);
+				AddLitSpriteUV(LIGHTLIST_FOREGROUND, &TileSet->Sprite, (float)CurX, (float)CurY, 64, 64, U0, V0, U1, V1, U2, V2, U3, V3);
 			}
 		}
 	}
-}
-
-void DisplayPortal()
-{
-    if (Chapter.EndY + 256 + ScrollY >= 0 && 
-        Chapter.EndY - 256 + ScrollY <= LitScreenHeight)
-    {
-        Chapter.PortalAngle += 2.0f*PI / 60.0f * 0.1f; 
-        for (int i = 5; i > 0; i--)
-        {
-            float Alpha = (float)i / 5.0f;
-            float Angle = Chapter.PortalAngle - (1.0f-Alpha);
-            AddLitSpriteCenteredScaledRotatedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &PortalSprite, Chapter.EndX + ScrollX, Chapter.EndY - 50 + ScrollY, 1.0f, Angle, Alpha);
-        }
-    }
 }
 
 void DisplayChapterBaseLayer()

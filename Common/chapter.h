@@ -26,9 +26,10 @@ enum ESpecialBlockID
 	SPECIALBLOCKID_OUTOFBOUNDS      = SPECIALBLOCKID_FIRST,
 	SPECIALBLOCKID_BLANK,
 
+    SPECIALBLOCKID_FLIP_DIAGONAL    = 1 << 29,
     SPECIALBLOCKID_FLIP_Y           = 1 << 30,
     SPECIALBLOCKID_FLIP_X           = 1 << 31,
-    SPECIALBLOCKID_MASK             = 0xfffffff, // One nibble reserved for flags.
+    SPECIALBLOCKID_MASK             = 0xffffff, // One byte reserved for flags.
 };
 
 enum EBlockType
