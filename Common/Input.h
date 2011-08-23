@@ -10,7 +10,7 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-#define SWIPE_DEBUG
+//#define SWIPE_DEBUG
 
 
 void GetInput_BeginSwipe(float X, float Y, double Time);

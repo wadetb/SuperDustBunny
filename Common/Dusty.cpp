@@ -435,21 +435,20 @@ void SetDustyState_Jump( bool OffWall )
 
     if (Dusty.PowerUpTimer > 0)
 	{
-		Dusty.FloatY -= 60.0f;
+//		Dusty.FloatY -= 60.0f;
 		Dusty.FloatVelocityX = 12.0f;
 		Dusty.FloatVelocityY = -24.0f;
-		if (Dusty.Direction == DIRECTION_LEFT)
-			Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
 	}
     else
     {
-    	Dusty.FloatY -= 40.0f;
+//    	Dusty.FloatY -= 40.0f;
 	    Dusty.FloatVelocityX = 6.0f;
 	    Dusty.FloatVelocityY = -16.0f;
-	    if (Dusty.Direction == DIRECTION_LEFT)
-		    Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
     }
-    
+
+    if (Dusty.Direction == DIRECTION_LEFT)
+        Dusty.FloatVelocityX = -Dusty.FloatVelocityX;
+
     Dusty.LandTimer = 0;
 
     Dusty.HasJumped = true;
@@ -459,7 +458,7 @@ void SetDustyState_Jump( bool OffWall )
 
 void SetDustyState_JumpWithVelocity( float VX, float VY )
 {
-	Dusty.FloatY -= 40.0f;
+	Dusty.FloatY -= 5.0f;
     
     if (Dusty.PowerUpTimer > 0)
     {
@@ -1297,7 +1296,7 @@ void SetDustyState_Hurt()
 	if (Dusty.CollideWithBottomSide)
 	{
 		Dusty.FloatVelocityY = -15;
-		Dusty.FloatY += -40;
+		//Dusty.FloatY += -40;
 		Dusty.CollideWithBottomSide = false;
 	}
 

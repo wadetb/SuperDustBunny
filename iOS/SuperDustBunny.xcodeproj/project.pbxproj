@@ -87,7 +87,7 @@
 		0856200C1346A40000F9EFBA /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		0856200D1346A40000F9EFBA /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		0856200E1346A40000F9EFBA /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
-		085AA95A132C572A00DF32CA /* SuperDustBunny.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SuperDustBunny.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		085AA95A132C572A00DF32CA /* SDB.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SDB.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		085AA95E132C572A00DF32CA /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		085AA960132C572A00DF32CA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		085AA962132C572A00DF32CA /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -230,7 +230,7 @@
 		085AA95B132C572A00DF32CA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				085AA95A132C572A00DF32CA /* SuperDustBunny.app */,
+				085AA95A132C572A00DF32CA /* SDB.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -396,9 +396,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		085AA959132C572A00DF32CA /* SuperDustBunny */ = {
+		085AA959132C572A00DF32CA /* SDB */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 085AA980132C572A00DF32CA /* Build configuration list for PBXNativeTarget "SuperDustBunny" */;
+			buildConfigurationList = 085AA980132C572A00DF32CA /* Build configuration list for PBXNativeTarget "SDB" */;
 			buildPhases = (
 				085AA956132C572A00DF32CA /* Sources */,
 				085AA957132C572A00DF32CA /* Frameworks */,
@@ -408,9 +408,9 @@
 			);
 			dependencies = (
 			);
-			name = SuperDustBunny;
+			name = SDB;
 			productName = SuperDustBunny;
-			productReference = 085AA95A132C572A00DF32CA /* SuperDustBunny.app */;
+			productReference = 085AA95A132C572A00DF32CA /* SDB.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -433,7 +433,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				085AA959132C572A00DF32CA /* SuperDustBunny */,
+				085AA959132C572A00DF32CA /* SDB */,
 			);
 		};
 /* End PBXProject section */
@@ -604,7 +604,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		085AA980132C572A00DF32CA /* Build configuration list for PBXNativeTarget "SuperDustBunny" */ = {
+		085AA980132C572A00DF32CA /* Build configuration list for PBXNativeTarget "SDB" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				085AA981132C572A00DF32CA /* Debug */,
