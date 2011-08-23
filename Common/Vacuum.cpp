@@ -32,7 +32,7 @@ int VacuumFreeHead;
 SVacuum Vacuum;
 
 const int VACUUM_INITIAL_TIME = 5*60;
-const int VACUUM_RETREAT_TIME = 3*60;
+const int VACUUM_RETREAT_TIME = 5*60;
 const int VACUUM_UNJAM_TIME   = 1*60;
 
 const float VacuumYOffset = 100;
@@ -82,7 +82,7 @@ void DisplayVacuum()
 	if (Chapter.PageProps.VacuumOff || Settings.DisableVacuum)
 		return;
 
-	if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.State == VACUUMSTATE_ONSCREEN)
+ 	if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
         gxSprite* Sprite;
         
@@ -202,8 +202,6 @@ void UpdateVacuum()
 	if (Chapter.PageProps.VacuumOff || Settings.DisableVacuum)
 		return;
 
-    Vacuum.X = 384 - ScrollX;
-    
 	if (Vacuum.State == VACUUMSTATE_FAR)
 	{
 		// Place the vacuum far off screen for dust purposes.
@@ -246,6 +244,8 @@ void UpdateVacuum()
 
 			Vacuum.Timer++;
 
+            Vacuum.X = Vacuum.X * 0.8f + (384 - ScrollX) * 0.2f;
+            
 			// Move the vacuum gradually up the screen.
 			if (Vacuum.Dir == VACUUMDIR_UP)
 				Vacuum.Y -= VacuumSpeed;
@@ -266,6 +266,7 @@ void UpdateVacuum()
             CreateVacuumSmoke(1);
 
 		// Move the vacuum back down the screen.
+#if 0
         if (Vacuum.Timer < VACUUM_RETREAT_TIME - 60)
         {
             if (Vacuum.Dir == VACUUMDIR_UP)
@@ -279,6 +280,13 @@ void UpdateVacuum()
 			Vacuum.State = VACUUMSTATE_FAR;
 			Vacuum.Timer = VACUUM_UNJAM_TIME;
 		}
+#else
+		if (Vacuum.Timer <= 0)
+		{
+			Vacuum.State = VACUUMSTATE_ONSCREEN;
+            Vacuum.Timer = 0;
+		}
+#endif
 	}
     
     if (Vacuum.State == VACUUMSTATE_ONSCREEN || Vacuum.State == VACUUMSTATE_RETREAT)
@@ -343,16 +351,22 @@ void TurnOffVacuum()
 
 void TurnOnVacuum()
 {
-	if (Vacuum.Dir == VACUUMDIR_UP)
-		Vacuum.Y = (float)Chapter.PageHeight * 64;
-	else
-		Vacuum.Y = 0;
-
-	Vacuum.Timer = VACUUM_INITIAL_TIME;
-
 	if (Vacuum.State == VACUUMSTATE_OFF)
 	{
-		Vacuum.State = VACUUMSTATE_FAR;
+        Vacuum.State = VACUUMSTATE_ONSCREEN;
+        
+        int LightsOffset = Chapter.PageProps.LightsOff ? 768 : 0;
+        
+        Vacuum.X = 384 - ScrollX;
+        
+        // Vacuum.Y is the leading edge of the vacuum.
+        if (Vacuum.Dir == VACUUMDIR_UP)
+            Vacuum.Y = (float)-ScrollY + (float)LitScreenHeight + VacuumYOffset + LightsOffset;
+        else
+            Vacuum.Y = (float)-ScrollY - VacuumYOffset - LightsOffset;
+        
+        Vacuum.Timer = 0;
+
 		sxSetSoundVolume(&VacuumTurnOnSound, 0);
 		sxPlaySound(&VacuumTurnOnSound);
 	}

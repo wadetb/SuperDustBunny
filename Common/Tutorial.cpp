@@ -37,7 +37,8 @@ struct STutorial
     
     float WaitTimer;
     float StateTimer;
-    float FadeTimer;
+    float FadeOutTimer;
+    float FadeInTimer;
     float WiggleTimer;
     
     bool DustyHasJumped;
@@ -60,7 +61,8 @@ void InitTutorial()
 
     Tutorial.WaitTimer = 0.0f;
     Tutorial.StateTimer = 0.0f;
-    Tutorial.FadeTimer = 0.0f;
+    Tutorial.FadeOutTimer = 0.0f;
+    Tutorial.FadeInTimer = 0.0f;
     Tutorial.WiggleTimer = 0.0f;
     
     Tutorial.DustyHasJumped = false;
@@ -78,8 +80,8 @@ void DisplayTutorial()
     Y += sinf(Tutorial.WiggleTimer*4.0f) * 2.5f + sinf(Tutorial.WiggleTimer*1.0f/3.0f) * 2.5f;
 
     float Alpha = 1.0f;
-    Alpha *= Remap(Tutorial.WiggleTimer, 0.0f, 0.5f, 0.0f, 1.0f, true);
-    Alpha *= Remap(Tutorial.FadeTimer, 0.0f, 0.25f, 1.0f, 0.0f, true);
+    Alpha *= Remap(Tutorial.FadeInTimer, 0.0f, 0.5f, 0.0f, 1.0f, true);
+    Alpha *= Remap(Tutorial.FadeOutTimer, 0.0f, 0.25f, 1.0f, 0.0f, true);
     
     if (Alpha > 0)
     {
@@ -89,18 +91,18 @@ void DisplayTutorial()
         }
         else if (Tutorial.State == TUTORIAL_VACUUM_INTRO_1)
         {
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &TextBubbleSprite, 384, 250, 1.0f, Alpha);
-            DisplayStringAlpha(LIGHTLIST_VACUUM, "mom!! lets play", FORMAT_CENTER_X, 384, 250, 1.0f, Alpha);
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &TextBubbleSprite, 384, 230, 1.0f, Alpha);
+            DisplayStringAlpha(LIGHTLIST_VACUUM, "mom!! lets play", FORMAT_CENTER_X, 384, 230, 1.0f, Alpha);
         }
         else if (Tutorial.State == TUTORIAL_VACUUM_INTRO_2)
         {
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &TextBubbleSprite, 384, 350, -1.0f, Alpha);
-            DisplayStringAlpha(LIGHTLIST_VACUUM, "i have to vacuum", FORMAT_CENTER_X, 384, 250, 1.0f, Alpha);
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &TextBubbleSprite, 384, 300, -1.0f, Alpha);
+            DisplayStringAlpha(LIGHTLIST_VACUUM, "i have to vacuum", FORMAT_CENTER_X, 384, 230, 1.0f, Alpha);
         }
         else if (Tutorial.State == TUTORIAL_VACUUM_INTRO_3)
         {
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &TextBubbleSprite, 384, 250, 1.0f, Alpha);
-            DisplayStringAlpha(LIGHTLIST_VACUUM, "look out dusty!", FORMAT_CENTER_X, 384, 250, 1.0f, Alpha);
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &TextBubbleSprite, 384, 230, 1.0f, Alpha);
+            DisplayStringAlpha(LIGHTLIST_VACUUM, "look out dusty!", FORMAT_CENTER_X, 384, 230, 1.0f, Alpha);
         }
         else if (Tutorial.State == TUTORIAL_EXTRA_LIFE)
         {
@@ -121,9 +123,13 @@ void UpdateTutorial()
     Tutorial.WaitTimer -= 1.0f/60.0f;
     if (Tutorial.WaitTimer > 0.0f)
         return;
-    
+        
+    Tutorial.WiggleTimer += 1.0f/60.0f;
+
     if (Tutorial.State == TUTORIAL_FLICK_TO_JUMP)
     {
+        Tutorial.FadeInTimer += 1.0f/60.0f;
+
         if (Dusty.State == DUSTYSTATE_JUMP)
         {
             Tutorial.DustyHasJumped = true;
@@ -132,13 +138,14 @@ void UpdateTutorial()
 
         if (Tutorial.DustyHasJumped)
         {
-            Tutorial.FadeTimer += 1.0f/60.0f;
-            if (Tutorial.FadeTimer >= 0.25f)
+            Tutorial.FadeOutTimer += 1.0f/60.0f;
+            if (Tutorial.FadeOutTimer >= 0.25f)
             {
                 Tutorial.State = TUTORIAL_VACUUM_INTRO_1;
-                Tutorial.WaitTimer = 1;
-                Tutorial.FadeTimer = 0;
-                Tutorial.StateTimer = 3.0f;
+                Tutorial.FadeInTimer = 0;
+                Tutorial.FadeOutTimer = 0;
+                Tutorial.WaitTimer = 3;
+                Tutorial.StateTimer = 5.0f;
                 return;
             }            
         }
@@ -150,38 +157,46 @@ void UpdateTutorial()
     }
     else if (Tutorial.State == TUTORIAL_VACUUM_INTRO_1)
     {
-        Tutorial.StateTimer -= 1.0f/60.0f;
+        if (Dusty.FloatY <= 86*64)
+        {
+            Tutorial.FadeInTimer += 1.0f/60.0f;
+            Tutorial.StateTimer -= 1.0f/60.0f;
+        }
         
         if (Tutorial.StateTimer <= 0.0f)
         {
-            Tutorial.FadeTimer += 1.0f/60.0f;
-            if (Tutorial.FadeTimer >= 0.25f)
+            Tutorial.FadeOutTimer += 1.0f/60.0f;
+            if (Tutorial.FadeOutTimer >= 0.25f)
             {
                 Tutorial.State = TUTORIAL_VACUUM_INTRO_2;
+                Tutorial.FadeInTimer = 0;
+                Tutorial.FadeOutTimer = 0;
                 Tutorial.WaitTimer = 1;
-                Tutorial.FadeTimer = 0;
-                Tutorial.StateTimer = 5.0f;
+                Tutorial.StateTimer = 3.0f;
             }
         }
     }
     else if (Tutorial.State == TUTORIAL_VACUUM_INTRO_2)
     {
+        Tutorial.FadeInTimer += 1.0f/60.0f;
         Tutorial.StateTimer -= 1.0f/60.0f;
         
         if (Tutorial.StateTimer <= 0.0f)
         {
-            Tutorial.FadeTimer += 1.0f/60.0f;
-            if (Tutorial.FadeTimer >= 0.25f)
+            Tutorial.FadeOutTimer += 1.0f/60.0f;
+            if (Tutorial.FadeOutTimer >= 0.25f)
             {
                 Tutorial.State = TUTORIAL_VACUUM_INTRO_3;
+                Tutorial.FadeInTimer = 0;
+                Tutorial.FadeOutTimer = 0;
                 Tutorial.WaitTimer = 1;
-                Tutorial.FadeTimer = 0;
                 Tutorial.StateTimer = 3.0f;
             }
         }
     }
     else if (Tutorial.State == TUTORIAL_VACUUM_INTRO_3)
     {
+        Tutorial.FadeInTimer += 1.0f/60.0f;
         Tutorial.StateTimer -= 1.0f/60.0f;
         
         if (Tutorial.StateTimer <= 1.0f && Tutorial.StateTimer+1.0f/60.0f >= 1.0f)
@@ -193,8 +208,8 @@ void UpdateTutorial()
         
         if (Tutorial.StateTimer <= 0.0f)
         {
-            Tutorial.FadeTimer += 1.0f/60.0f;
-            if (Tutorial.FadeTimer >= 0.25f)
+            Tutorial.FadeOutTimer += 1.0f/60.0f;
+            if (Tutorial.FadeOutTimer >= 0.25f)
             {
                 Tutorial.State = TUTORIAL_INACTIVE;
             }
@@ -202,11 +217,13 @@ void UpdateTutorial()
     }
     else if (Tutorial.State == TUTORIAL_EXTRA_LIFE)
     {
+        Tutorial.FadeInTimer += 1.0f/60.0f;
+
         SCoin* LastCoin = &Coins[NCoins-1];
         
         if (LastCoin->State != COINSTATE_ACTIVE)
         {
-            Tutorial.FadeTimer += 1.0f/60.0f;
+            Tutorial.FadeOutTimer += 1.0f/60.0f;
         }
         else
         {
@@ -216,11 +233,13 @@ void UpdateTutorial()
     }
     else if (Tutorial.State == TUTORIAL_BONUS)
     {
+        Tutorial.FadeInTimer += 1.0f/60.0f;
+
         SGear* LastGear = &Gears[NGears-1];
         
         if (LastGear->State != GEARSTATE_ACTIVE)
         {
-            Tutorial.FadeTimer += 1.0f/60.0f;
+            Tutorial.FadeOutTimer += 1.0f/60.0f;
         }
         else
         {
@@ -228,7 +247,5 @@ void UpdateTutorial()
             Tutorial.Y = LastGear->Y - 160;
         }
     }
-
-    Tutorial.WiggleTimer += 1.0f/60.0f;
 }
 

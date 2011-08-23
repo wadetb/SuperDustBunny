@@ -1470,6 +1470,16 @@ void UpdateDusty_Collision()
 		Dusty.FloatY = -64-(float)Dusty.Top;
 	} 
     
+    // Collision with the vacuum when it's off.
+    if (Vacuum.State == VACUUMSTATE_RETREAT)
+    {
+        if (Dusty.FloatY + Dusty.Bottom >= Vacuum.Y)
+        {
+            Dusty.CollideWithBottomSide = true;
+            Dusty.FloatY = Vacuum.Y - Dusty.Bottom;
+        }
+    }
+    
 	for (int y = 0; y < Chapter.PageHeight; y++)
 	{
 		for (int x = 0; x < Chapter.PageWidth; x++)
