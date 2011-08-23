@@ -54,8 +54,8 @@ void InitTutorial()
         Tutorial.State = TUTORIAL_FLICK_TO_JUMP;
     else if (CurrentChapter == 0 && Chapter.PageNum == 1 && NCoins > 0)
         Tutorial.State = TUTORIAL_EXTRA_LIFE;
-    else if (CurrentChapter == 0 && Chapter.PageNum == 2 && NGears > 0)
-        Tutorial.State = TUTORIAL_BONUS;
+//    else if (CurrentChapter == 0 && Chapter.PageNum == 2 && NGears > 0)
+//        Tutorial.State = TUTORIAL_BONUS;
     else
         Tutorial.State = TUTORIAL_INACTIVE;
 
