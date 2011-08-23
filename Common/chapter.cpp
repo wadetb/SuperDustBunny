@@ -1004,8 +1004,12 @@ void DisplayChapterLayer(ELightList LightList, int* Blocks)
                 
                 if (ID & SPECIALBLOCKID_FLIP_DIAGONAL)
                 {
-                    Swap(&U0, &U3);
-                    Swap(&V0, &V3);
+                    float TmpU = U3;
+                    float TmpV = V3;
+                    U3 = U2; V3 = V2;
+                    U2 = U1; V2 = V1;
+                    U1 = U0; V1 = V0;
+                    U0 = TmpU; V0 = TmpV;
                 }
                 
                 if (ID & SPECIALBLOCKID_FLIP_X)
@@ -1019,7 +1023,7 @@ void DisplayChapterLayer(ELightList LightList, int* Blocks)
                     Swap(&V0, &V2);
                     Swap(&V1, &V3);
                 }
-
+                 
 				AddLitSpriteUV(LIGHTLIST_FOREGROUND, &TileSet->Sprite, (float)CurX, (float)CurY, 64, 64, U0, V0, U1, V1, U2, V2, U3, V3);
 			}
 		}
