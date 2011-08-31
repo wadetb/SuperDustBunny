@@ -49,6 +49,8 @@ void InitSettings()
     
     [defaults registerDefaults:appDefaults];
 #endif
+    
+    LoadSettings();
 }
 
 void LoadSettings()

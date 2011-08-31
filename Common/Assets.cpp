@@ -480,7 +480,7 @@ bool DownloadLiveAssetFile(const char* FileName)
     
     NSLog(@"DOWNLOAD '%@'...", URLString);
 
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:10];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:10];
     
     NSURLResponse *response;
     NSError *error = [[NSError alloc] init];
@@ -611,7 +611,6 @@ void GetAsset(const char* FileName, SAssetList** AssetList, SAsset** Asset)
                 *Asset = LiveAsset;   
                 return;
             }
-            return;
         }
     }
 
@@ -838,7 +837,7 @@ void LoadAssets()
 
 	LoadSpriteAsset("Assets/dusty-die.png", &DustyDeathSprite);
 
-    LoadSpriteAsset("Assets/logo.png", &LogoSprite);
+    LoadSpriteAsset("Assets/title.png", &LogoSprite);
     
     LoadSpriteAsset("Assets/new-unlock.png", &NewUnlockSprite);
     

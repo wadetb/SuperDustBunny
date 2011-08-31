@@ -105,11 +105,11 @@ void Init()
 #ifdef PLATFORM_IPHONE
 	msInit();
 #endif	
-	
-    LoadBundleAssetList();
-
+    
     InitSettings();
 	InitLighting();
+	
+    LoadBundleAssetList();
 
     SetGameState_StartScreen();
 }

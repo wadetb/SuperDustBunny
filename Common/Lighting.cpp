@@ -24,8 +24,10 @@ int NLitVertIndices;
 
 int BufferObjectIndex;
 
-GLuint LitVertsVBO[2];
-GLuint LitVertsIBO[2];
+#define LIT_VBO_COUNT 3
+
+GLuint LitVertsVBO[LIT_VBO_COUNT];
+GLuint LitVertsIBO[LIT_VBO_COUNT];
 
 GLuint ScreenVBO;
 
@@ -39,6 +41,10 @@ SLitVertex ScreenVerts[4] =
     { 0.0f,    1024.0f, 0.0f, 0.0f, 0xffffffff },
     { 768.0f,  1024.0f, 1.0f, 0.0f, 0xffffffff },
 };
+
+GLuint CurrentVBO;
+int CurrentBlendMode;
+gxShader* CurrentShader;
 
 #endif
 
@@ -380,10 +386,18 @@ gxShader CombineShader;
 
 void DrawLightList(int List, gxShader* Shader, gxAlphaMode Alpha)
 {
-    _gxSetAlpha(Alpha);
+    if (Alpha != CurrentBlendMode)
+    {
+        CurrentBlendMode = Alpha;
+        _gxSetAlpha(Alpha);
+    }
     
-    if (Shader)
-        gxSetShader(Shader);
+    if (Shader != CurrentShader)
+    {
+        CurrentShader = Shader;
+        if (Shader)
+            gxSetShader(Shader);
+    }
 
 #ifdef PLATFORM_WINDOWS
     for (int i = 0; i < LightLists[List].NQuads; i++)
@@ -398,24 +412,25 @@ void DrawLightList(int List, gxShader* Shader, gxAlphaMode Alpha)
 #endif
     
 #ifdef PLATFORM_IPHONE
-    glBindBuffer(GL_ARRAY_BUFFER, LitVertsVBO[BufferObjectIndex]);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, LitVertsIBO[BufferObjectIndex]);
-    
-    if (gxOpenGLESVersion == 2)
+    if (CurrentVBO != LitVertsVBO[BufferObjectIndex])
     {
-        glEnableVertexAttribArray(GX_ATTRIB_VERTEX);
-        glEnableVertexAttribArray(GX_ATTRIB_TEXCOORD);
-        glEnableVertexAttribArray(GX_ATTRIB_COLOR);
+        CurrentVBO = LitVertsVBO[BufferObjectIndex];
+
+        glBindBuffer(GL_ARRAY_BUFFER, LitVertsVBO[BufferObjectIndex]);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, LitVertsIBO[BufferObjectIndex]);
         
-        glVertexAttribPointer(GX_ATTRIB_VERTEX, 2, GL_FLOAT, 0, sizeof(SLitVertex), (void*)offsetof(SLitVertex, X));
-        glVertexAttribPointer(GX_ATTRIB_TEXCOORD, 2, GL_FLOAT, 0, sizeof(SLitVertex), (void*)offsetof(SLitVertex, U));
-        glVertexAttribPointer(GX_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, sizeof(SLitVertex), (void*)offsetof(SLitVertex, Color));
-    }
-    else
-    {
-        glVertexPointer(3, GL_FLOAT, sizeof(SLitVertex), (void*)offsetof(SLitVertex, X));
-        glTexCoordPointer(2, GL_FLOAT, sizeof(SLitVertex), (void*)offsetof(SLitVertex, U));
-        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(SLitVertex), (void*)offsetof(SLitVertex, Color));
+        if (gxOpenGLESVersion == 2)
+        {
+            glVertexAttribPointer(GX_ATTRIB_VERTEX, 2, GL_FLOAT, 0, sizeof(SLitVertex), (void*)offsetof(SLitVertex, X));
+            glVertexAttribPointer(GX_ATTRIB_TEXCOORD, 2, GL_FLOAT, 0, sizeof(SLitVertex), (void*)offsetof(SLitVertex, U));
+            glVertexAttribPointer(GX_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, sizeof(SLitVertex), (void*)offsetof(SLitVertex, Color));
+        }
+        else
+        {
+            glVertexPointer(3, GL_FLOAT, sizeof(SLitVertex), (void*)offsetof(SLitVertex, X));
+            glTexCoordPointer(2, GL_FLOAT, sizeof(SLitVertex), (void*)offsetof(SLitVertex, U));
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(SLitVertex), (void*)offsetof(SLitVertex, Color));
+        }
     }
     
     int NQuads = LightLists[List].NQuads;
@@ -448,9 +463,6 @@ void DrawLightList(int List, gxShader* Shader, gxAlphaMode Alpha)
         
         glDrawElements(GL_TRIANGLE_STRIP, IndexCount, GL_UNSIGNED_SHORT, (void*)(BaseIndex * sizeof(GLushort)));
     }
-    
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 #endif
 }
 
@@ -467,26 +479,27 @@ void DrawScreen(gxShader* Shader, gxAlphaMode Alpha)
 #endif
 
 #ifdef PLATFORM_IPHONE
-    glBindBuffer(GL_ARRAY_BUFFER, ScreenVBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    if (gxOpenGLESVersion == 2)
+    if (CurrentVBO != ScreenVBO)
     {
-        glEnableVertexAttribArray(GX_ATTRIB_VERTEX);
-        glEnableVertexAttribArray(GX_ATTRIB_TEXCOORD);
-        glEnableVertexAttribArray(GX_ATTRIB_COLOR);
+        CurrentVBO = ScreenVBO;
         
-        glVertexAttribPointer(GX_ATTRIB_VERTEX, 2, GL_FLOAT, 0, sizeof(SLitVertex), (void*)offsetof(SLitVertex, X));
-        glVertexAttribPointer(GX_ATTRIB_TEXCOORD, 2, GL_FLOAT, 0, sizeof(SLitVertex), (void*)offsetof(SLitVertex, U));
-        glVertexAttribPointer(GX_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, sizeof(SLitVertex), (void*)offsetof(SLitVertex, Color));
+        glBindBuffer(GL_ARRAY_BUFFER, ScreenVBO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        
+        if (gxOpenGLESVersion == 2)
+        {
+            glVertexAttribPointer(GX_ATTRIB_VERTEX, 2, GL_FLOAT, 0, sizeof(SLitVertex), (void*)offsetof(SLitVertex, X));
+            glVertexAttribPointer(GX_ATTRIB_TEXCOORD, 2, GL_FLOAT, 0, sizeof(SLitVertex), (void*)offsetof(SLitVertex, U));
+            glVertexAttribPointer(GX_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, sizeof(SLitVertex), (void*)offsetof(SLitVertex, Color));
+        }
+        else
+        {
+            glVertexPointer(3, GL_FLOAT, sizeof(SLitVertex), (void*)offsetof(SLitVertex, X));
+            glTexCoordPointer(2, GL_FLOAT, sizeof(SLitVertex), (void*)offsetof(SLitVertex, U));
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(SLitVertex), (void*)offsetof(SLitVertex, Color));
+        }
     }
-    else
-    {
-        glVertexPointer(3, GL_FLOAT, sizeof(SLitVertex), (void*)offsetof(SLitVertex, X));
-        glTexCoordPointer(2, GL_FLOAT, sizeof(SLitVertex), (void*)offsetof(SLitVertex, U));
-        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(SLitVertex), (void*)offsetof(SLitVertex, Color));
-    }
-
+    
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -520,8 +533,8 @@ void DrawShadows(ELightList List, gxSprite* FinalRT, float ShadowOffsetX, float 
     }
 
     gxSetShader(&ShadowShader);
-    gxSetShaderConstant(ShadowShadowOffset, ShadowOffsetX, ShadowOffsetY);
-    gxSetShaderConstant(ShadowShadowAlpha, 128.0f/255.0f);
+    gxSetShaderConstant2(ShadowShadowOffset, ShadowOffsetX, ShadowOffsetY);
+    gxSetShaderConstant1(ShadowShadowAlpha, 128.0f/255.0f);
     
     DrawLightList(List, NULL, GXALPHA_BLEND);
 }
@@ -595,17 +608,16 @@ void InitLighting()
     };
     
     // Create the vertex and index buffers.
-    glGenBuffers(2, LitVertsVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, LitVertsVBO[0]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(SLitVertex) * MAX_LIT_VERTS, NULL, GL_DYNAMIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, LitVertsVBO[1]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(SLitVertex) * MAX_LIT_VERTS, NULL, GL_DYNAMIC_DRAW);
-    
-    glGenBuffers(2, LitVertsIBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, LitVertsIBO[0]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * MAX_LIT_VERTS * 2, NULL, GL_DYNAMIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, LitVertsIBO[1]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * MAX_LIT_VERTS * 2, NULL, GL_DYNAMIC_DRAW);
+    glGenBuffers(LIT_VBO_COUNT, LitVertsVBO);
+    glGenBuffers(LIT_VBO_COUNT, LitVertsIBO);
+    for (int i = 0; i < LIT_VBO_COUNT; i++)
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, LitVertsVBO[i]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(SLitVertex) * MAX_LIT_VERTS, NULL, GL_DYNAMIC_DRAW);
+        
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, LitVertsIBO[i]);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * MAX_LIT_VERTS * 2, NULL, GL_DYNAMIC_DRAW);
+    }
     
     BufferObjectIndex = 0;
     
@@ -657,7 +669,7 @@ void ResetLighting()
 #ifdef PLATFORM_IPHONE
     NLitVertIndices = 0;
     
-    BufferObjectIndex ^= 1;
+    BufferObjectIndex = (BufferObjectIndex+1) % LIT_VBO_COUNT;
     
     glBindBuffer(GL_ARRAY_BUFFER, LitVertsVBO[BufferObjectIndex]);
     LitVerts = (SLitVertex*)glMapBufferOES(GL_ARRAY_BUFFER, GL_WRITE_ONLY_OES);
@@ -697,7 +709,6 @@ void RenderLighting()
 	else
 		LightState.AmbientColor = gxRGBA32(128, 128, 128, 255);
 
-    
 #ifdef PLATFORM_IPHONE
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
     //                                                         OpenGL ES 1.1 Renderer                                                          //

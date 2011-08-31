@@ -21,7 +21,7 @@ enum
 };
 
 
-struct gxSprite
+typedef struct 
 {
 	GLuint tex;
     GLuint framebuffer;
@@ -33,9 +33,9 @@ struct gxSprite
     int top;
     int right;
     int bottom;
-};
+} gxSprite;
 
-enum gxDisplayType
+typedef enum 
 {
 	GXDISPLAY_IPHONE_PORTRAIT,
 	GXDISPLAY_IPHONE_LANDSCAPE,
@@ -45,7 +45,7 @@ enum gxDisplayType
     
 	GXDISPLAY_IPAD_PORTRAIT,
 	GXDISPLAY_IPAD_LANDSCAPE,
-};
+} gxDisplayType;
 
 extern int gxScreenWidth;
 extern int gxScreenHeight;
@@ -62,12 +62,12 @@ void gxDrawRectangleFilled(int x, int y, int width, int height, unsigned int col
 
 void gxDrawString(int x, int y, int ptsize, int color, const char* text, ...);
 
-enum gxAlphaMode
+typedef enum 
 {
 	GXALPHA_NONE,
 	GXALPHA_BLEND,
 	GXALPHA_ADD,
-};
+} gxAlphaMode;
 
 void _gxSetAlpha( gxAlphaMode mode );
 void _gxSetTexture( gxSprite* spr );
@@ -77,12 +77,12 @@ void gxSetRenderTarget(gxSprite* Sprite);
 
 void gxClearColor(unsigned int Color);
 
-struct gxShader
+typedef struct gxShader
 {
     GLuint VertexShader;
     GLuint PixelShader;
     GLuint Program;
-};
+} gxShader;
 
 void gxCreateShader(const char* VertexSource, const char* PixelSource, gxShader* Shader);
 void gxSetShader(gxShader* Shader);
@@ -90,13 +90,11 @@ void gxSetShader(gxShader* Shader);
 typedef GLint gxShaderConstant;
 
 gxShaderConstant gxGetShaderConstantByName(gxShader* Shader, const char* Name);
-void gxSetShaderConstant(gxShaderConstant Constant, float x);
-void gxSetShaderConstant(gxShaderConstant Constant, float x, float y);
-void gxSetShaderConstant(gxShaderConstant Constant, float x, float y, float z);
-void gxSetShaderConstant(gxShaderConstant Constant, float x, float y, float z, float w);
+void gxSetShaderConstant1(gxShaderConstant Constant, float x);
+void gxSetShaderConstant2(gxShaderConstant Constant, float x, float y);
+void gxSetShaderConstant3(gxShaderConstant Constant, float x, float y, float z);
+void gxSetShaderConstant4(gxShaderConstant Constant, float x, float y, float z, float w);
 void gxSetShaderSampler(gxShaderConstant Constant, gxSprite* Sprite);
-
-void gxCopyRenderTarget(gxSprite* From, gxSprite* To);
 
 void Init();
 void Exit();

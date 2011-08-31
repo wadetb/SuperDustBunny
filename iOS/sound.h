@@ -1,12 +1,12 @@
 #ifndef SOUND_H
 #define SOUND_H
 
-struct sxSound
+typedef struct 
 {
 	float volume;
 	unsigned int buffer;
 	unsigned int source;
-};
+} sxSound;
 
 void sxInit();
 void sxExit();

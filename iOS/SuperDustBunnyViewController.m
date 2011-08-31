@@ -19,6 +19,7 @@ void Init();
 void Exit();
 void Update();
 void Display();
+void SaveSettings();
 
 extern GLuint gxOpenGLESVersion;
 
@@ -72,7 +73,6 @@ SuperDustBunnyViewController *theViewController;
     wasPaused = TRUE;
     
     [self drawFrame]; 
-
 }
 
 - (void)dealloc
@@ -145,6 +145,8 @@ SuperDustBunnyViewController *theViewController;
     [[settingsViewController view] removeFromSuperview];
     [UIView commitAnimations];
 
+    SaveSettings();
+    
     paused = FALSE;
 }
 
