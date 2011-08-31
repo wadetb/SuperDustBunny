@@ -122,8 +122,8 @@ void DisplayWinScreen()
             if (Score.Medal == MEDAL_SILVER) MedalString = "silver";
             if (Score.Medal == MEDAL_GOLD) MedalString = "gold";
             
-            DisplayString(LIGHTLIST_FOREGROUND_NO_SHADOW, MedalString, 384 + 600*WinScreen.SlideIn, 75, MedalScale, FORMAT_CENTER_X);
-            DisplayString(LIGHTLIST_FOREGROUND_NO_SHADOW, "medal!", 384 - 600*WinScreen.SlideIn, 175, MedalScale, FORMAT_CENTER_X);
+            DisplayString(LIGHTLIST_FOREGROUND_NO_SHADOW, MedalString, FORMAT_CENTER_X, 384 + 600*WinScreen.SlideIn, 75, MedalScale);
+            DisplayString(LIGHTLIST_FOREGROUND_NO_SHADOW, "medal!", FORMAT_CENTER_X, 384 - 600*WinScreen.SlideIn, 175, MedalScale);
             
             AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, &MedalFrames[(WinScreen.MedalFrame/8)%MEDAL_FRAMES], 384, 665 + 300*WinScreen.SlideIn, 0.8f, 1.0f);                
         }

@@ -141,7 +141,7 @@ void UpdateTutorial()
             Tutorial.FadeOutTimer += 1.0f/60.0f;
             if (Tutorial.FadeOutTimer >= 0.25f)
             {
-                Tutorial.State = TUTORIAL_VACUUM_INTRO_1;
+                Tutorial.State = TUTORIAL_VACUUM_INTRO_3;
                 Tutorial.FadeInTimer = 0;
                 Tutorial.FadeOutTimer = 0;
                 Tutorial.WaitTimer = 3;
