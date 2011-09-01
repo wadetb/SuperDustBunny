@@ -570,6 +570,7 @@
 				GCC_PREFIX_HEADER = "SuperDustBunny-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "SuperDustBunny-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -586,6 +587,7 @@
 				GCC_PREFIX_HEADER = "SuperDustBunny-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "SuperDustBunny-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALIDATE_PRODUCT = YES;
