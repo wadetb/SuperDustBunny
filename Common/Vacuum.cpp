@@ -266,27 +266,11 @@ void UpdateVacuum()
             CreateVacuumSmoke(1);
 
 		// Move the vacuum back down the screen.
-#if 0
-        if (Vacuum.Timer < VACUUM_RETREAT_TIME - 60)
-        {
-            if (Vacuum.Dir == VACUUMDIR_UP)
-                Vacuum.Y += 5;
-            else
-                Vacuum.Y -= 5;
-        }
-
-		if (Vacuum.Timer <= 0)
-		{
-			Vacuum.State = VACUUMSTATE_FAR;
-			Vacuum.Timer = VACUUM_UNJAM_TIME;
-		}
-#else
 		if (Vacuum.Timer <= 0)
 		{
 			Vacuum.State = VACUUMSTATE_ONSCREEN;
             Vacuum.Timer = 0;
 		}
-#endif
 	}
     
     if (Vacuum.State == VACUUMSTATE_ONSCREEN || Vacuum.State == VACUUMSTATE_RETREAT)
@@ -353,8 +337,10 @@ void TurnOnVacuum()
 {
 	if (Vacuum.State == VACUUMSTATE_OFF)
 	{
-        Vacuum.State = VACUUMSTATE_ONSCREEN;
+        Vacuum.State = VACUUMSTATE_FAR;
         
+        Vacuum.Timer = 60*5;
+
         int LightsOffset = Chapter.PageProps.LightsOff ? 768 : 0;
         
         Vacuum.X = 384 - ScrollX;
@@ -364,8 +350,6 @@ void TurnOnVacuum()
             Vacuum.Y = (float)-ScrollY + (float)LitScreenHeight + VacuumYOffset + LightsOffset;
         else
             Vacuum.Y = (float)-ScrollY - VacuumYOffset - LightsOffset;
-        
-        Vacuum.Timer = 0;
 
 		sxSetSoundVolume(&VacuumTurnOnSound, 0);
 		sxPlaySound(&VacuumTurnOnSound);

@@ -77,6 +77,7 @@ void InitPageProperties(SPageProperties* Props)
 	Props->VacuumOff = false;
 	Props->VacuumDir = VACUUMDIR_UP;
 	Props->VacuumStart = 100000000;
+    Props->VacuumSpeed = 1.0f;
 }
 
 void ParsePageProperties(SPageProperties* Props, rapidxml::xml_node<char>* PropertiesNode)
