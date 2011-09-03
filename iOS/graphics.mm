@@ -192,11 +192,13 @@ gxDisplayType gxGetDisplayType()
     int Width = MainScreen.currentMode.size.width;
     int Height = MainScreen.currentMode.size.height;
 
-    if (Width == 768 && Height == 1024)
+    if ((Width == 768 && Height == 1024) || (Width == 1024 && Height == 768))
         return GXDISPLAY_IPAD_PORTRAIT;
 
-    if (Width == 640 && Height == 960)
+    if ((Width == 640 && Height == 960) || (Width == 960 && Height == 640))
         return GXDISPLAY_IPHONE_RETINA_PORTRAIT;
+    
+    NSLog(@"Unknown display resolution; defaulting to iPhone.  Graphics may be blurry!");
     
     return GXDISPLAY_IPHONE_PORTRAIT;    
 }

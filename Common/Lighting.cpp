@@ -590,13 +590,13 @@ void InitLighting()
         LitAspectOffset = 0.0f;
         LitScreenHeight = 1024.0f;
         break;
-    case GXDISPLAY_IPHONE_RETINA_PORTRAIT:
+/*    case GXDISPLAY_IPHONE_RETINA_PORTRAIT:
         LitRenderTargetWidth = 640;
         LitRenderTargetHeight = 960;
         LitAspectScale = (640.0f/960.0f) / (768.0f/1024.0f);
         LitAspectOffset = 0.0f; //-(1024 - (1024 * LitAspectScale)) * 0.5f;
         LitScreenHeight = 1024 / LitAspectScale;
-        break;
+        break;*/
     default:
     case GXDISPLAY_IPHONE_PORTRAIT:
         LitRenderTargetWidth = 320;

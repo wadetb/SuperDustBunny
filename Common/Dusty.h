@@ -100,6 +100,9 @@ struct SDusty
 
 	int CollideMaterial;
     
+    float SwipeAngle;
+    float SwipePower;
+    
     float JumpPower;
     
     int BlockX, BlockY;

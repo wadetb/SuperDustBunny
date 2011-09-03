@@ -37,6 +37,15 @@ struct SDustyTrail
 SDustyTrail DustyTrail[MAX_DUSTY_TRAIL];
 
 
+float NormalizeAngle(float Angle)
+{
+    while (Angle < 0)
+        Angle += 360.0f;
+    while (Angle >= 360.0f)
+        Angle -= 360.0f;
+    return Angle;
+}
+
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                  Dusty initialization function                                                          //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -55,7 +64,7 @@ void InitDusty()
 	Dusty.FloatVelocityX = 0.0f;
 	Dusty.FloatVelocityY = 0.0f;
 	
-	Dusty.FloatGravity = 0.5f;
+	Dusty.FloatGravity = 0.3f;
 
 	Dusty.SpriteTransition = 5;
 
@@ -84,7 +93,7 @@ void InitDusty()
 	Dusty.CollideWithTopSide = false;
 	Dusty.CollideWithBottomSide = false;
     
-    Dusty.JumpPower = 27.5f;
+    Dusty.JumpPower = 23.0f;
 
     memset(DustyTrail, 0, sizeof(DustyTrail));
 };
@@ -181,24 +190,41 @@ bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
         //float Power = Remap(MaxSpeed, 2000.0f, 5000.0f, Dusty.JumpPower/3, Dusty.JumpPower, true);
         dX = dX * Power * 0.8f;
         dY = dY * ( dY > 0 ? Power * 0.8f : Power );
-        
-        //printf("Jump: Count=%d MaxSpeed=%f L=%f Power=%f\n", Swipe.ValidCount, MaxSpeed, L, Power);
-        
-        SetDustyState_JumpWithVelocity(dX, dY);
 
+        Dusty.SwipeAngle = NormalizeAngle(RadiansToDegrees(atan2f(-dY, dX)));
+        Dusty.SwipePower = Power;
+        
 #ifdef SWIPE_DEBUG
         AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle+Range))*100 + ScrollX, Dusty.FloatY + -sinf(DegreesToRadians(Angle+Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
         AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle-Range))*100 + ScrollX, Dusty.FloatY + -sinf(DegreesToRadians(Angle-Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
-        
-        AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + dX*10 + ScrollX, Dusty.FloatY + dY*10 + ScrollY, gxRGB32(192, 128, 128), 0.5f);
 #endif
-        
-        GetInput_SetSwipeUsed();
-        
+
         return true;
     }
 
     return false;
+}
+
+bool UpdateDusty_CheckSwipeJumpRange(float MinAngle, float MaxAngle)
+{
+    float Spread = AngleDifference(MinAngle, MaxAngle)/2;
+    return UpdateDusty_CheckSwipeJump(MinAngle + Spread, Spread);
+}
+
+void UpdateDusty_DoSwipeJump(float Angle, float Power)
+{
+    float dX = cosf(DegreesToRadians(Angle)) * Power;
+    float dY = -sinf(DegreesToRadians(Angle)) * Power;
+    
+    //printf("Jump: Count=%d MaxSpeed=%f L=%f Power=%f\n", Swipe.ValidCount, MaxSpeed, L, Power);
+
+    SetDustyState_JumpWithVelocity(dX, dY);
+    
+#ifdef SWIPE_DEBUG
+    AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + dX*10 + ScrollX, Dusty.FloatY + dY*10 + ScrollY, gxRGB32(192, 128, 128), 0.5f);
+#endif
+    
+    GetInput_SetSwipeUsed();
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -341,55 +367,61 @@ void UpdateDusty_Stand()
     }
     else
     {
-        // Diagonal up and away into clear space.
-        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_UP_LEFT | NEARBY_UP_CENTER | NEARBY_CENTER_LEFT))
+        // Angle up and away.  
+        if (UpdateDusty_CheckSwipeJump(130.0f, 40.0f))
         {
-            if ( UpdateDusty_CheckSwipeJump(135.0f, 45.0f) )
+            // If totally clear, use as is.
+            if (UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_LEFT | NEARBY_UP_LEFT | NEARBY_UP_CENTER))
+            {
+                UpdateDusty_DoSwipeJump(Dusty.SwipeAngle, Dusty.SwipePower);
                 return;
+            }
+            // If blocked to the left, go straight up.  Consider a delayed air boost?
+            else if (UpdateDusty_NearbyBlocksAreClear(NEARBY_UP_CENTER))
+            {
+                UpdateDusty_DoSwipeJump(90.0f, Dusty.SwipePower);
+                return;
+            }
         }
-        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_UP_RIGHT | NEARBY_UP_CENTER | NEARBY_CENTER_RIGHT))
+        if (UpdateDusty_CheckSwipeJump(50.0f, 40.0f))
         {
-            if ( UpdateDusty_CheckSwipeJump(45.0f, 45.0f) )
+            // If totally clear, use as is.
+            if (UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_RIGHT | NEARBY_UP_RIGHT | NEARBY_UP_CENTER))
+            {
+                UpdateDusty_DoSwipeJump(Dusty.SwipeAngle, Dusty.SwipePower);
                 return;
+            }
+            // If blocked to the right, go straight up.  Consider a delayed air boost?
+            else if (UpdateDusty_NearbyBlocksAreClear(NEARBY_UP_CENTER))
+            {
+                UpdateDusty_DoSwipeJump(90.0f, Dusty.SwipePower);
+                return;
+            }
         }
-        // Angle down and away - dropping off ledge.  Consider special boost and/or anim.  Or could go directly into corner jump.
-        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_LEFT | NEARBY_DOWN_LEFT))
+        
+        // Lower range - 10 degrees up, 30 degrees down from horizontal
+        // Use a short hop and clamp angle.
+        if (UpdateDusty_CheckSwipeJump(190.0f, 20.0f) && UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_LEFT))
         {
-            if ( UpdateDusty_CheckSwipeJump(180.0f+22.5f, 22.5f) )
-                return;
+            UpdateDusty_DoSwipeJump(160.0f, Dusty.SwipePower*0.75f);
+            return;
         }
-        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_RIGHT | NEARBY_DOWN_RIGHT))
+        if (UpdateDusty_CheckSwipeJump(350.0f, 20.0f) && UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_RIGHT))
         {
-            if ( UpdateDusty_CheckSwipeJump(0.0f-22.5f, 22.5f) )
-                return;
+            UpdateDusty_DoSwipeJump(20.0f, Dusty.SwipePower*0.75f);
+            return;
         }
-        // Angle up and away - hopping over adjacent block.  Consider special boost or anim.  Or could go directly into corner jump.
-        if (!UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_LEFT) && UpdateDusty_NearbyBlocksAreClear(NEARBY_UP_LEFT | NEARBY_UP_CENTER))
+        // Bottom range - from 30 degrees down to straight down
+        // Use a shorter hop and clamp angle.
+        if (UpdateDusty_CheckSwipeJump(240, 30.0f) && UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_LEFT))
         {
-            if ( UpdateDusty_CheckSwipeJump(90.0f+45.0f, 45.0f) )
-                return;
+            UpdateDusty_DoSwipeJump(150.0f, Dusty.SwipePower*0.5f);
+            return;
         }
-        if (!UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_RIGHT) && UpdateDusty_NearbyBlocksAreClear(NEARBY_UP_RIGHT | NEARBY_UP_CENTER))
+        if (UpdateDusty_CheckSwipeJump(300.0f, 30.0f) && UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_RIGHT))
         {
-            if ( UpdateDusty_CheckSwipeJump(90.0f-45.0f, 45.0f) )
-                return;
-        }
-        // Straight up only.
-        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_UP_CENTER))
-        {
-            if ( UpdateDusty_CheckSwipeJump(90.0f, 22.5f) )
-                return;
-        }
-        // Straight left or right only.  Should consider angle assist.
-        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_LEFT))
-        {
-            if ( UpdateDusty_CheckSwipeJump(180.0f, 22.5f) )
-                return;
-        }
-        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_RIGHT))
-        {
-            if ( UpdateDusty_CheckSwipeJump(0.0f, 22.5f) )
-                return;
+            UpdateDusty_DoSwipeJump(30.0f, Dusty.SwipePower*0.5f);
+            return;
         }
     }
     
@@ -969,64 +1001,42 @@ void UpdateDusty_WallJump()
     }
     else
     {
-        // Diagonal up and away into clear space.
-        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_UP_LEFT | NEARBY_UP_CENTER | NEARBY_CENTER_LEFT))
+        if (Dusty.Direction == DIRECTION_LEFT)
         {
-            if ( UpdateDusty_CheckSwipeJump(135.0f, 45.0f) )
-                return;
-        }
-        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_UP_RIGHT | NEARBY_UP_CENTER | NEARBY_CENTER_RIGHT))
-        {
-            if ( UpdateDusty_CheckSwipeJump(45.0f, 45.0f) )
-                return;
-        }
-        // Diagonal down and away into clear space.  
-        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_LEFT | NEARBY_DOWN_CENTER | NEARBY_DOWN_LEFT))
-        {
-            if ( UpdateDusty_CheckSwipeJump(225.0f, 45.0f) )
-                return;
-        }
-        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_RIGHT | NEARBY_DOWN_CENTER| NEARBY_DOWN_RIGHT))
-        {
-            if ( UpdateDusty_CheckSwipeJump(-45.5f, 45.0f) )
-                return;
-        }
-        // Angle up and away - hopping over adjacent block.  Consider special boost or anim.  Or could go directly into corner jump.
-        if (!UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_LEFT) && UpdateDusty_NearbyBlocksAreClear(NEARBY_UP_LEFT | NEARBY_UP_CENTER))
-        {
-            if ( UpdateDusty_CheckSwipeJump(90.0f+45.0f, 45.0f) )
-                return;
-        }
-        if (!UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_RIGHT) && UpdateDusty_NearbyBlocksAreClear(NEARBY_UP_RIGHT | NEARBY_UP_CENTER))
-        {
-            if ( UpdateDusty_CheckSwipeJump(90.0f-45.0f, 45.0f) )
-                return;
-        }
-        // Straight up only.
-        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_UP_CENTER))
-        {
-            if (Dusty.Direction == DIRECTION_LEFT)
+            if ( UpdateDusty_CheckSwipeJump(180.0f, 80.0f) )
             {
-                if ( UpdateDusty_CheckSwipeJump(90.0f+22.5f, 22.5f) )
-                    return;
+                UpdateDusty_DoSwipeJump(Dusty.SwipeAngle, Dusty.SwipePower);
+                return;
             }
-            else
+            if ( UpdateDusty_CheckSwipeJump(60.0f, 40.0f) )
             {
-                if ( UpdateDusty_CheckSwipeJump(90.0f-22.5f, 22.5f) )
-                    return;
+                UpdateDusty_DoSwipeJump(100.0f, Dusty.SwipePower);
+                return;
+            }
+            if ( UpdateDusty_CheckSwipeJump(320.0f, 60.0f) )
+            {
+                UpdateDusty_DoSwipeJump(200.0f, Dusty.SwipePower*0.25f);
+                return;
             }
         }
-        // Straight left or right only.  Should consider angle assist.
-        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_LEFT))
+        else // DIRECTION_RIGHT
         {
-            if ( UpdateDusty_CheckSwipeJump(180.0f, 22.5f) )
+            if ( UpdateDusty_CheckSwipeJump(0.0f, 80.0f) )
+            {
+                UpdateDusty_DoSwipeJump(Dusty.SwipeAngle, Dusty.SwipePower);
                 return;
+            }
+            if ( UpdateDusty_CheckSwipeJump(120.0f, 40.0f) )
+            {
+                UpdateDusty_DoSwipeJump(80.0f, Dusty.SwipePower);
+                return;
+            }
+            if ( UpdateDusty_CheckSwipeJump(240.0f, 60.0f) )
+            {
+                UpdateDusty_DoSwipeJump(340.0f, Dusty.SwipePower*0.25f);
+                return;
+            }
         }
-        if (UpdateDusty_NearbyBlocksAreClear(NEARBY_CENTER_RIGHT))
-        {
-            if ( UpdateDusty_CheckSwipeJump(0.0f, 22.5f) )
-                return;
-        }        
     }
 }	
 
@@ -1113,12 +1123,18 @@ void UpdateDusty_CornerJump()
         if ( Dusty.Direction == DIRECTION_LEFT )
         {            
             if ( UpdateDusty_CheckSwipeJump(135.0f, 135.0f) )
+            {
+                UpdateDusty_DoSwipeJump(Dusty.SwipeAngle, Dusty.SwipePower);
                 return;
+            }
         }
         else
         {
             if ( UpdateDusty_CheckSwipeJump(45.0f, 135.0f) )
+            {
+                UpdateDusty_DoSwipeJump(Dusty.SwipeAngle, Dusty.SwipePower);
                 return;
+            }
         }
     }
 }	

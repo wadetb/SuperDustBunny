@@ -99,9 +99,38 @@ inline float Min(float a, float b)
 
 inline float Clamp(float a, float mn, float mx)
 {
+    if (mn > mx)
+    {
+        float tmp = mn;
+        mn = mx;
+        mx = tmp;
+    }
     if (a < mn)
         return mn;
     if (a > mx)
+        return mx;
+    return a;
+}
+
+inline float AngleDifference(float a, float b) 
+{
+	float mn = a - b;
+	while (mn < -180) mn += 360;
+	while (mn > 180) mn -= 360;
+	return mn;
+}
+
+inline float ClampAngle(float a, float mn, float mx)
+{
+    if (mn > mx)
+    {
+        float tmp = mn;
+        mn = mx;
+        mx = tmp;
+    }
+    if (AngleDifference(a, mn) < 0)
+        return mn;
+    if (AngleDifference(a, mx) > 0)
         return mx;
     return a;
 }

@@ -95,14 +95,6 @@ void DisplayBarrels_AfterDusty()
 	}
 }
 
-float GetDirDifference(float a, float b) 
-{
-	float mn = a - b;
-	while (mn < -180) mn += 360;
-	while (mn > 180) mn -= 360;
-	return mn;
-}
-
 void UpdateBarrels()
 {
 	for (int i = 0; i < NBarrels; i++)
@@ -116,7 +108,7 @@ void UpdateBarrels()
 			if (Dist < 200)
 			{
 				float NewDir = AngleBetween(Barrel->X, Barrel->Y, Dusty.FloatX, Dusty.FloatY-60) * 180 / PI;
-				float DirDelta = GetDirDifference(NewDir, Barrel->FromDir);
+				float DirDelta = AngleDifference(NewDir, Barrel->FromDir);
 				Barrel->Dir = Barrel->FromDir + Remap(Dist, 200, 100, 0, DirDelta, true);
 				
 				if (Dist < 100)
@@ -144,7 +136,7 @@ void UpdateBarrels()
 			Dusty.FloatX = (float)Barrel->X;
 			Dusty.FloatY = (float)Barrel->Y + 60;
 
-			float Diff = GetDirDifference(Barrel->Dir, Barrel->ToDir);
+			float Diff = AngleDifference(Barrel->Dir, Barrel->ToDir);
 			if (Diff > 5 || Diff < -5)
 			{
 				if (Diff < 0)
@@ -173,7 +165,7 @@ void UpdateBarrels()
 		}
 		else if (Barrel->State == BARRELSTATE_RESET)
 		{
-			float Diff = GetDirDifference(Barrel->Dir, Barrel->FromDir);
+			float Diff = AngleDifference(Barrel->Dir, Barrel->FromDir);
 			if (Diff > 5 || Diff < -5)
 			{
 				if (Diff < 0)
