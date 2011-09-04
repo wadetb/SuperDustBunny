@@ -521,10 +521,10 @@ void DisplayBackground()
         while (x < Chapter.PageWidth*64)
         {
             AddLitSprite(LIGHTLIST_BACKGROUND, BackgroundSprite, x + ScrollX, (float)y+ScrollY);
-            x += BackgroundSprite->width;
+            x += BackgroundSprite->width-1;
         }
         
-		y += BackgroundSprite->height;
+		y += BackgroundSprite->height-1;
 	}
 }
 

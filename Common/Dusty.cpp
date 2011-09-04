@@ -798,7 +798,19 @@ void UpdateDusty_JumpCommon()
                 Dusty.FloatVelocityX += 1.0f;
         }
 #elif 1
-        if (GetInput_GetSwipeTimeLeft() >= 1.0f/20.0f)
+        // Swipe in mid air gives a small boost.
+        if (UpdateDusty_CheckSwipeJump(0, 180.0f))
+        {
+            float dX = cosf(DegreesToRadians(Dusty.SwipeAngle)) * 5.0f;
+            float dY = -sinf(DegreesToRadians(Dusty.SwipeAngle)) * 5.0f;
+
+            Dusty.FloatVelocityX += dX;
+            Dusty.FloatVelocityY += dY;
+            
+            GetInput_SetSwipeUsed();
+        }
+        // Allow for dragging him around mid-air.
+        else if (GetInput_GetSwipeTimeLeft() >= 1.0f/20.0f)
         {
             float Current = GetInput_GetSwipeCurrent();
             

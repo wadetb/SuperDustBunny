@@ -15,7 +15,7 @@
 #define MAX_PAGES			25
 #define MAX_BLOCKS			10000
 #define MAX_TILESETS		100
-#define MAX_PAGE_TILESETS	10
+#define MAX_PAGE_TILESETS	20
 #define MAX_PAGE_LAYERS     10
 #define MIN_PAGE_WIDTH      12
 #define MIN_PAGE_HEIGHT     10

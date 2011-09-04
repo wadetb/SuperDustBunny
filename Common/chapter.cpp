@@ -1005,12 +1005,16 @@ void DisplayChapterLayer(ELightList LightList, int* Blocks)
                 
                 if (ID & SPECIALBLOCKID_FLIP_DIAGONAL)
                 {
-                    float TmpU = U3;
-                    float TmpV = V3;
-                    U3 = U2; V3 = V2;
-                    U2 = U1; V2 = V1;
-                    U1 = U0; V1 = V0;
-                    U0 = TmpU; V0 = TmpV;
+                    Swap(&U0, &U3);
+                    Swap(&V0, &V3);
+                    Swap(&U1, &U2);
+                    Swap(&V1, &V2);
+//                    float TmpU = U3;
+//                    float TmpV = V3;
+//                    U3 = U2; V3 = V2;
+//                    U2 = U1; V2 = V1;
+//                    U1 = U0; V1 = V0;
+//                    U0 = TmpU; V0 = TmpV;
                 }
                 
                 if (ID & SPECIALBLOCKID_FLIP_X)

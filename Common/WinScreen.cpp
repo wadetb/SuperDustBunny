@@ -125,7 +125,7 @@ void DisplayWinScreen()
             DisplayString(LIGHTLIST_FOREGROUND_NO_SHADOW, MedalString, FORMAT_CENTER_X, 384 + 600*WinScreen.SlideIn, 75, MedalScale);
             DisplayString(LIGHTLIST_FOREGROUND_NO_SHADOW, "medal!", FORMAT_CENTER_X, 384 - 600*WinScreen.SlideIn, 175, MedalScale);
             
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, &MedalFrames[(WinScreen.MedalFrame/8)%MEDAL_FRAMES], 384, 665 + 300*WinScreen.SlideIn, 0.8f, 1.0f);                
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, &MedalFrames[(WinScreen.MedalFrame/8)%MEDAL_FRAMES], 384, 665 + 300*WinScreen.SlideIn, 1.0f, 1.0f);                
         }
     }
     

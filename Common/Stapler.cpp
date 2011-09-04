@@ -142,7 +142,7 @@ void UpdateStaplers()
             if (Stapler->Timer == 10)
             {
                 Dusty.FloatY -= 10;
-                SetDustyState_Launch(0, -27); 
+                SetDustyState_Launch(0, -21); 
             }
             if (Stapler->Timer >= 100)
             {
