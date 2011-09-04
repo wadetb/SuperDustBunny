@@ -52,6 +52,8 @@ void DisplayLetter(ELightList List, char Letter, float X, float Y, float Scale, 
         case '9': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  8*48, 128,  9*48, 188, Scale, Scale, Alpha); break;
         case '0': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  9*48, 128, 10*48, 188, Scale, Scale, Alpha); break;
         case '!': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y, 10*48, 128, 11*48, 188, Scale, Scale, Alpha); break;
+        case '?': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y, 11*48, 128, 12*48, 188, Scale, Scale, Alpha); break;
+        case ',': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y, 12*48, 128, 13*48, 188, Scale, Scale, Alpha); break;
         default: break;
     }
 }

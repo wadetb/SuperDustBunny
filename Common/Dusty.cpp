@@ -315,7 +315,7 @@ void DisplayDusty_Stand()
 		if (Dusty.SpriteTransition <= 5)
 			DisplayDustySprite(&DustyHop5bSprite, -119, 18, -218);
 		else
-        if (Dusty.SpriteTransition <= 15)
+        if (Dusty.SpriteTransition <= 15 && Dusty.State != DUSTYSTATE_INTROSTAND)
             DisplayDustySprite(&DustyHop5bSprite, -119, 18, -218);
         else
 		{

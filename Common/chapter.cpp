@@ -975,7 +975,7 @@ void DisplayChapterLayer(ELightList LightList, int* Blocks)
 		    //if (CurX > gxScreenWidth || CurX+64 < 0)
 			   // continue;
 
-            int ID = Blocks[y * Chapter.PageWidth + x];
+            unsigned int ID = Blocks[y * Chapter.PageWidth + x];
             int BlockID = ID & SPECIALBLOCKID_MASK;
 
 			if (BlockID >= SPECIALBLOCKID_FIRST)
@@ -1003,33 +1003,44 @@ void DisplayChapterLayer(ELightList LightList, int* Blocks)
 				float V2 = (float)(Block->SubY + 64) / TileSet->Sprite.height;
 				float V3 = (float)(Block->SubY + 64) / TileSet->Sprite.height;
                 
-                if (ID & SPECIALBLOCKID_FLIP_DIAGONAL)
+                float m11 = 64, m12 = 0, m21 = 0, m22 = 64;
+                float dx = CurX, dy = CurY;
+                
+                if (ID & SPECIALBLOCKID_FLIP_DIAGONAL) 
                 {
-                    Swap(&U0, &U3);
-                    Swap(&V0, &V3);
-                    Swap(&U1, &U2);
-                    Swap(&V1, &V2);
-//                    float TmpU = U3;
-//                    float TmpV = V3;
-//                    U3 = U2; V3 = V2;
-//                    U2 = U1; V2 = V1;
-//                    U1 = U0; V1 = V0;
-//                    U0 = TmpU; V0 = TmpV;
+                    Swap(&m11, &m12);
+                    Swap(&m21, &m22);
+                }
+                if (ID & SPECIALBLOCKID_FLIP_X) 
+                {
+                    m11 = -m11;
+                    m21 = -m21;    
+                    dx += 64;
+                }
+                if (ID & SPECIALBLOCKID_FLIP_Y) 
+                {
+                    m12 = -m12;
+                    m22 = -m22;
+                    dy += 64;
                 }
                 
-                if (ID & SPECIALBLOCKID_FLIP_X)
-                {
-                    Swap(&U0, &U1);
-                    Swap(&U2, &U3);
-                }
-
-                if (ID & SPECIALBLOCKID_FLIP_Y)
-                {
-                    Swap(&V0, &V2);
-                    Swap(&V1, &V3);
-                }
-                 
-				AddLitSpriteUV(LIGHTLIST_FOREGROUND, &TileSet->Sprite, (float)CurX, (float)CurY, 64, 64, U0, V0, U1, V1, U2, V2, U3, V3);
+                float X0 = 0.0f*m11 + 0.0f*m21 + dx;
+                float Y0 = 0.0f*m12 + 0.0f*m22 + dy;
+                
+                float X1 = 1.0f*m11 + 0.0f*m21 + dx;
+                float Y1 = 1.0f*m12 + 0.0f*m22 + dy;
+                
+                float X2 = 1.0f*m11 + 1.0f*m21 + dx;
+                float Y2 = 1.0f*m12 + 1.0f*m22 + dy;
+                
+                float X3 = 0.0f*m11 + 1.0f*m21 + dx;
+                float Y3 = 0.0f*m12 + 1.0f*m22 + dy;
+                
+                AddLitQuad(LIGHTLIST_FOREGROUND, &TileSet->Sprite, gxRGBA32(255,255,255,255),
+                           X0, Y0, U0, V0, 
+                           X1, Y1, U1, V1,
+                           X2, Y2, U2, V2, 
+                           X3, Y3, U3, V3);
 			}
 		}
 	}
