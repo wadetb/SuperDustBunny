@@ -42,8 +42,10 @@ gxSprite DustyHop5Sprite;
 
 gxSprite DustyHop2bSprite;
 gxSprite DustyHop2cSprite;
+gxSprite DustyHop3bSprite;
 gxSprite DustyHop4bSprite;
 gxSprite DustyHop4cSprite;
+gxSprite DustyHop5bSprite;
 
 gxSprite DustyIdle1Sprite;
 gxSprite DustyIdle2Sprite;
@@ -54,7 +56,12 @@ gxSprite DustySlide2Sprite;
 gxSprite DustySlide3Sprite;
 
 gxSprite DustyWallJumpSprite;
+gxSprite DustyWallJumpbSprite;
+gxSprite DustyWallJumpcSprite;
 gxSprite DustyCornerJumpSprite;
+gxSprite DustyCornerJumpbSprite;
+gxSprite DustyCornerJumpcSprite;
+gxSprite DustyCornerJumpdSprite;
 
 gxSprite DustyDeathSprite;
 
@@ -823,8 +830,10 @@ void LoadAssets()
 
 	LoadSpriteAsset("Assets/dusty-hop-2b.png", &DustyHop2bSprite);
 	LoadSpriteAsset("Assets/dusty-hop-2c.png", &DustyHop2cSprite);
+	LoadSpriteAsset("Assets/dusty-hop-3b.png", &DustyHop3bSprite);
 	LoadSpriteAsset("Assets/dusty-hop-4b.png", &DustyHop4bSprite);
 	LoadSpriteAsset("Assets/dusty-hop-4c.png", &DustyHop4cSprite);
+	LoadSpriteAsset("Assets/dusty-hop-5b.png", &DustyHop5bSprite);
 
 	LoadSpriteAsset("Assets/dusty-idle-1.png", &DustyIdle1Sprite);
 	LoadSpriteAsset("Assets/dusty-idle-2.png", &DustyIdle2Sprite);
@@ -835,7 +844,12 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/dusty-slide-3.png", &DustySlide3Sprite);
 
 	LoadSpriteAsset("Assets/dusty-walljump.png", &DustyWallJumpSprite);
+	LoadSpriteAsset("Assets/dusty-walljumpb.png", &DustyWallJumpbSprite);
+	LoadSpriteAsset("Assets/dusty-walljumpc.png", &DustyWallJumpcSprite);
 	LoadSpriteAsset("Assets/dusty-cornerjump.png", &DustyCornerJumpSprite);
+	LoadSpriteAsset("Assets/dusty-cornerjumpb.png", &DustyCornerJumpbSprite);
+	LoadSpriteAsset("Assets/dusty-cornerjumpc.png", &DustyCornerJumpcSprite);
+	LoadSpriteAsset("Assets/dusty-cornerjumpd.png", &DustyCornerJumpdSprite);
 
 	LoadSpriteAsset("Assets/dusty-die.png", &DustyDeathSprite);
 

@@ -36,8 +36,10 @@ extern gxSprite DustyHop5Sprite;
 
 extern gxSprite DustyHop2bSprite;
 extern gxSprite DustyHop2cSprite;
+extern gxSprite DustyHop3bSprite;
 extern gxSprite DustyHop4bSprite;
 extern gxSprite DustyHop4cSprite;
+extern gxSprite DustyHop5bSprite;
 
 extern gxSprite DustyIdle1Sprite;
 extern gxSprite DustyIdle2Sprite;
@@ -48,7 +50,12 @@ extern gxSprite DustySlide2Sprite;
 extern gxSprite DustySlide3Sprite;
 
 extern gxSprite DustyWallJumpSprite;
+extern gxSprite DustyWallJumpbSprite;
+extern gxSprite DustyWallJumpcSprite;
 extern gxSprite DustyCornerJumpSprite;
+extern gxSprite DustyCornerJumpbSprite;
+extern gxSprite DustyCornerJumpcSprite;
+extern gxSprite DustyCornerJumpdSprite;
 
 extern gxSprite DustyDeathSprite;
 

@@ -312,9 +312,12 @@ void DisplayDusty_Stand()
 	}
 	else
 	{
-		if (Dusty.SpriteTransition <= 4)
-			DisplayDustySprite(&DustyHop5Sprite, -119, 18, -218);
+		if (Dusty.SpriteTransition <= 5)
+			DisplayDustySprite(&DustyHop5bSprite, -119, 18, -218);
 		else
+        if (Dusty.SpriteTransition <= 15)
+            DisplayDustySprite(&DustyHop5bSprite, -119, 18, -218);
+        else
 		{
 			if (Dusty.SpriteTransition % 45 < 10)
 				DisplayDustySprite(&DustyIdle1Sprite, -124, 5, -221);
@@ -533,7 +536,13 @@ void DisplayDusty_Jump()
 		&DustyHop2bSprite,
 		&DustyHop2cSprite,
 	};
-
+    
+	gxSprite* Hop3Sprites[3] =
+	{
+		&DustyHop3Sprite,
+		&DustyHop3bSprite,
+	};
+    
 	gxSprite* Hop4Sprites[3] =
 	{
 		&DustyHop4Sprite,
@@ -546,7 +555,7 @@ void DisplayDusty_Jump()
 	else if (Dusty.FloatVelocityY <= -5)
 		DisplayDustySprite(Hop2Sprites[(Dusty.SpriteTransition/5) % 3], -124, -18, -150);
 	else
-		DisplayDustySprite(&DustyHop3Sprite, -124, -18, -140);
+		DisplayDustySprite(Hop3Sprites[(Dusty.SpriteTransition/10) % 2], -124, -18, -150);
 }
 
 void UpdateDusty_Jump()
@@ -913,6 +922,7 @@ void SetDustyState_WallJump()
 	Dusty.WallJumpTimer = 0;
     Dusty.AirJumpCount = 0;
     Dusty.LandTimer = 0;
+    Dusty.SpriteTransition = 0;
 
 	// Switch directions when entering a wall jump.
 	if (Dusty.Direction == DIRECTION_RIGHT)
@@ -926,20 +936,17 @@ void SetDustyState_WallJump()
 }
 
 void DisplayDusty_WallJump()
-{
-	float ScaleX, OffsetX;
-	if (Dusty.Direction == DIRECTION_RIGHT)
+{    
+	gxSprite* WallJumpSprites[2] =
 	{
-		ScaleX = 1.0f;
-		OffsetX = 0.0f;
-	}
+		&DustyWallJumpbSprite,
+		&DustyWallJumpcSprite,
+	};
+    
+	if (Dusty.FloatVelocityY <= 3.5f)
+        DisplayDustySprite(&DustyWallJumpSprite, -128, -8, -200);
 	else
-	{
-		ScaleX = -1.0f;
-		OffsetX = 256.0f;
-	}
-
-	DisplayDustySprite(&DustyWallJumpSprite, -128, -8, -200);
+		DisplayDustySprite(WallJumpSprites[(Dusty.SpriteTransition/5) % 2], -128, -8, -200);
 }
 
 void UpdateDusty_WallJump()
@@ -950,6 +957,8 @@ void UpdateDusty_WallJump()
 		SetDustyState_Stuck();
 		return;
 	}
+
+    Dusty.SpriteTransition += 1;
 
     Dusty.LandTimer++;
     if (Dusty.LandTimer <= 5)
@@ -1082,11 +1091,29 @@ void SetDustyState_CornerJump()
 
 void DisplayDusty_CornerJump()
 {
-	DisplayDustySprite(&DustyCornerJumpSprite, -128, -32, -150);
+    gxSprite* CornerJumpSprites[] =
+    {
+        &DustyCornerJumpbSprite,
+        &DustyCornerJumpcSprite,
+        &DustyCornerJumpdSprite
+    };
+    
+    if (Dusty.SpriteTransition < 10)
+    {
+        DisplayDustySprite(&DustyCornerJumpSprite, -128, -32, -150);
+    }
+    else
+    {
+        int Index = (Dusty.SpriteTransition/10) % 3;
+        DisplayDustySprite(CornerJumpSprites[Index], -128, -32, -150);
+    }
+
 }
 
 void UpdateDusty_CornerJump()
 {
+    Dusty.SpriteTransition += 1;
+    
     Dusty.LandTimer += 1;
 	if (Dusty.LandTimer <= 5)
 		return;
