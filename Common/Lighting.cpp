@@ -18,6 +18,9 @@
 
 int NLitVerts;
 
+int CurrentBlendMode;
+gxShader* CurrentShader;
+
 #ifdef PLATFORM_IPHONE
 
 int NLitVertIndices;
@@ -43,8 +46,6 @@ SLitVertex ScreenVerts[4] =
 };
 
 GLuint CurrentVBO;
-int CurrentBlendMode;
-gxShader* CurrentShader;
 
 #endif
 
