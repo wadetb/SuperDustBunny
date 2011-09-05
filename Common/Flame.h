@@ -10,7 +10,12 @@
 #ifndef __FLAME_H__
 #define __FLAME_H__
 
-void CreateFlame(int X, int Y);
+struct SBlock;
+struct SFlameProperties;
+
+void ParseFlameProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode);
+
+void CreateFlame(int X, int Y, SFlameProperties* Props);
 void ClearFlames();
 
 void UpdateFlames();

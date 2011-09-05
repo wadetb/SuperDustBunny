@@ -1091,21 +1091,18 @@ void SetDustyState_CornerJump()
 
 void DisplayDusty_CornerJump()
 {
-    gxSprite* CornerJumpSprites[] =
-    {
-        &DustyCornerJumpbSprite,
-        &DustyCornerJumpcSprite,
-        &DustyCornerJumpdSprite
-    };
-    
     if (Dusty.SpriteTransition < 10)
     {
         DisplayDustySprite(&DustyCornerJumpSprite, -128, -32, -150);
     }
     else
     {
-        int Index = (Dusty.SpriteTransition/10) % 3;
-        DisplayDustySprite(CornerJumpSprites[Index], -128, -32, -150);
+        if (Dusty.SpriteTransition % 45 < 10)
+            DisplayDustySprite(&DustyCornerJumpbSprite, -128, -32, -150);
+        else if (Dusty.SpriteTransition % 45 < 40)
+            DisplayDustySprite(&DustyCornerJumpcSprite, -128, -32, -150);
+        else
+            DisplayDustySprite(&DustyCornerJumpdSprite, -128, -32, -150);
     }
 
 }

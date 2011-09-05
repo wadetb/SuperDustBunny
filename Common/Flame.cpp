@@ -14,29 +14,165 @@
 
 
 #define MAX_FLAMES 50
+#define MAX_FLAME_FRAMES 10
 
+
+enum EFlameAnglularType
+{
+    ANGULAR_NONE,
+    ANGULAR_ROTATE,
+    ANGULAR_PENDULUM,
+};
+
+struct SFlameProperties
+{
+    int NFrames;
+    gxSprite Frames[MAX_FLAME_FRAMES];
+    int FrameTime;
+    
+    float XOffset;
+    float YOffset;
+    
+    float XOrigin;
+    float YOrigin;
+    
+    float Scale;
+    
+    EFlameAnglularType AngularType;
+    float AngularSpeed;
+    
+    bool IsFire;
+};
 
 struct SFlame
 {
+    SFlameProperties* Props;
 	float X, Y;
 	int Frame;
 };
 
+
 int NFlames;
 SFlame Flames[MAX_FLAMES];
 
+void ParseFlameProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode)
+{
+	SFlameProperties* Props = (SFlameProperties*)malloc(sizeof(SFlameProperties));
+    
+    Props->NFrames = 0;
+    Props->FrameTime = 1;
+    Props->XOffset = 0;
+    Props->YOffset = 0;
+    Props->XOrigin = 0;
+    Props->YOrigin = 0;
+    Props->AngularSpeed = 0.0f;
+    Props->Scale = 1.0f;
+    Props->IsFire = false;
 
-void CreateFlame(int X, int Y)
+	rapidxml::xml_node<char>* PropertyNode = PropertiesNode->first_node("property");
+	while (PropertyNode)
+	{
+		const char* Name = PropertyNode->first_attribute("name")->value();
+		const char* ConstValue = PropertyNode->first_attribute("value")->value();
+        char* WritableValue = strdup(ConstValue);
+        char* Value = WritableValue;
+        
+		if (strcmp(Name, "frames") == 0)
+		{
+            if (Props->NFrames)
+                ReportError("Flame has more than one 'frames' property.");
+            
+            char* Save;
+            for (char* p = strtok_r(Value, " ", &Save); p; p = strtok_r(NULL, " ", &Save))
+            {
+                if (Props->NFrames >= MAX_FLAME_FRAMES)
+                    ReportError("Flame has more than the maximum of %d frames.", MAX_FLAME_FRAMES);
+                
+                LoadSpriteAsset(p, &Props->Frames[Props->NFrames]);
+                Props->NFrames++;
+            }
+        }
+        else if (strcmp(Name, "frametime") == 0)
+        {
+            Props->FrameTime = atoi(Value);
+        }
+        else if (strcmp(Name, "xoffset") == 0)
+        {
+            Props->XOffset = atof(Value);
+        }
+        else if (strcmp(Name, "yoffset") == 0)
+        {
+            Props->YOffset = atof(Value);
+        }
+        else if (strcmp(Name, "origin") == 0)
+        {
+            Props->XOrigin = strtof(Value, &Value);
+            Props->YOrigin = strtof(Value, &Value);
+        }
+        else if (strcmp(Name, "offset") == 0)
+        {
+            Props->XOffset = strtof(Value, &Value);
+            Props->YOffset = strtof(Value, &Value);
+        }
+        else if (strcmp(Name, "angle") == 0)
+        {
+            if (strncmp(Value, "rotate ", 7) == 0)
+            {
+                Props->AngularType = ANGULAR_ROTATE;
+                Value += 6;
+            }
+            else if (strncmp(Value, "pendulum ", 9) == 0)
+            {
+                Props->AngularType = ANGULAR_PENDULUM;
+                Value += 8;
+            }
+            else
+                Props->AngularType = ANGULAR_NONE;
+            Props->AngularSpeed = strtof(Value, &Value);
+        }
+        else if (strcmp(Name, "scale") == 0)
+        {
+            Props->Scale = atof(Value);
+        }
+        else if (strcmp(Name, "fire") == 0)
+        {
+            Props->IsFire = atoi(Value);
+        }
+		else if (strcmp(Name, "type") != 0 && strcmp(Name, "material") != 0)
+		{
+			ReportError("Unrecognized flame property '%s'='%s'.", Name, Value);
+		}
+        
+        free(WritableValue);
+        
+		PropertyNode = PropertyNode->next_sibling("property");
+	}
+    
+    if (Props->NFrames == 0)
+    {
+        ReportError("Flame is missing the 'frames' property.");
+    }
+    
+	Block->Properties = Props;
+}
+
+void CreateFlame(int X, int Y, SFlameProperties* Props)
 {
 	if (NFlames >= MAX_FLAMES)
 		ReportError("Exceeded the maximum of %d total flames.", MAX_FLAMES);
     
 	SFlame* Flame = &Flames[NFlames++];
     
+    Flame->Props = Props;
+    
 	Flame->X = (float)X + 32;
 	Flame->Y = (float)Y + 32;
     
     Flame->Frame = Random(0, 1);
+    
+    // Hack
+    if (Props->IsFire)
+        EraseBlock(X/64, Y/64);
 }
 
 void ClearFlames()
@@ -51,19 +187,22 @@ void UpdateFlames()
         SFlame* Flame = &Flames[i];
 
         Flame->Frame++;
-        if ( Flame->Frame > 8 )
-            Flame->Frame = 0;
         
-        if (Dusty.State != DUSTYSTATE_HURT)
+        SFlameProperties* Props = Flame->Props;
+
+         if (Props->IsFire)
         {
-            float Dist = Distance(Dusty.FloatX, Dusty.FloatY-50, Flame->X, Flame->Y - 64);
-            if (Dist < 100)
+            if (Dusty.State != DUSTYSTATE_HURT)
             {
-                Dusty.OnFireTimer = 30;
-                SetDustyState_Hurt();
-                Dusty.FloatVelocityX = Dusty.FloatX > Flame->X ? 10.0f : -10.0f;
-                Dusty.FloatVelocityY = -10;
-            } 	                       	    
+                float Dist = Distance(Dusty.FloatX, Dusty.FloatY-50, Flame->X, Flame->Y - 64);
+                if (Dist < 100)
+                {
+                    Dusty.OnFireTimer = 30;
+                    SetDustyState_Hurt();
+                    Dusty.FloatVelocityX = Dusty.FloatX > Flame->X ? 10.0f : -10.0f;
+                    Dusty.FloatVelocityY = -10;
+                } 	                       	    
+            }
         }
     }
 }
@@ -74,19 +213,29 @@ void DisplayFlames()
     {
         SFlame* Flame = &Flames[i];
         
-        if (Flame->Frame < 4) 
-        {
-			AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND_NO_SHADOW, &Flame1Sprite, Flame->X + ScrollX, Flame->Y + ScrollY - 64, 2.0f, 0.0f);
-        }
-        else 
-        {
-			AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND_NO_SHADOW, &Flame2Sprite, Flame->X + ScrollX, Flame->Y + ScrollY - 64, 2.0f, 0.0f);
-        } 
+        SFlameProperties* Props = Flame->Props;
+        
+        gxSprite* Sprite = &Props->Frames[(Flame->Frame / Props->FrameTime) % Props->NFrames];
 
-        if (Chapter.PageProps.LightsOff)
+        float X = Flame->X + Props->XOffset;
+        float Y = Flame->Y + Props->YOffset;
+        float Scale = Props->Scale;
+        
+        float XOrigin = Props->XOrigin;
+        float YOrigin = Props->YOrigin;
+        
+        float Angle = 0.0f;
+        if (Props->AngularType == ANGULAR_ROTATE)
+            Angle = DegreesToRadians(Flame->Frame * Props->AngularSpeed/60.0f);
+        else if (Props->AngularType == ANGULAR_PENDULUM)
+            Angle = DegreesToRadians(15.0f * sinf(DegreesToRadians(Flame->Frame * Props->AngularSpeed/60.0f)));
+        
+        AddLitSpriteOriginScaledRotatedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, Sprite, X + ScrollX, Y + ScrollY, XOrigin, YOrigin, Scale, Angle, 1.0f);
+
+        if (Chapter.PageProps.LightsOff && Props->IsFire)
         {
             float Alpha = 0.5f + 0.1f * Flame->Frame;
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightFlashlightSprite, Flame->X + ScrollX, Flame->Y + ScrollY, 1.3f, Alpha);
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightFlashlightSprite, X + ScrollX, Y + ScrollY, 1.3f, Alpha);
         }
     }
 }

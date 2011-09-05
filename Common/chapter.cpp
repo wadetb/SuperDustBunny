@@ -348,6 +348,10 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* FileName
 			{
 				ParseFanProperties(Block, PropertiesNode);
 			}
+			else if (Block->Type == BLOCKTYPE_FLAME)
+			{
+				ParseFlameProperties(Block, PropertiesNode);
+			}
 			else if (Block->Type == BLOCKTYPE_FLASHLIGHT_WAYPOINT)
 			{
 				ParseFlashlightWaypointProperties(Block, PropertiesNode);
@@ -817,8 +821,7 @@ void CreatePageObjects()
 					EraseBlock(x, y);
 					break;
                 case BLOCKTYPE_FLAME:
-                    CreateFlame(x * 64, y * 64);
-                    EraseBlock(x, y);
+                    CreateFlame(x * 64, y * 64, (SFlameProperties*)Block->Properties);
                     break;
 				case BLOCKTYPE_FLASHLIGHT_WAYPOINT:
 					CreateFlashlightWaypoint(x * 64, y * 64, (SFlashlightWaypointProperties*)Block->Properties);
