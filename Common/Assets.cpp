@@ -483,7 +483,7 @@ void GetLiveAssetFileName(const char* FileName, char* Buf, int BufSize)
 
 bool DownloadLiveAssetFile(const char* FileName)
 {
-    NSString* URLString = [NSString stringWithFormat:@"http://pluszerogames.com/sdb/live/%d/%s", Settings.LiveAssetSlot, FileName];
+    NSString* URLString = [NSString stringWithFormat:@"%@%s", [NSString stringWithUTF8String:Settings.AssetServer], FileName];
     NSURL *URL = [NSURL URLWithString:URLString];
     
     NSLog(@"DOWNLOAD '%@'...", URLString);

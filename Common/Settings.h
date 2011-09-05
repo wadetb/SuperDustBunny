@@ -20,16 +20,11 @@ typedef struct
 {
     EControlStyle ControlStyle;
     
-    int TiltSensitivity;
-    bool ContinuousJump;
-    bool FallGracePeriod;
-    bool DoubleJump;
-    
     bool InfiniteLives;
     bool DisableVacuum;
     
     bool LiveAssets;
-    int LiveAssetSlot;
+    char AssetServer[256];
     
     bool ChapterSkip;
 } SSettings;

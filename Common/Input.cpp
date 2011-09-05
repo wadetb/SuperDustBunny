@@ -61,7 +61,7 @@ bool GetInput_MoveLeft()
 	return kbIsKeyDown(KB_A);
 #endif
 #ifdef PLATFORM_IPHONE
-	return msAccelX < -AccelThreshold[Settings.TiltSensitivity];
+	return msAccelX < -AccelThreshold[0];
 #endif
 }
 
@@ -80,7 +80,7 @@ bool GetInput_MoveRight()
 	return kbIsKeyDown(KB_D);
 #endif
 #ifdef PLATFORM_IPHONE
-	return msAccelX > AccelThreshold[Settings.TiltSensitivity];
+	return msAccelX > AccelThreshold[0];
 #endif
 }
 
@@ -95,24 +95,12 @@ bool GetInput_Jump()
 	if (RemoteControl.Enabled)
 		return RemoteControl.Jump;
     
-    if (Settings.ContinuousJump)
-    {
 #ifdef PLATFORM_WINDOWS
-        return kbIsKeyDown(KB_SPACE);
+    return kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE);
 #endif
 #ifdef PLATFORM_IPHONE
-        return msButton1;
+    return msButton1 && !msOldButton1;
 #endif	
-    }
-    else
-    {
-#ifdef PLATFORM_WINDOWS
-        return kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE);
-#endif
-#ifdef PLATFORM_IPHONE
-        return msButton1 && !msOldButton1;
-#endif	
-    }
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//

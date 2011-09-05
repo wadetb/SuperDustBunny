@@ -374,15 +374,6 @@ void SetGameState_StartScreen()
 	GameState = GAMESTATE_START_SCREEN;
 
     LitSceneZoom = 1.0f;
-
-#ifdef PLATFORM_IPHONE
-    if (Settings.LiveAssets)
-    {
-        UpdateLiveAssetCache();
-        LoadAssets();
-        AssetsLoaded = true;
-    }
-#endif
     
     if (!AssetsLoaded)
     {

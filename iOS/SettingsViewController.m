@@ -16,13 +16,10 @@
 
 @synthesize mainViewController;
 @synthesize controlScheme;
-@synthesize tiltSensitivity;
-@synthesize continuousJump;
-@synthesize fallGracePeriod;
-@synthesize doubleJump;
 @synthesize infiniteLives;
 @synthesize disableVacuum;
 @synthesize liveAssets;
+@synthesize assetServer;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -35,15 +32,13 @@
 
 - (void)dealloc
 {
-    [tiltSensitivity release];
-    [continuousJump release];
-    [fallGracePeriod release];
-    [doubleJump release];
+    [controlScheme release];
     [infiniteLives release];
     [disableVacuum release];
-    [controlScheme release];
     [liveAssets release];
-    [liveAssets release];
+    [assetServer release];
+    [assetServer release];
+    [assetServer release];
     [super dealloc];
 }
 
@@ -65,6 +60,9 @@
 
 - (void)viewDidUnload
 {
+    [assetServer release];
+    assetServer = nil;
+    [self setAssetServer:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -80,9 +78,7 @@
     [[self mainViewController] hideSettings];
 }
 
-- (IBAction)controlSchemeChanged:(id)sender {
-    tiltSensitivity.enabled = controlScheme.selectedSegmentIndex == 0;
-    
+- (IBAction)controlSchemeChanged:(id)sender {    
     EAGLView *view = (EAGLView*)theViewController.view;
     
     if (controlScheme.selectedSegmentIndex == 0)
@@ -96,50 +92,20 @@
     }
 }
 
-- (IBAction)tiltSensitivityChanged:(id)sender {
-}
-
-- (IBAction)continuousJumpChanged:(id)sender {
-    if (continuousJump.on) {
-        doubleJump.on = FALSE;
-    }
-    doubleJump.enabled = !continuousJump.on;
-}
-
-- (IBAction)fallGracePeriodChanged:(id)sender {
-}
-
-- (IBAction)doubleJumpChanged:(id)sender {
-}
-
-- (IBAction)infiniteLivesChanged:(id)sender {
-}
-
-- (IBAction)disableVacuumChanged:(id)sender {
-}
-
 - (void)transferSettingsToView {
     controlScheme.selectedSegmentIndex = Settings.ControlStyle == CONTROL_TILT ? 0 : 1;
-    tiltSensitivity.selectedSegmentIndex = Settings.TiltSensitivity;
-    continuousJump.on = Settings.ContinuousJump;
-    fallGracePeriod.on = Settings.FallGracePeriod;
-    doubleJump.on = Settings.DoubleJump;
     infiniteLives.on = Settings.InfiniteLives;
     disableVacuum.on = Settings.DisableVacuum;
     liveAssets.on = Settings.LiveAssets;
-    
-    doubleJump.enabled = !continuousJump.on;
+    assetServer.text = [NSString stringWithUTF8String:Settings.AssetServer];
 }
 
 - (void)transferSettingsFromView {
     Settings.ControlStyle = controlScheme.selectedSegmentIndex == 0 ? CONTROL_TILT : CONTROL_SWIPE;
-    Settings.TiltSensitivity = tiltSensitivity.selectedSegmentIndex;
-    Settings.ContinuousJump = continuousJump.on;
-    Settings.FallGracePeriod = fallGracePeriod.on;
-    Settings.DoubleJump = doubleJump.on;
     Settings.InfiniteLives = infiniteLives.on;
     Settings.DisableVacuum = disableVacuum.on;
     Settings.LiveAssets = liveAssets.on;
+    snprintf(Settings.AssetServer, sizeof(Settings.AssetServer), "%s", [[assetServer text] UTF8String]);
 }
 
 @end

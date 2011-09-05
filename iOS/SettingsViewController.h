@@ -15,34 +15,23 @@
 @private
     
     UISegmentedControl *controlScheme;
-    UISegmentedControl *tiltSensitivity;
-    UISwitch *continuousJump;
-    UISwitch *fallGracePeriod;
-    UISwitch *doubleJump;
     UISwitch *infiniteLives;
     UISwitch *disableVacuum;
     UISwitch *liveAssets;
+    UITextField *assetServer;
 }
 
 @property (nonatomic, retain) IBOutlet SuperDustBunnyViewController *mainViewController;
 
 @property (nonatomic, retain) IBOutlet UISegmentedControl *controlScheme;
-@property (nonatomic, retain) IBOutlet UISegmentedControl *tiltSensitivity;
-@property (nonatomic, retain) IBOutlet UISwitch *continuousJump;
-@property (nonatomic, retain) IBOutlet UISwitch *fallGracePeriod;
-@property (nonatomic, retain) IBOutlet UISwitch *doubleJump;
 @property (nonatomic, retain) IBOutlet UISwitch *infiniteLives;
 @property (nonatomic, retain) IBOutlet UISwitch *disableVacuum;
 @property (nonatomic, retain) IBOutlet UISwitch *liveAssets;
+@property (nonatomic, retain) IBOutlet UITextField *assetServer;
 
 - (IBAction)done:(id)sender;
+
 - (IBAction)controlSchemeChanged:(id)sender;
-- (IBAction)tiltSensitivityChanged:(id)sender;
-- (IBAction)continuousJumpChanged:(id)sender;
-- (IBAction)fallGracePeriodChanged:(id)sender;
-- (IBAction)doubleJumpChanged:(id)sender;
-- (IBAction)infiniteLivesChanged:(id)sender;
-- (IBAction)disableVacuumChanged:(id)sender;
 
 - (void)transferSettingsFromView;
 - (void)transferSettingsToView;

@@ -11,6 +11,7 @@
 #include "StartScreen.h"
 #include "Dusty.h"
 #include "Chapter.h"
+#include "Settings.h"
 
 #ifdef PLATFORM_IPHONE
 #import "SuperDustBunnyViewController.h"
@@ -179,13 +180,21 @@ void StartScreen_Advance()
     
 	if (StartScreen.CurItem >= STARTSCREEN_ITEM_FIRST_CHAPTER)
 	{
+#ifdef PLATFORM_IPHONE
+        if (Settings.LiveAssets)
+        {
+            UpdateLiveAssetCache();
+            LoadAssets();
+        }
+#endif
+
         CurrentChapter = StartScreen.CurItem - STARTSCREEN_ITEM_FIRST_CHAPTER;
         extern int PlaybackID;
         if (PlaybackID >= 0)
             SetGameState_Transition(GAMETRANSITION_PLAY_RECORDING);
         else
             SetGameState_Transition(GAMETRANSITION_FIRST_PAGE);
-	}
+    }
 	else if (StartScreen.CurItem == STARTSCREEN_ITEM_HELP)
 	{
 		SetGameState_Help();

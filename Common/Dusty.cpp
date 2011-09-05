@@ -561,7 +561,7 @@ void DisplayDusty_Jump()
 void UpdateDusty_Jump()
 {       
     // Grace period jump.  Allows a midair jump within a few frames of falling.
-    if (Settings.FallGracePeriod && Dusty.JumpGraceTimer > 0)
+    if (Dusty.JumpGraceTimer > 0)
     {
         Dusty.JumpGraceTimer--;
         
@@ -579,30 +579,6 @@ void UpdateDusty_Jump()
                 return;
             }
         }
-    }
-    
-    // A single mid-air double jump.
-    // TODO: Work out rules about when this can be activated.  Y velocity?  Timer?
-    if (Settings.DoubleJump && Dusty.AirJumpCount == 0)
-    {
-        if (Settings.ControlStyle == CONTROL_TILT)
-        {
-            if (GetInput_Jump())
-            {
-                Dusty.AirJumpCount++;
-                
-                // Spawn some dust motes.
-                for (int i = 0; i < 10; i++)
-                    MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);
-
-                SetDustyState_Jump( false );
-                return;
-            }
-        }
-        else
-        {
-            // SWIPE TODO
-        }        
     }
     
 	UpdateDusty_JumpCommon();
