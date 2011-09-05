@@ -1042,7 +1042,7 @@ void DisplayChapterLayer(ELightList LightList, int* Blocks)
                 float X3 = 0.0f*m11 + 1.0f*m21 + dx;
                 float Y3 = 0.0f*m12 + 1.0f*m22 + dy;
                 
-                AddLitQuad(LIGHTLIST_FOREGROUND, &TileSet->Sprite, gxRGBA32(255,255,255,255),
+                AddLitQuad(LightList, &TileSet->Sprite, gxRGBA32(255,255,255,255),
                            X0, Y0, U0, V0, 
                            X1, Y1, U1, V1,
                            X2, Y2, U2, V2, 
