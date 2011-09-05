@@ -123,10 +123,10 @@ void DisplayStaplers()
             int Frame = 1+Stapler->Timer/5;
             if (Frame >= FrameCount) 
                 Frame = FrameCount-1;
-            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, Frames[Frame], Stapler->X + ScrollX, Stapler->Y + ScrollY - 50, 1.0f, 0.0f);
+            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, Frames[Frame], Stapler->X + ScrollX, Stapler->Y + ScrollY - 60, 1.0f, 0.0f);
         }
         else
-            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, Frames[0], Stapler->X + ScrollX, Stapler->Y + ScrollY - 50, 1.0f, 0.0f);            
+            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, Frames[0], Stapler->X + ScrollX, Stapler->Y + ScrollY - 60, 1.0f, 0.0f);            
     }
 }
 
