@@ -223,6 +223,8 @@ inline float SinWave(float Time, float Period, float Amplitude=1.0f)
 #define strcasecmp _stricmp
 #define strdup _strdup
 #define snprintf _snprintf
+inline char* strtok_r(char* p, char* t, char**) { return strtok(p, t); }
+inline float strtof(char* p, char** pp) { return strtod(p, pp); }
 #endif
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//

@@ -1062,7 +1062,7 @@ void DisplayChapterExtraLayers()
     SPage* Page = &Chapter.Pages[Chapter.PageNum];
 
     for (int i = 0; i < Page->NLayers; i++)
-        DisplayChapterLayer(LIGHTLIST_FOREGROUND, Page->Layers[i].Blocks);
+        DisplayChapterLayer(LIGHTLIST_FOREGROUND_NO_SHADOW, Page->Layers[i].Blocks);
 }
 
 int GetBlockID(int x, int y)
