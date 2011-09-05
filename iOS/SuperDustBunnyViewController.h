@@ -25,6 +25,7 @@
     BOOL paused;
     BOOL wasPaused;
     int slowFactor;
+    UIActivityIndicatorView *spinner;
 }
 
 @property (nonatomic, retain) EAGLContext *context;
@@ -35,6 +36,9 @@
 
 - (void)showSettings;
 - (void)hideSettings;
+
+- (void)startSpinner;
+- (void)stopSpinner;
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
 

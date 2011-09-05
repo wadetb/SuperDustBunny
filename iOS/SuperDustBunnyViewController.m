@@ -63,12 +63,19 @@ SuperDustBunnyViewController *theViewController;
     displayLink = [[UIScreen mainScreen] displayLinkWithTarget:self selector:@selector(displayLinkFrame)];
     [displayLink setFrameInterval:slowFactor];
     [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-    
+
+    /*
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(volumeChanged:) 
                                                  name:@"AVSystemController_SystemVolumeDidChangeNotification" 
                                                object:nil];
+    */
     
+    spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    [spinner setCenter:CGPointMake(160,124)]; 
+    [spinner hidesWhenStopped];
+    [self.view addSubview:spinner]; 
+
     paused = FALSE;
     wasPaused = TRUE;
     
@@ -148,6 +155,18 @@ SuperDustBunnyViewController *theViewController;
     SaveSettings();
     
     paused = FALSE;
+}
+
+- (void)startSpinner
+{
+    [spinner startAnimating];
+    [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
+}
+
+- (void)stopSpinner
+{
+    [spinner stopAnimating];
+    [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
 }
 
 - (void)drawFrame

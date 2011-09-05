@@ -509,6 +509,9 @@ void LoadPageFromTMX(const char* FileName)
 		rapidxml::xml_attribute<char>* TileSetSourceAttr = TileSetNode->first_attribute("source");
 		if (TileSetSourceAttr == NULL)
 		{
+            rapidxml::xml_attribute<char>* TileSetNameAttr = TileSetNode->first_attribute("name");
+            ReportError("Detected internal tileset '%s'.  For consistency purposes, internal tilesets are no longer supported.  Fix this problem and re-save the TMX file.", TileSetNameAttr->value());
+            
 			// Load the internal tileset.
 			LoadTileSetNode(TileSetNode, FileName);
 			TileSetIndex = Chapter.NTileSets - 1;

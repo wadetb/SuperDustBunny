@@ -14,6 +14,7 @@
 
 #ifdef PLATFORM_IPHONE
 #include <zlib.h>
+#import "SuperDustBunnyViewController.h"
 #endif
 
 //-----------------------------------------------------------------------------------------------------------------------------------------//
@@ -488,11 +489,15 @@ bool DownloadLiveAssetFile(const char* FileName)
     NSLog(@"DOWNLOAD '%@'...", URLString);
 
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:10];
+
+    [theViewController startSpinner];
     
     NSURLResponse *response;
     NSError *error = [[NSError alloc] init];
     NSData* result = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-        
+
+    [theViewController stopSpinner];
+
     if (result && [(NSHTTPURLResponse*)response statusCode] == 200)
     {
         NSLog(@"DONE...");
