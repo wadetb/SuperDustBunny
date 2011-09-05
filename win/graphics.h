@@ -91,6 +91,8 @@ void gxSetShader(gxShader* Shader);
 
 gxShaderConstant gxGetShaderConstantByName(gxShader* Shader, const char* Name);
 void gxSetShaderConstant(gxShaderConstant Constant, float x, float y=0.0f, float z=0.0f, float w=0.0f);
+inline void gxSetShaderConstant1(gxShaderConstant Constant, float x) { gxSetShaderConstant( Constant, x, 0, 0, 0 ); }
+inline void gxSetShaderConstant2(gxShaderConstant Constant, float x, float y) { gxSetShaderConstant( Constant, x, y, 0, 0 ); }
 void gxSetShaderSampler(gxShaderConstant Constant, gxSprite* Sprite);
 
 #endif
