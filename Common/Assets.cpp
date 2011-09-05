@@ -488,7 +488,7 @@ bool DownloadLiveAssetFile(const char* FileName)
     
     NSLog(@"DOWNLOAD '%@'...", URLString);
 
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:10];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:600];
 
     [theViewController startSpinner];
     
