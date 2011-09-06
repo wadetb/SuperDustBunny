@@ -31,8 +31,6 @@
 
 - (IBAction)done:(id)sender;
 
-- (IBAction)controlSchemeChanged:(id)sender;
-
 - (void)transferSettingsFromView;
 - (void)transferSettingsToView;
 

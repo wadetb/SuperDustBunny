@@ -78,20 +78,6 @@
     [[self mainViewController] hideSettings];
 }
 
-- (IBAction)controlSchemeChanged:(id)sender {    
-    EAGLView *view = (EAGLView*)theViewController.view;
-    
-    if (controlScheme.selectedSegmentIndex == 0)
-    {
-        [[UIAccelerometer sharedAccelerometer] setDelegate:view];	
-        [[UIAccelerometer sharedAccelerometer] setUpdateInterval:(1.0f/30.0f)];
-    }
-    else
-    {
-        [[UIAccelerometer sharedAccelerometer] setDelegate:nil]; 
-    }
-}
-
 - (void)transferSettingsToView {
     controlScheme.selectedSegmentIndex = Settings.ControlStyle == CONTROL_TILT ? 0 : 1;
     infiniteLives.on = Settings.InfiniteLives;

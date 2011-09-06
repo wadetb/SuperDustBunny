@@ -10,6 +10,11 @@
 #include "Common.h"
 #include "Settings.h"
 
+#ifdef PLATFORM_IPHONE
+#import "SuperDustBunnyViewController.h"
+#import "EAGLView.h"
+#endif
+
 
 SSettings Settings;
 
@@ -66,6 +71,16 @@ void SaveSettings()
     [defaults setObject:[NSNumber numberWithBool:Settings.LiveAssets] forKey:@"LiveAssets"];
     [defaults setObject:[NSString stringWithUTF8String:Settings.AssetServer] forKey:@"AssetServer"];
     [defaults setObject:[NSNumber numberWithBool:Settings.ChapterSkip] forKey:@"ChapterSkip"];
+    
+    if (Settings.ControlStyle == CONTROL_TILT)
+    {
+        [[UIAccelerometer sharedAccelerometer] setDelegate:(EAGLView*)theViewController.view];	
+        [[UIAccelerometer sharedAccelerometer] setUpdateInterval:(1.0f/30.0f)];
+    }
+    else
+    {
+        [[UIAccelerometer sharedAccelerometer] setDelegate:nil]; 
+    }
 #endif
 }
 
