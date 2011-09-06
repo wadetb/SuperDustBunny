@@ -182,10 +182,7 @@ void StartScreen_Advance()
 	{
 #ifdef PLATFORM_IPHONE
         if (Settings.LiveAssets)
-        {
             UpdateLiveAssetCache();
-            LoadAssets();
-        }
 #endif
 
         CurrentChapter = StartScreen.CurItem - STARTSCREEN_ITEM_FIRST_CHAPTER;

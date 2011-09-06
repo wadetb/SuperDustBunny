@@ -488,15 +488,11 @@ bool DownloadLiveAssetFile(const char* FileName)
     
     NSLog(@"DOWNLOAD '%@'...", URLString);
 
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:600];
-
-    [theViewController startSpinner];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:10];
     
     NSURLResponse *response;
     NSError *error = [[NSError alloc] init];
     NSData* result = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-
-    [theViewController stopSpinner];
 
     if (result && [(NSHTTPURLResponse*)response statusCode] == 200)
     {
@@ -528,6 +524,8 @@ bool DownloadLiveAssetFile(const char* FileName)
 void UpdateLiveAssetCache()
 {
     double StartTime = GetCurrentTime();
+
+    [theViewController startSpinner];
 
     ClearAssetList(&CacheAssets);
     
@@ -602,6 +600,10 @@ void UpdateLiveAssetCache()
         LoadAssetList(Work, &CacheAssets);
     }
     
+    [theViewController stopSpinner];
+    
+    LoadAssets();
+
     double EndTime = GetCurrentTime();
     LogMessage("Live asset cache update took %.1f seconds.\n", EndTime-StartTime);
 }

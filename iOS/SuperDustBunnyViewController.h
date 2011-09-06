@@ -25,7 +25,7 @@
     BOOL paused;
     BOOL wasPaused;
     int slowFactor;
-    UIActivityIndicatorView *spinner;
+    UIView *spinnerPanel;
 }
 
 @property (nonatomic, retain) EAGLContext *context;

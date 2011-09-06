@@ -71,10 +71,27 @@ SuperDustBunnyViewController *theViewController;
                                                object:nil];
     */
     
-    spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    [spinner setCenter:CGPointMake(160,124)]; 
-    [spinner hidesWhenStopped];
-    [self.view addSubview:spinner]; 
+    spinnerPanel = [[UIView alloc] initWithFrame:CGRectMake(75, 155, 170, 140)];
+    spinnerPanel.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
+    spinnerPanel.clipsToBounds = YES;
+    spinnerPanel.layer.cornerRadius = 10.0;
+    
+    UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    [spinner setCenter:CGPointMake(85, 45)];
+    [spinnerPanel addSubview:spinner]; 
+    [spinner startAnimating];
+
+    UILabel *spinnerCaption = [[UILabel alloc] initWithFrame:CGRectMake(20, 90, 130, 22)];
+    spinnerCaption.backgroundColor = [UIColor clearColor];
+    spinnerCaption.textColor = [UIColor whiteColor];
+    spinnerCaption.adjustsFontSizeToFitWidth = YES;
+    spinnerCaption.textAlignment = UITextAlignmentCenter;
+    spinnerCaption.text = @"Syncing Live Assets";
+    [spinnerPanel addSubview:spinnerCaption]; 
+    
+    [self.view addSubview:spinnerPanel];
+    
+    spinnerPanel.hidden = YES;
 
     paused = FALSE;
     wasPaused = TRUE;
@@ -159,13 +176,13 @@ SuperDustBunnyViewController *theViewController;
 
 - (void)startSpinner
 {
-    [spinner startAnimating];
+    spinnerPanel.hidden = NO;
     [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
 }
 
 - (void)stopSpinner
 {
-    [spinner stopAnimating];
+    spinnerPanel.hidden = YES;
     [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
 }
 
