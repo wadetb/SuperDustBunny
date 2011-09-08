@@ -168,14 +168,15 @@ void PopErrorContext()
 
 void ReportError(const char* ErrorMessage, ...)
 {
+	char ErrorContext[8192];
 	char TotalMessage[8192];
 	int MessageSize = 0;
 
 	// Append the error contexts.
-	strcpy(TotalMessage, "");
+	strcpy(ErrorContext, "");
 	for (int i = 0; i < NErrorContexts; i++)
 	{
-		MessageSize += snprintf(TotalMessage + MessageSize, sizeof(TotalMessage) - MessageSize, "%s", ErrorContexts[i].Text);
+		MessageSize += snprintf(ErrorContext + MessageSize, sizeof(ErrorContext) - MessageSize, "%s", ErrorContexts[i].Text);
 	}
 
 	// Append the error message.
@@ -186,15 +187,27 @@ void ReportError(const char* ErrorMessage, ...)
 	vsnprintf(Work, sizeof(Work), ErrorMessage, args);
 	va_end(args);
 
-	snprintf(TotalMessage + MessageSize, sizeof(TotalMessage) - MessageSize, "%s", Work);
+	snprintf(TotalMessage, sizeof(TotalMessage), "%s%s", ErrorContext, Work);
 
 #ifdef PLATFORM_WINDOWS
 	MessageBox(NULL, TotalMessage, "SuperDustBunny Error", MB_OK | MB_ICONSTOP);
 	exit(1);
 #endif
 
+#ifdef PLATFORM_MAC
+	NSLog(@"SuperDustBunny Error: %s\n", TotalMessage);
+
+    NSAlert* alert = [[NSAlert alloc] init];
+    [alert setAlertStyle:NSCriticalAlertStyle];
+    [alert setMessageText: [NSString stringWithUTF8String:ErrorMessage]];
+    [alert setInformativeText:[NSString stringWithUTF8String:ErrorContext]];
+    [alert runModal];
+    
+    exit(255);
+#endif
+    
 #ifdef PLATFORM_IPHONE
-	printf("SuperDustBunny Error: %s\n", TotalMessage);
+	NSLog(@"SuperDustBunny Error: %s\n", TotalMessage);
     
     theViewController.paused = TRUE;
 

@@ -40,7 +40,7 @@ void UpdateCreditsScreen()
 #ifdef PLATFORM_WINDOWS
     bool CreditsPressed = kbIsKeyDown(KB_RETURN) || msButton1;
 #endif
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
     bool CreditsPressed = msButton1;
 #endif
 

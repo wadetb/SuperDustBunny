@@ -3,10 +3,22 @@
 
 #include <stdio.h>
 
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+#include <OpenGL/OpenGL.h>
+#include <OpenGL/gl3.h>
+#define glMapBufferOES glMapBuffer
+#define glUnmapBufferOES glUnmapBuffer
+#define GL_WRITE_ONLY_OES GL_WRITE_ONLY
+#endif
+
+#if TARGET_OS_IPHONE
 #include <OpenGLES/ES1/gl.h>
 #include <OpenGLES/ES1/glext.h>
 #include <OpenGLES/ES2/gl.h>
 #include <OpenGLES/ES2/glext.h>
+#define glBindVertexArrayAPPLE glBindVertexArrayOES
+#define glGenVertexArraysAPPLE glGenVertexArraysOES
+#endif
 
 #define gxRGBA32(r,g,b,a) (((b)<<16)|((g)<<8)|((r)<<0)|((a)<<24))
 #define gxRGB32(r,g,b)    gxRGBA32(r,g,b,255)

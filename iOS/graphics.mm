@@ -5,9 +5,9 @@
 int gxScreenWidth;
 int gxScreenHeight;
 
-GLuint _gxDefaultFrameBuffer;
-GLuint _gxDefaultFrameBufferWidth;
-GLuint _gxDefaultFrameBufferHeight;
+GLint _gxDefaultFrameBuffer;
+GLint _gxDefaultFrameBufferWidth;
+GLint _gxDefaultFrameBufferHeight;
 
 GLuint gxOpenGLESVersion;
 
@@ -108,6 +108,42 @@ void gxInitFontSprite()
 	free(buffer);	
 }
 
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+
+const char* gxSpriteVertexShaderSource =
+"#version 150 core\n"
+"in vec2 PositionAttr;\n"
+"in vec2 TexCoordAttr;\n"
+"in vec4 ColorAttr;\n"
+"\n"
+"out vec2 TexCoordInterp;\n"
+"out vec4 ColorInterp;\n"
+"\n"
+"void main()\n"
+"{\n"
+"	gl_Position = vec4(PositionAttr.x/768.0*2.0-1.0, (1.0-PositionAttr.y/1024.0)*2.0-1.0, 0, 1);\n"
+"	TexCoordInterp = TexCoordAttr;\n"
+"	ColorInterp = ColorAttr;\n"
+"}\n";
+
+const char* gxSpritePixelShaderSource =
+"#version 150 core\n"
+"uniform sampler2D ColorSampler;\n"
+"\n"
+"in vec2 TexCoordInterp;\n"
+"in vec4 ColorInterp;\n"
+"\n"
+"out vec4 Color;\n"
+"\n"
+"void main()\n"
+"{\n"
+"	Color = texture(ColorSampler, TexCoordInterp) * ColorInterp;\n"
+"}\n";
+
+#endif
+
+#if TARGET_OS_IPHONE 
+
 const char* gxSpriteVertexShaderSource =
 "attribute vec2 PositionAttr;\n"
 "attribute vec2 TexCoordAttr;\n"
@@ -134,6 +170,8 @@ const char* gxSpritePixelShaderSource =
 "	gl_FragColor = texture2D(Sampler, TexCoordInterp) * ColorInterp;\n"
 "}\n";
 
+#endif
+
 gxShader gxSpriteShader;
 
 void gxInitSpriteShader()
@@ -141,25 +179,24 @@ void gxInitSpriteShader()
     gxCreateShader(gxSpriteVertexShaderSource, gxSpritePixelShaderSource, &gxSpriteShader);
 }
 
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+#define glOrthof glOrtho
+#endif
+
 void gxInit()
 {
     gxScreenWidth = 768;
     gxScreenHeight = 1024;
-	
+    
 	msSetMouseRange( 0, 0, gxScreenWidth, gxScreenHeight );	
 	
-    if (gxOpenGLESVersion == 2)
-    {
-        glEnableVertexAttribArray(GX_ATTRIB_VERTEX);
-        glEnableVertexAttribArray(GX_ATTRIB_TEXCOORD);
-        glEnableVertexAttribArray(GX_ATTRIB_COLOR);
-    }
-    else
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+    gxOpenGLESVersion = 2;
+#endif
+    
+    if (gxOpenGLESVersion == 1)
     {
         glEnable(GL_TEXTURE_2D);        
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glEnableClientState(GL_COLOR_ARRAY);
     }
     
 	gxInitFontSprite();
@@ -168,6 +205,7 @@ void gxInit()
     {
         gxInitSpriteShader();
     }
+#if TARGET_OS_IPHONE
     else
     {
         glMatrixMode(GL_PROJECTION);
@@ -176,6 +214,7 @@ void gxInit()
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
     }
+#endif
 }
 
 void gxDeinit()
@@ -184,6 +223,11 @@ void gxDeinit()
 
 gxDisplayType gxGetDisplayType()
 {
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+    return GXDISPLAY_IPAD_PORTRAIT;
+#endif
+    
+#if TARGET_OS_IPHONE
     float Version = [[[UIDevice currentDevice] systemVersion] floatValue];
     if (Version < 3.2f)
         return GXDISPLAY_IPHONE_PORTRAIT;
@@ -200,11 +244,24 @@ gxDisplayType gxGetDisplayType()
     
     NSLog(@"Unknown display resolution; defaulting to iPhone.  Graphics may be blurry!");
     
-    return GXDISPLAY_IPHONE_PORTRAIT;    
+    return GXDISPLAY_IPHONE_PORTRAIT;  
+#endif
 }
 
 void gxLoadSprite(const char* filename, gxSprite* sprite)
 {
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+    CFStringRef path = CFStringCreateWithCString(NULL, filename, kCFStringEncodingUTF8);
+    CFURLRef url = CFURLCreateWithFileSystemPath(NULL, path, kCFURLPOSIXPathStyle, false);
+    CGImageSourceRef imageSource = CGImageSourceCreateWithURL(url, NULL);
+    CGImageRef image = CGImageSourceCreateImageAtIndex(imageSource, 0, NULL);
+	if (image == NULL)
+	{
+		return;
+	}
+#endif
+
+#if TARGET_OS_IPHONE
 	NSString* nsname = [[NSString alloc] initWithUTF8String:filename];
 	CGImageRef image = [[[UIImage imageNamed:nsname] retain] CGImage];
 	if (image == nil)
@@ -214,6 +271,7 @@ void gxLoadSprite(const char* filename, gxSprite* sprite)
 		return;
 	}
 	[nsname release];
+#endif
 	
 	sprite->width = CGImageGetWidth(image);
 	sprite->height = CGImageGetHeight(image);
@@ -346,6 +404,10 @@ void gxCreateShader(const char* VertexSource, const char* PixelSource, gxShader*
     glBindAttribLocation(Shader->Program, GX_ATTRIB_COLOR, "ColorAttr");
     glBindAttribLocation(Shader->Program, GX_ATTRIB_TEXCOORD, "TexCoordAttr");   
 
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+    glBindFragDataLocation(Shader->Program, 0, "Color");
+#endif
+    
     glLinkProgram(Shader->Program);
     
     glGetProgramiv(Shader->Program, GL_INFO_LOG_LENGTH, &logLength);
@@ -455,13 +517,17 @@ void gxSetRenderTarget(gxSprite* Sprite)
     }
     else
     {
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+#else
         glBindFramebuffer(GL_FRAMEBUFFER, _gxDefaultFrameBuffer);    
         glViewport(0, 0, _gxDefaultFrameBufferWidth, _gxDefaultFrameBufferHeight);
+#endif
     }
 
 //    GLenum attach[] = { GL_COLOR_ATTACHMENT0 };
 //    glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, attach);    
-    glClearColor(0, 0, 0, 0);
+    glClearColor(0, 0, 1, 0);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 

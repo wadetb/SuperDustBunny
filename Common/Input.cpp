@@ -60,7 +60,7 @@ bool GetInput_MoveLeft()
 #ifdef PLATFORM_WINDOWS
 	return kbIsKeyDown(KB_A);
 #endif
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
 	return msAccelX < -AccelThreshold[0];
 #endif
 }
@@ -79,7 +79,7 @@ bool GetInput_MoveRight()
 #ifdef PLATFORM_WINDOWS
 	return kbIsKeyDown(KB_D);
 #endif
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
 	return msAccelX > AccelThreshold[0];
 #endif
 }
@@ -98,7 +98,7 @@ bool GetInput_Jump()
 #ifdef PLATFORM_WINDOWS
     return kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE);
 #endif
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
     return msButton1 && !msOldButton1;
 #endif	
 }

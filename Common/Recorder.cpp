@@ -19,7 +19,7 @@
 #pragma comment(lib,"winhttp.lib")
 #endif
 
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
 #include <sys/sysctl.h>
 #endif
 
@@ -150,6 +150,9 @@ void UploadRecording()
     //NSLog(@"HTTP post response:\n%@\n\n", [[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding]);
 #endif
     
+#ifdef PLATFORM_MAC
+#endif
+    
 	free(Data);
 }
 
@@ -215,6 +218,11 @@ void DownloadRecording(int id)
     DataSize = [result length];
 #endif
 
+#ifdef PLATFORM_MAC
+    const void* Data = NULL;
+    int DataSize = 0;
+#endif
+    
     if (DataSize < sizeof(SRecorderHeader))
         ReportError("Downloaded recorder data is too small to be valid.");
 
@@ -254,6 +262,7 @@ void StartRecording()
 	snprintf(RecorderHeader.ComputerName, sizeof(RecorderHeader.ComputerName), getenv("COMPUTERNAME"));
 	snprintf(RecorderHeader.UserName, sizeof(RecorderHeader.UserName), getenv("USERNAME"));
 #endif
+    
 #ifdef PLATFORM_IPHONE
     [[[UIDevice currentDevice] name] getCString:RecorderHeader.UserName maxLength:sizeof(RecorderHeader.UserName) encoding:NSUTF8StringEncoding];
 

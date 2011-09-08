@@ -11,7 +11,6 @@
 #include "Lighting.h"
 #include "Chapter.h"
 
-
 #define MAX_LIT_QUADS_PER_LIST	8192 // Holy crap
 #define MAX_LIT_VERTS			65536
 
@@ -21,7 +20,7 @@ int NLitVerts;
 int CurrentBlendMode;
 gxShader* CurrentShader;
 
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
 
 int NLitVertIndices;
 
@@ -31,7 +30,9 @@ int BufferObjectIndex;
 
 GLuint LitVertsVBO[LIT_VBO_COUNT];
 GLuint LitVertsIBO[LIT_VBO_COUNT];
+GLuint LitVertsVAO[LIT_VBO_COUNT];
 
+GLuint ScreenVAO;
 GLuint ScreenVBO;
 
 SLitVertex* LitVerts;
@@ -45,7 +46,7 @@ SLitVertex ScreenVerts[4] =
     { 768.0f,  1024.0f, 1.0f, 0.0f, 0xffffffff },
 };
 
-GLuint CurrentVBO;
+GLuint CurrentVAO;
 
 #endif
 
@@ -263,6 +264,121 @@ const char* CombineShaderSource =
 #endif
 
 
+#ifdef PLATFORM_MAC
+
+const char* LitVertexShaderSource =
+"#version 150\n"
+"in vec2 PositionAttr;\n"
+"in vec2 TexCoordAttr;\n"
+"in vec4 ColorAttr;\n"
+"\n"
+"out vec2 TexCoordInterp;\n"
+"out vec4 ColorInterp;\n"
+"\n"
+"void main()\n"
+"{\n"
+"	gl_Position = vec4(PositionAttr.x/768.0*2.0-1.0, (1.0-PositionAttr.y/1024.0)*2.0-1.0, 0, 1);\n"
+"	TexCoordInterp = TexCoordAttr;\n"
+"	ColorInterp = ColorAttr;\n"
+"}\n";
+
+const char* LitShaderSource =
+"#version 150\n"
+"uniform sampler2D ColorSampler;\n"
+"\n"
+"in vec2 TexCoordInterp;\n"
+"in vec4 ColorInterp;\n"
+"\n"
+"out vec4 Color;\n"
+"\n"
+"void main()\n"
+"{\n"
+"	Color = texture(ColorSampler, TexCoordInterp) * ColorInterp;\n"
+"}\n";
+
+const char* ShadowVertexShaderSource =
+"#version 150\n"
+"uniform vec2 ShadowOffset;\n"
+"\n"
+"in vec2 PositionAttr;\n"
+"in vec2 TexCoordAttr;\n"
+"in vec4 ColorAttr;\n"
+"\n"
+"out vec2 TexCoordInterp;\n"
+"out vec4 ColorInterp;\n"
+"\n"
+"void main()\n"
+"{\n"
+"	gl_Position = vec4((PositionAttr.x+ShadowOffset.x)/768.0*2.0-1.0, (1.0-(PositionAttr.y+ShadowOffset.y)/1024.0)*2.0-1.0, 0, 1);\n"
+"	TexCoordInterp = TexCoordAttr;\n"
+"	ColorInterp = ColorAttr;\n"
+"}\n";
+
+const char* ShadowShaderSource =
+"#version 150\n"
+"uniform float ShadowAlpha;\n"
+"uniform sampler2D ColorSampler;\n"
+"\n"
+"in vec2 TexCoordInterp;\n"
+"in vec4 ColorInterp;\n"
+"\n"
+"out vec4 Color;\n"
+"\n"
+"void main()\n"
+"{\n"
+"	Color = vec4(0.0, 0.0, 0.0, ColorInterp.a * ShadowAlpha * texture(ColorSampler, TexCoordInterp).a);\n"
+"}\n";
+
+const char* StandardVertexShaderSource =
+"#version 150\n"
+"in vec2 PositionAttr;\n"
+"in vec2 TexCoordAttr;\n"
+"in vec4 ColorAttr;\n"
+"\n"
+"out vec2 TexCoordInterp;\n"
+"out vec4 ColorInterp;\n"
+"\n"
+"void main()\n"
+"{\n"
+"	gl_Position = vec4(PositionAttr.x/768.0*2.0-1.0, (1.0-PositionAttr.y/1024.0)*2.0-1.0, 0, 1);\n"
+"	TexCoordInterp = TexCoordAttr;\n"
+"	ColorInterp = ColorAttr;\n"
+"}\n";
+
+const char* EffectsShaderSource =
+"#version 150\n"
+"uniform sampler2D ColorSampler;\n"
+"\n"
+"in vec2 TexCoordInterp;\n"
+"in vec4 ColorInterp;\n"
+"\n"
+"out vec4 Color;\n"
+"\n"
+"void main()\n"
+"{\n"
+"	Color = texture(ColorSampler, TexCoordInterp) * ColorInterp * 2.0;\n"
+"}\n";
+
+const char* CombineShaderSource =
+"#version 150\n"
+"uniform sampler2D ColorSampler;\n"
+"uniform sampler2D ColorBleedSampler;\n"
+"uniform sampler2D LightingSampler;\n"
+"\n"
+"in vec2 TexCoordInterp;\n"
+"\n"
+"out vec4 Color;\n"
+"\n"
+"void main()\n"
+"{\n"
+"	vec4 SceneColor = texture(ColorSampler, TexCoordInterp);\n"
+"	vec4 Lighting = texture(LightingSampler, TexCoordInterp);\n"
+"   Color = (Lighting*2.0) * SceneColor;\n"
+"}\n";
+
+#endif
+
+
 #ifdef PLATFORM_IPHONE
 
 const char* LitVertexShaderSource =
@@ -412,26 +528,12 @@ void DrawLightList(int List, gxShader* Shader, gxAlphaMode Alpha)
     }
 #endif
     
-#ifdef PLATFORM_IPHONE
-    if (CurrentVBO != LitVertsVBO[BufferObjectIndex])
+#ifdef PLATFORM_IPHONE_OR_MAC
+    if (CurrentVAO != LitVertsVAO[BufferObjectIndex])
     {
-        CurrentVBO = LitVertsVBO[BufferObjectIndex];
+        CurrentVAO = LitVertsVAO[BufferObjectIndex];
 
-        glBindBuffer(GL_ARRAY_BUFFER, LitVertsVBO[BufferObjectIndex]);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, LitVertsIBO[BufferObjectIndex]);
-        
-        if (gxOpenGLESVersion == 2)
-        {
-            glVertexAttribPointer(GX_ATTRIB_VERTEX, 2, GL_FLOAT, 0, sizeof(SLitVertex), (void*)offsetof(SLitVertex, X));
-            glVertexAttribPointer(GX_ATTRIB_TEXCOORD, 2, GL_FLOAT, 0, sizeof(SLitVertex), (void*)offsetof(SLitVertex, U));
-            glVertexAttribPointer(GX_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, sizeof(SLitVertex), (void*)offsetof(SLitVertex, Color));
-        }
-        else
-        {
-            glVertexPointer(3, GL_FLOAT, sizeof(SLitVertex), (void*)offsetof(SLitVertex, X));
-            glTexCoordPointer(2, GL_FLOAT, sizeof(SLitVertex), (void*)offsetof(SLitVertex, U));
-            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(SLitVertex), (void*)offsetof(SLitVertex, Color));
-        }
+        glBindVertexArray(LitVertsVAO[BufferObjectIndex]);
     }
     
     int NQuads = LightLists[List].NQuads;
@@ -479,26 +581,12 @@ void DrawScreen(gxShader* Shader, gxAlphaMode Alpha)
     gxDev->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 4, ScreenVerts, sizeof(SLitVertex) );
 #endif
 
-#ifdef PLATFORM_IPHONE
-    if (CurrentVBO != ScreenVBO)
+#ifdef PLATFORM_IPHONE_OR_MAC
+    if (CurrentVAO != ScreenVAO)
     {
-        CurrentVBO = ScreenVBO;
+        CurrentVAO = ScreenVAO;
         
-        glBindBuffer(GL_ARRAY_BUFFER, ScreenVBO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        
-        if (gxOpenGLESVersion == 2)
-        {
-            glVertexAttribPointer(GX_ATTRIB_VERTEX, 2, GL_FLOAT, 0, sizeof(SLitVertex), (void*)offsetof(SLitVertex, X));
-            glVertexAttribPointer(GX_ATTRIB_TEXCOORD, 2, GL_FLOAT, 0, sizeof(SLitVertex), (void*)offsetof(SLitVertex, U));
-            glVertexAttribPointer(GX_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, sizeof(SLitVertex), (void*)offsetof(SLitVertex, Color));
-        }
-        else
-        {
-            glVertexPointer(3, GL_FLOAT, sizeof(SLitVertex), (void*)offsetof(SLitVertex, X));
-            glTexCoordPointer(2, GL_FLOAT, sizeof(SLitVertex), (void*)offsetof(SLitVertex, U));
-            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(SLitVertex), (void*)offsetof(SLitVertex, Color));
-        }
+        glBindVertexArray(ScreenVAO);
     }
     
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -519,7 +607,7 @@ void InitShadows()
 	gxCreateRenderTarget(LitRenderTargetWidth, LitRenderTargetHeight, &ShadowVacuumRT, true);
 #endif
 
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
 	gxCreateRenderTarget(LitRenderTargetWidth/2, LitRenderTargetHeight/2, &ShadowForegroundRT, true);
 	gxCreateRenderTarget(LitRenderTargetWidth/2, LitRenderTargetHeight/2, &ShadowVacuumRT, true);
 #endif
@@ -581,7 +669,7 @@ void InitLighting()
     CombineLightingSampler = gxGetShaderConstantByName(&CombineShader, "LightingSampler");
 #endif
 
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
     switch (gxGetDisplayType()) 
     {
     case GXDISPLAY_IPAD_PORTRAIT:
@@ -609,22 +697,83 @@ void InitLighting()
     };
     
     // Create the vertex and index buffers.
+    glGenVertexArrays(LIT_VBO_COUNT, LitVertsVAO);
     glGenBuffers(LIT_VBO_COUNT, LitVertsVBO);
     glGenBuffers(LIT_VBO_COUNT, LitVertsIBO);
     for (int i = 0; i < LIT_VBO_COUNT; i++)
     {
+        glBindVertexArray(LitVertsVAO[i]);
+        
         glBindBuffer(GL_ARRAY_BUFFER, LitVertsVBO[i]);
         glBufferData(GL_ARRAY_BUFFER, sizeof(SLitVertex) * MAX_LIT_VERTS, NULL, GL_DYNAMIC_DRAW);
         
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, LitVertsIBO[i]);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * MAX_LIT_VERTS * 2, NULL, GL_DYNAMIC_DRAW);
+        
+        if (gxOpenGLESVersion == 2)
+        {
+            glEnableVertexAttribArray(GX_ATTRIB_VERTEX);
+            glEnableVertexAttribArray(GX_ATTRIB_TEXCOORD);
+            glEnableVertexAttribArray(GX_ATTRIB_COLOR);
+            glVertexAttribPointer(GX_ATTRIB_VERTEX, 2, GL_FLOAT, 0, sizeof(SLitVertex), (void*)offsetof(SLitVertex, X));
+            glVertexAttribPointer(GX_ATTRIB_TEXCOORD, 2, GL_FLOAT, 0, sizeof(SLitVertex), (void*)offsetof(SLitVertex, U));
+            glVertexAttribPointer(GX_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, sizeof(SLitVertex), (void*)offsetof(SLitVertex, Color));
+        }
+#if TARGET_OS_IPHONE
+        else
+        {
+            glVertexPointer(3, GL_FLOAT, sizeof(SLitVertex), (void*)offsetof(SLitVertex, X));
+            glTexCoordPointer(2, GL_FLOAT, sizeof(SLitVertex), (void*)offsetof(SLitVertex, U));
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(SLitVertex), (void*)offsetof(SLitVertex, Color));
+        }
+#endif
     }
     
     BufferObjectIndex = 0;
     
+#ifdef PLATFORM_IPHONE_OR_MAC
+    GLenum error = glGetError();
+    if (error != GL_NO_ERROR)
+        ReportError("Lit VAO setup caused an OpenGL error: 0x%x", error);
+#endif
+
+    glGenVertexArrays(1, &ScreenVAO);
+    glBindVertexArray(ScreenVAO);
+
     glGenBuffers(1, &ScreenVBO);
     glBindBuffer(GL_ARRAY_BUFFER, ScreenVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(SLitVertex) * 4, ScreenVerts, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    if (gxOpenGLESVersion == 2)
+    {
+        glEnableVertexAttribArray(GX_ATTRIB_VERTEX);
+        glEnableVertexAttribArray(GX_ATTRIB_TEXCOORD);
+        glEnableVertexAttribArray(GX_ATTRIB_COLOR);
+        glVertexAttribPointer(GX_ATTRIB_VERTEX, 2, GL_FLOAT, 0, sizeof(SLitVertex), (void*)offsetof(SLitVertex, X));
+        glVertexAttribPointer(GX_ATTRIB_TEXCOORD, 2, GL_FLOAT, 0, sizeof(SLitVertex), (void*)offsetof(SLitVertex, U));
+        glVertexAttribPointer(GX_ATTRIB_COLOR, 4, GL_UNSIGNED_BYTE, 1, sizeof(SLitVertex), (void*)offsetof(SLitVertex, Color));
+    }
+#if TARGET_OS_IPHONE
+    else
+    {
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
+        glVertexPointer(3, GL_FLOAT, sizeof(SLitVertex), (void*)offsetof(SLitVertex, X));
+        glTexCoordPointer(2, GL_FLOAT, sizeof(SLitVertex), (void*)offsetof(SLitVertex, U));
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(SLitVertex), (void*)offsetof(SLitVertex, Color));
+    }
+#endif
+    
+    glBindVertexArray(0);
+
+#ifdef PLATFORM_IPHONE_OR_MAC
+    error = glGetError();
+    if (error != GL_NO_ERROR)
+        ReportError("Screen setup caused an OpenGL error: 0x%x", error);
+#endif
 
     // Create shaders.
     if (gxOpenGLESVersion == 2)
@@ -645,8 +794,14 @@ void InitLighting()
     }
 #endif
     
+#ifdef PLATFORM_IPHONE_OR_MAC
+    error = glGetError();
+    if (error != GL_NO_ERROR)
+        ReportError("Shader setup caused an OpenGL error: 0x%x", error);
+#endif
+ 
 	// Create render targets.
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
     if (gxOpenGLESVersion == 2)
 #endif
     {
@@ -655,6 +810,12 @@ void InitLighting()
 
         InitShadows();
     }
+    
+#ifdef PLATFORM_IPHONE_OR_MAC
+    error = glGetError();
+    if (error != GL_NO_ERROR)
+        ReportError("RT setup caused an OpenGL error: 0x%x", error);
+#endif
     
     double EndTime = GetCurrentTime();
     LogMessage("Lighting setup took %.1f seconds.\n", EndTime-StartTime);
@@ -667,7 +828,7 @@ void ResetLighting()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
     //                                                   Begin writing buffers                                                                 //
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
     NLitVertIndices = 0;
     
     BufferObjectIndex = (BufferObjectIndex+1) % LIT_VBO_COUNT;
@@ -692,7 +853,7 @@ void RenderLighting()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
     //                                                   Finish writing buffers                                                                //
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
     glBindBuffer(GL_ARRAY_BUFFER, LitVertsVBO[BufferObjectIndex]);
     glUnmapBufferOES(GL_ARRAY_BUFFER);
     LitVerts = NULL;
@@ -710,7 +871,7 @@ void RenderLighting()
 	else
 		LightState.AmbientColor = gxRGBA32(128, 128, 128, 255);
 
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
     //                                                         OpenGL ES 1.1 Renderer                                                          //
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -827,7 +988,7 @@ SLitVertex* AllocateLitVerts(int NVerts)
 	return Verts;
 }
 
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
 void AddLitQuadStripIndices(SLitQuad* Quad, int NVerts)
 {
     Quad->BaseIndex = NLitVertIndices;
@@ -865,7 +1026,7 @@ void AddLitQuad(
 	Quad->List = List;
 	Quad->Sprite = Sprite;
 
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
     AddLitQuadStripIndices(Quad, 4);
 #endif    
 
@@ -920,7 +1081,7 @@ SLitVertex* AddLitQuad(ELightList List, gxSprite* Sprite, int NVerts)
 	Quad->List = List;
 	Quad->Sprite = Sprite;
 
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
     AddLitQuadStripIndices(Quad, NVerts);
 #endif    
 

@@ -40,7 +40,7 @@ struct SLitQuad
 	int NVerts;
 	SLitVertex* Verts;
     
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
     GLushort BaseIndex;
     GLushort IndexCount;
 #endif

@@ -78,7 +78,8 @@ void sxGetOpenALAudioData(CFURLRef inFileURL, void** outData, ALsizei *outDataSi
 
 void sxLoadSound(const char* filename, sxSound* sound)
 {
-	CFURLRef url = (CFURLRef)[[NSURL fileURLWithPath:[[NSString alloc] initWithUTF8String:filename]] retain];
+    CFStringRef path = CFStringCreateWithCString(NULL, filename, kCFStringEncodingUTF8);
+    CFURLRef url = CFURLCreateWithFileSystemPath(NULL, path, kCFURLPOSIXPathStyle, false);
 	
 	ALenum format;
 	ALsizei size;

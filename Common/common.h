@@ -21,12 +21,16 @@
 
 #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
 #define PLATFORM_IPHONE
+#define PLATFORM_IPHONE_OR_MAC
 
 #elif TARGET_OS_MAC
 #define PLATFORM_MAC
+#define PLATFORM_IPHONE_OR_MAC
+#define PLATFORM_WINDOWS_OR_MAC
 
 #elif defined(_MSC_VER)
 #define PLATFORM_WINDOWS
+#define PLATFORM_WINDOWS_OR_MAC
 #endif
 
 
@@ -44,10 +48,11 @@
 #include <mach/mach.h>
 #include <mach/mach_time.h>
 #elif defined(PLATFORM_MAC)
-#include "Mac/graphics.h"
-#include "Mac/mouse.h"
-#include "Mac/keyboard.h"
-#include "Mac/sound.h"
+#include "../iOS/graphics.h"
+#include "../iOS/mouse.h"
+#include "../iOS/sound.h"
+#include <mach/mach.h>
+#include <mach/mach_time.h>
 #endif
 
 #include <stdio.h>
@@ -56,6 +61,7 @@
 #include <ctype.h>
 #include <math.h>
 #include <time.h>
+#include <limits.h>
 
 #include "rapidxml/rapidxml.hpp"
 
@@ -190,7 +196,7 @@ inline float Random(float Min, float Max)
 	rand_s( &i );
 	return (float)( Min + ( (double)i / (double)UINT_MAX ) * (Max-Min) );
 #endif
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
 	u_int32_t i = arc4random();
 	return (float)( Min + ( (double)i / (double)((2ULL<<31)-1) ) * (Max-Min) );
 #endif
@@ -203,7 +209,7 @@ inline int Random(int Min, int Max)
 	rand_s( &i );
 	return Min + ( i % (Max-Min) );
 #endif
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
 	u_int32_t i = arc4random();
 	return (float)( Min + ( (double)i / (double)((2ULL<<31)-1) ) * (Max-Min) );
 #endif

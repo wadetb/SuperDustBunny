@@ -211,7 +211,11 @@ sxSound CoinVacuumedUpSound;
 sxSound GearGrindSound;
 sxSound TennisBallVacuumedUpSound;
 
+#ifdef PLATFORM_MAC
 
+char RootDirectory[1024];
+
+#endif
 
 #ifdef PLATFORM_IPHONE
 
@@ -642,6 +646,10 @@ void GetAsset(const char* FileName, SAssetList** AssetList, SAsset** Asset)
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 void GetBundleFileName(const char* FileName, char* Buf, int BufSize)
 {
+#ifdef PLATFORM_MAC
+    snprintf(Buf, BufSize, "%s/%s", RootDirectory, FileName);
+#endif
+    
 #ifdef PLATFORM_IPHONE
 	CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
     
@@ -684,7 +692,7 @@ void* LoadAssetFile(const char* FileName, void** Data, int* DataSize)
     }
 #endif
     
-#ifdef PLATFORM_WINDOWS
+#ifdef PLATFORM_WINDOWS_OR_MAC
     char Work[1024];
     GetBundleFileName(FileName, Work, sizeof(Work));
     
@@ -791,7 +799,7 @@ void LoadSpriteAsset(const char* FileName, gxSprite* Sprite)
     free(Pixels);
 #endif
     
-#ifdef PLATFORM_WINDOWS
+#ifdef PLATFORM_WINDOWS_OR_MAC
 	char Work[1024];
 	GetBundleFileName(FileName, Work, sizeof(Work));
 
