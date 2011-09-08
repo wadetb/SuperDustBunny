@@ -108,81 +108,6 @@ void gxInitFontSprite()
 	free(buffer);	
 }
 
-#if TARGET_OS_MAC && !TARGET_OS_IPHONE
-
-const char* gxSpriteVertexShaderSource =
-"#version 150 core\n"
-"in vec2 PositionAttr;\n"
-"in vec2 TexCoordAttr;\n"
-"in vec4 ColorAttr;\n"
-"\n"
-"out vec2 TexCoordInterp;\n"
-"out vec4 ColorInterp;\n"
-"\n"
-"void main()\n"
-"{\n"
-"	gl_Position = vec4(PositionAttr.x/768.0*2.0-1.0, (1.0-PositionAttr.y/1024.0)*2.0-1.0, 0, 1);\n"
-"	TexCoordInterp = TexCoordAttr;\n"
-"	ColorInterp = ColorAttr;\n"
-"}\n";
-
-const char* gxSpritePixelShaderSource =
-"#version 150 core\n"
-"uniform sampler2D ColorSampler;\n"
-"\n"
-"in vec2 TexCoordInterp;\n"
-"in vec4 ColorInterp;\n"
-"\n"
-"out vec4 Color;\n"
-"\n"
-"void main()\n"
-"{\n"
-"	Color = texture(ColorSampler, TexCoordInterp) * ColorInterp;\n"
-"}\n";
-
-#endif
-
-#if TARGET_OS_IPHONE 
-
-const char* gxSpriteVertexShaderSource =
-"attribute vec2 PositionAttr;\n"
-"attribute vec2 TexCoordAttr;\n"
-"attribute vec4 ColorAttr;\n"
-"\n"
-"varying vec2 TexCoordInterp;\n"
-"varying vec4 ColorInterp;\n"
-"\n"
-"void main()\n"
-"{\n"
-"	gl_Position = vec4(PositionAttr.x/768.0*2.0-1.0, (1.0-PositionAttr.y/1024.0)*2.0-1.0, 0, 1);\n"
-"	TexCoordInterp = TexCoordAttr;\n"
-"	ColorInterp = ColorAttr;\n"
-"}\n";
-
-const char* gxSpritePixelShaderSource =
-"uniform lowp sampler2D Sampler;\n"
-"\n"
-"varying lowp vec2 TexCoordInterp;\n"
-"varying lowp vec4 ColorInterp;\n"
-"\n"
-"void main()\n"
-"{\n"
-"	gl_FragColor = texture2D(Sampler, TexCoordInterp) * ColorInterp;\n"
-"}\n";
-
-#endif
-
-gxShader gxSpriteShader;
-
-void gxInitSpriteShader()
-{
-    gxCreateShader(gxSpriteVertexShaderSource, gxSpritePixelShaderSource, &gxSpriteShader);
-}
-
-#if TARGET_OS_MAC && !TARGET_OS_IPHONE
-#define glOrthof glOrtho
-#endif
-
 void gxInit()
 {
     gxScreenWidth = 768;
@@ -194,20 +119,12 @@ void gxInit()
     gxOpenGLESVersion = 2;
 #endif
     
+	gxInitFontSprite();
+    
+#if TARGET_OS_IPHONE
     if (gxOpenGLESVersion == 1)
     {
         glEnable(GL_TEXTURE_2D);        
-    }
-    
-	gxInitFontSprite();
-    
-    if (gxOpenGLESVersion == 2)
-    {
-        gxInitSpriteShader();
-    }
-#if TARGET_OS_IPHONE
-    else
-    {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         glOrthof(0, gxScreenWidth, gxScreenHeight, 0, -1.0f, 1.0f);

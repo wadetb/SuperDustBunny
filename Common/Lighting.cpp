@@ -766,13 +766,11 @@ void InitLighting()
         glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(SLitVertex), (void*)offsetof(SLitVertex, Color));
     }
 #endif
-    
-    glBindVertexArray(0);
 
 #ifdef PLATFORM_IPHONE_OR_MAC
     error = glGetError();
     if (error != GL_NO_ERROR)
-        ReportError("Screen setup caused an OpenGL error: 0x%x", error);
+        ReportError("Screen VAO setup caused an OpenGL error: 0x%x", error);
 #endif
 
     // Create shaders.

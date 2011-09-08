@@ -13,9 +13,25 @@ void Exit();
 void Update();
 void Display();
 
+extern int _msNewX;
+extern int _msNewY;
+extern int _msNewButton1;
+
+extern float _msNewAccelX;
+extern float _msNewAccelY;
+extern float _msNewAccelZ;
+
+extern GLuint _gxDefaultFrameBuffer;
+extern GLuint _gxDefaultFrameBufferWidth;
+extern GLuint _gxDefaultFrameBufferHeight;
+
+void GetInput_BeginSwipe(float X, float Y, double Time);
+void GetInput_AddToSwipe(float X, float Y, double Time);
+void GetInput_EndSwipe(float X, float Y, double Time);
+
 @implementation SDBOpenGLView
 
-- (void)awakeFromNib
+- (id)initWithFrame:(NSRect)frameRect
 {
     NSOpenGLPixelFormatAttribute attrs[] =
     {
@@ -25,13 +41,14 @@ void Display();
         0
     };
     
-    NSOpenGLPixelFormat *pf = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
-    if (!pf)
-        NSLog(@"No OpenGL pixel format");
-
-    [self setPixelFormat:pf];
-    
+    NSOpenGLPixelFormat *pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
+    if (!pixelFormat)
+        NSLog(@"Failed to create OpenGL pixel format");
+        
     started = NO;
+    currentTouch = nil;
+
+    return [super initWithFrame:frameRect pixelFormat:pixelFormat];
 }
 
 - (void)dealloc
@@ -69,19 +86,21 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 }
 
 - (void)startup
-{
+{    
     Init();
     started = YES;
+    
+    [self setAcceptsTouchEvents:YES];
 }
 
 - (void)displayFrameForTimer
 {
     [[self openGLContext] makeCurrentContext];
     
-    glClearColor(1, 0, 0, 0);
+    glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT);
     
-    //glViewport(0, 0, 576, 768);
+    glViewport(0, 0, 576, 768);
     
     if (started)
     {
@@ -94,23 +113,110 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 
 - (void)displayFrameForDisplayLink:(const CVTimeStamp*)outputTime
 {
-    [[self openGLContext] makeCurrentContext];
-    
-    glClearColor(0, 0, 0, 0);
-    glClear(GL_COLOR_BUFFER_BIT);
-    
-    if (started)
-    {
-        Update();
-        Display();
-    }
-    
-    [[self openGLContext] flushBuffer];
+    [self displayFrameForTimer];
 }
 
 - (void)drawRect:(NSRect)dirtyRect
 {
     [self displayFrameForTimer];
+}
+
+- (void)touchesBeganWithEvent:(NSEvent *)event
+{
+    NSSet* touches = [event touchesMatchingPhase:NSTouchPhaseTouching inView:nil];    
+    if (currentTouch)
+        return;
+    
+	currentTouch = [[touches anyObject] retain];
+    
+    if (currentTouch) {
+        CGPoint touchPoint = currentTouch.normalizedPosition;
+        _msNewX = touchPoint.x * 768;
+        _msNewY = (1.0f-touchPoint.y) * 1024;
+        _msNewButton1 = 1;
+        
+        GetInput_BeginSwipe(_msNewX, _msNewY, event.timestamp);
+    }
+}
+
+- (void)touchesMovedWithEvent:(NSEvent *)event
+{
+    NSSet* touches = [event touchesMatchingPhase:NSTouchPhaseTouching inView:nil];  
+    NSArray* array = [touches allObjects];    
+    for (int i = 0; i < array.count; i++)
+    {
+        NSTouch *touch = [array objectAtIndex:i];
+        if ([touch.identity isEqual:currentTouch.identity])
+        {
+            [currentTouch release];
+            currentTouch = [touch retain];
+            break;
+        }
+    }
+    
+    if (currentTouch) {
+        CGPoint touchPoint = currentTouch.normalizedPosition;
+        _msNewX = touchPoint.x * 768;
+        _msNewY = (1.0f-touchPoint.y) * 1024;
+        
+        GetInput_AddToSwipe(_msNewX, _msNewY, event.timestamp);
+    }
+}
+
+- (void)touchesEndedWithEvent:(NSEvent *)event
+{
+    NSSet* touches = [event touchesMatchingPhase:NSTouchPhaseTouching inView:nil];  
+    NSArray* array = [touches allObjects];    
+    for (int i = 0; i < array.count; i++)
+    {
+        NSTouch *touch = [array objectAtIndex:i];
+        if ([touch.identity isEqual:currentTouch.identity])
+        {
+            [currentTouch release];
+            currentTouch = [touch retain];
+            break;
+        }
+    }
+    
+    if (currentTouch) {
+        CGPoint touchPoint = currentTouch.normalizedPosition;
+        _msNewX = touchPoint.x * 768;
+        _msNewY = (1.0f-touchPoint.y) * 1024;
+        _msNewButton1 = 0;
+        
+        GetInput_EndSwipe(_msNewX, _msNewY, event.timestamp);
+        
+        [currentTouch release];
+        currentTouch = nil;
+    }
+}
+
+- (void)touchesCancelledWithEvent:(NSEvent *)event
+{
+    NSSet* touches = [event touchesMatchingPhase:NSTouchPhaseTouching inView:nil];  
+    NSArray* array = [touches allObjects];    
+    for (int i = 0; i < array.count; i++)
+    {
+        NSTouch *touch = [array objectAtIndex:i];
+        if ([touch.identity isEqual:currentTouch.identity])
+        {
+            [currentTouch release];
+            currentTouch = [touch retain];
+            break;
+        }
+    }
+    
+    if (currentTouch) {
+        CGPoint touchPoint = currentTouch.normalizedPosition;
+        _msNewX = touchPoint.x * 768;
+        _msNewY = (1.0f-touchPoint.y) * 1024;
+        _msNewButton1 = 0;
+        
+        GetInput_EndSwipe(_msNewX, _msNewY, event.timestamp);
+        
+        [currentTouch release];
+        currentTouch = nil;
+    }
 }
 
 @end

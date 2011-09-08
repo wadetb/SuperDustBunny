@@ -102,7 +102,7 @@ void Init()
 	kbInit();
 #endif
 	
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
 	msInit();
 #endif	
     
@@ -120,7 +120,7 @@ void Exit()
 	kbDeinit();
 #endif
 
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
 	msDeinit();
 #endif	
 	
@@ -230,7 +230,7 @@ void ReportError(const char* ErrorMessage, ...)
 
 void LogMessage(const char* LogMessage, ...)
 {
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
 	va_list args;
 	va_start(args, LogMessage);
 	vprintf(LogMessage, args);
@@ -240,7 +240,7 @@ void LogMessage(const char* LogMessage, ...)
 
 double GetCurrentTime()
 {
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
 	mach_timebase_info_data_t timerInfo;
 	mach_timebase_info(&timerInfo);
 	
@@ -267,7 +267,7 @@ void UpdateFPS()
 	FPS = (1000.0f / ((float)Time - (float)LastTime) + 0.5f);
 	LastTime = Time;
 #endif
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
 	mach_timebase_info_data_t timerInfo;
 	mach_timebase_info(&timerInfo);
     
@@ -594,7 +594,7 @@ void DisplayGame_Playing()
 			Dusty.FloatX, Dusty.FloatY, Dusty.FloatVelocityX, Dusty.FloatVelocityY, Chapter.Pages[Chapter.PageNum].Name,
 			Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide, Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide, Dusty.Direction, Dusty.CollideMaterial);
 		
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
 		// Draw the accelerometer data directly.
 		gxDrawRectangleFilled(768/2, 1024-32, msAccelX*300, 16, 0xff00ff00);
 #endif
@@ -616,7 +616,7 @@ void UpdateGame_Playing()
         GamePause = !GamePause;
     }
 #endif
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
     if (msButton1 && !msOldButton1)
     {
         if (msX >= 384-150 && msX <= 384+150 && msY < 200)
@@ -977,7 +977,7 @@ bool Update()
 	kbUpdateKeys();
 #endif
 	
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
 	msUpdateMouse();
 #endif
 
@@ -1082,7 +1082,7 @@ bool Update()
     }
 #endif
     
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
     // TODO: Consider holding a button down while hitting the rocker to engage debug features.
 #endif
 

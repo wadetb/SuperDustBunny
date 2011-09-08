@@ -70,6 +70,7 @@
 		085AAA8C132D169700DF32CA /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 085AAA8B132D169700DF32CA /* libz.dylib */; };
 		0877CB0F13DCA16E002800D2 /* Flame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0877CB0E13DCA16D002800D2 /* Flame.cpp */; };
 		0877CB1313E43FB5002800D2 /* Smoke.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0877CB1213E43FB4002800D2 /* Smoke.cpp */; };
+		089FEC1014188D2F00086B85 /* SDBWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 089FEC0F14188D2F00086B85 /* SDBWindow.m */; };
 		08A8FC7613302F6300E45A98 /* TODO.txt in Resources */ = {isa = PBXBuildFile; fileRef = 08A8FC7513302F6300E45A98 /* TODO.txt */; };
 		08BF391713466F4E002C1A7B /* Converted in Resources */ = {isa = PBXBuildFile; fileRef = 08BF391613466F4E002C1A7B /* Converted */; };
 		08D2E1AB13660E0300AD31B8 /* PowerUp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D2E1A913660E0300AD31B8 /* PowerUp.cpp */; };
@@ -237,6 +238,8 @@
 		0877CB1113DCA17A002800D2 /* Flame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flame.h; sourceTree = "<group>"; };
 		0877CB1213E43FB4002800D2 /* Smoke.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Smoke.cpp; sourceTree = "<group>"; };
 		0877CB1413E43FE1002800D2 /* Smoke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Smoke.h; sourceTree = "<group>"; };
+		089FEC0E14188D2F00086B85 /* SDBWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SDBWindow.h; path = ../../Mac/SDBWindow.h; sourceTree = "<group>"; };
+		089FEC0F14188D2F00086B85 /* SDBWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SDBWindow.m; path = ../../Mac/SDBWindow.m; sourceTree = "<group>"; };
 		08A8FC7513302F6300E45A98 /* TODO.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = TODO.txt; path = ../../Docs/TODO.txt; sourceTree = "<group>"; };
 		08BF391613466F4E002C1A7B /* Converted */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Converted; path = ../../Converted; sourceTree = "<group>"; };
 		08D2E1A913660E0300AD31B8 /* PowerUp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PowerUp.cpp; sourceTree = "<group>"; };
@@ -497,6 +500,8 @@
 			children = (
 				08D497A71417AE110022E457 /* SDBAppDelegate.h */,
 				08D497A81417AE110022E457 /* SDBAppDelegate.m */,
+				089FEC0E14188D2F00086B85 /* SDBWindow.h */,
+				089FEC0F14188D2F00086B85 /* SDBWindow.m */,
 				08D497AA1417AE110022E457 /* MainMenu.xib */,
 				08D4979C1417AE100022E457 /* Supporting Files */,
 				08D498071417EBA60022E457 /* SDBOpenGLView.h */,
@@ -715,6 +720,7 @@
 				08D497A21417AE110022E457 /* main.m in Sources */,
 				08D497A91417AE110022E457 /* SDBAppDelegate.m in Sources */,
 				08D498091417EBA70022E457 /* SDBOpenGLView.m in Sources */,
+				089FEC1014188D2F00086B85 /* SDBWindow.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -911,6 +917,7 @@
 				08D497AE1417AE110022E457 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

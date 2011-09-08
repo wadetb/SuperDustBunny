@@ -7,11 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "SDBOpenGLView.h"
 
 @interface SDBAppDelegate : NSObject <NSApplicationDelegate>
-
-@property (assign) IBOutlet NSWindow *window;
-@property (assign) IBOutlet SDBOpenGLView *view;
 
 @end

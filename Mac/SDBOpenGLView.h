@@ -14,6 +14,7 @@
     NSTimer* timer;
     CVDisplayLinkRef displayLink;
     BOOL started;
+    NSTouch* currentTouch;
 }
 
 - (void)prepareOpenGL;
