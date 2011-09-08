@@ -71,13 +71,14 @@
 		0877CB0F13DCA16E002800D2 /* Flame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0877CB0E13DCA16D002800D2 /* Flame.cpp */; };
 		0877CB1313E43FB5002800D2 /* Smoke.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0877CB1213E43FB4002800D2 /* Smoke.cpp */; };
 		089FEC1014188D2F00086B85 /* SDBWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 089FEC0F14188D2F00086B85 /* SDBWindow.m */; };
+		089FEC131418999F00086B85 /* SDB.icns in Resources */ = {isa = PBXBuildFile; fileRef = 089FEC121418999F00086B85 /* SDB.icns */; };
+		089FEC15141899AC00086B85 /* SDB.icns in Resources */ = {isa = PBXBuildFile; fileRef = 089FEC14141899AC00086B85 /* SDB.icns */; };
 		08A8FC7613302F6300E45A98 /* TODO.txt in Resources */ = {isa = PBXBuildFile; fileRef = 08A8FC7513302F6300E45A98 /* TODO.txt */; };
 		08BF391713466F4E002C1A7B /* Converted in Resources */ = {isa = PBXBuildFile; fileRef = 08BF391613466F4E002C1A7B /* Converted */; };
 		08D2E1AB13660E0300AD31B8 /* PowerUp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D2E1A913660E0300AD31B8 /* PowerUp.cpp */; };
 		08D497961417AE100022E457 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08D497951417AE100022E457 /* Cocoa.framework */; };
 		08D497A01417AE110022E457 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 08D4979E1417AE100022E457 /* InfoPlist.strings */; };
 		08D497A21417AE110022E457 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D497A11417AE110022E457 /* main.m */; };
-		08D497A61417AE110022E457 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 08D497A41417AE110022E457 /* Credits.rtf */; };
 		08D497A91417AE110022E457 /* SDBAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D497A81417AE110022E457 /* SDBAppDelegate.m */; };
 		08D497AC1417AE110022E457 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08D497AA1417AE110022E457 /* MainMenu.xib */; };
 		08D497B11417AFC10022E457 /* Assets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 085AAA16132C5B9F00DF32CA /* Assets.cpp */; };
@@ -240,6 +241,8 @@
 		0877CB1413E43FE1002800D2 /* Smoke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Smoke.h; sourceTree = "<group>"; };
 		089FEC0E14188D2F00086B85 /* SDBWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SDBWindow.h; path = ../../Mac/SDBWindow.h; sourceTree = "<group>"; };
 		089FEC0F14188D2F00086B85 /* SDBWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SDBWindow.m; path = ../../Mac/SDBWindow.m; sourceTree = "<group>"; };
+		089FEC121418999F00086B85 /* SDB.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = SDB.icns; path = ../../Mac/SDB.icns; sourceTree = "<group>"; };
+		089FEC14141899AC00086B85 /* SDB.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = SDB.icns; sourceTree = "<group>"; };
 		08A8FC7513302F6300E45A98 /* TODO.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = TODO.txt; path = ../../Docs/TODO.txt; sourceTree = "<group>"; };
 		08BF391613466F4E002C1A7B /* Converted */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Converted; path = ../../Converted; sourceTree = "<group>"; };
 		08D2E1A913660E0300AD31B8 /* PowerUp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PowerUp.cpp; sourceTree = "<group>"; };
@@ -253,7 +256,6 @@
 		08D4979F1417AE100022E457 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		08D497A11417AE110022E457 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		08D497A31417AE110022E457 /* SuperDustBunny-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SuperDustBunny-Prefix.pch"; sourceTree = "<group>"; };
-		08D497A51417AE110022E457 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
 		08D497A71417AE110022E457 /* SDBAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDBAppDelegate.h; sourceTree = "<group>"; };
 		08D497A81417AE110022E457 /* SDBAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SDBAppDelegate.m; sourceTree = "<group>"; };
 		08D497AB1417AE110022E457 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -301,6 +303,7 @@
 		085AA94F132C572A00DF32CA = {
 			isa = PBXGroup;
 			children = (
+				089FEC14141899AC00086B85 /* SDB.icns */,
 				08D4980A1417F4450022E457 /* CoreVideo.framework */,
 				08D498031417C6010022E457 /* AudioToolbox.framework */,
 				08D498011417C5DA0022E457 /* OpenAL.framework */,
@@ -498,6 +501,7 @@
 		08D4979B1417AE100022E457 /* Mac */ = {
 			isa = PBXGroup;
 			children = (
+				089FEC121418999F00086B85 /* SDB.icns */,
 				08D497A71417AE110022E457 /* SDBAppDelegate.h */,
 				08D497A81417AE110022E457 /* SDBAppDelegate.m */,
 				089FEC0E14188D2F00086B85 /* SDBWindow.h */,
@@ -518,7 +522,6 @@
 				08D4979E1417AE100022E457 /* InfoPlist.strings */,
 				08D497A11417AE110022E457 /* main.m */,
 				08D497A31417AE110022E457 /* SuperDustBunny-Prefix.pch */,
-				08D497A41417AE110022E457 /* Credits.rtf */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -616,9 +619,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				08D497A01417AE110022E457 /* InfoPlist.strings in Resources */,
-				08D497A61417AE110022E457 /* Credits.rtf in Resources */,
 				08D497AC1417AE110022E457 /* MainMenu.xib in Resources */,
 				08D4980C141800FD0022E457 /* Icon@2x.png in Resources */,
+				089FEC131418999F00086B85 /* SDB.icns in Resources */,
+				089FEC15141899AC00086B85 /* SDB.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -733,14 +737,6 @@
 				08D4979F1417AE100022E457 /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		08D497A41417AE110022E457 /* Credits.rtf */ = {
-			isa = PBXVariantGroup;
-			children = (
-				08D497A51417AE110022E457 /* en */,
-			);
-			name = Credits.rtf;
 			sourceTree = "<group>";
 		};
 		08D497AA1417AE110022E457 /* MainMenu.xib */ = {
