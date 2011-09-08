@@ -36,8 +36,8 @@ void GetInput_EndSwipe(float X, float Y, double Time);
     NSOpenGLPixelFormatAttribute attrs[] =
     {
         NSOpenGLPFADoubleBuffer,
-        NSOpenGLPFAOpenGLProfile,
-        NSOpenGLProfileVersion3_2Core,
+//        NSOpenGLPFAOpenGLProfile,
+//        NSOpenGLProfileVersion3_2Core,
         0
     };
     

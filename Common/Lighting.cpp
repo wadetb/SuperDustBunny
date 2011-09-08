@@ -267,13 +267,13 @@ const char* CombineShaderSource =
 #ifdef PLATFORM_MAC
 
 const char* LitVertexShaderSource =
-"#version 150\n"
-"in vec2 PositionAttr;\n"
-"in vec2 TexCoordAttr;\n"
-"in vec4 ColorAttr;\n"
+"#version 120\n"
+"attribute vec2 PositionAttr;\n"
+"attribute vec2 TexCoordAttr;\n"
+"attribute vec4 ColorAttr;\n"
 "\n"
-"out vec2 TexCoordInterp;\n"
-"out vec4 ColorInterp;\n"
+"varying vec2 TexCoordInterp;\n"
+"varying vec4 ColorInterp;\n"
 "\n"
 "void main()\n"
 "{\n"
@@ -283,29 +283,27 @@ const char* LitVertexShaderSource =
 "}\n";
 
 const char* LitShaderSource =
-"#version 150\n"
+"#version 120\n"
 "uniform sampler2D ColorSampler;\n"
 "\n"
-"in vec2 TexCoordInterp;\n"
-"in vec4 ColorInterp;\n"
-"\n"
-"out vec4 Color;\n"
+"varying vec2 TexCoordInterp;\n"
+"varying vec4 ColorInterp;\n"
 "\n"
 "void main()\n"
 "{\n"
-"	Color = texture(ColorSampler, TexCoordInterp) * ColorInterp;\n"
+"	gl_FragColor = texture2D(ColorSampler, TexCoordInterp) * ColorInterp;\n"
 "}\n";
 
 const char* ShadowVertexShaderSource =
-"#version 150\n"
+"#version 120\n"
 "uniform vec2 ShadowOffset;\n"
 "\n"
-"in vec2 PositionAttr;\n"
-"in vec2 TexCoordAttr;\n"
-"in vec4 ColorAttr;\n"
+"attribute vec2 PositionAttr;\n"
+"attribute vec2 TexCoordAttr;\n"
+"attribute vec4 ColorAttr;\n"
 "\n"
-"out vec2 TexCoordInterp;\n"
-"out vec4 ColorInterp;\n"
+"varying vec2 TexCoordInterp;\n"
+"varying vec4 ColorInterp;\n"
 "\n"
 "void main()\n"
 "{\n"
@@ -315,28 +313,26 @@ const char* ShadowVertexShaderSource =
 "}\n";
 
 const char* ShadowShaderSource =
-"#version 150\n"
+"#version 120\n"
 "uniform float ShadowAlpha;\n"
 "uniform sampler2D ColorSampler;\n"
 "\n"
-"in vec2 TexCoordInterp;\n"
-"in vec4 ColorInterp;\n"
-"\n"
-"out vec4 Color;\n"
+"varying vec2 TexCoordInterp;\n"
+"varying vec4 ColorInterp;\n"
 "\n"
 "void main()\n"
 "{\n"
-"	Color = vec4(0.0, 0.0, 0.0, ColorInterp.a * ShadowAlpha * texture(ColorSampler, TexCoordInterp).a);\n"
+"	gl_FragColor = vec4(0.0, 0.0, 0.0, ColorInterp.a * ShadowAlpha * texture2D(ColorSampler, TexCoordInterp).a);\n"
 "}\n";
 
 const char* StandardVertexShaderSource =
-"#version 150\n"
-"in vec2 PositionAttr;\n"
-"in vec2 TexCoordAttr;\n"
-"in vec4 ColorAttr;\n"
+"#version 120\n"
+"attribute vec2 PositionAttr;\n"
+"attribute vec2 TexCoordAttr;\n"
+"attribute vec4 ColorAttr;\n"
 "\n"
-"out vec2 TexCoordInterp;\n"
-"out vec4 ColorInterp;\n"
+"varying vec2 TexCoordInterp;\n"
+"varying vec4 ColorInterp;\n"
 "\n"
 "void main()\n"
 "{\n"
@@ -346,34 +342,30 @@ const char* StandardVertexShaderSource =
 "}\n";
 
 const char* EffectsShaderSource =
-"#version 150\n"
+"#version 120\n"
 "uniform sampler2D ColorSampler;\n"
 "\n"
-"in vec2 TexCoordInterp;\n"
-"in vec4 ColorInterp;\n"
-"\n"
-"out vec4 Color;\n"
+"varying vec2 TexCoordInterp;\n"
+"varying vec4 ColorInterp;\n"
 "\n"
 "void main()\n"
 "{\n"
-"	Color = texture(ColorSampler, TexCoordInterp) * ColorInterp * 2.0;\n"
+"	gl_FragColor = texture2D(ColorSampler, TexCoordInterp) * ColorInterp * 2.0;\n"
 "}\n";
 
 const char* CombineShaderSource =
-"#version 150\n"
+"#version 120\n"
 "uniform sampler2D ColorSampler;\n"
 "uniform sampler2D ColorBleedSampler;\n"
 "uniform sampler2D LightingSampler;\n"
 "\n"
-"in vec2 TexCoordInterp;\n"
-"\n"
-"out vec4 Color;\n"
+"varying vec2 TexCoordInterp;\n"
 "\n"
 "void main()\n"
 "{\n"
-"	vec4 SceneColor = texture(ColorSampler, TexCoordInterp);\n"
-"	vec4 Lighting = texture(LightingSampler, TexCoordInterp);\n"
-"   Color = (Lighting*2.0) * SceneColor;\n"
+"	vec4 SceneColor = texture2D(ColorSampler, TexCoordInterp);\n"
+"	vec4 Lighting = texture2D(LightingSampler, TexCoordInterp);\n"
+"   gl_FragColor = (Lighting*2.0) * SceneColor;\n"
 "}\n";
 
 #endif

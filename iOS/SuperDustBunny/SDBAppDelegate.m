@@ -13,6 +13,8 @@
 
 @implementation SDBAppDelegate
 
+@synthesize window;
+
 - (void)getRootDirectory
 {
     NSOpenPanel *openPanel = [NSOpenPanel openPanel];
@@ -41,41 +43,41 @@
 - (void)startupFullScreen
 {
     NSRect mainDisplayRect = [[NSScreen mainScreen] frame];
-    SDBWindow *fullScreenWindow = [[SDBWindow alloc] initWithContentRect:mainDisplayRect 
-                                                             styleMask:NSBorderlessWindowMask 
-                                                               backing:NSBackingStoreBuffered 
-                                                                 defer:YES];
-    [fullScreenWindow setLevel:NSMainMenuWindowLevel+1];
-    [fullScreenWindow setOpaque:YES];
-    [fullScreenWindow setHidesOnDeactivate:YES];
+    window = [[SDBWindow alloc] initWithContentRect:mainDisplayRect 
+                                          styleMask:NSBorderlessWindowMask 
+                                            backing:NSBackingStoreBuffered 
+                                              defer:YES];
+    [window setLevel:NSMainMenuWindowLevel+1];
+    [window setOpaque:YES];
+    [window setHidesOnDeactivate:YES];
     
     NSRect viewRect = NSMakeRect(0, 0, mainDisplayRect.size.width, mainDisplayRect.size.height);
-    SDBOpenGLView *fullScreenView = [[SDBOpenGLView alloc] initWithFrame:viewRect];
-    [fullScreenWindow setContentView:fullScreenView];
+    SDBOpenGLView *view = [[SDBOpenGLView alloc] initWithFrame:viewRect];
+    [window setContentView:view];
     
-    [fullScreenWindow makeKeyAndOrderFront:self];
+    [window makeKeyAndOrderFront:self];
 
     [NSCursor hide];
 
-    [fullScreenView startup];
+    [view startup];
 }
 
 - (void)startupWindowed
 {
     NSRect mainDisplayRect = NSMakeRect(0, 0, 576, 768);
-    SDBWindow *fullScreenWindow = [[SDBWindow alloc] initWithContentRect:mainDisplayRect 
-                                                             styleMask:NSTitledWindowMask 
-                                                               backing:NSBackingStoreBuffered 
-                                                                 defer:YES];
-    [fullScreenWindow setOpaque:YES];
+    window = [[SDBWindow alloc] initWithContentRect:mainDisplayRect 
+                                          styleMask:NSTitledWindowMask 
+                                            backing:NSBackingStoreBuffered 
+                                              defer:YES];
+    [window setOpaque:YES];
     
     NSRect viewRect = NSMakeRect(0, 0, mainDisplayRect.size.width, mainDisplayRect.size.height);
-    SDBOpenGLView *fullScreenView = [[SDBOpenGLView alloc] initWithFrame:viewRect];
-    [fullScreenWindow setContentView:fullScreenView];
+    SDBOpenGLView *view = [[SDBOpenGLView alloc] initWithFrame:viewRect];
+    [window setContentView:view];
     
-    [fullScreenWindow makeKeyAndOrderFront:self];
+    [window makeKeyAndOrderFront:self];
     
-    [fullScreenView startup];
+    [view startup];
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification

@@ -43,6 +43,9 @@
 #ifdef PLATFORM_IPHONE
 #import "SuperDustBunnyViewController.h"
 #endif
+#ifdef PLATFORM_MAC
+#import "SDBAppDelegate.h"
+#endif
 
 enum EGameState
 {
@@ -197,10 +200,15 @@ void ReportError(const char* ErrorMessage, ...)
 #ifdef PLATFORM_MAC
 	NSLog(@"SuperDustBunny Error: %s\n", TotalMessage);
 
+    NSWindow *window = [[NSApp delegate] window];
+    [window setLevel:NSNormalWindowLevel];
+    
+    [NSCursor unhide];
+    
     NSAlert* alert = [[NSAlert alloc] init];
     [alert setAlertStyle:NSCriticalAlertStyle];
-    [alert setMessageText: [NSString stringWithUTF8String:ErrorMessage]];
-    [alert setInformativeText:[NSString stringWithUTF8String:ErrorContext]];
+    [alert setMessageText: @"Super Dust Bunny Error"];
+    [alert setInformativeText:[NSString stringWithUTF8String:TotalMessage]];
     [alert runModal];
     
     exit(255);

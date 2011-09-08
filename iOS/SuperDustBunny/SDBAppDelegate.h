@@ -8,6 +8,13 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class SDBWindow;
+
 @interface SDBAppDelegate : NSObject <NSApplicationDelegate>
+{
+    SDBWindow *window;
+}
+
+@property (retain) SDBWindow *window;
 
 @end

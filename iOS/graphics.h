@@ -5,10 +5,12 @@
 
 #if TARGET_OS_MAC && !TARGET_OS_IPHONE
 #include <OpenGL/OpenGL.h>
-#include <OpenGL/gl3.h>
+#include <OpenGL/gl.h>
 #define glMapBufferOES glMapBuffer
 #define glUnmapBufferOES glUnmapBuffer
 #define GL_WRITE_ONLY_OES GL_WRITE_ONLY
+#define glGenVertexArrays glGenVertexArraysAPPLE
+#define glBindVertexArray glBindVertexArrayAPPLE
 #endif
 
 #if TARGET_OS_IPHONE
