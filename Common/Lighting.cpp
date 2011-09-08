@@ -955,6 +955,12 @@ void RenderLighting()
         
         // Combine everything into the final output.
         gxSetRenderTarget(NULL);
+#ifdef PLATFORM_MAC
+        int displayWidth = 576;
+        int displayHeight = 768;
+        NSRect mainDisplayRect = [[NSScreen mainScreen] frame];
+        glViewport(mainDisplayRect.size.width/2 - displayWidth/2, mainDisplayRect.size.height/2 - displayHeight/2, displayWidth, displayHeight);
+#endif
         RenderCombinedColor();
         
         // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//

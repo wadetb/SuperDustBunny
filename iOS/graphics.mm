@@ -420,7 +420,12 @@ void gxCreateRenderTarget(int width, int height, gxSprite* sprite, bool Alpha)
 	glGenFramebuffers(1, &sprite->framebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, sprite->framebuffer);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, sprite->tex, 0);
+    
+#if TARGET_OS_IPHONE
 	glBindFramebuffer(GL_FRAMEBUFFER, _gxDefaultFrameBuffer);
+#else
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+#endif
     
     free(pixels);
 }
@@ -444,7 +449,7 @@ void gxSetRenderTarget(gxSprite* Sprite)
 
 //    GLenum attach[] = { GL_COLOR_ATTACHMENT0 };
 //    glDiscardFramebufferEXT(GL_FRAMEBUFFER, 1, attach);    
-    glClearColor(0, 0, 1, 0);
+    glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 

@@ -80,16 +80,20 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
     
     //CVDisplayLinkStart(displayLink);
     
-    timer = [NSTimer scheduledTimerWithTimeInterval:0.0001 target:self selector:@selector(displayFrameForTimer) userInfo:nil repeats:YES];
-    
     [super prepareOpenGL];
+}
+
+- (void)reshape
+{
 }
 
 - (void)startup
 {    
     Init();
-    started = YES;
     
+    timer = [NSTimer scheduledTimerWithTimeInterval:0.0001 target:self selector:@selector(displayFrameForTimer) userInfo:nil repeats:YES];
+    started = YES;
+
     [self setAcceptsTouchEvents:YES];
 }
 
@@ -99,8 +103,6 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
     
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT);
-    
-    glViewport(0, 0, 576, 768);
     
     if (started)
     {
