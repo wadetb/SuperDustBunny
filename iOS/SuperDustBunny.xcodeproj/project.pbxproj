@@ -67,9 +67,11 @@
 		085AAA8C132D169700DF32CA /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 085AAA8B132D169700DF32CA /* libz.dylib */; };
 		0877CB0F13DCA16E002800D2 /* Flame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0877CB0E13DCA16D002800D2 /* Flame.cpp */; };
 		0877CB1313E43FB5002800D2 /* Smoke.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0877CB1213E43FB4002800D2 /* Smoke.cpp */; };
+		08866BCE141AC30700D25BB8 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08866BCD141AC30700D25BB8 /* ApplicationServices.framework */; };
+		08866BD1141AC34200D25BB8 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08866BCF141AC34200D25BB8 /* Quartz.framework */; };
+		08866BD2141AC34200D25BB8 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08866BD0141AC34200D25BB8 /* QuartzCore.framework */; };
 		089FEC1014188D2F00086B85 /* SDBWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 089FEC0F14188D2F00086B85 /* SDBWindow.m */; };
 		089FEC131418999F00086B85 /* SDB.icns in Resources */ = {isa = PBXBuildFile; fileRef = 089FEC121418999F00086B85 /* SDB.icns */; };
-		089FEC15141899AC00086B85 /* SDB.icns in Resources */ = {isa = PBXBuildFile; fileRef = 089FEC14141899AC00086B85 /* SDB.icns */; };
 		08BF391713466F4E002C1A7B /* Converted in Resources */ = {isa = PBXBuildFile; fileRef = 08BF391613466F4E002C1A7B /* Converted */; };
 		08D2E1AB13660E0300AD31B8 /* PowerUp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D2E1A913660E0300AD31B8 /* PowerUp.cpp */; };
 		08D497961417AE100022E457 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08D497951417AE100022E457 /* Cocoa.framework */; };
@@ -235,10 +237,12 @@
 		0877CB1113DCA17A002800D2 /* Flame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flame.h; sourceTree = "<group>"; };
 		0877CB1213E43FB4002800D2 /* Smoke.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Smoke.cpp; sourceTree = "<group>"; };
 		0877CB1413E43FE1002800D2 /* Smoke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Smoke.h; sourceTree = "<group>"; };
+		08866BCD141AC30700D25BB8 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = SDKs/MacOSX10.7.sdk/System/Library/Frameworks/ApplicationServices.framework; sourceTree = DEVELOPER_DIR; };
+		08866BCF141AC34200D25BB8 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = SDKs/MacOSX10.7.sdk/System/Library/Frameworks/Quartz.framework; sourceTree = DEVELOPER_DIR; };
+		08866BD0141AC34200D25BB8 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = SDKs/MacOSX10.7.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		089FEC0E14188D2F00086B85 /* SDBWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SDBWindow.h; path = ../../Mac/SDBWindow.h; sourceTree = "<group>"; };
 		089FEC0F14188D2F00086B85 /* SDBWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SDBWindow.m; path = ../../Mac/SDBWindow.m; sourceTree = "<group>"; };
 		089FEC121418999F00086B85 /* SDB.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = SDB.icns; path = ../../Mac/SDB.icns; sourceTree = "<group>"; };
-		089FEC14141899AC00086B85 /* SDB.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = SDB.icns; sourceTree = "<group>"; };
 		08A8FC7513302F6300E45A98 /* TODO.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = TODO.txt; path = ../../Docs/TODO.txt; sourceTree = "<group>"; };
 		08BF391613466F4E002C1A7B /* Converted */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Converted; path = ../../Converted; sourceTree = "<group>"; };
 		08D2E1A913660E0300AD31B8 /* PowerUp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PowerUp.cpp; sourceTree = "<group>"; };
@@ -285,6 +289,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				08866BD1141AC34200D25BB8 /* Quartz.framework in Frameworks */,
+				08866BD2141AC34200D25BB8 /* QuartzCore.framework in Frameworks */,
+				08866BCE141AC30700D25BB8 /* ApplicationServices.framework in Frameworks */,
 				08D4980B1417F4450022E457 /* CoreVideo.framework in Frameworks */,
 				08D498041417C6010022E457 /* AudioToolbox.framework in Frameworks */,
 				08D498021417C5DB0022E457 /* OpenAL.framework in Frameworks */,
@@ -299,7 +306,9 @@
 		085AA94F132C572A00DF32CA = {
 			isa = PBXGroup;
 			children = (
-				089FEC14141899AC00086B85 /* SDB.icns */,
+				08866BCF141AC34200D25BB8 /* Quartz.framework */,
+				08866BD0141AC34200D25BB8 /* QuartzCore.framework */,
+				08866BCD141AC30700D25BB8 /* ApplicationServices.framework */,
 				08D4980A1417F4450022E457 /* CoreVideo.framework */,
 				08D498031417C6010022E457 /* AudioToolbox.framework */,
 				08D498011417C5DA0022E457 /* OpenAL.framework */,
@@ -614,7 +623,6 @@
 				08D497AC1417AE110022E457 /* MainMenu.xib in Resources */,
 				08D4980C141800FD0022E457 /* Icon@2x.png in Resources */,
 				089FEC131418999F00086B85 /* SDB.icns in Resources */,
-				089FEC15141899AC00086B85 /* SDB.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -69,7 +69,7 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 {
     GLint swapInt = 1;
     [[self openGLContext] setValues:&swapInt forParameter:NSOpenGLCPSwapInterval];
-//    
+
 //    CVDisplayLinkCreateWithCGDisplay(CGMainDisplayID(), &displayLink);
 //    
 //    CVDisplayLinkSetOutputCallback(displayLink, DisplayLinkCallback, self);

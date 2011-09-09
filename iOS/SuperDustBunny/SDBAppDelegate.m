@@ -58,7 +58,9 @@
     [window makeKeyAndOrderFront:self];
 
     [NSCursor hide];
-
+    CGAssociateMouseAndMouseCursorPosition(false);
+    CGWarpMouseCursorPosition(NSMakePoint(mainDisplayRect.size.width/2, mainDisplayRect.size.height/2));
+    
     [view startup];
 }
 

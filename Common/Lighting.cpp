@@ -724,6 +724,7 @@ void InitLighting()
         glGenVertexArrays(LIT_VBO_COUNT, LitVertsVAO);
     glGenBuffers(LIT_VBO_COUNT, LitVertsVBO);
     glGenBuffers(LIT_VBO_COUNT, LitVertsIBO);
+    
     for (int i = 0; i < LIT_VBO_COUNT; i++)
     {
         if (gxOpenGLESVersion == 2)
@@ -747,7 +748,10 @@ void InitLighting()
     }
     
     BufferObjectIndex = 0;
-    
+   
+    if (gxOpenGLESVersion == 2)
+        glBindVertexArray(0);
+
 #ifdef PLATFORM_IPHONE_OR_MAC
     GLenum error = glGetError();
     if (error != GL_NO_ERROR)
@@ -843,6 +847,9 @@ void ResetLighting()
     
     BufferObjectIndex = (BufferObjectIndex+1) % LIT_VBO_COUNT;
     
+    if (gxOpenGLESVersion == 2)
+        glBindVertexArray(0);
+
     glBindBuffer(GL_ARRAY_BUFFER, LitVertsVBO[BufferObjectIndex]);
     LitVerts = (SLitVertex*)glMapBufferOES(GL_ARRAY_BUFFER, GL_WRITE_ONLY_OES);
     assert(LitVerts);
@@ -850,7 +857,12 @@ void ResetLighting()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, LitVertsIBO[BufferObjectIndex]);
     LitVertIndices = (GLushort*)glMapBufferOES(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY_OES);
     assert(LitVertIndices);
+    
+    CurrentVAO = -1;
 #endif
+    
+    CurrentBlendMode = -1;
+    CurrentShader = NULL;
     
 	for (int i = 0; i < LIGHTLIST_COUNT; i++)
 	{
@@ -867,6 +879,9 @@ void RenderLighting()
     //                                                   Finish writing buffers                                                                //
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 #ifdef PLATFORM_IPHONE_OR_MAC
+    if (gxOpenGLESVersion == 2)
+        glBindVertexArray(0);
+    
     glBindBuffer(GL_ARRAY_BUFFER, LitVertsVBO[BufferObjectIndex]);
     glUnmapBufferOES(GL_ARRAY_BUFFER);
     LitVerts = NULL;
