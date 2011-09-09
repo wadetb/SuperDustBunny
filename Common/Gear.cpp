@@ -34,6 +34,8 @@ void CreateGear(int X, int Y)
 
 	Gear->Angle = 0;
 	Gear->AngularVelocity = 0;
+    
+    Gear->Timer = 0;
 
     Gear->State = GEARSTATE_ACTIVE;
 }
@@ -52,7 +54,16 @@ void DisplayGear()
         if (Gear->State == GEARSTATE_INACTIVE)
             continue;
 
-		AddLitSpriteCenteredScaledRotated(LIGHTLIST_VACUUM, &GearSprite, Gear->X + ScrollX, Gear->Y + ScrollY, 1.0f, Gear->Angle);
+        float X = Gear->X;
+        float Y = Gear->Y; 
+
+        if (Gear->State == GEARSTATE_ACTIVE)
+        {
+            X += cosf(Gear->Timer*4.0f) * 2.5f + cosf(Gear->Timer*1.0f/3.0f) * 2.5f; 
+            Y += sinf(Gear->Timer*4.0f) * 2.5f + sinf(Gear->Timer*1.0f/3.0f) * 2.5f;
+        }
+        
+		AddLitSpriteCenteredScaledRotated(LIGHTLIST_VACUUM, &GearSprite, X + ScrollX, Y + ScrollY, 1.0f, Gear->Angle);
     }    
 }
 
@@ -64,6 +75,8 @@ void UpdateGear()
 
         if (Gear->State == GEARSTATE_ACTIVE)
 		{
+            Gear->Timer += 1.0f/60.0f;
+            
 			float Dist = Distance(Dusty.FloatX, Dusty.FloatY-50, Gear->X, Gear->Y);
 
 			if (Dist < 100)

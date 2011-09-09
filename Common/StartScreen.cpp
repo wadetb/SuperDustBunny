@@ -223,8 +223,8 @@ void DisplayStartScreen()
         
         if (i == StartScreen.CurItem)
         {
-            X += cosf(StartScreen.WiggleTime*4.0f) * 2.5f + cosf(StartScreen.WiggleTime*1.0f/3.0f) * 2.5f;
-            Y += sinf(StartScreen.WiggleTime*4.0f) * 2.5f + sinf(StartScreen.WiggleTime*1.0f/3.0f) * 2.5f;
+            X += cosf(StartScreen.WiggleTime*4.0f) * 5.0f + cosf(StartScreen.WiggleTime*1.0f/3.0f) * 5.0f;
+            Y += sinf(StartScreen.WiggleTime*4.0f) * 5.0f + sinf(StartScreen.WiggleTime*1.0f/3.0f) * 5.0f;
             
             float OverlayAlpha = SinWave(StartScreen.PressedTime, 1.0f);
             AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, GetStartScreenIcon(i), X, Y, Scale, 1.0f);

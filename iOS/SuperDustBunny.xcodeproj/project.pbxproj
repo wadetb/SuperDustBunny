@@ -53,8 +53,6 @@
 		085AAA65132C5B9F00DF32CA /* HelpScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 085AAA36132C5B9F00DF32CA /* HelpScreen.cpp */; };
 		085AAA66132C5B9F00DF32CA /* Lighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 085AAA38132C5B9F00DF32CA /* Lighting.cpp */; };
 		085AAA67132C5B9F00DF32CA /* Lives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 085AAA3A132C5B9F00DF32CA /* Lives.cpp */; };
-		085AAA68132C5B9F00DF32CA /* license.txt in Resources */ = {isa = PBXBuildFile; fileRef = 085AAA3D132C5B9F00DF32CA /* license.txt */; };
-		085AAA69132C5B9F00DF32CA /* manual.html in Resources */ = {isa = PBXBuildFile; fileRef = 085AAA3E132C5B9F00DF32CA /* manual.html */; };
 		085AAA6A132C5B9F00DF32CA /* Recorder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 085AAA43132C5B9F00DF32CA /* Recorder.cpp */; };
 		085AAA6B132C5B9F00DF32CA /* Settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 085AAA45132C5B9F00DF32CA /* Settings.cpp */; };
 		085AAA6C132C5B9F00DF32CA /* Stapler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 085AAA47132C5B9F00DF32CA /* Stapler.cpp */; };
@@ -66,14 +64,12 @@
 		085AAA72132C5B9F00DF32CA /* WinScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 085AAA52132C5B9F00DF32CA /* WinScreen.cpp */; };
 		085AAA73132C5B9F00DF32CA /* Wipe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 085AAA54132C5B9F00DF32CA /* Wipe.cpp */; };
 		085AAA75132C5C9E00DF32CA /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 085AAA74132C5C9E00DF32CA /* QuartzCore.framework */; };
-		085AAA8A132D0E8F00DF32CA /* Converter.py in Resources */ = {isa = PBXBuildFile; fileRef = 085AAA89132D0E8F00DF32CA /* Converter.py */; };
 		085AAA8C132D169700DF32CA /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 085AAA8B132D169700DF32CA /* libz.dylib */; };
 		0877CB0F13DCA16E002800D2 /* Flame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0877CB0E13DCA16D002800D2 /* Flame.cpp */; };
 		0877CB1313E43FB5002800D2 /* Smoke.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0877CB1213E43FB4002800D2 /* Smoke.cpp */; };
 		089FEC1014188D2F00086B85 /* SDBWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 089FEC0F14188D2F00086B85 /* SDBWindow.m */; };
 		089FEC131418999F00086B85 /* SDB.icns in Resources */ = {isa = PBXBuildFile; fileRef = 089FEC121418999F00086B85 /* SDB.icns */; };
 		089FEC15141899AC00086B85 /* SDB.icns in Resources */ = {isa = PBXBuildFile; fileRef = 089FEC14141899AC00086B85 /* SDB.icns */; };
-		08A8FC7613302F6300E45A98 /* TODO.txt in Resources */ = {isa = PBXBuildFile; fileRef = 08A8FC7513302F6300E45A98 /* TODO.txt */; };
 		08BF391713466F4E002C1A7B /* Converted in Resources */ = {isa = PBXBuildFile; fileRef = 08BF391613466F4E002C1A7B /* Converted */; };
 		08D2E1AB13660E0300AD31B8 /* PowerUp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D2E1A913660E0300AD31B8 /* PowerUp.cpp */; };
 		08D497961417AE100022E457 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08D497951417AE100022E457 /* Cocoa.framework */; };
@@ -600,10 +596,6 @@
 				085AAA04132C582C00DF32CA /* MainWindow-iPhone.xib in Resources */,
 				085AAA07132C582C00DF32CA /* SettingsViewController.xib in Resources */,
 				085AAA0C132C582C00DF32CA /* SuperDustBunnyViewController.xib in Resources */,
-				085AAA68132C5B9F00DF32CA /* license.txt in Resources */,
-				085AAA69132C5B9F00DF32CA /* manual.html in Resources */,
-				085AAA8A132D0E8F00DF32CA /* Converter.py in Resources */,
-				08A8FC7613302F6300E45A98 /* TODO.txt in Resources */,
 				08BF391713466F4E002C1A7B /* Converted in Resources */,
 				0856200F1346A40000F9EFBA /* Default-ipad.png in Resources */,
 				085620101346A40000F9EFBA /* Default.png in Resources */,
@@ -765,7 +757,8 @@
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -783,7 +776,8 @@
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -801,7 +795,7 @@
 				GCC_PREFIX_HEADER = "SuperDustBunny-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "SuperDustBunny-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -818,7 +812,7 @@
 				GCC_PREFIX_HEADER = "SuperDustBunny-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "SuperDustBunny-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALIDATE_PRODUCT = YES;

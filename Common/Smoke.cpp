@@ -187,7 +187,7 @@ void CreateBonus(float X, float Y)
     Smoke->VX = 0;
     Smoke->VY = -2.0f;
     
-    Smoke->Scale = 0.4f;
+    Smoke->Scale = 0.3f;
     Smoke->VScale = 0.0f;
     
     Smoke->Angle = 0.0f;
@@ -221,7 +221,7 @@ void Create1UpBubble(float X, float Y)
     Smoke->VX = 0;
     Smoke->VY = -2.0f;
     
-    Smoke->Scale = 0.4f;
+    Smoke->Scale = 0.3f;
     Smoke->VScale = 0.0f;
     
     Smoke->Angle = 0.0f;

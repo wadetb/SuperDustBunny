@@ -29,6 +29,8 @@ struct SGear
 	
 	float AngularVelocity;
 	float Angle;
+    
+    float Timer;
 };
 
 
