@@ -337,7 +337,16 @@ bool LoadAssetList(char* FileName, SAssetList* AssetList)
     
 	// Parse the XML text buffer into a Document hierarchy.
 	rapidxml::xml_document<> Document;
-	Document.parse<0>(XML);
+    
+    try 
+    {
+        Document.parse<0>(XML);
+    } 
+    catch (rapidxml::parse_error e)
+    {
+        unlink(FileName);
+        ReportError("Failed to parse asset list %s:\n%s", FileName, e.what());
+    }
     
     // Get the root <assets> node.
 	rapidxml::xml_node<char>* AssetsNode = Document.first_node("Assets");
@@ -485,6 +494,15 @@ void GetLiveAssetFileName(const char* FileName, char* Buf, int BufSize)
 	snprintf(Buf, BufSize, "%s", [cachedFileName UTF8String]);
 }
 
+void ClearLiveAssetCache()
+{
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    NSString *cacheDirectory = [paths objectAtIndex:0];
+
+    NSError *error = [[NSError alloc] init];
+    [[NSFileManager defaultManager] removeItemAtPath:cacheDirectory error:&error];
+}
+
 bool DownloadLiveAssetFile(const char* FileName)
 {
     NSString* URLString = [NSString stringWithFormat:@"%@%s", [NSString stringWithUTF8String:Settings.AssetServer], FileName];
@@ -492,7 +510,7 @@ bool DownloadLiveAssetFile(const char* FileName)
     
     NSLog(@"DOWNLOAD '%@'...", URLString);
 
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:10];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:30];
     
     NSURLResponse *response;
     NSError *error = [[NSError alloc] init];
@@ -553,30 +571,33 @@ void UpdateLiveAssetCache()
             
             bool Download = false;
             
-            if (!BundleAsset && !OldAsset)
+            if (strlen(NewAsset->MD5) > 0)
             {
-                printf("Downloading '%s', new asset.\n", NewAsset->SourceFileName);
-                Download = true;
-            }
-            
-            if (!Download)
-            {
-                if (OldAsset)
+                if (!BundleAsset && !OldAsset)
                 {
-                    if (strcmp(OldAsset->MD5, NewAsset->MD5))
-                    {
-                        printf("Downloading '%s', MD5 differs from cache.\n", NewAsset->SourceFileName);
-                        Download = true;
-                    }
+                    printf("Downloading '%s', new asset.\n", NewAsset->SourceFileName);
+                    Download = true;
                 }
-                else
+                
+                if (!Download)
                 {
-                    if (BundleAsset)
+                    if (OldAsset)
                     {
-                        if (strcmp(BundleAsset->MD5, NewAsset->MD5))
+                        if (strcmp(OldAsset->MD5, NewAsset->MD5))
                         {
-                            printf("Downloading '%s', MD5 differs from bundle.\n", NewAsset->SourceFileName);
+                            printf("Downloading '%s', MD5 differs from cache.\n", NewAsset->SourceFileName);
                             Download = true;
+                        }
+                    }
+                    else
+                    {
+                        if (BundleAsset)
+                        {
+                            if (strcmp(BundleAsset->MD5, NewAsset->MD5))
+                            {
+                                printf("Downloading '%s', MD5 differs from bundle.\n", NewAsset->SourceFileName);
+                                Download = true;
+                            }
                         }
                     }
                 }

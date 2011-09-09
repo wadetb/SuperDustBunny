@@ -30,6 +30,7 @@
 @property (nonatomic, retain) IBOutlet UITextField *assetServer;
 
 - (IBAction)done:(id)sender;
+- (IBAction)clearCache:(id)sender;
 
 - (void)transferSettingsFromView;
 - (void)transferSettingsToView;

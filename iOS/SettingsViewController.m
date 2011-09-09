@@ -12,6 +12,8 @@
 
 #include "../Common/Settings.h"
 
+void ClearLiveAssetCache();
+
 @implementation SettingsViewController
 
 @synthesize mainViewController;
@@ -76,6 +78,10 @@
 
 - (IBAction)done:(id)sender {
     [[self mainViewController] hideSettings];
+}
+
+- (IBAction)clearCache:(id)sender {
+    ClearLiveAssetCache();
 }
 
 - (void)transferSettingsToView {
