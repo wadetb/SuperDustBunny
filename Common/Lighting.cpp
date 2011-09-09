@@ -856,6 +856,9 @@ void ResetLighting()
 	{
 		LightLists[i].NQuads = 0;
 	}
+
+	CurrentShader = NULL;
+	CurrentBlendMode = 999;
 }
 
 void RenderLighting()
