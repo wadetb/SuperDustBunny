@@ -140,15 +140,15 @@ void UpdateBarrels()
 			if (Diff > 5 || Diff < -5)
 			{
 				if (Diff < 0)
-					Barrel->Dir = fmodf(Barrel->Dir+5, 360);
+					Barrel->Dir = fmodf(Barrel->Dir+10, 360);
 				else
-					Barrel->Dir = fmodf(Barrel->Dir+355, 360);
+					Barrel->Dir = fmodf(Barrel->Dir+350, 360);
 			}
 			else
 			{
 				Barrel->Dir = Barrel->ToDir;
 				float Angle = DirectionToAngle(Barrel->Dir);
-				float Velocity = 22.5f;
+				float Velocity = 30.0f;
 				SetDustyState_Launch(Velocity*cosf(Angle), -Velocity*sinf(Angle));
                 Dusty.Hidden = false;
 				Barrel->Timer = 30;

@@ -378,8 +378,8 @@ const char* LitVertexShaderSource =
 "attribute vec2 TexCoordAttr;\n"
 "attribute vec4 ColorAttr;\n"
 "\n"
-"varying vec2 TexCoordInterp;\n"
-"varying vec4 ColorInterp;\n"
+"varying lowp vec2 TexCoordInterp;\n"
+"varying lowp vec4 ColorInterp;\n"
 "\n"
 "void main()\n"
 "{\n"
@@ -406,8 +406,8 @@ const char* ShadowVertexShaderSource =
 "attribute vec2 TexCoordAttr;\n"
 "attribute vec4 ColorAttr;\n"
 "\n"
-"varying vec2 TexCoordInterp;\n"
-"varying vec4 ColorInterp;\n"
+"varying lowp vec2 TexCoordInterp;\n"
+"varying lowp vec4 ColorInterp;\n"
 "\n"
 "void main()\n"
 "{\n"
@@ -433,8 +433,8 @@ const char* StandardVertexShaderSource =
 "attribute vec2 TexCoordAttr;\n"
 "attribute vec4 ColorAttr;\n"
 "\n"
-"varying vec2 TexCoordInterp;\n"
-"varying vec4 ColorInterp;\n"
+"varying lowp vec2 TexCoordInterp;\n"
+"varying lowp vec4 ColorInterp;\n"
 "\n"
 "void main()\n"
 "{\n"
@@ -695,13 +695,13 @@ void InitLighting()
         LitAspectOffset = 0.0f;
         LitScreenHeight = 1024.0f;
         break;
-/*    case GXDISPLAY_IPHONE_RETINA_PORTRAIT:
+    case GXDISPLAY_IPHONE_RETINA_PORTRAIT:
         LitRenderTargetWidth = 640;
         LitRenderTargetHeight = 960;
         LitAspectScale = (640.0f/960.0f) / (768.0f/1024.0f);
         LitAspectOffset = 0.0f; //-(1024 - (1024 * LitAspectScale)) * 0.5f;
         LitScreenHeight = 1024 / LitAspectScale;
-        break;*/
+        break;
     default:
     case GXDISPLAY_IPHONE_PORTRAIT:
         LitRenderTargetWidth = 320;

@@ -16,16 +16,55 @@
 
 #define MAX_GEARS 100
 
+
 int NGears = 0;
 SGear Gears[MAX_GEARS];
 
-void CreateGear(int X, int Y)
+
+void ParseGearProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode)
+{
+	SGearProperties* Props = (SGearProperties*)malloc(sizeof(SGearProperties));
+    
+	rapidxml::xml_node<char>* PropertyNode = PropertiesNode->first_node("property");
+	while (PropertyNode)
+	{
+		const char* Name = PropertyNode->first_attribute("name")->value();
+		const char* ConstValue = PropertyNode->first_attribute("value")->value();
+        char* WritableValue = strdup(ConstValue);
+        char* Value = WritableValue;
+        
+		if (strcmp(Name, "sprite") == 0)
+		{
+            LoadSpriteAsset(Value, &Props->Sprite);
+        }
+		else if (strcmp(Name, "type") != 0 && strcmp(Name, "material") != 0)
+		{
+			ReportError("Unrecognized flame property '%s'='%s'.", Name, Value);
+		}
+        
+        free(WritableValue);
+        
+		PropertyNode = PropertyNode->next_sibling("property");
+	}
+    
+	Block->Properties = Props;
+}
+
+void FreeGearProperties(SBlock* Block)
+{
+    gxDestroySprite(&((SGearProperties*)Block->Properties)->Sprite);
+    free(Block->Properties);
+}
+
+void CreateGear(int X, int Y, SGearProperties* Props)
 {
 	if (NGears >= MAX_GEARS)
 		ReportError("Exceeded the maximum of %d total gears.", MAX_GEARS);
 
 	SGear* Gear = &Gears[NGears++];
 
+    Gear->Props = Props;
+    
     Gear->X = (float)X + 32;
     Gear->Y = (float)Y + 32;
 
@@ -63,7 +102,7 @@ void DisplayGear()
             Y += sinf(Gear->Timer*4.0f) * 2.5f + sinf(Gear->Timer*1.0f/3.0f) * 2.5f;
         }
         
-		AddLitSpriteCenteredScaledRotated(LIGHTLIST_VACUUM, &GearSprite, X + ScrollX, Y + ScrollY, 1.0f, Gear->Angle);
+		AddLitSpriteCenteredScaledRotated(LIGHTLIST_VACUUM, &Gear->Props->Sprite, X + ScrollX, Y + ScrollY, 1.0f, Gear->Angle);
     }    
 }
 

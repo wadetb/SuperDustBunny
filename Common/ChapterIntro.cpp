@@ -47,10 +47,17 @@ void DisplayChapterIntro()
 {
 	AddLitSprite(LIGHTLIST_VACUUM, &ChapterTitleSprite, 0, ChapterIntro.Y);
 	AddLitSprite(LIGHTLIST_VACUUM, &ChapterTextSprite, 220, ChapterIntro.Y+600);
-	int Chapter = 1;
-	switch (Chapter)
+	switch (CurrentChapter+1)
 	{
-	case 1: AddLitSubSprite(LIGHTLIST_VACUUM, &ChapterNumbersSprite, 220+305, ChapterIntro.Y+600, 0, 0, 64, 64); break;
+    case 1: AddLitSubSprite(LIGHTLIST_VACUUM, &ChapterNumbersSprite, 220+305, ChapterIntro.Y+600, 0, 58*0, 64, 58*1); break;
+    case 2: AddLitSubSprite(LIGHTLIST_VACUUM, &ChapterNumbersSprite, 220+305, ChapterIntro.Y+600, 0, 58*1, 64, 58*2); break;
+    case 3: AddLitSubSprite(LIGHTLIST_VACUUM, &ChapterNumbersSprite, 220+305, ChapterIntro.Y+600, 0, 58*2, 64, 58*3); break;
+    case 4: AddLitSubSprite(LIGHTLIST_VACUUM, &ChapterNumbersSprite, 220+305, ChapterIntro.Y+600, 0, 58*3, 64, 58*4); break;
+    case 5: AddLitSubSprite(LIGHTLIST_VACUUM, &ChapterNumbersSprite, 220+305, ChapterIntro.Y+600, 0, 58*4, 64, 58*5); break;
+    case 6: AddLitSubSprite(LIGHTLIST_VACUUM, &ChapterNumbersSprite, 220+305, ChapterIntro.Y+600, 0, 58*5, 64, 58*6); break;
+    case 7: AddLitSubSprite(LIGHTLIST_VACUUM, &ChapterNumbersSprite, 220+305, ChapterIntro.Y+600, 0, 58*6, 64, 58*7); break;
+    case 8: AddLitSubSprite(LIGHTLIST_VACUUM, &ChapterNumbersSprite, 220+305, ChapterIntro.Y+600, 0, 58*7, 64, 58*8); break;
+    case 9: AddLitSubSprite(LIGHTLIST_VACUUM, &ChapterNumbersSprite, 220+305, ChapterIntro.Y+600, 0, 58*8, 64, 58*9); break;
 	}
 }
 

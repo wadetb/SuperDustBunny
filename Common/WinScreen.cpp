@@ -136,9 +136,27 @@ void DisplayWinScreen()
         
         int CurrentY = 75;
         
+        // Chapter complete!
         AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterCompleteSprite, 384, CurrentY, 1.0f, 1.0f);
         CurrentY += 100;
         
+        // Total time
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterTotalTimeSprite, 384 + 2000*WinScreen.SlideIn, CurrentY, 1.0f, 1.0f);
+        CurrentY += 75;
+        
+        DisplayTime(200, CurrentY, 1.0f, Score.ChapterTime);
+        CurrentY += 150;
+        
+        // New record!
+        if (Score.NewChapterRecord)
+        {
+            float NewRecordScale = 1.0f + SinWave(WinScreen.Timer, 0.75f) * 0.30f;
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterNewRecordSprite, 384, CurrentY, NewRecordScale, 1.0f);
+            
+            CurrentY += 100;
+        }
+
+        // List of chapters.
         bool AnyNewRecords = false;
         for (int i = 0; i < Chapter.NPages; i++)
         {
@@ -165,22 +183,9 @@ void DisplayWinScreen()
             
             CurrentY += 75;
         }
-        
-        CurrentY += 75;
-        
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterTotalTimeSprite, 384 + 2000*WinScreen.SlideIn, CurrentY, 1.0f, 1.0f);
-        CurrentY += 75;
-
-        DisplayTime(200, CurrentY, 1.0f, Score.ChapterTime);
-        CurrentY += 150;
-        
-        if (Score.NewChapterRecord)
-        {
-            float NewRecordScale = 1.0f + SinWave(WinScreen.Timer, 0.75f) * 0.30f;
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterNewRecordSprite, 384, CurrentY, NewRecordScale, 1.0f);
-        }
     }
     
+    // tap to continue
     float TapScape = 1.0f + SinWave(WinScreen.Timer, 0.5f) * 0.05f;
     AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &TapToContinueSprite, 384, LitScreenHeight - 75 + 300*WinScreen.SlideIn, TapScape, 1.0f);
 }

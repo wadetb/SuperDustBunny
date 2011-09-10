@@ -44,7 +44,7 @@ void DisplayTimeDigit(int Digit, float BaseX, float BaseY, float ScaleFactor, fl
         case 7:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 354, 0, 406, 63, ScaleFactor, ScaleFactor); break;
         case 8:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 408, 0, 462, 63, ScaleFactor, ScaleFactor); break;
         case 9:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 463, 0, 520, 63, ScaleFactor, ScaleFactor); break;
-        case 10:   AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 55,  0, 74,  63, ScaleFactor, ScaleFactor/4.0f); break;
+        case 10:   AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 520, 41, 542, 63, ScaleFactor, ScaleFactor); break;
         default:   break;   
     }    
 }
@@ -56,11 +56,11 @@ void DisplayTime(float X, float Y, float ScaleFactor, int Time)
     int Hundredths = ( Time % 60 ) * 60 / 100;
     
 	DisplayTimeDigit(Minutes,         X, Y, ScaleFactor, 0,    0);
-	DisplayTimeDigit(10,              X, Y, ScaleFactor, 1,    0.25f);
-	DisplayTimeDigit(10,              X, Y, ScaleFactor, 1,    0.75f);
+	DisplayTimeDigit(10,              X, Y, ScaleFactor, 1,    0.2f);
+	DisplayTimeDigit(10,              X, Y, ScaleFactor, 1,    0.7f);
 	DisplayTimeDigit(Seconds/10,      X, Y, ScaleFactor, 1.5f, 0);
 	DisplayTimeDigit(Seconds%10,      X, Y, ScaleFactor, 2.5f, 0);
-	DisplayTimeDigit(10,              X, Y, ScaleFactor, 3.5f, 0.75f);
+	DisplayTimeDigit(10,              X, Y, ScaleFactor, 3.5f, 0.7f);
     DisplayTimeDigit(Hundredths/10,   X, Y, ScaleFactor, 4,    0);
     DisplayTimeDigit(Hundredths%10,   X, Y, ScaleFactor, 5,    0);
 }

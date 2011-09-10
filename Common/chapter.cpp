@@ -352,6 +352,10 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* FileName
 			{
 				ParseFlameProperties(Block, PropertiesNode);
 			}
+			else if (Block->Type == BLOCKTYPE_GEAR)
+			{
+				ParseGearProperties(Block, PropertiesNode);
+			}
 			else if (Block->Type == BLOCKTYPE_FLASHLIGHT_WAYPOINT)
 			{
 				ParseFlashlightWaypointProperties(Block, PropertiesNode);
@@ -739,7 +743,13 @@ void ClearChapter()
 	for (int i = 0; i < Chapter.NBlocks; i++)
 	{
 		if (Chapter.Blocks[i].Properties)
-			free(Chapter.Blocks[i].Properties);
+        {
+            // TODO FLAME!!!!
+            if (Chapter.Blocks[i].Type == BLOCKTYPE_GEAR)
+                FreeGearProperties(&Chapter.Blocks[i]);
+            else
+                free(Chapter.Blocks[i].Properties);
+        }
 	}
 	Chapter.NBlocks = 0;
 
@@ -812,7 +822,7 @@ void CreatePageObjects()
 					EraseBlock(x, y);
 					break;
 				case BLOCKTYPE_GEAR:
-					CreateGear(x * 64, y * 64);
+					CreateGear(x * 64, y * 64, (SGearProperties*)Block->Properties);
 					EraseBlock(x, y);
 					break;
 				case BLOCKTYPE_COIN:

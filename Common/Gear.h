@@ -10,6 +10,12 @@
 #ifndef GEAR_H
 #define GEAR_H
 
+struct SBlock;
+
+struct SGearProperties
+{
+    gxSprite Sprite;
+};
 
 enum EGearState
 {
@@ -18,11 +24,12 @@ enum EGearState
     GEARSTATE_INACTIVE,
 };
 
-
 struct SGear
 {
     EGearState State;
 
+    SGearProperties* Props;
+    
     float X, Y;
     float FloatVelocityX, FloatVelocityY;
     float FloatGravity;
@@ -37,8 +44,10 @@ struct SGear
 extern int NGears;
 extern SGear Gears[];
 
+void ParseGearProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode);
+void FreeGearProperties(SBlock* Block);
 
-void CreateGear(int X, int Y);
+void CreateGear(int X, int Y, SGearProperties* Props);
 void ClearGears();
 
 void UpdateGear();

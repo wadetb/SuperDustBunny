@@ -69,6 +69,8 @@ bool DisplayHelp = false;
 bool DevMode = false;
 bool SlowMotionMode = false;
 bool ChapterIntroDisplayed = false;
+float PauseTimer = 0.0f;
+float PauseSlideIn = 1.0f;
 bool GamePause = false;
 bool GameMuted = false;
 
@@ -406,14 +408,36 @@ void SetGameState_StartScreen()
     LoadChapterList();
     LoadChapterUnlocks();
     
-    // Advance to first unlocked chapter.
-    if (CurrentChapter < 0)
+    
+    if (CurrentChapter == -1)
     {
-        CurrentChapter = 0;
-        while (Chapters[CurrentChapter].Unlocked)
-            CurrentChapter++;
-        if (CurrentChapter > 0) 
-            CurrentChapter--;
+        // Look for the first unplayed chapter that is also unlocked.
+        for (int i = 0; i < NChapters; i++)
+        {
+            if (!Chapters[i].Played && Chapters[i].Unlocked)
+            {
+                CurrentChapter = i;
+                break;
+            }
+        }
+        
+        // In case of no entries, find the last chapter that is unlocked before a locked chapter.
+        if (CurrentChapter == -1)
+        {
+            for (int i = 0; i < NChapters-1; i++)
+            {
+                if (Chapters[i].Unlocked && !Chapters[i+1].Unlocked)
+                {
+                    CurrentChapter = i;
+                    break;
+                }
+            }
+        }
+        
+        // If all else fails, pick chapter 0.
+        // (Possible future improvement - pick the chapter with the worst, or perhaps the most recently played)
+        if (CurrentChapter == -1)
+            CurrentChapter = 0;
     }
 
 	InitStartScreen();
@@ -469,22 +493,41 @@ void SetGameState_Playing()
 
 void DisplayPauseScreen()
 {
-    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonHomeSprite, 192, 500, 1.0f, 1.0f);
-    
-    if (GameMuted)
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonUnmuteSprite, 768-192, 500, 1.0f, 1.0f);
-    else
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonMuteSprite, 768-192, 500, 1.0f, 1.0f);        
+    if (GameState == GAMESTATE_CHAPTER_INTRO || GameState == GAMESTATE_TRANSITION)
+        return;
 
-    if (Settings.ChapterSkip)
+    if (GamePause)
     {
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 192+16, 850, -2.0f, 2.0f);
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 768-192-16, 850, 2.0f, 1.0f);        
+        float Lerp = Remap(PauseTimer, 0.0f, 0.175f, 0.0f, 1.0f, true);
+        
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonPauseSprite, 384, 64, 1.0f+Lerp, 1.0f-Lerp);
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonPlaySprite, 384, 128 - 128*PauseSlideIn, 1.75f, 1.0f);
+        
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonHomeSprite, 192 - 600*PauseSlideIn, 500, 1.2f, 1.0f);
+        
+        if (GameMuted)
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonUnmuteSprite, 768-192 + 600*PauseSlideIn, 500, 1.2f, 1.0f);
+        else
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonMuteSprite, 768-192 + 600*PauseSlideIn, 500, 1.2f, 1.0f);        
+        
+        if (Settings.ChapterSkip)
+        {
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 192+16 - 600*PauseSlideIn, 850, -2.0f, 2.0f);
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 768-192-16 + 600*PauseSlideIn, 850, 2.0f, 1.0f);        
+        }
+    }
+    else
+    {
+        // TODO ADD FLYOUT
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonPauseSprite, 384, 64, 1.0f, 1.0f);
     }
 }
 
 void UpdatePauseScreen()
 {
+    PauseTimer += 1.0f/60.0f;
+    PauseSlideIn *= 0.8f;
+    
     if (msButton1 && !msOldButton1)
     {
         if (msX > 384+64 && msY >= 300 && msY <= 600)
@@ -511,6 +554,22 @@ void UpdatePauseScreen()
                 SkipToNextPage();
             }
         }
+    }
+}
+
+void PauseGame()
+{
+    if (GamePause)
+    {
+        GamePause = false;
+        PauseTimer = 0.0f;
+        PauseSlideIn = 1.0f;        
+    }
+    else
+    {
+        GamePause = true;
+        PauseTimer = 0.0f;
+        PauseSlideIn = 1.0f;
     }
 }
 
@@ -578,13 +637,7 @@ void DisplayGame_Playing()
     DisplayDebug();
     
 	// Display buttons
-    if (GamePause)
-    {
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonPlaySprite, (float)gxScreenWidth/2, 64, 1.0f, 1.0f);
-        DisplayPauseScreen();
-    }
-    else
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonPauseSprite, (float)gxScreenWidth/2, 64, 1.0f, 1.0f);
+    DisplayPauseScreen();
         
 	// Lighting effects.
 	DisplayFlashlight();
@@ -629,7 +682,7 @@ void UpdateGame_Playing()
     {
         if (msX >= 384-150 && msX <= 384+150 && msY < 200)
         {
-            GamePause = !GamePause;
+            PauseGame();
         }
     }
 #endif
