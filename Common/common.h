@@ -246,7 +246,7 @@ inline float SinWave(float Time, float Period, float Amplitude=1.0f)
 #define strdup _strdup
 #define snprintf _snprintf
 inline char* strtok_r(char* p, char* t, char**) { return strtok(p, t); }
-inline float strtof(char* p, char** pp) { return strtod(p, pp); }
+inline float strtof(char* p, char** pp) { return (float)strtod(p, pp); }
 #endif
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -258,7 +258,11 @@ void PushErrorContext(const char* ErrorContext, ...);
 void PopErrorContext();
 
 // Reports a fatal error and immediately exits the program.
+#ifdef PLATFORM_WINDOWS
+__declspec(noreturn) void ReportError(const char* ErrorMessage, ...);
+#else
 void ReportError(const char* ErrorMessage, ...) __attribute__((__noreturn__));
+#endif
 
 // Print something to the application log.
 void LogMessage(const char* LogMessage, ...);
@@ -312,8 +316,8 @@ void DisplayGame_Playing();
 
 extern bool DevMode;
 
-extern int ScrollX;
-extern int ScrollY;
+extern float ScrollX;
+extern float ScrollY;
 
 extern bool ChapterIntroDisplayed;
 extern bool GamePause;

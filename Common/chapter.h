@@ -179,8 +179,8 @@ extern int CurrentChapter;
 
 extern SChapter Chapter;
 
-extern int ScrollX;
-extern int ScrollY;
+extern float ScrollX;
+extern float ScrollY;
 
 void LoadChapter(const char* filename);
 void ClearChapter();

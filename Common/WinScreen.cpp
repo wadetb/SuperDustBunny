@@ -134,7 +134,7 @@ void DisplayWinScreen()
         if (Score.Medal != MEDAL_NONE)
             AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, &MedalFrames[0], 384, 675, 0.8f, 1.0f);        
         
-        int CurrentY = 75;
+        float CurrentY = 75;
         
         // Chapter complete!
         AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterCompleteSprite, 384, CurrentY, 1.0f, 1.0f);
@@ -167,7 +167,7 @@ void DisplayWinScreen()
             }
         }
 
-        int XOffset = AnyNewRecords ? 0 : 90;
+        float XOffset = AnyNewRecords ? 0.0f : 90.0f;
         
         AddLitSprite(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterTimeSprite, XOffset + 60, CurrentY);
         AddLitSprite(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterBonusSprite, XOffset + 350, CurrentY);

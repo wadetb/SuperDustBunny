@@ -45,8 +45,6 @@ void ClearBalls()
 	NBalls = 0;
 }
 
-extern int ScrollY;
-
 void DisplayBall()
 {
     for (int i = 0; i < NBalls; i++)

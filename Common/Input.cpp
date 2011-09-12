@@ -176,12 +176,12 @@ void GetInput_EndSwipe(float X, float Y, double Time)
 
 float GetInput_GetSwipeTimeLeft()
 {
-    return Swipe.Duration - Swipe.Current;
+    return (float)( Swipe.Duration - Swipe.Current );
 }
 
 float GetInput_GetSwipeCurrent()
 {
-    return Swipe.Current;
+    return (float)Swipe.Current;
 }
 
 void GetInput_GetSwipePosAtTime(float* X, float* Y, double Time)
@@ -214,8 +214,8 @@ void GetInput_GetSwipePosAtTime(float* X, float* Y, double Time)
     double Duration = SwipePoints[Index+1].Time - Start;
     
     double Ratio = (Time - Start) / Duration;
-    *X = SwipePoints[Index].X + (SwipePoints[Index+1].X - SwipePoints[Index].X) * Ratio;
-    *Y = SwipePoints[Index].Y + (SwipePoints[Index+1].Y - SwipePoints[Index].Y) * Ratio;
+    *X = (float)( SwipePoints[Index].X + (SwipePoints[Index+1].X - SwipePoints[Index].X) * Ratio );
+    *Y = (float)( SwipePoints[Index].Y + (SwipePoints[Index+1].Y - SwipePoints[Index].Y) * Ratio );
 }
 
 bool GetInput_CheckSwipeStraightness(float StartTime, float EndTime, float MaxAngle)

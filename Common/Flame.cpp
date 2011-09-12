@@ -98,11 +98,11 @@ void ParseFlameProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNod
         }
         else if (strcmp(Name, "xoffset") == 0)
         {
-            Props->XOffset = atof(Value);
+            Props->XOffset = (float)atof(Value);
         }
         else if (strcmp(Name, "yoffset") == 0)
         {
-            Props->YOffset = atof(Value);
+            Props->YOffset = (float)atof(Value);
         }
         else if (strcmp(Name, "origin") == 0)
         {
@@ -132,11 +132,11 @@ void ParseFlameProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNod
         }
         else if (strcmp(Name, "scale") == 0)
         {
-            Props->Scale = atof(Value);
+            Props->Scale = (float)atof(Value);
         }
         else if (strcmp(Name, "fire") == 0)
         {
-            Props->IsFire = atoi(Value);
+            Props->IsFire = atoi(Value) != 0;
         }
 		else if (strcmp(Name, "type") != 0 && strcmp(Name, "material") != 0)
 		{

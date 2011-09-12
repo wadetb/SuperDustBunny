@@ -236,11 +236,11 @@ void UpdateVacuum()
 			// The vacuum gets faster the longer it stays unclogged.
 			float VacuumSpeed;
 			if (Vacuum.Timer < 4*60)
-				VacuumSpeed = 3 * Chapter.PageProps.VacuumSpeed;
+				VacuumSpeed = 3.0f * Chapter.PageProps.VacuumSpeed;
 			else if (Vacuum.Timer < 8*60)
-				VacuumSpeed = 3.5 * Chapter.PageProps.VacuumSpeed;
+				VacuumSpeed = 3.5f * Chapter.PageProps.VacuumSpeed;
 			else
-				VacuumSpeed = 6 * Chapter.PageProps.VacuumSpeed;
+				VacuumSpeed = 6.0f * Chapter.PageProps.VacuumSpeed;
 
 			Vacuum.Timer++;
 
@@ -496,8 +496,8 @@ void GetVacuumForce(float X, float Y, float* VX, float* VY, float Strength, bool
                 if (Force == 0xffffffff)
                     continue;
                 
-                float DirX = TX - CurX;
-                float DirY = TY - CurY;
+                float DirX = (float)( TX - CurX );
+                float DirY = (float)( TY - CurY );
 
                 TotalVX += DirX * Force;
                 TotalVY += DirY * Force;

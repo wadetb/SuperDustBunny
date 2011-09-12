@@ -41,8 +41,8 @@ int CurrentChapter = -1;
 
 SChapter Chapter;
 
-int ScrollY;
-int ScrollX;
+float ScrollX;
+float ScrollY;
 
 const char* CurrentChapterDir;
 
@@ -123,7 +123,7 @@ static void ParsePageProperties(SPageProperties* Props, rapidxml::xml_node<char>
 		}
 		else if (strcmp(Name, "vacuum_speed") == 0)
 		{
-            Props->VacuumSpeed = atof(Value);
+            Props->VacuumSpeed = (float)atof(Value);
 		}
 		else
 			ReportError("'%s' is not a valid map property (value is '%s').  Fix this problem and re-save the TMX file.", Name, Value);
@@ -919,7 +919,7 @@ void CalculateScroll()
 	// Screen tracks Dusty upwards.
 	if (Dusty.FloatY + ScrollY < 500)
 	{
-		ScrollY = 500 - (int)Dusty.FloatY;
+		ScrollY = 500 - Dusty.FloatY;
 	}
 
 	// Screen also tracks Dusty downwards.
@@ -947,7 +947,7 @@ void CalculateScroll()
     
 	if (ScrollX < -(Chapter.PageWidth * 64 - 768))
 	{
-		ScrollX = -(Chapter.PageWidth * 64 - 768);
+		ScrollX = (float)-(Chapter.PageWidth * 64 - 768);
 	} 
     
 	if (ScrollX > 0)
@@ -973,14 +973,14 @@ void DisplayPortal()
 
 static void DisplayChapterLayer(ELightList LightList, int* Blocks)
 {
-    int CurY = ScrollY;
+    float CurY = ScrollY;
 	for (int y = 0; y < Chapter.PageHeight; y++, CurY += 64)
 	{
 		// Skip rows of tiles that cannot be on screen.
 		if (CurY > LitScreenHeight || CurY+64 < 0)
 			continue;
 
-        int CurX = ScrollX;
+        float CurX = ScrollX;
 		for (int x = 0; x < Chapter.PageWidth; x++, CurX += 64)
 		{
 		    //if (CurX > gxScreenWidth || CurX+64 < 0)

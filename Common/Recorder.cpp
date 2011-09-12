@@ -352,9 +352,9 @@ void UpdateRecorder()
             if (Type == EVENT_TILT)
             {
                 SRecorderTiltEvent* Event = (SRecorderTiltEvent*)Pos;
-                Recorder.MoveLeft = Event->MoveLeft;
-                Recorder.MoveRight = Event->MoveRight;
-                Recorder.Jump = Event->Jump;
+                Recorder.MoveLeft = Event->MoveLeft != 0;
+                Recorder.MoveRight = Event->MoveRight != 0;
+                Recorder.Jump = Event->Jump != 0;
                 
                 RecorderEventOffset += sizeof(SRecorderTiltEvent);
             }

@@ -123,8 +123,8 @@ static void UpdateDusty_GetNearbyBlocks()
 {
     Dusty.NearbyBlocks = 0;
     
-    Dusty.BlockX = ( Dusty.FloatX + (Dusty.Left+Dusty.Right)/2 ) / 64;
-    Dusty.BlockY = ( Dusty.FloatY + (Dusty.Top+Dusty.Bottom)/2 ) / 64;
+    Dusty.BlockX = (int)( ( Dusty.FloatX + (Dusty.Left+Dusty.Right)/2 ) / 64 );
+    Dusty.BlockY = (int)( ( Dusty.FloatY + (Dusty.Top+Dusty.Bottom)/2 ) / 64 );
     
     for (int i = 0; i <= 2; i++)
         for (int j = 0; j <= 2; j++)
