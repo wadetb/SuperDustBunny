@@ -271,9 +271,9 @@ SAssetList OldCacheAssets;
 //                                                          Loading Entire Files                                                           //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
-void* LoadFileData(const char* FileName, void** Data=NULL, int* DataSize=NULL)
+static void* LoadFileData(const char* FileName, void** Data=NULL, fpos_t* DataSize=NULL)
 {
-    int FileDataSize;
+    long FileDataSize;
     char* FileData;
     
     FILE* F = fopen(FileName, "rb");
@@ -665,7 +665,7 @@ void GetAsset(const char* FileName, SAssetList** AssetList, SAsset** Asset)
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                      Asset file loading (platform specific)                                             //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-void GetBundleFileName(const char* FileName, char* Buf, int BufSize)
+static void GetBundleFileName(const char* FileName, char* Buf, int BufSize)
 {
 #ifdef PLATFORM_MAC
     snprintf(Buf, BufSize, "%s/%s", RootDirectory, FileName);
@@ -692,7 +692,7 @@ void GetBundleFileName(const char* FileName, char* Buf, int BufSize)
 #endif
 }
 
-void* LoadAssetFile(const char* FileName, void** Data, int* DataSize)
+void* LoadAssetFile(const char* FileName, void** Data, fpos_t* DataSize)
 {
 #ifdef PLATFORM_IPHONE
     SAssetList* AssetList;

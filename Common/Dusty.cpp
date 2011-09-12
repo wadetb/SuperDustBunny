@@ -37,15 +37,6 @@ struct SDustyTrail
 SDustyTrail DustyTrail[MAX_DUSTY_TRAIL];
 
 
-float NormalizeAngle(float Angle)
-{
-    while (Angle < 0)
-        Angle += 360.0f;
-    while (Angle >= 360.0f)
-        Angle -= 360.0f;
-    return Angle;
-}
-
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                  Dusty initialization function                                                          //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -128,7 +119,7 @@ void UpdateDusty_JumpCommon();
 //                                                  General purpose control                                                                //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-void UpdateDusty_GetNearbyBlocks()
+static void UpdateDusty_GetNearbyBlocks()
 {
     Dusty.NearbyBlocks = 0;
     
@@ -143,12 +134,12 @@ void UpdateDusty_GetNearbyBlocks()
     Dusty.YInBlock = Dusty.FloatY - Dusty.BlockY*64;
 }
 
-bool UpdateDusty_NearbyBlocksAreClear(unsigned int Mask)
+static bool UpdateDusty_NearbyBlocksAreClear(unsigned int Mask)
 {
     return (Dusty.NearbyBlocks & Mask) == 0;
 }
 
-bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
+static bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
 {
     if (GetInput_IsSwipedUsed())
         return false;
@@ -205,13 +196,13 @@ bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
     return false;
 }
 
-bool UpdateDusty_CheckSwipeJumpRange(float MinAngle, float MaxAngle)
+static bool UpdateDusty_CheckSwipeJumpRange(float MinAngle, float MaxAngle)
 {
     float Spread = AngleDifference(MinAngle, MaxAngle)/2;
     return UpdateDusty_CheckSwipeJump(MinAngle + Spread, Spread);
 }
 
-void UpdateDusty_DoSwipeJump(float Angle, float Power)
+static void UpdateDusty_DoSwipeJump(float Angle, float Power)
 {
     float dX = cosf(DegreesToRadians(Angle)) * Power;
     float dY = -sinf(DegreesToRadians(Angle)) * Power;
@@ -231,7 +222,7 @@ void UpdateDusty_DoSwipeJump(float Angle, float Power)
 //                                                  General purpose display                                                                //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-void DisplayDustySprite(gxSprite* Sprite, float XAdj = 0.0f, float XMirrorAdj = 0.0f, float YAdj = 0.0f)
+static void DisplayDustySprite(gxSprite* Sprite, float XAdj = 0.0f, float XMirrorAdj = 0.0f, float YAdj = 0.0f)
 {
 	float ScaleX, OffsetX;
 	if (Dusty.Direction == DIRECTION_RIGHT)
@@ -296,7 +287,7 @@ void SetDustyState_Stand()
     GetInput_ClearSwipe();
 }
 
-void DisplayDusty_Stand()
+static void DisplayDusty_Stand()
 {
 	if (Dusty.CollideMaterial == MATERIAL_ICE && fabsf(Dusty.FloatVelocityX) > 1)
 	{
@@ -329,7 +320,7 @@ void DisplayDusty_Stand()
 	}
 }
 
-void UpdateDusty_Stand()
+static void UpdateDusty_Stand()
 {
 	// Check for hitting something sticky.
 	if (Dusty.CollideMaterial == MATERIAL_STICKY)
@@ -528,7 +519,7 @@ void SetDustyState_Fall()
     Dusty.JumpGraceTimer = 20;
 }
 
-void DisplayDusty_Jump()
+static void DisplayDusty_Jump()
 {
 	gxSprite* Hop2Sprites[3] =
 	{
@@ -558,7 +549,7 @@ void DisplayDusty_Jump()
 		DisplayDustySprite(Hop3Sprites[(Dusty.SpriteTransition/10) % 2], -124, -18, -150);
 }
 
-void UpdateDusty_Jump()
+static void UpdateDusty_Jump()
 {       
     // Grace period jump.  Allows a midair jump within a few frames of falling.
     if (Dusty.JumpGraceTimer > 0)
@@ -599,7 +590,7 @@ void SetDustyState_Hop(EDustyDirection Direction)
 	Dusty.State = DUSTYSTATE_HOP;
 }
 
-void DisplayDusty_Hop()
+static void DisplayDusty_Hop()
 {
 	switch (Dusty.SpriteTransition)
 	{
@@ -631,7 +622,7 @@ void DisplayDusty_Hop()
 	}
 }
 
-void UpdateDusty_Hop()
+static void UpdateDusty_Hop()
 {
 	// Check for hitting something sticky.
 	if (Dusty.CollideMaterial == MATERIAL_STICKY)
@@ -911,7 +902,7 @@ void SetDustyState_WallJump()
     GetInput_ClearSwipe();
 }
 
-void DisplayDusty_WallJump()
+static void DisplayDusty_WallJump()
 {    
 	gxSprite* WallJumpSprites[2] =
 	{
@@ -925,7 +916,7 @@ void DisplayDusty_WallJump()
 		DisplayDustySprite(WallJumpSprites[(Dusty.SpriteTransition/5) % 2], -128, -8, -200);
 }
 
-void UpdateDusty_WallJump()
+static void UpdateDusty_WallJump()
 {
 	// Check for hitting something sticky.
 	if (Dusty.CollideMaterial == MATERIAL_STICKY)
@@ -1065,7 +1056,7 @@ void SetDustyState_CornerJump()
     GetInput_ClearSwipe();
 }
 
-void DisplayDusty_CornerJump()
+static void DisplayDusty_CornerJump()
 {
     if (Dusty.SpriteTransition < 10)
     {
@@ -1083,7 +1074,7 @@ void DisplayDusty_CornerJump()
 
 }
 
-void UpdateDusty_CornerJump()
+static void UpdateDusty_CornerJump()
 {
     Dusty.SpriteTransition += 1;
     
@@ -1162,12 +1153,12 @@ void SetDustyState_PrepareLaunch()
     Dusty.State = DUSTYSTATE_PREPARELAUNCH;
 }
 
-void DisplayDusty_PrepareLaunch()
+static void DisplayDusty_PrepareLaunch()
 {
 	DisplayDustySprite(&DustyHop5Sprite, -119, 18, -170);
 }
 
-void UpdateDusty_PrepareLaunch()
+static void UpdateDusty_PrepareLaunch()
 {
     GetInput_ConsumeAllSwipe();
 }
@@ -1191,12 +1182,12 @@ void SetDustyState_Launch(float VelocityX, float VelocityY)
     Dusty.State = DUSTYSTATE_LAUNCH;
 }
 
-void DisplayDusty_Launch()
+static void DisplayDusty_Launch()
 {
 	DisplayDusty_Jump();
 }
 
-void UpdateDusty_Launch()
+static void UpdateDusty_Launch()
 {
 	UpdateDusty_JumpCommon();
 }
@@ -1219,12 +1210,12 @@ void SetDustyState_Die()
 	Dusty.State = DUSTYSTATE_DIE;
 }
 
-void DisplayDusty_Die()
+static void DisplayDusty_Die()
 {
 	DisplayDustySprite(&DustyDeathSprite, -125, 0, -181);
 }
 
-void UpdateDusty_Die()
+static void UpdateDusty_Die()
 {
 	Dusty.SpriteTransition += 1;
 
@@ -1274,7 +1265,7 @@ void SetDustyState_Stuck()
 	Dusty.State = DUSTYSTATE_STUCK;
 }
 
-void DisplayDusty_Stuck()
+static void DisplayDusty_Stuck()
 {
 	// TODO: Get sprites for attempting to escape stickiness, and use them when StuckTimer >= 20 or so.
 
@@ -1288,7 +1279,7 @@ void DisplayDusty_Stuck()
 	}
 }
 
-void UpdateDusty_Stuck()
+static void UpdateDusty_Stuck()
 {
 	if (Dusty.StuckTimer > 0)
 	{
@@ -1331,13 +1322,13 @@ void SetDustyState_Hurt()
 	Dusty.State = DUSTYSTATE_HURT;
 }
 
-void DisplayDusty_Hurt()
+static void DisplayDusty_Hurt()
 {       
 	// TODO: Need new sprite
 	DisplayDusty_Die();
 }
 
-void UpdateDusty_Hurt()
+static void UpdateDusty_Hurt()
 {
 	Dusty.FloatX = Dusty.FloatX + Dusty.FloatVelocityX;                                                   
 	Dusty.FloatY += Dusty.FloatVelocityY;
@@ -1371,7 +1362,7 @@ void SetDustyState_IntroHop(EDustyDirection Direction)
 	Dusty.State = DUSTYSTATE_INTROHOP;
 }
 
-void UpdateDusty_IntroHop()
+static void UpdateDusty_IntroHop()
 {
 	// Set Velocity first.
 	float VelocitySign = Dusty.Direction == DIRECTION_LEFT ? -1.0f : 1.0f;
@@ -1426,7 +1417,7 @@ void SetDustyState_IntroStand()
 	Dusty.State = DUSTYSTATE_INTROSTAND;
 }
 
-void UpdateDusty_IntroStand()
+static void UpdateDusty_IntroStand()
 {
 	if (!RemoteControl.Enabled)
 	{
@@ -1453,7 +1444,7 @@ void UpdateDusty_IntroStand()
 //                                                  UpdateDusty_Collision Implementation                                                   //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-void UpdateDusty_Collision()
+static void UpdateDusty_Collision()
 {
 	// Initialize all collision variables to false.  One or more of these will be set to true in this function.
 	// This function also corrects Dusty's position to not intersect anything.
@@ -1670,7 +1661,7 @@ void UpdateDusty_Collision()
 	}
 }
 
-void UpdateDusty_OnFire()
+static void UpdateDusty_OnFire()
 {
     if (Dusty.OnFireTimer > 0)
     {
@@ -1679,7 +1670,7 @@ void UpdateDusty_OnFire()
     }
 }
 
-void UpdateDusty_PowerUp()
+static void UpdateDusty_PowerUp()
 {
     if (Dusty.PowerUpTimer > 0)
     {

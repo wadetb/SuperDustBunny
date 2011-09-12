@@ -78,7 +78,7 @@ void DisplayFans()
 	}
 }
 
-void ApplyFanWind(SFan* Fan, float X, float Y, float Multiplier, float* VX, float* VY)
+static void ApplyFanWind(SFan* Fan, float X, float Y, float Multiplier, float* VX, float* VY)
 {
 	float XDist = Fan->X - X;
 	float YDist = Fan->Y - Y;

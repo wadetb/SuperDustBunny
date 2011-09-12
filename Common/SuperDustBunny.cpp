@@ -269,7 +269,7 @@ double GetCurrentTime()
 //                                                   Frames per second tracking                                                            //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -   //
 
-void UpdateFPS()
+static void UpdateFPS()
 {
 #ifdef PLATFORM_WINDOWS
 	static DWORD LastTime = 0;
@@ -335,7 +335,7 @@ void AdvanceToNextPage()
 	}
 }
 
-void SkipToNextPage()
+static void SkipToNextPage()
 {
     if (IsRecordingActive())
         StopRecording(RESULT_NONE);
@@ -343,7 +343,7 @@ void SkipToNextPage()
     StartRecording();
 }
 
-void SkipToPreviousPage()
+static void SkipToPreviousPage()
 {
     if (IsRecordingActive())
         StopRecording(RESULT_NONE);
@@ -351,7 +351,7 @@ void SkipToPreviousPage()
     StartRecording();    
 }
 
-void LoadRecordingChapterAndPage()
+static void LoadRecordingChapterAndPage()
 {
     char* ChapterName = GetRecordingChapterName();
     
@@ -491,7 +491,7 @@ void SetGameState_Playing()
     GetInput_ConsumeAllSwipe();
 }
 
-void DisplayPauseScreen()
+static void DisplayPauseScreen()
 {
     if (GameState == GAMESTATE_CHAPTER_INTRO || GameState == GAMESTATE_TRANSITION)
         return;
@@ -523,7 +523,7 @@ void DisplayPauseScreen()
     }
 }
 
-void UpdatePauseScreen()
+static void UpdatePauseScreen()
 {
     PauseTimer += 1.0f/60.0f;
     PauseSlideIn *= 0.8f;
@@ -557,7 +557,7 @@ void UpdatePauseScreen()
     }
 }
 
-void PauseGame()
+static void PauseGame()
 {
     if (GamePause)
     {
@@ -573,7 +573,7 @@ void PauseGame()
     }
 }
 
-void DisplayBackground()
+static void DisplayBackground()
 {
     gxSprite* BackgroundSprite;
     
@@ -668,7 +668,7 @@ void DisplayGame_Playing()
 	}
 }
 
-void UpdateGame_Playing()
+static void UpdateGame_Playing()
 { 
 #ifdef PLATFORM_WINDOWS
     //Pause Update
@@ -760,7 +760,7 @@ void SetGameState_Transition(EGameTransition Type)
 	GameState = GAMESTATE_TRANSITION;
 }
 
-void UpdateGame_Transition()
+static void UpdateGame_Transition()
 {
 	if (GameTransition == GAMETRANSITION_FIRST_PAGE)
 	{
@@ -861,7 +861,7 @@ void UpdateGame_Transition()
     }
 }
 
-void DisplayGame_Transition()
+static void DisplayGame_Transition()
 {
 	if (GameTransition == GAMETRANSITION_FIRST_PAGE)
 	{

@@ -8,7 +8,7 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
 #include "Common.h"
-#include "StartScreen.h"
+#include "CreditsScreen.h"
 
 struct SCreditsScreen
 {

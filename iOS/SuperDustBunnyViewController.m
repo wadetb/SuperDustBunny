@@ -80,6 +80,7 @@ SuperDustBunnyViewController *theViewController;
     [spinner setCenter:CGPointMake(85, 45)];
     [spinnerPanel addSubview:spinner]; 
     [spinner startAnimating];
+    [spinner release];
 
     UILabel *spinnerCaption = [[UILabel alloc] initWithFrame:CGRectMake(20, 90, 130, 22)];
     spinnerCaption.backgroundColor = [UIColor clearColor];
@@ -88,6 +89,7 @@ SuperDustBunnyViewController *theViewController;
     spinnerCaption.textAlignment = UITextAlignmentCenter;
     spinnerCaption.text = @"Syncing Live Assets";
     [spinnerPanel addSubview:spinnerCaption]; 
+    [spinnerCaption release];
     
     [self.view addSubview:spinnerPanel];
     

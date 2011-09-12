@@ -61,7 +61,7 @@ void DisplayChapterIntro()
 	}
 }
 
-void ChapterIntro_Advance()
+static void ChapterIntro_Advance()
 {
     if (!Chapter.PageProps.VacuumOff)
         TurnOnVacuum();

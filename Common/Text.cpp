@@ -11,7 +11,7 @@
 #include "Text.h"
 
 
-void DisplayLetter(ELightList List, char Letter, float X, float Y, float Scale, float Alpha)
+static void DisplayLetter(ELightList List, char Letter, float X, float Y, float Scale, float Alpha)
 {
     switch (Letter)
     {
@@ -58,7 +58,7 @@ void DisplayLetter(ELightList List, char Letter, float X, float Y, float Scale, 
     }
 }
 
-int GetLetterWidth(char Letter)
+static int GetLetterWidth(char Letter)
 {
     switch (Letter)
     {
@@ -104,7 +104,7 @@ int GetLetterWidth(char Letter)
     }
 }
 
-float GetStringWidth(const char* String, float Scale, float Alpha)
+float GetStringWidth(const char* String, float Scale)
 {
     float CurWidth = 0;
     
@@ -125,7 +125,7 @@ void DisplayStringAlpha(ELightList List, const char* String, unsigned int Format
     float CurY = Y;
     
     if (FormatFlags & FORMAT_CENTER_X)
-        CurX -= GetStringWidth(String, Scale, Alpha)/2;
+        CurX -= GetStringWidth(String, Scale)/2;
     
     const char* P = String;
     while (*P)

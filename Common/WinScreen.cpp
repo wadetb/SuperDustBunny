@@ -117,7 +117,7 @@ void DisplayWinScreen()
         {
             //float MedalScale = 1.5f + SinWave(WinScreen.Timer, 0.75f) * 0.25f;
 
-            const char* MedalString;
+            const char* MedalString = "";
             if (Score.Medal == MEDAL_BRONZE) MedalString = "bronze";
             if (Score.Medal == MEDAL_SILVER) MedalString = "silver";
             if (Score.Medal == MEDAL_GOLD) MedalString = "gold";
@@ -190,7 +190,7 @@ void DisplayWinScreen()
     AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &TapToContinueSprite, 384, LitScreenHeight - 75 + 300*WinScreen.SlideIn, TapScape, 1.0f);
 }
 
-void WinScreen_Advance()
+static void WinScreen_Advance()
 {
     for (int i = 0; i < MEDAL_FRAMES; i++)
         gxDestroySprite(&MedalFrames[i]);

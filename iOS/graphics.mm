@@ -73,7 +73,7 @@ GLubyte gxFontData[768] =
 
 gxSprite gxFontSprite;
 
-void gxInitFontSprite()
+static void gxInitFontSprite()
 {
 	void* buffer = calloc(8 * 1024 * 4, 1);
 	
@@ -170,28 +170,30 @@ void gxLoadSprite(const char* filename, gxSprite* sprite)
 #if TARGET_OS_MAC && !TARGET_OS_IPHONE
     CFStringRef path = CFStringCreateWithCString(NULL, filename, kCFStringEncodingUTF8);
     CFURLRef url = CFURLCreateWithFileSystemPath(NULL, path, kCFURLPOSIXPathStyle, false);
+    CFRelease(path);
     CGImageSourceRef imageSource = CGImageSourceCreateWithURL(url, NULL);
+    CFRelease(url);
     CGImageRef image = CGImageSourceCreateImageAtIndex(imageSource, 0, NULL);
+    CFRelease(imageSource);
 	if (image == NULL)
-	{
+    {
+		NSLog(@"Could not load image '%s'.", filename);
 		return;
-	}
+    }
 #endif
 
 #if TARGET_OS_IPHONE
-	NSString* nsname = [[NSString alloc] initWithUTF8String:filename];
-	CGImageRef image = [[[UIImage imageNamed:nsname] retain] CGImage];
+	NSString* name = [NSString stringWithUTF8String:filename];
+	CGImageRef image = [[UIImage imageNamed:name] CGImage];
 	if (image == nil)
 	{
-		NSLog(@"could not find %@", nsname);
-		[nsname release];
+		NSLog(@"Could not load image '%s'.", filename);
 		return;
 	}
-	[nsname release];
 #endif
 	
-	sprite->width = CGImageGetWidth(image);
-	sprite->height = CGImageGetHeight(image);
+	sprite->width = (int)CGImageGetWidth(image);
+	sprite->height = (int)CGImageGetHeight(image);
 	
 	sprite->texWidth = 1;
 	while (sprite->texWidth < sprite->width) 
@@ -204,21 +206,39 @@ void gxLoadSprite(const char* filename, gxSprite* sprite)
     sprite->left = 0;
     sprite->top = 0;
     sprite->right = sprite->width;
-    sprite->bottom = sprite->bottom;
+    sprite->bottom = sprite->height;
     
 	void* pixels = calloc(sprite->texWidth * sprite->texHeight * 4, 1);
+    
 	CGColorSpaceRef colorSpace = CGImageGetColorSpace(image);
 	CGContextRef context = CGBitmapContextCreate(pixels, sprite->texWidth, sprite->texHeight, 8, 4 * sprite->texWidth, colorSpace, kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
-	CGColorSpaceRelease(colorSpace);
+    if (context == NULL)
+    {
+		NSLog(@"Could not load image '%s'; unsupported color space.", filename);
+        free(pixels);
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+        CGImageRelease(image);
+#endif
+        return;
+    }
+    
 	CGContextDrawImage(context, CGRectMake(0, sprite->texHeight-sprite->height, sprite->width, sprite->height), image);
 	
 	glGenTextures(1, &sprite->tex);
 	glBindTexture(GL_TEXTURE_2D, sprite->tex);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sprite->texWidth, sprite->texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 	
 	CGContextRelease(context);
 	free(pixels);
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+    CGImageRelease(image);
+#endif
 }
 
 void gxDestroySprite(gxSprite* sprite)
@@ -231,11 +251,6 @@ void gxDestroySprite(gxSprite* sprite)
 	sprite->height = 0;
 	sprite->texWidth = 0;
 	sprite->texHeight = 0;
-}
-
-void _gxDrawQuad( float x, float y, float w, float h, unsigned int color, float u1, float v1, float u2, float v2 )
-{
-    return;
 }
 
 void gxDrawRectangleFilled(int x, int y, int width, int height, unsigned int color)

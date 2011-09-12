@@ -173,7 +173,7 @@ void UpdateVacuumSound()
 	}
 }
 
-void CreateVacuumSmoke(int Count)
+static void CreateVacuumSmoke(int Count)
 {
     
     // Always spawn smoke on screen or just off screen, for quick feedback.
@@ -472,14 +472,12 @@ void GetVacuumForce(float X, float Y, float* VX, float* VY, float Strength, bool
     {
         // Cheap solution, not accurate.
         float TotalVX, TotalVY;
-        float TotalWeight;
 
         int CurX = (int)((X+32)/64);
         int CurY = (int)((Y+32)/64);
 
         TotalVX = 0;
         TotalVY = 0;
-        TotalWeight = 0;
 
         for (int TX = CurX-1; TX <= CurX+1; TX++)
         {

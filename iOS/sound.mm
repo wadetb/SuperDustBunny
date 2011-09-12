@@ -22,7 +22,7 @@ void sxExit()
 	alcCloseDevice(sxDevice);
 }
 
-void sxGetOpenALAudioData(CFURLRef inFileURL, void** outData, ALsizei *outDataSize, ALenum *outDataFormat, ALsizei* outSampleRate)
+static void sxGetOpenALAudioData(CFURLRef inFileURL, void** outData, ALsizei *outDataSize, ALenum *outDataFormat, ALsizei* outSampleRate)
 {
 	ExtAudioFileRef extRef;
 	ExtAudioFileOpenURL(inFileURL, &extRef);
@@ -57,12 +57,12 @@ void sxGetOpenALAudioData(CFURLRef inFileURL, void** outData, ALsizei *outDataSi
 	ExtAudioFileGetProperty(extRef, kExtAudioFileProperty_FileLengthFrames, &propSize, &fileLengthInFrames);
 	
 	void* data = NULL;
-	UInt32 dataSize = fileLengthInFrames * outputFormat.mBytesPerFrame;
+	UInt64 dataSize = fileLengthInFrames * outputFormat.mBytesPerFrame;
 	data = malloc(dataSize);
 	
 	AudioBufferList	dataBuffer;
 	dataBuffer.mNumberBuffers = 1;
-	dataBuffer.mBuffers[0].mDataByteSize = dataSize;
+	dataBuffer.mBuffers[0].mDataByteSize = (UInt32)dataSize;
 	dataBuffer.mBuffers[0].mNumberChannels = outputFormat.mChannelsPerFrame;
 	dataBuffer.mBuffers[0].mData = data;
 	
@@ -71,7 +71,7 @@ void sxGetOpenALAudioData(CFURLRef inFileURL, void** outData, ALsizei *outDataSi
 	ExtAudioFileDispose(extRef);
 	
 	*outData = data;
-	*outDataSize = dataSize;
+	*outDataSize = (UInt32)dataSize;
 	*outDataFormat = (outputFormat.mChannelsPerFrame > 1) ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16;
 	*outSampleRate = outputFormat.mSampleRate;
 }
@@ -80,13 +80,13 @@ void sxLoadSound(const char* filename, sxSound* sound)
 {
     CFStringRef path = CFStringCreateWithCString(NULL, filename, kCFStringEncodingUTF8);
     CFURLRef url = CFURLCreateWithFileSystemPath(NULL, path, kCFURLPOSIXPathStyle, false);
-	
+	CFRelease(path);
+    
 	ALenum format;
 	ALsizei size;
 	ALsizei freq;
 	ALvoid* data;
 	sxGetOpenALAudioData(url, &data, &size, &format, &freq);
-	
 	CFRelease(url);
 
     if (data == NULL)

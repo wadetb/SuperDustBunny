@@ -54,13 +54,13 @@ struct SFireWorkTrail
 	int HistoryCount;
 	SFireWorkTrailHistory History[FIREWORK_TRAIL_HISTORY];
 
-	int NextFireWorkTrail;
+	intptr_t NextFireWorkTrail;
 };
 
 SFireWorkTrail FireWorkTrails[MAX_FIREWORK_TRAILS];
 
-int FirstInactiveFireWorkTrail = MAX_FIREWORK_TRAILS;
-int FirstActiveFireWorkTrail = MAX_FIREWORK_TRAILS;
+intptr_t FirstInactiveFireWorkTrail = MAX_FIREWORK_TRAILS;
+intptr_t FirstActiveFireWorkTrail = MAX_FIREWORK_TRAILS;
 
 
 unsigned int FireWorkColors[] =
@@ -152,9 +152,9 @@ void ClearFireWorks()
 	FirstActiveFireWorkTrail = MAX_FIREWORK_TRAILS;
 }
 
-void DisplayFireWorkTrails()
+static void DisplayFireWorkTrails()
 {
-	for (int i = FirstActiveFireWorkTrail; i != MAX_FIREWORK_TRAILS; i = FireWorkTrails[i].NextFireWorkTrail)
+	for (intptr_t i = FirstActiveFireWorkTrail; i != MAX_FIREWORK_TRAILS; i = FireWorkTrails[i].NextFireWorkTrail)
 	{
 		SFireWorkTrail* Trail = &FireWorkTrails[i];
 
@@ -229,10 +229,10 @@ void DisplayFireWorkTrails()
 	}
 }
 
-void UpdateFireWorkTrails()
+static void UpdateFireWorkTrails()
 {
 	// Advance Trails.
-	for (int i = FirstActiveFireWorkTrail; i != MAX_FIREWORK_TRAILS; i = FireWorkTrails[i].NextFireWorkTrail)
+	for (intptr_t i = FirstActiveFireWorkTrail; i != MAX_FIREWORK_TRAILS; i = FireWorkTrails[i].NextFireWorkTrail)
 	{
 		SFireWorkTrail* Trail = &FireWorkTrails[i];
 
@@ -268,7 +268,7 @@ void UpdateFireWorkTrails()
 	}
 
 	// Cull dead trails.
-	for (int i = FirstActiveFireWorkTrail; i != MAX_FIREWORK_TRAILS;)
+	for (intptr_t i = FirstActiveFireWorkTrail; i != MAX_FIREWORK_TRAILS;)
 	{
 		SFireWorkTrail* Trail = &FireWorkTrails[i];
 
@@ -276,13 +276,13 @@ void UpdateFireWorkTrails()
 
 		if (Trail->Life <= 0)
 		{
-			int TrailIndex = Trail - FireWorkTrails;
+			intptr_t TrailIndex = Trail - FireWorkTrails;
 
 			if (FirstActiveFireWorkTrail == TrailIndex)
 				FirstActiveFireWorkTrail = Trail->NextFireWorkTrail;
 			else
 			{
-				for (int i = FirstActiveFireWorkTrail; i != MAX_FIREWORK_TRAILS; i = FireWorkTrails[i].NextFireWorkTrail)
+				for (intptr_t i = FirstActiveFireWorkTrail; i != MAX_FIREWORK_TRAILS; i = FireWorkTrails[i].NextFireWorkTrail)
 				{
 					if (FireWorkTrails[i].NextFireWorkTrail == TrailIndex)
 					{
@@ -298,14 +298,14 @@ void UpdateFireWorkTrails()
 	}
 }
 
-void SpawnFireWorkTrail(float X, float Y, float Length, float Speed, float Life, float Brightness, unsigned int Color)
+static void SpawnFireWorkTrail(float X, float Y, float Length, float Speed, float Life, float Brightness, unsigned int Color)
 {
 	if (FirstInactiveFireWorkTrail == MAX_FIREWORK_TRAILS)
 		ReportError("Exceeded the maximum of %d firework trails.", MAX_FIREWORK_TRAILS);
 
 	SFireWorkTrail* Trail = &FireWorkTrails[FirstInactiveFireWorkTrail];
 
-	int NextInactive = Trail->NextFireWorkTrail;
+	intptr_t NextInactive = Trail->NextFireWorkTrail;
 	Trail->NextFireWorkTrail = FirstActiveFireWorkTrail;
 	FirstActiveFireWorkTrail = FirstInactiveFireWorkTrail;
 	FirstInactiveFireWorkTrail = NextInactive;
@@ -374,7 +374,7 @@ void DisplayFireWorks()
 	DisplayFireWorkTrails();
 }
 
-void ExplodeFireWork(float X, float Y, int Size)
+static void ExplodeFireWork(float X, float Y, int Size)
 {
 	// Spawn Trails
 	unsigned int Color = FireWorkColors[Random(0, sizeof(FireWorkColors)/sizeof(FireWorkColors[0]))];

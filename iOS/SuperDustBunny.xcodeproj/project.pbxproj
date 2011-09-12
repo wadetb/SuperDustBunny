@@ -306,19 +306,12 @@
 		085AA94F132C572A00DF32CA = {
 			isa = PBXGroup;
 			children = (
-				08866BCF141AC34200D25BB8 /* Quartz.framework */,
-				08866BD0141AC34200D25BB8 /* QuartzCore.framework */,
-				08866BCD141AC30700D25BB8 /* ApplicationServices.framework */,
-				08D4980A1417F4450022E457 /* CoreVideo.framework */,
-				08D498031417C6010022E457 /* AudioToolbox.framework */,
-				08D498011417C5DA0022E457 /* OpenAL.framework */,
 				08BF391613466F4E002C1A7B /* Converted */,
 				08A8FC7313302BB300E45A98 /* Documentation */,
 				085AAA88132D0E7100DF32CA /* Converter */,
 				085AAA15132C5B9F00DF32CA /* Common */,
 				085AAA14132C5B5F00DF32CA /* iOS */,
 				08D4979B1417AE100022E457 /* Mac */,
-				085AA95D132C572A00DF32CA /* Frameworks */,
 				085AA95B132C572A00DF32CA /* Products */,
 			);
 			sourceTree = "<group>";
@@ -335,7 +328,6 @@
 		085AA95D132C572A00DF32CA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				08D497FB1417BB3A0022E457 /* OpenGL.framework */,
 				085AAA8B132D169700DF32CA /* libz.dylib */,
 				085AAA74132C5C9E00DF32CA /* QuartzCore.framework */,
 				085AAA12132C5B4800DF32CA /* OpenAL.framework */,
@@ -383,6 +375,7 @@
 				085AA9FB132C582C00DF32CA /* SuperDustBunnyViewController.h */,
 				085AA9FC132C582C00DF32CA /* SuperDustBunnyViewController.m */,
 				085AA9FD132C582C00DF32CA /* SuperDustBunnyViewController.xib */,
+				085AA95D132C572A00DF32CA /* Frameworks */,
 			);
 			name = iOS;
 			sourceTree = "<group>";
@@ -506,6 +499,13 @@
 		08D4979B1417AE100022E457 /* Mac */ = {
 			isa = PBXGroup;
 			children = (
+				08D497FB1417BB3A0022E457 /* OpenGL.framework */,
+				08866BCF141AC34200D25BB8 /* Quartz.framework */,
+				08866BD0141AC34200D25BB8 /* QuartzCore.framework */,
+				08866BCD141AC30700D25BB8 /* ApplicationServices.framework */,
+				08D4980A1417F4450022E457 /* CoreVideo.framework */,
+				08D498031417C6010022E457 /* AudioToolbox.framework */,
+				08D498011417C5DA0022E457 /* OpenAL.framework */,
 				089FEC121418999F00086B85 /* SDB.icns */,
 				08D497A71417AE110022E457 /* SDBAppDelegate.h */,
 				08D497A81417AE110022E457 /* SDBAppDelegate.m */,

@@ -213,6 +213,6 @@ void LoadBundleAssetList();
 void LoadAssets();
 
 void LoadSpriteAsset(const char* FileName, gxSprite* Sprite);
-void* LoadAssetFile(const char* FileName, void** Data, int* DataSize);
+void* LoadAssetFile(const char* FileName, void** Data, fpos_t* DataSize);
 
 #endif

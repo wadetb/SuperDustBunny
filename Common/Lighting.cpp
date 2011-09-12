@@ -493,7 +493,7 @@ gxShader CombineShader;
 //                                                      Platform specific drawing                                                          //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-void DrawLightList(int List, gxShader* Shader, gxAlphaMode Alpha)
+static void DrawLightList(int List, gxShader* Shader, gxAlphaMode Alpha)
 {
     if (Alpha != CurrentBlendMode)
     {
@@ -573,7 +573,7 @@ void DrawLightList(int List, gxShader* Shader, gxAlphaMode Alpha)
 #endif
 }
 
-void DrawScreen(gxShader* Shader, gxAlphaMode Alpha)
+static void DrawScreen(gxShader* Shader, gxAlphaMode Alpha)
 {
     _gxSetAlpha(Alpha);
 
@@ -616,7 +616,7 @@ void DrawScreen(gxShader* Shader, gxAlphaMode Alpha)
 //                                                      Shadows                                                                            //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-void InitShadows()
+static void InitShadows()
 {
 #ifdef PLATFORM_WINDOWS
 	gxCreateRenderTarget(LitRenderTargetWidth, LitRenderTargetHeight, &ShadowForegroundRT, true);
@@ -629,7 +629,7 @@ void InitShadows()
 #endif
 }
 
-void DrawShadows(ELightList List, gxSprite* FinalRT, float ShadowOffsetX, float ShadowOffsetY)
+static void DrawShadows(ELightList List, gxSprite* FinalRT, float ShadowOffsetX, float ShadowOffsetY)
 {
     if (FinalRT != &ColorRT)
     {
@@ -644,7 +644,7 @@ void DrawShadows(ELightList List, gxSprite* FinalRT, float ShadowOffsetX, float 
     DrawLightList(List, NULL, GXALPHA_BLEND);
 }
 
-void RenderCombinedColor()
+static void RenderCombinedColor()
 {
     gxSetShader(&CombineShader);
     gxSetShaderSampler(CombineColorSampler, &ColorRT);
@@ -868,9 +868,6 @@ void ResetLighting()
 	{
 		LightLists[i].NQuads = 0;
 	}
-
-	CurrentShader = NULL;
-	CurrentBlendMode = 999;
 }
 
 void RenderLighting()
@@ -1010,7 +1007,7 @@ void RenderLighting()
 //                                          Quad Addition Functions                                                                        //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-SLitVertex* AllocateLitVerts(int NVerts)
+static SLitVertex* AllocateLitVerts(int NVerts)
 {
 	if (NLitVerts + NVerts > MAX_LIT_VERTS)
 		ReportError("Exceeded the maximum of %d lit vertices.", MAX_LIT_VERTS);
@@ -1023,7 +1020,7 @@ SLitVertex* AllocateLitVerts(int NVerts)
 }
 
 #ifdef PLATFORM_IPHONE_OR_MAC
-void AddLitQuadStripIndices(SLitQuad* Quad, int NVerts)
+static void AddLitQuadStripIndices(SLitQuad* Quad, int NVerts)
 {
     Quad->BaseIndex = NLitVertIndices;
     

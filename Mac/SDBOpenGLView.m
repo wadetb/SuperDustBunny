@@ -36,19 +36,24 @@ void GetInput_EndSwipe(float X, float Y, double Time);
     NSOpenGLPixelFormatAttribute attrs[] =
     {
         NSOpenGLPFADoubleBuffer,
-//        NSOpenGLPFAOpenGLProfile,
-//        NSOpenGLProfileVersion3_2Core,
+        //        NSOpenGLPFAOpenGLProfile,
+        //        NSOpenGLProfileVersion3_2Core,
         0
     };
     
     NSOpenGLPixelFormat *pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
     if (!pixelFormat)
         NSLog(@"Failed to create OpenGL pixel format");
-        
-    started = NO;
-    currentTouch = nil;
+    
+    self = [super initWithFrame:frameRect pixelFormat:pixelFormat];
+    [pixelFormat release];
+    
+	if (self) {
+        started = NO;
+        currentTouch = nil;
+    }
 
-    return [super initWithFrame:frameRect pixelFormat:pixelFormat];
+    return self;
 }
 
 - (void)dealloc

@@ -19,6 +19,7 @@
 #include "Flame.h"
 #include "Flashlight.h"
 #include "Vacuum.h"
+#include "Smoke.h"
 #include "Fan.h"
 #include "Wipe.h"
 #include "Debris.h"
@@ -46,7 +47,7 @@ int ScrollX;
 const char* CurrentChapterDir;
 
 
-void ParseNailProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode)
+static void ParseNailProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode)
 {
 	SNailProperties* NailProperties = (SNailProperties*)malloc(sizeof(SNailProperties));
 
@@ -71,7 +72,7 @@ void ParseNailProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode
 	Block->Properties = NailProperties;
 }
 
-void InitPageProperties(SPageProperties* Props)
+static void InitPageProperties(SPageProperties* Props)
 {
 	Props->LightsOff = false;
 	Props->VacuumOff = false;
@@ -80,7 +81,7 @@ void InitPageProperties(SPageProperties* Props)
     Props->VacuumSpeed = 0.75f;
 }
 
-void ParsePageProperties(SPageProperties* Props, rapidxml::xml_node<char>* PropertiesNode)
+static void ParsePageProperties(SPageProperties* Props, rapidxml::xml_node<char>* PropertiesNode)
 {
 	rapidxml::xml_node<char>* PropertyNode = PropertiesNode->first_node("property");
 
@@ -133,7 +134,7 @@ void ParsePageProperties(SPageProperties* Props, rapidxml::xml_node<char>* Prope
 
 // Loads a <tileset> node from either an internal or external tileset.
 // FileName is used to locate image files.
-void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* FileName)
+static void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* FileName)
 {
 	// Grr, Tiled doesn't currently put a TSX version number in the TSX file.
 	//if (strcmp(TileSetNode->first_attribute("version")->value(), "1.0") != 0)
@@ -381,7 +382,7 @@ void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* FileName
 	Chapter.NTileSets++;
 }
 
-void LoadTileSet(const char* FileName)
+static void LoadTileSet(const char* FileName)
 {
 	PushErrorContext("While loading tileset '%s':\n", FileName);
 
@@ -403,7 +404,7 @@ void LoadTileSet(const char* FileName)
 	PopErrorContext();
 }
 
-void ParseCSVData(rapidxml::xml_node<char>* DataNode, int Width, int Height, int NTileSetInfos, STileSetInfo* TileSetInfo, int* Blocks)
+static void ParseCSVData(rapidxml::xml_node<char>* DataNode, int Width, int Height, int NTileSetInfos, STileSetInfo* TileSetInfo, int* Blocks)
 {
 	rapidxml::xml_attribute<char>* DataEncodingAttr = DataNode->first_attribute("encoding");
 	if (DataEncodingAttr == NULL || strcmp(DataEncodingAttr->value(), "csv") != 0)
@@ -419,7 +420,7 @@ void ParseCSVData(rapidxml::xml_node<char>* DataNode, int Width, int Height, int
 			if (Data >= DataEnd)
 				ReportError("Unexpected end of tile data.  Re-saving the TMX file may help.");
 			
-			unsigned int ID = strtoul(Data, &Data, 0);
+			unsigned int ID = (unsigned int)strtoul(Data, &Data, 0);
 			
 			if (x < Width-1 || y < Height-1)
 			{
@@ -464,7 +465,7 @@ void ParseCSVData(rapidxml::xml_node<char>* DataNode, int Width, int Height, int
 	}
 }
 
-void LoadPageFromTMX(const char* FileName)
+static void LoadPageFromTMX(const char* FileName)
 {
 	PushErrorContext("While loading page '%s':\n", FileName);
 
@@ -760,7 +761,7 @@ void ClearChapter()
 	}
 }
 
-void ClearPageObjects()
+static void ClearPageObjects()
 {
 	ClearBarrels();
 	ClearFans();
@@ -780,7 +781,7 @@ void ClearPageObjects()
 	}
 }
 
-void CreatePageObjects()
+static void CreatePageObjects()
 {
 	// Process any special blocks that need to create dynamic objects.
 	for (int y = 0; y < Chapter.PageHeight; y++)
@@ -877,6 +878,7 @@ void CreatePageObjects()
     InitTutorial();
     
 	InitVacuum();
+    InitSmoke();
     
     if (!Chapter.PageProps.VacuumOff)
         TurnOnVacuum();
@@ -969,14 +971,7 @@ void DisplayPortal()
     }
 }
 
-void Swap(float* A, float* B)
-{
-    float Temp = *A;
-    *A = *B;
-    *B = Temp;
-}
-
-void DisplayChapterLayer(ELightList LightList, int* Blocks)
+static void DisplayChapterLayer(ELightList LightList, int* Blocks)
 {
     int CurY = ScrollY;
 	for (int y = 0; y < Chapter.PageHeight; y++, CurY += 64)
@@ -1321,6 +1316,8 @@ void SaveChapterUnlocks()
                           chapters, @"chapters", nil];
     
     [dict writeToFile:filePath atomically:YES];
+    
+    [chapters release];
 #endif
     
     PopErrorContext();

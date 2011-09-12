@@ -58,7 +58,7 @@ const float StartScreenSpacing = 470.0f;
 const float StartScreenDragSpacing = 300.0f;
 
 
-gxSprite* GetStartScreenMedal(int Item)
+static gxSprite* GetStartScreenMedal(int Item)
 {
     if (Item >= STARTSCREEN_ITEM_FIRST_CHAPTER)
     {
@@ -75,7 +75,7 @@ gxSprite* GetStartScreenMedal(int Item)
     return NULL;
 }
 
-gxSprite* GetStartScreenBadge(int Item)
+static gxSprite* GetStartScreenBadge(int Item)
 {
     if (Item >= STARTSCREEN_ITEM_FIRST_CHAPTER)
     {
@@ -88,7 +88,7 @@ gxSprite* GetStartScreenBadge(int Item)
     return NULL;
 }
 
-gxSprite* GetStartScreenIcon(int Item)
+static gxSprite* GetStartScreenIcon(int Item)
 {
     if (Item == STARTSCREEN_ITEM_HELP)
         return &IconHelp1Sprite;
@@ -108,7 +108,7 @@ gxSprite* GetStartScreenIcon(int Item)
         return &IconLockedSprite;
 }
 
-gxSprite* GetStartScreenPressedIcon(int Item)
+static gxSprite* GetStartScreenPressedIcon(int Item)
 {
     if (Item == STARTSCREEN_ITEM_HELP)
         return &IconHelp2Sprite;
@@ -128,7 +128,7 @@ gxSprite* GetStartScreenPressedIcon(int Item)
         return &IconLockedSprite;
 }
 
-gxSprite* GetStartScreenBackground(int Item)
+static gxSprite* GetStartScreenBackground(int Item)
 {
     if (Item == STARTSCREEN_ITEM_HELP)
         return &BackgroundFridgeSprite;
@@ -143,7 +143,7 @@ gxSprite* GetStartScreenBackground(int Item)
         return &BackgroundFridgeSprite;
 }
 
-bool GetStartScreenLocked(int Item)
+static bool GetStartScreenLocked(int Item)
 {
     if (Item == STARTSCREEN_ITEM_HELP)
         return false;
@@ -155,7 +155,7 @@ bool GetStartScreenLocked(int Item)
     return !Chapter->Unlocked;
 }
 
-int GetStartScreenItemCount()
+static int GetStartScreenItemCount()
 {
     return STARTSCREEN_ITEM_NON_CHAPTER_COUNT + NChapters;
 }
@@ -171,7 +171,7 @@ void InitStartScreen()
     StartScreen.ReleasedAtLeastOnce = false;
 }
 
-void StartScreen_Advance()
+static void StartScreen_Advance()
 {
     StartScreen.Dragging = false;
     StartScreen.Pressed = false;

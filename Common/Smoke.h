@@ -10,6 +10,7 @@
 #ifndef SMOKE_H
 #define SMOKE_H
 
+void InitSmoke();
 void DisplaySmoke();
 void UpdateSmoke();
 

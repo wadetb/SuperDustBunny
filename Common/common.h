@@ -87,6 +87,15 @@ inline float DirectionToAngle(float a)
 	return DegreesToRadians(90.0f-a);
 }
 
+inline float NormalizeAngle(float Angle)
+{
+    while (Angle < 0)
+        Angle += 360.0f;
+    while (Angle >= 360.0f)
+        Angle -= 360.0f;
+    return Angle;
+}
+
 inline float Max(float a, float b)
 {
 	if (a > b)
@@ -189,6 +198,13 @@ inline float Sign(float Value)
 	return 0;
 }
 
+inline void Swap(float* A, float* B)
+{
+    float Temp = *A;
+    *A = *B;
+    *B = Temp;
+}
+
 inline float Random(float Min, float Max)
 {
 #ifdef PLATFORM_WINDOWS
@@ -242,14 +258,13 @@ void PushErrorContext(const char* ErrorContext, ...);
 void PopErrorContext();
 
 // Reports a fatal error and immediately exits the program.
-void ReportError(const char* ErrorMessage, ...);
+void ReportError(const char* ErrorMessage, ...) __attribute__((__noreturn__));
 
 // Print something to the application log.
 void LogMessage(const char* LogMessage, ...);
 
 // Misc ObjC function exports.
 void DisplayWelcomeAlert();
-void HTTPPost(const char* URL, const void* Data, int DataSize);
 void ShowSettings();
 
 // Returns current time in seconds.  ONLY to be used for logging prints and non-final profiling code.

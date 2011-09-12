@@ -47,7 +47,7 @@ void DisplayDieScreen()
 	AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, &ScreenLoseGhostSprite, 768/2 + dx, 200+ScreenLoseGhostSprite.height/2+dy, 1.0f, Alpha*Alpha*0.5f);
 }
 
-void DieScreen_Advance()
+static void DieScreen_Advance()
 {
 	SetGameState_StartScreen();
 }
