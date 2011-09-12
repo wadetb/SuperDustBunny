@@ -83,17 +83,36 @@ const char* GoldMedalNames[MEDAL_FRAMES] =
 
 void InitWinScreen()
 {
+#ifdef PLATFORM_IPHONE
+    [TestFlight passCheckpoint:[NSString stringWithFormat:@"Beat the chapter"]];
+#endif
+
     if (Score.Medal != MEDAL_NONE)
     {
         WinScreen.State = WINSCREEN_MEDAL;
         
         const char** MedalNames;
         if (Score.Medal == MEDAL_BRONZE)
+        {
             MedalNames = BronzeMedalNames;
+#ifdef PLATFORM_IPHONE
+            [TestFlight passCheckpoint:[NSString stringWithFormat:@"Got a Bronze medal"]];
+#endif
+        }
         else if (Score.Medal == MEDAL_SILVER)
+        {
             MedalNames = SilverMedalNames;
+#ifdef PLATFORM_IPHONE
+            [TestFlight passCheckpoint:[NSString stringWithFormat:@"Got a Silver medal"]];
+#endif
+        }
         else 
+        {
             MedalNames = GoldMedalNames;
+#ifdef PLATFORM_IPHONE
+            [TestFlight passCheckpoint:[NSString stringWithFormat:@"Got a Gold medal"]];
+#endif
+        }
         
         for (int i = 0; i < MEDAL_FRAMES; i++)
             LoadSpriteAsset(MedalNames[i], &MedalFrames[i]);

@@ -581,10 +581,16 @@ static void LoadPageFromTMX(const char* FileName)
 	if (Dot) *Dot = '\0';
 	
 	char* Slash = strrchr(Name, '/');
-	if (!Slash) Slash = strrchr(Name, '\\');
-	if (!Slash) Slash = Name;
-	
-	Page->Name = strdup(Slash);
+    if (Slash)
+        Page->Name = strdup(Slash+1);
+    else
+    {
+        Slash = strrchr(Name, '\\');
+        if (Slash)
+            Page->Name = strdup(Slash+1);
+        else
+            Page->Name = strdup(Name);
+    }
 	
 	Page->Width = atoi(LayerNode->first_attribute("width")->value());
 	Page->Height = atoi(LayerNode->first_attribute("height")->value());
@@ -892,6 +898,10 @@ void SetCurrentPage(int PageNum)
 	// Clear out objects from previous page.
 	ClearPageObjects();
 
+#ifdef PLATFORM_IPHONE
+    [TestFlight passCheckpoint:[NSString stringWithFormat:@"Entered page %s", Chapter.Pages[PageNum].Name]];
+#endif
+    
 	PushErrorContext("While setting the current page to '%s':\n", Chapter.Pages[PageNum].Name);
 
 	Chapter.PageNum = PageNum;

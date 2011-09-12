@@ -234,7 +234,7 @@ SuperDustBunnyViewController *theViewController;
     [self setPaused:FALSE];
     
     if (buttonIndex == 1) {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://pluszerogames.com/sdb/feedback.html"]];
+        [TestFlight openFeedbackView];
     }
 }
 

@@ -1238,15 +1238,26 @@ static void UpdateDusty_Die()
 		{
             if (!Settings.InfiniteLives)
                 Dusty.Lives -= 1;
+            
             if (IsRecordingActive())
     			StopRecording(RESULT_RESTART_PAGE);
+            
 			SetGameState_Transition(GAMETRANSITION_RESTART_PAGE);
+
+#ifdef PLATFORM_IPHONE
+            [TestFlight passCheckpoint:[NSString stringWithFormat:@"Died"]];
+#endif
 		}
 		else
 		{
             if (IsRecordingActive())
 			    StopRecording(RESULT_DIE);
-			SetGameState_Transition(GAMETRANSITION_DIE_SCREEN);
+			
+            SetGameState_Transition(GAMETRANSITION_DIE_SCREEN);
+
+#ifdef PLATFORM_IPHONE
+            [TestFlight passCheckpoint:[NSString stringWithFormat:@"Game over"]];
+#endif
 		}
 		return;
 	} 

@@ -186,6 +186,11 @@ static void StartScreen_Advance()
 #endif
 
         CurrentChapter = StartScreen.CurItem - STARTSCREEN_ITEM_FIRST_CHAPTER;
+
+#ifdef PLATFORM_IPHONE
+        [TestFlight passCheckpoint:[NSString stringWithFormat:@"Entered chapter %s", Chapters[CurrentChapter].Name]];
+#endif
+
         extern int PlaybackID;
         if (PlaybackID >= 0)
             SetGameState_Transition(GAMETRANSITION_PLAY_RECORDING);
@@ -194,10 +199,17 @@ static void StartScreen_Advance()
     }
 	else if (StartScreen.CurItem == STARTSCREEN_ITEM_HELP)
 	{
+#ifdef PLATFORM_IPHONE
+        [TestFlight passCheckpoint:[NSString stringWithFormat:@"Opened Help"]];
+#endif
+
 		SetGameState_Help();
 	}
 	else if (StartScreen.CurItem == STARTSCREEN_ITEM_CREDITS)
 	{
+#ifdef PLATFORM_IPHONE
+        [TestFlight passCheckpoint:[NSString stringWithFormat:@"Opened Settings"]];
+#endif
 #ifdef PLATFORM_IPHONE
         ShowSettings();
 #endif

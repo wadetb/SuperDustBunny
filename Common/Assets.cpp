@@ -549,6 +549,10 @@ void UpdateLiveAssetCache()
 
     [theViewController startSpinner];
 
+#ifdef PLATFORM_IPHONE
+    [TestFlight passCheckpoint:[NSString stringWithFormat:@"Updated Live Assets"]];
+#endif
+
     ClearAssetList(&CacheAssets);
     
     char Work[1024];

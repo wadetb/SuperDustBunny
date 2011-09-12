@@ -337,6 +337,9 @@ void AdvanceToNextPage()
 
 static void SkipToNextPage()
 {
+#ifdef PLATFORM_IPHONE
+    [TestFlight passCheckpoint:@"Skipped to the next page"];
+#endif
     if (IsRecordingActive())
         StopRecording(RESULT_NONE);
     SetCurrentPage((Chapter.PageNum+1) % Chapter.NPages);
@@ -345,6 +348,9 @@ static void SkipToNextPage()
 
 static void SkipToPreviousPage()
 {
+#ifdef PLATFORM_IPHONE
+    [TestFlight passCheckpoint:@"Skipped to the previous page"];
+#endif
     if (IsRecordingActive())
         StopRecording(RESULT_NONE);
     SetCurrentPage((Chapter.PageNum+Chapter.NPages-1) % Chapter.NPages);
@@ -533,6 +539,9 @@ static void UpdatePauseScreen()
         if (msX > 384+64 && msY >= 300 && msY <= 600)
         {
             GameMuted = !GameMuted;
+#ifdef PLATFORM_IPHONE
+            [TestFlight passCheckpoint:[NSString stringWithFormat:@"%s the game", GameMuted ? "Muted" : "Unmuted"]];
+#endif
         }
 
         if (msX < 384-64 && msY >= 300 && msY <= 600)
@@ -540,6 +549,9 @@ static void UpdatePauseScreen()
             GamePause = false;
             if (IsRecordingActive())
 			    StopRecording(RESULT_RESTART_PAGE);
+#ifdef PLATFORM_IPHONE
+            [TestFlight passCheckpoint:@"Escaped to the home screen"];
+#endif
             SetGameState_StartScreen();
         }
 

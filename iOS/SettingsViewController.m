@@ -93,9 +93,34 @@ void ClearLiveAssetCache();
 }
 
 - (void)transferSettingsFromView {
-    Settings.ControlStyle = controlScheme.selectedSegmentIndex == 0 ? CONTROL_TILT : CONTROL_SWIPE;
+    EControlStyle newStyle = controlScheme.selectedSegmentIndex == 0 ? CONTROL_TILT : CONTROL_SWIPE;
+#ifdef PLATFORM_IPHONE
+    if (newStyle != Settings.ControlStyle)
+    {
+        if (Settings.ControlStyle == CONTROL_TILT)
+            [TestFlight passCheckpoint:[NSString stringWithFormat:@"Changed to Tilt controls"]];
+        else
+            [TestFlight passCheckpoint:[NSString stringWithFormat:@"Changed to Swipe controls"]];
+    }
+#endif
+    Settings.ControlStyle = newStyle;
+
+#ifdef PLATFORM_IPHONE
+    if (infiniteLives.on != Settings.InfiniteLives)
+        [TestFlight passCheckpoint:[NSString stringWithFormat:@"Turned Infinite Lives %s", infiniteLives.on ? "on" : "off"]];
+#endif
     Settings.InfiniteLives = infiniteLives.on;
+    
+#ifdef PLATFORM_IPHONE
+    if (disableVacuum.on != Settings.DisableVacuum)
+        [TestFlight passCheckpoint:[NSString stringWithFormat:@"Turned Disable Vacuum %s", disableVacuum.on ? "on" : "off"]];
+#endif
     Settings.DisableVacuum = disableVacuum.on;
+
+#ifdef PLATFORM_IPHONE
+    if (liveAssets.on != Settings.LiveAssets)
+        [TestFlight passCheckpoint:[NSString stringWithFormat:@"Turned Live Assets %s", liveAssets.on ? "on" : "off"]];
+#endif
     Settings.LiveAssets = liveAssets.on;
     snprintf(Settings.AssetServer, sizeof(Settings.AssetServer), "%s", [[assetServer text] UTF8String]);
 }
