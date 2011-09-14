@@ -74,6 +74,8 @@
 		089FEC1014188D2F00086B85 /* SDBWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 089FEC0F14188D2F00086B85 /* SDBWindow.m */; };
 		089FEC131418999F00086B85 /* SDB.icns in Resources */ = {isa = PBXBuildFile; fileRef = 089FEC121418999F00086B85 /* SDB.icns */; };
 		08BF391713466F4E002C1A7B /* Converted in Resources */ = {isa = PBXBuildFile; fileRef = 08BF391613466F4E002C1A7B /* Converted */; };
+		08D1C6E8142108A500046259 /* LeaderboardScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D1C6E7142108A500046259 /* LeaderboardScreen.cpp */; };
+		08D1C6E9142108A500046259 /* LeaderboardScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D1C6E7142108A500046259 /* LeaderboardScreen.cpp */; };
 		08D2E1AB13660E0300AD31B8 /* PowerUp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D2E1A913660E0300AD31B8 /* PowerUp.cpp */; };
 		08D497961417AE100022E457 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08D497951417AE100022E457 /* Cocoa.framework */; };
 		08D497A01417AE110022E457 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 08D4979E1417AE100022E457 /* InfoPlist.strings */; };
@@ -248,6 +250,8 @@
 		089FEC121418999F00086B85 /* SDB.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = SDB.icns; path = ../../Mac/SDB.icns; sourceTree = "<group>"; };
 		08A8FC7513302F6300E45A98 /* TODO.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = TODO.txt; path = ../../Docs/TODO.txt; sourceTree = "<group>"; };
 		08BF391613466F4E002C1A7B /* Converted */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Converted; path = ../../Converted; sourceTree = "<group>"; };
+		08D1C6E7142108A500046259 /* LeaderboardScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LeaderboardScreen.cpp; sourceTree = "<group>"; };
+		08D1C6EB142108F100046259 /* LeaderboardScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeaderboardScreen.h; sourceTree = "<group>"; };
 		08D2E1A913660E0300AD31B8 /* PowerUp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PowerUp.cpp; sourceTree = "<group>"; };
 		08D2E1AA13660E0300AD31B8 /* PowerUp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PowerUp.h; sourceTree = "<group>"; };
 		08D497931417AE100022E457 /* SuperDustBunny.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SuperDustBunny.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -428,6 +432,8 @@
 				085AAA37132C5B9F00DF32CA /* HelpScreen.h */,
 				0816B6D1137F8C1B00CE5DE4 /* Input.cpp */,
 				0816B6D2137F8C1C00CE5DE4 /* Input.h */,
+				08D1C6E7142108A500046259 /* LeaderboardScreen.cpp */,
+				08D1C6EB142108F100046259 /* LeaderboardScreen.h */,
 				085AAA38132C5B9F00DF32CA /* Lighting.cpp */,
 				085AAA39132C5B9F00DF32CA /* Lighting.h */,
 				085AAA3A132C5B9F00DF32CA /* Lives.cpp */,
@@ -682,6 +688,7 @@
 				0877CB1313E43FB5002800D2 /* Smoke.cpp in Sources */,
 				0844B73913F9F0A500092ECE /* Text.cpp in Sources */,
 				08F44AD013FB694D00991708 /* Debug.cpp in Sources */,
+				08D1C6E8142108A500046259 /* LeaderboardScreen.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -731,6 +738,7 @@
 				08D497A91417AE110022E457 /* SDBAppDelegate.m in Sources */,
 				08D498091417EBA70022E457 /* SDBOpenGLView.m in Sources */,
 				089FEC1014188D2F00086B85 /* SDBWindow.m in Sources */,
+				08D1C6E9142108A500046259 /* LeaderboardScreen.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -869,7 +877,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = macosx10.6;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -896,7 +904,7 @@
 				INFOPLIST_FILE = "SuperDustBunny/SuperDustBunny-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = macosx10.6;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

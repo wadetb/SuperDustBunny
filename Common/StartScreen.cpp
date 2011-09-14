@@ -209,9 +209,8 @@ static void StartScreen_Advance()
 	{
 #ifdef PLATFORM_IPHONE
         [TestFlight passCheckpoint:[NSString stringWithFormat:@"Opened Settings"]];
-#endif
-#ifdef PLATFORM_IPHONE
-        ShowSettings();
+
+        [theViewController showSettings];
 #endif
 //		SetGameState_Credits();
     }
@@ -265,7 +264,7 @@ void DisplayStartScreen()
     }
 }
 
-void DisplayWelcomeAlert()
+static void DisplayWelcomeAlert()
 {
 #ifdef PLATFORM_IPHONE
     theViewController.paused = TRUE;

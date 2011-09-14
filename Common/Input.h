@@ -10,8 +10,23 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-//#define SWIPE_DEBUG
+struct SRemoteControl
+{
+	bool Enabled;
+	bool MoveLeft;
+	bool MoveRight;
+	bool Jump;
+};
 
+extern SRemoteControl RemoteControl;
+
+
+bool GetInput_MoveLeft();
+bool GetInput_MoveRight();
+bool GetInput_Jump();
+
+
+//#define SWIPE_DEBUG
 
 void GetInput_BeginSwipe(float X, float Y, double Time);
 void GetInput_AddToSwipe(float X, float Y, double Time);

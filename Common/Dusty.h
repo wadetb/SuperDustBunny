@@ -77,6 +77,8 @@ struct SDusty
     
     int LandTimer;
     
+    int ComboCount;
+    
 	int Lives;
     
     bool Hidden;

@@ -253,43 +253,9 @@ inline float strtof(char* p, char** pp) { return (float)strtod(p, pp); }
 //                                            Temporary landing zone for global functions                                                  //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-// Stack of "error contexts" which provide extra information about the state of the program when an error occurs.
-void PushErrorContext(const char* ErrorContext, ...);
-void PopErrorContext();
-
-// Reports a fatal error and immediately exits the program.
-#ifdef PLATFORM_WINDOWS
-__declspec(noreturn) void ReportError(const char* ErrorMessage, ...);
-#else
-void ReportError(const char* ErrorMessage, ...) __attribute__((__noreturn__));
-#endif
-
-// Print something to the application log.
-void LogMessage(const char* LogMessage, ...);
-
-// Misc ObjC function exports.
-void DisplayWelcomeAlert();
-void ShowSettings();
-
 // Returns current time in seconds.  ONLY to be used for logging prints and non-final profiling code.
 #undef GetCurrentTime
 double GetCurrentTime();
-
-struct SRemoteControl
-{
-	bool Enabled;
-	bool MoveLeft;
-	bool MoveRight;
-	bool Jump;
-};
-
-extern SRemoteControl RemoteControl;
-
-
-
-bool GetInput_MoveLeft();
-bool GetInput_MoveRight();
-bool GetInput_Jump();
 
 void SetGameState_StartScreen();
 void SetGameState_DieScreen();

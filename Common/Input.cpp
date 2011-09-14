@@ -54,9 +54,6 @@ bool GetInput_MoveLeft()
 	if (IsPlaybackActive())
 		return Recorder.MoveLeft;
     
-	if (RemoteControl.Enabled)
-		return RemoteControl.MoveLeft;
-    
 #ifdef PLATFORM_WINDOWS
 	return kbIsKeyDown(KB_A);
 #endif
@@ -73,9 +70,6 @@ bool GetInput_MoveRight()
 	if (IsPlaybackActive())
 		return Recorder.MoveRight;
     
-	if (RemoteControl.Enabled)
-		return RemoteControl.MoveRight;
-    
 #ifdef PLATFORM_WINDOWS
 	return kbIsKeyDown(KB_D);
 #endif
@@ -91,10 +85,7 @@ bool GetInput_Jump()
     
 	if (IsPlaybackActive())
 		return Recorder.Jump;
-    
-	if (RemoteControl.Enabled)
-		return RemoteControl.Jump;
-    
+        
 #ifdef PLATFORM_WINDOWS
     return kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE);
 #endif

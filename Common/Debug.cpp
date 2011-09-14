@@ -83,3 +83,118 @@ void DisplayDebug()
     
     CurFrame++;
 }
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                      Error handling (platform specific)                                                 //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+#define MAX_ERROR_CONTEXT 10
+
+struct SErrorContext
+{
+	char Text[1024];
+};
+
+int NErrorContexts = 0;
+SErrorContext ErrorContexts[MAX_ERROR_CONTEXT];
+
+void PushErrorContext(const char* ErrorContext, ...)
+{
+	if (NErrorContexts >= MAX_ERROR_CONTEXT)
+		ReportError("Exceeded the maximum of %d error contexts.", MAX_ERROR_CONTEXT);
+    
+	SErrorContext* Context = &ErrorContexts[NErrorContexts];
+    
+	va_list args;
+	va_start(args, ErrorContext);
+	vsnprintf(Context->Text, sizeof(Context->Text), ErrorContext, args);
+	va_end(args);
+    
+	NErrorContexts++;
+}
+
+void PopErrorContext()
+{
+	if (NErrorContexts <= 0)
+		ReportError("Error context underflow.");
+    
+	NErrorContexts--;
+}
+
+void ReportError(const char* ErrorMessage, ...)
+{
+	char ErrorContext[8192];
+	char TotalMessage[8192];
+	int MessageSize = 0;
+    
+	// Append the error contexts.
+	strcpy(ErrorContext, "");
+	for (int i = 0; i < NErrorContexts; i++)
+	{
+		MessageSize += snprintf(ErrorContext + MessageSize, sizeof(ErrorContext) - MessageSize, "%s", ErrorContexts[i].Text);
+	}
+    
+	// Append the error message.
+	char Work[1024];
+    
+	va_list args;
+	va_start(args, ErrorMessage);
+	vsnprintf(Work, sizeof(Work), ErrorMessage, args);
+	va_end(args);
+    
+	snprintf(TotalMessage, sizeof(TotalMessage), "%s%s", ErrorContext, Work);
+    
+#ifdef PLATFORM_WINDOWS
+	MessageBox(NULL, TotalMessage, "SuperDustBunny Error", MB_OK | MB_ICONSTOP);
+	exit(1);
+#endif
+    
+#ifdef PLATFORM_MAC
+	NSLog(@"SuperDustBunny Error: %s\n", TotalMessage);
+    
+    NSWindow *window = [[NSApp delegate] window];
+    [window setLevel:NSNormalWindowLevel];
+    
+    [NSCursor unhide];
+    
+    NSAlert* alert = [[NSAlert alloc] init];
+    [alert setAlertStyle:NSCriticalAlertStyle];
+    [alert setMessageText: @"Super Dust Bunny Error"];
+    [alert setInformativeText:[NSString stringWithUTF8String:TotalMessage]];
+    [alert runModal];
+    
+    exit(255);
+#endif
+    
+#ifdef PLATFORM_IPHONE
+	NSLog(@"SuperDustBunny Error: %s\n", TotalMessage);
+    
+    theViewController.paused = TRUE;
+    
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"SuperDustBunny Error"
+                                                    message:[NSString stringWithUTF8String:TotalMessage]
+                                                   delegate:theViewController
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+    [alert release];
+    
+    while (theViewController.paused)
+    {
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
+    }
+    
+    exit(255);
+#endif
+}
+
+void LogMessage(const char* LogMessage, ...)
+{
+#ifdef PLATFORM_IPHONE_OR_MAC
+	va_list args;
+	va_start(args, LogMessage);
+	vprintf(LogMessage, args);
+	va_end(args);
+#endif
+}
+

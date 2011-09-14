@@ -7,27 +7,30 @@
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
-#ifndef DEBUG_H
-#define DEBUG_H
+#include "common.h"
+#include "LeaderboardScreen.h"
 
-void AddDebugLine(float X1, float Y1, float X2, float Y2, unsigned int Color, float Time);
 
-void DisplayDebugLine(float X1, float Y1, float X2, float Y2, float Width, unsigned int Color);
+struct SLeaderboardScreen
+{
+    
+};
 
-void DisplayDebug();
 
-// Stack of "error contexts" which provide extra information about the state of the program when an error occurs.
-void PushErrorContext(const char* ErrorContext, ...);
-void PopErrorContext();
+SLeaderboardScreen LeaderboardScreen;
 
-// Reports a fatal error and immediately exits the program.
-#ifdef PLATFORM_WINDOWS
-__declspec(noreturn) void ReportError(const char* ErrorMessage, ...);
-#else
-void ReportError(const char* ErrorMessage, ...) __attribute__((__noreturn__));
-#endif
 
-// Print something to the application log.
-void LogMessage(const char* LogMessage, ...);
+void InitLeaderboardScreen()
+{
+    
+}
 
-#endif
+void DisplayLeaderboardScreen()
+{
+    
+}
+
+void UpdateLeaderboardScreen()
+{
+    
+}

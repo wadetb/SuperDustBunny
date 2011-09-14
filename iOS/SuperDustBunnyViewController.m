@@ -254,9 +254,3 @@ SuperDustBunnyViewController *theViewController;
 }
 
 @end
-
-void ShowSettings()
-{
-    [theViewController showSettings];
-}
-

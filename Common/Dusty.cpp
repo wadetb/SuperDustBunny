@@ -70,6 +70,8 @@ void InitDusty()
     
     Dusty.LandTimer = 0;
     
+    Dusty.ComboCount = 0;
+    
     Dusty.Hidden = false;
     
     Dusty.OnFireTimer = 0;
@@ -84,7 +86,7 @@ void InitDusty()
 	Dusty.CollideWithTopSide = false;
 	Dusty.CollideWithBottomSide = false;
     
-    Dusty.JumpPower = 23.0f;
+    Dusty.JumpPower = 21.0f;
 
     memset(DustyTrail, 0, sizeof(DustyTrail));
 };
@@ -118,6 +120,13 @@ void UpdateDusty_JumpCommon();
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                  General purpose control                                                                //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+static void UpdateDusty_MakeDust(float XOffset, float YOffset, int Count)
+{
+    // Spawn some dust motes.
+    for (int i = 0; i < 5; i++)
+        MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);    
+}
 
 static void UpdateDusty_GetNearbyBlocks()
 {
@@ -281,6 +290,8 @@ void SetDustyState_Stand()
 
     Dusty.AirJumpCount = 0;
     Dusty.LandTimer = 0;
+    Dusty.ComboCount = 0;
+    NSLog(@"Dusty.ComboCount=%d per Stand\n", Dusty.ComboCount);
 
 	Dusty.State = DUSTYSTATE_STAND;
     
@@ -427,6 +438,7 @@ static void UpdateDusty_Stand()
 
 	// If Dusty comes to a stand atop a corner, use the corner jump state to prevent him from floating
 	// in the air.
+#if 0
 	if (Dusty.CollideWithBottomLeftCorner)
 	{
 		Dusty.Direction = DIRECTION_LEFT;
@@ -440,7 +452,8 @@ static void UpdateDusty_Stand()
 		SetDustyState_CornerJump();
 		return;
 	}
-
+#endif
+    
 	Dusty.SpriteTransition += 1;
 }
 
@@ -486,16 +499,30 @@ void SetDustyState_JumpWithVelocity( float VX, float VY )
 {
 	Dusty.FloatY -= 5.0f;
     
+    if (Dusty.ComboCount >= 3)
+    {
+        VX *= 1.25f;
+        VY *= 1.25f;
+//        Dusty.PowerUpTimer = 60;
+//        Dusty.ComboCount = 0;
+        NSLog(@"Dusty.ComboCount=%d per Powerup\n", Dusty.ComboCount);
+    }
+    else if (Dusty.ComboCount >= 1)
+    {
+        VX *= 1.10f;
+        VY *= 1.10f;
+    }
+    Dusty.ComboCount++;
+    NSLog(@"Dusty.ComboCount=%d\n", Dusty.ComboCount);
+    
     if (Dusty.PowerUpTimer > 0)
     {
-	    Dusty.FloatVelocityX = VX * 1.5f;
-	    Dusty.FloatVelocityY = VY * 1.5f;
+	    VX *= 1.25f;
+	    VY *= 1.25f;
     }
-    else
-    {
-	    Dusty.FloatVelocityX = VX;
-	    Dusty.FloatVelocityY = VY;
-    }
+    
+    Dusty.FloatVelocityX = VX;
+    Dusty.FloatVelocityY = VY;
 
     if (Dusty.FloatVelocityX < 0)
         Dusty.Direction = DIRECTION_LEFT;
@@ -503,6 +530,8 @@ void SetDustyState_JumpWithVelocity( float VX, float VY )
         Dusty.Direction = DIRECTION_RIGHT;
         
     Dusty.LandTimer = 0;
+
+    UpdateDusty_MakeDust(0, -50, 10 * (Dusty.ComboCount+1));    
 
     Dusty.HasJumped = true;
     
@@ -513,7 +542,9 @@ void SetDustyState_JumpWithVelocity( float VX, float VY )
 void SetDustyState_Fall()
 {
     Dusty.HasJumped = true;
-    
+    Dusty.ComboCount = 0;
+    NSLog(@"Dusty.ComboCount=%d per Fall\n", Dusty.ComboCount);
+
 	Dusty.State = DUSTYSTATE_JUMP;
     
     Dusty.JumpGraceTimer = 20;
@@ -552,19 +583,15 @@ static void DisplayDusty_Jump()
 static void UpdateDusty_Jump()
 {       
     // Grace period jump.  Allows a midair jump within a few frames of falling.
-    if (Dusty.JumpGraceTimer > 0)
+    if (Settings.ControlStyle == CONTROL_TILT)
     {
-        Dusty.JumpGraceTimer--;
-        
-        if (Settings.ControlStyle == CONTROL_TILT)
+        if (Dusty.JumpGraceTimer > 0)
         {
+            Dusty.JumpGraceTimer--;
+            
             if (GetInput_Jump())
             {
                 Dusty.JumpGraceTimer = 0;
-
-                // Spawn some dust motes.
-                for (int i = 0; i < 10; i++)
-                    MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);
                 
                 SetDustyState_Jump( false );
                 return;
@@ -816,20 +843,22 @@ void UpdateDusty_JumpCommon()
     else if (Dusty.FloatVelocityX < 0)
         Dusty.Direction = DIRECTION_LEFT;
 
+#if 0
 	// Collision with corners is indicated by separate collision variables being set.
-	if (Dusty.CollideWithBottomLeftCorner)
+	if (Dusty.CollideWithBottomLeftCorner && Dusty.FloatVelocityY >= 0)
 	{
 		Dusty.Direction = DIRECTION_LEFT;
 		SetDustyState_CornerJump();
 		return;
 	}
-	if (Dusty.CollideWithBottomRightCorner)
+	if (Dusty.CollideWithBottomRightCorner && Dusty.FloatVelocityY >= 0)
 	{
 		Dusty.Direction = DIRECTION_RIGHT;
 		SetDustyState_CornerJump();
 		return;
 	}
-
+#endif
+    
 	// Collision with either side translates to a possible wall jump.
 	// Dusty is not allowed to collide with the same side twice in a row, unless he stands once in between.
 	// Wade: Currently this stuff is tweaked around as an experiment- he can only walljump again after a delay.
@@ -837,22 +866,14 @@ void UpdateDusty_JumpCommon()
 
     if (Dusty.LandTimer >= 1)
     {
-        if (Dusty.CollideWithLeftSide && Dusty.Direction == DIRECTION_LEFT /*&& (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_LEFT)*/)
+        if (Dusty.CollideWithLeftSide && Dusty.FloatVelocityX <= 0 /*&& (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_LEFT)*/)
         {
-            // Spawn some dust motes.
-            for (int i = 0; i < 6; i++)
-                MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);
-
             SetDustyState_WallJump();
             return;
         }
 
-        if (Dusty.CollideWithRightSide && Dusty.Direction == DIRECTION_RIGHT /*&& (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_RIGHT)*/)
+        if (Dusty.CollideWithRightSide && Dusty.FloatVelocityX >= 0 /*&& (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_RIGHT)*/)
         {
-            // Spawn some dust motes.
-            for (int i = 0; i < 6; i++)
-                MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);
-
             SetDustyState_WallJump();
             return;
         }
@@ -882,7 +903,18 @@ void SetDustyState_WallJump()
 		Dusty.WallStickTimer = 15;
 
 	Dusty.FloatVelocityX = 0;
-	Dusty.FloatVelocityY = 0;
+
+    if (Dusty.FloatVelocityY > 0)
+    {
+        Dusty.ComboCount = 0;
+        NSLog(@"Dusty.ComboCount=%d per WallJump\n", Dusty.ComboCount);
+        Dusty.FloatVelocityY = 0;
+    }
+
+    if (Dusty.CollideMaterial == MATERIAL_ICE)
+        Dusty.FloatVelocityY *= 0.75f;
+    else
+        Dusty.FloatVelocityY *= 0.3f;
 
 	Dusty.LastWall = Dusty.Direction;
 
@@ -896,6 +928,8 @@ void SetDustyState_WallJump()
 		Dusty.Direction = DIRECTION_LEFT;
 	else
 		Dusty.Direction = DIRECTION_RIGHT;
+
+    UpdateDusty_MakeDust(0, -50, 10);    
 
 	Dusty.State = DUSTYSTATE_WALLJUMP;
     
@@ -927,14 +961,14 @@ static void UpdateDusty_WallJump()
 
     Dusty.SpriteTransition += 1;
 
-    Dusty.LandTimer++;
-    if (Dusty.LandTimer <= 5)
-        return;
+//    Dusty.LandTimer++;
+//    if (Dusty.LandTimer <= 5)
+//        return;
     
-	if (Dusty.WallStickTimer > 0)
-		Dusty.WallStickTimer--;
+//	if (Dusty.WallStickTimer > 0)
+//		Dusty.WallStickTimer--;
 
-	if (Dusty.WallStickTimer <= 0)
+//	if (Dusty.WallStickTimer <= 0)
 	{
 		// Sliding down the wall... If you hit the ground, switch to stand state.
 		if (Dusty.CollideWithBottomSide == true)
@@ -955,6 +989,7 @@ static void UpdateDusty_WallJump()
 			if (Dusty.CollideMaterial == MATERIAL_ICE)
 			{
 				Dusty.FloatVelocityY += Dusty.FloatGravity;
+                Dusty.FloatVelocityY *= 0.99f;
 
 				if (Dusty.FloatVelocityY > 15.0f)
 					Dusty.FloatVelocityY = 15.0f;
@@ -962,10 +997,17 @@ static void UpdateDusty_WallJump()
 			else
 			{
 				Dusty.FloatVelocityY += Dusty.FloatGravity/2;
+                Dusty.FloatVelocityY *= 0.95f;
 
 				if (Dusty.FloatVelocityY > 7.0f)
 					Dusty.FloatVelocityY = 7.0f;
 			}
+            
+            if (Dusty.FloatVelocityY > 5)
+            {
+                Dusty.ComboCount = 0;
+                NSLog(@"Dusty.ComboCount=%d per WallJump Gravity\n", Dusty.ComboCount);
+            }
 		}
 	}
 
@@ -1042,7 +1084,9 @@ void SetDustyState_CornerJump()
 	Dusty.WallJumpTimer = 0;
     Dusty.AirJumpCount = 0;
     Dusty.LandTimer = 0;
-    
+    Dusty.ComboCount = 0;
+    NSLog(@"Dusty.ComboCount=%d per CornerJump\n", Dusty.ComboCount);
+
 	Dusty.SpriteTransition = 0;
 
 	// Switch directions when entering a corner jump.
@@ -1149,6 +1193,7 @@ static void UpdateDusty_CornerJump()
 void SetDustyState_PrepareLaunch()
 {
     Dusty.LastWall = DIRECTION_NONE;
+    Dusty.ComboCount = 0;
 
     Dusty.State = DUSTYSTATE_PREPARELAUNCH;
 }
@@ -1179,6 +1224,8 @@ void SetDustyState_Launch(float VelocityX, float VelocityY)
 
 	sxPlaySound( &DustyLaunchSound );    
 
+    Dusty.ComboCount = 0;
+
     Dusty.State = DUSTYSTATE_LAUNCH;
 }
 
@@ -1206,6 +1253,8 @@ void SetDustyState_Die()
 	//sxPlaySound( &DieSound );    
 
 	Dusty.NoCollision = true;
+
+    Dusty.ComboCount = 0;
 
 	Dusty.State = DUSTYSTATE_DIE;
 }
@@ -1273,6 +1322,8 @@ void SetDustyState_Stuck()
 	Dusty.StuckTimer = 30;
 	Dusty.StuckJumpCount = 0;
 
+    Dusty.ComboCount = 0;
+
 	Dusty.State = DUSTYSTATE_STUCK;
 }
 
@@ -1329,6 +1380,8 @@ void SetDustyState_Hurt()
 		//Dusty.FloatY += -40;
 		Dusty.CollideWithBottomSide = false;
 	}
+
+    Dusty.ComboCount = 0;
 
 	Dusty.State = DUSTYSTATE_HURT;
 }
@@ -1463,11 +1516,10 @@ static void UpdateDusty_Collision()
 	Dusty.CollideWithLeftSide = false;
 	Dusty.CollideWithBottomSide = false;
 	Dusty.CollideWithTopSide = false;
-
-	UpdateStapler_Collision();
-
 	Dusty.CollideWithBottomLeftCorner = false;
 	Dusty.CollideWithBottomRightCorner = false;
+    
+	UpdateStapler_Collision();
 
 	Dusty.CollideMaterial = MATERIAL_NORMAL;
 
@@ -1573,8 +1625,10 @@ static void UpdateDusty_Collision()
 					bool BlockCollideWithTopSide = false;
 					bool BlockCollideWithBottomSide = false;
 
-					int CornerThreshold = 32;
-
+#if 0
+                    int CornerThreshold = 32;
+#endif
+                    
 					// Prefer to collide with the side of the block that would push Dusty out the least distance.
 					// (Only consider sides that are not adjacent to another solid block).
 					if (LeftBlockIsEmpty && LeftDistance < RightDistance && LeftDistance < DownDistance && LeftDistance < UpDistance)
@@ -1583,13 +1637,15 @@ static void UpdateDusty_Collision()
 						Dusty.CollideWithRightSide = true;//Collision with Dusty's Right Side but the left side of the platform
 						Dusty.FloatX -= LeftDistance;
 
+#if 0
 						if (TopBlockIsEmpty && abs(UpDistance - LeftDistance) < CornerThreshold)
 						{
  							Dusty.CollideWithBottomRightCorner = true;
 							Dusty.FloatY -= UpDistance;
 							Dusty.FloatVelocityY = 0;
 						}
-
+#endif
+                        
 						if (Dusty.FloatVelocityX > 0)
 							Dusty.FloatVelocityX = 0;
 					}
@@ -1599,13 +1655,15 @@ static void UpdateDusty_Collision()
 						Dusty.CollideWithLeftSide = true;//Collision with Dusty's Left Side but the right side of the platform
 						Dusty.FloatX += RightDistance;
 
+#if 0
 						if (TopBlockIsEmpty && abs(UpDistance - RightDistance) < CornerThreshold)
 						{
 							Dusty.CollideWithBottomLeftCorner = true;
 							Dusty.FloatY -= UpDistance;
 							Dusty.FloatVelocityY = 0;
 						}
-
+#endif
+                        
 						if (Dusty.FloatVelocityX < 0)
 							Dusty.FloatVelocityX = 0;
 					}
@@ -1625,6 +1683,7 @@ static void UpdateDusty_Collision()
 						if (Dusty.FloatVelocityY > 0)
 							Dusty.FloatVelocityY = 0;
 
+#if 0
 						// Top side corner jump is back in the game.
 						if (LeftBlockIsEmpty && abs(LeftDistance - UpDistance) < CornerThreshold)
 						{
@@ -1636,6 +1695,7 @@ static void UpdateDusty_Collision()
 							Dusty.CollideWithBottomLeftCorner = true;
 							Dusty.FloatX += RightDistance;
 						}
+#endif
 					}
 
 					int BlockID = GetBlockID(x, y);

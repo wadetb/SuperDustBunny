@@ -14,6 +14,7 @@
 #include "Dusty.h"
 #include "Dust.h"
 #include "Settings.h"
+#include "Input.h"
 
 
 struct SChapterIntro

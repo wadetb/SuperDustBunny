@@ -46,6 +46,13 @@ void DisplayDust()
 
 void UpdateDust()
 {
+    float DustySpeed = Length(Dusty.FloatVelocityX, Dusty.FloatVelocityY);
+    if (DustySpeed < 5)
+        DustySpeed = 5;
+    if (DustySpeed > 20)
+        DustySpeed = 20;
+    DustySpeed /= 200.0f;
+    
 	for (int i = 0; i < MAX_DUST_MOTES; i++)
 	{
 		SDustMote* Mote = &DustMotes[i];
@@ -60,14 +67,14 @@ void UpdateDust()
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 		//                                                   Dusty Wind Effects                                                                    //
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-		float XDist = (float)(Dusty.FloatX + ScrollX) - Mote->X;
-		float YDist = (float)(Dusty.FloatY-50 + ScrollY) - Mote->Y;
+		float XDist = (float)(Dusty.FloatX) - Mote->X;
+		float YDist = (float)(Dusty.FloatY-50) - Mote->Y;
 		float Dist = sqrtf(XDist*XDist + YDist*YDist);
 
-		if (Dist < 150)
+		if (Dist < 250)
 		{
-			Mote->VX -= XDist/Dist * Remap(Dist, 0, 150, 0.1f, 0.0f, true);
-			Mote->VY -= YDist/Dist * Remap(Dist, 0, 150, 0.1f, 0.0f, true);
+			Mote->VX -= XDist/Dist * Remap(Dist, 100, 250, DustySpeed, 0.0f, true);
+			Mote->VY -= YDist/Dist * Remap(Dist, 100, 250, DustySpeed, 0.0f, true);
 		}
 
 		// Apply terminal velocity.
