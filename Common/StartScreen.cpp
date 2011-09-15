@@ -33,11 +33,15 @@ struct SStartScreen
 	int CurItem;
     int PrevItem;
 	
+    float DragTimer;
 	float DragX;
 	float DragStartX;
     float DisplayX;
 
     float BackgroundFadeAlpha;
+    float LeaderboardButtonAlpha;
+    
+    bool LeaderboardsUnlocked;
     
 	bool Dragging;
 	bool Pressed;
@@ -165,10 +169,18 @@ void InitStartScreen()
 	StartScreen.CurItem = STARTSCREEN_ITEM_FIRST_CHAPTER + CurrentChapter;
     StartScreen.PrevItem = StartScreen.CurItem;
     StartScreen.BackgroundFadeAlpha = 0.0f;
+    StartScreen.LeaderboardButtonAlpha = 0.0f;
 	StartScreen.DragX = StartScreen.CurItem * StartScreenDragSpacing;
 	StartScreen.DisplayX = StartScreen.CurItem * StartScreenSpacing;
     StartScreen.PressedTime = 0.0f;
     StartScreen.ReleasedAtLeastOnce = false;
+    
+    StartScreen.LeaderboardsUnlocked = true;
+#ifdef PLATFORM_IPHONE
+    for (int i = 0; i < NChapters; i++)
+        if (!Chapters[i].Completed)
+            StartScreen.LeaderboardsUnlocked = false;
+#endif
 }
 
 static void StartScreen_Advance()
@@ -218,13 +230,20 @@ static void StartScreen_Advance()
 
 void DisplayStartScreen()
 {
+    // Fading backgrounds.
 	AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, GetStartScreenBackground(StartScreen.CurItem), 0, 0, 768, LitScreenHeight, 1.0f-StartScreen.BackgroundFadeAlpha);
 	AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, GetStartScreenBackground(StartScreen.PrevItem), 0, 0 , 768, LitScreenHeight, StartScreen.BackgroundFadeAlpha);
 
+    // Fading out logo.
     float LogoScale = Lerp(StartScreen.StartupTime, 0.0f, 0.8f, 2.0f, 0.5f);
     float LogoAlpha = Lerp(StartScreen.StartupTime, 0.6f, 0.8f, 1.0f, 0.0f);
-    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &LogoSprite, 384, 280, LogoScale, LogoAlpha);
+    if (LogoAlpha > 0)
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &LogoSprite, 384, 280, LogoScale, LogoAlpha);
 
+    // Leaderboard buttons.
+    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &IconCredits1Sprite, 90 + sinf(StartScreen.WiggleTime)*4.0f, 90, 0.25f, StartScreen.LeaderboardButtonAlpha);
+    
+    // Sliding main buttons.
 	for (int i = 0; i < GetStartScreenItemCount(); i++)
 	{
         float X = 384 + i*StartScreenSpacing - StartScreen.DisplayX;
@@ -321,35 +340,48 @@ void UpdateStartScreen()
 	{
 		if (!msButton1)
 		{
-			if (StartScreen.Pressed)
-			{
-                if ( !GetStartScreenLocked(StartScreen.CurItem) )
-                {
-                    StartScreen_Advance();
-                }
-			}
-
 			StartScreen.Dragging = false;
-			StartScreen.Pressed = false;
         }
 		else 
 		{
-			if (abs(msX - StartScreen.DragStartX) > 10)
-				StartScreen.Pressed = false;
-
 			StartScreen.DragX += StartScreen.DragStartX - msX;
 			StartScreen.DragStartX = (float)msX;
 		}        
 	}
 	else
 	{
-		if (msButton1)
-		{
-            StartScreen.Pressed = true;
-            StartScreen.Dragging = true;
-            StartScreen.DragStartX = (float)msX;
-            StartScreen.PressedTime = 0.0f;
-		}
+        StartScreen.DragX = StartScreen.CurItem * StartScreenDragSpacing;
+
+        if (StartScreen.Pressed)
+        {
+            StartScreen.PressedTime += 1.0f/60.0f;
+//            if (StartScreen.PressedTime < 0.25f)
+            {
+                if (fabsf((float)msX - StartScreen.DragStartX) > 10)
+                {
+                    StartScreen.Pressed = false;
+                    StartScreen.Dragging = true;
+                }
+            }
+            
+            if (!msButton1)
+            {
+                StartScreen.Pressed = false;
+                if ( !GetStartScreenLocked(StartScreen.CurItem) )
+                {
+                    StartScreen_Advance();
+                }
+			}
+        }
+        else
+        {
+            if (msY >= 256 && msButton1)
+            {
+                StartScreen.Pressed = true;
+                StartScreen.DragStartX = (float)msX;
+                StartScreen.PressedTime = 0.0f;
+            }
+        }
 	}
 
     if (StartScreen.DragX < 0)
@@ -358,6 +390,9 @@ void UpdateStartScreen()
 		StartScreen.DragX = (GetStartScreenItemCount()-1)*StartScreenDragSpacing;
 
     int NewItem = (int)Round(StartScreen.DragX / StartScreenDragSpacing);
+    if (NewItem > STARTSCREEN_ITEM_FIRST_CHAPTER + NChapters - 1)
+        NewItem = STARTSCREEN_ITEM_FIRST_CHAPTER + NChapters - 1;
+        
     if (NewItem != StartScreen.CurItem)
     {
         StartScreen.PrevItem = StartScreen.CurItem;
@@ -365,23 +400,22 @@ void UpdateStartScreen()
         StartScreen.BackgroundFadeAlpha = 1.0f;
     }
     
+    if ( StartScreen.Dragging )
+        StartScreen.DisplayX = StartScreen.DragX / StartScreenDragSpacing * StartScreenSpacing;
+    else
+        StartScreen.DisplayX = ( StartScreen.CurItem * StartScreenSpacing ) * 0.1f + StartScreen.DisplayX * 0.9f;
+    
     StartScreen.BackgroundFadeAlpha *= 0.9f;
     
-    StartScreen.DisplayX = ( StartScreen.CurItem * StartScreenSpacing ) * 0.1f + StartScreen.DisplayX * 0.9f;
-    
-    if (StartScreen.Pressed)
+    if (StartScreen.CurItem >= STARTSCREEN_ITEM_FIRST_CHAPTER)
     {
-        if (StartScreen.PressedTime < 0.5f)
-            StartScreen.PressedTime += 1.0f/60.0f;        
+        if (StartScreen.LeaderboardsUnlocked)
+            StartScreen.LeaderboardButtonAlpha = Clamp(StartScreen.LeaderboardButtonAlpha + 0.05f, 0.0f, 1.0f);
+        else
+            StartScreen.LeaderboardButtonAlpha = Clamp(StartScreen.LeaderboardButtonAlpha - 0.05f, 0.0f, 1.0f);
     }
-    else
-    {
-        if (StartScreen.PressedTime > 0.0f)
-            StartScreen.PressedTime -= 1.0f/60.0f;
-    }
-    
+        
     StartScreen.StartupTime += 1.0f/60.0f;
-    
     if (StartScreen.StartupTime >= 1.0f && !StartScreen.WelcomeDisplayed)
     {
         StartScreen.WelcomeDisplayed = true;

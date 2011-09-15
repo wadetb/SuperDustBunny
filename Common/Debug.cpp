@@ -11,7 +11,7 @@
 #include "Debug.h"
 
 
-#define MAX_DEBUG_LINES 100
+#define MAX_DEBUG_LINES 1000
 
 
 struct SDebugLine

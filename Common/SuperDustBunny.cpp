@@ -402,7 +402,7 @@ static void DisplayPauseScreen()
         float Lerp = Remap(PauseTimer, 0.0f, 0.175f, 0.0f, 1.0f, true);
         
         AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonPauseSprite, 384, 64, 1.0f+Lerp, 1.0f-Lerp);
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonPlaySprite, 384, 128 - 128*PauseSlideIn, 1.75f, 1.0f);
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonPlaySprite, 384, 160 - 160*PauseSlideIn, 2.25f, 1.0f);
         
         AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonHomeSprite, 192 - 600*PauseSlideIn, 500, 1.2f, 1.0f);
         

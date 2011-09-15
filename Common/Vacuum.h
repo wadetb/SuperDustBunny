@@ -40,6 +40,7 @@ struct SVacuum
     int BlinkTimer;
 
     int* ForceMap;
+    int* NextForceMap;
     int ForceMapWidth;
     int ForceMapHeight;
 };

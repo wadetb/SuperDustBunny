@@ -291,7 +291,6 @@ void SetDustyState_Stand()
     Dusty.AirJumpCount = 0;
     Dusty.LandTimer = 0;
     Dusty.ComboCount = 0;
-    NSLog(@"Dusty.ComboCount=%d per Stand\n", Dusty.ComboCount);
 
 	Dusty.State = DUSTYSTATE_STAND;
     
@@ -503,9 +502,6 @@ void SetDustyState_JumpWithVelocity( float VX, float VY )
     {
         VX *= 1.25f;
         VY *= 1.25f;
-//        Dusty.PowerUpTimer = 60;
-//        Dusty.ComboCount = 0;
-        NSLog(@"Dusty.ComboCount=%d per Powerup\n", Dusty.ComboCount);
     }
     else if (Dusty.ComboCount >= 1)
     {
@@ -513,7 +509,6 @@ void SetDustyState_JumpWithVelocity( float VX, float VY )
         VY *= 1.10f;
     }
     Dusty.ComboCount++;
-    NSLog(@"Dusty.ComboCount=%d\n", Dusty.ComboCount);
     
     if (Dusty.PowerUpTimer > 0)
     {
@@ -543,7 +538,6 @@ void SetDustyState_Fall()
 {
     Dusty.HasJumped = true;
     Dusty.ComboCount = 0;
-    NSLog(@"Dusty.ComboCount=%d per Fall\n", Dusty.ComboCount);
 
 	Dusty.State = DUSTYSTATE_JUMP;
     
@@ -905,11 +899,7 @@ void SetDustyState_WallJump()
 	Dusty.FloatVelocityX = 0;
 
     if (Dusty.FloatVelocityY > 0)
-    {
-        Dusty.ComboCount = 0;
-        NSLog(@"Dusty.ComboCount=%d per WallJump\n", Dusty.ComboCount);
         Dusty.FloatVelocityY = 0;
-    }
 
     if (Dusty.CollideMaterial == MATERIAL_ICE)
         Dusty.FloatVelocityY *= 0.75f;
@@ -1002,12 +992,6 @@ static void UpdateDusty_WallJump()
 				if (Dusty.FloatVelocityY > 7.0f)
 					Dusty.FloatVelocityY = 7.0f;
 			}
-            
-            if (Dusty.FloatVelocityY > 5)
-            {
-                Dusty.ComboCount = 0;
-                NSLog(@"Dusty.ComboCount=%d per WallJump Gravity\n", Dusty.ComboCount);
-            }
 		}
 	}
 
@@ -1085,7 +1069,6 @@ void SetDustyState_CornerJump()
     Dusty.AirJumpCount = 0;
     Dusty.LandTimer = 0;
     Dusty.ComboCount = 0;
-    NSLog(@"Dusty.ComboCount=%d per CornerJump\n", Dusty.ComboCount);
 
 	Dusty.SpriteTransition = 0;
 

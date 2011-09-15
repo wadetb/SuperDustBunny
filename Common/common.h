@@ -263,6 +263,7 @@ void SetGameState_WinScreen();
 void SetGameState_Playing();
 void SetGameState_Help();
 void SetGameState_Credits();
+void SetGameState_Leaderboard();
 void SetGameState_ChapterIntro();
 
 enum EGameTransition

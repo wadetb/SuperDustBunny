@@ -100,7 +100,7 @@ void UpdateDust()
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
         int BlockX = (int)(Mote->X / 64.0f);
         int BlockY = (int)(Mote->Y / 64.0f);
-        if (Vacuum.State != VACUUMSTATE_ONSCREEN && BlockX > 0 && BlockX < Chapter.PageWidth && BlockY > 0 && BlockY > Chapter.PageWidth)
+        if (Vacuum.State != VACUUMSTATE_ONSCREEN && BlockX >= 0 && BlockX < Chapter.PageWidth && BlockY >= 0 && BlockY < Chapter.PageHeight)
         {
             if (Chapter.PageBlocks[BlockY*Chapter.PageWidth+BlockX] != SPECIALBLOCKID_BLANK)
             {
