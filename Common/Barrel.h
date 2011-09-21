@@ -22,6 +22,7 @@ struct SBarrelProperties
 {
 	int From;
 	int To;
+    float Power;
 };
 
 struct SBarrel
@@ -34,6 +35,8 @@ struct SBarrel
 	float ToDir;
 	float Dir;
 
+    float Power;
+    
 	int Timer;
 };
 

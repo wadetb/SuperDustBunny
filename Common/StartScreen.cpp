@@ -240,8 +240,10 @@ void DisplayStartScreen()
     if (LogoAlpha > 0)
         AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &LogoSprite, 384, 280, LogoScale, LogoAlpha);
 
-    // Leaderboard buttons.
+    // Leaderboard and ghost buttons.
     AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &IconCredits1Sprite, 90 + sinf(StartScreen.WiggleTime)*4.0f, 90, 0.25f, StartScreen.LeaderboardButtonAlpha);
+    float GhostAlpha = Settings.GhostActive ? 0.75f : 0.5f;
+    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ScreenLoseGhostSprite, 768 - (90 + sinf(1234+StartScreen.WiggleTime)*4.0f), 90, 0.25f, StartScreen.LeaderboardButtonAlpha*GhostAlpha);
     
     // Sliding main buttons.
 	for (int i = 0; i < GetStartScreenItemCount(); i++)
@@ -384,6 +386,27 @@ void UpdateStartScreen()
         }
 	}
 
+    if (msY < 256 && msX < 384 && !msButton1 && msOldButton1 && StartScreen.CurItem >= STARTSCREEN_ITEM_FIRST_CHAPTER)
+    {
+        CurrentChapter = StartScreen.CurItem - STARTSCREEN_ITEM_FIRST_CHAPTER;
+        
+#ifdef PLATFORM_IPHONE
+        [TestFlight passCheckpoint:[NSString stringWithFormat:@"Opened Leaderboards for %s", Chapters[CurrentChapter].Name]];
+#endif
+        SetGameState_Leaderboard();
+        return;
+    }
+    
+    if (msY < 256 && msX > 384 && !msButton1 && msOldButton1 && StartScreen.CurItem >= STARTSCREEN_ITEM_FIRST_CHAPTER)
+    {
+        Settings.GhostActive = !Settings.GhostActive;
+#ifdef PLATFORM_IPHONE
+        [TestFlight passCheckpoint:[NSString stringWithFormat:@"Toggled Ghost mode to %s", Settings.GhostActive ? "on" : "off"]];
+#endif
+        SaveSettings();
+        return;
+    }
+    
     if (StartScreen.DragX < 0)
 		StartScreen.DragX = 0;
 	if (StartScreen.DragX >= (GetStartScreenItemCount()-1)*StartScreenDragSpacing)

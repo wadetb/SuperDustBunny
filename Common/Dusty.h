@@ -33,6 +33,46 @@ enum EDustyState
 	DUSTYSTATE_INTROSTAND,
 };
 
+enum EDustySprite
+{
+    DUSTYSPRITE_HOP_1,
+    DUSTYSPRITE_HOP_2,
+    DUSTYSPRITE_HOP_3,
+    DUSTYSPRITE_HOP_4,
+    DUSTYSPRITE_HOP_5,
+    
+    DUSTYSPRITE_HOP_2B,
+    DUSTYSPRITE_HOP_2C,
+
+    DUSTYSPRITE_HOP_3B,
+    
+    DUSTYSPRITE_HOP_4B,
+    DUSTYSPRITE_HOP_4C,
+    
+    DUSTYSPRITE_HOP_5B,
+    
+    DUSTYSPRITE_IDLE_1,
+    DUSTYSPRITE_IDLE_2,
+    DUSTYSPRITE_IDLE_3,
+    
+    DUSTYSPRITE_SLIDE_1,
+    DUSTYSPRITE_SLIDE_2,
+    DUSTYSPRITE_SLIDE_3,
+    
+    DUSTYSPRITE_WALLJUMP,
+    DUSTYSPRITE_WALLJUMP_B,
+    DUSTYSPRITE_WALLJUMP_C,
+    
+    DUSTYSPRITE_CORNERJUMP,
+    DUSTYSPRITE_CORNERJUMP_B,
+    DUSTYSPRITE_CORNERJUMP_C,
+    DUSTYSPRITE_CORNERJUMP_D,
+    
+    DUSTYSPRITE_DEATH,
+    
+    DUSTYSPRITE_COUNT
+};
+
 enum ENearbyBlock
 {
     NEARBY_UP_LEFT        = 1<<0,
@@ -62,6 +102,11 @@ struct SDusty
 	float FloatGravity;
 	float FloatVelocityX;
 	float FloatVelocityY;
+    
+    float LastX;
+    float LastY;
+    float LastScaleX;
+    EDustySprite LastSprite;
     
 	int SpriteTransition;
 
@@ -112,7 +157,11 @@ struct SDusty
     unsigned int NearbyBlocks;
 };
 
+
 extern SDusty Dusty;
+
+extern gxSprite* DustySprite[DUSTYSPRITE_COUNT];
+
 
 void DisplayDusty();
 void UpdateDusty();

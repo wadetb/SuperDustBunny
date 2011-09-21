@@ -71,6 +71,10 @@
 		08866BCE141AC30700D25BB8 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08866BCD141AC30700D25BB8 /* ApplicationServices.framework */; };
 		08866BD1141AC34200D25BB8 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08866BCF141AC34200D25BB8 /* Quartz.framework */; };
 		08866BD2141AC34200D25BB8 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08866BD0141AC34200D25BB8 /* QuartzCore.framework */; };
+		08899BAA1428E621008F7623 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08899BA91428E621008F7623 /* GameKit.framework */; };
+		08899BAD1428E8EF008F7623 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08899BAC1428E8EF008F7623 /* AddressBook.framework */; };
+		08899BAF14295AC8008F7623 /* Ghost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08899BAE14295AC8008F7623 /* Ghost.cpp */; };
+		08899BB014295AC8008F7623 /* Ghost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08899BAE14295AC8008F7623 /* Ghost.cpp */; };
 		089FEC1014188D2F00086B85 /* SDBWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 089FEC0F14188D2F00086B85 /* SDBWindow.m */; };
 		089FEC131418999F00086B85 /* SDB.icns in Resources */ = {isa = PBXBuildFile; fileRef = 089FEC121418999F00086B85 /* SDB.icns */; };
 		08BF391713466F4E002C1A7B /* Converted in Resources */ = {isa = PBXBuildFile; fileRef = 08BF391613466F4E002C1A7B /* Converted */; };
@@ -173,12 +177,12 @@
 		085AAA0D132C5ABC00DF32CA /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		085AAA10132C5B2E00DF32CA /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		085AAA12132C5B4800DF32CA /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
-		085AAA16132C5B9F00DF32CA /* Assets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; path = Assets.cpp; sourceTree = "<group>"; };
-		085AAA17132C5B9F00DF32CA /* Assets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Assets.h; sourceTree = "<group>"; };
+		085AAA16132C5B9F00DF32CA /* Assets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; path = Assets.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		085AAA17132C5B9F00DF32CA /* Assets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; path = Assets.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		085AAA18132C5B9F00DF32CA /* Barrel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Barrel.cpp; sourceTree = "<group>"; };
 		085AAA19132C5B9F00DF32CA /* Barrel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Barrel.h; sourceTree = "<group>"; };
-		085AAA1A132C5B9F00DF32CA /* chapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = chapter.cpp; sourceTree = "<group>"; };
-		085AAA1B132C5B9F00DF32CA /* chapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chapter.h; sourceTree = "<group>"; };
+		085AAA1A132C5B9F00DF32CA /* chapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; path = chapter.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		085AAA1B132C5B9F00DF32CA /* chapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; path = chapter.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		085AAA1C132C5B9F00DF32CA /* ChapterIntro.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChapterIntro.cpp; sourceTree = "<group>"; };
 		085AAA1D132C5B9F00DF32CA /* ChapterIntro.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChapterIntro.h; sourceTree = "<group>"; };
 		085AAA1E132C5B9F00DF32CA /* Coin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Coin.cpp; sourceTree = "<group>"; };
@@ -227,7 +231,7 @@
 		085AAA4B132C5B9F00DF32CA /* SuperDustBunny.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SuperDustBunny.cpp; sourceTree = "<group>"; };
 		085AAA4C132C5B9F00DF32CA /* TennisBall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TennisBall.cpp; sourceTree = "<group>"; };
 		085AAA4D132C5B9F00DF32CA /* TennisBall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TennisBall.h; sourceTree = "<group>"; };
-		085AAA4E132C5B9F00DF32CA /* Tutorial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tutorial.cpp; sourceTree = "<group>"; };
+		085AAA4E132C5B9F00DF32CA /* Tutorial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; path = Tutorial.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		085AAA4F132C5B9F00DF32CA /* Tutorial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tutorial.h; sourceTree = "<group>"; };
 		085AAA50132C5B9F00DF32CA /* Vacuum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vacuum.cpp; sourceTree = "<group>"; };
 		085AAA51132C5B9F00DF32CA /* Vacuum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vacuum.h; sourceTree = "<group>"; };
@@ -245,6 +249,10 @@
 		08866BCD141AC30700D25BB8 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = SDKs/MacOSX10.7.sdk/System/Library/Frameworks/ApplicationServices.framework; sourceTree = DEVELOPER_DIR; };
 		08866BCF141AC34200D25BB8 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = SDKs/MacOSX10.7.sdk/System/Library/Frameworks/Quartz.framework; sourceTree = DEVELOPER_DIR; };
 		08866BD0141AC34200D25BB8 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = SDKs/MacOSX10.7.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
+		08899BA91428E621008F7623 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
+		08899BAC1428E8EF008F7623 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = SDKs/MacOSX10.6.sdk/System/Library/Frameworks/AddressBook.framework; sourceTree = DEVELOPER_DIR; };
+		08899BAE14295AC8008F7623 /* Ghost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ghost.cpp; sourceTree = "<group>"; };
+		08899BB114295AD6008F7623 /* Ghost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ghost.h; sourceTree = "<group>"; };
 		089FEC0E14188D2F00086B85 /* SDBWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SDBWindow.h; path = ../../Mac/SDBWindow.h; sourceTree = "<group>"; };
 		089FEC0F14188D2F00086B85 /* SDBWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SDBWindow.m; path = ../../Mac/SDBWindow.m; sourceTree = "<group>"; };
 		089FEC121418999F00086B85 /* SDB.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = SDB.icns; path = ../../Mac/SDB.icns; sourceTree = "<group>"; };
@@ -281,6 +289,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				08899BAA1428E621008F7623 /* GameKit.framework in Frameworks */,
 				085AAA8C132D169700DF32CA /* libz.dylib in Frameworks */,
 				085AAA75132C5C9E00DF32CA /* QuartzCore.framework in Frameworks */,
 				085AAA13132C5B4800DF32CA /* OpenAL.framework in Frameworks */,
@@ -297,6 +306,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				08899BAD1428E8EF008F7623 /* AddressBook.framework in Frameworks */,
 				08866BD1141AC34200D25BB8 /* Quartz.framework in Frameworks */,
 				08866BD2141AC34200D25BB8 /* QuartzCore.framework in Frameworks */,
 				08866BCE141AC30700D25BB8 /* ApplicationServices.framework in Frameworks */,
@@ -336,6 +346,7 @@
 		085AA95D132C572A00DF32CA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				08899BA91428E621008F7623 /* GameKit.framework */,
 				085AAA8B132D169700DF32CA /* libz.dylib */,
 				085AAA74132C5C9E00DF32CA /* QuartzCore.framework */,
 				085AAA12132C5B4800DF32CA /* OpenAL.framework */,
@@ -464,6 +475,8 @@
 				085AAA53132C5B9F00DF32CA /* WinScreen.h */,
 				085AAA54132C5B9F00DF32CA /* Wipe.cpp */,
 				085AAA55132C5B9F00DF32CA /* Wipe.h */,
+				08899BAE14295AC8008F7623 /* Ghost.cpp */,
+				08899BB114295AD6008F7623 /* Ghost.h */,
 			);
 			name = Common;
 			path = ../Common;
@@ -511,6 +524,7 @@
 		08D4979B1417AE100022E457 /* Mac */ = {
 			isa = PBXGroup;
 			children = (
+				08899BAC1428E8EF008F7623 /* AddressBook.framework */,
 				08D497FB1417BB3A0022E457 /* OpenGL.framework */,
 				08866BCF141AC34200D25BB8 /* Quartz.framework */,
 				08866BD0141AC34200D25BB8 /* QuartzCore.framework */,
@@ -689,6 +703,7 @@
 				0844B73913F9F0A500092ECE /* Text.cpp in Sources */,
 				08F44AD013FB694D00991708 /* Debug.cpp in Sources */,
 				08D1C6E8142108A500046259 /* LeaderboardScreen.cpp in Sources */,
+				08899BAF14295AC8008F7623 /* Ghost.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -739,6 +754,7 @@
 				08D498091417EBA70022E457 /* SDBOpenGLView.m in Sources */,
 				089FEC1014188D2F00086B85 /* SDBWindow.m in Sources */,
 				08D1C6E9142108A500046259 /* LeaderboardScreen.cpp in Sources */,
+				08899BB014295AC8008F7623 /* Ghost.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

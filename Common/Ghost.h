@@ -7,37 +7,22 @@
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
-#ifndef __SETTINGS_H__
-#define __SETTINGS_H__
+#ifndef GHOST_H
+#define GHOST_H
 
-typedef enum
-{
-    CONTROL_TILT,
-    CONTROL_SWIPE
-} EControlStyle;
+void AddGhostEvent(float X, float Y, float ScaleX, int Sprite);
 
-typedef struct
-{
-    EControlStyle ControlStyle;
-    
-    bool GhostActive;
-    
-    bool InfiniteLives;
-    bool DisableVacuum;
-    
-    bool LiveAssets;
-    char AssetServer[256];
-    
-    bool ChapterSkip;
-} SSettings;
+void LoadGhost(const char* ChapterName, int Page);
+void SaveGhost(const char* ChapterName, int Page);
 
+bool IsGhostRecordingActive();
+bool IsGhostPlaybackActive();
 
-extern SSettings Settings;
+void StartGhostRecording();
+void StartGhostPlayback();
 
-
-void InitSettings();
-
-void LoadSettings();
-void SaveSettings();
+void InitGhost();
+void DisplayGhost();
+void UpdateGhost();
 
 #endif

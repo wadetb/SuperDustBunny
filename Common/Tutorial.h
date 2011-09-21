@@ -10,6 +10,13 @@
 #ifndef TUTORIAL_H
 #define TUTORIAL_H
 
+struct SBlock;
+struct STutorialProperties;
+void ParseTutorialProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode);
+
+void CreateTutorial(int X, int Y, STutorialProperties* Props);
+void ClearTutorials();
+
 void InitTutorial();
 void UpdateTutorial();
 void DisplayTutorial();

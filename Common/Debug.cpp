@@ -10,6 +10,10 @@
 #include "Common.h"
 #include "Debug.h"
 
+#ifdef PLATFORM_IPHONE
+#import "SuperDustBunnyViewController.h"
+#endif
+
 
 #define MAX_DEBUG_LINES 1000
 

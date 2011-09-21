@@ -26,11 +26,13 @@
     BOOL wasPaused;
     int slowFactor;
     UIView *spinnerPanel;
+    BOOL gameCenterEnabled;
 }
 
 @property (nonatomic, retain) EAGLContext *context;
 @property (nonatomic, retain) IBOutlet SettingsViewController *settingsViewController;
 @property BOOL paused;
+@property BOOL gameCenterEnabled;
 
 - (void)drawFrame;
 

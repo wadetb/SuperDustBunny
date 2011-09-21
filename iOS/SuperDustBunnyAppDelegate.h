@@ -12,8 +12,7 @@
 @class SettingsViewController;
 
 @interface SuperDustBunnyAppDelegate : NSObject <UIApplicationDelegate> {
-@private
-
+    BOOL gameCenterEnabled;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;

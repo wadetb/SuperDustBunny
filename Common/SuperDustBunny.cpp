@@ -32,6 +32,7 @@
 #include "Input.h"
 #include "Smoke.h"
 #include "Tutorial.h"
+#include "Ghost.h"
 
 #include "StartScreen.h"
 #include "HelpScreen.h"
@@ -231,7 +232,6 @@ static void SkipToNextPage()
     if (IsRecordingActive())
         StopRecording(RESULT_NONE);
     SetCurrentPage((Chapter.PageNum+1) % Chapter.NPages);
-    StartRecording();
 }
 
 static void SkipToPreviousPage()
@@ -242,7 +242,6 @@ static void SkipToPreviousPage()
     if (IsRecordingActive())
         StopRecording(RESULT_NONE);
     SetCurrentPage((Chapter.PageNum+Chapter.NPages-1) % Chapter.NPages);
-    StartRecording();    
 }
 
 static void LoadRecordingChapterAndPage()
@@ -549,8 +548,8 @@ void DisplayGame_Playing()
 	// Lighting effects.
 	DisplayFlashlight();
 
-	// Overlay
 	DisplayChapterIntro();
+    DisplayGhost();
       	
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Debugging aids                                                                        //
@@ -629,6 +628,7 @@ static void UpdateGame_Playing()
     UpdateVacuum(); 
     UpdateSmoke();
     UpdateTutorial();
+    UpdateGhost();
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -684,7 +684,6 @@ static void UpdateGame_Transition()
 		if (Wipe.Finished)
 		{
 			SetGameState_ChapterIntro();
-			StartRecording();
 		}
 	}
 	else if (GameTransition == GAMETRANSITION_NEXT_PAGE)
@@ -700,7 +699,6 @@ static void UpdateGame_Transition()
 		if (Wipe.Finished)
 		{
 			SetGameState_Playing();
-			StartRecording();
 		}
 	}
 	else if (GameTransition == GAMETRANSITION_RESTART_PAGE)
@@ -716,7 +714,6 @@ static void UpdateGame_Transition()
 		if (Wipe.Finished)
 		{
 			SetGameState_Playing();
-			StartRecording();
 		}
 	}
 	else if (GameTransition == GAMETRANSITION_DIE_SCREEN)
@@ -840,7 +837,7 @@ void Display()
 	}
 	else if (GameState == GAMESTATE_LEADERBOARD_SCREEN)
 	{
-	    DisplayCreditsScreen();
+	    DisplayLeaderboardScreen();
 	}
 	else if (GameState == GAMESTATE_DIE_SCREEN)
 	{
@@ -1072,8 +1069,8 @@ bool Update()
 	else if (GameState == GAMESTATE_CREDITS_SCREEN)
 	{
 	    UpdateCreditsScreen();
-	}    
-	else if (GameState == GAMESTATE_CREDITS_SCREEN)
+	} 
+	else if (GameState == GAMESTATE_LEADERBOARD_SCREEN)
 	{
 	    UpdateLeaderboardScreen();
 	}    

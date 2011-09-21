@@ -18,6 +18,7 @@
 #include "Stapler.h"
 #include "PowerUp.h"
 #include "Smoke.h"
+#include "Ghost.h"
 
 
 SDusty Dusty;
@@ -30,12 +31,41 @@ struct SDustyTrail
     float X;
     float Y;
     float ScaleX;
-    gxSprite* Sprite;
+    EDustySprite Sprite;
     float Alpha;
 };
 
 SDustyTrail DustyTrail[MAX_DUSTY_TRAIL];
 
+
+gxSprite* DustySprite[DUSTYSPRITE_COUNT] =
+{
+    &DustyHop1Sprite,
+    &DustyHop2Sprite,
+    &DustyHop3Sprite,
+    &DustyHop4Sprite,
+    &DustyHop5Sprite,
+    &DustyHop2bSprite,
+    &DustyHop2cSprite,
+    &DustyHop3bSprite,
+    &DustyHop4bSprite,
+    &DustyHop4cSprite,
+    &DustyHop5bSprite,
+    &DustyIdle1Sprite,
+    &DustyIdle2Sprite,
+    &DustyIdle3Sprite,
+    &DustySlide1Sprite,
+    &DustySlide2Sprite,
+    &DustySlide3Sprite,
+    &DustyWallJumpSprite,
+    &DustyWallJumpbSprite,
+    &DustyWallJumpcSprite,
+    &DustyCornerJumpSprite,
+    &DustyCornerJumpbSprite,
+    &DustyCornerJumpcSprite,
+    &DustyCornerJumpdSprite,
+    &DustyDeathSprite
+};
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                  Dusty initialization function                                                          //
@@ -57,6 +87,11 @@ void InitDusty()
 	
 	Dusty.FloatGravity = 0.3f;
 
+    Dusty.LastX = 0;
+    Dusty.LastY = 0;
+    Dusty.LastScaleX = 1.0f;
+    Dusty.LastSprite = DUSTYSPRITE_DEATH;
+    
 	Dusty.SpriteTransition = 5;
 
 	Dusty.NoCollision = false;
@@ -231,7 +266,7 @@ static void UpdateDusty_DoSwipeJump(float Angle, float Power)
 //                                                  General purpose display                                                                //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-static void DisplayDustySprite(gxSprite* Sprite, float XAdj = 0.0f, float XMirrorAdj = 0.0f, float YAdj = 0.0f)
+static void DisplayDustySprite(EDustySprite Sprite, float XAdj = 0.0f, float XMirrorAdj = 0.0f, float YAdj = 0.0f)
 {
 	float ScaleX, OffsetX;
 	if (Dusty.Direction == DIRECTION_RIGHT)
@@ -248,15 +283,20 @@ static void DisplayDustySprite(gxSprite* Sprite, float XAdj = 0.0f, float XMirro
     float X = Dusty.FloatX + OffsetX + XAdj + XMirrorAdj*ScaleX;
     float Y = Dusty.FloatY + YAdj;
 
+    Dusty.LastX = X;
+    Dusty.LastY = Y;
+    Dusty.LastScaleX = ScaleX;
+    Dusty.LastSprite = Sprite;
+    
     // Display trail.
     for (int i = 0; i < MAX_DUSTY_TRAIL; i++)
     {
         SDustyTrail* Trail = &DustyTrail[i];
 
-        if (Trail->Sprite && Trail->Alpha > 0.1f)
+        if (Trail->Sprite != DUSTYSPRITE_COUNT && Trail->Alpha > 0.1f)
         {
             unsigned int Color = gxRGBA32(0x40, 0x40, 0x40, (int)(255*Trail->Alpha));
-	        AddLitSpriteScaledColor(LIGHTLIST_DUST, Trail->Sprite, Trail->X + ScrollX, Trail->Y + ScrollY, Trail->ScaleX, 1.0f, Color);
+	        AddLitSpriteScaledColor(LIGHTLIST_DUST, DustySprite[Trail->Sprite], Trail->X + ScrollX, Trail->Y + ScrollY, Trail->ScaleX, 1.0f, Color);
         }
     }
 
@@ -270,7 +310,7 @@ static void DisplayDustySprite(gxSprite* Sprite, float XAdj = 0.0f, float XMirro
         Trail->Sprite = Sprite;
     }
 
-	AddLitSpriteScaled(LIGHTLIST_FOREGROUND, Sprite, X + ScrollX, Y + ScrollY, ScaleX, 1.0f);
+	AddLitSpriteScaled(LIGHTLIST_FOREGROUND, DustySprite[Sprite], X + ScrollX, Y + ScrollY, ScaleX, 1.0f);
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -301,11 +341,11 @@ static void DisplayDusty_Stand()
 {
 	if (Dusty.CollideMaterial == MATERIAL_ICE && fabsf(Dusty.FloatVelocityX) > 1)
 	{
-		gxSprite* SlideSprites[] =
+		EDustySprite SlideSprites[] =
 		{
-			&DustySlide1Sprite,
-			&DustySlide2Sprite,
-			&DustySlide3Sprite
+			DUSTYSPRITE_SLIDE_1,
+			DUSTYSPRITE_SLIDE_2,
+			DUSTYSPRITE_SLIDE_3
 		};
 
 		int Index = (Dusty.SpriteTransition/5) % 3;
@@ -314,18 +354,18 @@ static void DisplayDusty_Stand()
 	else
 	{
 		if (Dusty.SpriteTransition <= 5)
-			DisplayDustySprite(&DustyHop5bSprite, -119, 18, -218);
+			DisplayDustySprite(DUSTYSPRITE_HOP_5B, -119, 18, -218);
 		else
         if (Dusty.SpriteTransition <= 15 && Dusty.State != DUSTYSTATE_INTROSTAND)
-            DisplayDustySprite(&DustyHop5bSprite, -119, 18, -218);
+            DisplayDustySprite(DUSTYSPRITE_HOP_5B, -119, 18, -218);
         else
 		{
 			if (Dusty.SpriteTransition % 45 < 10)
-				DisplayDustySprite(&DustyIdle1Sprite, -124, 5, -221);
+				DisplayDustySprite(DUSTYSPRITE_IDLE_1, -124, 5, -221);
 			else if (Dusty.SpriteTransition % 45 < 40)
-				DisplayDustySprite(&DustyIdle2Sprite, -124, 5, -221);
+				DisplayDustySprite(DUSTYSPRITE_IDLE_2, -124, 5, -221);
 			else
-				DisplayDustySprite(&DustyIdle3Sprite, -124, 5, -221);
+				DisplayDustySprite(DUSTYSPRITE_IDLE_3, -124, 5, -221);
 		}
 	}
 }
@@ -546,24 +586,24 @@ void SetDustyState_Fall()
 
 static void DisplayDusty_Jump()
 {
-	gxSprite* Hop2Sprites[3] =
+	EDustySprite Hop2Sprites[3] =
 	{
-		&DustyHop2Sprite,
-		&DustyHop2bSprite,
-		&DustyHop2cSprite,
+		DUSTYSPRITE_HOP_2,
+		DUSTYSPRITE_HOP_2B,
+		DUSTYSPRITE_HOP_2C,
 	};
     
-	gxSprite* Hop3Sprites[3] =
+	EDustySprite Hop3Sprites[3] =
 	{
-		&DustyHop3Sprite,
-		&DustyHop3bSprite,
+		DUSTYSPRITE_HOP_3,
+		DUSTYSPRITE_HOP_3B,
 	};
     
-	gxSprite* Hop4Sprites[3] =
+	EDustySprite Hop4Sprites[3] =
 	{
-		&DustyHop4Sprite,
-		&DustyHop4bSprite,
-		&DustyHop4cSprite,
+		DUSTYSPRITE_HOP_4,
+		DUSTYSPRITE_HOP_4B,
+		DUSTYSPRITE_HOP_4C,
 	};
 
 	if (Dusty.FloatVelocityY >= 5)
@@ -615,30 +655,30 @@ static void DisplayDusty_Hop()
 {
 	switch (Dusty.SpriteTransition)
 	{
-	case 0:    DisplayDustySprite(&DustyHop2Sprite, -122,  0, -201); break;
-	case 1:    DisplayDustySprite(&DustyHop2Sprite, -122,  0, -212); break;
-	case 2:    DisplayDustySprite(&DustyHop2Sprite, -122,  0, -218); break;
-	case 3:    DisplayDustySprite(&DustyHop2Sprite, -122,  0, -224); break;
-	case 4:    DisplayDustySprite(&DustyHop2Sprite, -122,  0, -228); break;
-	case 5:    DisplayDustySprite(&DustyHop2Sprite, -122,  0, -236); break;
-	case 6:    DisplayDustySprite(&DustyHop3Sprite, -122,  0, -226); break;
-	case 7:    DisplayDustySprite(&DustyHop3Sprite, -122,  0, -226); break;
-	case 8:    DisplayDustySprite(&DustyHop3Sprite, -122,  0, -226); break;
-	case 9:    DisplayDustySprite(&DustyHop3Sprite, -122,  0, -226); break;
-	case 10:   DisplayDustySprite(&DustyHop3Sprite, -122,  0, -226); break;
-	case 11:   DisplayDustySprite(&DustyHop3Sprite, -122,  0, -226); break;
-	case 12:   DisplayDustySprite(&DustyHop4Sprite, -119,  0, -220); break;
-	case 13:   DisplayDustySprite(&DustyHop4Sprite, -119,  0, -215); break;
-	case 14:   DisplayDustySprite(&DustyHop4Sprite, -119,  0, -210); break;
-	case 15:   DisplayDustySprite(&DustyHop4Sprite, -119,  0, -205); break;
-	case 16:   DisplayDustySprite(&DustyHop4Sprite, -119,  0, -200); break;
-	case 17:   DisplayDustySprite(&DustyHop4Sprite, -119,  0, -195); break;
-	case 18:   DisplayDustySprite(&DustyHop5Sprite, -119, 18, -217); break;
-	case 19:   DisplayDustySprite(&DustyHop5Sprite, -119, 18, -217); break;
-	case 20:   DisplayDustySprite(&DustyHop5Sprite, -119, 18, -217); break;
-	case 21:   DisplayDustySprite(&DustyHop5Sprite, -119, 18, -217); break;
-	case 22:   DisplayDustySprite(&DustyHop5Sprite, -119, 18, -217); break;
-	case 23:   DisplayDustySprite(&DustyHop5Sprite, -119, 18, -217); break;
+	case 0:    DisplayDustySprite(DUSTYSPRITE_HOP_2, -122,  0, -201); break;
+	case 1:    DisplayDustySprite(DUSTYSPRITE_HOP_2, -122,  0, -212); break;
+	case 2:    DisplayDustySprite(DUSTYSPRITE_HOP_2, -122,  0, -218); break;
+	case 3:    DisplayDustySprite(DUSTYSPRITE_HOP_2, -122,  0, -224); break;
+	case 4:    DisplayDustySprite(DUSTYSPRITE_HOP_2, -122,  0, -228); break;
+	case 5:    DisplayDustySprite(DUSTYSPRITE_HOP_2, -122,  0, -236); break;
+	case 6:    DisplayDustySprite(DUSTYSPRITE_HOP_3, -122,  0, -226); break;
+	case 7:    DisplayDustySprite(DUSTYSPRITE_HOP_3, -122,  0, -226); break;
+	case 8:    DisplayDustySprite(DUSTYSPRITE_HOP_3, -122,  0, -226); break;
+	case 9:    DisplayDustySprite(DUSTYSPRITE_HOP_3, -122,  0, -226); break;
+	case 10:   DisplayDustySprite(DUSTYSPRITE_HOP_3, -122,  0, -226); break;
+	case 11:   DisplayDustySprite(DUSTYSPRITE_HOP_3, -122,  0, -226); break;
+	case 12:   DisplayDustySprite(DUSTYSPRITE_HOP_4, -119,  0, -220); break;
+	case 13:   DisplayDustySprite(DUSTYSPRITE_HOP_4, -119,  0, -215); break;
+	case 14:   DisplayDustySprite(DUSTYSPRITE_HOP_4, -119,  0, -210); break;
+	case 15:   DisplayDustySprite(DUSTYSPRITE_HOP_4, -119,  0, -205); break;
+	case 16:   DisplayDustySprite(DUSTYSPRITE_HOP_4, -119,  0, -200); break;
+	case 17:   DisplayDustySprite(DUSTYSPRITE_HOP_4, -119,  0, -195); break;
+	case 18:   DisplayDustySprite(DUSTYSPRITE_HOP_5, -119, 18, -217); break;
+	case 19:   DisplayDustySprite(DUSTYSPRITE_HOP_5, -119, 18, -217); break;
+	case 20:   DisplayDustySprite(DUSTYSPRITE_HOP_5, -119, 18, -217); break;
+	case 21:   DisplayDustySprite(DUSTYSPRITE_HOP_5, -119, 18, -217); break;
+	case 22:   DisplayDustySprite(DUSTYSPRITE_HOP_5, -119, 18, -217); break;
+	case 23:   DisplayDustySprite(DUSTYSPRITE_HOP_5, -119, 18, -217); break;
 	default:   break;
 	}
 }
@@ -928,14 +968,14 @@ void SetDustyState_WallJump()
 
 static void DisplayDusty_WallJump()
 {    
-	gxSprite* WallJumpSprites[2] =
+	EDustySprite WallJumpSprites[2] =
 	{
-		&DustyWallJumpbSprite,
-		&DustyWallJumpcSprite,
+		DUSTYSPRITE_WALLJUMP_B,
+		DUSTYSPRITE_WALLJUMP_C,
 	};
     
 	if (Dusty.FloatVelocityY <= 3.5f)
-        DisplayDustySprite(&DustyWallJumpSprite, -128, -8, -200);
+        DisplayDustySprite(DUSTYSPRITE_WALLJUMP, -128, -8, -200);
 	else
 		DisplayDustySprite(WallJumpSprites[(Dusty.SpriteTransition/5) % 2], -128, -8, -200);
 }
@@ -1087,16 +1127,16 @@ static void DisplayDusty_CornerJump()
 {
     if (Dusty.SpriteTransition < 10)
     {
-        DisplayDustySprite(&DustyCornerJumpSprite, -128, -32, -150);
+        DisplayDustySprite(DUSTYSPRITE_CORNERJUMP, -128, -32, -150);
     }
     else
     {
         if (Dusty.SpriteTransition % 45 < 10)
-            DisplayDustySprite(&DustyCornerJumpbSprite, -128, -32, -150);
+            DisplayDustySprite(DUSTYSPRITE_CORNERJUMP_B, -128, -32, -150);
         else if (Dusty.SpriteTransition % 45 < 40)
-            DisplayDustySprite(&DustyCornerJumpcSprite, -128, -32, -150);
+            DisplayDustySprite(DUSTYSPRITE_CORNERJUMP_C, -128, -32, -150);
         else
-            DisplayDustySprite(&DustyCornerJumpdSprite, -128, -32, -150);
+            DisplayDustySprite(DUSTYSPRITE_CORNERJUMP_D, -128, -32, -150);
     }
 
 }
@@ -1183,7 +1223,7 @@ void SetDustyState_PrepareLaunch()
 
 static void DisplayDusty_PrepareLaunch()
 {
-	DisplayDustySprite(&DustyHop5Sprite, -119, 18, -170);
+	DisplayDustySprite(DUSTYSPRITE_HOP_5, -119, 18, -170);
 }
 
 static void UpdateDusty_PrepareLaunch()
@@ -1244,7 +1284,7 @@ void SetDustyState_Die()
 
 static void DisplayDusty_Die()
 {
-	DisplayDustySprite(&DustyDeathSprite, -125, 0, -181);
+	DisplayDustySprite(DUSTYSPRITE_DEATH, -125, 0, -181);
 }
 
 static void UpdateDusty_Die()
@@ -1316,11 +1356,11 @@ static void DisplayDusty_Stuck()
 
 	if (Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide)
 	{
-		DisplayDustySprite(&DustyWallJumpSprite, -128, -8, -200);
+		DisplayDustySprite(DUSTYSPRITE_WALLJUMP, -128, -8, -200);
 	}
 	else
 	{
-		DisplayDustySprite(&DustyIdle3Sprite, -124, 5, -221);
+		DisplayDustySprite(DUSTYSPRITE_IDLE_3, -124, 5, -221);
 	}
 }
 
@@ -1735,7 +1775,7 @@ static void UpdateDusty_PowerUp()
         {
             for (int i = MAX_DUSTY_TRAIL-1; i > 0; i--)
                 DustyTrail[i] = DustyTrail[i-1];
-            DustyTrail[0].Sprite = NULL;
+            DustyTrail[0].Sprite = DUSTYSPRITE_COUNT;
             DustyTrail[0].Alpha = 1.0f;
         }
     }
@@ -1826,6 +1866,9 @@ void UpdateDusty()
 
     UpdateDusty_OnFire();
     UpdateDusty_PowerUp();
+    
+    if (IsGhostRecordingActive())
+        AddGhostEvent(Dusty.LastX, Dusty.LastY, Dusty.LastScaleX, Dusty.LastSprite);
     
     if (GetInput_GetSwipeTimeLeft() >= 1.0f/20.0f)
         GetInput_ConsumeSwipe(1.0f/60.0f);

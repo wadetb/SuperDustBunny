@@ -27,17 +27,19 @@ void InitSettings()
 #ifdef PLATFORM_IPHONE_OR_MAC
     Settings.ControlStyle = CONTROL_SWIPE;
 #endif
+    Settings.GhostActive = false;
     Settings.InfiniteLives = false;
     Settings.DisableVacuum = false;
     Settings.LiveAssets = false;
     strcpy(Settings.AssetServer, "http://pluszerogames.com/sdb/live/1/");
     Settings.ChapterSkip = true;
     
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSDictionary *appDefaults = [NSDictionary
                                  dictionaryWithObjectsAndKeys:
                                  [NSNumber numberWithInt: Settings.ControlStyle], @"ControlStyle", 
+                                 [NSNumber numberWithBool: Settings.GhostActive], @"GhostActive", 
                                  [NSNumber numberWithBool: Settings.InfiniteLives], @"InfiniteLives", 
                                  [NSNumber numberWithBool: Settings.LiveAssets], @"LiveAssets", 
                                  [NSString stringWithUTF8String:Settings.AssetServer], @"AssetServer", 
@@ -52,26 +54,42 @@ void InitSettings()
 
 void LoadSettings()
 {
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     Settings.ControlStyle = (EControlStyle)[defaults integerForKey:@"ControlStyle"];
+    Settings.GhostActive = [defaults boolForKey:@"GhostActive"];
     Settings.InfiniteLives = [defaults boolForKey:@"InfiniteLives"];
     Settings.LiveAssets = [defaults boolForKey:@"LiveAssets"];
     snprintf(Settings.AssetServer, sizeof(Settings.AssetServer), "%s", [[defaults stringForKey:@"AssetServer"] UTF8String]);
     Settings.ChapterSkip = [defaults boolForKey:@"ChapterSkip"];
 #endif
+    
+#ifdef PLATFORM_IPHONE
+    if (Settings.ControlStyle == CONTROL_TILT)
+    {
+        [[UIAccelerometer sharedAccelerometer] setDelegate:(EAGLView*)theViewController.view];	
+        [[UIAccelerometer sharedAccelerometer] setUpdateInterval:(1.0f/30.0f)];
+    }
+    else
+    {
+        [[UIAccelerometer sharedAccelerometer] setDelegate:nil]; 
+    }
+#endif
 }
 
 void SaveSettings()
 {
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:[NSNumber numberWithInt:Settings.ControlStyle] forKey:@"ControlStyle"];
+    [defaults setObject:[NSNumber numberWithBool:Settings.GhostActive] forKey:@"GhostActive"];
     [defaults setObject:[NSNumber numberWithBool:Settings.InfiniteLives] forKey:@"InfiniteLives"];
     [defaults setObject:[NSNumber numberWithBool:Settings.LiveAssets] forKey:@"LiveAssets"];
     [defaults setObject:[NSString stringWithUTF8String:Settings.AssetServer] forKey:@"AssetServer"];
     [defaults setObject:[NSNumber numberWithBool:Settings.ChapterSkip] forKey:@"ChapterSkip"];
+#endif
     
+#ifdef PLATFORM_IPHONE
     if (Settings.ControlStyle == CONTROL_TILT)
     {
         [[UIAccelerometer sharedAccelerometer] setDelegate:(EAGLView*)theViewController.view];	

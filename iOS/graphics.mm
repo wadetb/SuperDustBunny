@@ -173,13 +173,13 @@ void gxLoadSprite(const char* filename, gxSprite* sprite)
     CFRelease(path);
     CGImageSourceRef imageSource = CGImageSourceCreateWithURL(url, NULL);
     CFRelease(url);
-    CGImageRef image = CGImageSourceCreateImageAtIndex(imageSource, 0, NULL);
-    CFRelease(imageSource);
-	if (image == NULL)
+	if (imageSource == NULL)
     {
 		NSLog(@"Could not load image '%s'.", filename);
 		return;
     }
+    CGImageRef image = CGImageSourceCreateImageAtIndex(imageSource, 0, NULL);
+    CFRelease(imageSource);
 #endif
 
 #if TARGET_OS_IPHONE

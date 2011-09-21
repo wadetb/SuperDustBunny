@@ -28,6 +28,8 @@
 #include "Stapler.h"
 #include "PowerUp.h"
 #include "Tutorial.h"
+#include "Ghost.h"
+#include "Settings.h"
 
 #ifdef PLATFORM_WINDOWS
 #include <direct.h>
@@ -308,6 +310,10 @@ static void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* F
                     {
                         Block->Type = BLOCKTYPE_POWERUP;
                     }
+                    else if (strcmp(Value, "tutorial") == 0)
+                    {
+                        Block->Type = BLOCKTYPE_TUTORIAL;
+                    }
 				}
 				else if (strcmp(Name, "material") == 0)
 				{
@@ -360,6 +366,10 @@ static void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* F
 			else if (Block->Type == BLOCKTYPE_FLASHLIGHT_WAYPOINT)
 			{
 				ParseFlashlightWaypointProperties(Block, PropertiesNode);
+			}
+			else if (Block->Type == BLOCKTYPE_TUTORIAL)
+			{
+				ParseTutorialProperties(Block, PropertiesNode);
 			}
 			else
 			{
@@ -863,6 +873,10 @@ static void CreatePageObjects()
                     CreatePowerUp(x * 64, y * 64);
                     EraseBlock(x, y);
                     break;
+                case BLOCKTYPE_TUTORIAL:
+                    CreateTutorial(x * 64, y * 64, (STutorialProperties*)Block->Properties);
+                    EraseBlock(x, y);
+                    break;
                 default:
                     break;
 				}
@@ -916,6 +930,15 @@ void SetCurrentPage(int PageNum)
 	Chapter.PortalAngle = 0;
 
 	CreatePageObjects();
+
+    StartRecording();
+
+    StartGhostRecording();
+    if (Settings.GhostActive)
+    {
+        LoadGhost(Chapters[CurrentChapter].Name, PageNum);
+        StartGhostPlayback();
+    }
 
 	PopErrorContext();
 }

@@ -81,6 +81,16 @@ struct SRecorderSwipeEvent
     float Time;
 };
 
+struct SRecorderGhostEvent
+{
+	int Timestamp;
+    float X;
+    float Y;
+    int Sprite;
+};
+
+
+unsigned int BuildNumber = 0x010014 | BUILD_PRERELEASE;
 
 SRecorderHeader RecorderHeader;
 SRecorder Recorder;
@@ -247,7 +257,7 @@ void StartRecording()
 	memset(&RecorderHeader, 0, sizeof(RecorderHeader));
 
 	RecorderHeader.HeaderVersion = RECORDER_VERSION;
-	RecorderHeader.Build = 0;
+	RecorderHeader.Build = BuildNumber;
 
 	snprintf(RecorderHeader.Chapter, sizeof(RecorderHeader.Chapter), "%s", Chapter.Name);
 	snprintf(RecorderHeader.Page, sizeof(RecorderHeader.Page), "%s", Chapter.Pages[Chapter.PageNum].Name);
@@ -358,8 +368,7 @@ void UpdateRecorder()
                 
                 RecorderEventOffset += sizeof(SRecorderTiltEvent);
             }
-
-            if (Type == EVENT_SWIPE_BEGIN || Type == EVENT_SWIPE_POINT || Type == EVENT_SWIPE_END)
+            else if (Type == EVENT_SWIPE_BEGIN || Type == EVENT_SWIPE_POINT || Type == EVENT_SWIPE_END)
             {
                 SRecorderSwipeEvent* Event = (SRecorderSwipeEvent*)Pos;
                 
@@ -371,6 +380,12 @@ void UpdateRecorder()
                 }
                 
                 RecorderEventOffset += sizeof(SRecorderSwipeEvent);
+            }
+            else if (Type == EVENT_GHOST)
+            {
+                //SRecorderGhostEvent* Event = (SRecorderGhostEvent*)Pos;
+                
+                //SetDustyGhostState(Event->X, Event->Y, Event->Sprite);
             }
 
             NRecorderEvents++;
@@ -437,4 +452,20 @@ void RecordSwipeEvent(int Type, float X, float Y, float Time)
     
     RecorderEventOffset += sizeof(SRecorderSwipeEvent);
     NRecorderEvents++;
+}
+
+void RecordGhostEvent(float X, float Y, int Sprite)
+{
+    if (RecorderEventOffset + sizeof(SRecorderGhostEvent) >= RECORDER_BUFFER_SIZE)
+        ReportError("Exceeded the maximum recording buffer size of %d.", RECORDER_BUFFER_SIZE);
+    
+    SRecorderGhostEvent* Event = (SRecorderGhostEvent*)( RecorderEventBuffer + RecorderEventOffset );
+    Event->Timestamp = RecordingTime | (EVENT_GHOST<<24);
+    Event->X = X;
+    Event->Y = Y;
+    Event->Sprite = Sprite;
+    
+    RecorderEventOffset += sizeof(SRecorderSwipeEvent);
+    NRecorderEvents++;
+    
 }

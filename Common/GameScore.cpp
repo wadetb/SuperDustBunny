@@ -21,12 +21,23 @@
 #include "Lives.h"
 #include "Chapter.h"
 #include "Smoke.h"
+#include "Recorder.h"
+#include "Ghost.h"
+
+#ifdef PLATFORM_MAC
+#import <AddressBook/AddressBook.h>
+#endif
+#ifdef PLATFORM_IPHONE
+#import "SuperDustBunnyViewController.h"
+#import <GameKit/GameKit.h>
+#endif
 
 SScore Score;
 
 float TimeX = 40;
 float TimeY = 10;
 float TimeScaleFactor = 0.65f;
+
 
 void DisplayTimeDigit(int Digit, float BaseX, float BaseY, float ScaleFactor, float X, float Y)
 {
@@ -67,7 +78,7 @@ void DisplayTime(float X, float Y, float ScaleFactor, int Time)
 
 void DisplayScore()
 {
-    if (CurrentChapter == 0 && Chapter.PageNum == 0)
+    if (Chapter.PageProps.VacuumOff)
         return;
     
     DisplayTime(TimeX, TimeY, TimeScaleFactor, Score.CurrentPageTime);
@@ -93,6 +104,51 @@ void ResetScore()
     Score.Medal = MEDAL_NONE;
 }
 
+static void UploadChapterScore()
+{
+#ifdef PLATFORM_IPHONE
+    if (!theViewController.gameCenterEnabled)
+        return;
+    
+#if 0
+    GKScore *scoreReporter = [[[GKScore alloc] initWithCategory:@"sdb"] autorelease];
+    scoreReporter.value = score;
+    
+    [scoreReporter reportScoreWithCompletionHandler:^(NSError *error) {
+         if (error != nil)
+         {
+         // TODO: Write that score to a file.
+            // handle the reporting error
+         }
+     }];
+#endif
+    
+    GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
+    NSString *name = [localPlayer alias];    
+#endif
+
+#ifdef PLATFORM_MAC
+    ABPerson *aPerson = [[ABAddressBook sharedAddressBook] me];
+    NSString *name = [aPerson valueForProperty:kABFirstNameProperty];
+#endif
+    
+#ifdef PLATFORM_IPHONE_OR_MAC
+    NSString *post = [NSString stringWithFormat:@"build=%x&name=%@&time=%d&chapter=%s&city=%s&state=%s&country=%s", 
+                      BuildNumber, name, Chapters[CurrentChapter].BestTime, Chapters[CurrentChapter].Name, "nocity", "nostate", "nocountry"];
+    
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:
+                                    [NSURL URLWithString:
+                                     @"http://www.pluszerogames.com/sdb/postleaderboard.php"]];
+    
+    [request setHTTPMethod:@"POST"];
+    [request setHTTPBody:[post dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    NSURLResponse *response;
+    NSData* result = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil];
+    NSLog(@"HTTP post response:\n%@\n\n", [[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding]);
+#endif
+}
+
 void RecordPageScore(int Page)
 {
     if (Page < 0 || Page > MAX_PAGE_TIMES)
@@ -111,6 +167,9 @@ void RecordPageScore(int Page)
             Score.NewRecord[Page] = true;
 
         Score.BestPageTime[Page] = Score.CurrentPageTime;
+
+        if (IsGhostRecordingActive())
+            SaveGhost(Chapters[CurrentChapter].Name, Page);
     }
     
     if (Page == Chapter.NPages - 1)
@@ -148,6 +207,11 @@ void RecordPageScore(int Page)
             Score.Medal = MEDAL_SILVER;
         if (Score.ChapterTime <= Chapters[CurrentChapter].GoldTime)
             Score.Medal = MEDAL_GOLD;
+        
+        if (Score.Medal != MEDAL_NONE)
+        {
+            UploadChapterScore();
+        }
     }
     
     if (Chapters[CurrentChapter].Played == false)
@@ -173,7 +237,7 @@ void LoadChapterScores(char* ChapterName)
     
     ResetScore();
 
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
     @try
     {
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -184,14 +248,14 @@ void LoadChapterScores(char* ChapterName)
         NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:filePath];
         if ( !dict )
         {
-            PopErrorContext();
+            NSLog(@"Failed to load dictionary from chapter scores file for chapter '%s'.\n", ChapterName);
             return;
         }
         
         NSNumber *version = [dict objectForKey:@"version"];
         if ( [version intValue] != 1 )
         {
-            PopErrorContext();
+            NSLog(@"Chapter scores dictionary file is wrong version.  Got %d, expected %d.\n", [version intValue], 1);
             return;
         }
         
@@ -231,7 +295,7 @@ void SaveChapterScores(char* ChapterName)
 {
     PushErrorContext("While saving scores for chapter '%s':\n", ChapterName);
 
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
     @try
     {
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);

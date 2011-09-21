@@ -17,235 +17,224 @@
 #include "Text.h"
 
 
-enum ETutorialState
+#define MAX_TUTORIALS 10
+
+
+struct STutorialBubble
 {
-    TUTORIAL_INACTIVE,
-    TUTORIAL_FLICK_TO_JUMP,
-    TUTORIAL_VACUUM_INTRO_1,
-    TUTORIAL_VACUUM_INTRO_2,
-    TUTORIAL_VACUUM_INTRO_3,
-    TUTORIAL_BONUS,
-    TUTORIAL_EXTRA_LIFE,
+    int SubX1, SubY1, SubX2, SubY2;
 };
 
+struct STutorialProperties
+{
+    char* Text;
+    char* Actions;
+    float XOffset, YOffset;
+    float TextScale;
+    STutorialBubble* Bubble;
+};
 
 struct STutorial
 {
-    ETutorialState State;
-    
     float X, Y;
-    
-    float WaitTimer;
-    float StateTimer;
-    float FadeOutTimer;
-    float FadeInTimer;
+    STutorialProperties* Props;
+    bool Active;
+    float Alpha;
     float WiggleTimer;
-    
-    bool DustyHasJumped;
 };
 
 
-STutorial Tutorial;
+int NTutorials;
+STutorial Tutorials[MAX_TUTORIALS];
 
+STutorialBubble TutorialBubbles[] =
+{
+    { 75, 0, 700, 230 },
+    { 0, 262, 384, 500 },
+    { 420, 236, 750, 512 },
+    { 90, 530, 310, 680 },
+    { 396, 524, 644, 690 },
+    { 0, 692, 768, 1024 },
+};
+
+void ParseTutorialProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode)
+{
+	STutorialProperties* Props = (STutorialProperties*)malloc(sizeof(STutorialProperties));
+    
+    Props->Text = NULL;
+    Props->Actions = NULL;
+    Props->XOffset = Props->YOffset = 0;
+    Props->TextScale = 1.0f;
+    Props->Bubble = NULL;
+    
+	rapidxml::xml_node<char>* PropertyNode = PropertiesNode->first_node("property");
+	while (PropertyNode)
+	{
+		const char* Name = PropertyNode->first_attribute("name")->value();
+		const char* ConstValue = PropertyNode->first_attribute("value")->value();
+        char* WritableValue = strdup(ConstValue);
+        char* Value = WritableValue;
+        
+		if (strcmp(Name, "text") == 0)
+		{
+            Props->Text = strdup(Value);
+        }
+		else if (strcmp(Name, "actions") == 0)
+		{
+            Props->Actions = strdup(Value);
+        }
+        else if (strcmp(Name, "offset") == 0)
+        {
+            Props->XOffset = strtof(Value, &Value);
+            Props->YOffset = strtof(Value, &Value);
+        }
+        else if (strcmp(Name, "textscale") == 0)
+        {
+            Props->TextScale = strtof(Value, &Value);
+        }
+        
+        free(WritableValue);
+        
+		PropertyNode = PropertyNode->next_sibling("property");
+	}
+    
+    if (Props->Text == NULL)
+        ReportError("Tutorial is missing the 'text' property.");
+
+    
+    float Width, Height;
+    GetMultilineStringDimensions(Props->Text, Props->TextScale, &Width, &Height);
+
+    for (int i = 0; i < sizeof(TutorialBubbles)/sizeof(TutorialBubbles[0]); i++)
+    {
+        STutorialBubble* Bubble = &TutorialBubbles[i];
+        float BubbleWidth = Bubble->SubX2 - Bubble->SubX1;
+        float BubbleHeight = Bubble->SubY2 - Bubble->SubY1;
+        if (BubbleWidth*0.9f >= Width && BubbleHeight*0.9f >= Height)
+        {
+            Props->Bubble = Bubble;
+            break;
+        }
+    }
+    if (Props->Bubble == NULL)
+    {
+        ReportError("Unable to fit a suitable bubble to the text '%s' with scale %f.  Required dimensions are %d x %d.", 
+                    Props->Text, Props->TextScale, Width, Height);
+    }
+    
+	Block->Properties = Props;
+}
+
+void CreateTutorial(int X, int Y, STutorialProperties* Props)
+{
+	if (NTutorials >= MAX_TUTORIALS)
+		ReportError("Exceeded the maximum of %d total tutorials.", MAX_TUTORIALS);
+    
+	STutorial* Tutorial = &Tutorials[NTutorials++];
+    
+    Tutorial->Props = Props;
+    
+	Tutorial->X = (float)X + 32;
+	Tutorial->Y = (float)Y + 32;
+
+    Tutorial->Alpha = 0.0f;
+
+    if (Props->Actions && strstr(Props->Actions, "hideuntil"))
+        Tutorial->Active = false;
+    else
+        Tutorial->Active = true;
+    
+    Tutorial->WiggleTimer = Random(0.0f, 10.0f);
+}
+
+void ClearTutorials()
+{
+	NTutorials = 0;
+}
 
 void InitTutorial()
 {
-    if (CurrentChapter == 0 && Chapter.PageNum == 0)
-        Tutorial.State = TUTORIAL_FLICK_TO_JUMP;
-    else if (CurrentChapter == 0 && Chapter.PageNum == 1 && NCoins > 0)
-        Tutorial.State = TUTORIAL_EXTRA_LIFE;
-//    else if (CurrentChapter == 0 && Chapter.PageNum == 2 && NGears > 0)
-//        Tutorial.State = TUTORIAL_BONUS;
-    else
-        Tutorial.State = TUTORIAL_INACTIVE;
-
-    Tutorial.WaitTimer = 0.0f;
-    Tutorial.StateTimer = 0.0f;
-    Tutorial.FadeOutTimer = 0.0f;
-    Tutorial.FadeInTimer = 0.0f;
-    Tutorial.WiggleTimer = 0.0f;
-    
-    Tutorial.DustyHasJumped = false;
 }
 
 void DisplayTutorial()
 {
-    if (Tutorial.State == TUTORIAL_INACTIVE)
-        return;
-
-    float X = Tutorial.X;
-    float Y = Tutorial.Y;
-
-    X += cosf(Tutorial.WiggleTimer*4.0f) * 2.5f + cosf(Tutorial.WiggleTimer*1.0f/3.0f) * 2.5f;
-    Y += sinf(Tutorial.WiggleTimer*4.0f) * 2.5f + sinf(Tutorial.WiggleTimer*1.0f/3.0f) * 2.5f;
-
-    float Alpha = 1.0f;
-    Alpha *= Remap(Tutorial.FadeInTimer, 0.0f, 0.5f, 0.0f, 1.0f, true);
-    Alpha *= Remap(Tutorial.FadeOutTimer, 0.0f, 0.25f, 1.0f, 0.0f, true);
-    
-    if (Alpha > 0)
+    for (int i = 0; i < NTutorials; i++)
     {
-        if (Tutorial.State == TUTORIAL_FLICK_TO_JUMP)
+        STutorial* Tutorial = &Tutorials[i];
+        
+        if (Tutorial->Alpha > 0)
         {
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &TextFlickToJumpSprite, X + ScrollX, Y + ScrollY, 1.0f, Alpha);
-        }
-        else if (Tutorial.State == TUTORIAL_VACUUM_INTRO_1)
-        {
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &TextBubbleSprite, 384, 230, 1.0f, Alpha);
-            DisplayStringAlpha(LIGHTLIST_VACUUM, "mom!! lets play", FORMAT_CENTER_X, 384, 230, 1.0f, Alpha);
-        }
-        else if (Tutorial.State == TUTORIAL_VACUUM_INTRO_2)
-        {
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &TextBubbleSprite, 384, 300, -1.0f, Alpha);
-            DisplayStringAlpha(LIGHTLIST_VACUUM, "i have to vacuum", FORMAT_CENTER_X, 384, 230, 1.0f, Alpha);
-        }
-        else if (Tutorial.State == TUTORIAL_VACUUM_INTRO_3)
-        {
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &TextBubbleSprite, 384, 230, 1.0f, Alpha);
-            DisplayStringAlpha(LIGHTLIST_VACUUM, "look out dusty!", FORMAT_CENTER_X, 384, 230, 1.0f, Alpha);
-        }
-        else if (Tutorial.State == TUTORIAL_EXTRA_LIFE)
-        {
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &TextExtraLifeSprite, X + ScrollX, Y + ScrollY, 1.0f, Alpha);            
-        }
-        else if (Tutorial.State == TUTORIAL_BONUS)
-        {
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &TextBonusSprite, X + ScrollX, Y + ScrollY, 1.0f, Alpha);            
+            STutorialProperties* Props = Tutorial->Props;
+            STutorialBubble* Bubble = Props->Bubble;
+            
+            float X = Tutorial->X + Props->XOffset + ScrollX;
+            float Y = Tutorial->Y + Props->YOffset - ( Bubble->SubY2 - Bubble->SubY1 ) + ScrollY;
+            
+            X += cosf(Tutorial->WiggleTimer*4.0f) * 2.5f + cosf(Tutorial->WiggleTimer*1.0f/3.0f) * 2.5f;
+            Y += sinf(Tutorial->WiggleTimer*4.0f) * 2.5f + sinf(Tutorial->WiggleTimer*1.0f/3.0f) * 2.5f;
+
+            AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &TextBubblesSprite, X, Y, Bubble->SubX1, Bubble->SubY1, Bubble->SubX2, Bubble->SubY2, Tutorial->Alpha);
+            
+            float TextX = X + (Bubble->SubX2-Bubble->SubX1)*0.5f;
+            float TextY = Y + (Bubble->SubY2-Bubble->SubY1)*0.5f;
+            
+            DisplayMultilineStringAlpha(LIGHTLIST_VACUUM, Props->Text, FORMAT_CENTER_X | FORMAT_CENTER_Y, TextX, TextY, Props->TextScale, Tutorial->Alpha);
         }
     }
 }
 
 void UpdateTutorial()
 {   
-    if (Tutorial.State == TUTORIAL_INACTIVE)
-        return;
-    
-    Tutorial.WaitTimer -= 1.0f/60.0f;
-    if (Tutorial.WaitTimer > 0.0f)
-        return;
-        
-    Tutorial.WiggleTimer += 1.0f/60.0f;
-
-    if (Tutorial.State == TUTORIAL_FLICK_TO_JUMP)
+    for (int i = 0; i < NTutorials; i++)
     {
-        Tutorial.FadeInTimer += 1.0f/60.0f;
-
-        if (Dusty.State == DUSTYSTATE_JUMP)
+        STutorial* Tutorial = &Tutorials[i];
+        STutorialProperties* Props = Tutorial->Props;
+        
+        Tutorial->Alpha = Clamp(Tutorial->Alpha + ( Tutorial->Active ? 0.1f : -0.1f ), 0.0f, 1.0f);
+        
+        if (!Tutorial->Active)
         {
-            Tutorial.DustyHasJumped = true;
-            Tutorial.StateTimer = 5.0f;
-        }
-
-        if (Tutorial.DustyHasJumped)
-        {
-            Tutorial.FadeOutTimer += 1.0f/60.0f;
-            if (Tutorial.FadeOutTimer >= 0.25f)
+            if (Props->Actions && strstr(Props->Actions, "hideuntiljump"))
             {
-                Tutorial.State = TUTORIAL_VACUUM_INTRO_3;
-                Tutorial.FadeInTimer = 0;
-                Tutorial.FadeOutTimer = 0;
-                Tutorial.WaitTimer = 3;
-                Tutorial.StateTimer = 5.0f;
-                return;
-            }            
+                if (Dusty.State == DUSTYSTATE_JUMP)
+                {
+                    Tutorial->Active = true;
+                }
+            }
+            else if (Props->Actions && strstr(Props->Actions, "hideuntildusty"))
+            {
+                if (Dusty.FloatY <= Tutorial->Y)
+                {
+                    Tutorial->Active = true;
+                }
+            }
+            
+            if (Tutorial->Active)
+            {
+                if (Props->Actions && strstr(Props->Actions, "turnonvacuum"))
+                {
+                    Chapter.PageProps.VacuumOff = false;
+                    TurnOnVacuum();
+                    Vacuum.Timer = 0;            
+                }
+            }
         }
         else
         {
-            Tutorial.X = Dusty.FloatX + 175;
-            Tutorial.Y = Dusty.FloatY - 350;            
-        }
-    }
-    else if (Tutorial.State == TUTORIAL_VACUUM_INTRO_1)
-    {
-        if (Dusty.FloatY <= 86*64)
-        {
-            Tutorial.FadeInTimer += 1.0f/60.0f;
-            Tutorial.StateTimer -= 1.0f/60.0f;
-        }
-        
-        if (Tutorial.StateTimer <= 0.0f)
-        {
-            Tutorial.FadeOutTimer += 1.0f/60.0f;
-            if (Tutorial.FadeOutTimer >= 0.25f)
+            if (Props->Actions && strstr(Props->Actions, "showuntilgear"))
             {
-                Tutorial.State = TUTORIAL_VACUUM_INTRO_2;
-                Tutorial.FadeInTimer = 0;
-                Tutorial.FadeOutTimer = 0;
-                Tutorial.WaitTimer = 1;
-                Tutorial.StateTimer = 3.0f;
+                for (int i = 0; i < NGears; i++)
+                    if (Gears[i].State != GEARSTATE_ACTIVE)
+                        Tutorial->Active = false;
+            }
+            else if (Props->Actions && strstr(Props->Actions, "showuntilcoin"))
+            {
+                for (int i = 0; i < NCoins; i++)
+                    if (Coins[i].State != COINSTATE_ACTIVE)
+                        Tutorial->Active = false;
             }
         }
-    }
-    else if (Tutorial.State == TUTORIAL_VACUUM_INTRO_2)
-    {
-        Tutorial.FadeInTimer += 1.0f/60.0f;
-        Tutorial.StateTimer -= 1.0f/60.0f;
         
-        if (Tutorial.StateTimer <= 0.0f)
-        {
-            Tutorial.FadeOutTimer += 1.0f/60.0f;
-            if (Tutorial.FadeOutTimer >= 0.25f)
-            {
-                Tutorial.State = TUTORIAL_VACUUM_INTRO_3;
-                Tutorial.FadeInTimer = 0;
-                Tutorial.FadeOutTimer = 0;
-                Tutorial.WaitTimer = 1;
-                Tutorial.StateTimer = 3.0f;
-            }
-        }
-    }
-    else if (Tutorial.State == TUTORIAL_VACUUM_INTRO_3)
-    {
-        Tutorial.FadeInTimer += 1.0f/60.0f;
-        Tutorial.StateTimer -= 1.0f/60.0f;
-        
-        if (Tutorial.StateTimer <= 1.0f && Tutorial.StateTimer+1.0f/60.0f >= 1.0f)
-        {
-            Chapter.PageProps.VacuumOff = false;
-            TurnOnVacuum();
-            Vacuum.Timer = 0;            
-        }
-        
-        if (Tutorial.StateTimer <= 0.0f)
-        {
-            Tutorial.FadeOutTimer += 1.0f/60.0f;
-            if (Tutorial.FadeOutTimer >= 0.25f)
-            {
-                Tutorial.State = TUTORIAL_INACTIVE;
-            }
-        }
-    }
-    else if (Tutorial.State == TUTORIAL_EXTRA_LIFE)
-    {
-        Tutorial.FadeInTimer += 1.0f/60.0f;
-
-        SCoin* LastCoin = &Coins[NCoins-1];
-        
-        if (LastCoin->State != COINSTATE_ACTIVE)
-        {
-            Tutorial.FadeOutTimer += 1.0f/60.0f;
-        }
-        else
-        {
-            Tutorial.X = LastCoin->X - 160;
-            Tutorial.Y = LastCoin->Y - 200;
-        }
-    }
-    else if (Tutorial.State == TUTORIAL_BONUS)
-    {
-        Tutorial.FadeInTimer += 1.0f/60.0f;
-
-        SGear* LastGear = &Gears[NGears-1];
-        
-        if (LastGear->State != GEARSTATE_ACTIVE)
-        {
-            Tutorial.FadeOutTimer += 1.0f/60.0f;
-        }
-        else
-        {
-            Tutorial.X = LastGear->X - 190;
-            Tutorial.Y = LastGear->Y - 160;
-        }
+        Tutorial->WiggleTimer += 1.0f/60.0f;
     }
 }
-

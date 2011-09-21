@@ -157,7 +157,7 @@ extern gxSprite ScreenWin2Sprite;
 extern gxSprite TextFlickToJumpSprite;
 extern gxSprite TextExtraLifeSprite;
 extern gxSprite TextBonusSprite;
-extern gxSprite TextBubbleSprite;
+extern gxSprite TextBubblesSprite;
 
 extern gxSprite BubbleMinus1SecSprite;
 extern gxSprite Bubble1UpSprite;

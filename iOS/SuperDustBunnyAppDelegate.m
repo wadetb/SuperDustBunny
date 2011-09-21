@@ -14,9 +14,7 @@
 
 @implementation SuperDustBunnyAppDelegate
 
-
 @synthesize window;
-
 @synthesize viewController, settingsViewController;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions

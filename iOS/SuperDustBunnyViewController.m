@@ -7,6 +7,7 @@
 //
 
 #import <QuartzCore/QuartzCore.h>
+#import <GameKit/GameKit.h>
 
 #import "SuperDustBunnyViewController.h"
 #import "SettingsViewController.h"
@@ -30,6 +31,31 @@ SuperDustBunnyViewController *theViewController;
 
 @synthesize context;
 @synthesize settingsViewController;
+@synthesize gameCenterEnabled;
+
+BOOL isGameCenterAPIAvailable()
+{
+    // Check for presence of GKLocalPlayer class.
+    BOOL localPlayerClassAvailable = (NSClassFromString(@"GKLocalPlayer")) != nil;
+    
+    // The device must be running iOS 4.1 or later.
+    NSString *reqSysVer = @"4.1";
+    NSString *currSysVer = [[UIDevice currentDevice] systemVersion];
+    BOOL osVersionSupported = ([currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedAscending);
+    
+    return (localPlayerClassAvailable && osVersionSupported);
+}
+
+- (void) authenticateLocalPlayer
+{
+    GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
+    [localPlayer authenticateWithCompletionHandler:^(NSError *error) {
+        if (localPlayer.isAuthenticated)
+        {
+            gameCenterEnabled = YES;
+        }
+    }];
+}
 
 - (void)awakeFromNib
 {
@@ -98,6 +124,12 @@ SuperDustBunnyViewController *theViewController;
     paused = FALSE;
     wasPaused = TRUE;
     
+    gameCenterEnabled = NO;
+    if (isGameCenterAPIAvailable())
+    {
+        [self authenticateLocalPlayer];
+    }
+
     [self drawFrame]; 
 }
 
@@ -130,12 +162,19 @@ SuperDustBunnyViewController *theViewController;
 {
     printf("viewWillAppear\n");
     [super viewWillAppear:animated];
+    
+    if (isGameCenterAPIAvailable())
+    {
+        [self authenticateLocalPlayer];
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
     printf("viewWillDisappear\n");
     [super viewWillDisappear:animated];
+
+    gameCenterEnabled = NO;
 }
 
 - (void)viewDidUnload

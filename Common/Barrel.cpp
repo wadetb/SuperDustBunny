@@ -25,6 +25,7 @@ void ParseBarrelProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNo
 	// Set default values.
 	BarrelProperties->From = 0;
 	BarrelProperties->To = 0;
+    BarrelProperties->Power = 30.0f;
 
 	// Scan properties for values.
 	rapidxml::xml_node<char>* PropertyNode = PropertiesNode->first_node("property");
@@ -40,6 +41,10 @@ void ParseBarrelProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNo
 		else if (strcmp(Name, "to") == 0)
 		{
 			BarrelProperties->To = atoi(Value);
+		}
+		else if (strcmp(Name, "power") == 0)
+		{
+			BarrelProperties->Power = atof(Value);
 		}
 		else if (strcmp(Name, "type") != 0 && strcmp(Name, "material") != 0)
 		{
@@ -65,6 +70,7 @@ void CreateBarrel(int X, int Y, SBarrelProperties* Properties)
 	Barrel->FromDir = (float)Properties->From;
 	Barrel->ToDir = (float)Properties->To;
 	Barrel->Dir = Barrel->FromDir;
+    Barrel->Power = Properties->Power;
 
 	Barrel->State = BARRELSTATE_WAIT;
 }
@@ -148,8 +154,7 @@ void UpdateBarrels()
 			{
 				Barrel->Dir = Barrel->ToDir;
 				float Angle = DirectionToAngle(Barrel->Dir);
-				float Velocity = 30.0f;
-				SetDustyState_Launch(Velocity*cosf(Angle), -Velocity*sinf(Angle));
+				SetDustyState_Launch(Barrel->Power*cosf(Angle), -Barrel->Power*sinf(Angle));
                 Dusty.Hidden = false;
 				Barrel->Timer = 30;
 				Barrel->State = BARRELSTATE_LAUNCH;

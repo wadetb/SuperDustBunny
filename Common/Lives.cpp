@@ -18,7 +18,7 @@ float LivesScaleFactor = 0.85f;
 
 void DisplayLives()
 {
-    if (CurrentChapter == 0 && Chapter.PageNum == 0)
+    if (Chapter.PageProps.VacuumOff)
         return;
 
 	for (int i = 0; i < Dusty.Lives; i++)

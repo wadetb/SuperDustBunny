@@ -26,7 +26,9 @@ enum ERecordingEventType
     
     EVENT_SWIPE_BEGIN    = 1,
     EVENT_SWIPE_POINT    = 2,
-    EVENT_SWIPE_END      = 3
+    EVENT_SWIPE_END      = 3,
+
+    EVENT_GHOST          = 4,
 };
 
 struct SRecorder
@@ -34,6 +36,7 @@ struct SRecorder
 	bool RecordingActive;
 
 	bool PlaybackActive;
+
 	bool MoveLeft;
 	bool MoveRight;
 	bool Jump;
@@ -41,6 +44,10 @@ struct SRecorder
     int SumFPS;
     int FPSCount;
 };
+
+#define BUILD_PRERELEASE (1<<31)
+
+extern unsigned int BuildNumber;
 
 extern SRecorder Recorder;
 
@@ -58,6 +65,7 @@ void UpdateRecorder();
 
 void RecordSwipeEvent(int Type, float X, float Y, float Time);
 void RecordTiltEvents();
+void RecordGhostEvent(float X, float Y, int Sprite);
 
 void UploadRecording();
 void DownloadRecording(int id);

@@ -482,7 +482,7 @@ static void UpdateVacuumForceMap()
         RestartVacuumForceMap();
     }
     
-#if 1
+#if 0
     for (int CurY = 0; CurY < Vacuum.ForceMapHeight; CurY++)
     {
         for (int CurX = 0; CurX < Vacuum.ForceMapWidth; CurX++)

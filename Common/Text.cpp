@@ -125,7 +125,7 @@ void DisplayStringAlpha(ELightList List, const char* String, unsigned int Format
     float CurY = Y;
     
     if (FormatFlags & FORMAT_CENTER_X)
-        CurX -= GetStringWidth(String, Scale)/2;
+        CurX = X - GetStringWidth(String, Scale)/2;
     
     const char* P = String;
     while (*P)
@@ -140,5 +140,92 @@ void DisplayStringAlpha(ELightList List, const char* String, unsigned int Format
 void DisplayString(ELightList List, const char* String, unsigned int FormatFlags, float X, float Y, float Scale)
 {
     DisplayStringAlpha(List, String, FormatFlags, X, Y, Scale, 1.0f);
+}
+
+static float GetLineWidth(const char* Line, float Scale)
+{
+    float CurWidth = 0;
+    
+    const char* P = Line;
+    while (*P && *P != '\n')
+    {
+        char C = *P;
+        CurWidth += GetLetterWidth(C) * Scale;
+        P++;
+    }
+    
+    return CurWidth;
+}
+
+void GetMultilineStringDimensions(const char* String, float Scale, float* Width, float* Height)
+{
+    float CurWidth = 0;
+    float CurHeight = 0;
+    
+    float LineWidth = 0;
+    
+    const char* P = String;
+    while (*P)
+    {
+        char C = *P++;        
+        if (C == '\n')
+        {
+            CurHeight += 48*Scale;
+            if (LineWidth > CurWidth)
+                CurWidth = LineWidth;
+            LineWidth = 0;
+        }
+        else
+        {
+            LineWidth += GetLetterWidth(C) * Scale;
+        }
+    }    
+
+    CurHeight += 48*Scale;
+    if (LineWidth > CurWidth)
+        CurWidth = LineWidth;
+    
+    *Width = CurWidth;
+    *Height = CurHeight;
+}
+
+void DisplayMultilineStringAlpha(ELightList List, const char* String, unsigned int FormatFlags, float X, float Y, float Scale, float Alpha)
+{
+    float CurX, CurY;
+    
+    if (FormatFlags & FORMAT_CENTER_X)
+        CurX = X - GetLineWidth(String, Scale)/2;
+    else
+        CurX = X;
+    
+    if (FormatFlags & FORMAT_CENTER_Y)
+    {
+        float Width, Height;
+        GetMultilineStringDimensions(String, Scale, &Width, &Height);
+        CurY = Y - Height/2;
+    }
+    else
+        CurY = Y;
+    
+    const char* P = String;
+    while (*P)
+    {
+        char C = *P++;
+        if (C == '\n')
+        {
+            CurY += 48*Scale;
+            CurX = X - GetLineWidth(P, Scale)/2;
+        }
+        else
+        {
+            DisplayLetter(List, C, CurX, CurY, Scale, Alpha);
+            CurX += GetLetterWidth(C) * Scale;
+        }
+    }
+}
+
+void DisplayMultilineString(ELightList List, const char* String, unsigned int FormatFlags, float X, float Y, float Scale)
+{
+    DisplayMultilineStringAlpha(List, String, FormatFlags, X, Y, Scale, 1.0f);
 }
 
