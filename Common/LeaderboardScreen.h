@@ -10,6 +10,8 @@
 #ifndef LEADERBOARDSCREEN_H
 #define LEADERBOARDSCREEN_H
 
+void DownloadLeaderboards();
+
 void InitLeaderboardScreen();
 void UpdateLeaderboardScreen();
 void DisplayLeaderboardScreen();

@@ -13,6 +13,10 @@
 #include "Chapter.h"
 #include "GameScore.h"
 
+#ifdef PLATFORM_IPHONE
+#import "SuperDustBunnyViewController.h"
+#endif
+
 
 #define LEADERBOARD_COUNT 25
 
@@ -36,6 +40,7 @@ enum ELeaderboardMode
 struct SLeaderboardScreen
 {
     float WiggleTime;
+    float FadeInTime;
     
     float StartX;
     float StartY;
@@ -47,6 +52,9 @@ struct SLeaderboardScreen
     ELeaderboardRegion Region;
     ELeaderboardMode Mode;
 
+    int AvailableRegionCount;
+    ELeaderboardRegion AvailableRegions[LEADERBOARDREGION_COUNT];
+    
     char* Name[LEADERBOARD_COUNT];
     int Time[LEADERBOARD_COUNT];
 };
@@ -55,8 +63,10 @@ struct SLeaderboardScreen
 SLeaderboardScreen LeaderboardScreen;
 
 
-static void DownloadLeaderboards()
+void DownloadLeaderboards()
 {
+    LeaderboardScreen.FadeInTime = 0.0f;
+    
     for (int i = 0; i < LEADERBOARD_COUNT; i++)
     {
         if (LeaderboardScreen.Name[i])
@@ -70,8 +80,30 @@ static void DownloadLeaderboards()
     const char* RegionTag[LEADERBOARDREGION_COUNT] = { "world", "state", "city" };
     const char* ModeTag[LEADERBOARDMODE_COUNT] = { "alltime", "kingofthehill" };
     
-    NSString* URLString = [NSString stringWithFormat:@"http://pluszerogames.com/sdb/getleaderboard.php?zone=%s_%s&chapter=%s", 
-                           RegionTag[LeaderboardScreen.Region], ModeTag[LeaderboardScreen.Mode], Chapters[CurrentChapter].Name];
+    NSString* URLString;
+#ifdef PLATFORM_IPHONE
+    if (theViewController.haveLocation && (LeaderboardScreen.Region == LEADERBOARDREGION_CITY || LeaderboardScreen.Region == LEADERBOARDREGION_STATE))
+    {
+        NSString* region;
+        if (LeaderboardScreen.Region == LEADERBOARDREGION_CITY)
+            region = theViewController.city;
+        else
+            region = theViewController.state;
+        
+        URLString = [NSString stringWithFormat:@"http://pluszerogames.com/sdb/getleaderboard.php?mode=%s&region=%s&chapter=%s&region_value=%@", 
+                     ModeTag[LeaderboardScreen.Mode], 
+                     RegionTag[LeaderboardScreen.Region], 
+                     Chapters[CurrentChapter].Name, 
+                     [region stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    }
+    else
+#endif
+    {
+        URLString = [NSString stringWithFormat:@"http://pluszerogames.com/sdb/getleaderboard.php?mode=%s&region=%s&chapter=%s", 
+                     ModeTag[LeaderboardScreen.Mode], 
+                     RegionTag[LeaderboardScreen.Region], 
+                     Chapters[CurrentChapter].Name];        
+    }
     NSURL *URL = [NSURL URLWithString:URLString];
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:30];
@@ -111,7 +143,11 @@ void InitLeaderboardScreen()
     LeaderboardScreen.StartY = 0;
     LeaderboardScreen.Dragging = false;
     
+#ifdef PLATFORM_IPHONE
+    [theViewController retrieveLocationAndDownloadLeaderboards];
+#else
     DownloadLeaderboards();
+#endif
 }
 
 void DisplayLeaderboardScreen()
@@ -122,28 +158,52 @@ void DisplayLeaderboardScreen()
     // Leaderboard buttons.
     AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &IconCredits1Sprite, 90 + sinf(LeaderboardScreen.WiggleTime)*4.0f, 90, 0.25f, 1.0f);
 
-    int CurrentY = LeaderboardScreen.StartY;
-    
     const char* RegionName[LEADERBOARDREGION_COUNT] = { "worldwide", "state", "city" };
     const char* ModeName[LEADERBOARDMODE_COUNT] = { "top score", "king of the hill" };
 
-    CurrentY += 50;
-
-    DisplayString(LIGHTLIST_FOREGROUND_NO_SHADOW, RegionName[LeaderboardScreen.Region], FORMAT_CENTER_X, 384 + LeaderboardScreen.StartX, CurrentY, 0.9f);
-    CurrentY += 100;
-    DisplayString(LIGHTLIST_FOREGROUND_NO_SHADOW, ModeName[LeaderboardScreen.Mode], FORMAT_CENTER_X, 384 + LeaderboardScreen.StartX, CurrentY, 0.8f);
-    CurrentY += 150;
+    int CurrentX = LeaderboardScreen.StartX;
     
-    for (int i = 0; i < LEADERBOARD_COUNT; i++)
+    for (int RegionIndex = 0; RegionIndex < LeaderboardScreen.AvailableRegionCount; RegionIndex++)
     {
-        if (!LeaderboardScreen.Name[i])
-            continue;
+        ELeaderboardRegion Region = LeaderboardScreen.AvailableRegions[RegionIndex];
         
-        DisplayString(LIGHTLIST_FOREGROUND_NO_SHADOW, LeaderboardScreen.Name[i], 0, 80 + LeaderboardScreen.StartX, CurrentY, 0.8f);
-        DisplayTime(450 + LeaderboardScreen.StartX, CurrentY, 0.6f, LeaderboardScreen.Time[i]);
-        
-        CurrentY += 75;
+        for (int Mode = 0; Mode < LEADERBOARDMODE_COUNT; Mode++)
+        {
+            const char* LocalRegionName = RegionName[Region];
+#ifdef PLATFORM_IPHONE
+            if (theViewController.haveLocation && (Region == LEADERBOARDREGION_CITY || Region == LEADERBOARDREGION_STATE))
+            {
+                if (Region == LEADERBOARDREGION_CITY)
+                    LocalRegionName = [[theViewController.city lowercaseString] UTF8String];
+                else
+                    LocalRegionName = [[theViewController.state lowercaseString] UTF8String];
+            }
+#endif
+            DisplayString(LIGHTLIST_FOREGROUND_NO_SHADOW, LocalRegionName, FORMAT_CENTER_X, 384 + CurrentX, -LeaderboardScreen.StartY + 50, 0.8f);
+
+            DisplayString(LIGHTLIST_FOREGROUND_NO_SHADOW, ModeName[Mode], FORMAT_CENTER_X, 384 + CurrentX, -LeaderboardScreen.StartY + 130, 1.0f);
+            
+            if (Region == LeaderboardScreen.Region && Mode == LeaderboardScreen.Mode)
+            {
+                int CurrentY = 250;
+                
+                for (int i = 0; i < LEADERBOARD_COUNT; i++)
+                {
+                    if (!LeaderboardScreen.Name[i])
+                        continue;
+                    
+                    float Alpha = Remap((float)CurrentY - 300, 0.0f, LeaderboardScreen.FadeInTime * 5000.0f, 1.0f, 0.0f, true);
+                    DisplayStringAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, LeaderboardScreen.Name[i], 0, 80 + CurrentX, CurrentY-LeaderboardScreen.StartY, 0.8f, Alpha);
+                    DisplayTimeAlpha(450 + CurrentX, CurrentY-LeaderboardScreen.StartY, 0.6f, LeaderboardScreen.Time[i], Alpha);
+                    
+                    CurrentY += 75;
+                }
+            }
+            
+            CurrentX += 768;
+        }
     }
+
 }
 
 void UpdateLeaderboardScreen()
@@ -157,6 +217,18 @@ void UpdateLeaderboardScreen()
         return;
     }
 
+    LeaderboardScreen.AvailableRegionCount = 0;
+    
+    LeaderboardScreen.AvailableRegions[LeaderboardScreen.AvailableRegionCount++] = LEADERBOARDREGION_WORLD;
+#ifdef PLATFORM_IPHONE
+    if (theViewController.haveLocation)
+    {
+        LeaderboardScreen.AvailableRegions[LeaderboardScreen.AvailableRegionCount++] = LEADERBOARDREGION_STATE;
+        LeaderboardScreen.AvailableRegions[LeaderboardScreen.AvailableRegionCount++] = LEADERBOARDREGION_CITY;
+    }
+#endif
+    // TODO if (HaveFacebook), if (HaveGameCenter)
+
     if (LeaderboardScreen.Dragging)
     {
         if (!msButton1)
@@ -164,40 +236,16 @@ void UpdateLeaderboardScreen()
             LeaderboardScreen.Dragging = false;
         }
         
-        LeaderboardScreen.StartY += msY - LeaderboardScreen.DragStartY;
+        LeaderboardScreen.StartY -= msY - LeaderboardScreen.DragStartY;
         LeaderboardScreen.DragStartY = msY;
         
-        if (!LeaderboardScreen.Dragging && fabsf(msX - LeaderboardScreen.DragStartX) > 100)
-        {
-            if (msX < LeaderboardScreen.DragStartX)
-            {
-                if (LeaderboardScreen.Region > 0)
-                    LeaderboardScreen.Region = (ELeaderboardRegion)(LeaderboardScreen.Region-1);
-/*                else
-                if (LeaderboardScreen.Mode > 0)
-                {
-                    LeaderboardScreen.Mode = (ELeaderboardMode)(LeaderboardScreen.Mode-1);
-                    LeaderboardScreen.Region = (ELeaderboardRegion)(LEADERBOARDREGION_COUNT - 1);
-                }*/
-                
-                LeaderboardScreen.StartX = -384;
-            }
-            else
-            {
-                if (LeaderboardScreen.Region < LEADERBOARDREGION_COUNT - 1)
-                    LeaderboardScreen.Region = (ELeaderboardRegion)(LeaderboardScreen.Region+1);
-/*                else
-                if (LeaderboardScreen.Mode < LEADERBOARDMODE_COUNT - 1)
-                {
-                    LeaderboardScreen.Mode = (ELeaderboardMode)(LeaderboardScreen.Mode+1);
-                    LeaderboardScreen.Region = (ELeaderboardRegion)(0);
-                }*/
-                
-                LeaderboardScreen.StartX = 384;
-            }
-            
-            DownloadLeaderboards();
-        }
+        LeaderboardScreen.StartX += (msX - LeaderboardScreen.DragStartX) * 2.5f;
+        LeaderboardScreen.DragStartX = msX;
+        
+        if (LeaderboardScreen.StartX > 100)
+            LeaderboardScreen.StartX = 100;
+        if (LeaderboardScreen.StartX < -((LEADERBOARDMODE_COUNT * LeaderboardScreen.AvailableRegionCount - 1) * 768) - 100 )
+            LeaderboardScreen.StartX = -((LEADERBOARDMODE_COUNT * LeaderboardScreen.AvailableRegionCount - 1) * 768) - 100;
     }
     else
     {
@@ -224,10 +272,30 @@ void UpdateLeaderboardScreen()
             TotalHeight = LitScreenHeight;
         
         if (LeaderboardScreen.StartY > TotalHeight - LitScreenHeight)
-            LeaderboardScreen.StartY += ((TotalHeight - LitScreenHeight) - LeaderboardScreen.StartY) * 0.1f;
+            LeaderboardScreen.StartY = LeaderboardScreen.StartY*0.9f + (TotalHeight - LitScreenHeight)*0.1f;
         
-        LeaderboardScreen.StartX *= 0.95f;
+        float TargetX = -((LeaderboardScreen.Region * LEADERBOARDMODE_COUNT) + LeaderboardScreen.Mode) * 768;
+        LeaderboardScreen.StartX  = LeaderboardScreen.StartX*0.9f + TargetX*0.1f;
+    }
+    
+    int CurTab = (-LeaderboardScreen.StartX+384) / 768;
+
+    if (CurTab < 0)
+        CurTab = 0;
+    if (CurTab >= LEADERBOARDMODE_COUNT * LeaderboardScreen.AvailableRegionCount)
+        CurTab = (LEADERBOARDMODE_COUNT * LeaderboardScreen.AvailableRegionCount) - 1;
+    
+    int CurRegion = CurTab / LEADERBOARDMODE_COUNT;
+    int CurMode = CurTab % LEADERBOARDMODE_COUNT;
+
+    if (CurRegion != LeaderboardScreen.Region || CurMode != LeaderboardScreen.Mode)
+    {
+        LeaderboardScreen.Region = (ELeaderboardRegion)CurRegion;
+        LeaderboardScreen.Mode = (ELeaderboardMode)CurMode;
+        NSLog(@"Region=%d Mode=%d\n", CurRegion, CurMode);
+        DownloadLeaderboards();
     }
     
     LeaderboardScreen.WiggleTime += 1.0f/60.0f;
+    LeaderboardScreen.FadeInTime += 1.0f/60.0f;
 }

@@ -408,7 +408,7 @@ static void RestartVacuumForceMap()
     
     VacuumFreeHead = NextVacuumFreeHead;
     
-    LogMessage("Recalculating vacuum forces\n");
+    //LogMessage("Recalculating vacuum forces\n");
 }
 
 static void UpdateVacuumForceMap()

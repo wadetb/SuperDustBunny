@@ -954,7 +954,7 @@ void SetDustyState_WallJump()
     Dusty.SpriteTransition = 0;
 
 	// Switch directions when entering a wall jump.
-	if (Dusty.Direction == DIRECTION_RIGHT)
+	if (Dusty.CollideWithRightSide)
 		Dusty.Direction = DIRECTION_LEFT;
 	else
 		Dusty.Direction = DIRECTION_RIGHT;
@@ -1658,7 +1658,7 @@ static void UpdateDusty_Collision()
 					{
 						BlockCollideWithRightSide = true;
 						Dusty.CollideWithRightSide = true;//Collision with Dusty's Right Side but the left side of the platform
-						Dusty.FloatX -= LeftDistance;
+						Dusty.FloatX -= (LeftDistance-1);
 
 #if 0
 						if (TopBlockIsEmpty && abs(UpDistance - LeftDistance) < CornerThreshold)
@@ -1682,7 +1682,7 @@ static void UpdateDusty_Collision()
 						if (TopBlockIsEmpty && abs(UpDistance - RightDistance) < CornerThreshold)
 						{
 							Dusty.CollideWithBottomLeftCorner = true;
-							Dusty.FloatY -= UpDistance;
+							Dusty.FloatY -= (UpDistance-1);
 							Dusty.FloatVelocityY = 0;
 						}
 #endif
@@ -1694,7 +1694,7 @@ static void UpdateDusty_Collision()
 					{
 						BlockCollideWithTopSide = true;
 						Dusty.CollideWithTopSide = true;//Collision with Dusty's Top Side but the Bottom side of the platform
-						Dusty.FloatY += DownDistance;
+						Dusty.FloatY += (DownDistance-1);
 						if (Dusty.FloatVelocityY < 0)
 							Dusty.FloatVelocityY = 0;
 					}
@@ -1702,7 +1702,7 @@ static void UpdateDusty_Collision()
 					{
 						BlockCollideWithBottomSide = true;
 						Dusty.CollideWithBottomSide = true;//Collision with Dusty's Bottom Side but the Top side of the platform
-						Dusty.FloatY -= UpDistance;
+						Dusty.FloatY -= (UpDistance-1);
 						if (Dusty.FloatVelocityY > 0)
 							Dusty.FloatVelocityY = 0;
 

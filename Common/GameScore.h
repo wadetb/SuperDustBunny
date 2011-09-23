@@ -54,7 +54,9 @@ void SaveChapterScores(char* ChapterName);
 void RecordPageScore(int Page);
 
 void DisplayTimeDigit(int Digit, float BaseX, float BaseY, float ScaleFactor, float X, float Y);
+void DisplayTimeDigitAlpha(int Digit, float BaseX, float BaseY, float ScaleFactor, float X, float Y, float Alpha);
 
 void DisplayTime(float X, float Y, float ScaleFactor, int Time);
+void DisplayTimeAlpha(float X, float Y, float ScaleFactor, int Time, float Alpha);
 
 #endif

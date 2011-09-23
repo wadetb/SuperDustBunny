@@ -21,17 +21,18 @@ void Exit();
 void Update();
 void Display();
 void SaveSettings();
+void DownloadLeaderboards();
 
 extern GLuint gxOpenGLESVersion;
 
 SuperDustBunnyViewController *theViewController;
-
 
 @implementation SuperDustBunnyViewController
 
 @synthesize context;
 @synthesize settingsViewController;
 @synthesize gameCenterEnabled;
+@synthesize haveLocation, city, state, country;
 
 BOOL isGameCenterAPIAvailable()
 {
@@ -55,6 +56,63 @@ BOOL isGameCenterAPIAvailable()
             gameCenterEnabled = YES;
         }
     }];
+}
+
+- (void)retrieveLocationAndDownloadLeaderboards
+{
+    if (locationManager == nil)
+        locationManager = [[CLLocationManager alloc] init];
+
+    haveLocation = NO;
+    city = nil;
+    state = nil;
+    country = nil;
+
+    CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+    if (status != kCLAuthorizationStatusNotDetermined && status != kCLAuthorizationStatusAuthorized)
+    {
+        DownloadLeaderboards();
+        return;
+    }
+    
+    locationManager.delegate = self;
+    locationManager.desiredAccuracy = kCLLocationAccuracyKilometer;
+    locationManager.distanceFilter = 500;
+    
+    [locationManager startUpdatingLocation];
+}
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
+{
+    [locationManager stopUpdatingLocation];
+
+    MKReverseGeocoder* geo = [[MKReverseGeocoder alloc] initWithCoordinate:newLocation.coordinate];
+    geo.delegate = self;
+    [geo start];
+}
+
+- (void)reverseGeocoder:(MKReverseGeocoder*)geocoder didFindPlacemark:(MKPlacemark*)place
+{
+    haveLocation = YES;
+    city = place.locality;
+    state = place.administrativeArea;
+    country = place.country;
+    
+    NSLog(@"city:%@ state:%@ country:%@\n", city, state, country);
+    
+    DownloadLeaderboards();
+}
+
+- (void)reverseGeocoder:(MKReverseGeocoder*)geocoder didFailWithError:(NSError*)error
+{
+    haveLocation = NO;
+    city = nil;
+    state = nil;
+    country = nil;
+
+    NSLog(@"Could not retrieve the specified place information.\n");
+
+    DownloadLeaderboards();
 }
 
 - (void)awakeFromNib
@@ -129,7 +187,13 @@ BOOL isGameCenterAPIAvailable()
     {
         [self authenticateLocalPlayer];
     }
-
+    
+    locationManager = nil;
+    haveLocation = NO;
+    city = nil;
+    state = nil;
+    country = nil;
+    
     [self drawFrame]; 
 }
 

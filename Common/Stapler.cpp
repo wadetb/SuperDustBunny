@@ -100,6 +100,7 @@ void DisplayStaplers()
 
         int FrameCount;
         gxSprite** Frames;
+        float OffsetY;
         
         switch (Stapler->Type)
         {
@@ -107,14 +108,17 @@ void DisplayStaplers()
         case STAPLER_STAPLER: 
             Frames = StaplerSprites; 
             FrameCount = sizeof(StaplerSprites)/sizeof(gxSprite*); 
+            OffsetY = -60;
             break;
         case STAPLER_JELLO: 
             Frames = JelloSprites; 
             FrameCount = sizeof(JelloSprites)/sizeof(gxSprite*); 
+            OffsetY = -60;
             break;
         case STAPLER_CLOTHESPIN: 
             Frames = ClothespinSprites; 
             FrameCount = sizeof(ClothespinSprites)/sizeof(gxSprite*); 
+            OffsetY = -30;
             break;
         }
         
@@ -123,10 +127,10 @@ void DisplayStaplers()
             int Frame = 1+Stapler->Timer/5;
             if (Frame >= FrameCount) 
                 Frame = FrameCount-1;
-            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, Frames[Frame], Stapler->X + ScrollX, Stapler->Y + ScrollY - 60, 1.0f, 0.0f);
+            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, Frames[Frame], Stapler->X + ScrollX, Stapler->Y + ScrollY + OffsetY, 1.0f, 0.0f);
         }
         else
-            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, Frames[0], Stapler->X + ScrollX, Stapler->Y + ScrollY - 60, 1.0f, 0.0f);            
+            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, Frames[0], Stapler->X + ScrollX, Stapler->Y + ScrollY + OffsetY, 1.0f, 0.0f);            
     }
 }
 

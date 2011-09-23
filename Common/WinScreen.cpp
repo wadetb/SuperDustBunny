@@ -194,6 +194,9 @@ void DisplayWinScreen()
         
         for (int i = 0; i < Chapter.NPages; i++)
         {
+            if (Score.PageTime[i] == 0)
+                continue;
+            
             DisplayTime(XOffset + 80 - (i+1)*300*WinScreen.SlideIn, CurrentY, 0.75f, Score.PageTime[i]);
             DisplayTimeDigit(Score.PageBonus[i], XOffset + 450 - (i+1)*300*WinScreen.SlideIn, CurrentY, 0.75f, 0, 0);
             

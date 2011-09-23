@@ -10,6 +10,8 @@
 		08058FA6141EB76F004780BA /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 08058FA4141EB76F004780BA /* libTestFlight.a */; };
 		0816B6D3137F8C1C00CE5DE4 /* Input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0816B6D1137F8C1B00CE5DE4 /* Input.cpp */; };
 		082C9B8013E8D97400586EDB /* Icon-ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 082C9B7F13E8D97400586EDB /* Icon-ipad.png */; };
+		0837CAF6142BB77C0042DB5C /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0837CAF5142BB77C0042DB5C /* CoreLocation.framework */; };
+		0837CAF9142BB7D20042DB5C /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0837CAF8142BB7D20042DB5C /* MapKit.framework */; };
 		0844B73913F9F0A500092ECE /* Text.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0844B73813F9F0A500092ECE /* Text.cpp */; };
 		0856200F1346A40000F9EFBA /* Default-ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856200A1346A40000F9EFBA /* Default-ipad.png */; };
 		085620101346A40000F9EFBA /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856200B1346A40000F9EFBA /* Default.png */; };
@@ -139,6 +141,8 @@
 		0816B6D1137F8C1B00CE5DE4 /* Input.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Input.cpp; sourceTree = "<group>"; };
 		0816B6D2137F8C1C00CE5DE4 /* Input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Input.h; sourceTree = "<group>"; };
 		082C9B7F13E8D97400586EDB /* Icon-ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-ipad.png"; sourceTree = "<group>"; };
+		0837CAF5142BB77C0042DB5C /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		0837CAF8142BB7D20042DB5C /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		0844B73613F9F09B00092ECE /* Text.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Text.h; sourceTree = "<group>"; };
 		0844B73813F9F0A500092ECE /* Text.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Text.cpp; sourceTree = "<group>"; };
 		0856200A1346A40000F9EFBA /* Default-ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-ipad.png"; sourceTree = "<group>"; };
@@ -289,6 +293,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0837CAF9142BB7D20042DB5C /* MapKit.framework in Frameworks */,
+				0837CAF6142BB77C0042DB5C /* CoreLocation.framework in Frameworks */,
 				08899BAA1428E621008F7623 /* GameKit.framework in Frameworks */,
 				085AAA8C132D169700DF32CA /* libz.dylib in Frameworks */,
 				085AAA75132C5C9E00DF32CA /* QuartzCore.framework in Frameworks */,
@@ -324,6 +330,8 @@
 		085AA94F132C572A00DF32CA = {
 			isa = PBXGroup;
 			children = (
+				0837CAF8142BB7D20042DB5C /* MapKit.framework */,
+				0837CAF5142BB77C0042DB5C /* CoreLocation.framework */,
 				08BF391613466F4E002C1A7B /* Converted */,
 				08A8FC7313302BB300E45A98 /* Documentation */,
 				085AAA88132D0E7100DF32CA /* Converter */,

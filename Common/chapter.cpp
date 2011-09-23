@@ -789,6 +789,7 @@ static void ClearPageObjects()
 	ClearFlames();
 	ClearFlashlightWaypoints();
 	ClearPowerUps();
+    ClearTutorials();
 
 	if (Chapter.PageBlocks)
 	{
@@ -886,7 +887,7 @@ static void CreatePageObjects()
 
 	// Set initial scrolling.
     ScrollX = 0;
-	ScrollY = -(Chapter.PageHeight * 64 - LitScreenHeight);
+	ScrollY = 768 - Chapter.StartY;
 
 	// Initialize global stuff for the page.
 	InitDusty();
@@ -950,9 +951,9 @@ void CalculateScroll()
 		return;
 
 	// Screen tracks Dusty upwards.
-	if (Dusty.FloatY + ScrollY < 500)
+	if (Dusty.FloatY + ScrollY < 600)
 	{
-		ScrollY = 500 - Dusty.FloatY;
+		ScrollY = 600 - Dusty.FloatY;
 	}
 
 	// Screen also tracks Dusty downwards.

@@ -7,6 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <CoreLocation/CoreLocation.h>
+#import <MapKit/MapKit.h>
 
 #import <OpenGLES/EAGL.h>
 
@@ -17,7 +19,7 @@
 
 @class SettingsViewController;
 
-@interface SuperDustBunnyViewController : UIViewController <UIAlertViewDelegate> {
+@interface SuperDustBunnyViewController : UIViewController <UIAlertViewDelegate, CLLocationManagerDelegate, MKReverseGeocoderDelegate> {
 @private
     CADisplayLink *displayLink;
     CFTimeInterval lastTimeStamp;
@@ -27,12 +29,21 @@
     int slowFactor;
     UIView *spinnerPanel;
     BOOL gameCenterEnabled;
+    CLLocationManager* locationManager;
+    BOOL haveLocation;
+    NSString* city;
+    NSString* state;
+    NSString* country;
 }
 
 @property (nonatomic, retain) EAGLContext *context;
 @property (nonatomic, retain) IBOutlet SettingsViewController *settingsViewController;
 @property BOOL paused;
 @property BOOL gameCenterEnabled;
+@property BOOL haveLocation;
+@property (nonatomic, retain) NSString* city;
+@property (nonatomic, retain) NSString* state;
+@property (nonatomic, retain) NSString* country;
 
 - (void)drawFrame;
 
@@ -43,6 +54,8 @@
 - (void)stopSpinner;
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;
+
+- (void)retrieveLocationAndDownloadLeaderboards;
 
 @end
 

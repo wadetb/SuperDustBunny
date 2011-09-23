@@ -147,7 +147,7 @@ static float GetLineWidth(const char* Line, float Scale)
     float CurWidth = 0;
     
     const char* P = Line;
-    while (*P && *P != '\n')
+    while (*P && *P != '\n' && *P != '|')
     {
         char C = *P;
         CurWidth += GetLetterWidth(C) * Scale;
@@ -168,9 +168,9 @@ void GetMultilineStringDimensions(const char* String, float Scale, float* Width,
     while (*P)
     {
         char C = *P++;        
-        if (C == '\n')
+        if (C == '\n' || C == '|')
         {
-            CurHeight += 48*Scale;
+            CurHeight += 64*Scale;
             if (LineWidth > CurWidth)
                 CurWidth = LineWidth;
             LineWidth = 0;
@@ -181,7 +181,7 @@ void GetMultilineStringDimensions(const char* String, float Scale, float* Width,
         }
     }    
 
-    CurHeight += 48*Scale;
+    CurHeight += 64*Scale;
     if (LineWidth > CurWidth)
         CurWidth = LineWidth;
     
@@ -211,9 +211,9 @@ void DisplayMultilineStringAlpha(ELightList List, const char* String, unsigned i
     while (*P)
     {
         char C = *P++;
-        if (C == '\n')
+        if (C == '\n' || C == '|')
         {
-            CurY += 48*Scale;
+            CurY += 64*Scale;
             CurX = X - GetLineWidth(P, Scale)/2;
         }
         else

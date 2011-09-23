@@ -23,6 +23,7 @@
 struct STutorialBubble
 {
     int SubX1, SubY1, SubX2, SubY2;
+    float TextXOffset, TextYOffset;
 };
 
 struct STutorialProperties
@@ -30,7 +31,9 @@ struct STutorialProperties
     char* Text;
     char* Actions;
     float XOffset, YOffset;
+    float OriginXOffset, OriginYOffset;
     float TextScale;
+    bool ScreenAligned;
     STutorialBubble* Bubble;
 };
 
@@ -49,11 +52,11 @@ STutorial Tutorials[MAX_TUTORIALS];
 
 STutorialBubble TutorialBubbles[] =
 {
-    { 75, 0, 700, 230 },
-    { 0, 262, 384, 500 },
+    { 0, 262, 384, 500, 0, -10 },
     { 420, 236, 750, 512 },
     { 90, 530, 310, 680 },
     { 396, 524, 644, 690 },
+    { 75, 0, 700, 230 },
     { 0, 692, 768, 1024 },
 };
 
@@ -63,8 +66,12 @@ void ParseTutorialProperties(SBlock* Block, rapidxml::xml_node<char>* Properties
     
     Props->Text = NULL;
     Props->Actions = NULL;
-    Props->XOffset = Props->YOffset = 0;
-    Props->TextScale = 1.0f;
+    Props->XOffset = 100;
+    Props->YOffset = -150;
+    Props->OriginXOffset = 0;
+    Props->OriginYOffset = 0;
+    Props->TextScale = 0.9f;
+    Props->ScreenAligned = false;
     Props->Bubble = NULL;
     
 	rapidxml::xml_node<char>* PropertyNode = PropertiesNode->first_node("property");
@@ -88,9 +95,18 @@ void ParseTutorialProperties(SBlock* Block, rapidxml::xml_node<char>* Properties
             Props->XOffset = strtof(Value, &Value);
             Props->YOffset = strtof(Value, &Value);
         }
+        else if (strcmp(Name, "originoffset") == 0)
+        {
+            Props->OriginXOffset = strtof(Value, &Value);
+            Props->OriginYOffset = strtof(Value, &Value);
+        }
         else if (strcmp(Name, "textscale") == 0)
         {
             Props->TextScale = strtof(Value, &Value);
+        }
+        else if (strcmp(Name, "screenaligned") == 0)
+        {
+            Props->ScreenAligned = (bool)atoi(Value);
         }
         
         free(WritableValue);
@@ -110,7 +126,7 @@ void ParseTutorialProperties(SBlock* Block, rapidxml::xml_node<char>* Properties
         STutorialBubble* Bubble = &TutorialBubbles[i];
         float BubbleWidth = Bubble->SubX2 - Bubble->SubX1;
         float BubbleHeight = Bubble->SubY2 - Bubble->SubY1;
-        if (BubbleWidth*0.9f >= Width && BubbleHeight*0.9f >= Height)
+        if (BubbleWidth*0.7f >= Width && BubbleHeight*0.7f >= Height)
         {
             Props->Bubble = Bubble;
             break;
@@ -134,8 +150,8 @@ void CreateTutorial(int X, int Y, STutorialProperties* Props)
     
     Tutorial->Props = Props;
     
-	Tutorial->X = (float)X + 32;
-	Tutorial->Y = (float)Y + 32;
+	Tutorial->X = (float)X + 32 + Props->OriginXOffset;
+	Tutorial->Y = (float)Y + 86 + Props->OriginYOffset;
 
     Tutorial->Alpha = 0.0f;
 
@@ -167,16 +183,40 @@ void DisplayTutorial()
             STutorialProperties* Props = Tutorial->Props;
             STutorialBubble* Bubble = Props->Bubble;
             
-            float X = Tutorial->X + Props->XOffset + ScrollX;
-            float Y = Tutorial->Y + Props->YOffset - ( Bubble->SubY2 - Bubble->SubY1 ) + ScrollY;
+            float X, Y;
             
-            X += cosf(Tutorial->WiggleTimer*4.0f) * 2.5f + cosf(Tutorial->WiggleTimer*1.0f/3.0f) * 2.5f;
-            Y += sinf(Tutorial->WiggleTimer*4.0f) * 2.5f + sinf(Tutorial->WiggleTimer*1.0f/3.0f) * 2.5f;
+            if (Props->ScreenAligned)
+            {
+                X = 384 - (Bubble->SubX2 - Bubble->SubX1)/2;
+                Y = 100;
+                
+                AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &TextBubblesSprite, X, Y, Bubble->SubX1, Bubble->SubY1, Bubble->SubX2, Bubble->SubY2, Tutorial->Alpha);
+            }
+            else
+            {
+                X = Tutorial->X + Props->XOffset + ScrollX;
+                Y = Tutorial->Y + Props->YOffset + ScrollY;
+                
+                X += cosf(Tutorial->WiggleTimer*4.0f) * 2.5f + cosf(Tutorial->WiggleTimer*1.0f/3.0f) * 2.5f;
+                Y += sinf(Tutorial->WiggleTimer*4.0f) * 2.5f + sinf(Tutorial->WiggleTimer*1.0f/3.0f) * 2.5f;
+                
+                float Dot1X = Remap(0.75f, 0, 1.0f, Tutorial->X + ScrollX, X, true);
+                float Dot1Y = Remap(0.75f, 0, 1.0f, Tutorial->Y + ScrollY, Y, true);
 
-            AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &TextBubblesSprite, X, Y, Bubble->SubX1, Bubble->SubY1, Bubble->SubX2, Bubble->SubY2, Tutorial->Alpha);
+                AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &TextBubblesSprite, Dot1X-22, Dot1Y-22, 0, 40, 40, 74, Tutorial->Alpha);
+                
+                float Dot2X = Remap(1.10f, 0, 1.0f, Tutorial->X + ScrollX, X, false);
+                float Dot2Y = Remap(1.10f, 0, 1.0f, Tutorial->Y + ScrollY, Y, false);
+
+                AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &TextBubblesSprite, Dot2X-22, Dot2Y-22, 0, 0, 45, 42, Tutorial->Alpha);
+                
+                Y -= Bubble->SubY2 - Bubble->SubY1;
+                
+                AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &TextBubblesSprite, X, Y, Bubble->SubX1, Bubble->SubY1, Bubble->SubX2, Bubble->SubY2, Tutorial->Alpha);
+            }
             
-            float TextX = X + (Bubble->SubX2-Bubble->SubX1)*0.5f;
-            float TextY = Y + (Bubble->SubY2-Bubble->SubY1)*0.5f;
+            float TextX = X + (Bubble->SubX2-Bubble->SubX1)*0.5f + Bubble->TextXOffset;
+            float TextY = Y + (Bubble->SubY2-Bubble->SubY1)*0.5f + Bubble->TextYOffset;
             
             DisplayMultilineStringAlpha(LIGHTLIST_VACUUM, Props->Text, FORMAT_CENTER_X | FORMAT_CENTER_Y, TextX, TextY, Props->TextScale, Tutorial->Alpha);
         }
@@ -194,14 +234,7 @@ void UpdateTutorial()
         
         if (!Tutorial->Active)
         {
-            if (Props->Actions && strstr(Props->Actions, "hideuntiljump"))
-            {
-                if (Dusty.State == DUSTYSTATE_JUMP)
-                {
-                    Tutorial->Active = true;
-                }
-            }
-            else if (Props->Actions && strstr(Props->Actions, "hideuntildusty"))
+            if (Props->Actions && strstr(Props->Actions, "hideuntildusty"))
             {
                 if (Dusty.FloatY <= Tutorial->Y)
                 {
@@ -221,7 +254,14 @@ void UpdateTutorial()
         }
         else
         {
-            if (Props->Actions && strstr(Props->Actions, "showuntilgear"))
+            if (Props->Actions && strstr(Props->Actions, "showuntiljump"))
+            {
+                if (Dusty.State == DUSTYSTATE_JUMP)
+                {
+                    Tutorial->Active = false;
+                }
+            }
+            else if (Props->Actions && strstr(Props->Actions, "showuntilgear"))
             {
                 for (int i = 0; i < NGears; i++)
                     if (Gears[i].State != GEARSTATE_ACTIVE)

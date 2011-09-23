@@ -39,41 +39,51 @@ float TimeY = 10;
 float TimeScaleFactor = 0.65f;
 
 
-void DisplayTimeDigit(int Digit, float BaseX, float BaseY, float ScaleFactor, float X, float Y)
+void DisplayTimeDigitAlpha(int Digit, float BaseX, float BaseY, float ScaleFactor, float X, float Y, float Alpha)
 {
     X = BaseX + X * 64 * ScaleFactor;
     Y = BaseY + Y * 64 * ScaleFactor;
     switch (Digit)
     {
-        case 0:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 1,   0, 54,  63, ScaleFactor, ScaleFactor); break;        
-        case 1:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X+10, Y, 55,  0, 74,  63, ScaleFactor, ScaleFactor); break;
-        case 2:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 76,  0, 131, 63, ScaleFactor, ScaleFactor); break;
-        case 3:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 133, 0, 187, 63, ScaleFactor, ScaleFactor); break;
-        case 4:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 189, 0, 242, 63, ScaleFactor, ScaleFactor); break;
-        case 5:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 243, 0, 296, 63, ScaleFactor, ScaleFactor); break;
-        case 6:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 298, 0, 353, 63, ScaleFactor, ScaleFactor); break;
-        case 7:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 354, 0, 406, 63, ScaleFactor, ScaleFactor); break;
-        case 8:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 408, 0, 462, 63, ScaleFactor, ScaleFactor); break;
-        case 9:    AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 463, 0, 520, 63, ScaleFactor, ScaleFactor); break;
-        case 10:   AddLitSubSpriteScaled(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 520, 41, 542, 63, ScaleFactor, ScaleFactor); break;
+        case 0:    AddLitSubSpriteScaledAlpha(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 1,   0, 54,  63, ScaleFactor, ScaleFactor, Alpha); break;        
+        case 1:    AddLitSubSpriteScaledAlpha(LIGHTLIST_WIPE, &FullScoreSprite, X+10, Y, 55,  0, 74,  63, ScaleFactor, ScaleFactor, Alpha); break;
+        case 2:    AddLitSubSpriteScaledAlpha(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 76,  0, 131, 63, ScaleFactor, ScaleFactor, Alpha); break;
+        case 3:    AddLitSubSpriteScaledAlpha(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 133, 0, 187, 63, ScaleFactor, ScaleFactor, Alpha); break;
+        case 4:    AddLitSubSpriteScaledAlpha(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 189, 0, 242, 63, ScaleFactor, ScaleFactor, Alpha); break;
+        case 5:    AddLitSubSpriteScaledAlpha(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 243, 0, 296, 63, ScaleFactor, ScaleFactor, Alpha); break;
+        case 6:    AddLitSubSpriteScaledAlpha(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 298, 0, 353, 63, ScaleFactor, ScaleFactor, Alpha); break;
+        case 7:    AddLitSubSpriteScaledAlpha(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 354, 0, 406, 63, ScaleFactor, ScaleFactor, Alpha); break;
+        case 8:    AddLitSubSpriteScaledAlpha(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 408, 0, 462, 63, ScaleFactor, ScaleFactor, Alpha); break;
+        case 9:    AddLitSubSpriteScaledAlpha(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 463, 0, 520, 63, ScaleFactor, ScaleFactor, Alpha); break;
+        case 10:   AddLitSubSpriteScaledAlpha(LIGHTLIST_WIPE, &FullScoreSprite, X,    Y, 520, 41, 542, 63, ScaleFactor, ScaleFactor, Alpha); break;
         default:   break;   
     }    
 }
 
-void DisplayTime(float X, float Y, float ScaleFactor, int Time)
+void DisplayTimeDigit(int Digit, float BaseX, float BaseY, float ScaleFactor, float X, float Y)
+{
+    DisplayTimeDigitAlpha(Digit, BaseX, BaseY, ScaleFactor, X, Y, 1.0f);
+}
+
+void DisplayTimeAlpha(float X, float Y, float ScaleFactor, int Time, float Alpha)
 {
     int Minutes = ( Time / 60 ) / 60;
     int Seconds = ( Time / 60 ) % 60;
     int Hundredths = ( Time % 60 ) * 60 / 100;
     
-	DisplayTimeDigit(Minutes,         X, Y, ScaleFactor, 0,    0);
-	DisplayTimeDigit(10,              X, Y, ScaleFactor, 1,    0.2f);
-	DisplayTimeDigit(10,              X, Y, ScaleFactor, 1,    0.7f);
-	DisplayTimeDigit(Seconds/10,      X, Y, ScaleFactor, 1.5f, 0);
-	DisplayTimeDigit(Seconds%10,      X, Y, ScaleFactor, 2.5f, 0);
-	DisplayTimeDigit(10,              X, Y, ScaleFactor, 3.5f, 0.7f);
-    DisplayTimeDigit(Hundredths/10,   X, Y, ScaleFactor, 4,    0);
-    DisplayTimeDigit(Hundredths%10,   X, Y, ScaleFactor, 5,    0);
+	DisplayTimeDigitAlpha(Minutes,         X, Y, ScaleFactor, 0,    0,    Alpha);
+	DisplayTimeDigitAlpha(10,              X, Y, ScaleFactor, 1,    0.2f, Alpha);
+	DisplayTimeDigitAlpha(10,              X, Y, ScaleFactor, 1,    0.7f, Alpha);
+	DisplayTimeDigitAlpha(Seconds/10,      X, Y, ScaleFactor, 1.5f, 0,    Alpha);
+	DisplayTimeDigitAlpha(Seconds%10,      X, Y, ScaleFactor, 2.5f, 0,    Alpha);
+	DisplayTimeDigitAlpha(10,              X, Y, ScaleFactor, 3.5f, 0.7f, Alpha);
+    DisplayTimeDigitAlpha(Hundredths/10,   X, Y, ScaleFactor, 4,    0,    Alpha);
+    DisplayTimeDigitAlpha(Hundredths%10,   X, Y, ScaleFactor, 5,    0,    Alpha);
+}
+
+void DisplayTime(float X, float Y, float ScaleFactor, int Time)
+{
+    DisplayTimeAlpha(X, Y, ScaleFactor, Time, 1.0f);
 }
 
 void DisplayScore()
@@ -128,13 +138,27 @@ static void UploadChapterScore()
 #endif
 
 #ifdef PLATFORM_MAC
-    ABPerson *aPerson = [[ABAddressBook sharedAddressBook] me];
-    NSString *name = [aPerson valueForProperty:kABFirstNameProperty];
+    ABPerson *person = [[ABAddressBook sharedAddressBook] me];
+    NSString *name = [person valueForProperty:kABFirstNameProperty];
+#endif
+
+    NSString* city = @"nocity";
+    NSString* state = @"nostate";
+    NSString* country = @"nocountry";
+
+#ifdef PLATFORM_IPHONE
+    // TODO- Request location data at an appropriate time in the application.
+    if (theViewController.haveLocation)
+    {
+        city = theViewController.city;
+        state = theViewController.state;
+        country = theViewController.country;
+    }
 #endif
     
 #ifdef PLATFORM_IPHONE_OR_MAC
-    NSString *post = [NSString stringWithFormat:@"build=%x&name=%@&time=%d&chapter=%s&city=%s&state=%s&country=%s", 
-                      BuildNumber, name, Chapters[CurrentChapter].BestTime, Chapters[CurrentChapter].Name, "nocity", "nostate", "nocountry"];
+    NSString *post = [NSString stringWithFormat:@"build=%x&name=%@&time=%d&chapter=%s&city=%@&state=%@&country=%@", 
+                      BuildNumber, name, Chapters[CurrentChapter].BestTime, Chapters[CurrentChapter].Name, city, state, country];
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:
                                     [NSURL URLWithString:
@@ -153,6 +177,17 @@ void RecordPageScore(int Page)
 {
     if (Page < 0 || Page > MAX_PAGE_TIMES)
         ReportError("Invalid page number %d for scorekeeping.  Maximum is %d.", Page, MAX_PAGE_TIMES);
+    
+    if (Chapter.PageProps.VacuumOff)
+    {
+        Score.PageTime[Page] = 0;
+        Score.PageBonus[Page] = 0;
+        Score.BestPageTime[Page] = 0;
+        Score.NewRecord[Page] = false;
+        Score.CurrentPageTime = 0;
+        Score.CurrentBonus = 0;
+        return;
+    }
     
     Score.CurrentPageTime -= Score.CurrentBonus;
     
@@ -328,6 +363,7 @@ void SaveChapterScores(char* ChapterName)
 }
 
 void UpdateScore()
-{    
-    Score.CurrentPageTime++;
+{
+    if (!Chapter.PageProps.VacuumOff)
+        Score.CurrentPageTime++;
 }
