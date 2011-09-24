@@ -133,6 +133,7 @@ static void UploadChapterScore()
      }];
 #endif
     
+    
     GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
     NSString *name = [localPlayer alias];    
 #endif
