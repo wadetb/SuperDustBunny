@@ -902,7 +902,7 @@ static void CreatePageObjects()
     InitSmoke();
     
     if (!Chapter.PageProps.VacuumOff)
-        TurnOnVacuum();
+        TurnOnVacuum(LitScreenHeight);
 }
 
 void SetCurrentPage(int PageNum)
@@ -950,44 +950,52 @@ void CalculateScroll()
 	if (Dusty.State == DUSTYSTATE_DIE)
 		return;
 
-	// Screen tracks Dusty upwards.
-	if (Dusty.FloatY + ScrollY < 600)
-	{
-		ScrollY = 600 - Dusty.FloatY;
-	}
+    if (TutorialOverrides.FocusOnVacuum)
+    {
+//        ScrollX = ScrollX*0.9f + (LitScreenHeight/2-Vacuum.X)*0.1f;
+        ScrollY = ScrollY*0.95f + (LitScreenHeight*0.75f-Vacuum.Y)*0.05f;
+    }
+    else
+    {        
+        // Screen tracks Dusty upwards.
+        if (Dusty.FloatY + ScrollY < 600)
+        {
+            ScrollY = 600 - Dusty.FloatY;
+        }
 
-	// Screen also tracks Dusty downwards.
-	if (Dusty.FloatY + ScrollY > LitScreenHeight - 200)
-	{
-		ScrollY = (LitScreenHeight - 200) - (int)Dusty.FloatY;
-	}
+        // Screen also tracks Dusty downwards.
+        if (Dusty.FloatY + ScrollY > LitScreenHeight - 200)
+        {
+            ScrollY = (LitScreenHeight - 200) - (int)Dusty.FloatY;
+        }
 
-	// Prevent scrolling off bottom of map.
-	if (ScrollY < -(Chapter.PageHeight * 64 - LitScreenHeight))
-	{
-		ScrollY = -(Chapter.PageHeight * 64 - LitScreenHeight);
-	} 
+        // Prevent scrolling off bottom of map.
+        if (ScrollY < -(Chapter.PageHeight * 64 - LitScreenHeight))
+        {
+            ScrollY = -(Chapter.PageHeight * 64 - LitScreenHeight);
+        } 
 
-	// Prevent scrolling off top of map.
-	if (ScrollY > 0)
-	{
-		ScrollY = 0;
-	}
-
-    float XRatio = Dusty.FloatX/(Chapter.PageWidth*64);
-//    XRatio = powf(XRatio*2.0f-1.0f, 1.0f) *0.5f+0.5f;
-    
-    ScrollX = -XRatio * (Chapter.PageWidth*64 - 768);
-    
-	if (ScrollX < -(Chapter.PageWidth * 64 - 768))
-	{
-		ScrollX = (float)-(Chapter.PageWidth * 64 - 768);
-	} 
-    
-	if (ScrollX > 0)
-	{
-		ScrollX = 0;
-	}
+        // Prevent scrolling off top of map.
+        if (ScrollY > 0)
+        {
+            ScrollY = 0;
+        }
+        
+        float XRatio = Dusty.FloatX/(Chapter.PageWidth*64);
+        //    XRatio = powf(XRatio*2.0f-1.0f, 1.0f) *0.5f+0.5f;
+        
+        ScrollX = -XRatio * (Chapter.PageWidth*64 - 768);
+        
+        if (ScrollX < -(Chapter.PageWidth * 64 - 768))
+        {
+            ScrollX = (float)-(Chapter.PageWidth * 64 - 768);
+        } 
+        
+        if (ScrollX > 0)
+        {
+            ScrollX = 0;
+        }
+    }
 }
 
 void DisplayPortal()

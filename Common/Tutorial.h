@@ -10,6 +10,14 @@
 #ifndef TUTORIAL_H
 #define TUTORIAL_H
 
+struct STutorialOverrides
+{
+    bool FocusOnVacuum;
+    bool FreezeDusty;
+};
+
+extern STutorialOverrides TutorialOverrides;
+
 struct SBlock;
 struct STutorialProperties;
 void ParseTutorialProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode);

@@ -13,7 +13,6 @@
 enum EVacuumState
 {
 	VACUUMSTATE_OFF,
-	VACUUMSTATE_FAR,
 	VACUUMSTATE_ONSCREEN,
 	VACUUMSTATE_RETREAT,
 };
@@ -52,7 +51,7 @@ void DisplayVacuum();
 void UpdateVacuum();
 void UpdateVacuumSound();
 
-void TurnOnVacuum();
+void TurnOnVacuum(float InitialDistance);
 void TurnOffVacuum();
 void JamVacuum();
 

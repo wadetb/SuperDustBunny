@@ -137,11 +137,7 @@ void DisplayVacuum()
 void UpdateVacuumSound()
 {
 	float TargetVolume;
-	if (Vacuum.State == VACUUMSTATE_FAR)
-	{
-		TargetVolume = 0.5f;
-	}
-	else if (Vacuum.State == VACUUMSTATE_RETREAT)
+	if (Vacuum.State == VACUUMSTATE_RETREAT)
 	{
 		TargetVolume = 0.8f;
 	}
@@ -158,7 +154,7 @@ void UpdateVacuumSound()
 			Vacuum.Volume -= 0.01f;
 	}
 
-	if (Vacuum.State == VACUUMSTATE_FAR || Vacuum.State == VACUUMSTATE_ONSCREEN)
+	if (Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
 		if (VacuumOnSound.volume < 1.0f)
 			sxSetSoundVolume(&VacuumOnSound, VacuumOnSound.volume + 0.1f);
@@ -210,40 +206,15 @@ void UpdateVacuum()
 	if (Chapter.PageProps.VacuumOff || Settings.DisableVacuum)
 		return;
 
-	if (Vacuum.State == VACUUMSTATE_FAR)
-	{
-		// Place the vacuum far off screen for dust purposes.
-		if (Vacuum.Dir == VACUUMDIR_UP)
-			Vacuum.Y = (float)-ScrollY + (float)LitScreenHeight + 1500;
-		else
-			Vacuum.Y = (float)-ScrollY - 1500;
-
-        if (Dusty.FloatY <= Chapter.PageProps.VacuumStart)
-        {
-            Vacuum.Timer--;
-            if (Vacuum.Timer <= 0)
-            {
-                Vacuum.State = VACUUMSTATE_ONSCREEN;
-                
-                int LightsOffset = Chapter.PageProps.LightsOff ? 768 : 0;
-
-                // Vacuum.Y is the leading edge of the vacuum.
-                if (Vacuum.Dir == VACUUMDIR_UP)
-                    Vacuum.Y = (float)-ScrollY + (float)LitScreenHeight + VacuumYOffset + LightsOffset;
-                else
-                    Vacuum.Y = (float)-ScrollY - VacuumYOffset - LightsOffset;
-
-                Vacuum.Timer = 0;
-            }
-        }
-	}
-	else if (Vacuum.State == VACUUMSTATE_ONSCREEN)
+	if (Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
 		if (Dusty.State != DUSTYSTATE_DIE)
 		{
 			// The vacuum gets faster the longer it stays unclogged.
 			float VacuumSpeed;
-			if (Vacuum.Timer < 4*60)
+            if (Vacuum.Timer < 0)
+                VacuumSpeed = 0;
+			else if (Vacuum.Timer < 4*60)
 				VacuumSpeed = 3.0f * Chapter.PageProps.VacuumSpeed;
 			else if (Vacuum.Timer < 8*60)
 				VacuumSpeed = 3.5f * Chapter.PageProps.VacuumSpeed;
@@ -290,13 +261,13 @@ void UpdateVacuum()
     
     // Zoom the screen when the vacuum is on screen.
     float TargetZoom;
-    if (Vacuum.State == VACUUMSTATE_ONSCREEN && Dusty.State != DUSTYSTATE_DIE)
+    if (Vacuum.State == VACUUMSTATE_ONSCREEN && Dusty.State != DUSTYSTATE_DIE && Vacuum.Timer >= 0)
     {
         LitSceneOffsetX = Clamp(LitSceneOffsetX + (rand() % 13) - 6, -10, 10);
         LitSceneOffsetY = Clamp(LitSceneOffsetY + (rand() % 13) - 6, -10, 10);
         TargetZoom = 1.1f;
     }
-    else if (Vacuum.State == VACUUMSTATE_RETREAT && Vacuum.Timer >= VACUUM_RETREAT_TIME - 120 && Dusty.State != DUSTYSTATE_DIE)
+    else if (Vacuum.State == VACUUMSTATE_RETREAT && Vacuum.Timer >= VACUUM_RETREAT_TIME - 60 && Dusty.State != DUSTYSTATE_DIE)
     {
         LitSceneOffsetX = Clamp(LitSceneOffsetX + (rand() % 13) - 6, -10, 10);
         LitSceneOffsetY = Clamp(LitSceneOffsetY + (rand() % 13) - 6, -10, 10);
@@ -341,13 +312,11 @@ void TurnOffVacuum()
     LitSceneZoom = 1.0f;
 }
 
-void TurnOnVacuum()
+void TurnOnVacuum(float InitialDistance)
 {
 	if (Vacuum.State == VACUUMSTATE_OFF)
 	{
-        Vacuum.State = VACUUMSTATE_FAR;
-        
-        Vacuum.Timer = 60*5;
+        Vacuum.State = VACUUMSTATE_ONSCREEN;
 
         int LightsOffset = Chapter.PageProps.LightsOff ? 768 : 0;
         
@@ -355,9 +324,9 @@ void TurnOnVacuum()
         
         // Vacuum.Y is the leading edge of the vacuum.
         if (Vacuum.Dir == VACUUMDIR_UP)
-            Vacuum.Y = (float)-ScrollY + (float)LitScreenHeight + VacuumYOffset + LightsOffset;
+            Vacuum.Y = (float)-ScrollY + InitialDistance + LitScreenHeight + VacuumYOffset + LightsOffset;
         else
-            Vacuum.Y = (float)-ScrollY - VacuumYOffset - LightsOffset;
+            Vacuum.Y = (float)-ScrollY - InitialDistance - VacuumYOffset - LightsOffset;
 
 		sxSetSoundVolume(&VacuumTurnOnSound, 0);
 		sxPlaySound(&VacuumTurnOnSound);
@@ -518,6 +487,13 @@ void GetVacuumForce(float X, float Y, float* VX, float* VY, float Strength, bool
         int CurX = (int)((X+32)/64);
         int CurY = (int)((Y+32)/64);
 
+        if (CurX < 0 || CurX >= Vacuum.ForceMapWidth || CurY < 0 || CurY >= Vacuum.ForceMapHeight)
+        {
+            *VX = 0;
+            *VY = 0;
+            return;        
+        }
+        
         TotalVX = 0;
         TotalVY = 0;
 

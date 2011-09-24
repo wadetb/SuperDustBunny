@@ -15,6 +15,7 @@
 #include "Dust.h"
 #include "Settings.h"
 #include "Input.h"
+#include "Ghost.h"
 
 
 struct SChapterIntro
@@ -65,7 +66,7 @@ void DisplayChapterIntro()
 static void ChapterIntro_Advance()
 {
     if (!Chapter.PageProps.VacuumOff)
-        TurnOnVacuum();
+        TurnOnVacuum(LitScreenHeight);
 
 	Dusty.NoCollision = false;
 	RemoteControl.Enabled = false;
@@ -96,6 +97,7 @@ void UpdateChapterIntro()
 
 	UpdateDusty();
 	UpdateDust();
+    UpdateGhost();
 
 	if ( ChapterIntro.Tapped )
 	{

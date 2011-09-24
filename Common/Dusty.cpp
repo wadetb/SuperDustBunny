@@ -19,6 +19,7 @@
 #include "PowerUp.h"
 #include "Smoke.h"
 #include "Ghost.h"
+#include "Tutorial.h"
 
 
 SDusty Dusty;
@@ -1835,6 +1836,9 @@ void DisplayDusty()
 
 void UpdateDusty()
 {
+    if (TutorialOverrides.FreezeDusty)
+        return;
+    
 	if (!Dusty.NoCollision)
 	{
 		UpdateDusty_Collision();
