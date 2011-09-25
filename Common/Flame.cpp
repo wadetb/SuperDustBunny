@@ -22,6 +22,7 @@ enum EFlameAnglularType
     ANGULAR_NONE,
     ANGULAR_ROTATE,
     ANGULAR_PENDULUM,
+    ANGULAR_STEP,
 };
 
 struct SFlameProperties
@@ -40,6 +41,8 @@ struct SFlameProperties
     
     EFlameAnglularType AngularType;
     float AngularSpeed;
+    float AngularSwing;
+    float AngularStep;
     
     bool IsFire;
     bool ReplaceBlock;
@@ -68,8 +71,11 @@ void ParseFlameProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNod
     Props->XOrigin = 0;
     Props->YOrigin = 0;
     Props->AngularSpeed = 0.0f;
+    Props->AngularSwing = 0.0f;
+    Props->AngularStep = 0.0f;
     Props->Scale = 1.0f;
     Props->IsFire = false;
+    Props->ReplaceBlock = false;
 
 	rapidxml::xml_node<char>* PropertyNode = PropertiesNode->first_node("property");
 	while (PropertyNode)
@@ -122,15 +128,24 @@ void ParseFlameProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNod
             {
                 Props->AngularType = ANGULAR_ROTATE;
                 Value += 6;
+                Props->AngularSpeed = strtof(Value, &Value);
             }
             else if (strncmp(Value, "pendulum ", 9) == 0)
             {
                 Props->AngularType = ANGULAR_PENDULUM;
                 Value += 8;
+                Props->AngularSpeed = strtof(Value, &Value);
+                Props->AngularSwing = strtof(Value, &Value);
+            }
+            else if (strncmp(Value, "step ", 5) == 0)
+            {
+                Props->AngularType = ANGULAR_STEP;
+                Value += 5;
+                Props->AngularSpeed = strtof(Value, &Value);
+                Props->AngularStep = strtof(Value, &Value);
             }
             else
                 Props->AngularType = ANGULAR_NONE;
-            Props->AngularSpeed = strtof(Value, &Value);
         }
         else if (strcmp(Name, "scale") == 0)
         {
@@ -240,7 +255,12 @@ void DisplayFlames()
         if (Props->AngularType == ANGULAR_ROTATE)
             Angle += DegreesToRadians(Flame->Frame * Props->AngularSpeed/60.0f);
         else if (Props->AngularType == ANGULAR_PENDULUM)
-            Angle += DegreesToRadians(15.0f * sinf(DegreesToRadians(Flame->Frame * Props->AngularSpeed/60.0f)));
+            Angle += DegreesToRadians(Props->AngularSwing * sinf(DegreesToRadians(Flame->Frame * Props->AngularSpeed/60.0f)));
+        else if (Props->AngularType == ANGULAR_STEP)
+        {
+            Angle += DegreesToRadians(Flame->Frame * Props->AngularSpeed/60.0f);
+            Angle -= fmodf(Angle, DegreesToRadians(Props->AngularStep));
+        }
         
         AddLitSpriteOriginScaledRotatedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, Sprite, X + ScrollX, Y + ScrollY, XOrigin, YOrigin, Scale, Angle, 1.0f);
 

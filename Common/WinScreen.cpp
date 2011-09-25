@@ -172,7 +172,7 @@ void DisplayWinScreen()
             float NewRecordScale = 1.0f + SinWave(WinScreen.Timer, 0.75f) * 0.30f;
             AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ChapterNewRecordSprite, 384, CurrentY, NewRecordScale, 1.0f);
             
-            CurrentY += 100;
+            CurrentY += 85;
         }
 
         // List of chapters.
