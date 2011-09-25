@@ -15,7 +15,7 @@ struct SFlameProperties;
 
 void ParseFlameProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode);
 
-void CreateFlame(int X, int Y, SFlameProperties* Props);
+void CreateFlame(int X, int Y, unsigned int Flags, SFlameProperties* Props);
 void ClearFlames();
 
 void UpdateFlames();

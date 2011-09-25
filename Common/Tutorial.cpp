@@ -60,7 +60,7 @@ STutorialBubble TutorialBubbles[] =
     { 420, 236, 750, 512 },
     { 90, 530, 310, 680 },
     { 396, 524, 644, 690 },
-    { 75, 0, 700, 230 },
+    { 75, 0, 700, 230, 0, 10 },
     { 0, 692, 768, 1024 },
 };
 
@@ -182,6 +182,9 @@ void CreateTutorial(int X, int Y, STutorialProperties* Props)
 void ClearTutorials()
 {
 	NTutorials = 0;
+    
+    TutorialOverrides.FocusOnVacuum = false;
+    TutorialOverrides.FreezeDusty = false;
 }
 
 void InitTutorial()
@@ -292,8 +295,7 @@ void UpdateTutorial()
                         Tutorial->PauseTimer = 5.0f;
 
                         Chapter.PageProps.VacuumOff = false;
-                        TurnOnVacuum(600);
-                        Vacuum.Timer = -2*60;
+                        TurnOnVacuum(600, 2.0f);
                     }
                 }
             }
@@ -302,6 +304,13 @@ void UpdateTutorial()
                 if (Props->Actions && strstr(Props->Actions, "showuntiljump"))
                 {
                     if (Dusty.State == DUSTYSTATE_JUMP)
+                    {
+                        Tutorial->Active = false;
+                    }
+                }
+                else if (Props->Actions && strstr(Props->Actions, "showuntillaunch"))
+                {
+                    if (Dusty.State == DUSTYSTATE_LAUNCH)
                     {
                         Tutorial->Active = false;
                     }

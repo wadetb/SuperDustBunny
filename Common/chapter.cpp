@@ -805,12 +805,13 @@ static void CreatePageObjects()
 	{
 		for (int x = 0; x < Chapter.PageWidth; x++)
 		{
-			int BlockID = Chapter.PageBlocks[y * Chapter.PageWidth + x];
+			unsigned int BlockID = Chapter.PageBlocks[y * Chapter.PageWidth + x];
+            unsigned int Flags = BlockID & ~SPECIALBLOCKID_MASK;
             BlockID &= SPECIALBLOCKID_MASK;
 
 			if (BlockID < SPECIALBLOCKID_FIRST)
 			{
-				if (BlockID < 0 || BlockID > Chapter.NBlocks)
+				if (BlockID > Chapter.NBlocks)
 					ReportError("Invalid block ID encountered when creating page objects.");
 				
 				SBlock* Block = &Chapter.Blocks[BlockID];
@@ -852,7 +853,7 @@ static void CreatePageObjects()
 					EraseBlock(x, y);
 					break;
                 case BLOCKTYPE_FLAME:
-                    CreateFlame(x * 64, y * 64, (SFlameProperties*)Block->Properties);
+                    CreateFlame(x * 64, y * 64, Flags, (SFlameProperties*)Block->Properties);
                     break;
 				case BLOCKTYPE_FLASHLIGHT_WAYPOINT:
 					CreateFlashlightWaypoint(x * 64, y * 64, (SFlashlightWaypointProperties*)Block->Properties);
@@ -902,7 +903,7 @@ static void CreatePageObjects()
     InitSmoke();
     
     if (!Chapter.PageProps.VacuumOff)
-        TurnOnVacuum(LitScreenHeight);
+        TurnOnVacuum(0, 2.0f);
 }
 
 void SetCurrentPage(int PageNum)

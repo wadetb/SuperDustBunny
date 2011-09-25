@@ -42,12 +42,14 @@ struct SFlameProperties
     float AngularSpeed;
     
     bool IsFire;
+    bool ReplaceBlock;
 };
 
 struct SFlame
 {
     SFlameProperties* Props;
 	float X, Y;
+    float Angle;
 	int Frame;
 };
 
@@ -138,6 +140,10 @@ void ParseFlameProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNod
         {
             Props->IsFire = atoi(Value) != 0;
         }
+        else if (strcmp(Name, "replaceblock") == 0)
+        {
+            Props->ReplaceBlock = atoi(Value) != 0;
+        }
 		else if (strcmp(Name, "type") != 0 && strcmp(Name, "material") != 0)
 		{
 			ReportError("Unrecognized flame property '%s'='%s'.", Name, Value);
@@ -156,7 +162,13 @@ void ParseFlameProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNod
 	Block->Properties = Props;
 }
 
-void CreateFlame(int X, int Y, SFlameProperties* Props)
+static float BlockFlagsToAngle(unsigned int Flags)
+{
+    if (Flags == (SPECIALBLOCKID_FLIP_X | SPECIALBLOCKID_FLIP_DIAGONAL)) return PI/2;
+    return 0;
+}
+
+void CreateFlame(int X, int Y, unsigned int Flags, SFlameProperties* Props)
 {
 	if (NFlames >= MAX_FLAMES)
 		ReportError("Exceeded the maximum of %d total flames.", MAX_FLAMES);
@@ -167,11 +179,11 @@ void CreateFlame(int X, int Y, SFlameProperties* Props)
     
 	Flame->X = (float)X + 32;
 	Flame->Y = (float)Y + 32;
+    Flame->Angle = BlockFlagsToAngle(Flags);
     
     Flame->Frame = Random(0, 1);
     
-    // Hack
-    if (Props->IsFire)
+    if (Props->ReplaceBlock)
         EraseBlock(X/64, Y/64);
 }
 
@@ -224,11 +236,11 @@ void DisplayFlames()
         float XOrigin = Props->XOrigin;
         float YOrigin = Props->YOrigin;
         
-        float Angle = 0.0f;
+        float Angle = Flame->Angle;
         if (Props->AngularType == ANGULAR_ROTATE)
-            Angle = DegreesToRadians(Flame->Frame * Props->AngularSpeed/60.0f);
+            Angle += DegreesToRadians(Flame->Frame * Props->AngularSpeed/60.0f);
         else if (Props->AngularType == ANGULAR_PENDULUM)
-            Angle = DegreesToRadians(15.0f * sinf(DegreesToRadians(Flame->Frame * Props->AngularSpeed/60.0f)));
+            Angle += DegreesToRadians(15.0f * sinf(DegreesToRadians(Flame->Frame * Props->AngularSpeed/60.0f)));
         
         AddLitSpriteOriginScaledRotatedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, Sprite, X + ScrollX, Y + ScrollY, XOrigin, YOrigin, Scale, Angle, 1.0f);
 

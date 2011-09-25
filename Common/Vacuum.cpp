@@ -261,7 +261,7 @@ void UpdateVacuum()
     
     // Zoom the screen when the vacuum is on screen.
     float TargetZoom;
-    if (Vacuum.State == VACUUMSTATE_ONSCREEN && Dusty.State != DUSTYSTATE_DIE && Vacuum.Timer >= 0)
+    if (Vacuum.State == VACUUMSTATE_ONSCREEN && Dusty.State != DUSTYSTATE_DIE && Vacuum.Timer >= 0 && fabsf(Vacuum.Y - Dusty.FloatY) < 700)
     {
         LitSceneOffsetX = Clamp(LitSceneOffsetX + (rand() % 13) - 6, -10, 10);
         LitSceneOffsetY = Clamp(LitSceneOffsetY + (rand() % 13) - 6, -10, 10);
@@ -312,12 +312,13 @@ void TurnOffVacuum()
     LitSceneZoom = 1.0f;
 }
 
-void TurnOnVacuum(float InitialDistance)
+void TurnOnVacuum(float InitialDistance, float DelayBeforeMoving)
 {
 	if (Vacuum.State == VACUUMSTATE_OFF)
 	{
         Vacuum.State = VACUUMSTATE_ONSCREEN;
 
+        Vacuum.Timer = -(int)(DelayBeforeMoving*60);
         int LightsOffset = Chapter.PageProps.LightsOff ? 768 : 0;
         
         Vacuum.X = 384 - ScrollX;

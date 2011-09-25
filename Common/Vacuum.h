@@ -51,7 +51,7 @@ void DisplayVacuum();
 void UpdateVacuum();
 void UpdateVacuumSound();
 
-void TurnOnVacuum(float InitialDistance);
+void TurnOnVacuum(float InitialDistance, float DelayBeforeMoving);
 void TurnOffVacuum();
 void JamVacuum();
 
