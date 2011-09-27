@@ -335,6 +335,8 @@ void SetDustyState_Stand()
 
 	Dusty.State = DUSTYSTATE_STAND;
     
+    UpdateMinimap(MINIMAP_LAND);
+
     GetInput_ClearSwipe();
 }
 
@@ -533,6 +535,8 @@ void SetDustyState_Jump( bool OffWall )
     Dusty.HasJumped = true;
     
 	Dusty.State = DUSTYSTATE_JUMP;
+    
+    UpdateMinimap(MINIMAP_JUMP);
 }
 
 void SetDustyState_JumpWithVelocity( float VX, float VY )
@@ -572,6 +576,8 @@ void SetDustyState_JumpWithVelocity( float VX, float VY )
     Dusty.HasJumped = true;
     
 	Dusty.State = DUSTYSTATE_JUMP;
+    
+    UpdateMinimap(MINIMAP_JUMP);
 }
 
 // This is a specialized way to get into the Jump state, without the initial velocity boost.
@@ -582,6 +588,8 @@ void SetDustyState_Fall()
 
 	Dusty.State = DUSTYSTATE_JUMP;
     
+    UpdateMinimap(MINIMAP_FALL);
+
     Dusty.JumpGraceTimer = 20;
 }
 
@@ -964,6 +972,8 @@ void SetDustyState_WallJump()
 
 	Dusty.State = DUSTYSTATE_WALLJUMP;
     
+    UpdateMinimap(MINIMAP_WALL_JUMP);
+
     GetInput_ClearSwipe();
 }
 
@@ -1121,6 +1131,8 @@ void SetDustyState_CornerJump()
 
 	Dusty.State = DUSTYSTATE_CORNERJUMP;
     
+    UpdateMinimap(MINIMAP_CORNER_JUMP);
+
     GetInput_ClearSwipe();
 }
 
@@ -1251,6 +1263,8 @@ void SetDustyState_Launch(float VelocityX, float VelocityY)
     Dusty.ComboCount = 0;
 
     Dusty.State = DUSTYSTATE_LAUNCH;
+    
+    UpdateMinimap(MINIMAP_LAUNCH);
 }
 
 static void DisplayDusty_Launch()
@@ -1281,6 +1295,8 @@ void SetDustyState_Die()
     Dusty.ComboCount = 0;
 
 	Dusty.State = DUSTYSTATE_DIE;
+    
+    UpdateMinimap(MINIMAP_DIE);
 }
 
 static void DisplayDusty_Die()
@@ -1349,6 +1365,8 @@ void SetDustyState_Stuck()
     Dusty.ComboCount = 0;
 
 	Dusty.State = DUSTYSTATE_STUCK;
+    
+    UpdateMinimap(MINIMAP_STUCK);
 }
 
 static void DisplayDusty_Stuck()
@@ -1408,6 +1426,8 @@ void SetDustyState_Hurt()
     Dusty.ComboCount = 0;
 
 	Dusty.State = DUSTYSTATE_HURT;
+    
+    UpdateMinimap(MINIMAP_HURT);
 }
 
 static void DisplayDusty_Hurt()
@@ -1698,6 +1718,7 @@ static void UpdateDusty_Collision()
 						Dusty.FloatY += (DownDistance-1);
 						if (Dusty.FloatVelocityY < 0)
 							Dusty.FloatVelocityY = 0;
+                        UpdateMinimap(MINIMAP_HEAD_BUMP);
 					}
 					if (TopBlockIsEmpty && UpDistance < RightDistance && UpDistance < DownDistance && UpDistance < LeftDistance)
 					{
@@ -1848,6 +1869,7 @@ void UpdateDusty()
 		
 	if (Dusty.State != DUSTYSTATE_DIE && Distance(Dusty.FloatX, Dusty.FloatY, Chapter.EndX, Chapter.EndY) < 100)
 	{
+        UpdateMinimap(MINIMAP_WIN);
 		AdvanceToNextPage();
 		return;
 	}
@@ -1873,6 +1895,8 @@ void UpdateDusty()
     
     if (IsGhostRecordingActive())
         AddGhostEvent(Dusty.LastX, Dusty.LastY, Dusty.LastScaleX, Dusty.LastSprite);
+    
+    UpdateMinimap(MINIMAP_NORMAL);
     
     if (GetInput_GetSwipeTimeLeft() >= 1.0f/20.0f)
         GetInput_ConsumeSwipe(1.0f/60.0f);

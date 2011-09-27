@@ -606,7 +606,7 @@ static void UpdateGame_Playing()
     UpdateRecorder();
     
     UpdateDusty();
-        
+    
     if (Dusty.State != DUSTYSTATE_DIE)
     {
         UpdateFans();

@@ -61,6 +61,14 @@ enum EBlockMaterial
 	MATERIAL_STICKY,
 };
 
+enum EChapterTheme
+{
+    THEME_STUDY,
+    THEME_PANTRY,
+    THEME_FRIDGE,
+    THEME_WORKSHOP
+};
+
 struct STileSet
 {
 	char* Name;
@@ -126,6 +134,8 @@ struct SChapter
 {
 	const char* Name;
 
+    EChapterTheme Theme;
+    
     bool HasBackground;
     gxSprite BackgroundSprite;
     

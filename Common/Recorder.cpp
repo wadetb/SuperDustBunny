@@ -32,7 +32,7 @@
 // + Record game settings.  As DB fields or Blob?
 // + Add extra data validation, like CRCs.
 
-#define RECORDER_VERSION 2
+#define RECORDER_VERSION 3
 
 #define RECORDER_BUFFER_SIZE (128*1024)
 
@@ -101,6 +101,20 @@ unsigned char RecorderEventBuffer[RECORDER_BUFFER_SIZE];
 
 int RecordingTime;
 
+struct SMinimapHeader
+{
+    int Version;
+    int Width;
+    int Height;
+    int SolidStride;
+    int SolidSize;
+    int ActionSize;
+};
+
+SMinimapHeader MinimapHeader;
+unsigned int* MinimapSolid;
+unsigned char* MinimapAction;
+
 
 char* GetRecordingChapterName()
 {
@@ -122,10 +136,27 @@ void UploadRecording()
     if (Recorder.RecordingActive || Recorder.PlaybackActive)
 		ReportError("Cannot upload recording when recording or playback is active.");
 
-    int DataSize = sizeof(SRecorderHeader) + RecorderEventOffset;
+    int DataSize = 0;
+    DataSize += sizeof(SRecorderHeader) + RecorderEventOffset;
+    DataSize += sizeof(SMinimapHeader) + MinimapHeader.SolidSize + MinimapHeader.ActionSize;
+    
 	char* Data = (char*)malloc(DataSize);
-	memcpy(Data, &RecorderHeader, sizeof(SRecorderHeader));
-	memcpy(Data + sizeof(SRecorderHeader), RecorderEventBuffer, RecorderEventOffset);
+    char* CurData = Data;
+    
+	memcpy(CurData, &RecorderHeader, sizeof(SRecorderHeader));
+    CurData += sizeof(SRecorderHeader);
+    
+	memcpy(CurData, RecorderEventBuffer, RecorderEventOffset);
+    CurData += RecorderEventOffset;
+    
+    memcpy(CurData, &MinimapHeader, sizeof(SMinimapHeader));
+    CurData += sizeof(SMinimapHeader);
+    
+    memcpy(CurData, MinimapSolid, MinimapHeader.SolidSize);
+    CurData += MinimapHeader.SolidSize;
+    
+    memcpy(CurData, MinimapAction, MinimapHeader.ActionSize);
+    CurData += MinimapHeader.ActionSize;
     
 #ifdef PLATFORM_WINDOWS
 	DWORD dwBytesWritten = 0;
@@ -141,7 +172,7 @@ void UploadRecording()
 	WinHttpCloseHandle(hSession);
 #endif
     
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
     NSData *data = [NSMutableData dataWithBytes:Data length:DataSize];
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:
@@ -152,15 +183,14 @@ void UploadRecording()
     [request setHTTPBody:data];
     
     // Asynchronnous:
-    [NSURLConnection connectionWithRequest:request delegate:nil];
+    //[NSURLConnection connectionWithRequest:request delegate:nil];
     
     // Synchronous, for testing:
-    //NSURLResponse *response;
-    //NSData* result = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil];
-    //NSLog(@"HTTP post response:\n%@\n\n", [[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding]);
-#endif
-    
-#ifdef PLATFORM_MAC
+    NSURLResponse *response;
+    NSData* result = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil];
+    NSString* resultText = [[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding];
+    NSLog(@"HTTP post response:\n%@\n\n", resultText);
+    [resultText release];
 #endif
     
 	free(Data);
@@ -208,9 +238,9 @@ void DownloadRecording(int id)
 	WinHttpCloseHandle(hSession);
 #endif
     
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
     const void* Data = NULL;
-    int DataSize = 0;
+    unsigned long DataSize = 0;
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:
                                     [NSURL URLWithString:
@@ -228,11 +258,6 @@ void DownloadRecording(int id)
     DataSize = [result length];
 #endif
 
-#ifdef PLATFORM_MAC
-    const void* Data = NULL;
-    int DataSize = 0;
-#endif
-    
     if (DataSize < sizeof(SRecorderHeader))
         ReportError("Downloaded recorder data is too small to be valid.");
 
@@ -467,5 +492,49 @@ void RecordGhostEvent(float X, float Y, int Sprite)
     
     RecorderEventOffset += sizeof(SRecorderSwipeEvent);
     NRecorderEvents++;
+}
+
+void InitMinimap()
+{
+    MinimapHeader.Version = 1;
+    MinimapHeader.Width = Chapter.PageWidth;
+    MinimapHeader.Height = Chapter.PageHeight;
+
+    if (MinimapSolid)
+        free(MinimapSolid);
+    if (MinimapAction)
+        free(MinimapAction);
     
+    MinimapHeader.SolidStride = ((MinimapHeader.Width+31)/32) * sizeof(unsigned int);
+    MinimapHeader.SolidSize = MinimapHeader.SolidStride * MinimapHeader.Height;
+    MinimapHeader.ActionSize = MinimapHeader.Width * MinimapHeader.Height;
+    
+    MinimapSolid = (unsigned int*)malloc(MinimapHeader.SolidSize);
+    MinimapAction = (unsigned char*)malloc(MinimapHeader.ActionSize);
+    
+    memset(MinimapSolid, 0, MinimapHeader.SolidSize);
+    memset(MinimapAction, 0, MinimapHeader.ActionSize);
+    
+    for (int y = 0; y < MinimapHeader.Height; y++)
+        for (int x = 0; x < MinimapHeader.Width; x++)
+            MinimapSolid[MinimapHeader.SolidStride/4 * y + x/32] |= (1<<(x&31)) * IsBlockSolid(x, y);    
+}
+
+void UpdateMinimap(EMinimapAction Action)
+{
+    int CurX = Dusty.FloatX / 64;
+    int CurY = Dusty.FloatY / 64;
+    
+    int Velocity = (int)(Length(Dusty.FloatVelocityX, Dusty.FloatVelocityY) / 4.0f);
+    if (Velocity > 7)
+        Velocity = 7;
+    
+    unsigned char OldToken = MinimapAction[CurY * MinimapHeader.Width + CurX];
+    EMinimapAction OldAction = (EMinimapAction)(OldToken >> 3);
+    int OldVelocity = OldToken & 0xf;
+
+    unsigned char Token = Velocity | (Action << 3);
+    
+    if (Action > OldAction || Velocity < OldVelocity)
+        MinimapAction[CurY * MinimapHeader.Width + CurX] = Token;
 }

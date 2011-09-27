@@ -13,6 +13,7 @@
 #include "Vacuum.h"
 #include "GameScore.h"
 #include "Chapter.h"
+#include "Recorder.h"
 
 #define MAX_GEARS 100
 
@@ -124,6 +125,7 @@ void UpdateGear()
 				sxPlaySound( &GearGrindSound );
 				
                 AwardBonus(Gear->X, Gear->Y - 100);
+                UpdateMinimap(MINIMAP_JAM);
 				
 				if (Dusty.FloatVelocityX < 0)
 				{

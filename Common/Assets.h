@@ -73,8 +73,12 @@ extern gxSprite BackgroundFridgeSprite;
 
 extern gxSprite TileUnknownSprite;
 
-extern gxSprite BarrelBackSprite;
-extern gxSprite BarrelFrontSprite;
+extern gxSprite BarrelBeansBackSprite;
+extern gxSprite BarrelBeansFrontSprite;
+extern gxSprite BarrelMetalBackSprite;
+extern gxSprite BarrelMetalFrontSprite;
+extern gxSprite BarrelMugBackSprite;
+extern gxSprite BarrelMugFrontSprite;
 extern gxSprite BarrelNailSprite;
 
 extern gxSprite FanSprite;

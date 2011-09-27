@@ -702,6 +702,20 @@ void LoadChapter(const char* ChapterDir)
     else
         Chapter.HasBackground = false;
     
+    Chapter.Theme = THEME_STUDY;
+    rapidxml::xml_attribute<char>* ThemeAttr = ChapterNode->first_attribute("Theme");
+    if (ThemeAttr)
+    {
+        if (strcmp(ThemeAttr->value(), "study") == 0)
+            Chapter.Theme = THEME_STUDY;
+        else if (strcmp(ThemeAttr->value(), "pantry") == 0)
+            Chapter.Theme = THEME_PANTRY;
+        else if (strcmp(ThemeAttr->value(), "fridge") == 0)
+            Chapter.Theme = THEME_FRIDGE;
+        else if (strcmp(ThemeAttr->value(), "workshop") == 0)
+            Chapter.Theme = THEME_WORKSHOP;
+    }
+    
    	rapidxml::xml_node<char>* PageNode = ChapterNode->first_node("Page");
 
     while (PageNode != NULL)
@@ -934,6 +948,7 @@ void SetCurrentPage(int PageNum)
 	CreatePageObjects();
 
     StartRecording();
+    InitMinimap();
 
     StartGhostRecording();
     if (Settings.GhostActive)

@@ -80,8 +80,12 @@ gxSprite BackgroundFridgeSprite;
 
 gxSprite TileUnknownSprite;
 
-gxSprite BarrelBackSprite;
-gxSprite BarrelFrontSprite;
+gxSprite BarrelBeansBackSprite;
+gxSprite BarrelBeansFrontSprite;
+gxSprite BarrelMetalBackSprite;
+gxSprite BarrelMetalFrontSprite;
+gxSprite BarrelMugBackSprite;
+gxSprite BarrelMugFrontSprite;
 gxSprite BarrelNailSprite;
 
 gxSprite FanSprite;
@@ -907,8 +911,13 @@ void LoadAssets()
 
 	LoadSpriteAsset("Assets/tile-wtf.png", &TileUnknownSprite);
 	
-	LoadSpriteAsset("Assets/barrel-beans-back.png", &BarrelBackSprite);
-	LoadSpriteAsset("Assets/barrel-beans-front.png", &BarrelFrontSprite);
+	LoadSpriteAsset("Assets/barrel-beans-back.png", &BarrelBeansBackSprite);
+	LoadSpriteAsset("Assets/barrel-beans-front.png", &BarrelBeansFrontSprite);
+	LoadSpriteAsset("Assets/barrel-metal-back.png", &BarrelMetalBackSprite);
+	LoadSpriteAsset("Assets/barrel-metal-front.png", &BarrelMetalFrontSprite);
+	LoadSpriteAsset("Assets/barrel-mug-back.png", &BarrelMugBackSprite);
+	LoadSpriteAsset("Assets/barrel-mug-front.png", &BarrelMugFrontSprite);
+    
 	LoadSpriteAsset("Assets/barrel-nail.png", &BarrelNailSprite);
 
 	LoadSpriteAsset("Assets/fan.png", &FanSprite);

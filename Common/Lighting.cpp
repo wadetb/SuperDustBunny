@@ -852,10 +852,16 @@ void ResetLighting()
 
     glBindBuffer(GL_ARRAY_BUFFER, LitVertsVBO[BufferObjectIndex]);
     LitVerts = (SLitVertex*)glMapBufferOES(GL_ARRAY_BUFFER, GL_WRITE_ONLY_OES);
+    GLenum error = glGetError();
+    if (error != GL_NO_ERROR)
+        ReportError("Mapping lit verts caused an OpenGL error: 0x%x", error);
     assert(LitVerts);
     
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, LitVertsIBO[BufferObjectIndex]);
     LitVertIndices = (GLushort*)glMapBufferOES(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY_OES);
+    error = glGetError();
+    if (error != GL_NO_ERROR)
+        ReportError("Mapping lit vert indices caused an OpenGL error: 0x%x", error);
     assert(LitVertIndices);
     
     CurrentVAO = -1;

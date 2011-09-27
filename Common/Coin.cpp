@@ -14,6 +14,7 @@
 #include "Chapter.h"
 #include "GameScore.h"
 #include "Smoke.h"
+#include "Recorder.h"
 
 
 #define MAX_COINS 100
@@ -84,6 +85,7 @@ void UpdateCoins()
 				Coin->State = COINSTATE_COLLECTED;
 				
                 Create1UpBubble(Coin->X, Coin->Y);
+                UpdateMinimap(MINIMAP_EXTRA_LIFE);
 
 				sxPlaySound(&CoinVacuumedUpSound);  
 			} 	                       	    

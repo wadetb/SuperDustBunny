@@ -141,6 +141,7 @@ static void UploadChapterScore()
 #ifdef PLATFORM_MAC
     ABPerson *person = [[ABAddressBook sharedAddressBook] me];
     NSString *name = [person valueForProperty:kABFirstNameProperty];
+    [person release];
 #endif
 
     NSString* city = @"nocity";

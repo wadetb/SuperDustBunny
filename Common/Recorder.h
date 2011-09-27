@@ -74,4 +74,25 @@ char* GetRecordingChapterName();
 char* GetRecordingPageName();
 int GetRecordingStartLives();
 
+enum EMinimapAction
+{
+    MINIMAP_NORMAL,
+    MINIMAP_HEAD_BUMP,
+    MINIMAP_WALL_JUMP,
+    MINIMAP_CORNER_JUMP,
+    MINIMAP_JUMP,
+    MINIMAP_LAUNCH,
+    MINIMAP_LAND,
+    MINIMAP_FALL,
+    MINIMAP_DIE,
+    MINIMAP_WIN,
+    MINIMAP_EXTRA_LIFE,
+    MINIMAP_JAM,
+    MINIMAP_HURT,
+    MINIMAP_STUCK,
+};
+
+void InitMinimap();
+void UpdateMinimap(EMinimapAction Action);
+
 #endif

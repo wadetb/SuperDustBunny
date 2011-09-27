@@ -82,21 +82,41 @@ void ClearBarrels()
 
 void DisplayBarrels_BeforeDusty()
 {
+    gxSprite* Sprite;
+    switch (Chapter.Theme)
+    {
+        default:
+        case THEME_STUDY: Sprite = &BarrelMugBackSprite; break;
+        case THEME_PANTRY: Sprite = &BarrelBeansBackSprite; break;
+        case THEME_FRIDGE: Sprite = &BarrelBeansBackSprite; break;
+        case THEME_WORKSHOP: Sprite = &BarrelMetalBackSprite; break;
+    }
+
 	for (int i = 0; i < NBarrels; i++)
 	{
 		SBarrel* Barrel = &Barrels[i];
-		
-		AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &BarrelBackSprite, Barrel->X + ScrollX, Barrel->Y + ScrollY, 1.0f, DegreesToRadians(Barrel->Dir));
+	
+        AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, Sprite, Barrel->X + ScrollX, Barrel->Y + ScrollY, 1.0f, DegreesToRadians(Barrel->Dir));
 	}
 }
 
 void DisplayBarrels_AfterDusty()
 {
+    gxSprite* Sprite;
+    switch (Chapter.Theme)
+    {
+        default:
+        case THEME_STUDY: Sprite = &BarrelMugFrontSprite; break;
+        case THEME_PANTRY: Sprite = &BarrelBeansFrontSprite; break;
+        case THEME_FRIDGE: Sprite = &BarrelBeansFrontSprite; break;
+        case THEME_WORKSHOP: Sprite = &BarrelMetalFrontSprite; break;
+    }
+
 	for (int i = 0; i < NBarrels; i++)
 	{
 		SBarrel* Barrel = &Barrels[i];
 		
-		AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND_NO_SHADOW, &BarrelFrontSprite, Barrel->X + ScrollX, Barrel->Y + ScrollY, 1.0f, DegreesToRadians(Barrel->Dir));
+		AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND_NO_SHADOW, Sprite, Barrel->X + ScrollX, Barrel->Y + ScrollY, 1.0f, DegreesToRadians(Barrel->Dir));
 		AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND_NO_SHADOW, &BarrelNailSprite, Barrel->X + ScrollX, Barrel->Y + ScrollY, 1.0f, 0.0f);
 	}
 }
