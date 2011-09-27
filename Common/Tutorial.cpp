@@ -261,6 +261,14 @@ void UpdateTutorial()
             if (Tutorial->PauseActive)
             {
                 Tutorial->PauseTimer -= 1.0f/60.0f;
+                if (Tutorial->PauseTimer < 4.0f && Tutorial->PauseTimer + 1.0f/60.0f >= 4.0f)
+                {
+                    if (Props->Actions && strstr(Props->Actions, "turnonvacuum"))
+                    {
+                        TutorialOverrides.FocusOnVacuum = true;
+                    }
+                    
+                }
                 if (Tutorial->PauseTimer <= 0)
                 {
                     Tutorial->PauseActive = false;
@@ -288,7 +296,6 @@ void UpdateTutorial()
                 {
                     if (Props->Actions && strstr(Props->Actions, "turnonvacuum"))
                     {
-                        TutorialOverrides.FocusOnVacuum = true;
                         TutorialOverrides.FreezeDusty = true;
                         
                         Tutorial->PauseActive = true;
