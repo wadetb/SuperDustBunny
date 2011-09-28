@@ -969,7 +969,8 @@ void CalculateScroll()
     if (TutorialOverrides.FocusOnVacuum)
     {
 //        ScrollX = ScrollX*0.9f + (LitScreenHeight/2-Vacuum.X)*0.1f;
-        ScrollY = ScrollY*0.95f + (LitScreenHeight*0.75f-Vacuum.Y)*0.05f;
+//        ScrollY = ScrollY*0.95f + (LitScreenHeight*0.75f-Vacuum.Y)*0.05f;
+        ScrollY = Remap(SmoothStep(TutorialOverrides.Timer), 0.0f, 1.0f, TutorialOverrides.SavedScrollY, (LitScreenHeight*0.75f-Vacuum.Y), true);
     }
     else
     {        
@@ -1288,7 +1289,7 @@ void LoadChapterUnlocks()
 {
     PushErrorContext("While loading chapter unlocks:");
     
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
     @try
     {
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -1350,7 +1351,7 @@ void SaveChapterUnlocks()
 {
     PushErrorContext("While saving chapter unlocks:\n");
     
-#ifdef PLATFORM_IPHONE
+#ifdef PLATFORM_IPHONE_OR_MAC
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSString *filePath = [documentsDirectory stringByAppendingPathComponent:@"chapter.unlocks"];

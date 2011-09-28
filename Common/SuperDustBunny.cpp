@@ -628,7 +628,6 @@ static void UpdateGame_Playing()
     UpdateVacuum(); 
     UpdateSmoke();
     UpdateTutorial();
-    UpdateGhost();
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//

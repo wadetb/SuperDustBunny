@@ -522,8 +522,8 @@ void GetVacuumForce(float X, float Y, float* VX, float* VY, float Strength, bool
                 float DirX = (float)( TX - CurX );
                 float DirY = (float)( TY - CurY );
 
-                TotalVX += DirX * Force*(Force-BaseForce) / 100.0f;
-                TotalVY += DirY * Force*(Force-BaseForce) / 100.0f;
+                TotalVX += DirX * Force*(Force-BaseForce) / 50.0f;
+                TotalVY += DirY * Force*(Force-BaseForce) / 50.0f;
             }
         }
 

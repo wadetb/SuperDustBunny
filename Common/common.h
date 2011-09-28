@@ -167,6 +167,13 @@ inline float AngleBetween(float x1, float y1, float x2, float y2)
 	return atan2f(x2-x1, -(y2-y1));
 }
 
+inline float SmoothStep(float t)
+{
+    if (t < 0.0f) return 0.0f;
+    if (t > 1.0f) return 1.0f;
+	return t*t*(3.0f-2*t);
+}
+
 inline float Remap(float Value, float FromMin, float FromMax, float ToMin, float ToMax, bool Clamp)
 {
 	float RelativeValue = (Value - FromMin) / (FromMax - FromMin);

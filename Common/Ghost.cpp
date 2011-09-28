@@ -170,8 +170,8 @@ void DisplayGhost()
     {
         SGhostEvent* Event = &GhostPlaybackEvents[Ghost.PlaybackTime];
         
-        AddLitSpriteScaledAlpha(LIGHTLIST_FOREGROUND, DustySprite[Event->Sprite], 
-                                Event->X + ScrollX, Event->Y + ScrollY, Event->ScaleX, 1.0f, 0.5f);
+        unsigned int Color = gxRGBA32(0x80, 0xc0, 0xff, 0xc0);
+        AddLitSpriteScaledColor(LIGHTLIST_FOREGROUND, DustySprite[Event->Sprite], Event->X + ScrollX, Event->Y + ScrollY, Event->ScaleX, 1.0f, Color);
     }
 }
 

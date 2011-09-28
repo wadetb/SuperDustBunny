@@ -175,12 +175,7 @@ void InitStartScreen()
     StartScreen.PressedTime = 0.0f;
     StartScreen.ReleasedAtLeastOnce = false;
     
-    StartScreen.LeaderboardsUnlocked = true;
-#ifdef PLATFORM_IPHONE
-    for (int i = 0; i < NChapters; i++)
-        if (!Chapters[i].Completed)
-            StartScreen.LeaderboardsUnlocked = false;
-#endif
+    StartScreen.LeaderboardsUnlocked = Chapters[CurrentChapter].Completed;
 }
 
 static void StartScreen_Advance()
@@ -386,27 +381,6 @@ void UpdateStartScreen()
         }
 	}
 
-    if (msY < 256 && msX < 384 && !msButton1 && msOldButton1 && StartScreen.CurItem >= STARTSCREEN_ITEM_FIRST_CHAPTER)
-    {
-        CurrentChapter = StartScreen.CurItem - STARTSCREEN_ITEM_FIRST_CHAPTER;
-        
-#ifdef PLATFORM_IPHONE
-        [TestFlight passCheckpoint:[NSString stringWithFormat:@"Opened Leaderboards for %s", Chapters[CurrentChapter].Name]];
-#endif
-        SetGameState_Leaderboard();
-        return;
-    }
-    
-    if (msY < 256 && msX > 384 && !msButton1 && msOldButton1 && StartScreen.CurItem >= STARTSCREEN_ITEM_FIRST_CHAPTER)
-    {
-        Settings.GhostActive = !Settings.GhostActive;
-#ifdef PLATFORM_IPHONE
-        [TestFlight passCheckpoint:[NSString stringWithFormat:@"Toggled Ghost mode to %s", Settings.GhostActive ? "on" : "off"]];
-#endif
-        SaveSettings();
-        return;
-    }
-    
     if (StartScreen.DragX < 0)
 		StartScreen.DragX = 0;
 	if (StartScreen.DragX >= (GetStartScreenItemCount()-1)*StartScreenDragSpacing)
@@ -432,12 +406,42 @@ void UpdateStartScreen()
     
     if (StartScreen.CurItem >= STARTSCREEN_ITEM_FIRST_CHAPTER)
     {
-        if (StartScreen.LeaderboardsUnlocked)
-            StartScreen.LeaderboardButtonAlpha = Clamp(StartScreen.LeaderboardButtonAlpha + 0.05f, 0.0f, 1.0f);
-        else
-            StartScreen.LeaderboardButtonAlpha = Clamp(StartScreen.LeaderboardButtonAlpha - 0.05f, 0.0f, 1.0f);
-    }
+        StartScreen.LeaderboardsUnlocked = Chapters[StartScreen.CurItem - STARTSCREEN_ITEM_FIRST_CHAPTER].Completed;
         
+        if (StartScreen.LeaderboardsUnlocked)
+        {
+            if (msY < 256 && msX < 384 && !msButton1 && msOldButton1)
+            {
+                CurrentChapter = StartScreen.CurItem - STARTSCREEN_ITEM_FIRST_CHAPTER;
+                
+#ifdef PLATFORM_IPHONE
+                [TestFlight passCheckpoint:[NSString stringWithFormat:@"Opened Leaderboards for %s", Chapters[CurrentChapter].Name]];
+#endif
+                SetGameState_Leaderboard();
+                return;
+            }
+            
+            if (msY < 256 && msX > 384 && !msButton1 && msOldButton1)
+            {
+                Settings.GhostActive = !Settings.GhostActive;
+#ifdef PLATFORM_IPHONE
+                [TestFlight passCheckpoint:[NSString stringWithFormat:@"Toggled Ghost mode to %s", Settings.GhostActive ? "on" : "off"]];
+#endif
+                SaveSettings();
+                return;
+            }
+        }
+    }
+    else
+    {
+        StartScreen.LeaderboardsUnlocked = false;
+    }
+
+    if (StartScreen.LeaderboardsUnlocked)
+        StartScreen.LeaderboardButtonAlpha = Clamp(StartScreen.LeaderboardButtonAlpha + 0.05f, 0.0f, 1.0f);
+    else
+        StartScreen.LeaderboardButtonAlpha = Clamp(StartScreen.LeaderboardButtonAlpha - 0.05f, 0.0f, 1.0f);    
+
     StartScreen.StartupTime += 1.0f/60.0f;
     if (StartScreen.StartupTime >= 1.0f && !StartScreen.WelcomeDisplayed)
     {

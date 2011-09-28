@@ -247,6 +247,8 @@ void DisplayTutorial()
 
 void UpdateTutorial()
 {   
+    TutorialOverrides.Timer += 1.0f/60.0f;
+
     for (int i = 0; i < NTutorials; i++)
     {
         STutorial* Tutorial = &Tutorials[i];
@@ -261,11 +263,13 @@ void UpdateTutorial()
             if (Tutorial->PauseActive)
             {
                 Tutorial->PauseTimer -= 1.0f/60.0f;
-                if (Tutorial->PauseTimer < 4.0f && Tutorial->PauseTimer + 1.0f/60.0f >= 4.0f)
+                if (Tutorial->PauseTimer < 3.5f && Tutorial->PauseTimer + 1.0f/60.0f >= 3.5f)
                 {
                     if (Props->Actions && strstr(Props->Actions, "turnonvacuum"))
                     {
                         TutorialOverrides.FocusOnVacuum = true;
+                        TutorialOverrides.SavedScrollY = ScrollY;
+                        TutorialOverrides.Timer = 0.0f;
                     }
                     
                 }

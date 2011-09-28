@@ -1895,7 +1895,8 @@ void UpdateDusty()
     
     if (IsGhostRecordingActive())
         AddGhostEvent(Dusty.LastX, Dusty.LastY, Dusty.LastScaleX, Dusty.LastSprite);
-    
+    UpdateGhost();
+
     UpdateMinimap(MINIMAP_NORMAL);
     
     if (GetInput_GetSwipeTimeLeft() >= 1.0f/20.0f)
