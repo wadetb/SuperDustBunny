@@ -31,7 +31,6 @@ SuperDustBunnyViewController *theViewController;
 
 @synthesize context;
 @synthesize settingsViewController;
-@synthesize gameCenterEnabled;
 @synthesize haveLocation, city, state, country;
 
 BOOL isGameCenterAPIAvailable()
@@ -47,14 +46,20 @@ BOOL isGameCenterAPIAvailable()
     return (localPlayerClassAvailable && osVersionSupported);
 }
 
+- (BOOL) isGameCenterEnabled
+{
+    if ( !isGameCenterAPIAvailable() )
+        return NO;
+    
+    GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
+    return localPlayer.authenticated;
+}
+
 - (void) authenticateLocalPlayer
 {
     GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
     [localPlayer authenticateWithCompletionHandler:^(NSError *error) {
-        if (localPlayer.isAuthenticated)
-        {
-            gameCenterEnabled = YES;
-        }
+        NSLog(@"Player authenticated: %s", localPlayer.authenticated ? "YES" : "NO");
     }];
 }
 
@@ -182,12 +187,6 @@ BOOL isGameCenterAPIAvailable()
     paused = FALSE;
     wasPaused = TRUE;
     
-    gameCenterEnabled = NO;
-    if (isGameCenterAPIAvailable())
-    {
-        [self authenticateLocalPlayer];
-    }
-    
     locationManager = nil;
     haveLocation = NO;
     city = nil;
@@ -237,8 +236,6 @@ BOOL isGameCenterAPIAvailable()
 {
     printf("viewWillDisappear\n");
     [super viewWillDisappear:animated];
-
-    gameCenterEnabled = NO;
 }
 
 - (void)viewDidUnload

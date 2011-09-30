@@ -229,6 +229,7 @@ static void SkipToNextPage()
 #ifdef PLATFORM_IPHONE
     [TestFlight passCheckpoint:@"Skipped to the next page"];
 #endif
+    Score.Invalid = true;
     if (IsRecordingActive())
         StopRecording(RESULT_NONE);
     SetCurrentPage((Chapter.PageNum+1) % Chapter.NPages);
@@ -239,6 +240,7 @@ static void SkipToPreviousPage()
 #ifdef PLATFORM_IPHONE
     [TestFlight passCheckpoint:@"Skipped to the previous page"];
 #endif
+    Score.Invalid = true;
     if (IsRecordingActive())
         StopRecording(RESULT_NONE);
     SetCurrentPage((Chapter.PageNum+Chapter.NPages-1) % Chapter.NPages);

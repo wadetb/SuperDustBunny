@@ -28,7 +28,6 @@
     BOOL wasPaused;
     int slowFactor;
     UIView *spinnerPanel;
-    BOOL gameCenterEnabled;
     CLLocationManager* locationManager;
     BOOL haveLocation;
     NSString* city;
@@ -39,8 +38,8 @@
 @property (nonatomic, retain) EAGLContext *context;
 @property (nonatomic, retain) IBOutlet SettingsViewController *settingsViewController;
 @property BOOL paused;
-@property BOOL gameCenterEnabled;
 @property BOOL haveLocation;
+@property (nonatomic, readonly, getter=isGameCenterEnabled) BOOL gameCenterEnabled;
 @property (nonatomic, retain) NSString* city;
 @property (nonatomic, retain) NSString* state;
 @property (nonatomic, retain) NSString* country;

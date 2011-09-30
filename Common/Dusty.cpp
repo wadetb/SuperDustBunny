@@ -626,12 +626,12 @@ static void DisplayDusty_Jump()
 static void UpdateDusty_Jump()
 {       
     // Grace period jump.  Allows a midair jump within a few frames of falling.
-    if (Settings.ControlStyle == CONTROL_TILT)
+    if (Dusty.JumpGraceTimer > 0)
     {
-        if (Dusty.JumpGraceTimer > 0)
+        Dusty.JumpGraceTimer--;
+        
+        if (Settings.ControlStyle == CONTROL_TILT)
         {
-            Dusty.JumpGraceTimer--;
-            
             if (GetInput_Jump())
             {
                 Dusty.JumpGraceTimer = 0;
@@ -639,6 +639,14 @@ static void UpdateDusty_Jump()
                 SetDustyState_Jump( false );
                 return;
             }
+        }
+        else
+        {
+            if (UpdateDusty_CheckSwipeJump(0.0f, 180.0f))
+            {
+                UpdateDusty_DoSwipeJump(Dusty.SwipeAngle, Dusty.SwipePower);
+                return;
+            }            
         }
     }
     

@@ -159,7 +159,7 @@ void DisplayLeaderboardScreen()
     AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &IconCredits1Sprite, 90 + sinf(LeaderboardScreen.WiggleTime)*4.0f, 90, 0.25f, 1.0f);
 
     const char* RegionName[LEADERBOARDREGION_COUNT] = { "worldwide", "state", "city" };
-    const char* ModeName[LEADERBOARDMODE_COUNT] = { "top score", "king of the hill" };
+    const char* ModeName[LEADERBOARDMODE_COUNT] = { "top score", "king of the day" };
 
     int CurrentX = LeaderboardScreen.StartX;
     

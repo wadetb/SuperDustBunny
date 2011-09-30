@@ -112,30 +112,63 @@ void ResetScore()
     Score.BestChapterTime = INT_MAX;
     
     Score.Medal = MEDAL_NONE;
+    
+    Score.Invalid = false;
 }
 
-static void UploadChapterScore()
+void UploadChapterScore()
 {
 #ifdef PLATFORM_IPHONE
-    if (!theViewController.gameCenterEnabled)
-        return;
-    
+    NSString *name;
+    if (theViewController.gameCenterEnabled)
+    {
 #if 0
-    GKScore *scoreReporter = [[[GKScore alloc] initWithCategory:@"sdb"] autorelease];
-    scoreReporter.value = score;
-    
-    [scoreReporter reportScoreWithCompletionHandler:^(NSError *error) {
+        GKScore *scoreReporter = [[[GKScore alloc] initWithCategory:@"sdb"] autorelease];
+        scoreReporter.value = score;
+        
+        [scoreReporter reportScoreWithCompletionHandler:^(NSError *error) {
          if (error != nil)
          {
          // TODO: Write that score to a file.
-            // handle the reporting error
+         // handle the reporting error
          }
-     }];
+         }];
 #endif
+
+        GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
+        name = [localPlayer alias];    
+    }
+    else
+    {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Enter your name"
+                                                        message:@"-------------------------------"
+                                                       delegate:theViewController
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        
+        UITextField *textField = [[UITextField alloc] initWithFrame:CGRectMake(12.0, 45.0, 260.0, 31.0)]; 
+        [textField setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
+        [textField setAutocapitalizationType:UITextAutocapitalizationTypeWords];
+        [textField setBorderStyle:UITextBorderStyleRoundedRect];
+        [textField setBackgroundColor:[UIColor whiteColor]];
+        [textField setTextAlignment:UITextAlignmentCenter];
+        
+        [alert addSubview:textField];
+
+        theViewController.paused = TRUE;
+        
+        [alert show];
+        
+        while (theViewController.paused)
+        {
+            [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
+        }
+
+        name = [textField text];
+        
+        [alert release];
+    }
     
-    
-    GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
-    NSString *name = [localPlayer alias];    
 #endif
 
 #ifdef PLATFORM_MAC
@@ -178,6 +211,9 @@ void RecordPageScore(int Page)
 {
     if (Page < 0 || Page > MAX_PAGE_TIMES)
         ReportError("Invalid page number %d for scorekeeping.  Maximum is %d.", Page, MAX_PAGE_TIMES);
+    
+    if (Score.Invalid)
+        return;
     
     if (Chapter.PageProps.VacuumOff)
     {
@@ -243,11 +279,6 @@ void RecordPageScore(int Page)
             Score.Medal = MEDAL_SILVER;
         if (Score.ChapterTime <= Chapters[CurrentChapter].GoldTime)
             Score.Medal = MEDAL_GOLD;
-        
-        if (Score.Medal != MEDAL_NONE)
-        {
-            UploadChapterScore();
-        }
     }
     
     if (Chapters[CurrentChapter].Played == false)

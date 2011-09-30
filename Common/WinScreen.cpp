@@ -273,6 +273,8 @@ void UpdateWinScreen()
         {
             if (WinScreen.State == WINSCREEN_MEDAL)
             {
+                UploadChapterScore();                
+
                 WinScreen.State = WINSCREEN_TIMES;
                 WinScreen.Timer = 0;
                 WinScreen.SlideIn = 1.0f;
