@@ -40,6 +40,7 @@ struct SScore
     EMedalType Medal;
     
     bool Invalid;
+    int DeathCount;
 };
 
 extern SScore Score;

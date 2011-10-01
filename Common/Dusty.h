@@ -86,6 +86,12 @@ enum ENearbyBlock
     NEARBY_DOWN_RIGHT     = 1<<8
 };
 
+enum EDeathType
+{
+    DEATH_VACUUM,
+    DEATH_GHOST
+};
+
 struct SDusty
 {
 	EDustyState State;
@@ -110,6 +116,8 @@ struct SDusty
     
 	int SpriteTransition;
 
+    EDeathType Death;
+    
 	int WallStickTimer;
 	EDustyDirection LastWall;
 	int WallJumpTimer;
@@ -167,13 +175,13 @@ void DisplayDusty();
 void UpdateDusty();
 void InitDusty();
 
-void SetDustyPosition(float x, float y);
+void SetDustyPosition(float x, float y, EDustyDirection direction);
 
 void SetDustyState_PrepareLaunch();
 void SetDustyState_JumpWithVelocity( float VX, float VY );
 void SetDustyState_Launch(float VelocityX, float VelocityY);
 void SetDustyState_Hurt();
-void SetDustyState_Die();
+void SetDustyState_Die(EDeathType Death);
 void SetDustyState_Stuck();
 void SetDustyState_Stand();
 void SetDustyState_Hop(EDustyDirection Direction);

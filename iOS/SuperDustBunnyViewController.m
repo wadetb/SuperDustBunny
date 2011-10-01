@@ -52,14 +52,14 @@ BOOL isGameCenterAPIAvailable()
         return NO;
     
     GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
-    return localPlayer.authenticated;
+    return [localPlayer isAuthenticated];
 }
 
 - (void) authenticateLocalPlayer
 {
     GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
     [localPlayer authenticateWithCompletionHandler:^(NSError *error) {
-        NSLog(@"Player authenticated: %s", localPlayer.authenticated ? "YES" : "NO");
+        NSLog(@"Player authenticated: %s", ([localPlayer isAuthenticated] ? "YES" : "NO"));
     }];
 }
 

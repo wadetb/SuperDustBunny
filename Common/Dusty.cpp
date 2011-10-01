@@ -20,6 +20,7 @@
 #include "Smoke.h"
 #include "Ghost.h"
 #include "Tutorial.h"
+#include "GameScore.h"
 
 
 SDusty Dusty;
@@ -93,7 +94,7 @@ void InitDusty()
     Dusty.LastScaleX = 1.0f;
     Dusty.LastSprite = DUSTYSPRITE_DEATH;
     
-	Dusty.SpriteTransition = 5;
+	Dusty.SpriteTransition = 45;
 
 	Dusty.NoCollision = false;
 
@@ -127,10 +128,11 @@ void InitDusty()
     memset(DustyTrail, 0, sizeof(DustyTrail));
 };
 
-void SetDustyPosition(float x, float y)
+void SetDustyPosition(float x, float y, EDustyDirection direction)
 {
 	Dusty.FloatX = x;
 	Dusty.FloatY = y;
+    Dusty.Direction = direction;
 }
 
 
@@ -359,7 +361,7 @@ static void DisplayDusty_Stand()
 		if (Dusty.SpriteTransition <= 5)
 			DisplayDustySprite(DUSTYSPRITE_HOP_5B, -119, 18, -218);
 		else
-        if (Dusty.SpriteTransition <= 15 && Dusty.State != DUSTYSTATE_INTROSTAND)
+        if (Dusty.SpriteTransition <= 12)
             DisplayDustySprite(DUSTYSPRITE_HOP_5B, -119, 18, -218);
         else
 		{
@@ -1289,10 +1291,18 @@ static void UpdateDusty_Launch()
 //                                                  DUSTYSTATE_DIE Implementation                                                          //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-void SetDustyState_Die()
+void SetDustyState_Die(EDeathType Death)
 {
-	Dusty.FloatVelocityX = Dusty.FloatX > Vacuum.X ? -15.0f : 15.0f;
-	Dusty.FloatVelocityY = -30;
+    if (Dusty.Death == DEATH_VACUUM)
+    {
+        Dusty.FloatVelocityX = Dusty.FloatX > Vacuum.X ? -15.0f : 15.0f;
+        Dusty.FloatVelocityY = -30;
+    }
+    if (Dusty.Death == DEATH_GHOST)
+    {
+        Dusty.FloatVelocityX = 0;
+        Dusty.FloatVelocityY = -10;        
+    }
 
 	Dusty.SpriteTransition = 0;
 
@@ -1302,6 +1312,8 @@ void SetDustyState_Die()
 
     Dusty.ComboCount = 0;
 
+    Dusty.Death = Death;
+    
 	Dusty.State = DUSTYSTATE_DIE;
     
     UpdateMinimap(MINIMAP_DIE);
@@ -1319,18 +1331,35 @@ static void UpdateDusty_Die()
 	Dusty.FloatX += Dusty.FloatVelocityX;
 	Dusty.FloatY += Dusty.FloatVelocityY;
 
-	Dusty.FloatVelocityY += Dusty.FloatGravity;
+    bool DeathOver = false;
+    
+    if (Dusty.Death == DEATH_VACUUM)
+    {
+        Dusty.FloatVelocityY += Dusty.FloatGravity;
 
-	float DirX, DirY;
-	GetVacuumForce(Dusty.FloatX, Dusty.FloatY, &DirX, &DirY, (float)Dusty.SpriteTransition/400.0f, false);
-	Dusty.FloatVelocityX += DirX;
-	Dusty.FloatVelocityY += DirY;
+        float DirX, DirY;
+        GetVacuumForce(Dusty.FloatX, Dusty.FloatY, &DirX, &DirY, (float)Dusty.SpriteTransition/400.0f, false);
+        Dusty.FloatVelocityX += DirX;
+        Dusty.FloatVelocityY += DirY;
+        
+        Dusty.FloatVelocityX *= 0.99f;
+        Dusty.FloatVelocityY *= 0.99f;
+        
+        DeathOver = Dusty.SpriteTransition > 120 && Distance(Dusty.FloatX, Dusty.FloatY, Vacuum.X, Vacuum.Y) < 40.0f;
+    }
 
-	Dusty.FloatVelocityX *= 0.99f;
-	Dusty.FloatVelocityY *= 0.99f;
-
-	if (Dusty.SpriteTransition > 120 && Distance(Dusty.FloatX, Dusty.FloatY, Vacuum.X, Vacuum.Y) < 40.0f)
+    if (Dusty.Death == DEATH_GHOST)
+    {
+        Dusty.FloatVelocityX = 0;
+        Dusty.FloatVelocityY += Dusty.FloatGravity;
+        
+        DeathOver = Dusty.FloatY + ScrollY > LitScreenHeight;
+    }
+    
+	if (DeathOver)
 	{
+        Score.DeathCount++;
+        
 		if (Dusty.Lives > 0) //Check before the Die Screen Transition
 		{
             if (!Settings.InfiniteLives)
@@ -1528,7 +1557,7 @@ void SetDustyState_IntroStand()
 {
 	Dusty.FloatVelocityY = 0;
 
-	Dusty.SpriteTransition = 0;	
+	Dusty.SpriteTransition = 45;	
 
 	Dusty.State = DUSTYSTATE_INTROSTAND;
 }

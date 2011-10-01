@@ -233,7 +233,7 @@ void UpdateVacuum()
 
 			if (IsInVacuum(Dusty.FloatY))
 			{
-				SetDustyState_Die();
+				SetDustyState_Die(DEATH_VACUUM);
 			}
 		}
 	}

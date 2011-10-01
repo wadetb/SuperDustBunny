@@ -114,6 +114,7 @@ void ResetScore()
     Score.Medal = MEDAL_NONE;
     
     Score.Invalid = false;
+    Score.DeathCount = 0;
 }
 
 void UploadChapterScore()
@@ -289,6 +290,7 @@ void RecordPageScore(int Page)
     
     Score.CurrentPageTime = 0;
     Score.CurrentBonus = 0;
+    Score.DeathCount = 0;
 }
 
 void AwardBonus(float X, float Y)

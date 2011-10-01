@@ -108,6 +108,7 @@ struct SPageProperties
 	int VacuumDir;
     int VacuumStart;
     float VacuumSpeed;
+    bool GhostRace;
 };
 
 struct SPageLayer
@@ -140,6 +141,7 @@ struct SChapter
     gxSprite BackgroundSprite;
     
 	float StartX, StartY;
+    int StartDirection;
 	float EndX, EndY;
     
     float PortalAngle;

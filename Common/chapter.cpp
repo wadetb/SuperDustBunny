@@ -30,6 +30,8 @@
 #include "Tutorial.h"
 #include "Ghost.h"
 #include "Settings.h"
+#include "GameScore.h"
+
 
 #ifdef PLATFORM_WINDOWS
 #include <direct.h>
@@ -81,6 +83,7 @@ static void InitPageProperties(SPageProperties* Props)
 	Props->VacuumDir = VACUUMDIR_UP;
 	Props->VacuumStart = 100000000;
     Props->VacuumSpeed = 0.75f;
+    Props->GhostRace = false;
 }
 
 static void ParsePageProperties(SPageProperties* Props, rapidxml::xml_node<char>* PropertiesNode)
@@ -126,6 +129,15 @@ static void ParsePageProperties(SPageProperties* Props, rapidxml::xml_node<char>
 		else if (strcmp(Name, "vacuum_speed") == 0)
 		{
             Props->VacuumSpeed = (float)atof(Value);
+		}
+		else if (strcmp(Name, "ghost_race") == 0)
+		{
+			if (strcmp(Value, "on") == 0)
+				Props->GhostRace = true;
+			else if (strcmp(Value, "off") == 0)
+				Props->GhostRace = false;
+			else
+				ReportError("'%s' is not a valid value for the 'ghost_race' property.  The value must be 'on' or 'off'.  Fix this problem and re-save the TMX file.", Value);
 		}
 		else
 			ReportError("'%s' is not a valid map property (value is '%s').  Fix this problem and re-save the TMX file.", Name, Value);
@@ -835,6 +847,7 @@ static void CreatePageObjects()
 				case BLOCKTYPE_CHAPTERSTART:
 					Chapter.StartX = (float)x * 64 + 32;
 					Chapter.StartY = (float)y * 64 + 64;
+                    Chapter.StartDirection = (Flags & SPECIALBLOCKID_FLIP_X) ? DIRECTION_LEFT : DIRECTION_RIGHT;
 					EraseBlock(x, y);
 					break;
 				case BLOCKTYPE_CHAPTEREND:
@@ -906,7 +919,7 @@ static void CreatePageObjects()
 
 	// Initialize global stuff for the page.
 	InitDusty();
-	SetDustyPosition(Chapter.StartX, Chapter.StartY);
+	SetDustyPosition(Chapter.StartX, Chapter.StartY, (EDustyDirection)Chapter.StartDirection);
 
 	InitDust();
 	InitDebris();
@@ -916,6 +929,9 @@ static void CreatePageObjects()
 	InitVacuum();
     InitSmoke();
     
+    if (Score.DeathCount >= 2)
+        CreatePowerUp(Dusty.FloatX + 192, Dusty.FloatY - 320);
+
     if (!Chapter.PageProps.VacuumOff)
         TurnOnVacuum(0, 2.0f);
 }
@@ -953,8 +969,16 @@ void SetCurrentPage(int PageNum)
     StartGhostRecording();
     if (Settings.GhostActive)
     {
-        LoadGhost(Chapters[CurrentChapter].Name, PageNum);
+        LoadGhost(Chapters[CurrentChapter].Name, PageNum, false);
         StartGhostPlayback();
+    }
+    else
+    {
+        if (Chapter.PageProps.GhostRace)
+        {
+            LoadGhost(Chapters[CurrentChapter].Name, PageNum, true);
+            StartGhostPlayback();        
+        }        
     }
 
 	PopErrorContext();

@@ -11,6 +11,7 @@
 #include "Ghost.h"
 #include "Lighting.h"
 #include "Dusty.h"
+#include "Chapter.h"
 
 
 #define MAX_GHOST_EVENTS 20000
@@ -54,17 +55,31 @@ void AddGhostEvent(float X, float Y, float ScaleX, int Sprite)
     Event->Sprite = Sprite;
 }
 
-void LoadGhost(const char* ChapterName, int Page)
+void LoadGhost(const char* ChapterName, int Page, bool Race)
 {
     Ghost.PlaybackEventCount = 0;
     
 #ifdef PLATFORM_IPHONE_OR_MAC
     @try
     {
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        NSString *documentsDirectory = [paths objectAtIndex:0];
-        NSString *fileName = [NSString stringWithFormat:@"%s_%d.ghost", ChapterName, Page];
-        NSString *filePath = [documentsDirectory stringByAppendingPathComponent:fileName];
+        NSString *filePath;
+        if (Race)
+        {
+#ifdef PLATFORM_MAC
+            extern char RootDirectory[1024];
+            filePath = [NSString stringWithFormat:@"%s/Chapters/%s/%s_%d.ghost", RootDirectory, ChapterName, ChapterName, Page];
+#endif
+#ifdef PLATFORM_IPHONE
+            filePath =  [NSString stringWithFormat:@"%s/Chapters~%s~%s_%d.ghost", [[NSBundle mainBundle] bundlePath], ChapterName, ChapterName, Page];
+#endif            
+        }
+        else
+        {
+            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+            NSString *documentsDirectory = [paths objectAtIndex:0];
+            NSString *fileName = [NSString stringWithFormat:@"%s_%d.ghost", ChapterName, Page];
+            filePath = [documentsDirectory stringByAppendingPathComponent:fileName];            
+        }
         
         NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:filePath];
         if ( !dict )
@@ -184,6 +199,11 @@ void UpdateGhost()
         {
             Ghost.PlaybackTime = 0;
             Ghost.PlaybackActive = false;
+            
+            if (Chapter.PageProps.GhostRace)
+            {
+                SetDustyState_Die(DEATH_GHOST);
+            }
         }
     }
 }
