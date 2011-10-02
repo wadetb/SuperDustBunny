@@ -26,11 +26,14 @@
 
 #ifdef PLATFORM_MAC
 #import <AddressBook/AddressBook.h>
+#import "URLRequestStore.h"
 #endif
 #ifdef PLATFORM_IPHONE
 #import "SuperDustBunnyViewController.h"
 #import <GameKit/GameKit.h>
+#import "URLRequestStore.h"
 #endif
+
 
 SScore Score;
 
@@ -202,9 +205,7 @@ void UploadChapterScore()
     [request setHTTPMethod:@"POST"];
     [request setHTTPBody:[post dataUsingEncoding:NSUTF8StringEncoding]];
     
-    NSURLResponse *response;
-    NSData* result = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil];
-    NSLog(@"HTTP post response:\n%@\n\n", [[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding]);
+    [URLRequestStore submitRequest:request];
 #endif
 }
 

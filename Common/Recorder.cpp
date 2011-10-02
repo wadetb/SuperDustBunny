@@ -21,6 +21,7 @@
 
 #ifdef PLATFORM_IPHONE_OR_MAC
 #include <sys/sysctl.h>
+#import "URLRequestStore.h"
 #endif
 
 #ifdef PLATFORM_MAC
@@ -191,15 +192,7 @@ void UploadRecording()
     [request setHTTPMethod:@"POST"];
     [request setHTTPBody:data];
     
-    // Asynchronnous:
-    [NSURLConnection connectionWithRequest:request delegate:nil];
-    
-    // Synchronous, for testing:
-//    NSURLResponse *response;
-//    NSData* result = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil];
-//    NSString* resultText = [[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding];
-//    NSLog(@"HTTP post response:\n%@\n\n", resultText);
-//    [resultText release];
+    [URLRequestStore submitRequest:request];
 #endif
     
 	free(Data);

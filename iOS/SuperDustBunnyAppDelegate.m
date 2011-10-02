@@ -12,6 +12,8 @@
 
 #import "SuperDustBunnyViewController.h"
 
+#import "URLRequestStore.h"
+
 @implementation SuperDustBunnyAppDelegate
 
 @synthesize window;
@@ -23,6 +25,8 @@
     self.window.rootViewController = self.viewController;
     
     [TestFlight takeOff:@"9d4e9280aeaa7d42ddbeb54639d7a6ef_NTU5NDIwMTEtMDktMTIgMTc6Mzg6NTEuNDk0ODA3"];
+    
+    [URLRequestStore processStoredRequests];
     
     return YES;
 }

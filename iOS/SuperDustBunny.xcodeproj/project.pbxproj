@@ -132,6 +132,8 @@
 		08D498091417EBA70022E457 /* SDBOpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D498081417EBA60022E457 /* SDBOpenGLView.m */; };
 		08D4980B1417F4450022E457 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08D4980A1417F4450022E457 /* CoreVideo.framework */; };
 		08D4980C141800FD0022E457 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856200E1346A40000F9EFBA /* Icon@2x.png */; };
+		08EBB20C14380E4E006D3EB6 /* URLRequestStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08EBB20B14380E4D006D3EB6 /* URLRequestStore.m */; };
+		08EBB20D14380E4E006D3EB6 /* URLRequestStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08EBB20B14380E4D006D3EB6 /* URLRequestStore.m */; };
 		08F44AD013FB694D00991708 /* Debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08F44ACF13FB694D00991708 /* Debug.cpp */; };
 /* End PBXBuildFile section */
 
@@ -284,6 +286,8 @@
 		08D498071417EBA60022E457 /* SDBOpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SDBOpenGLView.h; path = ../../Mac/SDBOpenGLView.h; sourceTree = "<group>"; };
 		08D498081417EBA60022E457 /* SDBOpenGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SDBOpenGLView.m; path = ../../Mac/SDBOpenGLView.m; sourceTree = "<group>"; };
 		08D4980A1417F4450022E457 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = SDKs/MacOSX10.7.sdk/System/Library/Frameworks/CoreVideo.framework; sourceTree = DEVELOPER_DIR; };
+		08EBB20A14380E4D006D3EB6 /* URLRequestStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLRequestStore.h; sourceTree = "<group>"; };
+		08EBB20B14380E4D006D3EB6 /* URLRequestStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = URLRequestStore.m; sourceTree = "<group>"; };
 		08F44ACD13FB694300991708 /* Debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Debug.h; sourceTree = "<group>"; };
 		08F44ACF13FB694D00991708 /* Debug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Debug.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -405,6 +409,8 @@
 				085AA9FC132C582C00DF32CA /* SuperDustBunnyViewController.m */,
 				085AA9FD132C582C00DF32CA /* SuperDustBunnyViewController.xib */,
 				085AA95D132C572A00DF32CA /* Frameworks */,
+				08EBB20A14380E4D006D3EB6 /* URLRequestStore.h */,
+				08EBB20B14380E4D006D3EB6 /* URLRequestStore.m */,
 			);
 			name = iOS;
 			sourceTree = "<group>";
@@ -712,6 +718,7 @@
 				08F44AD013FB694D00991708 /* Debug.cpp in Sources */,
 				08D1C6E8142108A500046259 /* LeaderboardScreen.cpp in Sources */,
 				08899BAF14295AC8008F7623 /* Ghost.cpp in Sources */,
+				08EBB20C14380E4E006D3EB6 /* URLRequestStore.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -763,6 +770,7 @@
 				089FEC1014188D2F00086B85 /* SDBWindow.m in Sources */,
 				08D1C6E9142108A500046259 /* LeaderboardScreen.cpp in Sources */,
 				08899BB014295AC8008F7623 /* Ghost.cpp in Sources */,
+				08EBB20D14380E4E006D3EB6 /* URLRequestStore.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

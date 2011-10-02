@@ -11,6 +11,8 @@
 #import "SDBWindow.h"
 #import "SDBOpenGLView.h"
 
+#import "URLRequestStore.h"
+
 @implementation SDBAppDelegate
 
 @synthesize window;
@@ -114,6 +116,8 @@
     
     //[self startupWindowed];
     [self startupFullScreen];
+    
+    [URLRequestStore processedStoredRequests];
 }
 
 @end
