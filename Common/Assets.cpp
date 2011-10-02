@@ -29,6 +29,7 @@ gxSprite AlphabetSprite;
 
 gxSprite LightFlashlightSprite;
 gxSprite LightVacuumSprite;
+gxSprite LightingSprite;
 
 gxSprite SparkSprite;
 gxSprite FlareSprite;
@@ -860,6 +861,7 @@ void LoadAssets()
 
 	LoadSpriteAsset("Assets/light-flashlight.png", &LightFlashlightSprite);
 	LoadSpriteAsset("Assets/light-vacuum.png", &LightVacuumSprite);
+	LoadSpriteAsset("Assets/lighting.png", &LightingSprite);
 
 	LoadSpriteAsset("Assets/spark.png", &SparkSprite);
 	LoadSpriteAsset("Assets/flare.png", &FlareSprite);

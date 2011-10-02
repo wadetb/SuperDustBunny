@@ -170,6 +170,8 @@ const char* LitShaderSource =
 
 const char* ShadowVertexShaderSource =
 "float2 ShadowOffset : register(c0);\n"
+"float2 ShadowScale : register(c1);\n"
+"float2 LightOrigin : register(c2);\n"
 "\n"
 "struct SVertexInput\n"
 "{\n"
@@ -187,8 +189,9 @@ const char* ShadowVertexShaderSource =
 "SVertexOutput main(SVertexInput VertexInput)\n"
 "{\n"
 "	SVertexOutput VertexOutput;\n"
-"	float2 Position = VertexInput.Position + ShadowOffset;\n"
-"	VertexOutput.Position = float4(Position.x/768.0*2-1, (1-Position.y/1024)*2-1, 0, 1);\n"
+"   float2 ShadowDir = PositionAttr - LightOrigin;\n"
+"   float2 ShadowPos = LightOrigin + ShadowDir*ShadowScale + ShadowOffset;\n"
+"	VertexOutput.Position = float4(ShadowPos.x/768.0*2.0-1.0, (1.0-ShadowPos.y/1024.0)*2.0-1.0, 0, 1);\n"
 "	VertexOutput.TexCoord0 = VertexInput.TexCoord0;\n"
 "	return VertexOutput;\n"
 "}\n";
@@ -297,6 +300,8 @@ const char* LitShaderSource =
 const char* ShadowVertexShaderSource =
 "#version 120\n"
 "uniform vec2 ShadowOffset;\n"
+"uniform vec2 ShadowScale;\n"
+"uniform vec2 LightOrigin;\n"
 "\n"
 "attribute vec2 PositionAttr;\n"
 "attribute vec2 TexCoordAttr;\n"
@@ -307,7 +312,9 @@ const char* ShadowVertexShaderSource =
 "\n"
 "void main()\n"
 "{\n"
-"	gl_Position = vec4((PositionAttr.x+ShadowOffset.x)/768.0*2.0-1.0, (1.0-(PositionAttr.y+ShadowOffset.y)/1024.0)*2.0-1.0, 0, 1);\n"
+"   vec2 ShadowDir = PositionAttr - LightOrigin;\n"
+"   vec2 ShadowPos = LightOrigin + ShadowDir*ShadowScale + ShadowOffset;\n"
+"	gl_Position = vec4(ShadowPos.x/768.0*2.0-1.0, (1.0-ShadowPos.y/1024.0)*2.0-1.0, 0, 1);\n"
 "	TexCoordInterp = TexCoordAttr;\n"
 "	ColorInterp = ColorAttr;\n"
 "}\n";
@@ -356,7 +363,6 @@ const char* EffectsShaderSource =
 const char* CombineShaderSource =
 "#version 120\n"
 "uniform sampler2D ColorSampler;\n"
-"uniform sampler2D ColorBleedSampler;\n"
 "uniform sampler2D LightingSampler;\n"
 "\n"
 "varying vec2 TexCoordInterp;\n"
@@ -401,6 +407,8 @@ const char* LitShaderSource =
 
 const char* ShadowVertexShaderSource =
 "uniform vec2 ShadowOffset;\n"
+"uniform vec2 ShadowScale;\n"
+"uniform vec2 LightOrigin;\n"
 "\n"
 "attribute vec2 PositionAttr;\n"
 "attribute vec2 TexCoordAttr;\n"
@@ -411,7 +419,9 @@ const char* ShadowVertexShaderSource =
 "\n"
 "void main()\n"
 "{\n"
-"	gl_Position = vec4((PositionAttr.x+ShadowOffset.x)/768.0*2.0-1.0, (1.0-(PositionAttr.y+ShadowOffset.y)/1024.0)*2.0-1.0, 0, 1);\n"
+"   vec2 ShadowDir = PositionAttr - LightOrigin;\n"
+"   vec2 ShadowPos = LightOrigin + ShadowDir*ShadowScale + ShadowOffset;\n"
+"	gl_Position = vec4(ShadowPos.x/768.0*2.0-1.0, (1.0-ShadowPos.y/1024.0)*2.0-1.0, 0, 1);\n"
 "	TexCoordInterp = TexCoordAttr;\n"
 "	ColorInterp = ColorAttr;\n"
 "}\n";
@@ -456,7 +466,6 @@ const char* EffectsShaderSource =
 
 const char* CombineShaderSource =
 "uniform lowp sampler2D ColorSampler;\n"
-"uniform lowp sampler2D ColorBleedSampler;\n"
 "uniform lowp sampler2D LightingSampler;\n"
 "\n"
 "varying lowp vec2 TexCoordInterp;\n"
@@ -474,6 +483,8 @@ const char* CombineShaderSource =
 gxShader LitShader;
 
 gxShaderConstant ShadowShadowOffset;
+gxShaderConstant ShadowShadowScale;
+gxShaderConstant ShadowLightOrigin;
 gxShaderConstant ShadowShadowAlpha;
 gxShaderConstant ShadowSampler;
 
@@ -629,7 +640,7 @@ static void InitShadows()
 #endif
 }
 
-static void DrawShadows(ELightList List, gxSprite* FinalRT, float ShadowOffsetX, float ShadowOffsetY)
+static void DrawShadows(ELightList List, gxSprite* FinalRT)
 {
     if (FinalRT != &ColorRT)
     {
@@ -638,7 +649,18 @@ static void DrawShadows(ELightList List, gxSprite* FinalRT, float ShadowOffsetX,
     }
 
     gxSetShader(&ShadowShader);
-    gxSetShaderConstant2(ShadowShadowOffset, ShadowOffsetX, ShadowOffsetY);
+    if (Chapter.Name)
+    {
+        gxSetShaderConstant2(ShadowShadowOffset, Chapter.PageProps.ShadowOffsetX, Chapter.PageProps.ShadowOffsetY);
+        gxSetShaderConstant2(ShadowShadowScale, Chapter.PageProps.ShadowScaleX, Chapter.PageProps.ShadowScaleY);
+        gxSetShaderConstant2(ShadowLightOrigin, Chapter.PageProps.LightOriginX, Chapter.PageProps.LightOriginY);
+    }
+    else
+    {
+        gxSetShaderConstant2(ShadowShadowOffset, 30, 20);
+        gxSetShaderConstant2(ShadowShadowScale, 1.0f, 1.0f);
+        gxSetShaderConstant2(ShadowLightOrigin, 384.0f, 512.0f);
+    }
     gxSetShaderConstant1(ShadowShadowAlpha, 128.0f/255.0f);
     
     DrawLightList(List, NULL, GXALPHA_BLEND);
@@ -674,6 +696,8 @@ void InitLighting()
         
     gxCreateShader(ShadowVertexShaderSource, ShadowShaderSource, &ShadowShader);
     ShadowShadowOffset = gxGetShaderConstantByName(&ShadowShader, "ShadowOffset");
+    ShadowShadowScale = gxGetShaderConstantByName(&ShadowShader, "ShadowScale");
+    ShadowLightOrigin = gxGetShaderConstantByName(&ShadowShader, "LightOrigin");
     ShadowShadowAlpha = gxGetShaderConstantByName(&ShadowShader, "ShadowAlpha");
     ShadowSampler = gxGetShaderConstantByName(&ShadowShader, "Sampler");
         
@@ -796,6 +820,8 @@ void InitLighting()
         
         gxCreateShader(ShadowVertexShaderSource, ShadowShaderSource, &ShadowShader);
         ShadowShadowOffset = gxGetShaderConstantByName(&ShadowShader, "ShadowOffset");
+        ShadowShadowScale = gxGetShaderConstantByName(&ShadowShader, "ShadowScale");
+        ShadowLightOrigin = gxGetShaderConstantByName(&ShadowShader, "LightOrigin");
         ShadowShadowAlpha = gxGetShaderConstantByName(&ShadowShader, "ShadowAlpha");
         ShadowSampler = gxGetShaderConstantByName(&ShadowShader, "Sampler");
         
@@ -874,6 +900,14 @@ void ResetLighting()
 	{
 		LightLists[i].NQuads = 0;
 	}
+    
+	if (Chapter.PageProps.LightsOff)
+		LightState.AmbientColor = gxRGBA32(16, 16, 16, 255);
+	else
+		LightState.AmbientColor = gxRGBA32(128, 128, 128, 255);
+
+    AddLitSpriteSizedColor(LIGHTLIST_LIGHTING, &WhiteSprite, 0, 0, 768, LitScreenHeight, LightState.AmbientColor);
+    //AddLitSpriteSizedColor(LIGHTLIST_LIGHTING, &LightingSprite, 0, 0, 768, LitScreenHeight, LightState.AmbientColor);
 }
 
 void RenderLighting()
@@ -897,11 +931,6 @@ void RenderLighting()
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
     //                                                   Set up lighting globals                                                               //
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	if (Chapter.PageProps.LightsOff)
-		LightState.AmbientColor = gxRGBA32(16, 16, 16, 255);
-	else
-		LightState.AmbientColor = gxRGBA32(128, 128, 128, 255);
-
 #ifdef PLATFORM_IPHONE_OR_MAC
     // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
     //                                                         OpenGL ES 1.1 Renderer                                                          //
@@ -947,7 +976,7 @@ void RenderLighting()
         //                                                   Build lighting                                                                        //
         // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
         gxSetRenderTarget(&LightingRT);
-        gxClearColor(LightState.AmbientColor);
+//        gxClearColor(gxRGBA32(0, 0, 0, 0));
         
         DrawLightList(LIGHTLIST_LIGHTING, &LitShader, GXALPHA_ADD);
         
@@ -966,7 +995,7 @@ void RenderLighting()
         DrawLightList(LIGHTLIST_BACKGROUND, &LitShader, GXALPHA_NONE);
         
         // Foreground shadows.
-        DrawShadows(LIGHTLIST_FOREGROUND, &ColorRT, 30, 20);
+        DrawShadows(LIGHTLIST_FOREGROUND, &ColorRT);
         
         // Dust layer.        
         DrawLightList(LIGHTLIST_DUST, &LitShader, GXALPHA_BLEND);
@@ -974,7 +1003,7 @@ void RenderLighting()
         DrawLightList(LIGHTLIST_FOREGROUND_NO_SHADOW, &LitShader, GXALPHA_BLEND);
         
         // Vacuum shadows.
-        DrawShadows(LIGHTLIST_VACUUM, &ColorRT, 30, 20);
+        DrawShadows(LIGHTLIST_VACUUM, &ColorRT);
         
         // Smoke.
         DrawLightList(LIGHTLIST_SMOKE, &LitShader, GXALPHA_BLEND);
@@ -1154,6 +1183,15 @@ void AddLitSpriteScaled(ELightList List, gxSprite* Sprite, float X, float Y, flo
 void AddLitSpriteAlpha(ELightList List, gxSprite* Sprite, float X, float Y, float Alpha)
 {
 	AddLitQuad(List, Sprite, gxRGBA32(255,255,255,(int)(255*Alpha)),
+               X,               Y,                0.0f, 0.0f, 
+               X+Sprite->width, Y,                1.0f, 0.0f,
+               X+Sprite->width, Y+Sprite->height, 1.0f, 1.0f, 
+               X,               Y+Sprite->height, 0.0f, 1.0f);
+}
+
+void AddLitSpriteColor(ELightList List, gxSprite* Sprite, float X, float Y, unsigned int Color)
+{
+	AddLitQuad(List, Sprite, Color,
                X,               Y,                0.0f, 0.0f, 
                X+Sprite->width, Y,                1.0f, 0.0f,
                X+Sprite->width, Y+Sprite->height, 1.0f, 1.0f, 

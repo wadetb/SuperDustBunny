@@ -84,6 +84,12 @@ static void InitPageProperties(SPageProperties* Props)
 	Props->VacuumStart = 100000000;
     Props->VacuumSpeed = 0.75f;
     Props->GhostRace = false;
+    Props->ShadowOffsetX = 30;
+    Props->ShadowOffsetY = 20;
+    Props->ShadowScaleX = 1.0f;
+    Props->ShadowScaleY = 1.0f;
+    Props->LightOriginX = 384.0f;
+    Props->LightOriginY = 512.0f;
 }
 
 static void ParsePageProperties(SPageProperties* Props, rapidxml::xml_node<char>* PropertiesNode)
@@ -138,6 +144,21 @@ static void ParsePageProperties(SPageProperties* Props, rapidxml::xml_node<char>
 				Props->GhostRace = false;
 			else
 				ReportError("'%s' is not a valid value for the 'ghost_race' property.  The value must be 'on' or 'off'.  Fix this problem and re-save the TMX file.", Value);
+		}
+		else if (strcmp(Name, "shadow_offset") == 0)
+		{
+            Props->ShadowOffsetX = strtof(Value, (char**)&Value);
+            Props->ShadowOffsetY = strtof(Value, (char**)&Value);
+		}
+		else if (strcmp(Name, "shadow_scale") == 0)
+		{
+            Props->ShadowScaleX = strtof(Value, (char**)&Value);
+            Props->ShadowScaleY = strtof(Value, (char**)&Value);
+		}
+		else if (strcmp(Name, "light_origin") == 0)
+		{
+            Props->LightOriginX = strtof(Value, (char**)&Value);
+            Props->LightOriginY = strtof(Value, (char**)&Value);
 		}
 		else
 			ReportError("'%s' is not a valid map property (value is '%s').  Fix this problem and re-save the TMX file.", Name, Value);

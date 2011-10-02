@@ -109,6 +109,12 @@ struct SPageProperties
     int VacuumStart;
     float VacuumSpeed;
     bool GhostRace;
+    float ShadowOffsetX;
+    float ShadowOffsetY;
+    float ShadowScaleX;
+    float ShadowScaleY;
+    float LightOriginX;
+    float LightOriginY;
 };
 
 struct SPageLayer

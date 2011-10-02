@@ -22,6 +22,7 @@ extern gxSprite AlphabetSprite;
 
 extern gxSprite LightFlashlightSprite;
 extern gxSprite LightVacuumSprite;
+extern gxSprite LightingSprite;
 
 extern gxSprite SparkSprite;
 extern gxSprite FlareSprite;

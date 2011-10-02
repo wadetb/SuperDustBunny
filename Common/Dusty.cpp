@@ -1293,12 +1293,12 @@ static void UpdateDusty_Launch()
 
 void SetDustyState_Die(EDeathType Death)
 {
-    if (Dusty.Death == DEATH_VACUUM)
+    if (Death == DEATH_VACUUM)
     {
         Dusty.FloatVelocityX = Dusty.FloatX > Vacuum.X ? -15.0f : 15.0f;
         Dusty.FloatVelocityY = -30;
     }
-    if (Dusty.Death == DEATH_GHOST)
+    if (Death == DEATH_GHOST)
     {
         Dusty.FloatVelocityX = 0;
         Dusty.FloatVelocityY = -10;        
