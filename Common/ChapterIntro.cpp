@@ -66,7 +66,7 @@ void DisplayChapterIntro()
 static void ChapterIntro_Advance()
 {
     if (!Chapter.PageProps.VacuumOff)
-        TurnOnVacuum(0, 2.0f);
+        TurnOnVacuum(500, 2.0f, false);
 
 	Dusty.NoCollision = false;
 	RemoteControl.Enabled = false;

@@ -124,18 +124,24 @@ void UpdateDust()
 		}
 
 		// If it's gone off the bottom of the screen, reintroduce it at the top.
-		if (Mote->Y + ScrollY*Mote->Depth > LitScreenHeight + 50)
+		if (Mote->Y + ScrollY > LitScreenHeight + 50)
 		{
 			Recycle = true;
 			Mote->Y = Random(-100.0f, 100.0f) - (float)ScrollY;
 		}
 
 		// If it's gone off the top of the screen, reintroduce it at the bottom.
-		if (Mote->Y + ScrollY*Mote->Depth < -50)
+		if (Mote->Y + ScrollY < -50)
 		{
 			Recycle = true;
 			Mote->Y = Random(LitScreenHeight-100.0f, LitScreenHeight+100.0f) - (float)ScrollY;
 		}
+
+        if (Vacuum.State == VACUUMSTATE_ONSCREEN && Distance(Mote->X, Mote->Y, Vacuum.X, Vacuum.Y) < 100)
+        {
+			Recycle = true;            
+			Mote->Y = Random(0.0f, (float)LitScreenHeight) - (float)ScrollY;
+        }        
 
 		// Recycle this dust mote with new parameters if requested.
 		if (Recycle)

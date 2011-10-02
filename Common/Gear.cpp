@@ -161,7 +161,7 @@ void UpdateGear()
 				Gear->FloatVelocityX = -Gear->FloatVelocityX;
 			}
 			
-			if (IsInVacuum(Gear->Y))
+			if (IsInVacuum(Gear->X, Gear->Y))
             {
                 Gear->State = GEARSTATE_INACTIVE;
                 sxPlaySound (&VacuumClogSound);

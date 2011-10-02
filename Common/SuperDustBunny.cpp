@@ -623,6 +623,7 @@ static void UpdateGame_Playing()
         UpdateLives();
         UpdateStaplers();
         UpdatePowerUp();
+        UpdateVacuumTriggers();
     }
 
     UpdateDust();

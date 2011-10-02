@@ -80,6 +80,7 @@ static void InitPageProperties(SPageProperties* Props)
 {
 	Props->LightsOff = false;
 	Props->VacuumOff = false;
+    Props->VacuumType = VACUUM_NORMAL;
 	Props->VacuumDir = VACUUMDIR_UP;
 	Props->VacuumStart = 100000000;
     Props->VacuumSpeed = 0.75f;
@@ -118,6 +119,15 @@ static void ParsePageProperties(SPageProperties* Props, rapidxml::xml_node<char>
 				Props->VacuumOff = false;
 			else
 				ReportError("'%s' is not a valid value for the 'vacuum' property.  The value must be 'on' or 'off'.  Fix this problem and re-save the TMX file.", Value);
+		}
+		else if (strcmp(Name, "vacuum_type") == 0)
+		{
+			if (strcmp(Value, "normal") == 0)
+				Props->VacuumType = VACUUM_NORMAL;
+			else if (strcmp(Value, "dustbuster") == 0)
+				Props->VacuumType = VACUUM_DUSTBUSTER;
+			else
+				ReportError("'%s' is not a valid value for the 'vacuum_type' property.  The value must be 'normal' or 'dustbuster'.  Fix this problem and re-save the TMX file.", Value);
 		}
 		else if (strcmp(Name, "vacuum_dir") == 0)
 		{
@@ -347,6 +357,10 @@ static void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* F
                     {
                         Block->Type = BLOCKTYPE_TUTORIAL;
                     }
+                    else if (strcmp(Value, "vacuum_trigger") == 0)
+                    {
+                        Block->Type = BLOCKTYPE_VACUUM_TRIGGER;
+                    }
 				}
 				else if (strcmp(Name, "material") == 0)
 				{
@@ -403,6 +417,10 @@ static void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* F
 			else if (Block->Type == BLOCKTYPE_TUTORIAL)
 			{
 				ParseTutorialProperties(Block, PropertiesNode);
+			}
+			else if (Block->Type == BLOCKTYPE_VACUUM_TRIGGER)
+			{
+				ParseVacuumTriggerProperties(Block, PropertiesNode);
 			}
 			else
 			{
@@ -837,6 +855,7 @@ static void ClearPageObjects()
 	ClearFlashlightWaypoints();
 	ClearPowerUps();
     ClearTutorials();
+    ClearVacuumTriggers();
 
 	if (Chapter.PageBlocks)
 	{
@@ -927,6 +946,10 @@ static void CreatePageObjects()
                     CreateTutorial(x * 64, y * 64, (STutorialProperties*)Block->Properties);
                     EraseBlock(x, y);
                     break;
+                case BLOCKTYPE_VACUUM_TRIGGER:
+                    CreateVacuumTrigger(x * 64, y * 64, (SVacuumTriggerProperties*)Block->Properties);
+                    EraseBlock(x, y);
+                    break;
                 default:
                     break;
 				}
@@ -954,7 +977,7 @@ static void CreatePageObjects()
         CreatePowerUp(Dusty.FloatX + 192, Dusty.FloatY - 320);
 
     if (!Chapter.PageProps.VacuumOff)
-        TurnOnVacuum(0, 2.0f);
+        TurnOnVacuum(500, 2.0f, false);
 }
 
 void SetCurrentPage(int PageNum)

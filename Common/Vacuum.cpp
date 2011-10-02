@@ -16,6 +16,7 @@
 
 
 #define MAX_VACUUM_QUEUE_NODES 1000
+#define MAX_VACUUM_TRIGGERS 50
 
 
 struct SVacuumQueueNode
@@ -23,6 +24,19 @@ struct SVacuumQueueNode
     int X, Y;
     int Force;
     int Next;
+};
+
+struct SVacuumTriggerProperties
+{
+    EVacuumDir Direction;
+    EVacuumSide Side;
+};
+
+struct SVacuumTrigger
+{
+    float X, Y;
+    SVacuumTriggerProperties* Props;
+    bool Active;
 };
 
 
@@ -39,6 +53,9 @@ const int VACUUM_UNJAM_TIME   = 1*60;
 
 const float VacuumYOffset = 100;
 
+int NVacuumTriggers;
+SVacuumTrigger VacuumTriggers[MAX_VACUUM_TRIGGERS];
+
 
 static void RestartVacuumForceMap();
 static void UpdateVacuumForceMap();
@@ -46,7 +63,9 @@ static void UpdateVacuumForceMap();
 
 void InitVacuum()
 {
+    Vacuum.Type = (EVacuumType)Chapter.PageProps.VacuumType;
 	Vacuum.Dir = (EVacuumDir)Chapter.PageProps.VacuumDir;
+    Vacuum.Side = VACUUMSIDE_LEFT;
 
     Vacuum.X = 384;
     if (Vacuum.Dir == VACUUMDIR_UP)
@@ -57,6 +76,8 @@ void InitVacuum()
 	Vacuum.State = VACUUMSTATE_OFF;
 	Vacuum.Volume = 0.5f;
 
+    Vacuum.Charging = false;
+    
     if (Vacuum.ForceMap)
         free(Vacuum.ForceMap);
     if (Vacuum.NextForceMap)
@@ -93,36 +114,57 @@ void DisplayVacuum()
  	if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
         gxSprite* Sprite;
-        
         float LightsAlpha = 1.0f;
 
-        if (Vacuum.State == VACUUMSTATE_RETREAT)
-            Sprite = &Vacuum3Sprite;
-        else
+        if (Vacuum.Type == VACUUM_NORMAL)
         {
-            switch (Vacuum.BlinkTimer/6)
+            if (Vacuum.State == VACUUMSTATE_RETREAT)
+                Sprite = &Vacuum3Sprite;
+            else
             {
-                case 0: Sprite = &Vacuum1Sprite; break;
-                case 1: Sprite = &Vacuum2Sprite; LightsAlpha = 0.75f; break;
-                case 2: Sprite = &Vacuum3Sprite; LightsAlpha = 0.5f; break;
-                case 3: Sprite = &Vacuum2Sprite; LightsAlpha = 0.75f; break;
-                case 4: Sprite = &Vacuum1Sprite; break;
-                default: Sprite = &Vacuum1Sprite; break;
+                switch (Vacuum.BlinkTimer/6)
+                {
+                    case 0: Sprite = &Vacuum1Sprite; break;
+                    case 1: Sprite = &Vacuum2Sprite; LightsAlpha = 0.75f; break;
+                    case 2: Sprite = &Vacuum3Sprite; LightsAlpha = 0.5f; break;
+                    case 3: Sprite = &Vacuum2Sprite; LightsAlpha = 0.75f; break;
+                    case 4: Sprite = &Vacuum1Sprite; break;
+                    default: Sprite = &Vacuum1Sprite; break;
+                }
+            }
+            
+            if (Vacuum.Dir == VACUUMDIR_UP)
+                AddLitSpriteScaled(LIGHTLIST_VACUUM, Sprite, Vacuum.X - Sprite->width/2 + ScrollX, Vacuum.Y + ScrollY - VacuumYOffset, 1.0f, 1.0f);
+            else
+                AddLitSpriteScaled(LIGHTLIST_VACUUM, Sprite, Vacuum.X - Sprite->width/2 + ScrollX, Vacuum.Y + ScrollY + VacuumYOffset, 1.0f, -1.0f);
+
+            if (Chapter.PageProps.LightsOff)
+            {
+                if (Vacuum.Dir == VACUUMDIR_UP)
+                {
+                    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightVacuumSprite, Vacuum.X + ScrollX, Vacuum.Y + ScrollY - 384, 1.0f, LightsAlpha);
+                }
             }
         }
-        
-		if (Vacuum.Dir == VACUUMDIR_UP)
-			AddLitSpriteScaled(LIGHTLIST_VACUUM, Sprite, Vacuum.X - Sprite->width/2 + ScrollX, Vacuum.Y + ScrollY - VacuumYOffset, 1.0f, 1.0f);
-		else
-			AddLitSpriteScaled(LIGHTLIST_VACUUM, Sprite, Vacuum.X - Sprite->width/2 + ScrollX, Vacuum.Y + ScrollY + VacuumYOffset, 1.0f, -1.0f);
-
-		if (Chapter.PageProps.LightsOff)
-		{
-			if (Vacuum.Dir == VACUUMDIR_UP)
-			{
-				AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightVacuumSprite, Vacuum.X + ScrollX, Vacuum.Y + ScrollY - 384, 1.0f, LightsAlpha);
-			}
-		}
+        else if (Vacuum.Type == VACUUM_DUSTBUSTER)
+        {
+            gxSprite* Sprite = &DustBusterSprite;
+            
+            if (Vacuum.Side == VACUUMSIDE_LEFT)
+            {
+                if (Vacuum.Dir == VACUUMDIR_UP)
+                    AddLitSpriteScaled(LIGHTLIST_VACUUM, Sprite, Vacuum.X+140 + ScrollX, Vacuum.Y+560 + ScrollY, -1.0f, -1.0f);
+                else
+                    AddLitSpriteScaled(LIGHTLIST_VACUUM, Sprite, Vacuum.X+140 + ScrollX, Vacuum.Y-560 + ScrollY, -1.0f, 1.0f);
+            }
+            else
+            {
+                if (Vacuum.Dir == VACUUMDIR_UP)
+                    AddLitSpriteScaled(LIGHTLIST_VACUUM, Sprite, Vacuum.X-140 + ScrollX, Vacuum.Y+560 + ScrollY, 1.0f, -1.0f);
+                else
+                    AddLitSpriteScaled(LIGHTLIST_VACUUM, Sprite, Vacuum.X-140 + ScrollX, Vacuum.Y-560 + ScrollY, 1.0f, 1.0f);
+            }
+        }
 	}
     
 	if (DevMode)
@@ -188,6 +230,22 @@ static void CreateVacuumSmoke(int Count)
     CreateSmoke(384.0f, SmokeY, Count);
 }
 
+static float GetVacuumTargetX()
+{
+    if (Vacuum.Type == VACUUM_NORMAL)
+    {
+        return 384 - ScrollX;
+    }
+    else if (Vacuum.Type == VACUUM_DUSTBUSTER)
+    {
+        if (Vacuum.Side == VACUUMSIDE_LEFT)                    
+            return 192 - ScrollX;
+        else
+            return 576 - ScrollX;
+    }
+    return 0.0f;
+}
+
 void UpdateVacuum()
 {
 #ifdef PLATFORM_WINDOWS
@@ -212,18 +270,28 @@ void UpdateVacuum()
 		{
 			// The vacuum gets faster the longer it stays unclogged.
 			float VacuumSpeed;
-            if (Vacuum.Timer < 0)
-                VacuumSpeed = 0;
-			else if (Vacuum.Timer < 4*60)
-				VacuumSpeed = 3.0f * Chapter.PageProps.VacuumSpeed;
-			else if (Vacuum.Timer < 8*60)
-				VacuumSpeed = 3.5f * Chapter.PageProps.VacuumSpeed;
-			else
-				VacuumSpeed = 6.0f * Chapter.PageProps.VacuumSpeed;
+            if (Vacuum.Charging)
+            {
+                if (Vacuum.Timer < 0)
+                    VacuumSpeed = 0;
+                else
+                    VacuumSpeed = 15.0f;
+            }
+            else
+            {
+                if (Vacuum.Timer < 0)
+                    VacuumSpeed = 0;
+                else if (Vacuum.Timer < 4*60)
+                    VacuumSpeed = 3.0f * Chapter.PageProps.VacuumSpeed;
+                else if (Vacuum.Timer < 8*60)
+                    VacuumSpeed = 3.5f * Chapter.PageProps.VacuumSpeed;
+                else
+                    VacuumSpeed = 6.0f * Chapter.PageProps.VacuumSpeed;
+            }
 
 			Vacuum.Timer++;
 
-            Vacuum.X = Vacuum.X * 0.8f + (384 - ScrollX) * 0.2f;
+            Vacuum.X = Vacuum.X*0.8f + GetVacuumTargetX()*0.2f;
             
 			// Move the vacuum gradually up the screen.
 			if (Vacuum.Dir == VACUUMDIR_UP)
@@ -231,7 +299,7 @@ void UpdateVacuum()
 			else
 				Vacuum.Y += VacuumSpeed;
 
-			if (IsInVacuum(Dusty.FloatY))
+			if (IsInVacuum(Dusty.FloatX, Dusty.FloatY))
 			{
 				SetDustyState_Die(DEATH_VACUUM);
 			}
@@ -312,37 +380,45 @@ void TurnOffVacuum()
     LitSceneZoom = 1.0f;
 }
 
-void TurnOnVacuum(float InitialDistance, float DelayBeforeMoving)
+void TurnOnVacuum(float InitialDistance, float DelayBeforeMoving, bool Charging)
 {
-	if (Vacuum.State == VACUUMSTATE_OFF)
-	{
-        Vacuum.State = VACUUMSTATE_ONSCREEN;
+    Vacuum.State = VACUUMSTATE_ONSCREEN;
 
-        Vacuum.Timer = -(int)(DelayBeforeMoving*60);
-        int LightsOffset = Chapter.PageProps.LightsOff ? 768 : 0;
-        
-        Vacuum.X = 384 - ScrollX;
-        
-        // Vacuum.Y is the leading edge of the vacuum.
-        if (Vacuum.Dir == VACUUMDIR_UP)
-            Vacuum.Y = (float)-ScrollY + InitialDistance + LitScreenHeight + VacuumYOffset + LightsOffset;
-        else
-            Vacuum.Y = (float)-ScrollY - InitialDistance - VacuumYOffset - LightsOffset;
+    Vacuum.Timer = -(int)(DelayBeforeMoving*60);
+    int LightsOffset = Chapter.PageProps.LightsOff ? 768 : 0;
+    
+    Vacuum.X = GetVacuumTargetX();
+    
+    // Vacuum.Y is the leading edge of the vacuum.
+    if (Vacuum.Dir == VACUUMDIR_UP)
+        Vacuum.Y = (float)-ScrollY + InitialDistance + LitScreenHeight + LightsOffset;
+    else
+        Vacuum.Y = (float)-ScrollY - InitialDistance - LightsOffset;
 
-		sxSetSoundVolume(&VacuumTurnOnSound, 0);
-		sxPlaySound(&VacuumTurnOnSound);
-	}
+    Vacuum.Charging = Charging;
+    
+//    sxSetSoundVolume(&VacuumTurnOnSound, 0);
+//    sxPlaySound(&VacuumTurnOnSound);
 }
 
-bool IsInVacuum(float Y)
+bool IsInVacuum(float X, float Y)
 {
     if (Vacuum.State != VACUUMSTATE_ONSCREEN)
         return false;
     
-	if (Vacuum.Dir == VACUUMDIR_UP)
-		return Y >= Vacuum.Y;
-	else
-		return Y <= Vacuum.Y;
+    if (Vacuum.Type == VACUUM_NORMAL)
+    {
+        if (Vacuum.Dir == VACUUMDIR_UP)
+            return Y >= Vacuum.Y;
+        else
+            return Y <= Vacuum.Y;
+    }
+    else if (Vacuum.Type == VACUUM_DUSTBUSTER)
+    {
+        return Distance(X, Y, Vacuum.X, Vacuum.Y) <= 250;
+    }
+    
+    return false;
 }
 
 #ifdef PLATFORM_WINDOWS
@@ -522,8 +598,8 @@ void GetVacuumForce(float X, float Y, float* VX, float* VY, float Strength, bool
                 float DirX = (float)( TX - CurX );
                 float DirY = (float)( TY - CurY );
 
-                TotalVX += DirX * Force*(Force-BaseForce) / 50.0f;
-                TotalVY += DirY * Force*(Force-BaseForce) / 50.0f;
+                TotalVX += DirX * Force*(Force-BaseForce) / 80.0f;
+                TotalVY += DirY * Force*(Force-BaseForce) / 80.0f;
             }
         }
 
@@ -563,3 +639,85 @@ void GetVacuumForce(float X, float Y, float* VX, float* VY, float Strength, bool
 	    *VY = DirY * AttenuatedStrength;
     }
 }
+
+void ParseVacuumTriggerProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode)
+{
+	SVacuumTriggerProperties* Props = (SVacuumTriggerProperties*)malloc(sizeof(SVacuumTriggerProperties));
+    
+    Props->Direction = VACUUMDIR_UP;
+    Props->Side = VACUUMSIDE_LEFT;
+    
+	rapidxml::xml_node<char>* PropertyNode = PropertiesNode->first_node("property");
+	while (PropertyNode)
+	{
+		const char* Name = PropertyNode->first_attribute("name")->value();
+		const char* ConstValue = PropertyNode->first_attribute("value")->value();
+        
+		if (strcmp(Name, "direction") == 0)
+		{
+            if (strcmp(ConstValue, "up") == 0)
+                Props->Direction = VACUUMDIR_UP;
+            else if (strcmp(ConstValue, "down") == 0)
+                Props->Direction = VACUUMDIR_DOWN;
+            else
+                ReportError("Unknown value '%s' for vacuum trigger 'direction' property; allowed values are 'up' and 'down'.  Fix this and re-save the TMX file.", ConstValue);
+        }
+		else if (strcmp(Name, "side") == 0)
+		{
+            if (strcmp(ConstValue, "left") == 0)
+                Props->Side = VACUUMSIDE_LEFT;
+            else if (strcmp(ConstValue, "right") == 0)
+                Props->Side = VACUUMSIDE_RIGHT;
+            else
+                ReportError("Unknown value '%s' for vacuum trigger 'side' property; allowed values are 'left' and 'right'.  Fix this and re-save the TMX file.", ConstValue);
+        }
+        
+		PropertyNode = PropertyNode->next_sibling("property");
+	}
+    
+	Block->Properties = Props;
+}
+
+void CreateVacuumTrigger(int X, int Y, SVacuumTriggerProperties* Props)
+{
+	if (NVacuumTriggers >= MAX_VACUUM_TRIGGERS)
+		ReportError("Exceeded the maximum of %d total vacuum triggers.", MAX_VACUUM_TRIGGERS);
+    
+	SVacuumTrigger* Trigger = &VacuumTriggers[NVacuumTriggers++];
+    
+    Trigger->Props = Props;
+    
+	Trigger->X = (float)X + 32;
+	Trigger->Y = (float)Y + 32;
+    
+    Trigger->Active = true;
+}
+
+void ClearVacuumTriggers()
+{
+	NVacuumTriggers = 0;
+}
+
+void UpdateVacuumTriggers()
+{
+    for (int i = 0; i < NVacuumTriggers; i++)
+    {
+        SVacuumTrigger* Trigger = &VacuumTriggers[i];
+        if (!Trigger->Active)
+            continue;
+        
+        if (Dusty.FloatY <= Trigger->Y)
+        {
+//            float ScreenDist = (Vacuum.Y + ScrollY) - LitScreenHeight/2;
+//            if (ScreenDist > LitScreenHeight/2 + 256)
+            {            
+                Vacuum.Dir = Trigger->Props->Direction;
+                Vacuum.Side = Trigger->Props->Side;
+                TurnOnVacuum(400, 2.0f, true);
+            }
+            
+            Trigger->Active = false;
+        }
+    }
+}
+

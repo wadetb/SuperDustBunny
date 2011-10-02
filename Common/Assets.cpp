@@ -141,6 +141,8 @@ gxSprite Vacuum2Sprite;
 gxSprite Vacuum3Sprite;
 gxSprite VacuumSmokeSprite;
 
+gxSprite DustBusterSprite;
+
 gxSprite ScreenStart1Sprite;
 gxSprite ScreenStart2Sprite;
 gxSprite ScreenHelp1Sprite;
@@ -973,6 +975,8 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/vacuum-2.png", &Vacuum2Sprite);
 	LoadSpriteAsset("Assets/vacuum-3.png", &Vacuum3Sprite);
 	LoadSpriteAsset("Assets/vacuum-smoke.png", &VacuumSmokeSprite);
+    
+	LoadSpriteAsset("Assets/dustbuster.png", &DustBusterSprite);
 
 	LoadSpriteAsset("Assets/screen-start-1.png", &ScreenStart1Sprite);
 	LoadSpriteAsset("Assets/screen-start-2.png", &ScreenStart2Sprite);

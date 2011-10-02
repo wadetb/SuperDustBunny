@@ -335,10 +335,6 @@ void gxCreateShader(const char* VertexSource, const char* PixelSource, gxShader*
     glBindAttribLocation(Shader->Program, GX_ATTRIB_VERTEX, "PositionAttr");
     glBindAttribLocation(Shader->Program, GX_ATTRIB_COLOR, "ColorAttr");
     glBindAttribLocation(Shader->Program, GX_ATTRIB_TEXCOORD, "TexCoordAttr");   
-
-#if TARGET_OS_MAC && !TARGET_OS_IPHONE
-    glBindFragDataLocationEXT(Shader->Program, 0, "Color");
-#endif
     
     glLinkProgram(Shader->Program);
     

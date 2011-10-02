@@ -51,6 +51,7 @@ enum EBlockType
 	BLOCKTYPE_CLOTHESPIN, 
 	BLOCKTYPE_POWERUP,
     BLOCKTYPE_TUTORIAL,
+    BLOCKTYPE_VACUUM_TRIGGER,
 };
 
 enum EBlockMaterial
@@ -105,6 +106,7 @@ struct SPageProperties
 {
 	bool LightsOff;
 	bool VacuumOff;
+    int VacuumType;
 	int VacuumDir;
     int VacuumStart;
     float VacuumSpeed;

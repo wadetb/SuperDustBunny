@@ -306,7 +306,7 @@ void UpdateTutorial()
                         Tutorial->PauseTimer = 5.0f;
 
                         Chapter.PageProps.VacuumOff = false;
-                        TurnOnVacuum(600, 2.0f);
+                        TurnOnVacuum(600, 2.0f, false);
                     }
                 }
             }
