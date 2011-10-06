@@ -157,18 +157,18 @@ static void ParsePageProperties(SPageProperties* Props, rapidxml::xml_node<char>
 		}
 		else if (strcmp(Name, "shadow_offset") == 0)
 		{
-            Props->ShadowOffsetX = strtof(Value, (char**)&Value);
-            Props->ShadowOffsetY = strtof(Value, (char**)&Value);
+            Props->ShadowOffsetX = strtof((char*)Value, (char**)&Value);
+            Props->ShadowOffsetY = strtof((char*)Value, (char**)&Value);
 		}
 		else if (strcmp(Name, "shadow_scale") == 0)
 		{
-            Props->ShadowScaleX = strtof(Value, (char**)&Value);
-            Props->ShadowScaleY = strtof(Value, (char**)&Value);
+            Props->ShadowScaleX = strtof((char*)Value, (char**)&Value);
+            Props->ShadowScaleY = strtof((char*)Value, (char**)&Value);
 		}
 		else if (strcmp(Name, "light_origin") == 0)
 		{
-            Props->LightOriginX = strtof(Value, (char**)&Value);
-            Props->LightOriginY = strtof(Value, (char**)&Value);
+            Props->LightOriginX = strtof((char*)Value, (char**)&Value);
+            Props->LightOriginY = strtof((char*)Value, (char**)&Value);
 		}
 		else
 			ReportError("'%s' is not a valid map property (value is '%s').  Fix this problem and re-save the TMX file.", Name, Value);

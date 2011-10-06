@@ -102,6 +102,8 @@ struct SErrorContext
 int NErrorContexts = 0;
 SErrorContext ErrorContexts[MAX_ERROR_CONTEXT];
 
+bool InErrorHandler = false;
+
 void PushErrorContext(const char* ErrorContext, ...)
 {
 	if (NErrorContexts >= MAX_ERROR_CONTEXT)
@@ -127,6 +129,8 @@ void PopErrorContext()
 
 void ReportError(const char* ErrorMessage, ...)
 {
+    InErrorHandler = true;
+
 	char ErrorContext[8192];
 	char TotalMessage[8192];
 	int MessageSize = 0;
@@ -149,6 +153,7 @@ void ReportError(const char* ErrorMessage, ...)
 	snprintf(TotalMessage, sizeof(TotalMessage), "%s%s", ErrorContext, Work);
     
 #ifdef PLATFORM_WINDOWS
+    OutputDebugString(TotalMessage);
 	MessageBox(NULL, TotalMessage, "SuperDustBunny Error", MB_OK | MB_ICONSTOP);
 	exit(1);
 #endif
@@ -190,6 +195,8 @@ void ReportError(const char* ErrorMessage, ...)
     
     exit(255);
 #endif
+
+    InErrorHandler = false;
 }
 
 void LogMessage(const char* LogMessage, ...)

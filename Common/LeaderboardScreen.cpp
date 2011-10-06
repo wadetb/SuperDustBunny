@@ -292,7 +292,6 @@ void UpdateLeaderboardScreen()
     {
         LeaderboardScreen.Region = (ELeaderboardRegion)CurRegion;
         LeaderboardScreen.Mode = (ELeaderboardMode)CurMode;
-        NSLog(@"Region=%d Mode=%d\n", CurRegion, CurMode);
         DownloadLeaderboards();
     }
     

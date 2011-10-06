@@ -100,8 +100,7 @@ void Init()
 	gxInit();
 
 #ifdef PLATFORM_WINDOWS
-	// Default to iPhone size.
-	gxEmulateDisplaySize(GXDISPLAY_IPHONE_PORTRAIT);
+	gxEmulateDisplaySize(GXDISPLAY_IPAD_PORTRAIT);
 #endif
     
 	sxInit();

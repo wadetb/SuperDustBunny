@@ -189,7 +189,7 @@ const char* ShadowVertexShaderSource =
 "SVertexOutput main(SVertexInput VertexInput)\n"
 "{\n"
 "	SVertexOutput VertexOutput;\n"
-"   float2 ShadowDir = PositionAttr - LightOrigin;\n"
+"   float2 ShadowDir = VertexInput.Position - LightOrigin;\n"
 "   float2 ShadowPos = LightOrigin + ShadowDir*ShadowScale + ShadowOffset;\n"
 "	VertexOutput.Position = float4(ShadowPos.x/768.0*2.0-1.0, (1.0-ShadowPos.y/1024.0)*2.0-1.0, 0, 1);\n"
 "	VertexOutput.TexCoord0 = VertexInput.TexCoord0;\n"
@@ -976,7 +976,7 @@ void RenderLighting()
         //                                                   Build lighting                                                                        //
         // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
         gxSetRenderTarget(&LightingRT);
-//        gxClearColor(gxRGBA32(0, 0, 0, 0));
+        gxClearColor(gxRGBA32(0, 0, 0, 0));
         
         DrawLightList(LIGHTLIST_LIGHTING, &LitShader, GXALPHA_ADD);
         

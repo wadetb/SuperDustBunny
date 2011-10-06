@@ -368,8 +368,13 @@ void Exit();
 bool Update();
 void Display();
 
+extern bool InErrorHandler;
+
 void gxDisplayWindow()
 {
+    if (InErrorHandler)
+        return;
+
 	gxDev->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER|D3DCLEAR_STENCIL, gxRGB32(0,0,0), 1.0f, 0 );
 	gxDev->BeginScene();
 	Display();
