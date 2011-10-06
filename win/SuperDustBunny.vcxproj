@@ -98,6 +98,7 @@
     <ClCompile Include="..\Common\Debug.cpp" />
     <ClCompile Include="..\Common\Flame.cpp" />
     <ClCompile Include="..\Common\Ghost.cpp" />
+    <ClCompile Include="..\Common\Hanger.cpp" />
     <ClCompile Include="..\Common\Input.cpp" />
     <ClCompile Include="..\Common\LeaderboardScreen.cpp" />
     <ClCompile Include="..\Common\Smoke.cpp" />
@@ -140,6 +141,7 @@
     <ClInclude Include="..\Common\Debug.h" />
     <ClInclude Include="..\Common\Flame.h" />
     <ClInclude Include="..\Common\Ghost.h" />
+    <ClInclude Include="..\Common\Hanger.h" />
     <ClInclude Include="..\Common\Input.h" />
     <ClInclude Include="..\Common\LeaderboardScreen.h" />
     <ClInclude Include="..\Common\Smoke.h" />
