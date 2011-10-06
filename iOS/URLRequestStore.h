@@ -10,7 +10,7 @@
 
 #import <Foundation/NSURLConnection.h>
 
-@interface URLRequestStore : NSObject < NSConnectionDelegate > {
+@interface URLRequestStore : NSObject < NSURLConnectionDelegate > {
     NSString *path;
     NSURLRequest *request;
 }
@@ -18,6 +18,6 @@
 - (id) initWithRequest:(NSURLRequest *)_request;
 
 + (void) submitRequest:(NSURLRequest *)request;
-+ (void) processedStoredRequests;
++ (void) processStoredRequests;
 
 @end

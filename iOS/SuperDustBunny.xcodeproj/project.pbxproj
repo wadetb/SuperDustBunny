@@ -134,6 +134,8 @@
 		08D4980C141800FD0022E457 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856200E1346A40000F9EFBA /* Icon@2x.png */; };
 		08EBB20C14380E4E006D3EB6 /* URLRequestStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08EBB20B14380E4D006D3EB6 /* URLRequestStore.m */; };
 		08EBB20D14380E4E006D3EB6 /* URLRequestStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08EBB20B14380E4D006D3EB6 /* URLRequestStore.m */; };
+		08EBB210143BC834006D3EB6 /* Hanger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08EBB20F143BC833006D3EB6 /* Hanger.cpp */; };
+		08EBB211143BC834006D3EB6 /* Hanger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08EBB20F143BC833006D3EB6 /* Hanger.cpp */; };
 		08F44AD013FB694D00991708 /* Debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08F44ACF13FB694D00991708 /* Debug.cpp */; };
 /* End PBXBuildFile section */
 
@@ -288,6 +290,8 @@
 		08D4980A1417F4450022E457 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = SDKs/MacOSX10.7.sdk/System/Library/Frameworks/CoreVideo.framework; sourceTree = DEVELOPER_DIR; };
 		08EBB20A14380E4D006D3EB6 /* URLRequestStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLRequestStore.h; sourceTree = "<group>"; };
 		08EBB20B14380E4D006D3EB6 /* URLRequestStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = URLRequestStore.m; sourceTree = "<group>"; };
+		08EBB20F143BC833006D3EB6 /* Hanger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hanger.cpp; sourceTree = "<group>"; };
+		08EBB212143BC885006D3EB6 /* Hanger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hanger.h; sourceTree = "<group>"; };
 		08F44ACD13FB694300991708 /* Debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Debug.h; sourceTree = "<group>"; };
 		08F44ACF13FB694D00991708 /* Debug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Debug.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -453,6 +457,10 @@
 				085AAA33132C5B9F00DF32CA /* GameScore.h */,
 				085AAA34132C5B9F00DF32CA /* Gear.cpp */,
 				085AAA35132C5B9F00DF32CA /* Gear.h */,
+				08899BAE14295AC8008F7623 /* Ghost.cpp */,
+				08899BB114295AD6008F7623 /* Ghost.h */,
+				08EBB20F143BC833006D3EB6 /* Hanger.cpp */,
+				08EBB212143BC885006D3EB6 /* Hanger.h */,
 				085AAA36132C5B9F00DF32CA /* HelpScreen.cpp */,
 				085AAA37132C5B9F00DF32CA /* HelpScreen.h */,
 				0816B6D1137F8C1B00CE5DE4 /* Input.cpp */,
@@ -489,8 +497,6 @@
 				085AAA53132C5B9F00DF32CA /* WinScreen.h */,
 				085AAA54132C5B9F00DF32CA /* Wipe.cpp */,
 				085AAA55132C5B9F00DF32CA /* Wipe.h */,
-				08899BAE14295AC8008F7623 /* Ghost.cpp */,
-				08899BB114295AD6008F7623 /* Ghost.h */,
 			);
 			name = Common;
 			path = ../Common;
@@ -719,6 +725,7 @@
 				08D1C6E8142108A500046259 /* LeaderboardScreen.cpp in Sources */,
 				08899BAF14295AC8008F7623 /* Ghost.cpp in Sources */,
 				08EBB20C14380E4E006D3EB6 /* URLRequestStore.m in Sources */,
+				08EBB210143BC834006D3EB6 /* Hanger.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -771,6 +778,7 @@
 				08D1C6E9142108A500046259 /* LeaderboardScreen.cpp in Sources */,
 				08899BB014295AC8008F7623 /* Ghost.cpp in Sources */,
 				08EBB20D14380E4E006D3EB6 /* URLRequestStore.m in Sources */,
+				08EBB211143BC834006D3EB6 /* Hanger.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

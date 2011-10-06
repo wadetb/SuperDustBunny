@@ -517,10 +517,10 @@ bool DownloadLiveAssetFile(const char* FileName)
     
     NSLog(@"DOWNLOAD '%@'...", URLString);
 
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:30];
+    NSURLRequest *request = [NSURLRequest requestWithURL:URL cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:30];
     
     NSURLResponse *response;
-    NSError *error = [[NSError alloc] init];
+    NSError *error;
     NSData* result = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
 
     if (result && [(NSHTTPURLResponse*)response statusCode] == 200)
@@ -544,10 +544,12 @@ bool DownloadLiveAssetFile(const char* FileName)
 
         return true;
     }
+    else
+    {
+        NSLog(@"FAIL - %@\n", [error localizedDescription]);
 
-    NSLog(@"FAIL\n");
-
-    return false;
+        return false;
+    }
 }
 
 void UpdateLiveAssetCache()

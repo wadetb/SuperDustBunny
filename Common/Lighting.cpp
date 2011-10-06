@@ -1327,6 +1327,23 @@ void AddLitSubSpriteCenteredScaledRotated(ELightList List, gxSprite* Sprite, flo
 		X + (-w * ca) - (+h * sa), Y + (-w * sa) + (+h * ca), SubX1/Sprite->width, SubY2/Sprite->height);
 }
 
+void AddLitSubSpriteOriginScaledRotatedAlpha(ELightList List, gxSprite* Sprite, float X, float Y, float XOrigin, float YOrigin, float SubX1, float SubY1, float SubX2, float SubY2, float Scale, float Angle, float Alpha)
+{
+	float ca = cosf(Angle);
+	float sa = sinf(Angle);
+    
+	float w0 = Scale * XOrigin;
+	float h0 = Scale * YOrigin;
+	float w1 = Scale * ( (SubX2-SubX1) - XOrigin );
+	float h1 = Scale * ( (SubY2-SubY1) - YOrigin );
+    
+	AddLitQuad(List, Sprite, gxRGBA32(255,255,255,(int)(255*Alpha)),
+               X + (-w0 * ca) - (-h0 * sa),    Y + (-w0 * sa) + (-h0 * ca), SubX1/Sprite->width, SubY1/Sprite->height, 
+               X + (+w1 * ca) - (-h0 * sa),    Y + (+w1 * sa) + (-h0 * ca), SubX2/Sprite->width, SubY1/Sprite->height, 
+               X + (+w1 * ca) - (+h1 * sa),    Y + (+w1 * sa) + (+h1 * ca), SubX2/Sprite->width, SubY2/Sprite->height, 
+               X + (-w0 * ca) - (+h1 * sa),    Y + (-w0 * sa) + (+h1 * ca), SubX1/Sprite->width, SubY2/Sprite->height);
+}
+
 void AddLitSpriteUV(ELightList List, gxSprite* Sprite, float X, float Y, float SizeX, float SizeY, float U0, float V0, float U1, float V1, float U2, float V2, float U3, float V3)
 {
 	AddLitQuad(List, Sprite, gxRGBA32(255,255,255,255),

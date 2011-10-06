@@ -33,6 +33,7 @@
 #include "Smoke.h"
 #include "Tutorial.h"
 #include "Ghost.h"
+#include "Hanger.h"
 
 #include "StartScreen.h"
 #include "HelpScreen.h"
@@ -537,7 +538,8 @@ void DisplayGame_Playing()
 	DisplayLives();
 	DisplayPowerUp();
     DisplayTutorial();
-	
+	DisplayHangers();
+    
     // HUD Drawing - Score, etc.
     DisplayScore();
     
@@ -625,6 +627,7 @@ static void UpdateGame_Playing()
         UpdateVacuumTriggers();
     }
 
+    UpdateHangers();
     UpdateDust();
     UpdateDebris();
     UpdateVacuum(); 

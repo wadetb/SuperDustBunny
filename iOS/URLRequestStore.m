@@ -132,7 +132,7 @@
     [NSURLConnection connectionWithRequest:request delegate:[[[URLRequestStore alloc] initWithRequest:request] autorelease]];    
 }
 
-+ (void) processedStoredRequests
++ (void) processStoredRequests
 {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentDirectory = [paths objectAtIndex:0];

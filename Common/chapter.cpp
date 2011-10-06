@@ -31,6 +31,7 @@
 #include "Ghost.h"
 #include "Settings.h"
 #include "GameScore.h"
+#include "Hanger.h"
 
 
 #ifdef PLATFORM_WINDOWS
@@ -361,6 +362,10 @@ static void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* F
                     {
                         Block->Type = BLOCKTYPE_VACUUM_TRIGGER;
                     }
+                    else if (strcmp(Value, "hanger") == 0)
+                    {
+                        Block->Type = BLOCKTYPE_HANGER;
+                    }
 				}
 				else if (strcmp(Name, "material") == 0)
 				{
@@ -421,6 +426,10 @@ static void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* F
 			else if (Block->Type == BLOCKTYPE_VACUUM_TRIGGER)
 			{
 				ParseVacuumTriggerProperties(Block, PropertiesNode);
+			}
+			else if (Block->Type == BLOCKTYPE_HANGER)
+			{
+				ParseHangerProperties(Block, PropertiesNode);
 			}
 			else
 			{
@@ -857,6 +866,7 @@ static void ClearPageObjects()
 	ClearPowerUps();
     ClearTutorials();
     ClearVacuumTriggers();
+    ClearHangers();
 
 	if (Chapter.PageBlocks)
 	{
@@ -950,6 +960,9 @@ static void CreatePageObjects()
                 case BLOCKTYPE_VACUUM_TRIGGER:
                     CreateVacuumTrigger(x * 64, y * 64, (SVacuumTriggerProperties*)Block->Properties);
                     EraseBlock(x, y);
+                    break;
+                case BLOCKTYPE_HANGER:
+                    CreateHanger(x, y, (SHangerProperties*)Block->Properties);
                     break;
                 default:
                     break;
