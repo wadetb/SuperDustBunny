@@ -827,10 +827,11 @@ void ClearChapter()
 		if (Chapter.Blocks[i].Properties)
         {
             // TODO FLAME!!!!
-            if (Chapter.Blocks[i].Type == BLOCKTYPE_GEAR)
-                FreeGearProperties(&Chapter.Blocks[i]);
-            else
+//            if (Chapter.Blocks[i].Type == BLOCKTYPE_GEAR)
+//                FreeGearProperties(&Chapter.Blocks[i]);
+//            else
                 free(Chapter.Blocks[i].Properties);
+            Chapter.Blocks[i].Properties = NULL;
         }
 	}
 	Chapter.NBlocks = 0;

@@ -55,6 +55,7 @@ void FreeGearProperties(SBlock* Block)
 {
     gxDestroySprite(&((SGearProperties*)Block->Properties)->Sprite);
     free(Block->Properties);
+    Block->Properties = NULL;
 }
 
 void CreateGear(int X, int Y, SGearProperties* Props)
