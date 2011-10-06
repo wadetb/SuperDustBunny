@@ -175,6 +175,8 @@ void UploadChapterScore()
     
 #endif
 
+#ifdef PLATFORM_IPHONE_OR_MAC
+
 #ifdef PLATFORM_MAC
     ABPerson *person = [[ABAddressBook sharedAddressBook] me];
     NSString *name = [person valueForProperty:kABFirstNameProperty];
@@ -194,7 +196,6 @@ void UploadChapterScore()
     }
 #endif
     
-#ifdef PLATFORM_IPHONE_OR_MAC
     NSString *post = [NSString stringWithFormat:@"build=%x&name=%@&time=%d&chapter=%s&city=%@&state=%@&country=%@", 
                       BuildNumber, name, Chapters[CurrentChapter].BestTime, Chapters[CurrentChapter].Name, city, state, country];
     
