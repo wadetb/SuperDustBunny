@@ -1589,7 +1589,7 @@ static void UpdateDusty_IntroStand()
 //                                                  UpdateDusty_Collision Implementation                                                   //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
-static void UpdateDusty_Collision()
+void ResetDustyCollision()
 {
 	// Initialize all collision variables to false.  One or more of these will be set to true in this function.
 	// This function also corrects Dusty's position to not intersect anything.
@@ -1598,10 +1598,11 @@ static void UpdateDusty_Collision()
 	Dusty.CollideWithBottomSide = false;
 	Dusty.CollideWithTopSide = false;
 	Dusty.CollideWithBottomLeftCorner = false;
-	Dusty.CollideWithBottomRightCorner = false;
-    
-	UpdateStapler_Collision();
+	Dusty.CollideWithBottomRightCorner = false;    
+}
 
+static void UpdateDusty_Collision()
+{
 	Dusty.CollideMaterial = MATERIAL_NORMAL;
 
 	// Collision with right side of the right screen and Dusty's right Side

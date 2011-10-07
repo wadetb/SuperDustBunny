@@ -159,7 +159,8 @@ static void AddHangerTorque(SHanger* Hanger, float X, float Y, float FX, float F
     if (L < 0.001f)
         return;
     
-//    AddDebugLine(Hanger->X + ScrollX, Hanger->Y + ScrollY, X + ScrollX, Y + ScrollY, gxRGB32(255, 255, 0), 1.0f/60.0f);
+    //AddDebugLine(Hanger->X + ScrollX, Hanger->Y + ScrollY, X + ScrollX, Y + ScrollY, gxRGB32(255, 255, 0), 1.0f/60.0f);
+    //AddDebugLine(X + ScrollX, Y + ScrollY, X + FX*100 + ScrollX, Y + FY*100 + ScrollY, gxRGB32(255, 0, 0), 1.0f/60.0f);
 
     float NPX = PX/L;
     float NPY = PY/L;
@@ -191,21 +192,21 @@ void UpdateHangers()
         float ca = cosf(Hanger->Angle);
         float sa = sinf(Hanger->Angle);
         
-        float P0X = X0*ca - Y0*sa;
-        float P0Y = X0*sa + Y0*ca;
-        AddHangerTorque(Hanger, Hanger->X + P0X, Hanger->Y + P0Y, 0, Force);
+        float P0X = Hanger->X + X0*ca - Y0*sa;
+        float P0Y = Hanger->Y + X0*sa + Y0*ca;
+        AddHangerTorque(Hanger, P0X, P0Y, 0, Force);
         
-        float P1X = X1*ca - Y0*sa;
-        float P1Y = X1*sa + Y0*ca;
-        AddHangerTorque(Hanger, Hanger->X + P1X, Hanger->Y + P1Y, 0, 0.1f+Force);
+        float P1X = Hanger->X + X1*ca - Y0*sa;
+        float P1Y = Hanger->Y + X1*sa + Y0*ca;
+        AddHangerTorque(Hanger, P1X, P1Y, 0, Force);
 
-        float P2X = X1*ca - Y1*sa;
-        float P2Y = X1*sa + Y1*ca;
-        AddHangerTorque(Hanger, Hanger->X + P2X, Hanger->Y + P2Y, 0, 0.1f+Force);
+        float P2X = Hanger->X + X1*ca - Y1*sa;
+        float P2Y = Hanger->Y + X1*sa + Y1*ca;
+        AddHangerTorque(Hanger, P2X, P2Y, 0, Force);
 
-        float P3X = X0*ca - Y1*sa;
-        float P3Y = X0*sa + Y1*ca;
-        AddHangerTorque(Hanger, Hanger->X + P3X, Hanger->Y + P3Y, 0, Force);
+        float P3X = Hanger->X + X0*ca - Y1*sa;
+        float P3Y = Hanger->Y + X0*sa + Y1*ca;
+        AddHangerTorque(Hanger, P3X, P3Y, 0, Force);
         
         if (Hanger->DustyOnBoard)
         {
@@ -213,21 +214,95 @@ void UpdateHangers()
             AddHangerTorque(Hanger, Dusty.FloatX, Dusty.FloatY, 0, Mass * Gravity);            
         }
         
-        float DustyRadius = 50;
-        
-        if (Distance(Dusty.FloatX, Dusty.FloatY, P0X, P0Y) < DustyRadius)
+        float VL = Length(Dusty.FloatVelocityX, Dusty.FloatVelocityY);
+
+        if (VL > 0.001f)
         {
-            Dusty.FloatVelocityX = 0;
-            Dusty.FloatVelocityY = 0;
+            float VNX = Dusty.FloatVelocityX / VL;
+            float VNY = Dusty.FloatVelocityY / VL;
+
+            float DustyMass = 0.02f;
             
+            float PTX[] = { P0X, P1X, P2X, P3X };
+            float PTY[] = { P0Y, P1Y, P2Y, P3Y };
+            
+            float DustyCenterX = ( (Dusty.FloatX + Dusty.Right) + (Dusty.FloatX + Dusty.Left) ) / 2;
+            float DustyCenterY = ( (Dusty.FloatY + Dusty.Bottom) + (Dusty.FloatY + Dusty.Top) ) / 2;
+            float DustyRadius = Distance(Dusty.FloatX + Dusty.Right, Dusty.FloatY + Dusty.Bottom, DustyCenterX, DustyCenterY);
+            
+            for (int i = 0; i < 4; i++)
+            {
+                float AX = PTX[i];
+                float AY = PTY[i];
+                float BX = PTX[(i+1)%4];
+                float BY = PTY[(i+1)%4];
+                
+                //AddDebugLine(AX + ScrollX, AY + ScrollY, BX + ScrollX, BY + ScrollY, gxRGB32(0, 255, 255), 1.0f/60.0f);
+
+                float ABX = BX - AX;
+                float ABY = BY - AY;
+                
+                float ABL2 = ABX*ABX + ABY*ABY;
+                
+                float ADX = DustyCenterX - AX;
+                float ADY = DustyCenterY - AY;
+                
+                float T = ( ADX*ABX + ADY*ABY ) / ABL2;
+
+                float PX, PY;
+                if ( T < 0 )
+                {
+                    PX = AX;
+                    PY = AY;
+                }
+                else if ( T > 1 )
+                {
+                    PX = BX;
+                    PY = BY;
+                }
+                else
+                {
+                    PX = AX + T * ( BX - AX );
+                    PY = AY + T * ( BY - AY );
+                }
+                
+                //AddDebugLine(PX + ScrollX, PY + ScrollY, DustyCenterX + ScrollX, DustyCenterY + ScrollY, gxRGB32(0, 255, 255), 1.0f/60.0f);
+
+                float DX = PX - DustyCenterX;
+                float DY = PY - DustyCenterY;
+                float DL = sqrtf(DX*DX + DY*DY);
+                
+                if (DL < DustyRadius)
+                {
+                    float DNX = DX / DL;
+                    float DNY = DY / DL;
+                    
+                    AddHangerTorque(Hanger, PX, PY, Dusty.FloatVelocityX * DustyMass, Dusty.FloatVelocityY * DustyMass);            
+                    
+                    float D = VNX*DNX + VNY*DNY;
+                    
+                    Dusty.FloatX -= DNX * (DustyRadius - DL);
+                    Dusty.FloatY -= DNY * (DustyRadius - DL);
+                    
+                    Dusty.FloatVelocityX -= DNX * (D)*VL;
+                    Dusty.FloatVelocityY -= DNY * (D)*VL;
+                    
+/*
+                    // TODO- Interact with dusty
+                    if (i == 0)
+                        Dusty.CollideWithBottomSide = true;
+                    else if (i == 1)
+                        Dusty.CollideWithLeftSide = true;
+                    else if (i == 2)
+                        Dusty.CollideWithTopSide = true;
+                    else if (i == 3)
+                        Dusty.CollideWithRightSide = true;
+*/
+                }
+            }
         }
-        
+
         Hanger->Angle += Hanger->VAngle;
         Hanger->VAngle *= 0.97f;
-        
-//        AddDebugLine(Hanger->X + P0X + ScrollX, Hanger->Y + P0Y + ScrollY, Hanger->X + P1X + ScrollX, Hanger->Y + P1Y + ScrollY, gxRGB32(255, 0, 0), 1.0f/60.0f);
-//        AddDebugLine(Hanger->X + P1X + ScrollX, Hanger->Y + P1Y + ScrollY, Hanger->X + P2X + ScrollX, Hanger->Y + P2Y + ScrollY, gxRGB32(255, 0, 0), 1.0f/60.0f);
-//        AddDebugLine(Hanger->X + P2X + ScrollX, Hanger->Y + P2Y + ScrollY, Hanger->X + P3X + ScrollX, Hanger->Y + P3Y + ScrollY, gxRGB32(255, 0, 0), 1.0f/60.0f);
-//        AddDebugLine(Hanger->X + P3X + ScrollX, Hanger->Y + P3Y + ScrollY, Hanger->X + P0X + ScrollX, Hanger->Y + P0Y + ScrollY, gxRGB32(255, 0, 0), 1.0f/60.0f);
     }
 }

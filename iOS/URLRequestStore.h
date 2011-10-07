@@ -10,7 +10,11 @@
 
 #import <Foundation/NSURLConnection.h>
 
+#if TARGET_OS_IPHONE
 @interface URLRequestStore : NSObject < NSURLConnectionDelegate > {
+#else
+@interface URLRequestStore : NSObject < NSConnectionDelegate > {
+#endif
     NSString *path;
     NSURLRequest *request;
 }

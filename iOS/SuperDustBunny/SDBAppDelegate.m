@@ -117,7 +117,7 @@
     //[self startupWindowed];
     [self startupFullScreen];
     
-    [URLRequestStore processedStoredRequests];
+    [URLRequestStore processStoredRequests];
 }
 
 @end

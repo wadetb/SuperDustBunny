@@ -607,7 +607,10 @@ static void UpdateGame_Playing()
         RecordTiltEvents();
     
     UpdateRecorder();
-    
+
+    ResetDustyCollision();
+	UpdateStapler_Collision();
+    UpdateHangers();
     UpdateDusty();
     
     if (Dusty.State != DUSTYSTATE_DIE)
@@ -627,7 +630,6 @@ static void UpdateGame_Playing()
         UpdateVacuumTriggers();
     }
 
-    UpdateHangers();
     UpdateDust();
     UpdateDebris();
     UpdateVacuum(); 

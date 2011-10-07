@@ -177,6 +177,8 @@ void InitDusty();
 
 void SetDustyPosition(float x, float y, EDustyDirection direction);
 
+void ResetDustyCollision();
+
 void SetDustyState_PrepareLaunch();
 void SetDustyState_JumpWithVelocity( float VX, float VY );
 void SetDustyState_Launch(float VelocityX, float VelocityY);
