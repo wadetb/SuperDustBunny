@@ -23,6 +23,7 @@
 #include "Smoke.h"
 #include "Recorder.h"
 #include "Ghost.h"
+#include "Settings.h"
 
 #ifdef PLATFORM_MAC
 #import <AddressBook/AddressBook.h>
@@ -120,12 +121,32 @@ void ResetScore()
     Score.DeathCount = 0;
 }
 
+#ifdef PLATFORM_IPHONE
+bool authenticationComplete = false;
+#endif
+
 void UploadChapterScore()
 {
 #ifdef PLATFORM_IPHONE
-    NSString *name;
-    if (theViewController.gameCenterEnabled)
+    NSString *name = nil;
+    
+    if (isGameCenterAPIAvailable())
     {
+        theViewController.paused = TRUE;
+
+        GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
+        [localPlayer authenticateWithCompletionHandler:^(NSError *error) {
+            NSLog(@"Player authenticated: %s", ([localPlayer isAuthenticated] ? "YES" : "NO"));
+            authenticationComplete = true;
+         }];
+
+        while (!authenticationComplete)
+        {
+            [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
+        }
+
+        theViewController.paused = FALSE;
+
 #if 0
         GKScore *scoreReporter = [[[GKScore alloc] initWithCategory:@"sdb"] autorelease];
         scoreReporter.value = score;
@@ -138,11 +159,12 @@ void UploadChapterScore()
          }
          }];
 #endif
-
-        GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
-        name = [localPlayer alias];    
+        
+        if ([localPlayer isAuthenticated])
+            name = [localPlayer alias];    
     }
-    else
+    
+    if (name == nil)
     {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Enter your name"
                                                         message:@"-------------------------------"
@@ -156,6 +178,11 @@ void UploadChapterScore()
         [textField setBorderStyle:UITextBorderStyleRoundedRect];
         [textField setBackgroundColor:[UIColor whiteColor]];
         [textField setTextAlignment:UITextAlignmentCenter];
+
+        if (Settings.LeaderboardName != nil)
+            [textField setText:Settings.LeaderboardName];
+
+        [textField becomeFirstResponder];
         
         [alert addSubview:textField];
 
@@ -168,26 +195,29 @@ void UploadChapterScore()
             [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
         }
 
+        if (Settings.LeaderboardName != nil)
+            [Settings.LeaderboardName release];
+        Settings.LeaderboardName = [[textField text] retain];
+        
         name = [textField text];
         
         [alert release];
     }
-    
 #endif
-
-#ifdef PLATFORM_IPHONE_OR_MAC
-
+    
 #ifdef PLATFORM_MAC
     ABPerson *person = [[ABAddressBook sharedAddressBook] me];
     NSString *name = [person valueForProperty:kABFirstNameProperty];
 #endif
+
+#ifdef PLATFORM_IPHONE_OR_MAC
 
     NSString* city = @"nocity";
     NSString* state = @"nostate";
     NSString* country = @"nocountry";
 
 #ifdef PLATFORM_IPHONE
-    // TODO- Request location data at an appropriate time in the application.
+    // TODO- Request location data at an appropriate time in the application, instead of the beginning.
     if (theViewController.haveLocation)
     {
         city = theViewController.city;

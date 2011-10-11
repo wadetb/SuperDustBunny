@@ -267,7 +267,7 @@ void UpdateWinScreen()
     WinScreen.MedalFrame++;
     
 	// Advance to playing state when button is released.
-	if (WinScreen.Timer > 2.0f)
+	if (WinScreen.Timer > 0.1f && WinScreen.SlideIn < 0.01f)
     { 
         if (!Pressed && WinScreen.Pressed)
         {

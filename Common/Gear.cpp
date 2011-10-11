@@ -25,6 +25,7 @@ SGear Gears[MAX_GEARS];
 void ParseGearProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode)
 {
 	SGearProperties* Props = (SGearProperties*)malloc(sizeof(SGearProperties));
+    memset(Props, 0, sizeof(SGearProperties));
     
 	rapidxml::xml_node<char>* PropertyNode = PropertiesNode->first_node("property");
 	while (PropertyNode)

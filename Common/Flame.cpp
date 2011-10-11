@@ -63,6 +63,7 @@ SFlame Flames[MAX_FLAMES];
 void ParseFlameProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode)
 {
 	SFlameProperties* Props = (SFlameProperties*)malloc(sizeof(SFlameProperties));
+    memset(Props, 0, sizeof(SFlameProperties));
     
     Props->NFrames = 0;
     Props->FrameTime = 1;

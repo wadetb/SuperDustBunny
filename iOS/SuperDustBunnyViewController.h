@@ -39,7 +39,6 @@
 @property (nonatomic, retain) IBOutlet SettingsViewController *settingsViewController;
 @property BOOL paused;
 @property BOOL haveLocation;
-@property (nonatomic, readonly, getter=isGameCenterEnabled) BOOL gameCenterEnabled;
 @property (nonatomic, retain) NSString* city;
 @property (nonatomic, retain) NSString* state;
 @property (nonatomic, retain) NSString* country;
@@ -56,6 +55,10 @@
 
 - (void)retrieveLocationAndDownloadLeaderboards;
 
+- (void)authenticateLocalPlayer;
+
 @end
 
 extern SuperDustBunnyViewController *theViewController;
+
+BOOL isGameCenterAPIAvailable();

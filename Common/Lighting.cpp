@@ -649,7 +649,7 @@ static void DrawShadows(ELightList List, gxSprite* FinalRT)
     }
 
     gxSetShader(&ShadowShader);
-    if (Chapter.Name)
+    if (0/*Chapter.Name*/)
     {
         gxSetShaderConstant2(ShadowShadowOffset, Chapter.PageProps.ShadowOffsetX, Chapter.PageProps.ShadowOffsetY);
         gxSetShaderConstant2(ShadowShadowScale, Chapter.PageProps.ShadowScaleX, Chapter.PageProps.ShadowScaleY);
@@ -657,9 +657,12 @@ static void DrawShadows(ELightList List, gxSprite* FinalRT)
     }
     else
     {
-        gxSetShaderConstant2(ShadowShadowOffset, 30, 20);
-        gxSetShaderConstant2(ShadowShadowScale, 1.0f, 1.0f);
-        gxSetShaderConstant2(ShadowLightOrigin, 384.0f, 512.0f);
+//        gxSetShaderConstant2(ShadowShadowOffset, 30, 20);
+//        gxSetShaderConstant2(ShadowShadowScale, 1.0f, 1.0f);
+//        gxSetShaderConstant2(ShadowLightOrigin, 384.0f, 512.0f);
+        gxSetShaderConstant2(ShadowShadowOffset, 0, 0);
+        gxSetShaderConstant2(ShadowShadowScale, 1.05f, 1.05f);
+        gxSetShaderConstant2(ShadowLightOrigin, 128, 128);
     }
     gxSetShaderConstant1(ShadowShadowAlpha, 128.0f/255.0f);
     

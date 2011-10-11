@@ -21,8 +21,6 @@
     UITextField *assetServer;
 }
 
-@property (nonatomic, retain) IBOutlet SuperDustBunnyViewController *mainViewController;
-
 @property (nonatomic, retain) IBOutlet UISegmentedControl *controlScheme;
 @property (nonatomic, retain) IBOutlet UISwitch *infiniteLives;
 @property (nonatomic, retain) IBOutlet UISwitch *disableVacuum;

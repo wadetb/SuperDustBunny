@@ -46,14 +46,14 @@ BOOL isGameCenterAPIAvailable()
     return (localPlayerClassAvailable && osVersionSupported);
 }
 
-- (BOOL) isGameCenterEnabled
-{
-    if ( !isGameCenterAPIAvailable() )
-        return NO;
-    
-    GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
-    return [localPlayer isAuthenticated];
-}
+//- (BOOL) isGameCenterEnabled
+//{
+//    if ( !isGameCenterAPIAvailable() )
+//        return NO;
+//    
+//    GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
+//    return [localPlayer isAuthenticated];
+//}
 
 - (void) authenticateLocalPlayer
 {
@@ -225,11 +225,6 @@ BOOL isGameCenterAPIAvailable()
 {
     printf("viewWillAppear\n");
     [super viewWillAppear:animated];
-    
-    if (isGameCenterAPIAvailable())
-    {
-        [self authenticateLocalPlayer];
-    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated

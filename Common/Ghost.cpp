@@ -202,7 +202,8 @@ void UpdateGhost()
             
             if (Chapter.PageProps.GhostRace)
             {
-                SetDustyState_Die(DEATH_GHOST);
+                if (Ghost.PlaybackEventCount > 0)
+                    SetDustyState_Die(DEATH_GHOST);
             }
         }
     }

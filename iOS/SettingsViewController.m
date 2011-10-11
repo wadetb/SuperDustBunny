@@ -16,7 +16,6 @@ void ClearLiveAssetCache();
 
 @implementation SettingsViewController
 
-@synthesize mainViewController;
 @synthesize controlScheme;
 @synthesize infiniteLives;
 @synthesize disableVacuum;
@@ -77,7 +76,7 @@ void ClearLiveAssetCache();
 }
 
 - (IBAction)done:(id)sender {
-    [[self mainViewController] hideSettings];
+    [theViewController hideSettings];
 }
 
 - (IBAction)clearCache:(id)sender {

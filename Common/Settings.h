@@ -29,6 +29,10 @@ typedef struct
     char AssetServer[256];
     
     bool ChapterSkip;
+    
+#ifdef PLATFORM_IPHONE
+    NSString* LeaderboardName;
+#endif
 } SSettings;
 
 
