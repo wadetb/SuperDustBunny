@@ -7,41 +7,25 @@
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
-#ifndef __SETTINGS_H__
-#define __SETTINGS_H__
+#ifndef TWEAK_H
+#define TWEAK_H
 
-typedef enum
+struct STweak
 {
-    CONTROL_TILT,
-    CONTROL_SWIPE
-} EControlStyle;
+    #define TWEAK_FLOAT(Name, Default, Description) \
+        float Name;
+        
+    #define TWEAK_INT(Name, Default, Description) \
+        int Name;
 
-typedef struct
-{
-    EControlStyle ControlStyle;
+    #include "TweakList.h"
     
-    bool GhostActive;
-    
-    bool InfiniteLives;
-    bool DisableVacuum;
-    
-    bool LiveAssets;
-    char AssetServer[256];
-    
-    bool ChapterSkip;
-    
-#ifdef PLATFORM_IPHONE_OR_MAC
-    NSString* LeaderboardName;
-#endif
-} SSettings;
+    #undef TWEAK_FLOAT
+    #undef TWEAK_INT
+};
 
+extern STweak Tweak;
 
-extern SSettings Settings;
-
-
-void InitSettings();
-
-void LoadSettings();
-void SaveSettings();
+void LoadTweaks();
 
 #endif

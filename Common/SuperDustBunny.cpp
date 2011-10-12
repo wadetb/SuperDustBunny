@@ -34,6 +34,7 @@
 #include "Tutorial.h"
 #include "Ghost.h"
 #include "Hanger.h"
+#include "Tweak.h"
 
 #include "StartScreen.h"
 #include "HelpScreen.h"
@@ -196,6 +197,8 @@ void LoadCurrentChapter()
 	if (CurrentChapter < 0 || CurrentChapter >= NChapters)
 		CurrentChapter = 0;
 
+    LoadTweaks();
+    
 	LoadChapter(Chapters[CurrentChapter].Name);
 
     LoadChapterScores(Chapters[CurrentChapter].Name);

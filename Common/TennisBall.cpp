@@ -30,7 +30,6 @@ void CreateBall(int X, int Y)
     Ball->Y = (float)Y + 32;
     
     Ball->FloatVelocityY = 0.0f;
-    Ball->FloatGravity = 0.5f;
     
     Ball->Transition = 40;
     Ball->Sprite = 1;

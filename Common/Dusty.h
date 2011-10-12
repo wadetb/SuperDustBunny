@@ -105,7 +105,6 @@ struct SDusty
 
 	float FloatX;
 	float FloatY;
-	float FloatGravity;
 	float FloatVelocityX;
 	float FloatVelocityY;
     
@@ -157,8 +156,6 @@ struct SDusty
     
     float SwipeAngle;
     float SwipePower;
-    
-    float JumpPower;
     
     int BlockX, BlockY;
     float XInBlock, YInBlock;

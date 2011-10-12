@@ -21,6 +21,7 @@
 #include "Ghost.h"
 #include "Tutorial.h"
 #include "GameScore.h"
+#include "Tweak.h"
 
 
 SDusty Dusty;
@@ -87,8 +88,6 @@ void InitDusty()
 	Dusty.FloatVelocityX = 0.0f;
 	Dusty.FloatVelocityY = 0.0f;
 	
-	Dusty.FloatGravity = 0.3f;
-
     Dusty.LastX = 0;
     Dusty.LastY = 0;
     Dusty.LastScaleX = 1.0f;
@@ -123,8 +122,6 @@ void InitDusty()
 	Dusty.CollideWithTopSide = false;
 	Dusty.CollideWithBottomSide = false;
     
-    Dusty.JumpPower = 21.0f;
-
     memset(DustyTrail, 0, sizeof(DustyTrail));
 };
 
@@ -223,11 +220,11 @@ static bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
     
     if ( Dot >= cR )
     {
-        float Power = Dusty.JumpPower;
-        //float Power = Remap(L, 50.0f, 100.0f, Dusty.JumpPower/3, Dusty.JumpPower, true);
-        //float Power = Remap(MaxSpeed, 2000.0f, 5000.0f, Dusty.JumpPower/3, Dusty.JumpPower, true);
-        dX = dX * Power * 0.8f;
-        dY = dY * ( dY > 0 ? Power * 0.8f : Power );
+        float Power = Tweak.DustyJumpPower;
+        //float Power = Remap(L, 50.0f, 100.0f, Tweak.DustyJumpPower/3, Tweak.DustyJumpPower, true);
+        //float Power = Remap(MaxSpeed, 2000.0f, 5000.0f, Tweak.DustyJumpPower/3, Tweak.DustyJumpPower, true);
+        dX = dX * Power * Tweak.DustyJumpPowerXScale;
+        dY = dY * ( dY > 0 ? Power * Tweak.DustyJumpPowerYScaleWhenDown : Power );
 
         Dusty.SwipeAngle = NormalizeAngle(RadiansToDegrees(atan2f(-dY, dX)));
         Dusty.SwipePower = Power;
@@ -518,13 +515,11 @@ void SetDustyState_Jump( bool OffWall )
 
     if (Dusty.PowerUpTimer > 0)
 	{
-//		Dusty.FloatY -= 60.0f;
 		Dusty.FloatVelocityX = 12.0f;
 		Dusty.FloatVelocityY = -24.0f;
 	}
     else
     {
-//    	Dusty.FloatY -= 40.0f;
 	    Dusty.FloatVelocityX = 6.0f;
 	    Dusty.FloatVelocityY = -16.0f;
     }
@@ -545,15 +540,15 @@ void SetDustyState_JumpWithVelocity( float VX, float VY )
 {
 	Dusty.FloatY -= 5.0f;
     
-    if (Dusty.ComboCount >= 3)
+    if (Dusty.ComboCount >= 2)
     {
-        VX *= 1.25f;
-        VY *= 1.25f;
+        VX *= Tweak.DustyJumpPowerScaleAfter3Combo;
+        VY *= Tweak.DustyJumpPowerScaleAfter3Combo;
     }
     else if (Dusty.ComboCount >= 1)
     {
-        VX *= 1.10f;
-        VY *= 1.10f;
+        VX *= Tweak.DustyJumpPowerScaleAfter2Combo;
+        VY *= Tweak.DustyJumpPowerScaleAfter2Combo;
     }
     Dusty.ComboCount++;
     
@@ -592,7 +587,7 @@ void SetDustyState_Fall()
     
     UpdateMinimap(MINIMAP_FALL);
 
-    Dusty.JumpGraceTimer = 20;
+    Dusty.JumpGraceTimer = Tweak.DustyGraceJumpTime;
 }
 
 static void DisplayDusty_Jump()
@@ -806,21 +801,21 @@ void UpdateDusty_JumpCommon()
     if ( Dusty.State == DUSTYSTATE_LAUNCH )
     {
         // Reduced gravity when launching, and no friction.
-        Dusty.FloatVelocityY += Dusty.FloatGravity * 0.75f; 
+        Dusty.FloatVelocityY += Tweak.DustyGravity * Tweak.DustyGravityScaleWhenLaunched; 
     }
     else
     {
-        Dusty.FloatVelocityY += Dusty.FloatGravity;        
+        Dusty.FloatVelocityY += Tweak.DustyGravity;        
 
         if ( Settings.ControlStyle == CONTROL_SWIPE )
         {
-            Dusty.FloatVelocityX *= 0.98f;
-            Dusty.FloatVelocityY *= 0.98f;
+            Dusty.FloatVelocityX *= Tweak.DustyAirFriction;
+            Dusty.FloatVelocityY *= Tweak.DustyAirFriction;
         }
     }
     
-	if (Dusty.FloatVelocityY > 15.0f)
-		Dusty.FloatVelocityY = 15.0f;
+	if (Dusty.FloatVelocityY > Tweak.DustyTerminalVelocityDown)
+		Dusty.FloatVelocityY = Tweak.DustyTerminalVelocityDown;
     
 	Dusty.SpriteTransition++;
 
@@ -860,8 +855,8 @@ void UpdateDusty_JumpCommon()
             float dX = cosf(DegreesToRadians(Dusty.SwipeAngle)) * 5.0f;
             float dY = -sinf(DegreesToRadians(Dusty.SwipeAngle)) * 5.0f;
 
-            Dusty.FloatVelocityX += dX;
-            Dusty.FloatVelocityY += dY;
+            Dusty.FloatVelocityX += dX * Tweak.DustyAirBoostForSwipe;
+            Dusty.FloatVelocityY += dY * Tweak.DustyAirBoostForSwipe;
             
             GetInput_SetSwipeUsed();
         }
@@ -883,9 +878,9 @@ void UpdateDusty_JumpCommon()
             if (L > 1.0f)
             {
                 if (fabsf(Dusty.FloatVelocityX) < 10)
-                    Dusty.FloatVelocityX += dX >= 0 ? 1.0f : -1.0f;
+                    Dusty.FloatVelocityX += ( dX >= 0 ? 1.0f : -1.0f ) * Tweak.DustyAirBoostXForDrag;
                 if (fabsf(Dusty.FloatVelocityY) < 10)
-                    Dusty.FloatVelocityY += dY >= 0 ? 0.5f : -0.5f;
+                    Dusty.FloatVelocityY += ( dY >= 0 ? 0.5f : -0.5f ) * Tweak.DustyAirBoostYForDrag;
             }
         }
 #endif
@@ -951,9 +946,9 @@ void UpdateDusty_JumpCommon()
 void SetDustyState_WallJump()
 {   	
 	if (Dusty.CollideMaterial == MATERIAL_ICE)
-		Dusty.WallStickTimer = 0;
+		Dusty.WallStickTimer = Tweak.DustyWallStickTimeOnIce;
 	else
-		Dusty.WallStickTimer = 15;
+		Dusty.WallStickTimer = Tweak.DustyWallStickTime;
 
 	Dusty.FloatVelocityX = 0;
 
@@ -961,9 +956,9 @@ void SetDustyState_WallJump()
         Dusty.FloatVelocityY = 0;
 
     if (Dusty.CollideMaterial == MATERIAL_ICE)
-        Dusty.FloatVelocityY *= 0.75f;
+        Dusty.FloatVelocityY *= Tweak.DustyWallInitialFrictionOnIce;
     else
-        Dusty.FloatVelocityY *= 0.3f;
+        Dusty.FloatVelocityY *= Tweak.DustyWallInitialFriction;
 
 	Dusty.LastWall = Dusty.Direction;
 
@@ -1016,10 +1011,10 @@ static void UpdateDusty_WallJump()
 //    if (Dusty.LandTimer <= 5)
 //        return;
     
-//	if (Dusty.WallStickTimer > 0)
-//		Dusty.WallStickTimer--;
+	if (Dusty.WallStickTimer > 0)
+		Dusty.WallStickTimer--;
 
-//	if (Dusty.WallStickTimer <= 0)
+	if (Dusty.WallStickTimer <= 0)
 	{
 		// Sliding down the wall... If you hit the ground, switch to stand state.
 		if (Dusty.CollideWithBottomSide == true)
@@ -1039,19 +1034,19 @@ static void UpdateDusty_WallJump()
 
 			if (Dusty.CollideMaterial == MATERIAL_ICE)
 			{
-				Dusty.FloatVelocityY += Dusty.FloatGravity;
-                Dusty.FloatVelocityY *= 0.99f;
+				Dusty.FloatVelocityY += Tweak.DustyGravity * Tweak.DustyWallGravityScaleOnIce;
+                Dusty.FloatVelocityY *= Tweak.DustyWallFrictionOnIce;
 
-				if (Dusty.FloatVelocityY > 15.0f)
-					Dusty.FloatVelocityY = 15.0f;
+				if (Dusty.FloatVelocityY > Tweak.DustyWallTerminalVelocityDownOnIce)
+					Dusty.FloatVelocityY = Tweak.DustyWallTerminalVelocityDownOnIce;
 			}
 			else
 			{
-				Dusty.FloatVelocityY += Dusty.FloatGravity/2;
-                Dusty.FloatVelocityY *= 0.95f;
+				Dusty.FloatVelocityY += Tweak.DustyGravity * Tweak.DustyWallGravityScale;
+                Dusty.FloatVelocityY *= Tweak.DustyWallFriction;
 
-				if (Dusty.FloatVelocityY > 7.0f)
-					Dusty.FloatVelocityY = 7.0f;
+				if (Dusty.FloatVelocityY > Tweak.DustyWallTerminalVelocityDown)
+					Dusty.FloatVelocityY = Tweak.DustyWallTerminalVelocityDown;
 			}
 		}
 	}
@@ -1335,7 +1330,7 @@ static void UpdateDusty_Die()
     
     if (Dusty.Death == DEATH_VACUUM)
     {
-        Dusty.FloatVelocityY += Dusty.FloatGravity;
+        Dusty.FloatVelocityY += Tweak.DustyGravity;
 
         float DirX, DirY;
         GetVacuumForce(Dusty.FloatX, Dusty.FloatY, &DirX, &DirY, (float)Dusty.SpriteTransition/400.0f, false);
@@ -1351,7 +1346,7 @@ static void UpdateDusty_Die()
     if (Dusty.Death == DEATH_GHOST)
     {
         Dusty.FloatVelocityX = 0;
-        Dusty.FloatVelocityY += Dusty.FloatGravity;
+        Dusty.FloatVelocityY += Tweak.DustyGravity;
         
         DeathOver = Dusty.FloatY + ScrollY > LitScreenHeight;
     }
@@ -1475,17 +1470,17 @@ static void DisplayDusty_Hurt()
 
 static void UpdateDusty_Hurt()
 {
-	Dusty.FloatX = Dusty.FloatX + Dusty.FloatVelocityX;                                                   
+	Dusty.FloatX += Dusty.FloatVelocityX;                                                   
 	Dusty.FloatY += Dusty.FloatVelocityY;
 
-	Dusty.FloatVelocityY += Dusty.FloatGravity;
+	Dusty.FloatVelocityY += Tweak.DustyGravity;
 
-	if (Dusty.FloatVelocityY > 15.0f)
-		Dusty.FloatVelocityY = 15.0f;
+	if (Dusty.FloatVelocityY > Tweak.DustyTerminalVelocityDown)
+		Dusty.FloatVelocityY = Tweak.DustyTerminalVelocityDown;
 
 	// If Dusty lands or the timer expires, revert to stand state.
 	Dusty.SpriteTransition += 1;
-    if (Dusty.SpriteTransition >= 60 || Dusty.CollideWithBottomSide)
+    if (Dusty.SpriteTransition >= Tweak.DustyHurtTime || Dusty.CollideWithBottomSide)
     {
 		SetDustyState_Stand();
 		return;

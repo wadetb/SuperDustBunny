@@ -27,10 +27,8 @@ struct SBall
     
     float X, Y;
     float FloatVelocityY;
-    float FloatGravity;
 
     bool Collided;
-
 };
 
 extern SBall Ball;

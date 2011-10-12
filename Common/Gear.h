@@ -32,7 +32,6 @@ struct SGear
     
     float X, Y;
     float FloatVelocityX, FloatVelocityY;
-    float FloatGravity;
 	
 	float AngularVelocity;
 	float Angle;

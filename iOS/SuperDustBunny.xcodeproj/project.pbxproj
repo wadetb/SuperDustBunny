@@ -10,6 +10,8 @@
 		08058FA6141EB76F004780BA /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 08058FA4141EB76F004780BA /* libTestFlight.a */; };
 		0816B6D3137F8C1C00CE5DE4 /* Input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0816B6D1137F8C1B00CE5DE4 /* Input.cpp */; };
 		082C9B8013E8D97400586EDB /* Icon-ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 082C9B7F13E8D97400586EDB /* Icon-ipad.png */; };
+		0832E7F71445188400EDCAED /* Tweak.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0832E7F61445188400EDCAED /* Tweak.cpp */; };
+		0832E7F81445869700EDCAED /* Tweak.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0832E7F61445188400EDCAED /* Tweak.cpp */; };
 		0837CAF6142BB77C0042DB5C /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0837CAF5142BB77C0042DB5C /* CoreLocation.framework */; };
 		0837CAF9142BB7D20042DB5C /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0837CAF8142BB7D20042DB5C /* MapKit.framework */; };
 		0844B73913F9F0A500092ECE /* Text.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0844B73813F9F0A500092ECE /* Text.cpp */; };
@@ -145,6 +147,9 @@
 		0816B6D1137F8C1B00CE5DE4 /* Input.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Input.cpp; sourceTree = "<group>"; };
 		0816B6D2137F8C1C00CE5DE4 /* Input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Input.h; sourceTree = "<group>"; };
 		082C9B7F13E8D97400586EDB /* Icon-ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-ipad.png"; sourceTree = "<group>"; };
+		0832E7F51445186E00EDCAED /* Tweak.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tweak.h; sourceTree = "<group>"; };
+		0832E7F61445188400EDCAED /* Tweak.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tweak.cpp; sourceTree = "<group>"; };
+		0832E7F914458B1000EDCAED /* TweakList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TweakList.h; sourceTree = "<group>"; };
 		0837CAF5142BB77C0042DB5C /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		0837CAF8142BB7D20042DB5C /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		0844B73613F9F09B00092ECE /* Text.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Text.h; sourceTree = "<group>"; };
@@ -491,6 +496,9 @@
 				0844B73613F9F09B00092ECE /* Text.h */,
 				085AAA4E132C5B9F00DF32CA /* Tutorial.cpp */,
 				085AAA4F132C5B9F00DF32CA /* Tutorial.h */,
+				0832E7F51445186E00EDCAED /* Tweak.h */,
+				0832E7F61445188400EDCAED /* Tweak.cpp */,
+				0832E7F914458B1000EDCAED /* TweakList.h */,
 				085AAA50132C5B9F00DF32CA /* Vacuum.cpp */,
 				085AAA51132C5B9F00DF32CA /* Vacuum.h */,
 				085AAA52132C5B9F00DF32CA /* WinScreen.cpp */,
@@ -726,6 +734,7 @@
 				08899BAF14295AC8008F7623 /* Ghost.cpp in Sources */,
 				08EBB20C14380E4E006D3EB6 /* URLRequestStore.m in Sources */,
 				08EBB210143BC834006D3EB6 /* Hanger.cpp in Sources */,
+				0832E7F71445188400EDCAED /* Tweak.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -767,6 +776,7 @@
 				08D497EE1417AFC10022E457 /* SuperDustBunny.cpp in Sources */,
 				08D497EF1417AFC10022E457 /* TennisBall.cpp in Sources */,
 				08D497F11417AFC10022E457 /* Text.cpp in Sources */,
+				0832E7F81445869700EDCAED /* Tweak.cpp in Sources */,
 				08D497F31417AFC10022E457 /* Tutorial.cpp in Sources */,
 				08D497F51417AFC10022E457 /* Vacuum.cpp in Sources */,
 				08D497F71417AFC10022E457 /* WinScreen.cpp in Sources */,
