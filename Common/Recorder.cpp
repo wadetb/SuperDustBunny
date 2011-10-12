@@ -96,7 +96,7 @@ struct SRecorderGhostEvent
 };
 
 
-unsigned int BuildNumber = 0x010016;
+unsigned int BuildNumber = 0x010017 | BUILD_PRERELEASE;
 
 SRecorderHeader RecorderHeader;
 SRecorder Recorder;
