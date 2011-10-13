@@ -909,7 +909,7 @@ void ResetLighting()
 	else
 		LightState.AmbientColor = gxRGBA32(128, 128, 128, 255);
 
-    AddLitSpriteSizedColor(LIGHTLIST_LIGHTING, &WhiteSprite, 0, 0, 768, LitScreenHeight, LightState.AmbientColor);
+    //AddLitSpriteSizedColor(LIGHTLIST_LIGHTING, &WhiteSprite, 0, 0, 768, LitScreenHeight, LightState.AmbientColor);
     //AddLitSpriteSizedColor(LIGHTLIST_LIGHTING, &LightingSprite, 0, 0, 768, LitScreenHeight, LightState.AmbientColor);
 }
 
@@ -979,7 +979,7 @@ void RenderLighting()
         //                                                   Build lighting                                                                        //
         // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
         gxSetRenderTarget(&LightingRT);
-        gxClearColor(gxRGBA32(0, 0, 0, 0));
+        gxClearColor(LightState.AmbientColor);
         
         DrawLightList(LIGHTLIST_LIGHTING, &LitShader, GXALPHA_ADD);
         
