@@ -236,9 +236,9 @@ void DisplayStartScreen()
         AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &LogoSprite, 384, 280, LogoScale, LogoAlpha);
 
     // Leaderboard and ghost buttons.
-    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &IconCredits1Sprite, 90 + sinf(StartScreen.WiggleTime)*4.0f, 90, 0.25f, StartScreen.LeaderboardButtonAlpha);
+    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ButtonLeaderboardSprite, 90 + sinf(StartScreen.WiggleTime)*4.0f, 90, 1.0f, StartScreen.LeaderboardButtonAlpha);
     float GhostAlpha = Settings.GhostActive ? 0.75f : 0.5f;
-    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ScreenLoseGhostSprite, 768 - (90 + sinf(1234+StartScreen.WiggleTime)*4.0f), 90, 0.25f, StartScreen.LeaderboardButtonAlpha*GhostAlpha);
+    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ButtonGhostSprite, 768 - (90 + sinf(1234+StartScreen.WiggleTime)*4.0f), 90, 1.0f, StartScreen.LeaderboardButtonAlpha*GhostAlpha);
     
     // Sliding main buttons.
 	for (int i = 0; i < GetStartScreenItemCount(); i++)

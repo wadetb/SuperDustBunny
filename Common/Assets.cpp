@@ -106,6 +106,8 @@ gxSprite ButtonMuteSprite;
 gxSprite ButtonUnmuteSprite;
 gxSprite ButtonHomeSprite;
 gxSprite ButtonFastForwardSprite;
+gxSprite ButtonLeaderboardSprite;
+gxSprite ButtonGhostSprite;
 
 gxSprite PortalSprite;
 
@@ -943,6 +945,8 @@ void LoadAssets()
     LoadSpriteAsset("Assets/button-mute.png", &ButtonMuteSprite);
     LoadSpriteAsset("Assets/button-unmute.png", &ButtonUnmuteSprite);
     LoadSpriteAsset("Assets/button-fast-forward.png", &ButtonFastForwardSprite);
+    LoadSpriteAsset("Assets/button-leaderboard.png", &ButtonLeaderboardSprite);
+    LoadSpriteAsset("Assets/button-ghost.png", &ButtonGhostSprite);
 
     LoadSpriteAsset("Assets/portal.png", &PortalSprite);
 
