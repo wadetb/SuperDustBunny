@@ -135,7 +135,6 @@
 		08D498041417C6010022E457 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08D498031417C6010022E457 /* AudioToolbox.framework */; };
 		08D498091417EBA70022E457 /* SDBOpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D498081417EBA60022E457 /* SDBOpenGLView.m */; };
 		08D4980B1417F4450022E457 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08D4980A1417F4450022E457 /* CoreVideo.framework */; };
-		08D4980C141800FD0022E457 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856200E1346A40000F9EFBA /* Icon@2x.png */; };
 		08EBB20C14380E4E006D3EB6 /* URLRequestStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08EBB20B14380E4D006D3EB6 /* URLRequestStore.m */; };
 		08EBB20D14380E4E006D3EB6 /* URLRequestStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08EBB20B14380E4D006D3EB6 /* URLRequestStore.m */; };
 		08EBB210143BC834006D3EB6 /* Hanger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08EBB20F143BC833006D3EB6 /* Hanger.cpp */; };
@@ -146,6 +145,8 @@
 /* Begin PBXFileReference section */
 		08058FA4141EB76F004780BA /* libTestFlight.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTestFlight.a; sourceTree = "<group>"; };
 		08058FA5141EB76F004780BA /* TestFlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlight.h; sourceTree = "<group>"; };
+		080BEB8914490DF70057B6B4 /* CopyAppToSVN.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = CopyAppToSVN.sh; path = ../../Tools/Scripts/CopyAppToSVN.sh; sourceTree = "<group>"; };
+		080BEB8C14490E700057B6B4 /* CopySVNToApp.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = CopySVNToApp.sh; path = ../../Tools/Scripts/CopySVNToApp.sh; sourceTree = "<group>"; };
 		0816B6D1137F8C1B00CE5DE4 /* Input.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Input.cpp; sourceTree = "<group>"; };
 		0816B6D2137F8C1C00CE5DE4 /* Input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Input.h; sourceTree = "<group>"; };
 		082C9B7F13E8D97400586EDB /* Icon-ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-ipad.png"; sourceTree = "<group>"; };
@@ -344,12 +345,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		080BEB8B14490DFE0057B6B4 /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				080BEB8914490DF70057B6B4 /* CopyAppToSVN.sh */,
+				080BEB8C14490E700057B6B4 /* CopySVNToApp.sh */,
+			);
+			name = Scripts;
+			sourceTree = "<group>";
+		};
 		085AA94F132C572A00DF32CA = {
 			isa = PBXGroup;
 			children = (
 				08BF391613466F4E002C1A7B /* Converted */,
 				08A8FC7313302BB300E45A98 /* Documentation */,
 				085AAA88132D0E7100DF32CA /* Converter */,
+				080BEB8B14490DFE0057B6B4 /* Scripts */,
 				085AAA15132C5B9F00DF32CA /* Common */,
 				085AAA14132C5B5F00DF32CA /* iOS */,
 				08D4979B1417AE100022E457 /* Mac */,
@@ -681,7 +692,6 @@
 			files = (
 				08D497A01417AE110022E457 /* InfoPlist.strings in Resources */,
 				08D497AC1417AE110022E457 /* MainMenu.xib in Resources */,
-				08D4980C141800FD0022E457 /* Icon@2x.png in Resources */,
 				089FEC131418999F00086B85 /* SDB.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
