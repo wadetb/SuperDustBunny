@@ -75,6 +75,7 @@ void TurnOffVacuum();
 void JamVacuum();
 
 bool IsInVacuum(float X, float Y);
+float GetDistanceToVacuum(float X, float Y);
 
 void GetVacuumForce(float X, float Y, float* VX, float* VY, float Strength, bool FollowLevel);
 

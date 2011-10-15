@@ -10,6 +10,8 @@
 #include "Common.h"
 #include "Lighting.h"
 #include "Chapter.h"
+#include "Flashlight.h"
+
 
 #define MAX_LIT_QUADS_PER_LIST	8192 // Holy crap
 #define MAX_LIT_VERTS			65536
@@ -649,7 +651,9 @@ static void DrawShadows(ELightList List, gxSprite* FinalRT)
     }
 
     gxSetShader(&ShadowShader);
-    if (0/*Chapter.Name*/)
+    
+/*
+    if (Chapter.Name)
     {
         gxSetShaderConstant2(ShadowShadowOffset, Chapter.PageProps.ShadowOffsetX, Chapter.PageProps.ShadowOffsetY);
         gxSetShaderConstant2(ShadowShadowScale, Chapter.PageProps.ShadowScaleX, Chapter.PageProps.ShadowScaleY);
@@ -657,9 +661,20 @@ static void DrawShadows(ELightList List, gxSprite* FinalRT)
     }
     else
     {
-//        gxSetShaderConstant2(ShadowShadowOffset, 30, 20);
-//        gxSetShaderConstant2(ShadowShadowScale, 1.0f, 1.0f);
-//        gxSetShaderConstant2(ShadowLightOrigin, 384.0f, 512.0f);
+        gxSetShaderConstant2(ShadowShadowOffset, 30, 20);
+        gxSetShaderConstant2(ShadowShadowScale, 1.0f, 1.0f);
+        gxSetShaderConstant2(ShadowLightOrigin, 384.0f, 512.0f);
+    }
+*/
+    
+    if (Chapter.PageProps.LightsOff)
+    {
+        gxSetShaderConstant2(ShadowShadowOffset, 0, 0);
+        gxSetShaderConstant2(ShadowShadowScale, 1.25f, 1.25f);
+        gxSetShaderConstant2(ShadowLightOrigin, Flashlight.X + ScrollX, Flashlight.Y + ScrollY);
+    }
+    else
+    {
         gxSetShaderConstant2(ShadowShadowOffset, 0, 0);
         gxSetShaderConstant2(ShadowShadowScale, 1.05f, 1.05f);
         gxSetShaderConstant2(ShadowLightOrigin, 128, 128);

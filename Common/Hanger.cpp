@@ -40,6 +40,9 @@ struct SHanger
     float Angle;
     float VAngle;
     bool DustyOnBoard;
+    float PrevAngle;
+    int DustySide;
+    int DustyClearTimer;
 };
 
 
@@ -210,114 +213,151 @@ void UpdateHangers()
         
         float DustyMass = 0.02f;
 
-        float DustyCenterX = ( (Dusty.FloatX + Dusty.Right) + (Dusty.FloatX + Dusty.Left) ) / 2;
-        float DustyCenterY = ( (Dusty.FloatY + Dusty.Bottom) + (Dusty.FloatY + Dusty.Top) ) / 2;
-        float DustyRadius = Distance(Dusty.FloatX + Dusty.Right, Dusty.FloatY + Dusty.Bottom, DustyCenterX, DustyCenterY);
-        
         if (Hanger->DustyOnBoard)
         {
             AddHangerTorque(Hanger, Dusty.FloatX, Dusty.FloatY, 0, DustyMass * Gravity);
+            
+            float AngleDelta = Hanger->Angle - Hanger->PrevAngle;
+            
+            float DX = Dusty.FloatX - Hanger->X;
+            float DY = Dusty.FloatY - Hanger->Y;
+            
+            ca = cosf(AngleDelta);
+            sa = sinf(AngleDelta);
+            
+            Dusty.FloatX = Hanger->X + DX*ca - DY*sa;
+            Dusty.FloatY = Hanger->Y + DX*sa + DY*ca;
+            
             if (Dusty.State != DUSTYSTATE_STAND && Dusty.State != DUSTYSTATE_WALLJUMP)
+            {
                 Hanger->DustyOnBoard = false;
+                Hanger->DustyClearTimer = 5;
+            }
         }
+        
+        int ClosestSide = -1;
+        float ClosestSideDist = 1.0e6f;
+
+        if (Hanger->DustyClearTimer > 0)
+            Hanger->DustyClearTimer--;
         else
         {
+            float DustyCenterX = ( (Dusty.FloatX + Dusty.Right) + (Dusty.FloatX + Dusty.Left) ) / 2;
+            float DustyCenterY = ( (Dusty.FloatY + Dusty.Bottom) + (Dusty.FloatY + Dusty.Top) ) / 2;
+            float DustyRadius = Distance(Dusty.FloatX + Dusty.Right, Dusty.FloatY + Dusty.Bottom, DustyCenterX, DustyCenterY);
+                    
             float VL = Length(Dusty.FloatVelocityX, Dusty.FloatVelocityY);
 
+            float VNX = 0;
+            float VNY = 0;
             if (VL > 0.001f)
             {
-                float VNX = Dusty.FloatVelocityX / VL;
-                float VNY = Dusty.FloatVelocityY / VL;
+                VNX = Dusty.FloatVelocityX / VL;
+                VNY = Dusty.FloatVelocityY / VL;
+            }
                 
-                float PTX[] = { P0X, P1X, P2X, P3X };
-                float PTY[] = { P0Y, P1Y, P2Y, P3Y };
+            float PTX[] = { P0X, P1X, P2X, P3X };
+            float PTY[] = { P0Y, P1Y, P2Y, P3Y };
+            
+            int CheckOrder[] = { 0, 2, 1, 3 };
+            
+            for (int i = 0; i < 4; i++)
+            {
+                int Side = CheckOrder[i];
                 
-                int CheckOrder[] = { 0, 2, 1, 3 };
+                float AX = PTX[Side];
+                float AY = PTY[Side];
+                float BX = PTX[(Side+1)%4];
+                float BY = PTY[(Side+1)%4];
                 
-                for (int i = 0; i < 4; i++)
+                //AddDebugLine(AX + ScrollX, AY + ScrollY, BX + ScrollX, BY + ScrollY, gxRGB32(0, 255, 255), 1.0f/60.0f);
+
+                float ABX = BX - AX;
+                float ABY = BY - AY;
+                
+                float ABL2 = ABX*ABX + ABY*ABY;
+                
+                float ADX = DustyCenterX - AX;
+                float ADY = DustyCenterY - AY;
+                
+                float T = ( ADX*ABX + ADY*ABY ) / ABL2;
+
+                float PX, PY;
+                if ( T < 0 )
                 {
-                    int Side = CheckOrder[i];
-                    
-                    float AX = PTX[Side];
-                    float AY = PTY[Side];
-                    float BX = PTX[(Side+1)%4];
-                    float BY = PTY[(Side+1)%4];
-                    
-                    //AddDebugLine(AX + ScrollX, AY + ScrollY, BX + ScrollX, BY + ScrollY, gxRGB32(0, 255, 255), 1.0f/60.0f);
+                    PX = AX;
+                    PY = AY;
+                }
+                else if ( T > 1 )
+                {
+                    PX = BX;
+                    PY = BY;
+                }
+                else
+                {
+                    PX = AX + T * ( BX - AX );
+                    PY = AY + T * ( BY - AY );
+                }
+                
+                //AddDebugLine(PX + ScrollX, PY + ScrollY, DustyCenterX + ScrollX, DustyCenterY + ScrollY, gxRGB32(0, 255, 255), 1.0f/60.0f);
 
-                    float ABX = BX - AX;
-                    float ABY = BY - AY;
+                float DX = PX - DustyCenterX;
+                float DY = PY - DustyCenterY;
+                float DL = sqrtf(DX*DX + DY*DY);
+                
+                if (DL <= DustyRadius)
+                {
+                    float DNX = DX / DL;
+                    float DNY = DY / DL;
                     
-                    float ABL2 = ABX*ABX + ABY*ABY;
+                    AddHangerTorque(Hanger, PX, PY, Dusty.FloatVelocityX * DustyMass, Dusty.FloatVelocityY * DustyMass);            
                     
-                    float ADX = DustyCenterX - AX;
-                    float ADY = DustyCenterY - AY;
-                    
-                    float T = ( ADX*ABX + ADY*ABY ) / ABL2;
+                    float D = VNX*DNX + VNY*DNY;
 
-                    float PX, PY;
-                    if ( T < 0 )
+                    if (DL < ClosestSideDist)
                     {
-                        PX = AX;
-                        PY = AY;
-                    }
-                    else if ( T > 1 )
-                    {
-                        PX = BX;
-                        PY = BY;
-                    }
-                    else
-                    {
-                        PX = AX + T * ( BX - AX );
-                        PY = AY + T * ( BY - AY );
+                        ClosestSideDist = DL;
+                        ClosestSide = Side;
                     }
                     
-                    //AddDebugLine(PX + ScrollX, PY + ScrollY, DustyCenterX + ScrollX, DustyCenterY + ScrollY, gxRGB32(0, 255, 255), 1.0f/60.0f);
-
-                    float DX = PX - DustyCenterX;
-                    float DY = PY - DustyCenterY;
-                    float DL = sqrtf(DX*DX + DY*DY);
-                    
-                    if (DL < DustyRadius)
+                    if (Side == 2)
                     {
-                        float DNX = DX / DL;
-                        float DNY = DY / DL;
-                        
-                        AddHangerTorque(Hanger, PX, PY, Dusty.FloatVelocityX * DustyMass, Dusty.FloatVelocityY * DustyMass);            
-                        
-                        float D = VNX*DNX + VNY*DNY;
-                        
                         Dusty.FloatX -= DNX * (DustyRadius - DL);
                         Dusty.FloatY -= DNY * (DustyRadius - DL);
-                        
+
                         Dusty.FloatVelocityX -= DNX * (D)*VL;
                         Dusty.FloatVelocityY -= DNY * (D)*VL;
                         
-                        if (Side == 0)
-                        {
-                            Dusty.CollideWithBottomSide = true;
-                            Hanger->DustyOnBoard = true;
-                        }
-                        else if (Side == 1)
-                        {
-                            Dusty.CollideWithLeftSide = true;
-                            Hanger->DustyOnBoard = true;
-                        }
-                        else if (Side == 2)
-                        {
-                            Dusty.CollideWithTopSide = true;
-                            Hanger->DustyOnBoard = true;
-                        }
-                        else if (Side == 3)
-                        {
-                            Dusty.CollideWithRightSide = true;
-                            Hanger->DustyOnBoard = true;
-                        }
+                        Dusty.CollideWithTopSide = true;
+                    }
+                    else
+                    {                        
+                        Dusty.FloatX -= DNX * (DustyRadius - DL - 15);
+                        Dusty.FloatY -= DNY * (DustyRadius - DL - 15);
+                        
+                        Dusty.FloatVelocityX = 0; //-= DNX * (D)*VL;
+                        Dusty.FloatVelocityY = 0; //-= DNY * (D)*VL;
+                    
+                        Hanger->DustyOnBoard = true;
+                        Hanger->DustySide = Side;
                     }
                 }
             }
+            
+            if (ClosestSide >= 0)
+            {
+                if (ClosestSide == 0)
+                    Dusty.CollideWithBottomSide = true;
+                else if (ClosestSide == 1)
+                    Dusty.CollideWithLeftSide = true;
+                else if (ClosestSide == 2)
+                    Dusty.CollideWithTopSide = true;
+                else if (ClosestSide == 3)
+                    Dusty.CollideWithRightSide = true;
+            }
         }
-
+        Hanger->PrevAngle = Hanger->Angle;
+        
         Hanger->Angle += Hanger->VAngle;
         Hanger->VAngle *= 0.97f;
     }

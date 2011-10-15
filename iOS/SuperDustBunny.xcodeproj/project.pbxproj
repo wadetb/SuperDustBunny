@@ -81,6 +81,8 @@
 		08899BB014295AC8008F7623 /* Ghost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08899BAE14295AC8008F7623 /* Ghost.cpp */; };
 		089FEC1014188D2F00086B85 /* SDBWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 089FEC0F14188D2F00086B85 /* SDBWindow.m */; };
 		089FEC131418999F00086B85 /* SDB.icns in Resources */ = {isa = PBXBuildFile; fileRef = 089FEC121418999F00086B85 /* SDB.icns */; };
+		08A9E0101447B6CD009A76B9 /* Baby.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08A9E00F1447B6CD009A76B9 /* Baby.cpp */; };
+		08A9E0111447B6CD009A76B9 /* Baby.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08A9E00F1447B6CD009A76B9 /* Baby.cpp */; };
 		08BF391713466F4E002C1A7B /* Converted in Resources */ = {isa = PBXBuildFile; fileRef = 08BF391613466F4E002C1A7B /* Converted */; };
 		08D1C6E8142108A500046259 /* LeaderboardScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D1C6E7142108A500046259 /* LeaderboardScreen.cpp */; };
 		08D1C6E9142108A500046259 /* LeaderboardScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D1C6E7142108A500046259 /* LeaderboardScreen.cpp */; };
@@ -270,6 +272,8 @@
 		089FEC0F14188D2F00086B85 /* SDBWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SDBWindow.m; path = ../../Mac/SDBWindow.m; sourceTree = "<group>"; };
 		089FEC121418999F00086B85 /* SDB.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = SDB.icns; path = ../../Mac/SDB.icns; sourceTree = "<group>"; };
 		08A8FC7513302F6300E45A98 /* TODO.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = TODO.txt; path = ../../Docs/TODO.txt; sourceTree = "<group>"; };
+		08A9E00D1447B6BF009A76B9 /* Baby.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Baby.h; sourceTree = "<group>"; };
+		08A9E00F1447B6CD009A76B9 /* Baby.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Baby.cpp; sourceTree = "<group>"; };
 		08BF391613466F4E002C1A7B /* Converted */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Converted; path = ../../Converted; sourceTree = "<group>"; };
 		08D1C6E7142108A500046259 /* LeaderboardScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LeaderboardScreen.cpp; sourceTree = "<group>"; };
 		08D1C6EB142108F100046259 /* LeaderboardScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeaderboardScreen.h; sourceTree = "<group>"; };
@@ -429,6 +433,8 @@
 			children = (
 				085AAA16132C5B9F00DF32CA /* Assets.cpp */,
 				085AAA17132C5B9F00DF32CA /* Assets.h */,
+				08A9E00F1447B6CD009A76B9 /* Baby.cpp */,
+				08A9E00D1447B6BF009A76B9 /* Baby.h */,
 				085AAA18132C5B9F00DF32CA /* Barrel.cpp */,
 				085AAA19132C5B9F00DF32CA /* Barrel.h */,
 				085AAA1A132C5B9F00DF32CA /* chapter.cpp */,
@@ -735,6 +741,7 @@
 				08EBB20C14380E4E006D3EB6 /* URLRequestStore.m in Sources */,
 				08EBB210143BC834006D3EB6 /* Hanger.cpp in Sources */,
 				0832E7F71445188400EDCAED /* Tweak.cpp in Sources */,
+				08A9E0101447B6CD009A76B9 /* Baby.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -789,6 +796,7 @@
 				08899BB014295AC8008F7623 /* Ghost.cpp in Sources */,
 				08EBB20D14380E4E006D3EB6 /* URLRequestStore.m in Sources */,
 				08EBB211143BC834006D3EB6 /* Hanger.cpp in Sources */,
+				08A9E0111447B6CD009A76B9 /* Baby.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

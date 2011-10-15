@@ -53,6 +53,7 @@ enum EBlockType
     BLOCKTYPE_TUTORIAL,
     BLOCKTYPE_VACUUM_TRIGGER,
     BLOCKTYPE_HANGER,
+    BLOCKTYPE_BABY,
 };
 
 enum EBlockMaterial

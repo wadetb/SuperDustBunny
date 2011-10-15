@@ -32,7 +32,7 @@
 #include "Settings.h"
 #include "GameScore.h"
 #include "Hanger.h"
-
+#include "Baby.h"
 
 #ifdef PLATFORM_WINDOWS
 #include <direct.h>
@@ -365,6 +365,10 @@ static void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* F
                     else if (strcmp(Value, "hanger") == 0)
                     {
                         Block->Type = BLOCKTYPE_HANGER;
+                    }
+                    else if (strcmp(Value, "baby") == 0)
+                    {
+                        Block->Type = BLOCKTYPE_BABY;
                     }
 				}
 				else if (strcmp(Name, "material") == 0)
@@ -867,6 +871,7 @@ static void ClearPageObjects()
     ClearTutorials();
     ClearVacuumTriggers();
     ClearHangers();
+    ClearBabies();
 
 	if (Chapter.PageBlocks)
 	{
@@ -963,6 +968,9 @@ static void CreatePageObjects()
                     break;
                 case BLOCKTYPE_HANGER:
                     CreateHanger(x, y, (SHangerProperties*)Block->Properties);
+                    break;
+                case BLOCKTYPE_BABY:
+                    CreateBaby(x, y, Flags);
                     break;
                 default:
                     break;

@@ -34,6 +34,7 @@
 #include "Tutorial.h"
 #include "Ghost.h"
 #include "Hanger.h"
+#include "Baby.h"
 #include "Tweak.h"
 
 #include "StartScreen.h"
@@ -199,9 +200,9 @@ void LoadCurrentChapter()
 
     LoadTweaks();
     
-	LoadChapter(Chapters[CurrentChapter].Name);
-
     LoadChapterScores(Chapters[CurrentChapter].Name);
+    
+	LoadChapter(Chapters[CurrentChapter].Name);
 }
 
 void AdvanceToNextPage()
@@ -542,6 +543,7 @@ void DisplayGame_Playing()
 	DisplayPowerUp();
     DisplayTutorial();
 	DisplayHangers();
+	DisplayBabies();
     
     // HUD Drawing - Score, etc.
     DisplayScore();
@@ -615,6 +617,7 @@ static void UpdateGame_Playing()
 	UpdateStapler_Collision();
     UpdateHangers();
     UpdateDusty();
+    UpdateBabies();
     
     if (Dusty.State != DUSTYSTATE_DIE)
     {

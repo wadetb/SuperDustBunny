@@ -415,10 +415,27 @@ bool IsInVacuum(float X, float Y)
     }
     else if (Vacuum.Type == VACUUM_DUSTBUSTER)
     {
-        return Distance(X, Y, Vacuum.X, Vacuum.Y) <= 250;
+        return Distance(X, Y, Vacuum.X, Vacuum.Y) <= 150;
     }
     
     return false;
+}
+
+float GetDistanceToVacuum(float X, float Y)
+{
+    if (Vacuum.State != VACUUMSTATE_ONSCREEN)
+        return 1000000.0f;
+    
+    if (Vacuum.Type == VACUUM_NORMAL)
+    {
+        return fabsf( Y - Vacuum.Y );
+    }
+    else if (Vacuum.Type == VACUUM_DUSTBUSTER)
+    {
+        return Distance(X, Y, Vacuum.X, Vacuum.Y);
+    }
+    
+    return 1000000.0f;    
 }
 
 #ifdef PLATFORM_WINDOWS
