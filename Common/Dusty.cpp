@@ -287,6 +287,9 @@ static void DisplayDustySprite(EDustySprite Sprite, float XAdj = 0.0f, float XMi
     Dusty.LastY = Y;
     Dusty.LastScaleX = ScaleX;
     Dusty.LastSprite = Sprite;
+    Dusty.LastXAdj = XAdj;
+    Dusty.LastXMirrorAdj = XMirrorAdj;
+    Dusty.LastYAdj = YAdj;
     
     // Display trail.
     for (int i = 0; i < MAX_DUSTY_TRAIL; i++)

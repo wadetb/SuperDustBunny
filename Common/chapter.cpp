@@ -1033,7 +1033,7 @@ void SetCurrentPage(int PageNum)
     InitMinimap();
 
     StartGhostRecording();
-    if (Settings.GhostActive)
+    if (Settings.GhostActive && Chapters[CurrentChapter].Completed)
     {
         LoadGhost(Chapters[CurrentChapter].Name, PageNum, false);
         StartGhostPlayback();

@@ -244,7 +244,7 @@ void RecordPageScore(int Page)
 {
     if (Page < 0 || Page > MAX_PAGE_TIMES)
         ReportError("Invalid page number %d for scorekeeping.  Maximum is %d.", Page, MAX_PAGE_TIMES);
-    
+
     if (Score.Invalid)
         return;
     
@@ -255,7 +255,8 @@ void RecordPageScore(int Page)
         Score.BestPageTime[Page] = 0;
         Score.NewRecord[Page] = false;
         Score.CurrentPageTime = 0;
-        Score.CurrentBonus = 0;
+        Score.CurrentBonus = 0;        
+        Score.DeathCount = 0;
         return;
     }
     

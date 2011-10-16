@@ -18,6 +18,8 @@
 
 #define MAX_BABIES 50
 
+#define MAX_DUSTY_HISTORY 30
+
 
 enum EBabyState
 {
@@ -40,12 +42,60 @@ struct SBaby
 	float X, Y;
     float VelocityX, VelocityY;
     float Alpha;
+    float FollowOffset;
+    int FollowOrder;
+    EDustyState FollowState;
+    EDustySprite FollowSprite;
+};
+
+struct SDustyHistory
+{
+    float X;
+    float Y;
+    float ScaleX;
+    EDustyState State;
+    EDustyDirection Direction;
+    EDustySprite Sprite;
+    float XAdj;
+    float XMirrorAdj;
+    float YAdj;
 };
 
 
 int NBabies;
 SBaby Babies[MAX_BABIES];
 
+SDustyHistory DustyHistory[MAX_DUSTY_HISTORY];
+int DustyHistoryCount = 0;
+int DustyHistoryFrame = 0;
+
+
+static void RecordDustyHistory()
+{
+    DustyHistoryFrame++;
+    
+    for (int i = MAX_DUSTY_HISTORY-1; i >= 1; i--)
+        DustyHistory[i] = DustyHistory[i-1];
+    
+    DustyHistory[0].Sprite = Dusty.LastSprite;
+    DustyHistory[0].X = Dusty.FloatX;
+    DustyHistory[0].Y = Dusty.FloatY;
+    DustyHistory[0].ScaleX = Dusty.LastScaleX;
+    DustyHistory[0].State = Dusty.State;
+    DustyHistory[0].Direction = Dusty.Direction;
+    DustyHistory[0].XAdj = Dusty.LastXAdj;
+    DustyHistory[0].XMirrorAdj = Dusty.LastXMirrorAdj;
+    DustyHistory[0].YAdj = Dusty.LastYAdj;
+    
+    if (DustyHistoryCount < MAX_DUSTY_HISTORY)
+        DustyHistoryCount++;
+}
+
+static void ClearDustyHistory()
+{
+    DustyHistoryFrame = 0;
+    DustyHistoryCount = 0;
+}
 
 void CreateBaby(int X, int Y, unsigned int Flags)
 {
@@ -59,7 +109,7 @@ void CreateBaby(int X, int Y, unsigned int Flags)
 
     Baby->Direction = (Flags & SPECIALBLOCKID_FLIP_X) ? DIRECTION_RIGHT : DIRECTION_LEFT;
 
-    Baby->Size = Random(0.6f, 0.7f);
+    Baby->Size = 0.6f; //Random(0.6f, 0.7f);
     
 	Baby->X = (float)X*64 + 32;
 	Baby->Y = (float)Y*64 + 64;
@@ -77,6 +127,8 @@ void CreateBaby(int X, int Y, unsigned int Flags)
 void ClearBabies()
 {
 	NBabies = 0;
+    
+    ClearDustyHistory();
 }
 
 static void DisplayBabySprite(SBaby* Baby, EDustySprite Sprite, float XAdj, float XMirrorAdj, float YAdj)
@@ -85,18 +137,18 @@ static void DisplayBabySprite(SBaby* Baby, EDustySprite Sprite, float XAdj, floa
 	if (Baby->Direction == DIRECTION_RIGHT)
 	{
 		ScaleX = 1.0f;
-		OffsetX = 0.0f;
+		OffsetX = 32;
 	}
 	else
 	{
 		ScaleX = -1.0f;
-		OffsetX = 256.0f * Baby->Size;
+		OffsetX = 224;
 	}
     
     float X = Baby->X + OffsetX + XAdj + XMirrorAdj*ScaleX;
     float Y = Baby->Y + YAdj * Baby->Size;
     
-	AddLitSpriteScaledAlpha(LIGHTLIST_FOREGROUND, DustySprite[Sprite], X + ScrollX, Y + ScrollY, ScaleX * Baby->Size, 1.0f * Baby->Size, Baby->Alpha);
+	AddLitSpriteScaledAlpha(LIGHTLIST_FOREGROUND, DustySprite[Sprite], X + ScrollX, Y + ScrollY, ScaleX * Baby->Size, Baby->Size, Baby->Alpha);
 }
 
 void DisplayBabies()
@@ -172,6 +224,12 @@ void DisplayBabies()
                                     Baby->Y + dy + ScrollY, 
                                     ScaleX * 0.35f * Baby->Size, 0.35f * Baby->Size, Baby->Alpha);            
         }
+        else if (Baby->State == BABYSTATE_FOLLOW)
+        {
+            SDustyHistory* History = &DustyHistory[Baby->FollowOrder < DustyHistoryCount-1 ? Baby->FollowOrder : DustyHistoryCount-1];
+
+            DisplayBabySprite(Baby, History->Sprite, History->XAdj, History->XMirrorAdj, History->YAdj);
+        }
     }
 }
 
@@ -204,13 +262,15 @@ static void VacuumUpBaby(SBaby* Baby)
 
 void UpdateBabies()
 {
+    RecordDustyHistory();
+    
     for (int i = 0; i < NBabies; i++)
     {
         SBaby* Baby = &Babies[i];
         
         bool CloseToVacuum = GetDistanceToVacuum(Baby->X, Baby->Y) < 600.0f;
         
-        bool CloseToDusty = Distance(Baby->X, Baby->Y, Dusty.FloatX, Dusty.FloatY) < 300;
+        bool CloseToDusty = Distance(Baby->X, Baby->Y, Dusty.FloatX, Dusty.FloatY) < 400;
         
         if (Baby->State == BABYSTATE_WAIT_STAND)
         {
@@ -218,6 +278,14 @@ void UpdateBabies()
             {
                 VacuumUpBaby(Baby);
                 return;
+            }
+            
+            if (Dusty.FloatY <= Baby->Y && Distance(Baby->X, Baby->Y, Dusty.FloatX, Dusty.FloatY) < 200)
+            {
+                Baby->State = BABYSTATE_FOLLOW;
+                Baby->FollowOffset = Random(-80.0f, 80.0f);
+                Baby->FollowOrder = Random(10, MAX_DUSTY_HISTORY);
+                continue;
             }
             
             Baby->FloatTimer -= 1.0f;
@@ -292,7 +360,7 @@ void UpdateBabies()
                 Baby->State = BABYSTATE_WAIT_STAND;
                 
                 if (CloseToVacuum)
-                    Baby->FloatTimer = Random(5, 10);
+                    Baby->FloatTimer = Random(0, 10);
                 else
                     Baby->FloatTimer = Random(60, 120);
             
@@ -338,6 +406,18 @@ void UpdateBabies()
                 Baby->State = BABYSTATE_INACTIVE;
                 continue;
             }
+        }
+        else if (Baby->State == BABYSTATE_FOLLOW)
+        {
+            SDustyHistory* History = &DustyHistory[Baby->FollowOrder < DustyHistoryCount-1 ? Baby->FollowOrder : DustyHistoryCount-1];
+            if (History->State == DUSTYSTATE_WALLJUMP)
+                Baby->X = History->X;
+            else
+                Baby->X = History->X+Baby->FollowOffset;
+            Baby->Y = History->Y;
+            Baby->FollowState = History->State;
+            Baby->Direction = History->Direction;
+            Baby->Timer++;
         }
     }
 }

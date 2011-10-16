@@ -112,6 +112,9 @@ struct SDusty
     float LastY;
     float LastScaleX;
     EDustySprite LastSprite;
+    float LastXAdj;
+    float LastXMirrorAdj;
+    float LastYAdj;
     
 	int SpriteTransition;
 
