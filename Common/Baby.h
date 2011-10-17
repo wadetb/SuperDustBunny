@@ -10,7 +10,7 @@
 #ifndef BABY_H
 #define BABY_H
 
-void CreateBaby(int X, int Y, unsigned int Flags);
+void CreateBaby(int X, int Y, unsigned int Flags, bool StartFollowing);
 void ClearBabies();
 
 void UpdateBabies();

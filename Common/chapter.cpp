@@ -970,7 +970,7 @@ static void CreatePageObjects()
                     CreateHanger(x, y, (SHangerProperties*)Block->Properties);
                     break;
                 case BLOCKTYPE_BABY:
-                    CreateBaby(x, y, Flags);
+                    CreateBaby(x, y, Flags, false);
                     break;
                 default:
                     break;
@@ -1000,6 +1000,10 @@ static void CreatePageObjects()
 
     if (!Chapter.PageProps.VacuumOff)
         TurnOnVacuum(500, 2.0f, false);
+    
+    for (int i = 0; i < Chapter.PageNum; i++)
+        for (int j = 0; j < Score.PageBabies[i]; j++)
+            CreateBaby(Chapter.StartX/64, (Chapter.StartY-32)/64, 0, true);
 }
 
 void SetCurrentPage(int PageNum)

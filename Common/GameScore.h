@@ -25,9 +25,11 @@ struct SScore
 {
     int CurrentPageTime;
     int CurrentBonus;
+    int CurrentBabies;
     
     int PageTime[MAX_PAGE_TIMES];
     int PageBonus[MAX_PAGE_TIMES];
+    int PageBabies[MAX_PAGE_TIMES];
 
     bool NewRecord[MAX_PAGE_TIMES];
     int BestPageTime[MAX_PAGE_TIMES];
@@ -51,6 +53,7 @@ void UpdateScore();
 void ResetScore();
 
 void AwardBonus(float X, float Y);
+void AwardBaby();
 
 void LoadChapterScores(char* ChapterName);
 void SaveChapterScores(char* ChapterName);

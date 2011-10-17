@@ -255,7 +255,8 @@ void RecordPageScore(int Page)
         Score.BestPageTime[Page] = 0;
         Score.NewRecord[Page] = false;
         Score.CurrentPageTime = 0;
-        Score.CurrentBonus = 0;        
+        Score.CurrentBonus = 0;
+        Score.CurrentBabies = 0;
         Score.DeathCount = 0;
         return;
     }
@@ -264,6 +265,7 @@ void RecordPageScore(int Page)
     
     Score.PageTime[Page] = Score.CurrentPageTime;
     Score.PageBonus[Page] = Score.CurrentBonus;
+    Score.PageBabies[Page] = Score.CurrentBabies;
     
     Score.ChapterTime += Score.CurrentPageTime;
     
@@ -323,6 +325,7 @@ void RecordPageScore(int Page)
     
     Score.CurrentPageTime = 0;
     Score.CurrentBonus = 0;
+    Score.CurrentBabies = 0;
     Score.DeathCount = 0;
 }
 
@@ -331,6 +334,11 @@ void AwardBonus(float X, float Y)
     CreateBonus(X, Y);
     
     Score.CurrentBonus++;
+}
+
+void AwardBaby()
+{
+    Score.CurrentBabies++;
 }
 
 void LoadChapterScores(char* ChapterName)

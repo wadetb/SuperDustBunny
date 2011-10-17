@@ -14,11 +14,12 @@
 #include "Vacuum.h"
 #include "Tweak.h"
 #include "Dust.h"
+#include "GameScore.h"
 
 
 #define MAX_BABIES 50
 
-#define MAX_DUSTY_HISTORY 30
+#define MAX_DUSTY_HISTORY 50
 
 
 enum EBabyState
@@ -28,6 +29,7 @@ enum EBabyState
     BABYSTATE_WAIT_HOP,
     BABYSTATE_DIE,
     BABYSTATE_HEAVEN,
+    BABYSTATE_JUMP_TO_FOLLOW,
     BABYSTATE_FOLLOW,
 };
 
@@ -97,16 +99,25 @@ static void ClearDustyHistory()
     DustyHistoryCount = 0;
 }
 
-void CreateBaby(int X, int Y, unsigned int Flags)
+void CreateBaby(int X, int Y, unsigned int Flags, bool StartFollowing)
 {
 	if (NBabies >= MAX_BABIES)
 		ReportError("Exceeded the maximum of %d total Babies.", MAX_BABIES);
     
 	SBaby* Baby = &Babies[NBabies++];
     
-    Baby->State = BABYSTATE_WAIT_STAND;
-    Baby->FloatTimer = Random(60, 120);
-
+    if (StartFollowing)
+    {
+        Baby->State = BABYSTATE_JUMP_TO_FOLLOW;
+        Baby->FollowOffset = Random(-10.0f, 10.0f);
+        Baby->FollowOrder = Random(10, MAX_DUSTY_HISTORY);
+    }
+    else
+    {
+        Baby->State = BABYSTATE_WAIT_STAND;
+        Baby->FloatTimer = Random(60, 120);
+    }
+    
     Baby->Direction = (Flags & SPECIALBLOCKID_FLIP_X) ? DIRECTION_RIGHT : DIRECTION_LEFT;
 
     Baby->Size = 0.6f; //Random(0.6f, 0.7f);
@@ -224,6 +235,35 @@ void DisplayBabies()
                                     Baby->Y + dy + ScrollY, 
                                     ScaleX * 0.35f * Baby->Size, 0.35f * Baby->Size, Baby->Alpha);            
         }
+        else if (Baby->State == BABYSTATE_JUMP_TO_FOLLOW)
+        {
+            EDustySprite Hop2Sprites[3] =
+            {
+                DUSTYSPRITE_HOP_2,
+                DUSTYSPRITE_HOP_2B,
+                DUSTYSPRITE_HOP_2C,
+            };
+            
+            EDustySprite Hop3Sprites[3] =
+            {
+                DUSTYSPRITE_HOP_3,
+                DUSTYSPRITE_HOP_3B,
+            };
+            
+            EDustySprite Hop4Sprites[3] =
+            {
+                DUSTYSPRITE_HOP_4,
+                DUSTYSPRITE_HOP_4B,
+                DUSTYSPRITE_HOP_4C,
+            };
+            
+            if (Baby->VelocityY >= 5)
+                DisplayBabySprite(Baby, Hop4Sprites[(Dusty.SpriteTransition/5) % 3], -124, -18, -150);
+            else if (Baby->VelocityY <= -5)
+                DisplayBabySprite(Baby, Hop2Sprites[(Dusty.SpriteTransition/5) % 3], -124, -18, -150);
+            else
+                DisplayBabySprite(Baby, Hop3Sprites[(Dusty.SpriteTransition/10) % 2], -124, -18, -150);
+        }
         else if (Baby->State == BABYSTATE_FOLLOW)
         {
             SDustyHistory* History = &DustyHistory[Baby->FollowOrder < DustyHistoryCount-1 ? Baby->FollowOrder : DustyHistoryCount-1];
@@ -282,8 +322,9 @@ void UpdateBabies()
             
             if (Dusty.FloatY <= Baby->Y && Distance(Baby->X, Baby->Y, Dusty.FloatX, Dusty.FloatY) < 200)
             {
-                Baby->State = BABYSTATE_FOLLOW;
-                Baby->FollowOffset = Random(-80.0f, 80.0f);
+                AwardBaby();
+                Baby->State = BABYSTATE_JUMP_TO_FOLLOW;
+                Baby->FollowOffset = Random(-10.0f, 10.0f);
                 Baby->FollowOrder = Random(10, MAX_DUSTY_HISTORY);
                 continue;
             }
@@ -405,6 +446,35 @@ void UpdateBabies()
             {
                 Baby->State = BABYSTATE_INACTIVE;
                 continue;
+            }
+        }
+        else if (Baby->State == BABYSTATE_JUMP_TO_FOLLOW)
+        {
+            SDustyHistory* History = &DustyHistory[Baby->FollowOrder < DustyHistoryCount-1 ? Baby->FollowOrder : DustyHistoryCount-1];
+            
+            float TargetX;
+            if (History->State == DUSTYSTATE_WALLJUMP)
+                TargetX = History->X;
+            else
+                TargetX = History->X + Baby->FollowOffset;
+            
+            Baby->X = Baby->X*0.93f + TargetX*0.07f;
+            
+            float OldY = Baby->Y;
+            Baby->Y = Baby->Y*0.95f + History->Y*0.05f;
+            Baby->VelocityY = Baby->Y - OldY;
+            
+            if (Baby->X > Dusty.FloatX)
+                Baby->Direction = DIRECTION_LEFT;
+            else
+                Baby->Direction = DIRECTION_RIGHT;
+            
+            Baby->Timer++;
+            
+            if (Distance(Baby->X, Baby->Y, TargetX, History->Y) < 30)
+            {
+                Baby->State = BABYSTATE_FOLLOW;
+                Baby->Timer = 0;
             }
         }
         else if (Baby->State == BABYSTATE_FOLLOW)
