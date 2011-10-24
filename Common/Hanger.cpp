@@ -211,7 +211,7 @@ void UpdateHangers()
         float P3Y = Hanger->Y + X0*sa + Y1*ca;
         AddHangerTorque(Hanger, P3X, P3Y, 0, Force);
         
-        float DustyMass = 0.02f;
+        float DustyMass = 0.02f / Props->Mass;
 
         if (Hanger->DustyOnBoard)
         {

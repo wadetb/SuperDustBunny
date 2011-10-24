@@ -34,17 +34,18 @@ void InitDieScreen()
 
 void DisplayDieScreen()
 {
-	AddLitSprite(LIGHTLIST_BACKGROUND, &BackgroundCardboardSprite, 0, 0);
-	AddLitSprite(LIGHTLIST_BACKGROUND, &BackgroundCardboardSprite, 0, 1024);
+//	AddLitSprite(LIGHTLIST_BACKGROUND, &BackgroundCardboardSprite, 0, 0);
+//	AddLitSprite(LIGHTLIST_BACKGROUND, &BackgroundCardboardSprite, 0, 1024);
+
+    AddLitSprite(LIGHTLIST_BACKGROUND, DieScreen.Pressed ? &ScreenLoseGrave2Sprite : &ScreenLoseGrave1Sprite, 0, 0);
 
 	float t = DieScreen.Timer / 10.0f;
 	float dx = cos(t/5)*10 + cos(1+t/7)*10 + cos(1-t/9)*10 + 100;
-	float dy = sin(t/5)*10 + sin(1+t/7)*10 + sin(1-t/9)*10 - Min(t*2, 175.0f);
+	float dy = sin(t/5)*10 + sin(1+t/7)*10 + sin(1-t/9)*10 - Min(t*2, 125.0f);
 
 	float Alpha = 1.0f; //Min(t, 1.0f);
 
-	AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, DieScreen.Pressed ? &ScreenLoseGrave2Sprite : &ScreenLoseGrave1Sprite, 384, 800, 1.0f, Alpha);
-	AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, &ScreenLoseGhostSprite, 768/2 + dx, 200+ScreenLoseGhostSprite.height/2+dy, 1.0f, Alpha*Alpha*0.5f);
+	AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, &ScreenLoseGhostSprite, 768/2 + dx, 150+ScreenLoseGhostSprite.height/2+dy, 1.0f, Alpha*Alpha*0.5f);
 }
 
 static void DieScreen_Advance()
