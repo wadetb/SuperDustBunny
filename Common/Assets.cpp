@@ -980,7 +980,7 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/vacuum-1.png", &Vacuum1Sprite);
 	LoadSpriteAsset("Assets/vacuum-2.png", &Vacuum2Sprite);
 	LoadSpriteAsset("Assets/vacuum-3.png", &Vacuum3Sprite);
-	LoadSpriteAsset("Assets/vacuum-smoke.png", &VacuumSmokeSprite);
+	LoadSpriteAsset("Assets/vacuum_smoke2.png", &VacuumSmokeSprite);
     
 	LoadSpriteAsset("Assets/dustbuster.png", &DustBusterSprite);
 

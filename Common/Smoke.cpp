@@ -58,7 +58,8 @@ void DisplaySmoke()
         Alpha *= Remap(Smoke->Age, 0, Smoke->Life*1.0f/3.0f, 0.0f, 1.0f, true);
         Alpha *= Remap(Smoke->Age, Smoke->Life*2.0f/3.0f, Smoke->Life, 1.0f, 0.0f, true);
         
-        AddLitSpriteCenteredScaledRotatedAlpha(LIGHTLIST_SMOKE, Smoke->Sprite, Smoke->X + ScrollX, Smoke->Y + ScrollY, Smoke->Scale, Smoke->Angle, Alpha);
+        unsigned int Color = gxRGBA32(192, 192, 192, (unsigned int)(Alpha*255));
+        AddLitSpriteCenteredScaledRotatedColor(LIGHTLIST_SMOKE, Smoke->Sprite, Smoke->X + ScrollX, Smoke->Y + ScrollY, Smoke->Scale, Smoke->Angle, Color);
     }
 }
 
