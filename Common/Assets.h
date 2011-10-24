@@ -163,6 +163,8 @@ extern gxSprite ScreenLoseGrave2Sprite;
 extern gxSprite ScreenWin1Sprite;
 extern gxSprite ScreenWin2Sprite;
 
+extern gxSprite LeaderboardBackgroundSprite;
+
 extern gxSprite TextFlickToJumpSprite;
 extern gxSprite TextExtraLifeSprite;
 extern gxSprite TextBonusSprite;

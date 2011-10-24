@@ -170,6 +170,8 @@ gxSprite ScreenLoseGrave2Sprite;
 gxSprite ScreenWin1Sprite;
 gxSprite ScreenWin2Sprite;
 
+gxSprite LeaderboardBackgroundSprite;
+
 gxSprite TextFlickToJumpSprite;
 gxSprite TextExtraLifeSprite;
 gxSprite TextBonusSprite;
@@ -980,7 +982,7 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/vacuum-1.png", &Vacuum1Sprite);
 	LoadSpriteAsset("Assets/vacuum-2.png", &Vacuum2Sprite);
 	LoadSpriteAsset("Assets/vacuum-3.png", &Vacuum3Sprite);
-	LoadSpriteAsset("Assets/vacuum_smoke2.png", &VacuumSmokeSprite);
+	LoadSpriteAsset("Assets/vacuum-smoke.png", &VacuumSmokeSprite);
     
 	LoadSpriteAsset("Assets/dustbuster.png", &DustBusterSprite);
 
@@ -1009,6 +1011,8 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/screen-win-1.png", &ScreenWin1Sprite);
 	LoadSpriteAsset("Assets/screen-win-2.png", &ScreenWin2Sprite);
 
+    LoadSpriteAsset("Assets/leaderboard-background.png", &LeaderboardBackgroundSprite);
+    
 	LoadSpriteAsset("Assets/text-flick-to-jump.png", &TextFlickToJumpSprite);
 	LoadSpriteAsset("Assets/text-extra-life.png", &TextExtraLifeSprite);
     LoadSpriteAsset("Assets/text-bonus.png", &TextBonusSprite);
@@ -1031,7 +1035,6 @@ void LoadAssets()
     LoadSpriteAsset("Assets/text-tap-to-continue.png", &TapToContinueSprite);
 
     LoadSpriteAsset("Assets/powerup.png", &PowerUpSprite);
-    
 
 	//-----------------------------------------------------------------------------------------------------------------------------------------//
 	//                                                    Sound Assets                                                                         //

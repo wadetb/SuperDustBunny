@@ -10,6 +10,9 @@
 #ifndef LEADERBOARDSCREEN_H
 #define LEADERBOARDSCREEN_H
 
+void SwitchToNextLeaderboard();
+void SwitchToPreviousLeaderboard();
+
 void DownloadLeaderboards();
 
 void InitLeaderboardScreen();

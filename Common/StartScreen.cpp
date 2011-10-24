@@ -12,6 +12,7 @@
 #include "Dusty.h"
 #include "Chapter.h"
 #include "Settings.h"
+#include "LeaderboardScreen.h"
 
 #ifdef PLATFORM_IPHONE
 #import "SuperDustBunnyViewController.h"
@@ -54,6 +55,8 @@ struct SStartScreen
     bool WelcomeDisplayed;
     
     float WiggleTime;
+    
+    bool LeaderboardVisible;
 };
 
 SStartScreen StartScreen;
@@ -229,26 +232,18 @@ void DisplayStartScreen()
 	AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, GetStartScreenBackground(StartScreen.CurItem), 0, 0, 768, LitScreenHeight, 1.0f-StartScreen.BackgroundFadeAlpha);
 	AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, GetStartScreenBackground(StartScreen.PrevItem), 0, 0 , 768, LitScreenHeight, StartScreen.BackgroundFadeAlpha);
 
-    //AddLitSprite(LIGHTLIST_VACUUM, &ChapterTitleSprite, 0, -350);
+    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &LogoSprite, 384, 280, 1.0f, 1.0f);
 
-    // Fading out logo.
-    float LogoScale = 1.0f; //Lerp(StartScreen.StartupTime, 0.0f, 0.8f, 2.0f, 0.5f);
-    float LogoAlpha = 1.0f; //Lerp(StartScreen.StartupTime, 0.6f, 0.8f, 1.0f, 0.0f);
-    if (LogoAlpha > 0)
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &LogoSprite, 384, 280, LogoScale, LogoAlpha);
-
-    // Leaderboard and ghost buttons.
-    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ButtonLeaderboardSprite, 90 + sinf(StartScreen.WiggleTime)*4.0f, 90, 1.0f, StartScreen.LeaderboardButtonAlpha);
-    float GhostAlpha = Settings.GhostActive ? 0.75f : 0.5f;
-    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ButtonGhostSprite, 768 - (90 + sinf(1234+StartScreen.WiggleTime)*4.0f), 90, 1.0f, StartScreen.LeaderboardButtonAlpha*GhostAlpha);
+    // Leaderboard button.
+    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ButtonLeaderboardSprite, 768-90 + sinf(StartScreen.WiggleTime)*4.0f, 90, 1.0f, StartScreen.LeaderboardButtonAlpha);
     
     // Sliding main buttons.
 	for (int i = 0; i < GetStartScreenItemCount(); i++)
 	{
         float X = 384 + i*StartScreenSpacing - StartScreen.DisplayX;
-        float Y = LitScreenHeight * 0.7f;
+        float Y = LitScreenHeight * 0.75f;
 
-        float Scale = Remap(fabsf(384-X), 0.0f, 500.0f, 0.9f, 0.6f, true);
+        float Scale = Remap(fabsf(384-X), 0.0f, 500.0f, 0.85f, 0.6f, true);
         
         if (i == StartScreen.CurItem)
         {
@@ -279,6 +274,11 @@ void DisplayStartScreen()
         AddLitSpriteAlpha(LIGHTLIST_WIPE, &ScreenStart1Sprite, 0, LitScreenHeight/2 - ScreenStart1Sprite.height/2, Alpha);
         AddLitSpriteAlpha(LIGHTLIST_WIPE, &ScreenStart1Sprite, 0, LitScreenHeight/2 - ScreenStart1Sprite.height/2-ScreenStart1Sprite.height, Alpha);
         AddLitSpriteAlpha(LIGHTLIST_WIPE, &ScreenStart1Sprite, 0, LitScreenHeight/2 - ScreenStart1Sprite.height/2+ScreenStart1Sprite.height, Alpha);
+    }
+    
+    if (StartScreen.LeaderboardVisible)
+    {
+        DisplayLeaderboardScreen();
     }
 }
 
@@ -330,6 +330,43 @@ void UpdateStartScreen()
 	}
 #endif
 
+    if (StartScreen.LeaderboardVisible)
+    {
+        StartScreen.LeaderboardButtonAlpha = Clamp(StartScreen.LeaderboardButtonAlpha - 0.05f, 0.0f, 1.0f);    
+
+        if (msY < 200 && msX > 500 && msButton1 && !msOldButton1)
+        {
+#ifdef PLATFORM_IPHONE
+            [TestFlight passCheckpoint:[NSString stringWithFormat:@"Closed Leaderboards", Chapters[CurrentChapter].Name]];
+#endif
+            StartScreen.LeaderboardVisible = false;            
+        }
+        
+        if (msY > 700 && msX > 300 && msX < 500 && msButton1 && !msOldButton1)
+        {
+            Settings.GhostActive = !Settings.GhostActive;
+#ifdef PLATFORM_IPHONE
+            [TestFlight passCheckpoint:[NSString stringWithFormat:@"Toggled Ghost mode to %s", Settings.GhostActive ? "on" : "off"]];
+#endif
+            SaveSettings();
+        }
+        
+        if (msY > 700 && msX > 500 && msButton1 && !msOldButton1)
+        {
+            SwitchToNextLeaderboard();
+            return;
+        }
+        
+        if (msY > 700 && msX < 300 && msButton1 && !msOldButton1)
+        {
+            SwitchToPreviousLeaderboard();
+            return;
+        }
+        
+        UpdateLeaderboardScreen();
+        return;
+    }
+    
     if (!msButton1)
         StartScreen.ReleasedAtLeastOnce = true;
     if (!StartScreen.ReleasedAtLeastOnce)
@@ -412,24 +449,15 @@ void UpdateStartScreen()
         
         if (StartScreen.LeaderboardsUnlocked)
         {
-            if (msY < 256 && msX < 384 && !msButton1 && msOldButton1)
+            if (msY < 256 && msX > 384 && msButton1 && !msOldButton1)
             {
                 CurrentChapter = StartScreen.CurItem - STARTSCREEN_ITEM_FIRST_CHAPTER;
                 
 #ifdef PLATFORM_IPHONE
                 [TestFlight passCheckpoint:[NSString stringWithFormat:@"Opened Leaderboards for %s", Chapters[CurrentChapter].Name]];
 #endif
-                SetGameState_Leaderboard();
-                return;
-            }
-            
-            if (msY < 256 && msX > 384 && !msButton1 && msOldButton1)
-            {
-                Settings.GhostActive = !Settings.GhostActive;
-#ifdef PLATFORM_IPHONE
-                [TestFlight passCheckpoint:[NSString stringWithFormat:@"Toggled Ghost mode to %s", Settings.GhostActive ? "on" : "off"]];
-#endif
-                SaveSettings();
+                StartScreen.LeaderboardVisible = true;
+                InitLeaderboardScreen();
                 return;
             }
         }
