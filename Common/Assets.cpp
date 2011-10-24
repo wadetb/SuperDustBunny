@@ -905,7 +905,7 @@ void LoadAssets()
 
 	LoadSpriteAsset("Assets/dusty-die.png", &DustyDeathSprite);
 
-    LoadSpriteAsset("Assets/title.png", &LogoSprite);
+    LoadSpriteAsset("Assets/logo.png", &LogoSprite);
     
     LoadSpriteAsset("Assets/new-unlock.png", &NewUnlockSprite);
     

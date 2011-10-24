@@ -229,11 +229,13 @@ void DisplayStartScreen()
 	AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, GetStartScreenBackground(StartScreen.CurItem), 0, 0, 768, LitScreenHeight, 1.0f-StartScreen.BackgroundFadeAlpha);
 	AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, GetStartScreenBackground(StartScreen.PrevItem), 0, 0 , 768, LitScreenHeight, StartScreen.BackgroundFadeAlpha);
 
+    //AddLitSprite(LIGHTLIST_VACUUM, &ChapterTitleSprite, 0, -350);
+
     // Fading out logo.
-    float LogoScale = Lerp(StartScreen.StartupTime, 0.0f, 0.8f, 2.0f, 0.5f);
-    float LogoAlpha = Lerp(StartScreen.StartupTime, 0.6f, 0.8f, 1.0f, 0.0f);
+    float LogoScale = 1.0f; //Lerp(StartScreen.StartupTime, 0.0f, 0.8f, 2.0f, 0.5f);
+    float LogoAlpha = 1.0f; //Lerp(StartScreen.StartupTime, 0.6f, 0.8f, 1.0f, 0.0f);
     if (LogoAlpha > 0)
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &LogoSprite, 384, 280, LogoScale, LogoAlpha);
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &LogoSprite, 384, 280, LogoScale, LogoAlpha);
 
     // Leaderboard and ghost buttons.
     AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ButtonLeaderboardSprite, 90 + sinf(StartScreen.WiggleTime)*4.0f, 90, 1.0f, StartScreen.LeaderboardButtonAlpha);
