@@ -84,12 +84,12 @@ void DownloadLeaderboards()
     
     NSString* URLString;
 #ifdef PLATFORM_IPHONE
-    if (theViewController.haveLocation && (LeaderboardScreen.Region == LEADERBOARDREGION_CITY || LeaderboardScreen.Region == LEADERBOARDREGION_STATE))
+    if (theViewController.haveLocation && (/*LeaderboardScreen.Region == LEADERBOARDREGION_CITY ||*/ LeaderboardScreen.Region == LEADERBOARDREGION_STATE))
     {
         NSString* region;
-        if (LeaderboardScreen.Region == LEADERBOARDREGION_CITY)
-            region = theViewController.city;
-        else
+//        if (LeaderboardScreen.Region == LEADERBOARDREGION_CITY)
+//            region = theViewController.city;
+//        else
             region = theViewController.state;
         
         URLString = [NSString stringWithFormat:@"http://pluszerogames.com/sdb/getleaderboard.php?mode=%s&region=%s&chapter=%s&region_value=%@", 
@@ -182,11 +182,11 @@ void DisplayLeaderboardScreen()
 
     const char* LocalRegionName = RegionName[Region];
 #ifdef PLATFORM_IPHONE
-    if (theViewController.haveLocation && (Region == LEADERBOARDREGION_CITY || Region == LEADERBOARDREGION_STATE))
+    if (theViewController.haveLocation && (Region == LEADERBOARDREGION_STATE))
     {
-        if (Region == LEADERBOARDREGION_CITY)
-            LocalRegionName = [[theViewController.city lowercaseString] UTF8String];
-        else
+//        if (Region == LEADERBOARDREGION_CITY)
+//            LocalRegionName = [[theViewController.city lowercaseString] UTF8String];
+//        else
             LocalRegionName = [[theViewController.state lowercaseString] UTF8String];
     }
 #endif
@@ -258,15 +258,16 @@ void UpdateLeaderboardScreen()
     
     LeaderboardScreen.AvailableRegionCount = 0;
     
-    LeaderboardScreen.AvailableRegions[LeaderboardScreen.AvailableRegionCount++] = LEADERBOARDREGION_WORLD;
 #ifdef PLATFORM_IPHONE
     if (theViewController.haveLocation)
     {
         LeaderboardScreen.AvailableRegions[LeaderboardScreen.AvailableRegionCount++] = LEADERBOARDREGION_STATE;
-        LeaderboardScreen.AvailableRegions[LeaderboardScreen.AvailableRegionCount++] = LEADERBOARDREGION_CITY;
+//        LeaderboardScreen.AvailableRegions[LeaderboardScreen.AvailableRegionCount++] = LEADERBOARDREGION_CITY;
     }
 #endif
     // TODO if (HaveFacebook), if (HaveGameCenter)
+
+    LeaderboardScreen.AvailableRegions[LeaderboardScreen.AvailableRegionCount++] = LEADERBOARDREGION_WORLD;
 
     if (LeaderboardScreen.Dragging)
     {

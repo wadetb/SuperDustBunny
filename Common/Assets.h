@@ -139,7 +139,6 @@ extern gxSprite VacuumSmokeSprite;
 extern gxSprite DustBusterSprite;
 
 extern gxSprite ScreenStart1Sprite;
-extern gxSprite ScreenStart2Sprite;
 extern gxSprite ScreenHelp1Sprite;
 extern gxSprite ScreenHelp2Sprite;
 extern gxSprite ScreenCredits1Sprite;
@@ -152,9 +151,6 @@ extern gxSprite IconHelp2Sprite;
 extern gxSprite IconCredits1Sprite;
 extern gxSprite IconCredits2Sprite;
 extern gxSprite IconLockedSprite;
-
-extern gxSprite ScreenLose1Sprite;
-extern gxSprite ScreenLose2Sprite;
 
 extern gxSprite ScreenLoseGhostSprite;
 extern gxSprite ScreenLoseGrave1Sprite;

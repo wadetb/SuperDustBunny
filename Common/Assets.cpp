@@ -146,7 +146,6 @@ gxSprite VacuumSmokeSprite;
 gxSprite DustBusterSprite;
 
 gxSprite ScreenStart1Sprite;
-gxSprite ScreenStart2Sprite;
 gxSprite ScreenHelp1Sprite;
 gxSprite ScreenHelp2Sprite;
 gxSprite ScreenCredits1Sprite;
@@ -159,9 +158,6 @@ gxSprite IconHelp2Sprite;
 gxSprite IconCredits1Sprite;
 gxSprite IconCredits2Sprite;
 gxSprite IconLockedSprite;
-
-gxSprite ScreenLose1Sprite;
-gxSprite ScreenLose2Sprite;
 
 gxSprite ScreenLoseGhostSprite;
 gxSprite ScreenLoseGrave1Sprite;
@@ -987,7 +983,6 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/dustbuster.png", &DustBusterSprite);
 
 	LoadSpriteAsset("Assets/screen-start-1.png", &ScreenStart1Sprite);
-	LoadSpriteAsset("Assets/screen-start-2.png", &ScreenStart2Sprite);
     LoadSpriteAsset("Assets/screen-help-1.png", &ScreenHelp1Sprite);
     LoadSpriteAsset("Assets/screen-help-2.png", &ScreenHelp2Sprite);
     LoadSpriteAsset("Assets/screen-credits-1.png", &ScreenCredits1Sprite);
@@ -1001,9 +996,6 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/icon-credits-2.png", &IconCredits2Sprite);
 	LoadSpriteAsset("Assets/icon-locked.png", &IconLockedSprite);
 
-	LoadSpriteAsset("Assets/screen-lose-1.png", &ScreenLose1Sprite);
-	LoadSpriteAsset("Assets/screen-lose-2.png", &ScreenLose2Sprite);
-	
 	LoadSpriteAsset("Assets/screen-lose-ghost.png", &ScreenLoseGhostSprite);
 	LoadSpriteAsset("Assets/screen-lose-grave-1.png", &ScreenLoseGrave1Sprite);
 	LoadSpriteAsset("Assets/screen-lose-grave-2.png", &ScreenLoseGrave2Sprite);
