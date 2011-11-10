@@ -23,6 +23,7 @@ enum EDustyState
 	DUSTYSTATE_JUMP,
 	DUSTYSTATE_HOP,
 	DUSTYSTATE_WALLJUMP,
+	DUSTYSTATE_BALLOONRIDE,
 	DUSTYSTATE_CORNERJUMP,
 	DUSTYSTATE_PREPARELAUNCH,
 	DUSTYSTATE_LAUNCH,
@@ -73,6 +74,23 @@ enum EDustySprite
     DUSTYSPRITE_COUNT
 };
 
+struct SDustyHatOffset
+{
+    float Angle;
+    float X;
+    float Y;
+};
+
+enum EDustyHat
+{
+    DUSTYHAT_NONE,
+    
+    DUSTYHAT_PINK_BOW,
+    DUSTYHAT_PARTY,
+    
+    DUSTYHAT_COUNT
+};
+
 enum ENearbyBlock
 {
     NEARBY_UP_LEFT        = 1<<0,
@@ -118,6 +136,8 @@ struct SDusty
     
 	int SpriteTransition;
 
+    EDustyHat Hat;
+    
     EDeathType Death;
     
 	int WallStickTimer;
@@ -169,7 +189,8 @@ struct SDusty
 extern SDusty Dusty;
 
 extern gxSprite* DustySprite[DUSTYSPRITE_COUNT];
-
+extern SDustyHatOffset DustyHatOffsets[DUSTYSPRITE_COUNT];
+extern gxSprite* DustyHatSprites[DUSTYHAT_COUNT];
 
 void DisplayDusty();
 void UpdateDusty();
@@ -182,12 +203,12 @@ void ResetDustyCollision();
 void SetDustyState_PrepareLaunch();
 void SetDustyState_JumpWithVelocity( float VX, float VY );
 void SetDustyState_Launch(float VelocityX, float VelocityY);
+void SetDustyState_BalloonRide();
 void SetDustyState_Hurt();
 void SetDustyState_Die(EDeathType Death);
 void SetDustyState_Stuck();
 void SetDustyState_Stand();
 void SetDustyState_Hop(EDustyDirection Direction);
-void SetDustyState_StaplerLaunch();
 void SetDustyState_IntroHop(EDustyDirection Direction);
 void SetDustyState_IntroStand();
 

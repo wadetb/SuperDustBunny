@@ -15,6 +15,7 @@
 #include "Tweak.h"
 #include "Dust.h"
 #include "GameScore.h"
+#include "Tutorial.h"
 
 
 #define MAX_BABIES 50
@@ -37,6 +38,7 @@ struct SBaby
 {
     EBabyState State;
     EDustyDirection Direction;
+    EDustyHat Hat;
     float FloatTimer;
     int Timer;
     float Size;
@@ -99,7 +101,7 @@ static void ClearDustyHistory()
     DustyHistoryCount = 0;
 }
 
-void CreateBaby(int X, int Y, unsigned int Flags, bool StartFollowing)
+void CreateBaby(float X, int Y, unsigned int Flags, int Hat, bool StartFollowing)
 {
 	if (NBabies >= MAX_BABIES)
 		ReportError("Exceeded the maximum of %d total Babies.", MAX_BABIES);
@@ -118,6 +120,8 @@ void CreateBaby(int X, int Y, unsigned int Flags, bool StartFollowing)
         Baby->FloatTimer = Random(60, 120);
     }
     
+    Baby->Hat = (EDustyHat)Hat;
+    
     Baby->Direction = (Flags & SPECIALBLOCKID_FLIP_X) ? DIRECTION_RIGHT : DIRECTION_LEFT;
 
     Baby->Size = 0.6f; //Random(0.6f, 0.7f);
@@ -132,7 +136,7 @@ void CreateBaby(int X, int Y, unsigned int Flags, bool StartFollowing)
     
     Baby->Alpha = 1.0f;
     
-    EraseBlock(X, Y);
+    EraseBlock((int)X, Y);
 }
 
 void ClearBabies()
@@ -160,6 +164,18 @@ static void DisplayBabySprite(SBaby* Baby, EDustySprite Sprite, float XAdj, floa
     float Y = Baby->Y + YAdj * Baby->Size;
     
 	AddLitSpriteScaledAlpha(LIGHTLIST_FOREGROUND, DustySprite[Sprite], X + ScrollX, Y + ScrollY, ScaleX * Baby->Size, Baby->Size, Baby->Alpha);
+    
+    if (Baby->Hat != DUSTYHAT_NONE)
+    {
+        gxSprite* HatSprite = DustyHatSprites[Baby->Hat];
+        SDustyHatOffset* HatOffset = &DustyHatOffsets[Sprite];
+        
+        AddLitSpriteCenteredScaled2Rotated(LIGHTLIST_FOREGROUND, HatSprite, 
+                                           X + ScrollX + HatOffset->X*ScaleX*Baby->Size, 
+                                           Y + ScrollY + HatOffset->Y*Baby->Size, 
+                                           ScaleX*Baby->Size, Baby->Size, DegreesToRadians(HatOffset->Angle)*ScaleX);
+    }
+
 }
 
 void DisplayBabies()
@@ -320,9 +336,9 @@ void UpdateBabies()
                 return;
             }
             
-            if (Dusty.FloatY <= Baby->Y && Distance(Baby->X, Baby->Y, Dusty.FloatX, Dusty.FloatY) < 200)
+            if (!TutorialOverrides.NoBabyPickup && Dusty.FloatY <= Baby->Y && Distance(Baby->X, Baby->Y, Dusty.FloatX, Dusty.FloatY) < 200)
             {
-                AwardBaby();
+                AwardBaby(Baby->Hat);
                 Baby->State = BABYSTATE_JUMP_TO_FOLLOW;
                 Baby->FollowOffset = Random(-10.0f, 10.0f);
                 Baby->FollowOrder = Random(10, MAX_DUSTY_HISTORY);
@@ -349,11 +365,11 @@ void UpdateBabies()
                 {
                     Baby->Direction = DIRECTION_LEFT;
                 }
-                else if (CloseToDusty && Baby->X > Dusty.FloatX)
+                else if (!TutorialOverrides.NoBabyPickup && CloseToDusty && Baby->X > Dusty.FloatX)
                 {
                     Baby->Direction = DIRECTION_LEFT;
                 }
-                else if (CloseToDusty && Baby->X < Dusty.FloatX)
+                else if (!TutorialOverrides.NoBabyPickup && CloseToDusty && Baby->X < Dusty.FloatX)
                 {
                     Baby->Direction = DIRECTION_RIGHT;
                 }

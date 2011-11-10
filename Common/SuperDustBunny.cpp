@@ -36,6 +36,7 @@
 #include "Hanger.h"
 #include "Baby.h"
 #include "Tweak.h"
+#include "Balloon.h"
 
 #include "StartScreen.h"
 #include "HelpScreen.h"
@@ -295,7 +296,7 @@ void SetGameState_StartScreen()
 {
 	GameState = GAMESTATE_START_SCREEN;
 
-    LitSceneZoom = 1.0f;
+    ResetLightState();
     
     if (!AssetsLoaded)
     {
@@ -527,6 +528,7 @@ void DisplayGame_Playing()
     DisplayFlames();
 	DisplayDebris();
 	DisplayStaplers();
+	DisplayBabies();
 
 	// Dusty Drawing
 	DisplayDusty();
@@ -543,7 +545,7 @@ void DisplayGame_Playing()
 	DisplayPowerUp();
     DisplayTutorial();
 	DisplayHangers();
-	DisplayBabies();
+	DisplayBalloons();
     
     // HUD Drawing - Score, etc.
     DisplayScore();
@@ -634,6 +636,7 @@ static void UpdateGame_Playing()
         UpdateStaplers();
         UpdatePowerUp();
         UpdateVacuumTriggers();
+        UpdateBalloons();
     }
 
     UpdateDust();

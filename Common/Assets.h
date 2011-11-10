@@ -60,6 +60,15 @@ extern gxSprite DustyCornerJumpdSprite;
 
 extern gxSprite DustyDeathSprite;
 
+extern gxSprite PartyHatSprite;
+extern gxSprite PinkBowHatSprite;
+
+extern gxSprite BalloonBlueSprite;
+extern gxSprite BalloonYellowSprite;
+extern gxSprite BalloonRedSprite;
+extern gxSprite BalloonPurpleSprite;
+extern gxSprite BalloonGreenSprite;
+
 extern gxSprite LogoSprite;
 
 extern gxSprite NewUnlockSprite;

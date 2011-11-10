@@ -33,6 +33,7 @@
 #include "GameScore.h"
 #include "Hanger.h"
 #include "Baby.h"
+#include "Balloon.h"
 
 #ifdef PLATFORM_WINDOWS
 #include <direct.h>
@@ -370,6 +371,10 @@ static void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* F
                     {
                         Block->Type = BLOCKTYPE_BABY;
                     }
+                    else if (strcmp(Value, "balloon") == 0)
+                    {
+                        Block->Type = BLOCKTYPE_BALLOON;
+                    }
 				}
 				else if (strcmp(Name, "material") == 0)
 				{
@@ -702,6 +707,36 @@ static void LoadPageFromTMX(const char* FileName)
 
         SPageLayer* Layer = &Page->Layers[Page->NLayers++];
 
+        Layer->LightList = LIGHTLIST_FOREGROUND_NO_SHADOW;
+        Layer->Alpha = 1.0f;
+
+		rapidxml::xml_node<char>* PropertiesNode = LayerNode->first_node("properties");
+		if (PropertiesNode)
+		{
+			rapidxml::xml_node<char>* PropertyNode = PropertiesNode->first_node("property");
+			while (PropertyNode)
+			{
+				const char* Name = PropertyNode->first_attribute("name")->value();
+				const char* Value = PropertyNode->first_attribute("value")->value();
+                
+				if (strcmp(Name, "list") == 0)
+				{
+                    if (strcmp(Value, "background") == 0)
+                        Layer->LightList = LIGHTLIST_BACKGROUND;
+                    else
+                    if (strcmp(Value, "midground") == 0)
+                        Layer->LightList = LIGHTLIST_MIDGROUND;
+                    else
+                    if (strcmp(Value, "foreground") == 0)
+                        Layer->LightList = LIGHTLIST_FOREGROUND;
+                    else
+                        ReportError("Invalid light list '%s' for layer.", Value);
+                }
+                
+                PropertyNode = PropertyNode->next_sibling("property");
+            }
+        }
+
         Layer->Blocks = (int*)malloc(Page->Width * Page->Height * sizeof(int));
 
         ParseCSVData(DataNode, Page->Width, Page->Height, NTileSetInfos, TileSetInfo, Layer->Blocks);
@@ -848,6 +883,8 @@ void ClearChapter()
         }
 	}
 	Chapter.NBlocks = 0;
+    
+    ClearFlamePropertiesList();
 
 	if (Chapter.PageBlocks)
 	{
@@ -872,6 +909,7 @@ static void ClearPageObjects()
     ClearVacuumTriggers();
     ClearHangers();
     ClearBabies();
+    ClearBalloons();
 
 	if (Chapter.PageBlocks)
 	{
@@ -970,7 +1008,10 @@ static void CreatePageObjects()
                     CreateHanger(x, y, (SHangerProperties*)Block->Properties);
                     break;
                 case BLOCKTYPE_BABY:
-                    CreateBaby(x, y, Flags, false);
+                    CreateBaby(x, y, Flags, Random(0, 2) == 0 ? DUSTYHAT_NONE : DUSTYHAT_PINK_BOW, false);
+                    break;
+                case BLOCKTYPE_BALLOON:
+                    CreateBalloon(x, y);
                     break;
                 default:
                     break;
@@ -1001,9 +1042,10 @@ static void CreatePageObjects()
     if (!Chapter.PageProps.VacuumOff)
         TurnOnVacuum(500, 2.0f, false);
     
-    for (int i = 0; i < Chapter.PageNum; i++)
-        for (int j = 0; j < Score.PageBabies[i]; j++)
-            CreateBaby(Chapter.StartX/64, (Chapter.StartY-32)/64, 0, true);
+    for (int i = 0; i < Score.CurrentBabies; i++)
+        CreateBaby(Chapter.StartX/64, (Chapter.StartY-32)/64, 0, Score.BabyHats[i], true);
+    
+    ResetLightState();
 }
 
 void SetCurrentPage(int PageNum)
@@ -1124,8 +1166,10 @@ void DisplayPortal()
     }
 }
 
-static void DisplayChapterLayer(ELightList LightList, int* Blocks)
+static void DisplayChapterLayer(ELightList LightList, int* Blocks, float Alpha)
 {
+    unsigned int Color = gxRGBA32(255, 255, 255, (int)(255*Alpha));
+    
     float CurY = ScrollY;
 	for (int y = 0; y < Chapter.PageHeight; y++, CurY += 64)
 	{
@@ -1200,7 +1244,7 @@ static void DisplayChapterLayer(ELightList LightList, int* Blocks)
                 float X3 = 0.0f*m11 + 1.0f*m21 + dx;
                 float Y3 = 0.0f*m12 + 1.0f*m22 + dy;
                 
-                AddLitQuad(LightList, &TileSet->Sprite, gxRGBA32(255,255,255,255),
+                AddLitQuad(LightList, &TileSet->Sprite, Color,
                            X0, Y0, U0, V0, 
                            X1, Y1, U1, V1,
                            X2, Y2, U2, V2, 
@@ -1212,7 +1256,7 @@ static void DisplayChapterLayer(ELightList LightList, int* Blocks)
 
 void DisplayChapterBaseLayer()
 {
-    DisplayChapterLayer(LIGHTLIST_FOREGROUND, Chapter.PageBlocks);
+    DisplayChapterLayer(LIGHTLIST_FOREGROUND, Chapter.PageBlocks, 1.0f);
 }
 
 void DisplayChapterExtraLayers()
@@ -1220,7 +1264,10 @@ void DisplayChapterExtraLayers()
     SPage* Page = &Chapter.Pages[Chapter.PageNum];
 
     for (int i = 0; i < Page->NLayers; i++)
-        DisplayChapterLayer(LIGHTLIST_FOREGROUND_NO_SHADOW, Page->Layers[i].Blocks);
+    {
+        SPageLayer* Layer = &Page->Layers[i];
+        DisplayChapterLayer(Layer->LightList, Layer->Blocks, Layer->Alpha);
+    }
 }
 
 int GetBlockID(int x, int y)

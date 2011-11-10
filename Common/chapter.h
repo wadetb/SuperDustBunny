@@ -24,6 +24,7 @@ enum ESpecialBlockID
 {
 	SPECIALBLOCKID_FIRST			= 10000,
 	SPECIALBLOCKID_OUTOFBOUNDS      = SPECIALBLOCKID_FIRST,
+	SPECIALBLOCKID_SOLID,
 	SPECIALBLOCKID_BLANK,
 
     SPECIALBLOCKID_FLIP_DIAGONAL    = 1 << 29,
@@ -54,6 +55,7 @@ enum EBlockType
     BLOCKTYPE_VACUUM_TRIGGER,
     BLOCKTYPE_HANGER,
     BLOCKTYPE_BABY,
+    BLOCKTYPE_BALLOON,
 };
 
 enum EBlockMaterial
@@ -123,6 +125,8 @@ struct SPageProperties
 
 struct SPageLayer
 {
+    ELightList LightList;
+    float Alpha;
     int* Blocks;
 };
 

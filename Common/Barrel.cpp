@@ -116,8 +116,8 @@ void DisplayBarrels_AfterDusty()
 	{
 		SBarrel* Barrel = &Barrels[i];
 		
-		AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND_NO_SHADOW, Sprite, Barrel->X + ScrollX, Barrel->Y + ScrollY, 1.0f, DegreesToRadians(Barrel->Dir));
-		AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND_NO_SHADOW, &BarrelNailSprite, Barrel->X + ScrollX, Barrel->Y + ScrollY, 1.0f, 0.0f);
+		AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, Sprite, Barrel->X + ScrollX, Barrel->Y + ScrollY, 1.0f, DegreesToRadians(Barrel->Dir));
+		AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &BarrelNailSprite, Barrel->X + ScrollX, Barrel->Y + ScrollY, 1.0f, 0.0f);
 	}
 }
 

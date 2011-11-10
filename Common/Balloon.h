@@ -7,13 +7,13 @@
 //                                                                                                                                         //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
-#ifndef BABY_H
-#define BABY_H
+#ifndef BALLOON_H
+#define BALLOON_H
 
-void CreateBaby(float X, int Y, unsigned int Flags, int Hat, bool StartFollowing);
-void ClearBabies();
+void CreateBalloon(float X, float Y);
+void ClearBalloons();
 
-void UpdateBabies();
-void DisplayBabies();
+void UpdateBalloons();
+void DisplayBalloons();
 
 #endif

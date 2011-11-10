@@ -11,6 +11,7 @@
 #include "Lighting.h"
 #include "Chapter.h"
 #include "Flashlight.h"
+#include "Vacuum.h"
 
 
 #define MAX_LIT_QUADS_PER_LIST	8192 // Holy crap
@@ -96,11 +97,6 @@ IDirect3DVertexDeclaration9* LitVertexDecl;
 
 #endif
 
-
-struct SLightState
-{
-	unsigned int AmbientColor;
-};
 
 struct SLightList
 {
@@ -667,10 +663,11 @@ static void DrawShadows(ELightList List, gxSprite* FinalRT)
     }
 */
     
-    if (Chapter.PageProps.LightsOff)
+    if (Chapter.PageProps.LightsOff && Flashlight.Active)
     {
         gxSetShaderConstant2(ShadowShadowOffset, 0, 0);
         gxSetShaderConstant2(ShadowShadowScale, 1.25f, 1.25f);
+        
         gxSetShaderConstant2(ShadowLightOrigin, Flashlight.X + ScrollX, Flashlight.Y + ScrollY);
     }
     else
@@ -875,8 +872,24 @@ void InitLighting()
         ReportError("RT setup caused an OpenGL error: 0x%x", error);
 #endif
     
+    ResetLightState();
+    
     double EndTime = GetCurrentTime();
     LogMessage("Lighting setup took %.1f seconds.\n", EndTime-StartTime);
+}
+
+void ResetLightState()
+{
+    LitSceneZoom = 1.0f;
+    LitSceneOffsetX = 0;
+    LitSceneOffsetY = 0;
+
+    LightState.ForegroundShadows = true;
+
+	if (Chapter.PageProps.LightsOff)
+		LightState.AmbientColor = gxRGBA32(16, 16, 16, 255);
+	else
+		LightState.AmbientColor = gxRGBA32(128, 128, 128, 255);
 }
 
 void ResetLighting()
@@ -918,11 +931,6 @@ void ResetLighting()
 	{
 		LightLists[i].NQuads = 0;
 	}
-    
-	if (Chapter.PageProps.LightsOff)
-		LightState.AmbientColor = gxRGBA32(16, 16, 16, 255);
-	else
-		LightState.AmbientColor = gxRGBA32(128, 128, 128, 255);
 
     //AddLitSpriteSizedColor(LIGHTLIST_LIGHTING, &WhiteSprite, 0, 0, 768, LitScreenHeight, LightState.AmbientColor);
     //AddLitSpriteSizedColor(LIGHTLIST_LIGHTING, &LightingSprite, 0, 0, 768, LitScreenHeight, LightState.AmbientColor);
@@ -974,10 +982,12 @@ void RenderLighting()
         //gxClearColor(gxRGBA32(0, 0, 0, 255));
         
         DrawLightList(LIGHTLIST_BACKGROUND, NULL, GXALPHA_NONE);
+        //DrawLightListShadow(LIGHTLIST_MIDGROUND, NULL, GXALPHA_BLEND);
+        DrawLightList(LIGHTLIST_MIDGROUND, NULL, GXALPHA_BLEND);
         //DrawLightListShadow(LIGHTLIST_FOREGROUND, NULL, GXALPHA_BLEND);        
         DrawLightList(LIGHTLIST_DUST, NULL, GXALPHA_BLEND);
-        DrawLightList(LIGHTLIST_FOREGROUND, NULL, GXALPHA_BLEND);
         DrawLightList(LIGHTLIST_FOREGROUND_NO_SHADOW, NULL, GXALPHA_BLEND);        
+        DrawLightList(LIGHTLIST_FOREGROUND, NULL, GXALPHA_BLEND);
         //DrawLightListShadow(LIGHTLIST_VACUUM, NULL, GXALPHA_BLEND);        
         DrawLightList(LIGHTLIST_SMOKE, NULL, GXALPHA_BLEND);
         DrawLightList(LIGHTLIST_VACUUM, NULL, GXALPHA_BLEND);
@@ -1011,12 +1021,18 @@ void RenderLighting()
         
         // Real background.
         DrawLightList(LIGHTLIST_BACKGROUND, &LitShader, GXALPHA_NONE);
-        
+
+        // Midground - usually empty but used in special places, like the birthday.
+        DrawShadows(LIGHTLIST_MIDGROUND, &ColorRT);
+        DrawLightList(LIGHTLIST_MIDGROUND, &LitShader, GXALPHA_BLEND);
+
         // Foreground shadows.
-        DrawShadows(LIGHTLIST_FOREGROUND, &ColorRT);
+        if (LightState.ForegroundShadows)
+            DrawShadows(LIGHTLIST_FOREGROUND, &ColorRT);
         
         // Dust layer.        
         DrawLightList(LIGHTLIST_DUST, &LitShader, GXALPHA_BLEND);
+
         DrawLightList(LIGHTLIST_FOREGROUND, &LitShader, GXALPHA_BLEND);
         DrawLightList(LIGHTLIST_FOREGROUND_NO_SHADOW, &LitShader, GXALPHA_BLEND);
         
@@ -1384,6 +1400,21 @@ void AddLitSpriteCenteredScaledRotated(ELightList List, gxSprite* Sprite, float 
 		X + (+w * ca) - (-h * sa),    Y + (+w * sa) + (-h * ca),    1.0f, 0.0f, 
 		X + (+w * ca) - (+h * sa),    Y + (+w * sa) + (+h * ca),    1.0f, 1.0f, 
 		X + (-w * ca) - (+h * sa),    Y + (-w * sa) + (+h * ca),    0.0f, 1.0f);
+}
+
+void AddLitSpriteCenteredScaled2Rotated(ELightList List, gxSprite* Sprite, float X, float Y, float ScaleX, float ScaleY, float Angle)
+{
+	float ca = cosf(Angle);
+	float sa = sinf(Angle);
+    
+	float w = ScaleX * (float)Sprite->width * 0.5f;
+	float h = ScaleY * (float)Sprite->height * 0.5f;
+    
+	AddLitQuad(List, Sprite, gxRGBA32(255,255,255,255),
+               X + (-w * ca) - (-h * sa),    Y + (-w * sa) + (-h * ca),    0.0f, 0.0f, 
+               X + (+w * ca) - (-h * sa),    Y + (+w * sa) + (-h * ca),    1.0f, 0.0f, 
+               X + (+w * ca) - (+h * sa),    Y + (+w * sa) + (+h * ca),    1.0f, 1.0f, 
+               X + (-w * ca) - (+h * sa),    Y + (-w * sa) + (+h * ca),    0.0f, 1.0f);
 }
 
 void AddLitSpriteCenteredScaledRotatedAlpha(ELightList List, gxSprite* Sprite, float X, float Y, float Scale, float Angle, float Alpha)

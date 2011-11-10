@@ -135,6 +135,10 @@ void DownloadLeaderboards()
             if (atoi([time UTF8String]))
             {
                 LeaderboardScreen.Name[i] = strdup([[name lowercaseString] UTF8String]);
+                
+                if (strlen(LeaderboardScreen.Name[i]) > 10)
+                    LeaderboardScreen.Name[i][10] = 0;
+                
                 LeaderboardScreen.Time[i] = atoi([time UTF8String]);
             }
         }
@@ -156,12 +160,30 @@ void InitLeaderboardScreen()
 #endif
 }
 
+static void DisplayLeaderboardScrollString(const char* String, unsigned int Flags, float X, float Y, float Scale, float Alpha)
+{
+    Alpha *= Remap(Y - LeaderboardScreen.StartY, 30.0f, 50.0f, 0.0f, 1.0f, true);
+    Alpha *= Remap(Y - LeaderboardScreen.StartY, 700.0f, 800.0f, 1.0f, 0.0f, true);
+    if (Alpha < 0)
+        return;
+    DisplayStringAlpha(LIGHTLIST_VACUUM, String, Flags, X, Y - LeaderboardScreen.StartY + LeaderboardScreen.BaseY, Scale, Alpha);
+}
+
+static void DisplayLeaderboardScrollTime(int Time, float X, float Y, float Scale, float Alpha)
+{
+    Alpha *= Remap(Y - LeaderboardScreen.StartY, 30.0f, 50.0f, 0.0f, 1.0f, true);
+    Alpha *= Remap(Y - LeaderboardScreen.StartY, 700.0f, 800.0f, 1.0f, 0.0f, true);
+    if (Alpha < 0)
+        return;
+    DisplayTimeAlpha(X, Y - LeaderboardScreen.StartY + LeaderboardScreen.BaseY, Scale, Time, Alpha);
+}
+
 void DisplayLeaderboardScreen()
 {
     AddLitSprite(LIGHTLIST_VACUUM, &LeaderboardBackgroundSprite, 0, LeaderboardScreen.BaseY);
     
     // Leaderboard buttons.
-    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ButtonLeaderboardSprite, 768-100, LeaderboardScreen.BaseY + 60, 1.0f, 1.0f);
+    //AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ButtonLeaderboardSprite, 768-100, LeaderboardScreen.BaseY + 60, 1.0f, 1.0f);
  
     float PrevAlpha = LeaderboardScreen.CurTab > 0 ? 1.0f : 0.5f;
     float NextAlpha = LeaderboardScreen.CurTab < LEADERBOARDMODE_COUNT * LeaderboardScreen.AvailableRegionCount - 1 ? 1.0f : 0.5f;
@@ -173,8 +195,6 @@ void DisplayLeaderboardScreen()
 
     const char* RegionName[LEADERBOARDREGION_COUNT] = { "worldwide", "state" };
     const char* ModeName[LEADERBOARDMODE_COUNT] = { "king of the day", "top score" };
-
-    int CurrentX = 0;
     
     ELeaderboardRegion Region = LeaderboardScreen.Region;
     
@@ -191,11 +211,11 @@ void DisplayLeaderboardScreen()
     }
 #endif
     
-    DisplayString(LIGHTLIST_VACUUM, LocalRegionName, FORMAT_CENTER_X, 384, -LeaderboardScreen.StartY + 50 + LeaderboardScreen.BaseY, 0.8f);
+    DisplayLeaderboardScrollString(LocalRegionName, FORMAT_CENTER_X, 384, 50, 0.8f, 1.0f);
 
-    DisplayString(LIGHTLIST_VACUUM, ModeName[Mode], FORMAT_CENTER_X, 384, -LeaderboardScreen.StartY + 130 + LeaderboardScreen.BaseY, 1.0f);
+    DisplayLeaderboardScrollString(ModeName[Mode], FORMAT_CENTER_X, 384, 130, 1.0f, 1.0f);
     
-    int CurrentY = 250 + LeaderboardScreen.BaseY;
+    int CurrentY = 250;
     
     for (int i = 0; i < LEADERBOARD_COUNT; i++)
     {
@@ -203,13 +223,12 @@ void DisplayLeaderboardScreen()
             continue;
         
         float Alpha = Remap((float)CurrentY - 300, 0.0f, LeaderboardScreen.FadeInTime * 5000.0f, 1.0f, 0.0f, true);
-        DisplayStringAlpha(LIGHTLIST_VACUUM, LeaderboardScreen.Name[i], 0, 80 + CurrentX, CurrentY-LeaderboardScreen.StartY, 0.8f, Alpha);
-        DisplayTimeAlpha(450 + CurrentX, CurrentY-LeaderboardScreen.StartY, 0.6f, LeaderboardScreen.Time[i], Alpha);
+        
+        DisplayLeaderboardScrollString(LeaderboardScreen.Name[i], 0, 80, CurrentY, 0.8f, Alpha);
+        DisplayLeaderboardScrollTime(LeaderboardScreen.Time[i], 450, CurrentY, 0.6f, Alpha);
         
         CurrentY += 75;
     }
-    
-    CurrentX += 768;
 }
 
 void SwitchToNextLeaderboard()

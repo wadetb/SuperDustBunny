@@ -49,6 +49,8 @@ void CreateStapler(int X, int Y, EStaplerType Type)
     }
     
     Stapler->Timer = 0;
+    
+    Stapler->ChargeTime = 0;
 
 	Stapler->CollideWithLeftSide = false;
 	Stapler->CollideWithRightSide = false;
@@ -122,7 +124,14 @@ void DisplayStaplers()
             break;
         }
         
-        if (Stapler->State == STAPLERSTATE_LAUNCH)
+        if (Stapler->State == STAPLERSTATE_CHARGE)
+        {
+            int Frame = 2;
+            if (Frame >= FrameCount) 
+                Frame = FrameCount-1;
+            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, Frames[Frame], Stapler->X + ScrollX, Stapler->Y + ScrollY + OffsetY, 1.0f, 0.0f);
+        }
+        else if (Stapler->State == STAPLERSTATE_LAUNCH)
         {
             int Frame = 1+Stapler->Timer/5;
             if (Frame >= FrameCount) 
@@ -139,14 +148,34 @@ void UpdateStaplers()
     for (int i = 0; i < NStaplers; i++)
     {
         SStapler* Stapler = &Staplers[i];
-					
-        if (Stapler->State == STAPLERSTATE_LAUNCH)
+				
+        if (Stapler->State == STAPLERSTATE_CHARGE)
+        {
+            Stapler->ChargeTime += 1.0f/60.0f;
+            
+            if (Stapler->ChargeTime >= 0.25f)
+                Dusty.FloatX += Random(-1.0f, 1.0f);
+            
+            if (!msButton1)
+            {
+                Stapler->State = STAPLERSTATE_LAUNCH;
+                Stapler->Timer = 9;
+            }
+        }
+        else if (Stapler->State == STAPLERSTATE_LAUNCH)
         {
             Stapler->Timer++;
             if (Stapler->Timer == 10)
             {
                 Dusty.FloatY -= 10;
-                SetDustyState_Launch(0, -21); 
+                
+                if (Stapler->ChargeTime >= 0.25f)
+                {
+                    Dusty.PowerUpTimer = 30;
+                    SetDustyState_Launch(0, -24); 
+                }
+                else
+                    SetDustyState_Launch(0, -21); 
             }
             if (Stapler->Timer >= 20)
             {
@@ -212,8 +241,12 @@ void UpdateStapler_Collision()
 				
                 if (Stapler->CollideWithTopSide && Dusty.CollideWithBottomSide && Stapler->State == STAPLERSTATE_WAIT)
                 {
-                    Stapler->State = STAPLERSTATE_LAUNCH;
+                    Stapler->ChargeTime = 0;
                     Stapler->Timer = 0;
+                    if (msButton1)
+                        Stapler->State = STAPLERSTATE_CHARGE;
+                    else
+                        Stapler->State = STAPLERSTATE_LAUNCH;
                     SetDustyState_PrepareLaunch();
                     Dusty.FloatY -= 35;
                 }

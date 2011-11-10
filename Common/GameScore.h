@@ -12,6 +12,7 @@
 
 #define MAX_PAGE_TIMES 20
 
+#define MAX_SCORE_BABIES 50
 
 enum EMedalType
 {
@@ -26,6 +27,8 @@ struct SScore
     int CurrentPageTime;
     int CurrentBonus;
     int CurrentBabies;
+    
+    int BabyHats[MAX_SCORE_BABIES];
     
     int PageTime[MAX_PAGE_TIMES];
     int PageBonus[MAX_PAGE_TIMES];
@@ -53,7 +56,7 @@ void UpdateScore();
 void ResetScore();
 
 void AwardBonus(float X, float Y);
-void AwardBaby();
+void AwardBaby(int Hat);
 
 void LoadChapterScores(char* ChapterName);
 void SaveChapterScores(char* ChapterName);

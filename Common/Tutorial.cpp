@@ -15,6 +15,10 @@
 #include "Coin.h"
 #include "Vacuum.h"
 #include "Text.h"
+#include "Input.h"
+#include "Baby.h"
+#include "Flame.h"
+#include "Balloon.h"
 
 
 #define MAX_TUTORIALS 10
@@ -48,6 +52,8 @@ struct STutorial
     bool PauseActive;
     float PauseTimer;
     bool Disabled;
+    int Sequence;
+    float SequenceTimer;
 };
 
 
@@ -129,7 +135,6 @@ void ParseTutorialProperties(SBlock* Block, rapidxml::xml_node<char>* Properties
     if (Props->Text == NULL)
         ReportError("Tutorial is missing the 'text' property.");
 
-    
     float Width, Height;
     GetMultilineStringDimensions(Props->Text, Props->TextScale, &Width, &Height);
 
@@ -146,11 +151,157 @@ void ParseTutorialProperties(SBlock* Block, rapidxml::xml_node<char>* Properties
     }
     if (Props->Bubble == NULL)
     {
-        ReportError("Unable to fit a suitable bubble to the text '%s' with scale %f.  Required dimensions are %d x %d.", 
+        ReportError("Unable to fit a suitable bubble to the text '%s' with scale %f.  Required dimensions are %f x %f.", 
                     Props->Text, Props->TextScale, Width, Height);
     }
     
 	Block->Properties = Props;
+}
+
+static void CreateBirthdayTutorial(STutorial* Tutorial)
+{
+    SPage* Page = &Chapter.Pages[Chapter.PageNum];
+    
+    for (int i = 1; i < Page->NLayers; i++)
+    {
+        SPageLayer* Layer = &Page->Layers[i];
+        Layer->Alpha = 0;
+    }
+    
+    Tutorial->Y = (int)(Tutorial->Y/64) * 64;
+    
+    Tutorial->Active = false;
+}
+
+static void UpdateBirthdayTutorial(STutorial* Tutorial)
+{
+    if (Tutorial->Sequence == 0)
+    {
+        if (Dusty.FloatY < Tutorial->Y)
+        {
+            Tutorial->Sequence = 1;
+        }
+    }
+    else if (Tutorial->Sequence == 1)
+    {
+        if (Dusty.FloatY + Dusty.Bottom >= Tutorial->Y)
+        {
+            Dusty.FloatY = Tutorial->Y - Dusty.Bottom;
+            Dusty.NoCollision = true;
+            RemoteControl.Enabled = true;
+            SetDustyState_IntroStand();
+            
+            LightState.ForegroundShadows = false;
+
+            Tutorial->Sequence = 2;
+            Tutorial->SequenceTimer = 0.0f;
+        }
+    }
+    else if (Tutorial->Sequence == 2)
+    {
+        int Brightness = (int)Remap(Tutorial->SequenceTimer, 0.3f, 0.4f, 128, 0, true);        
+        LightState.AmbientColor = gxRGBA32(Brightness, Brightness, Brightness, 255);
+
+        Tutorial->SequenceTimer += 1.0f/60.0f;
+        
+        if (Tutorial->SequenceTimer >= 0.4f)
+        {
+            // Turn on cake.
+            SPage* Page = &Chapter.Pages[Chapter.PageNum];
+            for (int i = 1; i < Page->NLayers; i++)
+            {
+                SPageLayer* Layer = &Page->Layers[i];
+                Layer->Alpha = 1.0f;
+            }
+
+            int y = Tutorial->Y/64;
+
+            // Make flames
+            TutorialOverrides.NoFlameDamage = true;
+            SFlameProperties* Props = GetFlamePropertiesByName("candle");
+            CreateFlame(3.75f*64, (y-7.75)*64, 0, Props);
+            CreateFlame(5.5f*64, (y-7.75)*64, 0, Props);
+            CreateFlame(7.5f*64, (y-7.65f)*64, 0, Props);
+            
+            // Fill in solid collision row.
+            for (int x = 0; x < Page->Width; x++)
+                Chapter.PageBlocks[y*Chapter.PageWidth+x] = SPECIALBLOCKID_SOLID;
+
+            // Make babies.
+            TutorialOverrides.NoBabyPickup = true;
+            //CreateBaby(1, y-1, 0, DUSTYHAT_PINK_BOW, false);
+            CreateBaby(4, y-1, 0, DUSTYHAT_PARTY, false);
+            //CreateBaby(8, y-1, SPECIALBLOCKID_FLIP_X, DUSTYHAT_PARTY, false);
+            CreateBaby(9, y-1, SPECIALBLOCKID_FLIP_X, DUSTYHAT_PINK_BOW, false);
+            CreateBaby(11, y-1, SPECIALBLOCKID_FLIP_X, DUSTYHAT_PARTY, false);
+            
+            // Make balloons
+            CreateBalloon(1, y-7);
+            CreateBalloon(4, y-11);
+            CreateBalloon(8, y-11);
+            CreateBalloon(11, y-7);
+            
+            Dusty.Hat = DUSTYHAT_PARTY;
+            
+            Tutorial->Sequence = 3;
+            Tutorial->SequenceTimer = 0;
+        }
+    }
+    else if (Tutorial->Sequence == 3)
+    {
+        int Brightness = (int)Remap(Tutorial->SequenceTimer, 3.5f, 4.5f, 0, 72, true);        
+        LightState.AmbientColor = gxRGBA32(Brightness, Brightness, Brightness, 255);
+        
+        Tutorial->SequenceTimer += 1.0f/60.0f;
+        
+        if (Tutorial->SequenceTimer >= 1.5f)
+            Chapter.PageProps.LightsOff = true;
+
+        if (Tutorial->SequenceTimer >= 8)
+        {
+            Chapter.PageProps.VacuumOff = false;
+            TurnOnVacuum(50, 0.0f, false);
+
+            TutorialOverrides.FocusOnVacuum = true;
+            TutorialOverrides.SavedScrollY = ScrollY;
+            TutorialOverrides.Timer = 0.0f;
+            
+            Tutorial->Sequence = 4;
+            Tutorial->SequenceTimer = 0;  
+        }
+    }
+    else if (Tutorial->Sequence == 4)
+    {
+        Tutorial->SequenceTimer += 1.0f/60.0f;
+
+        if (Tutorial->SequenceTimer >= 5)
+        {
+            Tutorial->Active = true;
+                        
+            TutorialOverrides.FocusOnVacuum = false;
+            ScrollY = TutorialOverrides.SavedScrollY;
+            
+            SetDustyState_Stand();
+            Dusty.NoCollision = false;
+            RemoteControl.Enabled = false;
+            
+            TutorialOverrides.NoBabyPickup = false;
+            
+            Tutorial->Sequence = 5;
+            Tutorial->SequenceTimer = 0;            
+        }
+    }
+    else if (Tutorial->Sequence == 5)
+    {
+        Tutorial->SequenceTimer += 1.0f/60.0f;
+        
+        if (Tutorial->SequenceTimer >= 3)
+        {
+            Tutorial->Active = false;
+            
+            LightState.ForegroundShadows = true;
+        }
+    }
 }
 
 void CreateTutorial(int X, int Y, STutorialProperties* Props)
@@ -175,8 +326,14 @@ void CreateTutorial(int X, int Y, STutorialProperties* Props)
     Tutorial->PauseActive = false;
     Tutorial->PauseTimer = 0;
     Tutorial->Disabled = false;
+    Tutorial->Sequence = 0;
+
+    Tutorial->WiggleTimer = Random(0.0f, 10.0f);    
     
-    Tutorial->WiggleTimer = Random(0.0f, 10.0f);
+    if (Props->Actions && strstr(Props->Actions, "birthday"))
+    {
+        CreateBirthdayTutorial(Tutorial);
+    }
 }
 
 void ClearTutorials()
@@ -185,6 +342,8 @@ void ClearTutorials()
     
     TutorialOverrides.FocusOnVacuum = false;
     TutorialOverrides.FreezeDusty = false;
+    TutorialOverrides.NoBabyPickup = false;
+    TutorialOverrides.NoFlameDamage = false;
 }
 
 void InitTutorial()
@@ -258,6 +417,12 @@ void UpdateTutorial()
         
         Tutorial->WiggleTimer += 1.0f/60.0f;
         
+        if (Props->Actions && strstr(Props->Actions, "birthday"))
+        {
+            UpdateBirthdayTutorial(Tutorial);
+            continue;
+        }
+        
         if (!Tutorial->Disabled)
         {
             if (Tutorial->PauseActive)
@@ -271,7 +436,6 @@ void UpdateTutorial()
                         TutorialOverrides.SavedScrollY = ScrollY;
                         TutorialOverrides.Timer = 0.0f;
                     }
-                    
                 }
                 if (Tutorial->PauseTimer <= 0)
                 {
@@ -281,6 +445,7 @@ void UpdateTutorial()
                     {
                         TutorialOverrides.FocusOnVacuum = false;
                         TutorialOverrides.FreezeDusty = false;
+                        ScrollY = TutorialOverrides.SavedScrollY;
                         Tutorial->Active = false;
                         Tutorial->Disabled = true;
                     }

@@ -20,6 +20,7 @@ struct SLitVertex
 enum ELightList
 {
 	LIGHTLIST_BACKGROUND,
+	LIGHTLIST_MIDGROUND,
 	LIGHTLIST_DUST,
 	LIGHTLIST_FOREGROUND_NO_SHADOW,
 	LIGHTLIST_FOREGROUND,
@@ -45,6 +46,16 @@ struct SLitQuad
     GLushort IndexCount;
 #endif
 };
+
+
+struct SLightState
+{
+    bool ForegroundShadows;
+	unsigned int AmbientColor;
+};
+
+
+extern SLightState LightState;
 
 extern float LitScreenHeight;
 extern float LitSceneZoom;
@@ -85,6 +96,7 @@ void AddLitSubSpriteOriginScaledRotatedAlpha(ELightList List, gxSprite* Sprite, 
 void AddLitSpriteUV(ELightList List, gxSprite* Sprite, float X, float Y, float SizeX, float SizeY, float U0, float V0, float U1, float V1, float U2, float V2, float U3, float V3);
 
 void AddLitSpriteCenteredScaledRotated(ELightList List, gxSprite* Sprite, float X, float Y, float Scale, float Angle);
+void AddLitSpriteCenteredScaled2Rotated(ELightList List, gxSprite* Sprite, float X, float Y, float ScaleX, float ScaleY, float Angle);
 void AddLitSpriteCenteredScaledRotatedAlpha(ELightList List, gxSprite* Sprite, float X, float Y, float Scale, float Angle, float Alpha);
 void AddLitSpriteCenteredScaledRotatedColor(ELightList List, gxSprite* Sprite, float X, float Y, float Scale, float Angle, unsigned int Color);
 void AddLitSpriteCenteredScaledRotatedAdditive(ELightList List, gxSprite* Sprite, float X, float Y, float Scale, float Angle, float Alpha);
@@ -95,5 +107,7 @@ void InitLighting();
 
 void ResetLighting();
 void RenderLighting();
+
+void ResetLightState();
 
 #endif

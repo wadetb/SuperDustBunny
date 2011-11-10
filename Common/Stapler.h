@@ -20,6 +20,7 @@ enum EStaplerType
 enum EStaplerState
 {
     STAPLERSTATE_WAIT,
+    STAPLERSTATE_CHARGE,
     STAPLERSTATE_LAUNCH,
 };
 
@@ -43,6 +44,8 @@ struct SStapler
 
     int Timer;
 
+    float ChargeTime;
+    
 	bool CollideWithLeftSide;
 	bool CollideWithRightSide;
 	bool CollideWithTopSide;

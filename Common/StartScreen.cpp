@@ -334,7 +334,7 @@ void UpdateStartScreen()
     {
         StartScreen.LeaderboardButtonAlpha = Clamp(StartScreen.LeaderboardButtonAlpha - 0.05f, 0.0f, 1.0f);    
 
-        if (msY < 200 && msX > 500 && msButton1 && !msOldButton1)
+        if (msY < 200 && msX < 200 && msButton1 && !msOldButton1)
         {
 #ifdef PLATFORM_IPHONE
             [TestFlight passCheckpoint:[NSString stringWithFormat:@"Closed Leaderboards", Chapters[CurrentChapter].Name]];

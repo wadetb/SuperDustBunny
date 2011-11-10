@@ -11,6 +11,7 @@
 #include "Flame.h"
 #include "Dusty.h"
 #include "Chapter.h"
+#include "Tutorial.h"
 
 
 #define MAX_FLAMES 50
@@ -46,6 +47,9 @@ struct SFlameProperties
     
     bool IsFire;
     bool ReplaceBlock;
+    
+    const char* Name;
+    SFlameProperties* Next;
 };
 
 struct SFlame
@@ -56,6 +60,7 @@ struct SFlame
 	int Frame;
 };
 
+SFlameProperties* FlamePropertiesHead;
 
 int NFlames;
 SFlame Flames[MAX_FLAMES];
@@ -64,6 +69,9 @@ void ParseFlameProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNod
 {
 	SFlameProperties* Props = (SFlameProperties*)malloc(sizeof(SFlameProperties));
     memset(Props, 0, sizeof(SFlameProperties));
+    
+    Props->Next = FlamePropertiesHead;
+    FlamePropertiesHead = Props;
     
     Props->NFrames = 0;
     Props->FrameTime = 1;
@@ -77,6 +85,7 @@ void ParseFlameProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNod
     Props->Scale = 1.0f;
     Props->IsFire = false;
     Props->ReplaceBlock = false;
+    Props->Name = NULL;
 
 	rapidxml::xml_node<char>* PropertyNode = PropertiesNode->first_node("property");
 	while (PropertyNode)
@@ -86,7 +95,11 @@ void ParseFlameProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNod
         char* WritableValue = strdup(ConstValue);
         char* Value = WritableValue;
         
-		if (strcmp(Name, "frames") == 0)
+        if (strcmp(Name, "name") == 0)
+        {
+            Props->Name = strdup(Value);
+        }
+		else if (strcmp(Name, "frames") == 0)
 		{
             if (Props->NFrames)
                 ReportError("Flame has more than one 'frames' property.");
@@ -178,13 +191,26 @@ void ParseFlameProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNod
 	Block->Properties = Props;
 }
 
+SFlameProperties* GetFlamePropertiesByName(const char* Name)
+{
+    for (SFlameProperties* Props = FlamePropertiesHead; Props; Props = Props->Next)
+        if (Props->Name && strcmp(Props->Name, Name) == 0)
+            return Props;
+    return NULL;
+}
+
+void ClearFlamePropertiesList()
+{
+    FlamePropertiesHead = NULL;
+}
+
 static float BlockFlagsToAngle(unsigned int Flags)
 {
     if (Flags == (SPECIALBLOCKID_FLIP_X | SPECIALBLOCKID_FLIP_DIAGONAL)) return PI/2;
     return 0;
 }
 
-void CreateFlame(int X, int Y, unsigned int Flags, SFlameProperties* Props)
+void CreateFlame(float X, float Y, unsigned int Flags, SFlameProperties* Props)
 {
 	if (NFlames >= MAX_FLAMES)
 		ReportError("Exceeded the maximum of %d total flames.", MAX_FLAMES);
@@ -197,10 +223,10 @@ void CreateFlame(int X, int Y, unsigned int Flags, SFlameProperties* Props)
 	Flame->Y = (float)Y + 32;
     Flame->Angle = BlockFlagsToAngle(Flags);
     
-    Flame->Frame = Random(0, 1);
+    Flame->Frame = Random(0, 10);
     
     if (Props->ReplaceBlock)
-        EraseBlock(X/64, Y/64);
+        EraseBlock((int)X/64, (int)Y/64);
 }
 
 void ClearFlames()
@@ -218,7 +244,7 @@ void UpdateFlames()
         
         SFlameProperties* Props = Flame->Props;
 
-         if (Props->IsFire)
+         if (!TutorialOverrides.NoFlameDamage && Props->IsFire)
         {
             if (Dusty.State != DUSTYSTATE_HURT)
             {
@@ -267,8 +293,8 @@ void DisplayFlames()
 
         if (Chapter.PageProps.LightsOff && Props->IsFire)
         {
-            float Alpha = 0.5f + 0.1f * Flame->Frame;
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightFlashlightSprite, X + ScrollX, Y + ScrollY, 1.3f, Alpha);
+            float Alpha = 0.2f + 0.025f * sinf(Flame->Frame*0.1f) + 0.025f * cosf(Flame->Frame*0.3f);
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightFlashlightSprite, X + ScrollX, Y + ScrollY, 2.0f, Alpha);
         }
     }
 }

@@ -67,6 +67,15 @@ gxSprite DustyCornerJumpdSprite;
 
 gxSprite DustyDeathSprite;
 
+gxSprite PartyHatSprite;
+gxSprite PinkBowHatSprite;
+
+gxSprite BalloonBlueSprite;
+gxSprite BalloonYellowSprite;
+gxSprite BalloonRedSprite;
+gxSprite BalloonPurpleSprite;
+gxSprite BalloonGreenSprite;
+
 gxSprite LogoSprite;
 
 gxSprite NewUnlockSprite;
@@ -902,6 +911,15 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/dusty-cornerjumpd.png", &DustyCornerJumpdSprite);
 
 	LoadSpriteAsset("Assets/dusty-die.png", &DustyDeathSprite);
+    
+	LoadSpriteAsset("Assets/hat-party.png", &PartyHatSprite);
+	LoadSpriteAsset("Assets/hat-pink-bow.png", &PinkBowHatSprite);
+    
+	LoadSpriteAsset("Assets/balloon-blue.png", &BalloonBlueSprite);
+	LoadSpriteAsset("Assets/balloon-yellow.png", &BalloonYellowSprite);
+	LoadSpriteAsset("Assets/balloon-red.png", &BalloonRedSprite);
+	LoadSpriteAsset("Assets/balloon-purple.png", &BalloonPurpleSprite);
+	LoadSpriteAsset("Assets/balloon-green.png", &BalloonGreenSprite);
 
     LoadSpriteAsset("Assets/logo.png", &LogoSprite);
     

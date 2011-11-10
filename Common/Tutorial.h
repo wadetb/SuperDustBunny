@@ -14,6 +14,8 @@ struct STutorialOverrides
 {
     bool FocusOnVacuum;
     bool FreezeDusty;
+    bool NoBabyPickup;
+    bool NoFlameDamage;
     
     float SavedScrollY;
     float Timer;

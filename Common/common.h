@@ -234,7 +234,7 @@ inline int Random(int Min, int Max)
 #endif
 #ifdef PLATFORM_IPHONE_OR_MAC
 	u_int32_t i = arc4random();
-	return (float)( Min + ( (double)i / (double)((2ULL<<31)-1) ) * (Max-Min) );
+	return Min + ( i % (Max-Min) );
 #endif
 }
 

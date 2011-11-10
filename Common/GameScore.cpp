@@ -101,6 +101,8 @@ void DisplayScore()
 void ResetScore()
 {    
     Score.CurrentPageTime = 0;
+    Score.CurrentBonus = 0;
+    Score.CurrentBabies = 0;
     
     for (int i = 0; i < MAX_PAGE_TIMES; i++)
     {
@@ -336,8 +338,12 @@ void AwardBonus(float X, float Y)
     Score.CurrentBonus++;
 }
 
-void AwardBaby()
+void AwardBaby(int Hat)
 {
+    if (Score.CurrentBabies > MAX_SCORE_BABIES)
+        ReportError("Exceeded maximum of %d babies carried over between pages.", MAX_SCORE_BABIES);
+    
+    Score.BabyHats[Score.CurrentBabies] = Hat;
     Score.CurrentBabies++;
 }
 

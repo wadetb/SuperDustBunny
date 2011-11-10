@@ -70,6 +70,43 @@ gxSprite* DustySprite[DUSTYSPRITE_COUNT] =
     &DustyDeathSprite
 };
 
+SDustyHatOffset DustyHatOffsets[DUSTYSPRITE_COUNT] = 
+{
+    { -17, 137, 124 },
+    { -30, 152, 58 },
+    { -60, 100, 32 },
+    { -5, 121, 53 },
+    { 36, 204, 133 },
+    { -32, 152, 58 },
+    { -28, 152, 58 },
+    { -62, 100, 32 },
+    { -3, 121, 53 },
+    { -7, 121, 53 },
+    { 36, 204, 133 },
+    { -10, 140, 126 },
+    { -20, 132, 114 },
+    { -9, 140, 121 },
+    { -43, 121, 133 },
+    { -43, 121, 133 },
+    { -43, 121, 133 },
+    { -35, 140, 90 },
+    { -35, 140, 90 },
+    { -35, 140, 90 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 115, 114 },
+};
+
+gxSprite* DustyHatSprites[DUSTYHAT_COUNT] =
+{
+    NULL,
+    &PinkBowHatSprite,
+    &PartyHatSprite
+};
+
+
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                  Dusty initialization function                                                          //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -95,6 +132,8 @@ void InitDusty()
     
 	Dusty.SpriteTransition = 45;
 
+    Dusty.Hat = DUSTYHAT_NONE;
+    
 	Dusty.NoCollision = false;
 
 	Dusty.WallStickTimer = 0;
@@ -314,6 +353,16 @@ static void DisplayDustySprite(EDustySprite Sprite, float XAdj = 0.0f, float XMi
     }
 
 	AddLitSpriteScaled(LIGHTLIST_FOREGROUND, DustySprite[Sprite], X + ScrollX, Y + ScrollY, ScaleX, 1.0f);
+    
+    if (Dusty.Hat != DUSTYHAT_NONE)
+    {
+        gxSprite* HatSprite = DustyHatSprites[Dusty.Hat];
+        SDustyHatOffset* HatOffset = &DustyHatOffsets[Sprite];
+        
+        AddLitSpriteCenteredScaled2Rotated(LIGHTLIST_FOREGROUND, HatSprite, 
+                                          X + ScrollX + HatOffset->X*ScaleX, Y + ScrollY + HatOffset->Y, 
+                                          ScaleX, 1.0f, DegreesToRadians(HatOffset->Angle)*ScaleX);
+    }
 }
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -1114,6 +1163,64 @@ static void UpdateDusty_WallJump()
 }	
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+//                                                  DUSTYSTATE_BALLOONRIDE Implementation                                                  //
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
+
+void SetDustyState_BalloonRide()
+{   	
+	Dusty.FloatVelocityX = 0;
+    Dusty.FloatVelocityY = 0;
+    
+	Dusty.WallJumpTimer = 0;
+    Dusty.AirJumpCount = 0;
+    Dusty.LandTimer = 0;
+    Dusty.SpriteTransition = 0;
+
+	Dusty.State = DUSTYSTATE_BALLOONRIDE;
+    
+    UpdateMinimap(MINIMAP_WALL_JUMP);
+    
+    GetInput_ClearSwipe();
+}
+
+static void DisplayDusty_BalloonRide()
+{    
+    DisplayDustySprite(DUSTYSPRITE_WALLJUMP, -128, -8, -200);
+}
+
+static void UpdateDusty_BalloonRide()
+{
+    Dusty.SpriteTransition += 1;
+        
+	// Jump off wall by pressing jump
+    if (Settings.ControlStyle == CONTROL_TILT)
+    {
+        if (GetInput_Jump())
+        {
+            SetDustyState_Jump( true );
+            return;
+        }
+        
+        // Let go of wall by pressing direction.
+        // TODO: GetInput_HardMoveLeft/Right.
+        if ( ( Dusty.Direction == DIRECTION_LEFT  && GetInput_MoveLeft() ) ||
+            ( Dusty.Direction == DIRECTION_RIGHT && GetInput_MoveRight() ) )
+        {
+            SetDustyState_Fall();
+            return;
+        }
+    }
+    else
+    {
+        if ( UpdateDusty_CheckSwipeJump(0.0f, 180.0f) )
+        {
+            UpdateDusty_DoSwipeJump(Dusty.SwipeAngle, Dusty.SwipePower);
+            return;
+        }
+    }
+}	
+
+// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                  DUSTYSTATE_CORNERJUMP Implementation                                               //
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 
@@ -1858,6 +1965,7 @@ void DisplayDusty()
         case DUSTYSTATE_HOP:			    DisplayDusty_Hop(); break;
         case DUSTYSTATE_WALLJUMP:			DisplayDusty_WallJump(); break;
         case DUSTYSTATE_CORNERJUMP:			DisplayDusty_CornerJump(); break;
+        case DUSTYSTATE_BALLOONRIDE:		DisplayDusty_BalloonRide(); break;
         case DUSTYSTATE_PREPARELAUNCH:      DisplayDusty_PrepareLaunch(); break;
         case DUSTYSTATE_LAUNCH:             DisplayDusty_Launch(); break;	
         case DUSTYSTATE_DIE:				DisplayDusty_Die(); break;
@@ -1916,7 +2024,8 @@ void UpdateDusty()
 	case DUSTYSTATE_JUMP:			    UpdateDusty_Jump(); break;
 	case DUSTYSTATE_HOP:				UpdateDusty_Hop(); break;
 	case DUSTYSTATE_WALLJUMP:			UpdateDusty_WallJump(); break;
-	case DUSTYSTATE_CORNERJUMP:			UpdateDusty_CornerJump(); break;
+    case DUSTYSTATE_CORNERJUMP:			UpdateDusty_CornerJump(); break;
+    case DUSTYSTATE_BALLOONRIDE:			UpdateDusty_BalloonRide(); break;
 	case DUSTYSTATE_PREPARELAUNCH:      UpdateDusty_PrepareLaunch(); break;
 	case DUSTYSTATE_LAUNCH:             UpdateDusty_Launch(); break;
 	case DUSTYSTATE_DIE:				UpdateDusty_Die(); break;

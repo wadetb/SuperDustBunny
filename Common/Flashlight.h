@@ -17,6 +17,7 @@ struct SFlashlightWaypointProperties
 
 struct SFlashlight
 {
+    bool Active;
 	float X, Y;
 	int CurWaypoint;
 	float Timer;

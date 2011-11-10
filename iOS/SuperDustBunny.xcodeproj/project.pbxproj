@@ -135,6 +135,8 @@
 		08D498041417C6010022E457 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08D498031417C6010022E457 /* AudioToolbox.framework */; };
 		08D498091417EBA70022E457 /* SDBOpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 08D498081417EBA60022E457 /* SDBOpenGLView.m */; };
 		08D4980B1417F4450022E457 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08D4980A1417F4450022E457 /* CoreVideo.framework */; };
+		08E69E6E146B8FC7004FEDEF /* Balloon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08E69E6D146B8FC6004FEDEF /* Balloon.cpp */; };
+		08E69E6F146B8FC7004FEDEF /* Balloon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08E69E6D146B8FC6004FEDEF /* Balloon.cpp */; };
 		08EBB20C14380E4E006D3EB6 /* URLRequestStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08EBB20B14380E4D006D3EB6 /* URLRequestStore.m */; };
 		08EBB20D14380E4E006D3EB6 /* URLRequestStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 08EBB20B14380E4D006D3EB6 /* URLRequestStore.m */; };
 		08EBB210143BC834006D3EB6 /* Hanger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08EBB20F143BC833006D3EB6 /* Hanger.cpp */; };
@@ -298,6 +300,8 @@
 		08D498071417EBA60022E457 /* SDBOpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SDBOpenGLView.h; path = ../../Mac/SDBOpenGLView.h; sourceTree = "<group>"; };
 		08D498081417EBA60022E457 /* SDBOpenGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SDBOpenGLView.m; path = ../../Mac/SDBOpenGLView.m; sourceTree = "<group>"; };
 		08D4980A1417F4450022E457 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = SDKs/MacOSX10.7.sdk/System/Library/Frameworks/CoreVideo.framework; sourceTree = DEVELOPER_DIR; };
+		08E69E6B146B8FB9004FEDEF /* Balloon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Balloon.h; sourceTree = "<group>"; };
+		08E69E6D146B8FC6004FEDEF /* Balloon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Balloon.cpp; sourceTree = "<group>"; };
 		08EBB20A14380E4D006D3EB6 /* URLRequestStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLRequestStore.h; sourceTree = "<group>"; };
 		08EBB20B14380E4D006D3EB6 /* URLRequestStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = URLRequestStore.m; sourceTree = "<group>"; };
 		08EBB20F143BC833006D3EB6 /* Hanger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hanger.cpp; sourceTree = "<group>"; };
@@ -446,6 +450,8 @@
 				085AAA17132C5B9F00DF32CA /* Assets.h */,
 				08A9E00F1447B6CD009A76B9 /* Baby.cpp */,
 				08A9E00D1447B6BF009A76B9 /* Baby.h */,
+				08E69E6D146B8FC6004FEDEF /* Balloon.cpp */,
+				08E69E6B146B8FB9004FEDEF /* Balloon.h */,
 				085AAA18132C5B9F00DF32CA /* Barrel.cpp */,
 				085AAA19132C5B9F00DF32CA /* Barrel.h */,
 				085AAA1A132C5B9F00DF32CA /* chapter.cpp */,
@@ -752,6 +758,7 @@
 				08EBB210143BC834006D3EB6 /* Hanger.cpp in Sources */,
 				0832E7F71445188400EDCAED /* Tweak.cpp in Sources */,
 				08A9E0101447B6CD009A76B9 /* Baby.cpp in Sources */,
+				08E69E6E146B8FC7004FEDEF /* Balloon.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -807,6 +814,7 @@
 				08EBB20D14380E4E006D3EB6 /* URLRequestStore.m in Sources */,
 				08EBB211143BC834006D3EB6 /* Hanger.cpp in Sources */,
 				08A9E0111447B6CD009A76B9 /* Baby.cpp in Sources */,
+				08E69E6F146B8FC7004FEDEF /* Balloon.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -78,6 +78,8 @@ void ClearFlashlightWaypoints()
 
 void InitFlashlight()
 {
+    Flashlight.Active = NFlashlightWaypoints > 0;
+        
 	Flashlight.CurWaypoint = NFlashlightWaypoints-1;
 	if (Flashlight.CurWaypoint >= 0)
 	{
