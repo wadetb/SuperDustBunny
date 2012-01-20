@@ -118,7 +118,7 @@ void LoadTweaks()
         #define TWEAK_FLOAT(Name, Default, Description) \
             else if (strcmp(__NameAttr->value(), #Name) == 0) \
             { \
-                NewTweak.Name = atof(Value); \
+                NewTweak.Name = (float)atof(Value); \
                 goto __Next; \
             }        
                 

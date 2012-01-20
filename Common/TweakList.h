@@ -1,4 +1,4 @@
-TWEAK_FLOAT(DustyJumpPower, 21, "Force with which the bunny jumps.")
+TWEAK_FLOAT(DustyJumpPower, 21.0f, "Force with which the bunny jumps.")
 TWEAK_FLOAT(DustyJumpPowerXScale, 0.8f, "Scale applied to the horizontal axis of jump velocity.")
 TWEAK_FLOAT(DustyJumpPowerYScaleWhenDown, 0.8f, "Scale applied to the vertical axis of jump velocity, when jumping down.")
 TWEAK_FLOAT(DustyJumpPowerScaleAfter2Combo, 1.1f, "Scale applied to jump velocity after two clean jumps in a row.")
@@ -21,4 +21,4 @@ TWEAK_FLOAT(DustyWallTerminalVelocityDown, 7.0f, "Maximum downard velocity when 
 TWEAK_FLOAT(DustyWallTerminalVelocityDownOnIce, 15.0f, "Maximum downard velocity when sliding on a wall, on ice.")
 TWEAK_FLOAT(DustyWallGravityScale, 0.5f, "Scale factor applied to gravity when sliding on a wall.")
 TWEAK_FLOAT(DustyWallGravityScaleOnIce, 1.0f, "Scale factor applied to gravity when sliding on a wall, on ice." )
-TWEAK_FLOAT(DustyHurtTime, 60, "Number of 60hz frames the bunny will remain hurt for after striking a sharp or flaming object.  (Note that landing also clears the hurt state)")
+TWEAK_FLOAT(DustyHurtTime, 60.0f, "Number of 60hz frames the bunny will remain hurt for after striking a sharp or flaming object.  (Note that landing also clears the hurt state)")

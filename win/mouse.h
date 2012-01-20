@@ -27,11 +27,11 @@
 
     msUpdateMouse           Reads the position of the mouse from the hardware.
 
-    msSetMouseRange         Sets the range within which the mouse can move.
-  
 --------------------------------------------------------------------------------------------------------*/
 #ifndef MOUSE_H
 #define MOUSE_H
+
+#include <windows.h>
 
 /*--------------------------------------------------------------------------------------------------------
 
@@ -91,8 +91,8 @@ extern int msOldButton2;
   These variables contain the current location of the mouse on the screen.
 
 --------------------------------------------------------------------------------------------------------*/
-extern int msX;
-extern int msY;
+extern float msX;
+extern float msY;
 
 /*--------------------------------------------------------------------------------------------------------
 
@@ -102,28 +102,9 @@ extern int msY;
   they are unconstrained by msRangeXX and can be useful for detecting mouse motion as opposed to position.
 
 --------------------------------------------------------------------------------------------------------*/
-extern int msXDelta;
-extern int msYDelta;
+extern float msXDelta;
+extern float msYDelta;
 
-/*--------------------------------------------------------------------------------------------------------
-
-  msSetMouseRange
-
-  Limits the range of the mouse to within a certain area.
-
---------------------------------------------------------------------------------------------------------*/
-void msSetMouseRange( int x1, int y1, int x2, int y2 );
-
-/*--------------------------------------------------------------------------------------------------------
-
-  msRangeX1, msRangeY1, msRangeX2, msRangeY2
-
-  These variables hold the current mouse range, as set by msSetMouseRange.
-
---------------------------------------------------------------------------------------------------------*/
-extern int msRangeX1;
-extern int msRangeY1;
-extern int msRangeX2;
-extern int msRangeY2;
+void msOnWTPacket(WPARAM wSerial, LPARAM hCtx);
 
 #endif

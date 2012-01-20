@@ -95,6 +95,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Common\Baby.cpp" />
+    <ClCompile Include="..\Common\Balloon.cpp" />
     <ClCompile Include="..\Common\Debug.cpp" />
     <ClCompile Include="..\Common\Flame.cpp" />
     <ClCompile Include="..\Common\Ghost.cpp" />
@@ -103,6 +105,7 @@
     <ClCompile Include="..\Common\LeaderboardScreen.cpp" />
     <ClCompile Include="..\Common\Smoke.cpp" />
     <ClCompile Include="..\Common\Text.cpp" />
+    <ClCompile Include="..\Common\Tweak.cpp" />
     <ClCompile Include="graphics.cpp" />
     <ClCompile Include="keyboard.cpp" />
     <ClCompile Include="mouse.cpp" />
@@ -138,6 +141,8 @@
     <ClCompile Include="..\Common\Wipe.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Common\Baby.h" />
+    <ClInclude Include="..\Common\Balloon.h" />
     <ClInclude Include="..\Common\Debug.h" />
     <ClInclude Include="..\Common\Flame.h" />
     <ClInclude Include="..\Common\Ghost.h" />
@@ -146,9 +151,12 @@
     <ClInclude Include="..\Common\LeaderboardScreen.h" />
     <ClInclude Include="..\Common\Smoke.h" />
     <ClInclude Include="..\Common\Text.h" />
+    <ClInclude Include="..\Common\Tweak.h" />
+    <ClInclude Include="..\Common\TweakList.h" />
     <ClInclude Include="graphics.h" />
     <ClInclude Include="keyboard.h" />
     <ClInclude Include="mouse.h" />
+    <ClInclude Include="PKTDEF.H" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="..\Common\Assets.h" />
     <ClInclude Include="..\Common\Barrel.h" />
@@ -184,6 +192,7 @@
     <ClInclude Include="..\Common\rapidxml\rapidxml_iterators.hpp" />
     <ClInclude Include="..\Common\rapidxml\rapidxml_print.hpp" />
     <ClInclude Include="..\Common\rapidxml\rapidxml_utils.hpp" />
+    <ClInclude Include="WINTAB.H" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Common\rapidxml\license.txt" />

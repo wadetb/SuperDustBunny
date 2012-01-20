@@ -9,6 +9,7 @@
 #include <d3dx9.h>
 #include <shlwapi.h>
 #include <windowsx.h>
+#include "wintab.h"
 
 #pragma comment(lib,"d3d9.lib")
 #pragma comment(lib,"d3dx9.lib")
@@ -211,8 +212,6 @@ void gxInit()
 	gxDev->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
 	gxDev->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
 
-	msSetMouseRange( 0, 0, gxScreenWidth, gxScreenHeight );
-
 	gxInitFontSprite();
 
 	gxEmulateDisplaySize( GXDISPLAY_IPAD_PORTRAIT );
@@ -394,6 +393,9 @@ LRESULT CALLBACK WindowProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 		break;
 	case WM_PAINT:
 		gxDisplayWindow();
+		break;
+	case WT_PACKET:
+		msOnWTPacket(wparam, lparam);
 		break;
 	default:
 		break;

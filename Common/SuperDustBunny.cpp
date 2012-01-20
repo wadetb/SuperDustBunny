@@ -113,9 +113,7 @@ void Init()
 	kbInit();
 #endif
 	
-#ifdef PLATFORM_IPHONE_OR_MAC
 	msInit();
-#endif	
     
     InitSettings();
 	InitLighting();
@@ -131,9 +129,7 @@ void Exit()
 	kbDeinit();
 #endif
 
-#ifdef PLATFORM_IPHONE_OR_MAC
 	msDeinit();
-#endif	
 	
 	gxDeinit();
 	
