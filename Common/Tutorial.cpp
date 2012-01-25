@@ -181,31 +181,16 @@ static void UpdateBirthdayTutorial(STutorial* Tutorial)
         {
             Tutorial->Sequence = 1;
         }
+
+        int Brightness = (int)Remap(Dusty.FloatY - Tutorial->Y, 300, 0, 128, 0, true);        
+        LightState.AmbientColor = gxRGBA32(Brightness, Brightness, Brightness, 255);
     }
     else if (Tutorial->Sequence == 1)
     {
         if (Dusty.FloatY + Dusty.Bottom >= Tutorial->Y)
         {
-            Dusty.FloatY = Tutorial->Y - Dusty.Bottom;
-            Dusty.NoCollision = true;
-            RemoteControl.Enabled = true;
-            SetDustyState_IntroStand();
-            
             LightState.ForegroundShadows = false;
 
-            Tutorial->Sequence = 2;
-            Tutorial->SequenceTimer = 0.0f;
-        }
-    }
-    else if (Tutorial->Sequence == 2)
-    {
-        int Brightness = (int)Remap(Tutorial->SequenceTimer, 0.3f, 0.4f, 128, 0, true);        
-        LightState.AmbientColor = gxRGBA32(Brightness, Brightness, Brightness, 255);
-
-        Tutorial->SequenceTimer += 1.0f/60.0f;
-        
-        if (Tutorial->SequenceTimer >= 0.4f)
-        {
             // Turn on cake.
             SPage* Page = &Chapter.Pages[Chapter.PageNum];
             for (int i = 1; i < Page->NLayers; i++)
@@ -224,6 +209,7 @@ static void UpdateBirthdayTutorial(STutorial* Tutorial)
             CreateFlame(7.5f*64, (y-7.65f)*64, 0, Props);
             
             // Fill in solid collision row.
+            Dusty.FloatY = Tutorial->Y - Dusty.Bottom;            
             for (int x = 0; x < Page->Width; x++)
                 Chapter.PageBlocks[y*Chapter.PageWidth+x] = SPECIALBLOCKID_SOLID;
 
@@ -235,12 +221,6 @@ static void UpdateBirthdayTutorial(STutorial* Tutorial)
             CreateBaby(9, y-1, SPECIALBLOCKID_FLIP_X, DUSTYHAT_PINK_BOW, false);
             CreateBaby(11, y-1, SPECIALBLOCKID_FLIP_X, DUSTYHAT_PARTY, false);
             
-            // Make balloons
-            CreateBalloon(1, y-7);
-            CreateBalloon(4, y-11);
-            CreateBalloon(8, y-11);
-            CreateBalloon(11, y-7);
-            
             Dusty.Hat = DUSTYHAT_PARTY;
             
             Tutorial->Sequence = 3;
@@ -249,15 +229,15 @@ static void UpdateBirthdayTutorial(STutorial* Tutorial)
     }
     else if (Tutorial->Sequence == 3)
     {
-        int Brightness = (int)Remap(Tutorial->SequenceTimer, 3.5f, 4.5f, 0, 72, true);        
+        int Brightness = (int)Remap(Tutorial->SequenceTimer, 2.5f, 3.5f, 0, 72, true);        
         LightState.AmbientColor = gxRGBA32(Brightness, Brightness, Brightness, 255);
         
         Tutorial->SequenceTimer += 1.0f/60.0f;
         
-        if (Tutorial->SequenceTimer >= 1.5f)
+        if (Tutorial->SequenceTimer >= 0.5f)
             Chapter.PageProps.LightsOff = true;
 
-        if (Tutorial->SequenceTimer >= 8)
+        if (Tutorial->SequenceTimer >= 6)
         {
             Chapter.PageProps.VacuumOff = false;
             TurnOnVacuum(50, 0.0f, false);
@@ -274,16 +254,22 @@ static void UpdateBirthdayTutorial(STutorial* Tutorial)
     {
         Tutorial->SequenceTimer += 1.0f/60.0f;
 
+        if (Tutorial->SequenceTimer >= 1.0f && Tutorial->SequenceTimer-1.0f/60.0f < 1.0f)
+        {
+            // Make balloons
+            int y = Tutorial->Y/64;
+            //            CreateBalloon(1, y-7);
+            CreateBalloon(4, y-11);
+            CreateBalloon(8, y-11);
+            //            CreateBalloon(11, y-7);
+        }
+        
         if (Tutorial->SequenceTimer >= 5)
         {
             Tutorial->Active = true;
-                        
+
             TutorialOverrides.FocusOnVacuum = false;
             ScrollY = TutorialOverrides.SavedScrollY;
-            
-            SetDustyState_Stand();
-            Dusty.NoCollision = false;
-            RemoteControl.Enabled = false;
             
             TutorialOverrides.NoBabyPickup = false;
             
@@ -295,11 +281,15 @@ static void UpdateBirthdayTutorial(STutorial* Tutorial)
     {
         Tutorial->SequenceTimer += 1.0f/60.0f;
         
+        int Brightness = (int)Remap(Tutorial->SequenceTimer, 0, 3, 0, 128, true);        
+        LightState.AmbientColor = gxRGBA32(Brightness, Brightness, Brightness, 255);
+
         if (Tutorial->SequenceTimer >= 3)
         {
             Tutorial->Active = false;
             
             LightState.ForegroundShadows = true;
+            Chapter.PageProps.LightsOff = false;
         }
     }
 }
