@@ -327,7 +327,6 @@ void RecordPageScore(int Page)
     
     Score.CurrentPageTime = 0;
     Score.CurrentBonus = 0;
-    Score.CurrentBabies = 0;
     Score.DeathCount = 0;
 }
 

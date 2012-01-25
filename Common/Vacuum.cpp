@@ -13,6 +13,7 @@
 #include "Chapter.h"
 #include "Settings.h"
 #include "Smoke.h"
+#include "Tutorial.h"
 
 
 #define MAX_VACUUM_QUEUE_NODES 1000
@@ -50,6 +51,7 @@ SVacuum Vacuum;
 const int VACUUM_INITIAL_TIME = 5*60;
 const int VACUUM_RETREAT_TIME = 5*60;
 const int VACUUM_UNJAM_TIME   = 1*60;
+const int VACUUM_CHARGE_DELAY = 5*60;
 
 const float VacuumYOffset = 100;
 
@@ -96,6 +98,8 @@ void InitVacuum()
     VacuumQueue[MAX_VACUUM_QUEUE_NODES-1].Next = -1;
     VacuumFreeHead = 0;
 
+    Vacuum.ChargeTimer = VACUUM_CHARGE_DELAY;
+    
     RestartVacuumForceMap();
     
 	// These two sounds loop continuously.
@@ -268,14 +272,27 @@ void UpdateVacuum()
 	{
 		if (Dusty.State != DUSTYSTATE_DIE)
 		{
+            if (!TutorialOverrides.FocusOnVacuum && !Vacuum.Charging)
+            {
+                Vacuum.ChargeTimer--;
+                if (Vacuum.ChargeTimer <= 0)
+                {
+                    Vacuum.Charging = true;
+                    Vacuum.Timer = 0;                    
+                }
+            }
+            
 			// The vacuum gets faster the longer it stays unclogged.
 			float VacuumSpeed;
             if (Vacuum.Charging)
             {
-                if (Vacuum.Timer < 0)
-                    VacuumSpeed = 0;
+                float TargetY;
+                int LightsOffset = Chapter.PageProps.LightsOff ? 768 : 0;
+                if (Vacuum.Dir == VACUUMDIR_UP)
+                    TargetY = (float)-ScrollY + LitScreenHeight + LightsOffset - Vacuum.Timer*Chapter.PageProps.VacuumSpeed;
                 else
-                    VacuumSpeed = 15.0f;
+                    TargetY = (float)-ScrollY - LightsOffset + Vacuum.Timer*Chapter.PageProps.VacuumSpeed;
+                Vacuum.Y = Vacuum.Y*0.9f + TargetY*0.1f;
             }
             else
             {
@@ -287,18 +304,17 @@ void UpdateVacuum()
                     VacuumSpeed = 3.5f * Chapter.PageProps.VacuumSpeed;
                 else
                     VacuumSpeed = 6.0f * Chapter.PageProps.VacuumSpeed;
+                
+                if (Vacuum.Dir == VACUUMDIR_UP)
+                    Vacuum.Y -= VacuumSpeed;
+                else
+                    Vacuum.Y += VacuumSpeed;
             }
 
 			Vacuum.Timer++;
 
             Vacuum.X = Vacuum.X*0.8f + GetVacuumTargetX()*0.2f;
             
-			// Move the vacuum gradually up the screen.
-			if (Vacuum.Dir == VACUUMDIR_UP)
-				Vacuum.Y -= VacuumSpeed;
-			else
-				Vacuum.Y += VacuumSpeed;
-
 			if (IsInVacuum(Dusty.FloatX, Dusty.FloatY))
 			{
 				SetDustyState_Die(DEATH_VACUUM);
@@ -355,15 +371,18 @@ void UpdateVacuum()
 
 void JamVacuum()
 {
-    CreateVacuumSmoke(2);
-    
-	if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.State == VACUUMSTATE_ONSCREEN)
+	if (Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
+        CreateVacuumSmoke(2);
+        
 		Vacuum.State = VACUUMSTATE_RETREAT;
 		Vacuum.Timer = VACUUM_RETREAT_TIME;
+        
+        Vacuum.Charging = false;
+        Vacuum.ChargeTimer = VACUUM_CHARGE_DELAY;
 	}
-	else
-		Vacuum.Timer += VACUUM_UNJAM_TIME;
+	//else
+	//	Vacuum.Timer += VACUUM_UNJAM_TIME;
 }
 
 void TurnOffVacuum()
@@ -406,6 +425,11 @@ bool IsInVacuum(float X, float Y)
     if (Vacuum.State != VACUUMSTATE_ONSCREEN)
         return false;
     
+    return IsNearVacuum(X, Y);
+ }
+
+bool IsNearVacuum(float X, float Y)
+{
     if (Vacuum.Type == VACUUM_NORMAL)
     {
         if (Vacuum.Dir == VACUUMDIR_UP)
@@ -685,6 +709,8 @@ void ParseVacuumTriggerProperties(SBlock* Block, rapidxml::xml_node<char>* Prope
                 Props->Side = VACUUMSIDE_LEFT;
             else if (strcmp(ConstValue, "right") == 0)
                 Props->Side = VACUUMSIDE_RIGHT;
+            else if (strcmp(ConstValue, "center") == 0)
+                Props->Side = VACUUMSIDE_CENTER;
             else
                 ReportError("Unknown value '%s' for vacuum trigger 'side' property; allowed values are 'left' and 'right'.  Fix this and re-save the TMX file.", ConstValue);
         }

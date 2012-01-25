@@ -15,6 +15,7 @@ enum EVacuumState
 	VACUUMSTATE_OFF,
 	VACUUMSTATE_ONSCREEN,
 	VACUUMSTATE_RETREAT,
+    VACUUMSTATE_CHARGE,
 };
 
 enum EVacuumType
@@ -32,7 +33,8 @@ enum EVacuumDir
 enum EVacuumSide
 {
 	VACUUMSIDE_LEFT,
-	VACUUMSIDE_RIGHT
+	VACUUMSIDE_RIGHT,
+    VACUUMSIDE_CENTER
 };
 
 struct SVacuum
@@ -54,6 +56,8 @@ struct SVacuum
     
     int BlinkTimer;
 
+    int ChargeTimer;
+    
     int* ForceMap;
     int* NextForceMap;
     int ForceMapWidth;
@@ -74,6 +78,7 @@ void TurnOnVacuum(float InitialDistance, float DelayBeforeMoving, bool Charging)
 void TurnOffVacuum();
 void JamVacuum();
 
+bool IsNearVacuum(float X, float Y);
 bool IsInVacuum(float X, float Y);
 float GetDistanceToVacuum(float X, float Y);
 
