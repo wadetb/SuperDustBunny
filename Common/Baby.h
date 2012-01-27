@@ -16,4 +16,6 @@ void ClearBabies();
 void UpdateBabies();
 void DisplayBabies();
 
+void SendBabyToGather(float X, float Y);
+
 #endif

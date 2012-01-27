@@ -16,6 +16,10 @@
 #include "Dust.h"
 #include "GameScore.h"
 #include "Tutorial.h"
+#include "Coin.h"
+#include "Gear.h"
+#include "FireWorks.h"
+#include "TennisBall.h"
 
 
 #define MAX_BABIES 50
@@ -32,6 +36,8 @@ enum EBabyState
     BABYSTATE_HEAVEN,
     BABYSTATE_JUMP_TO_FOLLOW,
     BABYSTATE_FOLLOW,
+    BABYSTATE_GATHER,
+    BABYSTATE_ATTACK,
 };
 
 struct SBaby
@@ -50,6 +56,8 @@ struct SBaby
     int FollowOrder;
     EDustyState FollowState;
     EDustySprite FollowSprite;
+    float GatherX;
+    float GatherY;
 };
 
 struct SDustyHistory
@@ -251,7 +259,7 @@ void DisplayBabies()
                                     Baby->Y + dy + ScrollY, 
                                     ScaleX * 0.35f * Baby->Size, 0.35f * Baby->Size, Baby->Alpha);            
         }
-        else if (Baby->State == BABYSTATE_JUMP_TO_FOLLOW)
+        else if (Baby->State == BABYSTATE_JUMP_TO_FOLLOW || Baby->State == BABYSTATE_GATHER)
         {
             EDustySprite Hop2Sprites[3] =
             {
@@ -505,5 +513,92 @@ void UpdateBabies()
             Baby->Direction = History->Direction;
             Baby->Timer++;
         }
+        else if (Baby->State == BABYSTATE_GATHER)
+        {
+            Baby->X = Baby->X*0.9f + Baby->GatherX*0.1f;
+            
+            float OldY = Baby->Y;
+            Baby->Y = Baby->Y*0.9f + Baby->GatherY*0.1f;
+            Baby->VelocityY = Baby->Y - OldY;
+            
+            if (Baby->X > Baby->GatherX)
+                Baby->Direction = DIRECTION_LEFT;
+            else
+                Baby->Direction = DIRECTION_RIGHT;
+            
+            Baby->Timer++;
+            
+            if (Distance(Baby->X, Baby->Y, Baby->GatherX, Baby->GatherY) < 30)
+            {
+                float X = Baby->X;
+                float Y = Baby->Y;
+                float Size = 3;
+                
+                for (int i = 0; i < NCoins; i++)//Need extern in header file to accomplish
+                {
+                    SCoin* Coin = &Coins[i];
+                    float Dist =(Distance(X, Y, Coin->X, Coin->Y));
+                    if (Dist < Size*64)
+                    {                    
+                        Coin->State = COINSTATE_COLLECTED;     
+                    }        
+                }
+                
+                for (int i = 0; i < NGears; i++)
+                {
+                    SGear* Gear = &Gears[i];
+                    float Dist = (Distance(X, Y, Gear->X, Gear->Y));
+                    if (Dist < Size*64)
+                    {
+                        Gear->State = GEARSTATE_FALLING;
+                    }                                       
+                }
+                
+                for (int i = 0; i < NBalls; i++)
+                {
+                    SBall* Ball = &Balls[i];
+                    float Dist = (Distance(X, Y, Ball->X, Ball->Y));
+                    if (Dist < Size*64)
+                    {
+                        Ball->State = BALLSTATE_FALLING;
+                    }              
+                }
+                
+                for (int i = 0; i < NFireWorks; i++)
+                {
+                    SFireWork* FireWork = &FireWorks[i];
+                    
+                    float Dist = (Distance(X, Y, FireWork->X, FireWork->Y));
+                    if (Dist < Size*64 && Dist != 0 && FireWork->State == FIREWORKSTATE_WAIT)
+                    {
+                        FireWork->State = FIREWORKSTATE_FUSE;
+                    }
+                }
+
+                Baby->State = BABYSTATE_JUMP_TO_FOLLOW;
+                Baby->Timer = 0;
+            }
+        }
+    }
+}
+
+void SendBabyToGather(float X, float Y)
+{
+    if (NBabies == 0)
+        return;
+    
+    for (int i = NBabies-1; i >= 0; i--)
+    {
+        SBaby* Baby = &Babies[i];
+        if (Baby->State != BABYSTATE_FOLLOW)
+            continue;
+        
+        if (Y >= Vacuum.Y)
+            Baby->State = BABYSTATE_ATTACK;
+        else
+            Baby->State = BABYSTATE_GATHER;
+        Baby->GatherX = X;
+        Baby->GatherY = Y;
+        return;
     }
 }

@@ -17,8 +17,6 @@
 #include "Debris.h"
 #include "GameScore.h"
 
-#define MAX_FIREWORKS 100
-
 int NFireWorks = 0;
 SFireWork FireWorks[MAX_FIREWORKS];
 

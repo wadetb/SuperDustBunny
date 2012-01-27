@@ -10,6 +10,8 @@
 #ifndef FIREWORKS_H
 #define FIREWORKS_H
 
+#define MAX_FIREWORKS 100
+
 enum EFireWorkState
 {
 	FIREWORKSTATE_WAIT,
@@ -51,5 +53,8 @@ void ClearFireWorks();
 
 void DisplayFireWorks();
 void UpdateFireWorks();
+
+extern int NFireWorks;
+extern SFireWork FireWorks[MAX_FIREWORKS];
 
 #endif

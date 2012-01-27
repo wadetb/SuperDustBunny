@@ -22,6 +22,7 @@
 #include "Tutorial.h"
 #include "GameScore.h"
 #include "Tweak.h"
+#include "Baby.h"
 
 
 SDusty Dusty;
@@ -2046,4 +2047,19 @@ void UpdateDusty()
     
     if (GetInput_GetSwipeTimeLeft() >= 1.0f/20.0f)
         GetInput_ConsumeSwipe(1.0f/60.0f);
+    
+    static float TapDownX;
+    static float TapDownY;
+    if (msButton1 && !msOldButton1)
+    {
+        TapDownX = msX;
+        TapDownY = msY;
+    }
+    if (!msButton1 && msOldButton1)
+    {
+        if (Distance(msX, msY, TapDownX, TapDownY) < 32)
+        {
+            SendBabyToGather(msX - ScrollX, msY - ScrollY);
+        }
+    }
 }

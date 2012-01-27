@@ -39,7 +39,7 @@ enum EBalloonColor
 };
 
 #define BALLOON_TAIL_COUNT  10
-#define BALLOON_TAIL_LENGTH 200.0f
+#define BALLOON_TAIL_LENGTH 250.0f
 #define BALLOON_TAIL_OFFSET 80
 
 struct SBalloon

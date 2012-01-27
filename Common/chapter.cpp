@@ -1106,7 +1106,7 @@ void CalculateScroll()
     {
 //        ScrollX = ScrollX*0.9f + (LitScreenHeight/2-Vacuum.X)*0.1f;
 //        ScrollY = ScrollY*0.95f + (LitScreenHeight*0.75f-Vacuum.Y)*0.05f;
-        ScrollY = Remap(SmoothStep(TutorialOverrides.Timer), 0.0f, 1.0f, TutorialOverrides.SavedScrollY, (LitScreenHeight*0.75f-Vacuum.Y), true);
+        ScrollY = Remap(SmoothStep(TutorialOverrides.Timer), 0.0f, 1.0f, TutorialOverrides.SavedScrollY, (LitScreenHeight*0.65f-Vacuum.Y), true);
     }
     else
     {        
