@@ -3,13 +3,18 @@
   Mouse Library v1.0 by Wade Brainerd
   
 --------------------------------------------------------------------------------------------------------*/
+#include "..\Common\Common.h"
 #include "mouse.h"
+
+#include "..\Common\Debug.h"
+#include "..\Common\Tweak.h"
 
 #include <windows.h>
 
+#define NOWTFUNCTIONS
 #include "wintab.h"
 
-#define PACKETDATA	PK_X | PK_Y | PK_BUTTONS
+#define PACKETDATA	PK_X | PK_Y | PK_BUTTONS | PK_TIME | PK_NORMAL_PRESSURE
 #define PACKETMODE	0				
 #include "pktdef.h"
 
@@ -30,16 +35,16 @@ typedef BOOL ( API * WTQUEUESIZESET ) ( HCTX, int );
 typedef int  ( API * WTDATAPEEK ) ( HCTX, UINT, UINT, int, LPVOID, LPINT);
 typedef int  ( API * WTPACKETSGET ) (HCTX, int, LPVOID);
 
-WTINFOA gpWTInfoA = NULL;
-WTOPENA gpWTOpenA = NULL;
-WTPACKET gpWTPacket = NULL;
+WTINFOA WTInfoA;
+WTOPENA WTOpenA;
+WTPACKET WTPacket;
+WTPACKETSGET WTPacketsGet;
 
-HINSTANCE hWintab = NULL;
+HINSTANCE hWintab;
 
 extern HINSTANCE hInst;
 extern HWND hWnd;
 
-HCTX hCtx;
 LOGCONTEXT lc;
 
 int msOldButton1;
@@ -58,24 +63,23 @@ float msNewY;
 int msNewButton1;
 int msNewButton2;
 
-#define GETPROCADDRESS(type, func) gp##func = (type)GetProcAddress(hWintab, #func);
-
 void msInit()
 {
-	hWintab = LoadLibraryA("Wintab32.dll");
-	if (!hWintab)
+	HINSTANCE WintabDLL = LoadLibraryA("Wintab32.dll");
+	if (!WintabDLL)
 		return;
 
-	GETPROCADDRESS( WTOPENA, WTOpenA );
-	GETPROCADDRESS( WTINFOA, WTInfoA );
-	GETPROCADDRESS( WTPACKET, WTPacket );
+	WTOpenA = (WTOPENA)GetProcAddress(WintabDLL, "WTOpenA");
+	WTInfoA = (WTINFOA)GetProcAddress(WintabDLL, "WTInfoA");
+	WTPacket = (WTPACKET)GetProcAddress(WintabDLL, "WTPacket");
+	WTPacketsGet = (WTPACKETSGET)GetProcAddress(WintabDLL, "WTPacketsGet");
 
-	gpWTInfoA(WTI_DEFCONTEXT, 0, &lc);
+	WTInfoA(WTI_DEFCONTEXT, 0, &lc);
 
 	lc.lcPktData = PACKETDATA;
 	lc.lcPktMode = PACKETMODE;
 	lc.lcOptions = CXO_MESSAGES;
-	hCtx = gpWTOpenA(hWnd, &lc, TRUE);
+	WTOpenA(hWnd, &lc, TRUE);
 }
 
 void msDeinit( void )
@@ -103,29 +107,39 @@ void GetInput_EndSwipe(float X, float Y, double Time);
 #undef GetCurrentTime
 double GetCurrentTime();
 
+extern int gxScreenWidth, gxScreenHeight;
+
+int LastPacketPressure;
+
 void msOnWTPacket(WPARAM wSerial, LPARAM hCtx)
 {
-	PACKET pkt;
-	gpWTPacket((HCTX)hCtx, wSerial, &pkt);
+	PACKET Packets[8];
+	int NPackets = WTPacketsGet((HCTX)hCtx, 8, Packets);
 
-	msNewX = (float)pkt.pkX / lc.lcInExtX;
-	msNewY = (float)pkt.pkY / lc.lcInExtY;
+	for (int i = 0; i < NPackets; i++)
+	{
+		PACKET* Pkt = &Packets[i];
 
-	msNewButton1 = pkt.pkButtons;
-	msNewButton2 = pkt.pkButtons;
+		msNewX = (float)gxScreenWidth * ( ( ( Pkt->pkX - lc.lcInExtX/2 ) * Tweak.WacomXSensitivity + lc.lcInExtX/2 ) / lc.lcInExtX );
+		msNewY = gxScreenHeight - (float)gxScreenHeight * ( ( ( Pkt->pkY - lc.lcInExtY/2 ) * Tweak.WacomYSensitivity + lc.lcInExtY/2 ) / lc.lcInExtY );
 
-	if (msNewButton1 && !msButton1)
-	{
-		GetInput_BeginSwipe(msNewX, msNewY, GetCurrentTime());
-		return;
-	}
-	if (!msNewButton1 && msButton1)
-	{
-		GetInput_EndSwipe(msNewX, msNewY, GetCurrentTime());
-		return;
-	}
-	if (msNewButton1 && msButton1)
-	{
-		GetInput_AddToSwipe(msNewX, msNewY, GetCurrentTime());
+		msNewButton1 = Pkt->pkNormalPressure > 0;
+
+		//LogMessage("PKT X=%f Y=%f Pressure=%d\n", msNewX, msNewY, Pkt->pkNormalPressure);
+
+		if (Pkt->pkNormalPressure > 0 && LastPacketPressure == 0)
+		{
+			GetInput_BeginSwipe(msNewX, msNewY, Pkt->pkTime / 1000.0f);
+		}
+		else if (Pkt->pkNormalPressure == 0 && LastPacketPressure > 0)
+		{
+			GetInput_EndSwipe(msNewX, msNewY, Pkt->pkTime / 1000.0f);
+		}
+		else if (Pkt->pkNormalPressure > 0 && LastPacketPressure > 0)
+		{
+			GetInput_AddToSwipe(msNewX, msNewY, Pkt->pkTime / 1000.0f);
+		}
+
+		LastPacketPressure = Pkt->pkNormalPressure;
 	}
 }

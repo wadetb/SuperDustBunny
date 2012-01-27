@@ -354,8 +354,8 @@ void gxDrawString( int x, int y, int ptsize, int color, const char* text, ... )
 		if (ch < 32 || ch > 127)
 			continue;
 
-		float v0 = (float)( ch - 32 ) * 8 / gxFontSprite.height;
-		float v1 = (float)( ch - 32 + 1 ) * 8 / gxFontSprite.height;
+		float v0 = (float)( ch - 32 ) * 8 / gxFontSprite.height + (0.5f/gxFontSprite.height);
+		float v1 = (float)( ch - 32 + 1 ) * 8 / gxFontSprite.height + (0.5f/gxFontSprite.height);
 
 		_gxDrawQuad( x, y, ptsize, ptsize, color, 0.0f, v0, 1.0f, v1 );
 
@@ -417,7 +417,7 @@ void CheckMessages()
 	}
 }
 
-int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,  LPSTR lpCmdLine, int nCmdShow )
+int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow )
 {
 	hInst = hInstance;
 
@@ -431,13 +431,18 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,  LPSTR lpCmdLi
 	WNDCLASSEX wc = 
 	{
 		sizeof(WNDCLASSEX), CS_CLASSDC, WindowProc, 0L, 0L,
-		GetModuleHandle(NULL), LoadIcon(NULL, IDI_APPLICATION), LoadCursor(NULL,IDC_ARROW), NULL, NULL,
+		hInst, LoadIcon(hInst, MAKEINTRESOURCE(IDI_APPLICATION)), LoadCursor(NULL, IDC_ARROW), NULL, NULL,
 		"graphics", NULL 
 	};
 	RegisterClassEx( &wc );
 
 	// Create the application's window
-	hWnd = CreateWindow( "graphics", "", WS_OVERLAPPEDWINDOW, 100, 100, 640, 480, GetDesktopWindow(), NULL, wc.hInstance, NULL );
+#ifdef _DEBUG
+	const char* WindowTitle = "Super Dust Bunny [debug]";
+#else
+	const char* WindowTitle = "Super Dust Bunny";
+#endif
+	hWnd = CreateWindow( "graphics", WindowTitle, WS_OVERLAPPEDWINDOW, 100, 100, 640, 480, GetDesktopWindow(), NULL, wc.hInstance, NULL );
 
 	Init();
 

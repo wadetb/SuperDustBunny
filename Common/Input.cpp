@@ -112,7 +112,7 @@ void GetInput_BeginSwipe(float X, float Y, double Time)
         RecordSwipeEvent(EVENT_SWIPE_BEGIN, X, Y, 0);
     
 #ifdef SWIPE_DEBUG
-    printf("Begin swipe- %f %f\n", X, Y);
+    //printf("Begin swipe- %f %f\n", X, Y);
 #endif
 }
 
@@ -137,7 +137,7 @@ void GetInput_AddToSwipe(float X, float Y, double Time)
             RecordSwipeEvent(EVENT_SWIPE_POINT, X, Y, (float)(Time - Swipe.StartTime));
 
 #ifdef SWIPE_DEBUG
-        printf("Add swipe- %f %f\n", X, Y);
+        //printf("Add swipe- %f %f\n", X, Y);
 #endif
     }
 }
@@ -160,7 +160,7 @@ void GetInput_EndSwipe(float X, float Y, double Time)
             RecordSwipeEvent(EVENT_SWIPE_END, X, Y, (float)(Time - Swipe.StartTime));
 
 #ifdef SWIPE_DEBUG
-        printf("End swipe- %f %f\n", X, Y);
+        //printf("End swipe- %f %f\n", X, Y);
 #endif
     }
 }
@@ -296,34 +296,37 @@ bool GetInput_IsSwipedUsed()
 void DisplaySwipe()
 {
 #ifdef SWIPE_DEBUG
-    for (int i = 0; i < Swipe.Count-1; i++)
-    {        
-        if ( Swipe.Current < SwipePoints[i].Time )
-        {
-            DisplayDebugLine(SwipePoints[i].X, SwipePoints[i].Y, SwipePoints[i+1].X, SwipePoints[i+1].Y, 4.0f, gxRGBA32(128, 128, 192, 255));
-        }
-        else if ( Swipe.Current < SwipePoints[i+1].Time )
-        {
-            float Duration = SwipePoints[i+1].Time - SwipePoints[i].Time;
-            float Ratio = ( Swipe.Current - SwipePoints[i].Time ) / Duration;
+	if (DevMode)
+	{
+		for (int i = 0; i < Swipe.Count-1; i++)
+		{        
+			if ( Swipe.Current < SwipePoints[i].Time )
+			{
+				DisplayDebugLine(SwipePoints[i].X, SwipePoints[i].Y, SwipePoints[i+1].X, SwipePoints[i+1].Y, 4.0f, gxRGBA32(128, 128, 192, 255));
+			}
+			else if ( Swipe.Current < SwipePoints[i+1].Time )
+			{
+				float Duration = SwipePoints[i+1].Time - SwipePoints[i].Time;
+				float Ratio = ( Swipe.Current - SwipePoints[i].Time ) / Duration;
             
-            DisplayDebugLine(SwipePoints[i].X, SwipePoints[i].Y,
-                             SwipePoints[i].X + ( SwipePoints[i+1].X - SwipePoints[i].X ) * Ratio, 
-                             SwipePoints[i].Y + ( SwipePoints[i+1].Y - SwipePoints[i].Y ) * Ratio, 
-                             4.0f, gxRGBA32(128, 192, 128, 255));            
+				DisplayDebugLine(SwipePoints[i].X, SwipePoints[i].Y,
+								 SwipePoints[i].X + ( SwipePoints[i+1].X - SwipePoints[i].X ) * Ratio, 
+								 SwipePoints[i].Y + ( SwipePoints[i+1].Y - SwipePoints[i].Y ) * Ratio, 
+								 4.0f, gxRGBA32(128, 192, 128, 255));            
 
-            DisplayDebugLine(SwipePoints[i].X + ( SwipePoints[i+1].X - SwipePoints[i].X ) * Ratio, 
-                             SwipePoints[i].Y + ( SwipePoints[i+1].Y - SwipePoints[i].Y ) * Ratio, 
-                             SwipePoints[i+1].X, SwipePoints[i+1].Y,
-                             4.0f, gxRGBA32(128, 128, 192, 255));            
-        }
-        else
-        {
-            DisplayDebugLine(SwipePoints[i].X, SwipePoints[i].Y, SwipePoints[i+1].X, SwipePoints[i+1].Y, 4.0f, gxRGBA32(128, 192, 128, 255));            
-        }
-    }
+				DisplayDebugLine(SwipePoints[i].X + ( SwipePoints[i+1].X - SwipePoints[i].X ) * Ratio, 
+								 SwipePoints[i].Y + ( SwipePoints[i+1].Y - SwipePoints[i].Y ) * Ratio, 
+								 SwipePoints[i+1].X, SwipePoints[i+1].Y,
+								 4.0f, gxRGBA32(128, 128, 192, 255));            
+			}
+			else
+			{
+				DisplayDebugLine(SwipePoints[i].X, SwipePoints[i].Y, SwipePoints[i+1].X, SwipePoints[i+1].Y, 4.0f, gxRGBA32(128, 192, 128, 255));            
+			}
+		}
     
-	//gxDrawString(5, 37, 16, gxRGB32(255, 255, 255), "Active:%d Valid:%d Count:%d", Swipe.Active, Swipe.Valid, Swipe.Count);
+		//gxDrawString(5, 37, 16, gxRGB32(255, 255, 255), "Active:%d Valid:%d Count:%d", Swipe.Active, Swipe.Valid, Swipe.Count);
+	}
 #endif
 }
 

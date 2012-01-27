@@ -148,7 +148,7 @@ double GetCurrentTime()
 #endif
 
 #ifdef PLATFORM_WINDOWS
-    return 0;
+    return timeGetTime();
 #endif
 }
 
@@ -582,14 +582,6 @@ void DisplayGame_Playing()
 
 static void UpdateGame_Playing()
 { 
-#ifdef PLATFORM_WINDOWS
-    //Pause Update
-    if (kbIsKeyDown(KB_P) && !kbWasKeyDown(KB_P))
-    {
-        GamePause = !GamePause;
-    }
-#endif
-#ifdef PLATFORM_IPHONE_OR_MAC
     if (msButton1 && !msOldButton1)
     {
         if (msX >= 384-150 && msX <= 384+150 && msY < 200)
@@ -597,7 +589,6 @@ static void UpdateGame_Playing()
             PauseGame();
         }
     }
-#endif
     
     // TODO: GamePause should actually stop the update and display loop, to reduce battery use.
 	if (GamePause)
@@ -881,21 +872,24 @@ void Display()
 	{
 		int line = 2;
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " - - - - - - - - - - - - - - - - - - - - - - ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "     Super Dust Bunny Keyboard Commands      ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Enter  - Dismiss start / win / lose screen  ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "           Super Dust Bunny Help             ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "     This game requires a Wacom tablet.      ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "  Draw on the tablet like an iPad to play.   ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Esc    - Quit game                          ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " F1     - Toggle help                        ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " F2     - Emulate iPhone display size        ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " F3     - Emulate iPad display size          ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Home   - Toggle development mode            ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " \\      - Hold for slow motion               ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " \\      - Hold for slow motion              ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " ]      - Step one frame (in slow motion)    ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " A      - Hop left                           ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " D      - Hop right                          ");
-		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Space  - Jump                               ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " V      - Summon the vacuum                  ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Shft V - Banish the vacuum                  ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Chapters:                                   ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
@@ -903,6 +897,7 @@ void Display()
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " PgUp   - Previous page                      ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " PgDn   - Next page                          ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " Ctrl+E - Edit current page                  ");
+		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), "                                             ");
 		gxDrawString(20, (line++)*16, 16, gxRGB32(255, 255, 255), " - - - - - - - - - - - - - - - - - - - - - - ");
 	}
 	else
@@ -957,9 +952,7 @@ bool Update()
 	kbUpdateKeys();
 #endif
 	
-#ifdef PLATFORM_IPHONE_OR_MAC
 	msUpdateMouse();
-#endif
 
 #ifdef PLATFORM_WINDOWS
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -1025,7 +1018,7 @@ bool Update()
 	if (kbIsKeyDown(KB_LCONTROL) && kbIsKeyDown(KB_E) && !kbWasKeyDown(KB_E))
 	{
 		char Work[1024];
-		snprintf(Work, sizeof(Work), "%s%s.tmx", Chapters[CurrentChapter].Name, Chapter.Pages[Chapter.PageNum].Name);
+		snprintf(Work, sizeof(Work), "%s\\%s.tmx", Chapters[CurrentChapter].Name, Chapter.Pages[Chapter.PageNum].Name);
 		ShellExecute(NULL, NULL, "Tools\\Tiled\\Tiled.exe", Work, NULL, 0);
 	}
 
@@ -1054,9 +1047,10 @@ bool Update()
             {
                 if (IsRecordingActive())
                     StopRecording(RESULT_NONE);
-                CurrentChapter = i-1;
+                CurrentChapter = i-KB_1;
                 LoadCurrentChapter();
                 SetGameState_Playing();
+				HideChapterIntro();
             }
         }
     }

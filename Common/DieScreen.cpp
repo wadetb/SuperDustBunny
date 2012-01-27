@@ -55,12 +55,7 @@ static void DieScreen_Advance()
 
 void UpdateDieScreen()
 {
-#ifdef PLATFORM_WINDOWS
-	bool Pressed = kbIsKeyDown(KB_RETURN) || msButton1;
-#endif
-#ifdef PLATFORM_IPHONE_OR_MAC
 	bool Pressed = msButton1;
-#endif
 
 	DieScreen.Timer++;
     

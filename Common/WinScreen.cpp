@@ -253,12 +253,7 @@ static void WinScreen_Advance()
 
 void UpdateWinScreen()
 {
-#ifdef PLATFORM_WINDOWS
-	bool Pressed = kbIsKeyDown(KB_RETURN) || msButton1;
-#endif
-#ifdef PLATFORM_IPHONE_OR_MAC
 	bool Pressed = msButton1;
-#endif
 
     WinScreen.Timer += 1.0f/60.0f;
     

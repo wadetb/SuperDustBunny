@@ -310,26 +310,6 @@ static void DisplayWelcomeAlert()
 
 void UpdateStartScreen()
 {
-#ifdef PLATFORM_WINDOWS
-	// Keyboard shortcuts for Windows
-	StartScreen.Pressed = kbIsKeyDown(KB_RETURN);
-
-	if (!kbIsKeyDown(KB_RETURN) && kbWasKeyDown(KB_RETURN))
-	{
-		StartScreen_Advance();
-		return;
-	}
-
-	if (kbIsKeyDown(KB_A) && !kbWasKeyDown(KB_A))
-	{
-		StartScreen.DragX -= StartScreenDragSpacing;
-	}
-	if (kbIsKeyDown(KB_D) && !kbWasKeyDown(KB_D))
-	{
-		StartScreen.DragX += StartScreenDragSpacing;
-	}
-#endif
-
     if (StartScreen.LeaderboardVisible)
     {
         StartScreen.LeaderboardButtonAlpha = Clamp(StartScreen.LeaderboardButtonAlpha - 0.05f, 0.0f, 1.0f);    

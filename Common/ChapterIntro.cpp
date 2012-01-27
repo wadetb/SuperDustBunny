@@ -45,6 +45,11 @@ void InitChapterIntro()
 	TurnOffVacuum();
 }
 
+void HideChapterIntro()
+{
+	ChapterIntro.Y = -1000;
+}
+
 void DisplayChapterIntro()
 {
 	AddLitSprite(LIGHTLIST_VACUUM, &ChapterTitleSprite, 0, ChapterIntro.Y);
@@ -76,18 +81,10 @@ static void ChapterIntro_Advance()
 
 void UpdateChapterIntro()
 {
-#ifdef PLATFORM_WINDOWS
-	if (kbIsKeyDown(KB_SPACE) && !kbWasKeyDown(KB_SPACE))
-	{
-		ChapterIntro.Tapped = true;
-	}
-#endif
-#ifdef PLATFORM_IPHONE
 	if (msButton1 && !msOldButton1)
 	{
 		ChapterIntro.Tapped = true;
 	}
-#endif
 
 	if (Dusty.FloatX >= Chapter.StartX)
     {

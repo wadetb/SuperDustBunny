@@ -37,12 +37,7 @@ void DisplayHelpScreen()
 
 void UpdateHelpScreen()
 {
-#ifdef PLATFORM_WINDOWS
-    bool HelpPressed = kbIsKeyDown(KB_RETURN) || msButton1;
-#endif
-#ifdef PLATFORM_IPHONE_OR_MAC
     bool HelpPressed = msButton1;
-#endif
 
     // Advance to playing state when button is released.
     if (!HelpPressed && HelpScreen.HelpPressed)

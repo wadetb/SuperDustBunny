@@ -207,5 +207,14 @@ void LogMessage(const char* LogMessage, ...)
 	vprintf(LogMessage, args);
 	va_end(args);
 #endif
+
+#ifdef PLATFORM_WINDOWS
+	char Work[1024];
+	va_list args;
+	va_start(args, LogMessage);
+	vsnprintf(Work, sizeof(Work), LogMessage, args);
+	OutputDebugString(Work);
+	va_end(args);
+#endif
 }
 

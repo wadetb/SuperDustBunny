@@ -26,7 +26,7 @@ bool GetInput_MoveRight();
 bool GetInput_Jump();
 
 
-//#define SWIPE_DEBUG
+#define SWIPE_DEBUG
 
 void GetInput_BeginSwipe(float X, float Y, double Time);
 void GetInput_AddToSwipe(float X, float Y, double Time);

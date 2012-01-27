@@ -21,12 +21,7 @@ SSettings Settings;
 
 void InitSettings()
 {
-#ifdef PLATFORM_WINDOWS
-	Settings.ControlStyle = CONTROL_TILT;
-#endif
-#ifdef PLATFORM_IPHONE_OR_MAC
     Settings.ControlStyle = CONTROL_SWIPE;
-#endif
     Settings.GhostActive = false;
     Settings.InfiniteLives = false;
     Settings.DisableVacuum = false;

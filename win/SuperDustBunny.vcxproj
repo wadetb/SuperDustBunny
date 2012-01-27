@@ -157,6 +157,7 @@
     <ClInclude Include="keyboard.h" />
     <ClInclude Include="mouse.h" />
     <ClInclude Include="PKTDEF.H" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="..\Common\Assets.h" />
     <ClInclude Include="..\Common\Barrel.h" />
@@ -197,6 +198,10 @@
   <ItemGroup>
     <None Include="..\Common\rapidxml\license.txt" />
     <None Include="..\Common\rapidxml\manual.html" />
+    <None Include="SuperDustBunny.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SuperDustBunny.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

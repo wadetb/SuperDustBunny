@@ -21,7 +21,7 @@ void PushErrorContext(const char* ErrorContext, ...);
 void PopErrorContext();
 
 // Reports a fatal error and immediately exits the program.
-#ifdef PLATFORM_WINDOWS
+#ifdef WIN32
 __declspec(noreturn) void ReportError(const char* ErrorMessage, ...);
 #else
 void ReportError(const char* ErrorMessage, ...) __attribute__((__noreturn__));

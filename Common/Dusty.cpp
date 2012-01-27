@@ -270,8 +270,11 @@ static bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
         Dusty.SwipePower = Power;
         
 #ifdef SWIPE_DEBUG
-        AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle+Range))*100 + ScrollX, Dusty.FloatY + -sinf(DegreesToRadians(Angle+Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
-        AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle-Range))*100 + ScrollX, Dusty.FloatY + -sinf(DegreesToRadians(Angle-Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
+		if (DevMode)
+		{
+			AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle+Range))*100 + ScrollX, Dusty.FloatY + -sinf(DegreesToRadians(Angle+Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
+			AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle-Range))*100 + ScrollX, Dusty.FloatY + -sinf(DegreesToRadians(Angle-Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
+		}
 #endif
 
         return true;
@@ -296,7 +299,8 @@ static void UpdateDusty_DoSwipeJump(float Angle, float Power)
     SetDustyState_JumpWithVelocity(dX, dY);
     
 #ifdef SWIPE_DEBUG
-    AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + dX*10 + ScrollX, Dusty.FloatY + dY*10 + ScrollY, gxRGB32(192, 128, 128), 0.5f);
+	if (DevMode)
+	    AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + dX*10 + ScrollX, Dusty.FloatY + dY*10 + ScrollY, gxRGB32(192, 128, 128), 0.5f);
 #endif
     
     GetInput_SetSwipeUsed();
@@ -1978,25 +1982,28 @@ void DisplayDusty()
     }
 
 #ifdef SWIPE_DEBUG
-    DisplayDebugLine(Dusty.FloatX + Dusty.Left  + ScrollX, Dusty.FloatY + Dusty.Top    + ScrollY, Dusty.FloatX + Dusty.Right + ScrollX, Dusty.FloatY + Dusty.Top    + ScrollY, 2.0f, gxRGB32(255, 0, 0));
-    DisplayDebugLine(Dusty.FloatX + Dusty.Left  + ScrollX, Dusty.FloatY + Dusty.Bottom + ScrollY, Dusty.FloatX + Dusty.Right + ScrollX, Dusty.FloatY + Dusty.Bottom + ScrollY, 2.0f, gxRGB32(255, 0, 0));
-    DisplayDebugLine(Dusty.FloatX + Dusty.Left  + ScrollX, Dusty.FloatY + Dusty.Top    + ScrollY, Dusty.FloatX + Dusty.Left  + ScrollX, Dusty.FloatY + Dusty.Bottom + ScrollY, 2.0f, gxRGB32(255, 0, 0));
-    DisplayDebugLine(Dusty.FloatX + Dusty.Right + ScrollX, Dusty.FloatY + Dusty.Top    + ScrollY, Dusty.FloatX + Dusty.Right + ScrollX, Dusty.FloatY + Dusty.Bottom + ScrollY, 2.0f, gxRGB32(255, 0, 0));
+	if (DevMode)
+	{
+		DisplayDebugLine(Dusty.FloatX + Dusty.Left  + ScrollX, Dusty.FloatY + Dusty.Top    + ScrollY, Dusty.FloatX + Dusty.Right + ScrollX, Dusty.FloatY + Dusty.Top    + ScrollY, 2.0f, gxRGB32(255, 0, 0));
+		DisplayDebugLine(Dusty.FloatX + Dusty.Left  + ScrollX, Dusty.FloatY + Dusty.Bottom + ScrollY, Dusty.FloatX + Dusty.Right + ScrollX, Dusty.FloatY + Dusty.Bottom + ScrollY, 2.0f, gxRGB32(255, 0, 0));
+		DisplayDebugLine(Dusty.FloatX + Dusty.Left  + ScrollX, Dusty.FloatY + Dusty.Top    + ScrollY, Dusty.FloatX + Dusty.Left  + ScrollX, Dusty.FloatY + Dusty.Bottom + ScrollY, 2.0f, gxRGB32(255, 0, 0));
+		DisplayDebugLine(Dusty.FloatX + Dusty.Right + ScrollX, Dusty.FloatY + Dusty.Top    + ScrollY, Dusty.FloatX + Dusty.Right + ScrollX, Dusty.FloatY + Dusty.Bottom + ScrollY, 2.0f, gxRGB32(255, 0, 0));
 
-    DisplayDebugLine(Dusty.FloatX - 4 + ScrollX, Dusty.FloatY     + ScrollY, Dusty.FloatX + 4 + ScrollX, Dusty.FloatY     + ScrollY, 2.0f, gxRGB32(255, 255, 0));
-    DisplayDebugLine(Dusty.FloatX     + ScrollX, Dusty.FloatY - 4 + ScrollY, Dusty.FloatX     + ScrollX, Dusty.FloatY + 4 + ScrollY, 2.0f, gxRGB32(255, 255, 0));
+		DisplayDebugLine(Dusty.FloatX - 4 + ScrollX, Dusty.FloatY     + ScrollY, Dusty.FloatX + 4 + ScrollX, Dusty.FloatY     + ScrollY, 2.0f, gxRGB32(255, 255, 0));
+		DisplayDebugLine(Dusty.FloatX     + ScrollX, Dusty.FloatY - 4 + ScrollY, Dusty.FloatX     + ScrollX, Dusty.FloatY + 4 + ScrollY, 2.0f, gxRGB32(255, 255, 0));
     
-    for (int i = 0; i <= 2; i++)
-    {
-        for (int j = 0; j <= 2; j++)
-        {
-            if (Dusty.NearbyBlocks & (1<<(j*3+i)))
-                DisplayDebugLine((Dusty.BlockX-1+i)*64 + ScrollX,    (Dusty.BlockY-1+j)*64+32+ScrollY, 
-                                 (Dusty.BlockX-1+i)*64+64 + ScrollX, (Dusty.BlockY-1+j)*64+32+ScrollY, 32.0f, gxRGBA32(255, 255, 128, 128));
-        }
-    }
-    DisplayDebugLine(Dusty.BlockX*64 + ScrollX,    Dusty.BlockY*64+32+ScrollY, 
-                     Dusty.BlockX*64+64 + ScrollX, Dusty.BlockY*64+32+ScrollY, 32.0f, gxRGBA32(255, 128, 128, 128));
+		for (int i = 0; i <= 2; i++)
+		{
+			for (int j = 0; j <= 2; j++)
+			{
+				if (Dusty.NearbyBlocks & (1<<(j*3+i)))
+					DisplayDebugLine((Dusty.BlockX-1+i)*64 + ScrollX,    (Dusty.BlockY-1+j)*64+32+ScrollY, 
+									 (Dusty.BlockX-1+i)*64+64 + ScrollX, (Dusty.BlockY-1+j)*64+32+ScrollY, 32.0f, gxRGBA32(255, 255, 128, 128));
+			}
+		}
+		DisplayDebugLine(Dusty.BlockX*64 + ScrollX,    Dusty.BlockY*64+32+ScrollY, 
+						 Dusty.BlockX*64+64 + ScrollX, Dusty.BlockY*64+32+ScrollY, 32.0f, gxRGBA32(255, 128, 128, 128));
+	}
 #endif
 }
 

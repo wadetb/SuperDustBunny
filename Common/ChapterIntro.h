@@ -14,8 +14,6 @@ void InitChapterIntro();
 void UpdateChapterIntro();
 void DisplayChapterIntro();
 
-void InitChapterOutro();
-void UpdateChapterOutro();
-void DisplayChapterOutro();
+void HideChapterIntro();
 
 #endif
