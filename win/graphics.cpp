@@ -5,6 +5,8 @@
 
 #include "mouse.h"
 
+#define D3D_DEBUG_INFO
+
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <shlwapi.h>
@@ -185,10 +187,7 @@ void gxInit()
 	d3dpp.BackBufferFormat = D3DFMT_A8R8G8B8;
 	d3dpp.BackBufferWidth = gxScreenWidth;
 	d3dpp.BackBufferHeight = gxScreenHeight;
-	d3dpp.EnableAutoDepthStencil = TRUE;
-	d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
 	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
-	d3dpp.Flags = D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
 	gxD3D->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &gxDev );
 
 	for (int i = 0; i < 16; i++)
@@ -201,7 +200,9 @@ void gxInit()
 	}
 
 	gxDev->BeginScene();
-	gxDev->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER|D3DCLEAR_STENCIL, 0, 1.0f, 0 );
+	gxDev->Clear( 0, NULL, D3DCLEAR_TARGET, 0, 1.0f, 0 );
+	gxDev->EndScene();
+
 	gxDev->SetRenderState( D3DRS_CULLMODE, D3DCULL_NONE ); 
 
 	// Set up default modulation.
@@ -374,7 +375,7 @@ void gxDisplayWindow()
     if (InErrorHandler)
         return;
 
-	gxDev->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER|D3DCLEAR_STENCIL, gxRGB32(0,0,0), 1.0f, 0 );
+	gxDev->Clear( 0, NULL, D3DCLEAR_TARGET, gxRGB32(0,0,0), 1.0f, 0 );
 	gxDev->BeginScene();
 	Display();
 	gxDev->EndScene();
