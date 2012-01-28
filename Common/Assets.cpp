@@ -148,8 +148,16 @@ gxSprite Flame1Sprite;
 gxSprite Flame2Sprite;
 
 gxSprite Vacuum1Sprite;
-gxSprite Vacuum2Sprite;
-gxSprite Vacuum3Sprite;
+
+gxSprite VacuumBlink1Sprite;
+gxSprite VacuumBlink2Sprite;
+
+gxSprite VacuumHurt1Sprite;
+gxSprite VacuumHurt2Sprite;
+gxSprite VacuumHurt3Sprite;
+gxSprite VacuumHurt4Sprite;
+gxSprite VacuumHurt5Sprite;
+
 gxSprite VacuumSmokeSprite;
 
 gxSprite DustBusterSprite;
@@ -994,8 +1002,16 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/flame-2.png", &Flame2Sprite);
 
 	LoadSpriteAsset("Assets/vacuum-1.png", &Vacuum1Sprite);
-	LoadSpriteAsset("Assets/vacuum-2.png", &Vacuum2Sprite);
-	LoadSpriteAsset("Assets/vacuum-3.png", &Vacuum3Sprite);
+    
+	LoadSpriteAsset("Assets/vacuum-blink-1.png", &VacuumBlink1Sprite);
+	LoadSpriteAsset("Assets/vacuum-blink-2.png", &VacuumBlink2Sprite);
+    
+	LoadSpriteAsset("Assets/vacuum-hurt-1.png", &VacuumHurt1Sprite);
+	LoadSpriteAsset("Assets/vacuum-hurt-2.png", &VacuumHurt2Sprite);
+	LoadSpriteAsset("Assets/vacuum-hurt-3.png", &VacuumHurt3Sprite);
+	LoadSpriteAsset("Assets/vacuum-hurt-4.png", &VacuumHurt4Sprite);
+	LoadSpriteAsset("Assets/vacuum-hurt-5.png", &VacuumHurt5Sprite);
+    
 	LoadSpriteAsset("Assets/vacuum-smoke.png", &VacuumSmokeSprite);
     
 	LoadSpriteAsset("Assets/dustbuster.png", &DustBusterSprite);

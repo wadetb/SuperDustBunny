@@ -68,7 +68,7 @@ void InitVacuum()
     Vacuum.Type = (EVacuumType)Chapter.PageProps.VacuumType;
 	Vacuum.Dir = (EVacuumDir)Chapter.PageProps.VacuumDir;
     Vacuum.Side = VACUUMSIDE_LEFT;
-
+    
     Vacuum.X = 384;
     if (Vacuum.Dir == VACUUMDIR_UP)
         Vacuum.Y = Chapter.PageHeight*64 + LitScreenHeight*2;
@@ -77,6 +77,8 @@ void InitVacuum()
     
 	Vacuum.State = VACUUMSTATE_OFF;
 	Vacuum.Volume = 0.5f;
+    
+    Vacuum.Damage = 0;
 
     Vacuum.Charging = false;
     
@@ -117,37 +119,57 @@ void DisplayVacuum()
 
  	if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
-        gxSprite* Sprite;
+        gxSprite* BlinkSprite = NULL;
         float LightsAlpha = 1.0f;
 
         if (Vacuum.Type == VACUUM_NORMAL)
         {
-            if (Vacuum.State == VACUUMSTATE_RETREAT)
-                Sprite = &Vacuum3Sprite;
-            else
-            {
-                switch (Vacuum.BlinkTimer/6)
-                {
-                    case 0: Sprite = &Vacuum1Sprite; break;
-                    case 1: Sprite = &Vacuum2Sprite; LightsAlpha = 0.75f; break;
-                    case 2: Sprite = &Vacuum3Sprite; LightsAlpha = 0.5f; break;
-                    case 3: Sprite = &Vacuum2Sprite; LightsAlpha = 0.75f; break;
-                    case 4: Sprite = &Vacuum1Sprite; break;
-                    default: Sprite = &Vacuum1Sprite; break;
-                }
-            }
-            
             if (Vacuum.Dir == VACUUMDIR_UP)
-                AddLitSpriteScaled(LIGHTLIST_VACUUM, Sprite, Vacuum.X - Sprite->width/2 + ScrollX, Vacuum.Y + ScrollY - VacuumYOffset, 1.0f, 1.0f);
+                AddLitSpriteScaled(LIGHTLIST_VACUUM, &Vacuum1Sprite, Vacuum.X - Vacuum1Sprite.width/2 + ScrollX, Vacuum.Y + ScrollY - VacuumYOffset, 1.0f, 1.0f);
             else
-                AddLitSpriteScaled(LIGHTLIST_VACUUM, Sprite, Vacuum.X - Sprite->width/2 + ScrollX, Vacuum.Y + ScrollY + VacuumYOffset, 1.0f, -1.0f);
+                AddLitSpriteScaled(LIGHTLIST_VACUUM, &Vacuum1Sprite, Vacuum.X - Vacuum1Sprite.width/2 + ScrollX, Vacuum.Y + ScrollY + VacuumYOffset, 1.0f, -1.0f);
 
             if (Chapter.PageProps.LightsOff)
             {
                 if (Vacuum.Dir == VACUUMDIR_UP)
                 {
-                    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightVacuumSprite, Vacuum.X + ScrollX, Vacuum.Y + ScrollY - 384, 1.0f, LightsAlpha);
+                    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightVacuumSprite, Vacuum.X + ScrollX, Vacuum.Y + ScrollY - 580, 1.0f, LightsAlpha);
                 }
+            }
+            
+            // Damage overlay
+            gxSprite* DamageSprite = NULL;
+            switch (Vacuum.Damage)
+            {
+                case 1: DamageSprite = &VacuumHurt1Sprite; break;
+                case 2: DamageSprite = &VacuumHurt2Sprite; break;
+                case 3: DamageSprite = &VacuumHurt3Sprite; break;
+                case 4: DamageSprite = &VacuumHurt4Sprite; break;
+                case 5: DamageSprite = &VacuumHurt5Sprite; break;
+                default: break;
+            }
+            if (DamageSprite)
+                AddLitSpriteScaled(LIGHTLIST_VACUUM, DamageSprite, Vacuum.X - DamageSprite->width/2 + ScrollX, Vacuum.Y + ScrollY - VacuumYOffset, 1.0f, 1.0f);
+
+            // Blinking eyes overlay
+            if (Vacuum.State == VACUUMSTATE_RETREAT)
+                BlinkSprite = &VacuumBlink2Sprite;
+            else
+            {
+                switch (Vacuum.BlinkTimer/6)
+                {
+                    case 1: BlinkSprite = &VacuumBlink1Sprite; LightsAlpha = 0.75f; break;
+                    case 2: BlinkSprite = &VacuumBlink2Sprite; LightsAlpha = 0.5f; break;
+                    case 3: BlinkSprite = &VacuumBlink1Sprite; LightsAlpha = 0.75f; break;
+                    default: break;
+                }
+            }
+            if (BlinkSprite)
+            {
+                if (Vacuum.Dir == VACUUMDIR_UP)
+                    AddLitSpriteScaled(LIGHTLIST_VACUUM, BlinkSprite, Vacuum.X - BlinkSprite->width/2 + ScrollX, Vacuum.Y + ScrollY - VacuumYOffset, 1.0f, 1.0f);
+                else
+                    AddLitSpriteScaled(LIGHTLIST_VACUUM, BlinkSprite, Vacuum.X - BlinkSprite->width/2  + ScrollX, Vacuum.Y + ScrollY + VacuumYOffset, 1.0f, -1.0f);
             }
         }
         else if (Vacuum.Type == VACUUM_DUSTBUSTER)
@@ -374,6 +396,9 @@ void JamVacuum()
 {
 	if (Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
+        if (Vacuum.Damage < 5)
+            Vacuum.Damage++;
+        
         CreateVacuumSmoke(2);
         
 		Vacuum.State = VACUUMSTATE_RETREAT;

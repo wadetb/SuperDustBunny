@@ -141,8 +141,15 @@ extern gxSprite Flame1Sprite;
 extern gxSprite Flame2Sprite;
 
 extern gxSprite Vacuum1Sprite;
-extern gxSprite Vacuum2Sprite;
-extern gxSprite Vacuum3Sprite;
+extern gxSprite VacuumBlink1Sprite;
+extern gxSprite VacuumBlink2Sprite;
+
+extern gxSprite VacuumHurt1Sprite;
+extern gxSprite VacuumHurt2Sprite;
+extern gxSprite VacuumHurt3Sprite;
+extern gxSprite VacuumHurt4Sprite;
+extern gxSprite VacuumHurt5Sprite;
+
 extern gxSprite VacuumSmokeSprite;
 
 extern gxSprite DustBusterSprite;

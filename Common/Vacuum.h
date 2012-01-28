@@ -45,6 +45,7 @@ struct SVacuum
     
 	EVacuumState State;
 
+    int Damage;
     bool Charging;
     
 	int Timer;
