@@ -20,6 +20,7 @@
 #include "Gear.h"
 #include "FireWorks.h"
 #include "TennisBall.h"
+#include "Smoke.h"
 
 
 #define MAX_BABIES 50
@@ -37,6 +38,7 @@ enum EBabyState
     BABYSTATE_JUMP_TO_FOLLOW,
     BABYSTATE_FOLLOW,
     BABYSTATE_GATHER,
+    BABYSTATE_JUMP_TO_ATTACK,
     BABYSTATE_ATTACK,
 };
 
@@ -183,7 +185,6 @@ static void DisplayBabySprite(SBaby* Baby, EDustySprite Sprite, float XAdj, floa
                                            Y + ScrollY + HatOffset->Y*Baby->Size, 
                                            ScaleX*Baby->Size, Baby->Size, DegreesToRadians(HatOffset->Angle)*ScaleX);
     }
-
 }
 
 void DisplayBabies()
@@ -259,7 +260,7 @@ void DisplayBabies()
                                     Baby->Y + dy + ScrollY, 
                                     ScaleX * 0.35f * Baby->Size, 0.35f * Baby->Size, Baby->Alpha);            
         }
-        else if (Baby->State == BABYSTATE_JUMP_TO_FOLLOW || Baby->State == BABYSTATE_GATHER)
+        else if (Baby->State == BABYSTATE_JUMP_TO_FOLLOW || Baby->State == BABYSTATE_GATHER || Baby->State == BABYSTATE_JUMP_TO_ATTACK)
         {
             EDustySprite Hop2Sprites[3] =
             {
@@ -293,6 +294,10 @@ void DisplayBabies()
             SDustyHistory* History = &DustyHistory[Baby->FollowOrder < DustyHistoryCount-1 ? Baby->FollowOrder : DustyHistoryCount-1];
 
             DisplayBabySprite(Baby, History->Sprite, History->XAdj, History->XMirrorAdj, History->YAdj);
+        }
+        else if (Baby->State == BABYSTATE_ATTACK)
+        {            
+            DisplayBabySprite(Baby, DUSTYSPRITE_KICK, -124, -18, -150);
         }
     }
 }
@@ -579,6 +584,51 @@ void UpdateBabies()
                 Baby->Timer = 0;
             }
         }
+        else if (Baby->State == BABYSTATE_JUMP_TO_ATTACK)
+        {
+            Baby->X = Baby->X*0.9f + Baby->GatherX*0.1f;
+            
+            float OldY = Baby->Y;
+            Baby->Y = Baby->Y*0.9f + Baby->GatherY*0.1f;
+            Baby->VelocityY = Baby->Y - OldY;
+            
+            if (Baby->X > Baby->GatherX)
+                Baby->Direction = DIRECTION_LEFT;
+            else
+                Baby->Direction = DIRECTION_RIGHT;
+            
+            Baby->Timer++;
+            
+            if (Distance(Baby->X, Baby->Y, Baby->GatherX, Baby->GatherY) < 30)
+            {
+                Baby->State = BABYSTATE_ATTACK;
+                Baby->Timer = 0;
+                Baby->GatherY = Vacuum.Y;
+            }
+        }
+        else if (Baby->State == BABYSTATE_ATTACK)
+        {
+            Baby->X = Baby->X*0.9f + Baby->GatherX*0.1f;
+            
+            float OldY = Baby->Y;
+            Baby->Y = Baby->Y*0.9f + Baby->GatherY*0.1f;
+            Baby->VelocityY = Baby->Y - OldY;
+            
+            if (Baby->X > Baby->GatherX)
+                Baby->Direction = DIRECTION_LEFT;
+            else
+                Baby->Direction = DIRECTION_RIGHT;
+            
+            Baby->Timer++;
+            
+            if (Distance(Baby->X, Baby->Y, Baby->GatherX, Baby->GatherY) < 30)
+            {
+                CreateWhiteSmoke(Baby->X, Baby->Y);
+                JamVacuum();
+                Baby->State = BABYSTATE_INACTIVE;
+                Baby->Timer = 0;
+            }
+        }
     }
 }
 
@@ -593,12 +643,19 @@ void SendBabyToGather(float X, float Y)
         if (Baby->State != BABYSTATE_FOLLOW)
             continue;
         
-        if (Y >= Vacuum.Y)
-            Baby->State = BABYSTATE_ATTACK;
+        if (Y >= Vacuum.Y && Vacuum.State != VACUUMSTATE_RETREAT)
+        {
+            Baby->State = BABYSTATE_JUMP_TO_ATTACK;
+            Baby->GatherX = X;
+            Baby->GatherY = Baby->Y - 200;
+        }
         else
+        {
             Baby->State = BABYSTATE_GATHER;
-        Baby->GatherX = X;
-        Baby->GatherY = Y;
-        return;
+            Baby->GatherX = X;
+            Baby->GatherY = Y;
+        }
+        
+        break;
     }
 }

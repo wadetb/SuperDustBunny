@@ -68,7 +68,8 @@ gxSprite* DustySprite[DUSTYSPRITE_COUNT] =
     &DustyCornerJumpbSprite,
     &DustyCornerJumpcSprite,
     &DustyCornerJumpdSprite,
-    &DustyDeathSprite
+    &DustyDeathSprite,
+    &DustyKickSprite
 };
 
 SDustyHatOffset DustyHatOffsets[DUSTYSPRITE_COUNT] = 
@@ -98,6 +99,7 @@ SDustyHatOffset DustyHatOffsets[DUSTYSPRITE_COUNT] =
     { 0, 0, 0 },
     { 0, 0, 0 },
     { 0, 115, 114 },
+    { 0, 115, 114 }, // FIXME
 };
 
 gxSprite* DustyHatSprites[DUSTYHAT_COUNT] =

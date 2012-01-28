@@ -67,6 +67,8 @@ gxSprite DustyCornerJumpdSprite;
 
 gxSprite DustyDeathSprite;
 
+gxSprite DustyKickSprite;
+
 gxSprite PartyHatSprite;
 gxSprite PinkBowHatSprite;
 
@@ -159,6 +161,7 @@ gxSprite VacuumHurt4Sprite;
 gxSprite VacuumHurt5Sprite;
 
 gxSprite VacuumSmokeSprite;
+gxSprite WhiteSmokeSprite;
 
 gxSprite DustBusterSprite;
 
@@ -919,7 +922,9 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/dusty-cornerjumpd.png", &DustyCornerJumpdSprite);
 
 	LoadSpriteAsset("Assets/dusty-die.png", &DustyDeathSprite);
-    
+
+    LoadSpriteAsset("Assets/dusty-kick.png", &DustyKickSprite);
+
 	LoadSpriteAsset("Assets/hat-party.png", &PartyHatSprite);
 	LoadSpriteAsset("Assets/hat-pink-bow.png", &PinkBowHatSprite);
     
@@ -1013,6 +1018,7 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/vacuum-hurt-5.png", &VacuumHurt5Sprite);
     
 	LoadSpriteAsset("Assets/vacuum-smoke.png", &VacuumSmokeSprite);
+	LoadSpriteAsset("Assets/white-smoke.png", &WhiteSmokeSprite);
     
 	LoadSpriteAsset("Assets/dustbuster.png", &DustBusterSprite);
 

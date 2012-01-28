@@ -60,6 +60,8 @@ extern gxSprite DustyCornerJumpdSprite;
 
 extern gxSprite DustyDeathSprite;
 
+extern gxSprite DustyKickSprite;
+
 extern gxSprite PartyHatSprite;
 extern gxSprite PinkBowHatSprite;
 
@@ -151,6 +153,7 @@ extern gxSprite VacuumHurt4Sprite;
 extern gxSprite VacuumHurt5Sprite;
 
 extern gxSprite VacuumSmokeSprite;
+extern gxSprite WhiteSmokeSprite;
 
 extern gxSprite DustBusterSprite;
 

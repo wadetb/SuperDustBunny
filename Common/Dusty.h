@@ -70,7 +70,9 @@ enum EDustySprite
     DUSTYSPRITE_CORNERJUMP_D,
     
     DUSTYSPRITE_DEATH,
-    
+
+    DUSTYSPRITE_KICK,
+
     DUSTYSPRITE_COUNT
 };
 
