@@ -19,5 +19,6 @@ void CreateSmallSmoke(float X, float Y);
 void CreateWhiteSmoke(float X, float Y);
 void CreateBonus(float X, float Y);
 void Create1UpBubble(float X, float Y);
+void CreateBalloonPop(float X, float Y);
 
 #endif

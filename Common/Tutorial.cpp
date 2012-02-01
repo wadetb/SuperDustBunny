@@ -173,6 +173,10 @@ static void CreateBirthdayTutorial(STutorial* Tutorial)
     Tutorial->Active = false;
 }
 
+int BirthdayFlame1;
+int BirthdayFlame2;
+int BirthdayFlame3;
+
 static void UpdateBirthdayTutorial(STutorial* Tutorial)
 {
     if (Tutorial->Sequence == 0)
@@ -204,9 +208,9 @@ static void UpdateBirthdayTutorial(STutorial* Tutorial)
             // Make flames
             TutorialOverrides.NoFlameDamage = true;
             SFlameProperties* Props = GetFlamePropertiesByName("candle");
-            CreateFlame(3.75f*64, (y-7.75)*64, 0, Props);
-            CreateFlame(5.5f*64, (y-7.75)*64, 0, Props);
-            CreateFlame(7.5f*64, (y-7.65f)*64, 0, Props);
+            BirthdayFlame1 = CreateFlame(3.75f*64, (y-7.75)*64, 0, Props);
+            BirthdayFlame1 = CreateFlame(5.5f*64, (y-7.75)*64, 0, Props);
+            BirthdayFlame1 = CreateFlame(7.5f*64, (y-7.65f)*64, 0, Props);
             
             // Fill in solid collision row.
             Dusty.FloatY = Tutorial->Y - Dusty.Bottom;            
@@ -244,8 +248,10 @@ static void UpdateBirthdayTutorial(STutorial* Tutorial)
 
             TutorialOverrides.FocusOnVacuum = true;
             TutorialOverrides.SavedScrollY = ScrollY;
-            TutorialOverrides.Timer = 0.0f;
+            TutorialOverrides.Timer = 0.5f;
             
+            ClearFlames();
+
             Tutorial->Sequence = 4;
             Tutorial->SequenceTimer = 0;  
         }
@@ -256,12 +262,11 @@ static void UpdateBirthdayTutorial(STutorial* Tutorial)
 
         if (Tutorial->SequenceTimer >= 1.0f && Tutorial->SequenceTimer-1.0f/60.0f < 1.0f)
         {
-            // Make balloons
+            // Replace flames with balloons.
             int y = Tutorial->Y/64;
-            //            CreateBalloon(1, y-7);
-            CreateBalloon(4, y-11);
-            CreateBalloon(8, y-11);
-            //            CreateBalloon(11, y-7);
+            CreateBalloon(3.5f, y-8);
+            CreateBalloon(5.5f, y-8);
+            CreateBalloon(7.5f, y-8);
         }
         
         if (Tutorial->SequenceTimer >= 5)

@@ -939,7 +939,7 @@ void UpdateDusty_JumpCommon()
                 if (fabsf(Dusty.FloatVelocityX) < 10)
                     Dusty.FloatVelocityX += ( dX >= 0 ? 1.0f : -1.0f ) * Tweak.DustyAirBoostXForDrag;
                 if (fabsf(Dusty.FloatVelocityY) < 10)
-                    Dusty.FloatVelocityY += ( dY >= 0 ? 0.5f : -0.5f ) * Tweak.DustyAirBoostYForDrag;
+                    Dusty.FloatVelocityY += ( dY >= 0 ? Clamp(dY/30.0f, 0, 3) : -0.5f ) * Tweak.DustyAirBoostYForDrag;
             }
         }
 #endif

@@ -625,7 +625,7 @@ void UpdateBabies()
             {
                 CreateWhiteSmoke(Baby->X, Baby->Y);
                 JamVacuum();
-                Baby->State = BABYSTATE_INACTIVE;
+                Baby->State = BABYSTATE_INACTIVE; // BABYSTATE_JUMP_TO_FOLLOW?
                 Baby->Timer = 0;
             }
         }

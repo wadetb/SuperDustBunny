@@ -18,8 +18,10 @@ void ParseFlameProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNod
 SFlameProperties* GetFlamePropertiesByName(const char* Name);
 void ClearFlamePropertiesList();
 
-void CreateFlame(float X, float Y, unsigned int Flags, SFlameProperties* Props);
+int CreateFlame(float X, float Y, unsigned int Flags, SFlameProperties* Props);
 void ClearFlames();
+
+void DestroyFlame(int FlameID);
 
 void UpdateFlames();
 void DisplayFlames();

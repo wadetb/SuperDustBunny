@@ -525,6 +525,7 @@ void DisplayGame_Playing()
 	DisplayDebris();
 	DisplayStaplers();
 	DisplayBabies();
+	DisplayBalloons();
 
 	// Dusty Drawing
 	DisplayDusty();
@@ -541,7 +542,6 @@ void DisplayGame_Playing()
 	DisplayPowerUp();
     DisplayTutorial();
 	DisplayHangers();
-	DisplayBalloons();
     
     // HUD Drawing - Score, etc.
     DisplayScore();

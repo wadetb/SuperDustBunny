@@ -16,6 +16,7 @@
 #include "Dust.h"
 #include "GameScore.h"
 #include "Tutorial.h"
+#include "Smoke.h"
 
 
 #define MAX_BALLOONS 50
@@ -112,8 +113,8 @@ void DisplayBalloons()
         
         if (Balloon->State == BALLOONSTATE_FLOAT || Balloon->State == BALLOONSTATE_RISE)
         {
-            float dx = cosf(Balloon->Timer*2.0f) * 5.0f + cosf(Balloon->Timer*1.0f/6.0f) * 5.0f;
-            float dy = sinf(Balloon->Timer*2.0f) * 5.0f + sinf(Balloon->Timer*1.0f/6.0f) * 5.0f;
+            float dx = cosf(Balloon->Timer*2.0f) * 15.0f + cosf(Balloon->Timer*1.0f/6.0f) * 15.0f;
+            float dy = sinf(Balloon->Timer*2.0f) * 15.0f + sinf(Balloon->Timer*1.0f/6.0f) * 15.0f;
             
             AddLitSprite(LIGHTLIST_FOREGROUND, BalloonSprites[Balloon->Color], 
                                     Balloon->X - 64 + ScrollX + dx, 
@@ -181,7 +182,7 @@ void UpdateBalloons()
         
         if (Balloon->State == BALLOONSTATE_FLOAT || Balloon->State == BALLOONSTATE_RISE)
         {
-            if (!Balloon->DustyOnBoard)
+            if (Dusty.State != DUSTYSTATE_BALLOONRIDE && !Balloon->DustyOnBoard)
             {
                 if (fabsf(Dusty.FloatX - Balloon->X) < 30 && 
                     Dusty.FloatY >= Balloon->Y + BALLOON_TAIL_OFFSET*0.5f && 
@@ -193,11 +194,14 @@ void UpdateBalloons()
 
                     SetDustyState_BalloonRide();
                     
-                    if (Dusty.FloatX > Balloon->X)
+                    if (Dusty.FloatX < Balloon->X)
                         Dusty.Direction = DIRECTION_RIGHT;
                     else
                         Dusty.Direction = DIRECTION_LEFT;
-                    
+
+                    Dusty.FloatX = Balloon->X;
+                    Dusty.FloatY = Balloon->Y + 200;
+
                     Balloon->DustyOnBoard = true;
                 }
             }
@@ -218,6 +222,7 @@ void UpdateBalloons()
             if (Balloon->Timer >= 3.0f)
             {
                 Balloon->State = BALLOONSTATE_POP;
+                CreateBalloonPop(Balloon->X, Balloon->Y);
                 
                 Balloon->TailPrevX[0] += Random(-30, 30);
                 
@@ -236,7 +241,12 @@ void UpdateBalloons()
                 Dusty.FloatY += Balloon->VY;
                 
                 if (Dusty.State != DUSTYSTATE_BALLOONRIDE)
+                {
                     Balloon->DustyOnBoard = false;
+
+                    Balloon->State = BALLOONSTATE_POP;
+                    CreateBalloonPop(Balloon->X, Balloon->Y);
+                }
 
                 if (Balloon->VY >= -20)
                     Balloon->VY -= 0.2f;
@@ -259,8 +269,8 @@ void UpdateBalloons()
 //            Balloon->TailPrevY[i] = Balloon->TailY[i];
 //        }
 
-        float dx = cosf(Balloon->Timer*2.0f) * 5.0f + cosf(Balloon->Timer*1.0f/6.0f) * 5.0f;
-        float dy = sinf(Balloon->Timer*2.0f) * 5.0f + sinf(Balloon->Timer*1.0f/6.0f) * 5.0f;
+        float dx = cosf(Balloon->Timer*2.0f) * 15.0f + cosf(Balloon->Timer*1.0f/6.0f) * 15.0f;
+        float dy = sinf(Balloon->Timer*2.0f) * 15.0f + sinf(Balloon->Timer*1.0f/6.0f) * 15.0f;
         
 //        if (Balloon->State != BALLOONSTATE_POP)
 //        {

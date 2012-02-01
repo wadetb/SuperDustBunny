@@ -58,6 +58,7 @@ struct SFlame
 	float X, Y;
     float Angle;
 	int Frame;
+    bool Active;
 };
 
 SFlameProperties* FlamePropertiesHead;
@@ -210,7 +211,7 @@ static float BlockFlagsToAngle(unsigned int Flags)
     return 0;
 }
 
-void CreateFlame(float X, float Y, unsigned int Flags, SFlameProperties* Props)
+int CreateFlame(float X, float Y, unsigned int Flags, SFlameProperties* Props)
 {
 	if (NFlames >= MAX_FLAMES)
 		ReportError("Exceeded the maximum of %d total flames.", MAX_FLAMES);
@@ -225,8 +226,21 @@ void CreateFlame(float X, float Y, unsigned int Flags, SFlameProperties* Props)
     
     Flame->Frame = Random(0, 10);
     
+    Flame->Active = true;
+
     if (Props->ReplaceBlock)
         EraseBlock((int)X/64, (int)Y/64);
+    
+    return (int)( Flame - Flames );
+}
+
+void DestroyFlame(int FlameID)
+{
+    if (FlameID < 0 || FlameID >= NFlames)
+        ReportError("Invalid flame ID %d", FlameID);
+    
+	SFlame* Flame = &Flames[FlameID];
+    Flame->Active = false;
 }
 
 void ClearFlames()
@@ -240,6 +254,9 @@ void UpdateFlames()
     {
         SFlame* Flame = &Flames[i];
 
+        if (!Flame->Active)
+            continue;
+        
         Flame->Frame++;
         
         SFlameProperties* Props = Flame->Props;
@@ -267,6 +284,9 @@ void DisplayFlames()
     {
         SFlame* Flame = &Flames[i];
         
+        if (!Flame->Active)
+            continue;
+
         SFlameProperties* Props = Flame->Props;
         
         gxSprite* Sprite = &Props->Frames[(Flame->Frame / Props->FrameTime) % Props->NFrames];

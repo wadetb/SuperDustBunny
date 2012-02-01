@@ -100,7 +100,7 @@ void InitVacuum()
     VacuumQueue[MAX_VACUUM_QUEUE_NODES-1].Next = -1;
     VacuumFreeHead = 0;
 
-    Vacuum.ChargeTimer = VACUUM_CHARGE_DELAY;
+    Vacuum.ChargeTimer = VACUUM_CHARGE_DELAY * Chapter.PageProps.VacuumSpeed;
     
     RestartVacuumForceMap();
     
@@ -301,24 +301,38 @@ void UpdateVacuum()
                 if (Vacuum.ChargeTimer <= 0)
                 {
                     Vacuum.Charging = true;
-                    Vacuum.Timer = 0;                    
+                    Vacuum.ChargeTimer = 5 * 60;   
+                    Vacuum.Timer = 0;
+                    int LightsOffset = Chapter.PageProps.LightsOff ? 768 : 0;
+                    if (Vacuum.Dir == VACUUMDIR_UP)
+                        Vacuum.Y = (float)-ScrollY + LitScreenHeight + LightsOffset;
+                    else
+                        Vacuum.Y = (float)-ScrollY - LightsOffset;
                 }
             }
             
-			// The vacuum gets faster the longer it stays unclogged.
-			float VacuumSpeed;
             if (Vacuum.Charging)
             {
                 float TargetY;
                 int LightsOffset = Chapter.PageProps.LightsOff ? 768 : 0;
                 if (Vacuum.Dir == VACUUMDIR_UP)
-                    TargetY = (float)-ScrollY + LitScreenHeight + LightsOffset - Vacuum.Timer*Chapter.PageProps.VacuumSpeed;
+                    TargetY = (float)-ScrollY + LitScreenHeight + LightsOffset;
                 else
-                    TargetY = (float)-ScrollY - LightsOffset + Vacuum.Timer*Chapter.PageProps.VacuumSpeed;
-                Vacuum.Y = Vacuum.Y*0.9f + TargetY*0.1f;
+                    TargetY = (float)-ScrollY - LightsOffset;
+                TargetY -= Vacuum.Timer * 1.5f * Chapter.PageProps.VacuumSpeed;
+                if (TargetY < Vacuum.Y)
+                    Vacuum.Y = TargetY;
+                
+//                Vacuum.ChargeTimer--;
+//                if (Vacuum.ChargeTimer <= 0)
+//                {
+//                    Vacuum.ChargeTimer = 5*60 * Chapter.PageProps.VacuumSpeed;
+//                    Vacuum.Charging = false;
+//                }
             }
             else
             {
+                float VacuumSpeed;
                 if (Vacuum.Timer < 0)
                     VacuumSpeed = 0;
                 else if (Vacuum.Timer < 4*60)

@@ -1109,11 +1109,13 @@ void CalculateScroll()
         ScrollY = Remap(SmoothStep(TutorialOverrides.Timer), 0.0f, 1.0f, TutorialOverrides.SavedScrollY, (LitScreenHeight*0.65f-Vacuum.Y), true);
     }
     else
-    {        
+    {
+        float TopY = Vacuum.Charging ? 500 : 600;
+        
         // Screen tracks Dusty upwards.
-        if (Dusty.FloatY + ScrollY < 600)
+        if (Dusty.FloatY + ScrollY < TopY)
         {
-            ScrollY = 600 - Dusty.FloatY;
+            ScrollY = TopY - Dusty.FloatY;
         }
 
         // Screen also tracks Dusty downwards.

@@ -199,6 +199,40 @@ void CreateWhiteSmoke(float X, float Y)
     Smoke->FAngle = 0.99f;
 }
 
+void CreateBalloonPop(float X, float Y)
+{
+    SSmoke* Smoke = &AllSmoke[NextSmoke];
+    
+    NextSmoke++;
+    if (NextSmoke >= MAX_SMOKE)
+        NextSmoke = 0;
+    
+    Smoke->Active = true;
+    
+    Smoke->Sprite = &WhiteSmokeSprite;
+    
+    Smoke->Age = 0.0f;
+    Smoke->Life = 1.0f;
+    Smoke->Birth = Random(0.0f, 0.25f);
+    
+    Smoke->Alpha = 0.65f;
+    
+    Smoke->X = Random(X - 15.0f, X + 15.0f);
+    Smoke->Y = Random(Y - 15.0f, Y + 15.0f);
+    Smoke->VX = 0;
+    Smoke->VY = 0;
+    
+    Smoke->Scale = 0.25f;
+    Smoke->VScale = Random(0.01f, 0.02f);
+    
+    Smoke->Angle = 0;
+    Smoke->VAngle = 0;
+    
+    Smoke->FX = 0.95f;
+    Smoke->FY = 0.95f;
+    Smoke->FAngle = 0;
+}
+
 void CreateBonus(float X, float Y)
 {
     SSmoke* Smoke = &AllSmoke[NextSmoke];
