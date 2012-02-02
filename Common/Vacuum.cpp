@@ -100,7 +100,8 @@ void InitVacuum()
     VacuumQueue[MAX_VACUUM_QUEUE_NODES-1].Next = -1;
     VacuumFreeHead = 0;
 
-    Vacuum.ChargeTimer = VACUUM_CHARGE_DELAY * Chapter.PageProps.VacuumSpeed;
+    Vacuum.ChargeTimer = 0;
+    Vacuum.AverageDustySpeed = 0;
     
     RestartVacuumForceMap();
     
@@ -291,62 +292,55 @@ void UpdateVacuum()
 	if (Chapter.PageProps.VacuumOff || Settings.DisableVacuum)
 		return;
 
+    if (!TutorialOverrides.FreezeDusty)
+    {
+        if (fabsf(Dusty.FloatVelocityY) > 1.0f)
+            Vacuum.AverageDustySpeed = Vacuum.AverageDustySpeed * 0.992f + -Dusty.FloatVelocityY * 0.008f;
+    }
+    else
+        Vacuum.AverageDustySpeed = Vacuum.AverageDustySpeed * 0.99f;
+    
+    AddDebugLine(40, LitScreenHeight - 50, 40, LitScreenHeight - 50 - -Dusty.FloatVelocityY * 10, gxRGBA32(64, 64, 64, 255), 1.0f/60.0f);
+    AddDebugLine(50, LitScreenHeight - 50, 50, LitScreenHeight - 50 - Vacuum.AverageDustySpeed * 10, gxRGBA32(255, 0, 0, 255), 1.0f/60.0f);
+    AddDebugLine(70, LitScreenHeight - 50, 70, LitScreenHeight - 50 - fabsf(Vacuum.Y - Dusty.FloatY)/10, gxRGBA32(0, 0, 255, 255), 1.0f/60.0f);
+    
 	if (Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
 		if (Dusty.State != DUSTYSTATE_DIE)
-		{
-            if (!TutorialOverrides.FocusOnVacuum && !Vacuum.Charging)
-            {
-                Vacuum.ChargeTimer--;
-                if (Vacuum.ChargeTimer <= 0)
-                {
-                    Vacuum.Charging = true;
-                    Vacuum.ChargeTimer = 5 * 60;   
-                    Vacuum.Timer = 0;
-                    int LightsOffset = Chapter.PageProps.LightsOff ? 768 : 0;
-                    if (Vacuum.Dir == VACUUMDIR_UP)
-                        Vacuum.Y = (float)-ScrollY + LitScreenHeight + LightsOffset;
-                    else
-                        Vacuum.Y = (float)-ScrollY - LightsOffset;
-                }
-            }
-            
-            if (Vacuum.Charging)
-            {
-                float TargetY;
-                int LightsOffset = Chapter.PageProps.LightsOff ? 768 : 0;
-                if (Vacuum.Dir == VACUUMDIR_UP)
-                    TargetY = (float)-ScrollY + LitScreenHeight + LightsOffset;
-                else
-                    TargetY = (float)-ScrollY - LightsOffset;
-                TargetY -= Vacuum.Timer * 1.5f * Chapter.PageProps.VacuumSpeed;
-                if (TargetY < Vacuum.Y)
-                    Vacuum.Y = TargetY;
-                
-//                Vacuum.ChargeTimer--;
-//                if (Vacuum.ChargeTimer <= 0)
-//                {
-//                    Vacuum.ChargeTimer = 5*60 * Chapter.PageProps.VacuumSpeed;
-//                    Vacuum.Charging = false;
-//                }
-            }
-            else
+		{            
+            //if (Vacuum.Charging)
             {
                 float VacuumSpeed;
-                if (Vacuum.Timer < 0)
-                    VacuumSpeed = 0;
-                else if (Vacuum.Timer < 4*60)
-                    VacuumSpeed = 3.0f * Chapter.PageProps.VacuumSpeed;
-                else if (Vacuum.Timer < 8*60)
-                    VacuumSpeed = 3.5f * Chapter.PageProps.VacuumSpeed;
+                if (TutorialOverrides.FreezeDusty)
+                    VacuumSpeed = 1.5f;
                 else
-                    VacuumSpeed = 6.0f * Chapter.PageProps.VacuumSpeed;
+                    VacuumSpeed = Clamp(Vacuum.AverageDustySpeed, 1.0f, 10.0f) * 1.0f;
+                AddDebugLine(60, LitScreenHeight - 50, 60, LitScreenHeight - 50 - VacuumSpeed * 10, gxRGBA32(0, 255, 0, 255), 1.0f/60.0f);
                 
                 if (Vacuum.Dir == VACUUMDIR_UP)
                     Vacuum.Y -= VacuumSpeed;
                 else
                     Vacuum.Y += VacuumSpeed;
             }
+//            else
+//            {
+//                float VacuumSpeed;
+//                if (Vacuum.Timer < 0)
+//                    VacuumSpeed = 0;
+//                else
+//                    VacuumSpeed = Remap(Vacuum.Timer, 0, 15*60, 1, 6, true) * Chapter.PageProps.VacuumSpeed;
+////                else if (Vacuum.Timer < 4*60)
+////                    VacuumSpeed = 3.0f * Chapter.PageProps.VacuumSpeed;
+////                else if (Vacuum.Timer < 8*60)
+////                    VacuumSpeed = 3.5f * Chapter.PageProps.VacuumSpeed;
+////                else
+////                    VacuumSpeed = 6.0f * Chapter.PageProps.VacuumSpeed;
+//                
+//                if (Vacuum.Dir == VACUUMDIR_UP)
+//                    Vacuum.Y -= VacuumSpeed;
+//                else
+//                    Vacuum.Y += VacuumSpeed;
+//            }
 
 			Vacuum.Timer++;
 
@@ -369,7 +363,15 @@ void UpdateVacuum()
 		if (Vacuum.Timer <= 0)
 		{
 			Vacuum.State = VACUUMSTATE_ONSCREEN;
-            Vacuum.Timer = 0;
+            Vacuum.Timer = 5*60;
+            
+            float TargetY;
+            int LightsOffset = Chapter.PageProps.LightsOff ? 768 : 0;
+            if (Vacuum.Dir == VACUUMDIR_UP)
+                TargetY = (float)-ScrollY + LitScreenHeight*1.1f + LightsOffset;
+            else
+                TargetY = (float)-ScrollY - LightsOffset;
+            Vacuum.Y = TargetY;
 		}
 	}
     
@@ -450,9 +452,15 @@ void TurnOnVacuum(float InitialDistance, float DelayBeforeMoving, bool Charging)
     
     // Vacuum.Y is the leading edge of the vacuum.
     if (Vacuum.Dir == VACUUMDIR_UP)
-        Vacuum.Y = (float)-ScrollY + InitialDistance + LitScreenHeight + LightsOffset;
+    {
+        float NewY = (float)-ScrollY + InitialDistance + LitScreenHeight*1.1f + LightsOffset;
+        if (NewY < Vacuum.Y) Vacuum.Y = NewY;
+    }
     else
-        Vacuum.Y = (float)-ScrollY - InitialDistance - LightsOffset;
+    {
+        float NewY = (float)-ScrollY - InitialDistance - LightsOffset;
+        if (NewY > Vacuum.Y) Vacuum.Y = NewY;
+    }
 
     Vacuum.Charging = Charging;
     
@@ -796,7 +804,8 @@ void UpdateVacuumTriggers()
             {            
                 Vacuum.Dir = Trigger->Props->Direction;
                 Vacuum.Side = Trigger->Props->Side;
-                TurnOnVacuum(400, 2.0f, true);
+
+                TurnOnVacuum(0, 0.0f, true);
             }
             
             Trigger->Active = false;

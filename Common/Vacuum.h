@@ -58,7 +58,9 @@ struct SVacuum
     int BlinkTimer;
 
     int ChargeTimer;
-    
+
+    float AverageDustySpeed;
+
     int* ForceMap;
     int* NextForceMap;
     int ForceMapWidth;

@@ -1110,7 +1110,8 @@ void CalculateScroll()
     }
     else
     {
-        float TopY = Vacuum.Charging ? 500 : 600;
+        //float TopY = Vacuum.Charging ? 500 : 600;
+        float TopY = 600;
         
         // Screen tracks Dusty upwards.
         if (Dusty.FloatY + ScrollY < TopY)
