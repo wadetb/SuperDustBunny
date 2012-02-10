@@ -11,6 +11,7 @@
 #include "StartScreen.h"
 #include "Dusty.h"
 #include "Chapter.h"
+#include "Text.h"
 #include "Settings.h"
 #include "LeaderboardScreen.h"
 
@@ -43,6 +44,8 @@ struct SStartScreen
     float LeaderboardButtonAlpha;
     
     bool LeaderboardsUnlocked;
+    bool LeaderboardsToolTipVisible;//Tooltip for Leaderboards
+    bool LeaderboardsTriggered;
     
 	bool Dragging;
 	bool Pressed;
@@ -179,6 +182,8 @@ void InitStartScreen()
     StartScreen.ReleasedAtLeastOnce = false;
     
     StartScreen.LeaderboardsUnlocked = Chapters[CurrentChapter].Completed;
+    StartScreen.LeaderboardsToolTipVisible = false;
+    StartScreen.LeaderboardsTriggered = false;
 }
 
 static void StartScreen_Advance()
@@ -236,6 +241,18 @@ void DisplayStartScreen()
 
     // Leaderboard button.
     AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ButtonLeaderboardSprite, 768-90 + sinf(StartScreen.WiggleTime)*4.0f, 90, 1.0f, StartScreen.LeaderboardButtonAlpha);
+    
+    //Display ToolTip next to Leaderboard Button
+    if(StartScreen.LeaderboardsToolTipVisible)
+    {
+        AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &TextBubblesSprite, 658-90 + sinf(StartScreen.WiggleTime)*4.0f, 110, 0, 40, 40, 74, StartScreen.LeaderboardButtonAlpha);
+        
+        AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &TextBubblesSprite, 558-90 + sinf(StartScreen.WiggleTime)*4.0f, 150, 0, 0, 45, 42, StartScreen.LeaderboardButtonAlpha);
+        
+        AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &TextBubblesSprite, 208-90 + sinf(StartScreen.WiggleTime)*4.0f, 200, 85, 0, 736, 236, StartScreen.LeaderboardButtonAlpha);
+    
+        DisplayMultilineStringAlpha(LIGHTLIST_VACUUM, "tap for\n leaderboards", FORMAT_CENTER_X | FORMAT_CENTER_Y, 488-90 + sinf(StartScreen.WiggleTime)*4.0f, 320, .7f, StartScreen.LeaderboardButtonAlpha);
+    }
     
     // Sliding main buttons.
 	for (int i = 0; i < GetStartScreenItemCount(); i++)
@@ -427,16 +444,25 @@ void UpdateStartScreen()
     {
         StartScreen.LeaderboardsUnlocked = Chapters[StartScreen.CurItem - STARTSCREEN_ITEM_FIRST_CHAPTER].Completed;
         
+
         if (StartScreen.LeaderboardsUnlocked)
         {
+            if(StartScreen.CurItem == STARTSCREEN_ITEM_FIRST_CHAPTER && StartScreen.LeaderboardsTriggered == false)
+            {
+                //When the leaderboard button is unlocked, here, we activate the floating tooltip.
+                StartScreen.LeaderboardsTriggered = true;
+                StartScreen.LeaderboardsToolTipVisible = true;
+            }
+
             if (msY < 256 && msX > 384 && msButton1 && !msOldButton1)
             {
+                StartScreen.LeaderboardsToolTipVisible = false;
                 CurrentChapter = StartScreen.CurItem - STARTSCREEN_ITEM_FIRST_CHAPTER;
                 
 #ifdef PLATFORM_IPHONE
                 [TestFlight passCheckpoint:[NSString stringWithFormat:@"Opened Leaderboards for %s", Chapters[CurrentChapter].Name]];
 #endif
-                StartScreen.LeaderboardVisible = true;
+                StartScreen.LeaderboardVisible = true;        
                 InitLeaderboardScreen();
                 return;
             }

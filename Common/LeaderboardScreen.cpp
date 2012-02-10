@@ -21,7 +21,7 @@
 
 #define LEADERBOARD_COUNT 25
 
-
+//These two enums are pretty clear
 enum ELeaderboardRegion
 {
     LEADERBOARDREGION_WORLD,
@@ -57,14 +57,15 @@ struct SLeaderboardScreen
     int AvailableRegionCount;
     ELeaderboardRegion AvailableRegions[LEADERBOARDREGION_COUNT];
     
+    //Not entirely sure what the char* Name does just yet.
     char* Name[LEADERBOARD_COUNT];
     int Time[LEADERBOARD_COUNT];
 };
 
-
+//I get this.
 SLeaderboardScreen LeaderboardScreen;
 
-
+//This seems pretty clear.
 void DownloadLeaderboards()
 {
     LeaderboardScreen.FadeInTime = 0.0f;
@@ -78,12 +79,16 @@ void DownloadLeaderboards()
         }
     }
     
+    //I understand and have been using platform definitions lately, I'm much more comfortable with them now.
 #ifdef PLATFORM_IPHONE_OR_MAC
+    //These seem self-explanatory, I have not used char* at all really so it's a little confusing as to what makes it work
     const char* RegionTag[LEADERBOARDREGION_COUNT] = { "world", "state" };
     const char* ModeTag[LEADERBOARDMODE_COUNT] = { "kingofthehill", "alltime" };
     
+    
     NSString* URLString;
 #ifdef PLATFORM_IPHONE
+    
     if (theViewController.haveLocation && (/*LeaderboardScreen.Region == LEADERBOARDREGION_CITY ||*/ LeaderboardScreen.Region == LEADERBOARDREGION_STATE))
     {
         NSString* region;
@@ -107,6 +112,7 @@ void DownloadLeaderboards()
                      Chapters[CurrentChapter].Name];        
     }
     NSURL *URL = [NSURL URLWithString:URLString];
+    
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:30];
     
