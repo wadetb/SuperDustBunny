@@ -23,6 +23,7 @@ extern gxSprite AlphabetSprite;
 extern gxSprite LightFlashlightSprite;
 extern gxSprite LightVacuumSprite;
 extern gxSprite LightingSprite;
+extern gxSprite LightLampSprite;
 
 extern gxSprite SparkSprite;
 extern gxSprite FlareSprite;
@@ -174,6 +175,15 @@ extern gxSprite IconLockedSprite;
 extern gxSprite ScreenLoseGhostSprite;
 extern gxSprite ScreenLoseGrave1Sprite;
 extern gxSprite ScreenLoseGrave2Sprite;
+
+extern gxSprite TearEye1Sprite;
+extern gxSprite TearEye2Sprite;
+extern gxSprite TearEye3Sprite;
+extern gxSprite TearEye4Sprite;
+extern gxSprite TearSplash1Sprite;
+extern gxSprite TearSplash2Sprite;
+extern gxSprite TearSplash3Sprite;
+extern gxSprite TearDropSprite;
 
 extern gxSprite ScreenWin1Sprite;
 extern gxSprite ScreenWin2Sprite;

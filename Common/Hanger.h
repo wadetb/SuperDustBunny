@@ -10,13 +10,32 @@
 #ifndef HANGER_H
 #define HANGER_H
 
+#define MAX_HANGERS 50
+
 struct SBlock;
 struct SHangerProperties;
+
+struct SHanger
+{
+    SHangerProperties* Props;
+	float X, Y;
+    float Angle;
+    float VAngle;
+    bool DustyOnBoard;
+    float PrevAngle;
+    int DustySide;
+    int DustyClearTimer;
+};
+
+extern int NHangers;
+extern SHanger Hangers[MAX_HANGERS];
 
 void ParseHangerProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode);
 
 void CreateHanger(int X, int Y, SHangerProperties* Props);
 void ClearHangers();
+
+void AddHangerTorque(SHanger* Hanger, float X, float Y, float FX, float FY);
 
 void UpdateHangers();
 void DisplayHangers();

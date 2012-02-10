@@ -1049,7 +1049,7 @@ static void DisplayDusty_WallJump()
 		DUSTYSPRITE_WALLJUMP_C,
 	};
     
-	if (Dusty.FloatVelocityY <= 3.5f)
+	if (Dusty.FloatVelocityY <= 1.5f)
         DisplayDustySprite(DUSTYSPRITE_WALLJUMP, -128, -8, -200);
 	else
 		DisplayDustySprite(WallJumpSprites[(Dusty.SpriteTransition/5) % 2], -128, -8, -200);

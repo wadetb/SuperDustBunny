@@ -87,6 +87,7 @@ static void InitPageProperties(SPageProperties* Props)
 	Props->VacuumStart = 100000000;
     Props->VacuumSpeed = 0.75f;
     Props->GhostRace = false;
+    Props->GhostHat = DUSTYHAT_NONE;
     Props->ShadowOffsetX = 30;
     Props->ShadowOffsetY = 20;
     Props->ShadowScaleX = 1.0f;
@@ -156,6 +157,13 @@ static void ParsePageProperties(SPageProperties* Props, rapidxml::xml_node<char>
 				Props->GhostRace = false;
 			else
 				ReportError("'%s' is not a valid value for the 'ghost_race' property.  The value must be 'on' or 'off'.  Fix this problem and re-save the TMX file.", Value);
+		}
+		else if (strcmp(Name, "ghost_hat") == 0)
+		{
+			if (strcmp(Value, "girl") == 0)
+				Props->GhostHat = DUSTYHAT_PINK_BOW;
+			else
+				ReportError("'%s' is not a valid value for the 'ghost_hat' property.  The value must be 'on' or 'off'.  Fix this problem and re-save the TMX file.", Value);
 		}
 		else if (strcmp(Name, "shadow_offset") == 0)
 		{

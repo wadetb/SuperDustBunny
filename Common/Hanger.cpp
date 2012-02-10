@@ -13,7 +13,17 @@
 #include "Chapter.h"
 
 
-#define MAX_HANGERS 50
+enum EHangerLight
+{
+    HANGERLIGHT_NONE,
+    HANGERLIGHT_LAMP,
+};
+
+enum EHangerCollision
+{
+    HANGERCOLLISION_OFF,
+    HANGERCOLLISION_ON,
+};
 
 struct SHangerProperties
 {
@@ -31,18 +41,9 @@ struct SHangerProperties
     int SubY2;
     
     float Mass;
-};
-
-struct SHanger
-{
-    SHangerProperties* Props;
-	float X, Y;
-    float Angle;
-    float VAngle;
-    bool DustyOnBoard;
-    float PrevAngle;
-    int DustySide;
-    int DustyClearTimer;
+    
+    EHangerLight Light;
+    EHangerCollision Collision;
 };
 
 
@@ -58,6 +59,8 @@ void ParseHangerProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNo
     Props->Width = 0;
     Props->Height = 0;
     Props->Mass = 1.0f;
+    Props->Light = HANGERLIGHT_NONE;
+    Props->Collision = HANGERCOLLISION_ON;
     
 	rapidxml::xml_node<char>* PropertyNode = PropertiesNode->first_node("property");
 	while (PropertyNode)
@@ -80,6 +83,18 @@ void ParseHangerProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNo
         else if (strcmp(Name, "mass") == 0)
         {
             Props->Mass = strtof(Value, &Value);
+        }
+        else if (strcmp(Name, "light") == 0)
+        {
+            if (strcmp(Value, "lamp") == 0)
+                Props->Light = HANGERLIGHT_LAMP;
+        }
+        else if (strcmp(Name, "collision") == 0)
+        {
+            if (strcmp(Value, "on") == 0)
+                Props->Collision = HANGERCOLLISION_ON;
+            else if (strcmp(Value, "off") == 0)
+                Props->Collision = HANGERCOLLISION_OFF;
         }
 		else if (strcmp(Name, "type") != 0 && strcmp(Name, "material") != 0)
 		{
@@ -150,10 +165,21 @@ void DisplayHangers()
                                                 X + ScrollX, Y + ScrollY, XOrigin, YOrigin, 
                                                 Props->SubX1, Props->SubY1, Props->SubX2, Props->SubY2, 
                                                 1.0f, Angle, 1.0f);
+        
+        if (Chapter.PageProps.LightsOff && Props->Light != HANGERLIGHT_NONE)
+        {
+            if (Props->Light == HANGERLIGHT_LAMP)
+            {
+                AddLitSpriteOriginScaledRotatedAlpha(LIGHTLIST_LIGHTING, &LightLampSprite, 
+                                                     X + ScrollX, Y + ScrollY, 
+                                                     260, -90, 2.1f, Hanger->Angle, 1.0f);
+            }
+        }
+
     }
 }
 
-static void AddHangerTorque(SHanger* Hanger, float X, float Y, float FX, float FY)
+void AddHangerTorque(SHanger* Hanger, float X, float Y, float FX, float FY)
 {
     float PX = Y - Hanger->Y;
     float PY = -(X - Hanger->X);
@@ -301,45 +327,48 @@ void UpdateHangers()
                 
                 //AddDebugLine(PX + ScrollX, PY + ScrollY, DustyCenterX + ScrollX, DustyCenterY + ScrollY, gxRGB32(0, 255, 255), 1.0f/60.0f);
 
-                float DX = PX - DustyCenterX;
-                float DY = PY - DustyCenterY;
-                float DL = sqrtf(DX*DX + DY*DY);
-                
-                if (DL <= DustyRadius)
+                if (Props->Collision == HANGERCOLLISION_ON)
                 {
-                    float DNX = DX / DL;
-                    float DNY = DY / DL;
+                    float DX = PX - DustyCenterX;
+                    float DY = PY - DustyCenterY;
+                    float DL = sqrtf(DX*DX + DY*DY);
                     
-                    AddHangerTorque(Hanger, PX, PY, Dusty.FloatVelocityX * DustyMass, Dusty.FloatVelocityY * DustyMass);            
-                    
-                    float D = VNX*DNX + VNY*DNY;
-
-                    if (DL < ClosestSideDist)
+                    if (DL <= DustyRadius)
                     {
-                        ClosestSideDist = DL;
-                        ClosestSide = Side;
-                    }
-                    
-                    if (Side == 2)
-                    {
-                        Dusty.FloatX -= DNX * (DustyRadius - DL);
-                        Dusty.FloatY -= DNY * (DustyRadius - DL);
+                        float DNX = DX / DL;
+                        float DNY = DY / DL;
+                        
+                        AddHangerTorque(Hanger, PX, PY, Dusty.FloatVelocityX * DustyMass, Dusty.FloatVelocityY * DustyMass);            
+                        
+                        float D = VNX*DNX + VNY*DNY;
 
-                        Dusty.FloatVelocityX -= DNX * (D)*VL;
-                        Dusty.FloatVelocityY -= DNY * (D)*VL;
+                        if (DL < ClosestSideDist)
+                        {
+                            ClosestSideDist = DL;
+                            ClosestSide = Side;
+                        }
                         
-                        Dusty.CollideWithTopSide = true;
-                    }
-                    else
-                    {                        
-                        Dusty.FloatX -= DNX * (DustyRadius - DL - 15);
-                        Dusty.FloatY -= DNY * (DustyRadius - DL - 15);
+                        if (Side == 2)
+                        {
+                            Dusty.FloatX -= DNX * (DustyRadius - DL);
+                            Dusty.FloatY -= DNY * (DustyRadius - DL);
+
+                            Dusty.FloatVelocityX -= DNX * (D)*VL;
+                            Dusty.FloatVelocityY -= DNY * (D)*VL;
+                            
+                            Dusty.CollideWithTopSide = true;
+                        }
+                        else
+                        {                        
+                            Dusty.FloatX -= DNX * (DustyRadius - DL - 15);
+                            Dusty.FloatY -= DNY * (DustyRadius - DL - 15);
+                            
+                            Dusty.FloatVelocityX = 0; //-= DNX * (D)*VL;
+                            Dusty.FloatVelocityY = 0; //-= DNY * (D)*VL;
                         
-                        Dusty.FloatVelocityX = 0; //-= DNX * (D)*VL;
-                        Dusty.FloatVelocityY = 0; //-= DNY * (D)*VL;
-                    
-                        Hanger->DustyOnBoard = true;
-                        Hanger->DustySide = Side;
+                            Hanger->DustyOnBoard = true;
+                            Hanger->DustySide = Side;
+                        }
                     }
                 }
             }
@@ -356,6 +385,7 @@ void UpdateHangers()
                     Dusty.CollideWithRightSide = true;
             }
         }
+        
         Hanger->PrevAngle = Hanger->Angle;
         
         Hanger->Angle += Hanger->VAngle;

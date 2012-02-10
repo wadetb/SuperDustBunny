@@ -49,10 +49,12 @@ struct SStapler
 	bool CollideWithLeftSide;
 	bool CollideWithRightSide;
 	bool CollideWithTopSide;
+    
+    bool NoShadow;
 };
 
 
-void CreateStapler(int X, int Y, EStaplerType Type);
+SStapler* CreateStapler(int X, int Y, EStaplerType Type);
 void ClearStaplers();
 
 void UpdateStaplers();

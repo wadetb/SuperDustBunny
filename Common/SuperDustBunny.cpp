@@ -679,7 +679,7 @@ static void UpdateGame_Transition()
 		{
 			LoadCurrentChapter();
 			InitChapterIntro();
-            Dusty.Lives = 3;            
+            Dusty.Lives = 1;            
 			Wipe.Middle = false;
 		}
 

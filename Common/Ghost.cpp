@@ -185,8 +185,24 @@ void DisplayGhost()
     {
         SGhostEvent* Event = &GhostPlaybackEvents[Ghost.PlaybackTime];
         
-        unsigned int Color = gxRGBA32(0x80, 0x80, 0x80, 0xc0);
+        unsigned int Color;
+        
+        if ( Chapter.PageProps.GhostRace)
+            Color = gxRGBA32(255, 255, 255, 255);
+        else
+            Color = gxRGBA32(0x80, 0x80, 0x80, 0xc0);
+            
         AddLitSpriteScaledColor(LIGHTLIST_FOREGROUND, DustySprite[Event->Sprite], Event->X + ScrollX, Event->Y + ScrollY, Event->ScaleX, 1.0f, Color);
+        
+        if (Chapter.PageProps.GhostHat != DUSTYHAT_NONE)
+        {
+            gxSprite* HatSprite = DustyHatSprites[Chapter.PageProps.GhostHat];
+            SDustyHatOffset* HatOffset = &DustyHatOffsets[Event->Sprite];
+            
+            AddLitSpriteCenteredScaled2Rotated(LIGHTLIST_FOREGROUND, HatSprite, 
+                                               Event->X + ScrollX + HatOffset->X*Event->ScaleX, Event->Y + ScrollY + HatOffset->Y, 
+                                               Event->ScaleX, 1.0f, DegreesToRadians(HatOffset->Angle)*Event->ScaleX);
+        }
     }
 }
 
@@ -200,11 +216,11 @@ void UpdateGhost()
             Ghost.PlaybackTime = 0;
             Ghost.PlaybackActive = false;
             
-            if (Chapter.PageProps.GhostRace)
-            {
-                if (Ghost.PlaybackEventCount > 0)
-                    SetDustyState_Die(DEATH_GHOST);
-            }
+//            if (Chapter.PageProps.GhostRace)
+//            {
+//                if (Ghost.PlaybackEventCount > 0)
+//                    SetDustyState_Die(DEATH_GHOST);
+//            }
         }
     }
 }

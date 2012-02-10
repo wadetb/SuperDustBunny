@@ -29,6 +29,7 @@ gxSprite AlphabetSprite;
 
 gxSprite LightFlashlightSprite;
 gxSprite LightVacuumSprite;
+gxSprite LightLampSprite;
 gxSprite LightingSprite;
 
 gxSprite SparkSprite;
@@ -182,6 +183,15 @@ gxSprite IconLockedSprite;
 gxSprite ScreenLoseGhostSprite;
 gxSprite ScreenLoseGrave1Sprite;
 gxSprite ScreenLoseGrave2Sprite;
+
+gxSprite TearEye1Sprite;
+gxSprite TearEye2Sprite;
+gxSprite TearEye3Sprite;
+gxSprite TearEye4Sprite;
+gxSprite TearSplash1Sprite;
+gxSprite TearSplash2Sprite;
+gxSprite TearSplash3Sprite;
+gxSprite TearDropSprite;
 
 gxSprite ScreenWin1Sprite;
 gxSprite ScreenWin2Sprite;
@@ -885,6 +895,7 @@ void LoadAssets()
 
 	LoadSpriteAsset("Assets/light-flashlight.png", &LightFlashlightSprite);
 	LoadSpriteAsset("Assets/light-vacuum.png", &LightVacuumSprite);
+	LoadSpriteAsset("Assets/light-lamp.png", &LightLampSprite);
 	LoadSpriteAsset("Assets/lighting.png", &LightingSprite);
 
 	LoadSpriteAsset("Assets/spark.png", &SparkSprite);
@@ -1039,7 +1050,18 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/screen-lose-ghost.png", &ScreenLoseGhostSprite);
 	LoadSpriteAsset("Assets/screen-lose-grave-1.png", &ScreenLoseGrave1Sprite);
 	LoadSpriteAsset("Assets/screen-lose-grave-2.png", &ScreenLoseGrave2Sprite);
-	
+
+    LoadSpriteAsset("Assets/tear-eye1.png", &TearEye1Sprite);
+    LoadSpriteAsset("Assets/tear-eye2.png", &TearEye2Sprite);
+    LoadSpriteAsset("Assets/tear-eye3.png", &TearEye3Sprite);
+    LoadSpriteAsset("Assets/tear-eye4.png", &TearEye4Sprite);
+
+    LoadSpriteAsset("Assets/tear-splash1.png", &TearSplash1Sprite);
+    LoadSpriteAsset("Assets/tear-splash2.png", &TearSplash2Sprite);
+    LoadSpriteAsset("Assets/tear-splash3.png", &TearSplash3Sprite);
+
+    LoadSpriteAsset("Assets/tear-drop.png", &TearDropSprite);
+
 	LoadSpriteAsset("Assets/screen-win-1.png", &ScreenWin1Sprite);
 	LoadSpriteAsset("Assets/screen-win-2.png", &ScreenWin2Sprite);
 

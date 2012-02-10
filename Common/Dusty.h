@@ -187,6 +187,7 @@ struct SDusty
     unsigned int NearbyBlocks;
 };
 
+extern SDustyHatOffset DustyHatOffsets[DUSTYSPRITE_COUNT];
 
 extern SDusty Dusty;
 

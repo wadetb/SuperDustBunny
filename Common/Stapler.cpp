@@ -18,7 +18,7 @@
 int NStaplers = 0;
 SStapler Staplers[MAX_STAPLERS];
 
-void CreateStapler(int X, int Y, EStaplerType Type)
+SStapler* CreateStapler(int X, int Y, EStaplerType Type)
 {
     if (NStaplers >= MAX_STAPLERS)
         ReportError("Exceeded the maximum of %d total Staplers.", MAX_STAPLERS);
@@ -57,6 +57,10 @@ void CreateStapler(int X, int Y, EStaplerType Type)
 	Stapler->CollideWithTopSide = false;
 
     Stapler->State = STAPLERSTATE_WAIT;
+    
+    Stapler->NoShadow = false;
+    
+    return Stapler;
 }
 
 void ClearStaplers()
@@ -124,22 +128,24 @@ void DisplayStaplers()
             break;
         }
         
+        ELightList LightList = Stapler->NoShadow ? LIGHTLIST_FOREGROUND_NO_SHADOW : LIGHTLIST_FOREGROUND;
+        
         if (Stapler->State == STAPLERSTATE_CHARGE)
         {
             int Frame = 2;
             if (Frame >= FrameCount) 
                 Frame = FrameCount-1;
-            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, Frames[Frame], Stapler->X + ScrollX, Stapler->Y + ScrollY + OffsetY, 1.0f, 0.0f);
+            AddLitSpriteCenteredScaledRotated(LightList, Frames[Frame], Stapler->X + ScrollX, Stapler->Y + ScrollY + OffsetY, 1.0f, 0.0f);
         }
         else if (Stapler->State == STAPLERSTATE_LAUNCH)
         {
             int Frame = 1+Stapler->Timer/5;
             if (Frame >= FrameCount) 
                 Frame = FrameCount-1;
-            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, Frames[Frame], Stapler->X + ScrollX, Stapler->Y + ScrollY + OffsetY, 1.0f, 0.0f);
+            AddLitSpriteCenteredScaledRotated(LightList, Frames[Frame], Stapler->X + ScrollX, Stapler->Y + ScrollY + OffsetY, 1.0f, 0.0f);
         }
         else
-            AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, Frames[0], Stapler->X + ScrollX, Stapler->Y + ScrollY + OffsetY, 1.0f, 0.0f);            
+            AddLitSpriteCenteredScaledRotated(LightList, Frames[0], Stapler->X + ScrollX, Stapler->Y + ScrollY + OffsetY, 1.0f, 0.0f);            
     }
 }
 

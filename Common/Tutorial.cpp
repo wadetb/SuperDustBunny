@@ -19,6 +19,8 @@
 #include "Baby.h"
 #include "Flame.h"
 #include "Balloon.h"
+#include "Stapler.h"
+#include "Hanger.h"
 
 
 #define MAX_TUTORIALS 10
@@ -158,6 +160,89 @@ void ParseTutorialProperties(SBlock* Block, rapidxml::xml_node<char>* Properties
 	Block->Properties = Props;
 }
 
+SStapler* HotDateStapler;
+float HotDateVY;
+
+static void CreateHotDateTutorial(STutorial* Tutorial)
+{
+    Tutorial->Active = false;
+    Tutorial->Sequence = 0;
+    Tutorial->SequenceTimer = 0;
+    Chapter.PageProps.VacuumOff = true;
+    HotDateStapler = NULL;
+    HotDateVY = 0.0f;
+    TutorialOverrides.FocusOnVacuum = false;
+}
+
+static void UpdateHotDateTutorial(STutorial* Tutorial)
+{
+    if (Tutorial->Sequence == 0)
+    {
+        if (Tutorial->SequenceTimer == 0)
+        {
+            Dusty.FloatX -= 50;
+        }
+        
+        Tutorial->SequenceTimer += 1.0f/60.0f;
+        
+        if (Tutorial->SequenceTimer >= 3)
+        {
+            Chapter.PageProps.VacuumOff = false;
+            TurnOnVacuum(600, 0.0f, false);
+            
+            TutorialOverrides.FocusOnVacuum = true;
+            TutorialOverrides.SavedScrollY = ScrollY;
+            TutorialOverrides.Timer = 0.0f;
+            
+            Tutorial->Sequence = 4;
+            Tutorial->SequenceTimer = 0;  
+        }
+    }
+    else if (Tutorial->Sequence == 4)
+    {
+        Tutorial->SequenceTimer += 1.0f/60.0f;
+
+        if (Tutorial->SequenceTimer >= 5)
+        {
+            HotDateStapler = CreateStapler(Tutorial->X, Tutorial->Y - 800, STAPLER_STAPLER);
+            HotDateStapler->NoShadow = true;
+            HotDateVY = 0;
+                        
+            SFlameProperties* Props = GetFlamePropertiesByName("arrows");
+            CreateFlame(3.5f*64, Tutorial->Y-300, 0, Props);
+            CreateFlame(7.5f*64, Tutorial->Y-300, 0, Props);
+
+            TutorialOverrides.FocusOnVacuum = false;
+            ScrollY = TutorialOverrides.SavedScrollY;
+            
+            Tutorial->Sequence = 5;
+            Tutorial->SequenceTimer = 0;            
+        }
+    }
+    else if (Tutorial->Sequence == 5)
+    {
+        Tutorial->SequenceTimer += 1.0f/60.0f;
+
+        HotDateStapler->Y += HotDateVY;
+        HotDateVY += 2.0f;
+        
+        if (HotDateStapler->Y >= Tutorial->Y + 165)
+            HotDateStapler->Y = Tutorial->Y + 165;
+        
+        if (Dusty.State == DUSTYSTATE_LAUNCH)
+        {
+            Chapter.PageProps.LightsOff = false;
+            LightState.AmbientColor = gxRGBA32(128, 128, 128, 255);
+        }
+
+        for (int i = 0; i < NHangers; i++)
+        {
+            float SwingStrength = Remap(fabsf(Hangers[i].Y - Vacuum.Y), 2000, 1500, 0.1f, 0.5f, true);
+            AddHangerTorque(&Hangers[i], Hangers[i].X, Hangers[i].Y + 100.0f, sinf(Tutorial->SequenceTimer*2.0f)*SwingStrength, 0.0f);
+        }
+    }
+}
+
 static void CreateBirthdayTutorial(STutorial* Tutorial)
 {
     SPage* Page = &Chapter.Pages[Chapter.PageNum];
@@ -172,10 +257,6 @@ static void CreateBirthdayTutorial(STutorial* Tutorial)
     
     Tutorial->Active = false;
 }
-
-int BirthdayFlame1;
-int BirthdayFlame2;
-int BirthdayFlame3;
 
 static void UpdateBirthdayTutorial(STutorial* Tutorial)
 {
@@ -208,9 +289,9 @@ static void UpdateBirthdayTutorial(STutorial* Tutorial)
             // Make flames
             TutorialOverrides.NoFlameDamage = true;
             SFlameProperties* Props = GetFlamePropertiesByName("candle");
-            BirthdayFlame1 = CreateFlame(3.75f*64, (y-7.75)*64, 0, Props);
-            BirthdayFlame1 = CreateFlame(5.5f*64, (y-7.75)*64, 0, Props);
-            BirthdayFlame1 = CreateFlame(7.5f*64, (y-7.65f)*64, 0, Props);
+            CreateFlame(3.75f*64, (y-7.75)*64, 0, Props);
+            CreateFlame(5.5f*64, (y-7.75)*64, 0, Props);
+            CreateFlame(7.5f*64, (y-7.65f)*64, 0, Props);
             
             // Fill in solid collision row.
             Dusty.FloatY = Tutorial->Y - Dusty.Bottom;            
@@ -329,6 +410,10 @@ void CreateTutorial(int X, int Y, STutorialProperties* Props)
     {
         CreateBirthdayTutorial(Tutorial);
     }
+    if (Props->Actions && strstr(Props->Actions, "hotdate"))
+    {
+        CreateHotDateTutorial(Tutorial);
+    }
 }
 
 void ClearTutorials()
@@ -415,6 +500,11 @@ void UpdateTutorial()
         if (Props->Actions && strstr(Props->Actions, "birthday"))
         {
             UpdateBirthdayTutorial(Tutorial);
+            continue;
+        }
+        if (Props->Actions && strstr(Props->Actions, "hotdate"))
+        {
+            UpdateHotDateTutorial(Tutorial);
             continue;
         }
         
