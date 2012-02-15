@@ -243,7 +243,7 @@ void DisplayStartScreen()
     AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ButtonLeaderboardSprite, 768-90 + sinf(StartScreen.WiggleTime)*4.0f, 90, 1.0f, StartScreen.LeaderboardButtonAlpha);
     
     //Display ToolTip next to Leaderboard Button
-    if(StartScreen.LeaderboardsToolTipVisible)
+    if(StartScreen.LeaderboardsToolTipVisible && StartScreen.LeaderboardsTriggered == false)
     {
         AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &TextBubblesSprite, 658-90 + sinf(StartScreen.WiggleTime)*4.0f, 110, 0, 40, 40, 74, StartScreen.LeaderboardButtonAlpha);
         
@@ -443,10 +443,9 @@ void UpdateStartScreen()
     if (StartScreen.CurItem >= STARTSCREEN_ITEM_FIRST_CHAPTER)
     {
         StartScreen.LeaderboardsUnlocked = Chapters[StartScreen.CurItem - STARTSCREEN_ITEM_FIRST_CHAPTER].Completed;
-        
-
+                
         if (StartScreen.LeaderboardsUnlocked)
-        {
+        {            
             if(StartScreen.CurItem == STARTSCREEN_ITEM_FIRST_CHAPTER && StartScreen.LeaderboardsTriggered == false)
             {
                 //When the leaderboard button is unlocked, here, we activate the floating tooltip.
