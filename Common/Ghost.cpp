@@ -70,7 +70,7 @@ void LoadGhost(const char* ChapterName, int Page, bool Race)
             filePath = [NSString stringWithFormat:@"%s/Chapters/%s/%s_%d.ghost", RootDirectory, ChapterName, ChapterName, Page];
 #endif
 #ifdef PLATFORM_IPHONE
-            filePath =  [NSString stringWithFormat:@"%s/Chapters~%s~%s_%d.ghost", [[NSBundle mainBundle] bundlePath], ChapterName, ChapterName, Page];
+            filePath =  [NSString stringWithFormat:@"%@/Converted/Chapters~%s~%s_%d.ghost", [[NSBundle mainBundle] bundlePath], ChapterName, ChapterName, Page];
 #endif            
         }
         else
@@ -84,7 +84,7 @@ void LoadGhost(const char* ChapterName, int Page, bool Race)
         NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:filePath];
         if ( !dict )
         {
-            NSLog(@"Failed to load dictionary from ghost data file.\n");
+            NSLog(@"Failed to load dictionary from ghost data file %@.\n", filePath);
             return;
         }
         
