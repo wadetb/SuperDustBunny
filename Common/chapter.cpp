@@ -1145,10 +1145,11 @@ void CalculateScroll()
             ScrollY = 0;
         }
         
-        float XRatio = Dusty.FloatX/(Chapter.PageWidth*64);
+        //float XRatio = Dusty.FloatX/(Chapter.PageWidth*64);
         //    XRatio = powf(XRatio*2.0f-1.0f, 1.0f) *0.5f+0.5f;
         
-        ScrollX = -XRatio * (Chapter.PageWidth*64 - 768);
+        //ScrollX = -XRatio * (Chapter.PageWidth*64 - 768);
+        ScrollX = -Dusty.FloatX + 384;
         
         if (ScrollX < -(Chapter.PageWidth * 64 - 768))
         {
