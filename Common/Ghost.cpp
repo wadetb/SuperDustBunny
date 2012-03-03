@@ -55,7 +55,7 @@ void AddGhostEvent(float X, float Y, float ScaleX, int Sprite)
     Event->Sprite = Sprite;
 }
 
-void LoadGhost(const char* ChapterName, int Page, bool Race)
+void LoadGhost(const char* ChapterName, const char* PageName, bool Race)
 {
     Ghost.PlaybackEventCount = 0;
     
@@ -67,17 +67,17 @@ void LoadGhost(const char* ChapterName, int Page, bool Race)
         {
 #ifdef PLATFORM_MAC
             extern char RootDirectory[1024];
-            filePath = [NSString stringWithFormat:@"%s/Chapters/%s/%s_%d.ghost", RootDirectory, ChapterName, ChapterName, Page];
+            filePath = [NSString stringWithFormat:@"%s/Chapters/%s/%s.ghost", RootDirectory, ChapterName, PageName];
 #endif
 #ifdef PLATFORM_IPHONE
-            filePath =  [NSString stringWithFormat:@"%@/Converted/Chapters~%s~%s_%d.ghost", [[NSBundle mainBundle] bundlePath], ChapterName, ChapterName, Page];
+            filePath =  [NSString stringWithFormat:@"%@/Converted/Chapters~%s~%s.ghost", [[NSBundle mainBundle] bundlePath], ChapterName, PageName];
 #endif            
         }
         else
         {
             NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
             NSString *documentsDirectory = [paths objectAtIndex:0];
-            NSString *fileName = [NSString stringWithFormat:@"%s_%d.ghost", ChapterName, Page];
+            NSString *fileName = [NSString stringWithFormat:@"%s_%s.ghost", ChapterName, PageName];
             filePath = [documentsDirectory stringByAppendingPathComponent:fileName];            
         }
         
@@ -120,14 +120,18 @@ void LoadGhost(const char* ChapterName, int Page, bool Race)
 #endif
 }
 
-void SaveGhost(const char* ChapterName, int Page)
+void SaveGhost(const char* ChapterName, const char* PageName, bool Race)
 {
 #ifdef PLATFORM_IPHONE_OR_MAC
     @try
     {
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
         NSString *documentsDirectory = [paths objectAtIndex:0];
-        NSString *fileName = [NSString stringWithFormat:@"%s_%d.ghost", ChapterName, Page];
+        NSString *fileName;
+        if (Race)
+            fileName = [NSString stringWithFormat:@"%s.ghost", PageName];
+        else
+            fileName = [NSString stringWithFormat:@"%s_%s.ghost", ChapterName, PageName];
         NSString *filePath = [documentsDirectory stringByAppendingPathComponent:fileName];
         
         NSData* events = [NSData dataWithBytes:GhostRecordingEvents length:sizeof(SGhostEvent)*Ghost.RecordingEventCount];

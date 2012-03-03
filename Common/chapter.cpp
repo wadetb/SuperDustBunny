@@ -1089,14 +1089,14 @@ void SetCurrentPage(int PageNum)
     StartGhostRecording();
     if (Settings.GhostActive && Chapters[CurrentChapter].Completed)
     {
-        LoadGhost(Chapters[CurrentChapter].Name, PageNum, false);
+        LoadGhost(Chapters[CurrentChapter].Name, Chapter.Pages[Chapter.PageNum].Name, false);
         StartGhostPlayback();
     }
     else
     {
         if (Chapter.PageProps.GhostRace)
         {
-            LoadGhost(Chapters[CurrentChapter].Name, PageNum, true);
+            LoadGhost(Chapters[CurrentChapter].Name, Chapter.Pages[Chapter.PageNum].Name, true);
             StartGhostPlayback();        
         }        
     }

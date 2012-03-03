@@ -24,6 +24,7 @@
 #include "Recorder.h"
 #include "Ghost.h"
 #include "Settings.h"
+#include "Tweak.h"
 
 #ifdef PLATFORM_MAC
 #import <AddressBook/AddressBook.h>
@@ -247,6 +248,10 @@ void RecordPageScore(int Page)
     if (Page < 0 || Page > MAX_PAGE_TIMES)
         ReportError("Invalid page number %d for scorekeeping.  Maximum is %d.", Page, MAX_PAGE_TIMES);
 
+    // Uncomment to force ghost saving, e.g. when making race recordings.
+    if (Tweak.RecordGhostRace && Chapter.PageProps.GhostRace && IsGhostRecordingActive())
+        SaveGhost(Chapters[CurrentChapter].Name, Chapter.Pages[Chapter.PageNum].Name, true);
+
     if (Score.Invalid)
         return;
     
@@ -279,7 +284,7 @@ void RecordPageScore(int Page)
         Score.BestPageTime[Page] = Score.CurrentPageTime;
 
         if (IsGhostRecordingActive())
-            SaveGhost(Chapters[CurrentChapter].Name, Page);
+            SaveGhost(Chapters[CurrentChapter].Name, Chapter.Pages[Chapter.PageNum].Name, false);
     }
     
     if (Page == Chapter.NPages - 1)

@@ -12,8 +12,8 @@
 
 void AddGhostEvent(float X, float Y, float ScaleX, int Sprite);
 
-void LoadGhost(const char* ChapterName, int Page, bool Race);
-void SaveGhost(const char* ChapterName, int Page);
+void LoadGhost(const char* ChapterName, const char* PageName, bool Race);
+void SaveGhost(const char* ChapterName, const char* PageName, bool Race);
 
 bool IsGhostRecordingActive();
 bool IsGhostPlaybackActive();

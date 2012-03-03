@@ -1,3 +1,4 @@
+TWEAK_INT(RecordGhostRace, 0, "If 1, record Ghost race files to the Documents folder.")
 TWEAK_FLOAT(DustyJumpPower, 21.0f, "Force with which the bunny jumps.")
 TWEAK_FLOAT(DustyJumpPowerXScale, 0.8f, "Scale applied to the horizontal axis of jump velocity.")
 TWEAK_FLOAT(DustyJumpPowerYScaleWhenDown, 0.8f, "Scale applied to the vertical axis of jump velocity, when jumping down.")

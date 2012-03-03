@@ -227,7 +227,13 @@ static void UpdateHotDateTutorial(STutorial* Tutorial)
         HotDateVY += 2.0f;
         
         if (HotDateStapler->Y >= Tutorial->Y + 165)
+        {
             HotDateStapler->Y = Tutorial->Y + 165;
+            Chapter.PageBlocks[77*Chapter.PageWidth+4] = SPECIALBLOCKID_BLANK;
+            Chapter.PageBlocks[77*Chapter.PageWidth+5] = SPECIALBLOCKID_BLANK;
+            Chapter.PageBlocks[77*Chapter.PageWidth+6] = SPECIALBLOCKID_BLANK;
+            Chapter.PageBlocks[77*Chapter.PageWidth+7] = SPECIALBLOCKID_BLANK;
+        }
         
         if (Dusty.State == DUSTYSTATE_LAUNCH)
         {
