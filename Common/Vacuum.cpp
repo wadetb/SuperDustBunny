@@ -295,7 +295,7 @@ void UpdateVacuum()
     if (!TutorialOverrides.FreezeDusty)
     {
         if (fabsf(Dusty.FloatVelocityY) > 1.0f)
-            Vacuum.AverageDustySpeed = Vacuum.AverageDustySpeed * 0.992f + -Dusty.FloatVelocityY * 0.008f;
+            Vacuum.AverageDustySpeed = Vacuum.AverageDustySpeed * 0.991f + -Dusty.FloatVelocityY * 0.008f;
     }
     else
         Vacuum.AverageDustySpeed = Vacuum.AverageDustySpeed * 0.99f;
@@ -314,7 +314,7 @@ void UpdateVacuum()
                 if (TutorialOverrides.FreezeDusty)
                     VacuumSpeed = 1.5f;
                 else
-                    VacuumSpeed = Clamp(Vacuum.AverageDustySpeed, 1.0f, 10.0f) * 1.0f;
+                    VacuumSpeed = Clamp(Vacuum.AverageDustySpeed, 1.0f, 10.0f);
                 AddDebugLine(60, LitScreenHeight - 50, 60, LitScreenHeight - 50 - VacuumSpeed * 10, gxRGBA32(0, 255, 0, 255), 1.0f/60.0f);
                 
                 if (Vacuum.Dir == VACUUMDIR_UP)

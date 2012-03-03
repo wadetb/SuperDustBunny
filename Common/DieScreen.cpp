@@ -46,7 +46,7 @@ gxSprite* TearSprites[4] =
 
 void DisplayDieScreen()
 {
-    AddLitSprite(LIGHTLIST_FOREGROUND_NO_SHADOW, &ScreenLoseGrave1Sprite, 0, 0);
+    AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ScreenLoseGrave1Sprite, 0, 0, 768, LitScreenHeight, 1.0f);
     
     float PulseAlpha;
     if (DieScreen.Pressed)
@@ -54,7 +54,7 @@ void DisplayDieScreen()
     else
         PulseAlpha = SinWave(DieScreen.Timer/60.0f, 2.0f)*0.5f;
     
-    AddLitSpriteAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ScreenLoseGrave2Sprite, 0, 0, PulseAlpha);
+    AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ScreenLoseGrave2Sprite, 0, 0, 768, LitScreenHeight, PulseAlpha);
 
 	float t = DieScreen.Timer / 10.0f;
 	float dx = cos(t/5)*10 + cos(1+t/7)*10 + cos(1-t/9)*10 + 100;

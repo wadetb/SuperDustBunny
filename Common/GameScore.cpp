@@ -332,7 +332,7 @@ void RecordPageScore(int Page)
 
 void AwardBonus(float X, float Y)
 {
-    CreateBonus(X, Y);
+    //CreateBonus(X, Y);
     
     Score.CurrentBonus++;
 }

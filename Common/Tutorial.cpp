@@ -231,8 +231,10 @@ static void UpdateHotDateTutorial(STutorial* Tutorial)
         
         if (Dusty.State == DUSTYSTATE_LAUNCH)
         {
+            Tutorial->Sequence = 6;
+            Tutorial->SequenceTimer = 0.0f;
+            
             Chapter.PageProps.LightsOff = false;
-            LightState.AmbientColor = gxRGBA32(128, 128, 128, 255);
         }
 
         for (int i = 0; i < NHangers; i++)
@@ -240,6 +242,13 @@ static void UpdateHotDateTutorial(STutorial* Tutorial)
             float SwingStrength = Remap(fabsf(Hangers[i].Y - Vacuum.Y), 2000, 1500, 0.1f, 0.5f, true);
             AddHangerTorque(&Hangers[i], Hangers[i].X, Hangers[i].Y + 100.0f, sinf(Tutorial->SequenceTimer*2.0f)*SwingStrength, 0.0f);
         }
+    }
+    else if (Tutorial->Sequence == 6)
+    {
+        Tutorial->SequenceTimer += 1.0f/60.0f;
+
+        int Brightness = (int)Remap(Tutorial->SequenceTimer, 0, 3, 0, 128, true);        
+        LightState.AmbientColor = gxRGBA32(Brightness, Brightness, Brightness, 255);        
     }
 }
 

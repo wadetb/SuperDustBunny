@@ -1477,6 +1477,8 @@ static void UpdateDusty_Die()
             if (!Settings.InfiniteLives)
                 Dusty.Lives -= 1;
             
+            Score.CurrentBabies = 0;
+            
             if (IsRecordingActive())
     			StopRecording(RESULT_RESTART_PAGE);
             

@@ -511,6 +511,7 @@ SAsset* GetAssetFromAssetList(const char* FileName, SAssetList* AssetList)
     for (int i = 0; i < AssetList->NAssets; i++)
     {
         SAsset* Asset = &AssetList->Assets[i];
+        //NSLog(@"Checking %s against %s\n", FileName, Asset->SourceFileName);
         if (strcmp(Asset->SourceFileName, FileName) == 0)
             return Asset;
     }
