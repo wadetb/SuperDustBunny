@@ -44,7 +44,7 @@ extern SBarrel Barrel;
 
 void ParseBarrelProperties(struct SBlock* Block, rapidxml::xml_node<char>* PropertiesNode);
 
-void CreateBarrel(int X, int Y, SBarrelProperties* Properties);
+SBarrel* CreateBarrel(int X, int Y, SBarrelProperties* Properties);
 void ClearBarrels();
 
 void UpdateBarrels();

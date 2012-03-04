@@ -18,7 +18,16 @@ void ParseFlameProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNod
 SFlameProperties* GetFlamePropertiesByName(const char* Name);
 void ClearFlamePropertiesList();
 
-int CreateFlame(float X, float Y, unsigned int Flags, SFlameProperties* Props);
+struct SFlame
+{
+    SFlameProperties* Props;
+	float X, Y;
+    float Angle;
+	int Frame;
+    bool Active;
+};
+
+SFlame* CreateFlame(float X, float Y, unsigned int Flags, SFlameProperties* Props);
 void ClearFlames();
 
 void DestroyFlame(int FlameID);

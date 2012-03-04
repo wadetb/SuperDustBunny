@@ -131,9 +131,12 @@ void CreateHanger(int X, int Y, SHangerProperties* Props)
     
 	Hanger->X = (float)X*64 + Props->XOrigin;
 	Hanger->Y = (float)Y*64 + Props->YOrigin;
+    Hanger->VX = 0;
+    Hanger->VY = 0;
     Hanger->Angle = 0;
     Hanger->VAngle = 0;
     Hanger->DustyOnBoard = false;
+    Hanger->Attached = true;
     
     for (int y = Y; y < Y+Props->Height; y++)
         for (int x = X; x < X+Props->Width; x++)
@@ -212,6 +215,12 @@ void UpdateHangers()
         float Gravity = 1.0f;
 
         float Force = 0.25f * Props->Mass * Gravity;
+
+        if (!Hanger->Attached)
+            Hanger->VY += Gravity;
+        
+        Hanger->X += Hanger->VX;
+        Hanger->Y += Hanger->VY;
         
         float X0 = -Props->XOrigin;
         float Y0 = -Props->YOrigin;

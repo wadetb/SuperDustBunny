@@ -57,7 +57,7 @@ void ParseBarrelProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNo
 	Block->Properties = BarrelProperties;
 }
 
-void CreateBarrel(int X, int Y, SBarrelProperties* Properties)
+SBarrel* CreateBarrel(int X, int Y, SBarrelProperties* Properties)
 {
 	if (NBarrels >= MAX_BARRELS)
 		ReportError("Exceeded the maximum of %d total barrels.", MAX_BARRELS);
@@ -73,6 +73,8 @@ void CreateBarrel(int X, int Y, SBarrelProperties* Properties)
     Barrel->Power = Properties->Power;
 
 	Barrel->State = BARRELSTATE_WAIT;
+    
+    return Barrel;
 }
 
 void ClearBarrels()

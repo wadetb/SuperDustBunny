@@ -21,6 +21,7 @@
 #include "Balloon.h"
 #include "Stapler.h"
 #include "Hanger.h"
+#include "Barrel.h"
 
 
 #define MAX_TUTORIALS 10
@@ -258,6 +259,119 @@ static void UpdateHotDateTutorial(STutorial* Tutorial)
     }
 }
 
+SBarrelProperties BedtimeBarrelProps;
+SBarrel* BedtimeBarrel;
+float BedtimeVY;
+
+static void CreateBedtimeTutorial(STutorial* Tutorial)
+{
+    Tutorial->Active = false;
+    Tutorial->Sequence = 0;
+    Tutorial->SequenceTimer = 0;
+    
+    BedtimeBarrelProps.From = 180;
+    BedtimeBarrelProps.To = 0;
+    BedtimeBarrelProps.Power = 25;
+    
+    BedtimeBarrel = NULL;
+    BedtimeVY = 0;
+    
+    Chapter.PageProps.VacuumOff = true;
+    TutorialOverrides.FocusOnVacuum = false;
+    TutorialOverrides.NoBabyHop = true;
+}
+
+static void UpdateBedtimeTutorial(STutorial* Tutorial)
+{
+    if (Tutorial->Sequence == 0)
+    {        
+        if (Tutorial->SequenceTimer == 0)
+        {
+            Dusty.FloatX += 64;
+            if (NHangers > 0)
+            {
+                Hangers[NHangers-1].X += 0.0f;
+                Hangers[NHangers-1].Y += 80.0f;
+            }
+        }
+
+        Tutorial->SequenceTimer += 1.0f/60.0f;
+        
+        if (Tutorial->SequenceTimer >= 3)
+        {
+            Chapter.PageProps.VacuumOff = false;
+            TurnOnVacuum(600, 0.0f, false);
+            
+            TutorialOverrides.FocusOnVacuum = true;
+            TutorialOverrides.SavedScrollY = ScrollY;
+            TutorialOverrides.Timer = 0.0f;
+            
+            Tutorial->Sequence = 4;
+            Tutorial->SequenceTimer = 0;  
+        }
+    }
+    else if (Tutorial->Sequence == 4)
+    {
+        Tutorial->SequenceTimer += 1.0f/60.0f;
+        
+        if (Tutorial->SequenceTimer >= 5)
+        {
+            BedtimeBarrel = CreateBarrel(Tutorial->X, Tutorial->Y - 800, &BedtimeBarrelProps);
+            BedtimeVY = 0;
+            
+            SFlameProperties* Props = GetFlamePropertiesByName("arrows");
+            CreateFlame(2.5f*64, Tutorial->Y + 100, 0, Props)->Angle = 45.0f;
+            CreateFlame(8.5f*64, Tutorial->Y + 100, 0, Props)->Angle = -45.0f;
+            
+            TutorialOverrides.FocusOnVacuum = false;
+            ScrollY = TutorialOverrides.SavedScrollY;
+            
+            TutorialOverrides.NoBabyHop = false;
+
+            if (NHangers > 0)
+                Hangers[NHangers-1].Attached = false;
+            
+            Tutorial->Sequence = 5;
+            Tutorial->SequenceTimer = 0;            
+        }
+    }
+    else if (Tutorial->Sequence == 5)
+    {
+        Tutorial->SequenceTimer += 1.0f/60.0f;
+        
+        BedtimeBarrel->Y += BedtimeVY;
+        BedtimeVY += 2.0f;
+        
+        if (BedtimeBarrel->Y >= Tutorial->Y)
+        {
+            BedtimeBarrel->Y = Tutorial->Y;
+            Chapter.PageBlocks[78*Chapter.PageWidth+0] = SPECIALBLOCKID_BLANK;
+            Chapter.PageBlocks[78*Chapter.PageWidth+Chapter.PageWidth-1] = SPECIALBLOCKID_BLANK;
+        }
+        
+        if (Dusty.State == DUSTYSTATE_LAUNCH)
+        {
+            Tutorial->Sequence = 6;
+            Tutorial->SequenceTimer = 0.0f;
+            
+            Chapter.PageProps.LightsOff = false;
+        }
+        
+        for (int i = 0; i < NHangers; i++)
+        {
+            float SwingStrength = Remap(fabsf(Hangers[i].Y - Vacuum.Y), 2000, 1500, 0.1f, 0.5f, true);
+            AddHangerTorque(&Hangers[i], Hangers[i].X, Hangers[i].Y + 100.0f, sinf(Tutorial->SequenceTimer*2.0f)*SwingStrength, 0.0f);
+        }
+    }
+    else if (Tutorial->Sequence == 6)
+    {
+        Tutorial->SequenceTimer += 1.0f/60.0f;
+        
+        int Brightness = (int)Remap(Tutorial->SequenceTimer, 0, 3, 0, 128, true);        
+        LightState.AmbientColor = gxRGBA32(Brightness, Brightness, Brightness, 255);        
+    }
+}
+
 static void CreateBirthdayTutorial(STutorial* Tutorial)
 {
     SPage* Page = &Chapter.Pages[Chapter.PageNum];
@@ -429,6 +543,10 @@ void CreateTutorial(int X, int Y, STutorialProperties* Props)
     {
         CreateHotDateTutorial(Tutorial);
     }
+    if (Props->Actions && strstr(Props->Actions, "bedtime"))
+    {
+        CreateBedtimeTutorial(Tutorial);
+    }
 }
 
 void ClearTutorials()
@@ -438,6 +556,7 @@ void ClearTutorials()
     TutorialOverrides.FocusOnVacuum = false;
     TutorialOverrides.FreezeDusty = false;
     TutorialOverrides.NoBabyPickup = false;
+    TutorialOverrides.NoBabyHop = false;
     TutorialOverrides.NoFlameDamage = false;
 }
 
@@ -520,6 +639,11 @@ void UpdateTutorial()
         if (Props->Actions && strstr(Props->Actions, "hotdate"))
         {
             UpdateHotDateTutorial(Tutorial);
+            continue;
+        }
+        if (Props->Actions && strstr(Props->Actions, "bedtime"))
+        {
+            UpdateBedtimeTutorial(Tutorial);
             continue;
         }
         

@@ -52,15 +52,6 @@ struct SFlameProperties
     SFlameProperties* Next;
 };
 
-struct SFlame
-{
-    SFlameProperties* Props;
-	float X, Y;
-    float Angle;
-	int Frame;
-    bool Active;
-};
-
 SFlameProperties* FlamePropertiesHead;
 
 int NFlames;
@@ -211,7 +202,7 @@ static float BlockFlagsToAngle(unsigned int Flags)
     return 0;
 }
 
-int CreateFlame(float X, float Y, unsigned int Flags, SFlameProperties* Props)
+SFlame* CreateFlame(float X, float Y, unsigned int Flags, SFlameProperties* Props)
 {
 	if (NFlames >= MAX_FLAMES)
 		ReportError("Exceeded the maximum of %d total flames.", MAX_FLAMES);
@@ -231,7 +222,7 @@ int CreateFlame(float X, float Y, unsigned int Flags, SFlameProperties* Props)
     if (Props->ReplaceBlock)
         EraseBlock((int)X/64, (int)Y/64);
     
-    return (int)( Flame - Flames );
+    return Flame;
 }
 
 void DestroyFlame(int FlameID)

@@ -365,7 +365,7 @@ void UpdateBabies()
             
             Baby->Timer = (int)Baby->FloatTimer;
 
-            if (Baby->Timer <= 0)
+            if (Baby->Timer <= 0 && !TutorialOverrides.NoBabyHop)
             {
                 Baby->State = BABYSTATE_WAIT_HOP;
                 Baby->FloatTimer = 0;

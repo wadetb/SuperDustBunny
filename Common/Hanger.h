@@ -19,8 +19,10 @@ struct SHanger
 {
     SHangerProperties* Props;
 	float X, Y;
+    float VX, VY;
     float Angle;
     float VAngle;
+    bool Attached;
     bool DustyOnBoard;
     float PrevAngle;
     int DustySide;
