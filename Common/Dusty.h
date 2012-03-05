@@ -89,6 +89,7 @@ enum EDustyHat
     
     DUSTYHAT_PINK_BOW,
     DUSTYHAT_PARTY,
+    DUSTYHAT_GRADUATION,
     
     DUSTYHAT_COUNT
 };

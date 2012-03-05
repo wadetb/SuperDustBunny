@@ -70,6 +70,7 @@ gxSprite DustyDeathSprite;
 
 gxSprite DustyKickSprite;
 
+gxSprite GraduationHatSprite;
 gxSprite PartyHatSprite;
 gxSprite PinkBowHatSprite;
 
@@ -937,6 +938,7 @@ void LoadAssets()
 
     LoadSpriteAsset("Assets/dusty-kick.png", &DustyKickSprite);
 
+	LoadSpriteAsset("Assets/hat-graduation.png", &GraduationHatSprite);
 	LoadSpriteAsset("Assets/hat-party.png", &PartyHatSprite);
 	LoadSpriteAsset("Assets/hat-pink-bow.png", &PinkBowHatSprite);
     

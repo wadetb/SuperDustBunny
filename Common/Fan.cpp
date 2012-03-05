@@ -47,7 +47,7 @@ void ParseFanProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode)
 	Block->Properties = FanProperties;
 }
 
-void CreateFan(int X, int Y, SFanProperties* Properties)
+SFan* CreateFan(int X, int Y, SFanProperties* Properties)
 {
 	if (NFans >= MAX_FANS)
 		ReportError("Exceeded the maximum of %d total fans.", MAX_FANS);
@@ -58,6 +58,8 @@ void CreateFan(int X, int Y, SFanProperties* Properties)
 	Fan->Y = (float)Y + 32;
 
 	Fan->Dir = (float)Properties->Dir;
+    
+    return Fan;
 }
 
 void ClearFans()

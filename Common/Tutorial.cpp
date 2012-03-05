@@ -22,6 +22,7 @@
 #include "Stapler.h"
 #include "Hanger.h"
 #include "Barrel.h"
+#include "Fan.h"
 
 
 #define MAX_TUTORIALS 10
@@ -372,6 +373,114 @@ static void UpdateBedtimeTutorial(STutorial* Tutorial)
     }
 }
 
+SFanProperties GraduationFanProps;
+SFan* GraduationFan;
+float GraduationVY;
+
+static void CreateGraduationTutorial(STutorial* Tutorial)
+{
+    Tutorial->Active = false;
+    Tutorial->Sequence = 0;
+    Tutorial->SequenceTimer = 0;
+    
+    GraduationFanProps.Dir = 0;
+    
+    GraduationFan = NULL;
+    GraduationVY = 0;
+    
+    Chapter.PageProps.VacuumOff = true;
+    
+    TutorialOverrides.FocusOnVacuum = false;
+    TutorialOverrides.NoBabyHop = true;
+    TutorialOverrides.NoBabyPickup = true;
+}
+
+static void UpdateGraduationTutorial(STutorial* Tutorial)
+{
+    if (Tutorial->Sequence == 0)
+    {
+        if (Tutorial->SequenceTimer == 0)
+        {
+            CreateBaby(6, Dusty.FloatY/64-1, 0, DUSTYHAT_GRADUATION, false);
+            CreateBaby(7, Dusty.FloatY/64-1, 0, DUSTYHAT_GRADUATION, false);
+            CreateBaby(8, Dusty.FloatY/64-1, 0, DUSTYHAT_GRADUATION, false);
+            CreateBaby(9, Dusty.FloatY/64-1, 0, DUSTYHAT_GRADUATION, false);
+        }
+        
+        Tutorial->SequenceTimer += 1.0f/60.0f;
+        
+        if (Tutorial->SequenceTimer >= 3)
+        {
+            Chapter.PageProps.VacuumOff = false;
+            TurnOnVacuum(600, 0.0f, false);
+            
+            TutorialOverrides.FocusOnVacuum = true;
+            TutorialOverrides.SavedScrollY = ScrollY;
+            TutorialOverrides.Timer = 0.0f;
+            
+            Tutorial->Sequence = 4;
+            Tutorial->SequenceTimer = 0;  
+        }
+    }
+    else if (Tutorial->Sequence == 4)
+    {
+        Tutorial->SequenceTimer += 1.0f/60.0f;
+        
+        if (Tutorial->SequenceTimer >= 5)
+        {
+            GraduationFan = CreateFan(Tutorial->X, Tutorial->Y - 800, &GraduationFanProps);
+            GraduationVY = 0;
+            
+            SFlameProperties* Props = GetFlamePropertiesByName("arrows");
+            CreateFlame(5.5f*64, Tutorial->Y - 200, 0, Props);
+            
+            TutorialOverrides.FocusOnVacuum = false;
+            ScrollY = TutorialOverrides.SavedScrollY;
+            
+            TutorialOverrides.NoBabyHop = false;
+            TutorialOverrides.NoBabyPickup = false;
+
+            Tutorial->Sequence = 5;
+            Tutorial->SequenceTimer = 0;            
+        }
+    }
+    else if (Tutorial->Sequence == 5)
+    {
+        Tutorial->SequenceTimer += 1.0f/60.0f;
+        
+        GraduationFan->Y += GraduationVY;
+        GraduationVY += 2.0f;
+      
+        if (GraduationFan->Y >= Tutorial->Y)
+        {
+            GraduationFan->Y = Tutorial->Y;
+            Chapter.PageBlocks[79*Chapter.PageWidth+0] = SPECIALBLOCKID_BLANK;
+            Chapter.PageBlocks[79*Chapter.PageWidth+Chapter.PageWidth-1] = SPECIALBLOCKID_BLANK;
+        }
+        
+        if (Dusty.FloatY <= Tutorial->Y - 800)
+        {
+            Tutorial->Sequence = 6;
+            Tutorial->SequenceTimer = 0.0f;
+            
+            Chapter.PageProps.LightsOff = false;
+        }
+        
+        for (int i = 0; i < NHangers; i++)
+        {
+            float SwingStrength = Remap(fabsf(Hangers[i].Y - Vacuum.Y), 2000, 1500, 0.1f, 0.5f, true);
+            AddHangerTorque(&Hangers[i], Hangers[i].X, Hangers[i].Y + 100.0f, sinf(Tutorial->SequenceTimer*2.0f)*SwingStrength, 0.0f);
+        }
+    }
+    else if (Tutorial->Sequence == 6)
+    {
+        Tutorial->SequenceTimer += 1.0f/60.0f;
+        
+        int Brightness = (int)Remap(Tutorial->SequenceTimer, 0, 3, 0, 128, true);        
+        LightState.AmbientColor = gxRGBA32(Brightness, Brightness, Brightness, 255);        
+    }
+}
+
 static void CreateBirthdayTutorial(STutorial* Tutorial)
 {
     SPage* Page = &Chapter.Pages[Chapter.PageNum];
@@ -547,6 +656,10 @@ void CreateTutorial(int X, int Y, STutorialProperties* Props)
     {
         CreateBedtimeTutorial(Tutorial);
     }
+    if (Props->Actions && strstr(Props->Actions, "graduation"))
+    {
+        CreateGraduationTutorial(Tutorial);
+    }
 }
 
 void ClearTutorials()
@@ -644,6 +757,11 @@ void UpdateTutorial()
         if (Props->Actions && strstr(Props->Actions, "bedtime"))
         {
             UpdateBedtimeTutorial(Tutorial);
+            continue;
+        }
+        if (Props->Actions && strstr(Props->Actions, "graduation"))
+        {
+            UpdateGraduationTutorial(Tutorial);
             continue;
         }
         

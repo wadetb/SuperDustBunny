@@ -24,7 +24,7 @@ struct SFan
 
 void ParseFanProperties(struct SBlock* Block, rapidxml::xml_node<char>* PropertiesNode);
 
-void CreateFan(int X, int Y, SFanProperties* Properties);
+SFan* CreateFan(int X, int Y, SFanProperties* Properties);
 void ClearFans();
 
 void UpdateFans();

@@ -106,7 +106,8 @@ gxSprite* DustyHatSprites[DUSTYHAT_COUNT] =
 {
     NULL,
     &PinkBowHatSprite,
-    &PartyHatSprite
+    &PartyHatSprite,
+    &GraduationHatSprite
 };
 
 

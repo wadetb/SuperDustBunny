@@ -63,6 +63,7 @@ extern gxSprite DustyDeathSprite;
 
 extern gxSprite DustyKickSprite;
 
+extern gxSprite GraduationHatSprite;
 extern gxSprite PartyHatSprite;
 extern gxSprite PinkBowHatSprite;
 
