@@ -220,11 +220,22 @@ void UpdateGhost()
             Ghost.PlaybackTime = 0;
             Ghost.PlaybackActive = false;
             
-//            if (Chapter.PageProps.GhostRace)
-//            {
+            if (Chapter.PageProps.GhostRace)
+            {
 //                if (Ghost.PlaybackEventCount > 0)
 //                    SetDustyState_Die(DEATH_GHOST);
-//            }
+            }
+        }
+
+        // Catch the ghost up automatically.
+        if (Chapter.PageProps.GhostRace)
+        {
+            SGhostEvent* Event = &GhostPlaybackEvents[Ghost.PlaybackTime];
+            if (Ghost.PlaybackTime < Ghost.PlaybackEventCount && Event->Y >= Dusty.FloatY + 200)
+            {
+                Ghost.PlaybackTime++;
+                //Event = &GhostPlaybackEvents[Ghost.PlaybackTime];
+            }
         }
     }
 }

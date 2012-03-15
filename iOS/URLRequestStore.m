@@ -45,6 +45,8 @@
         [path release];
         path = nil;
     }
+    
+    [super dealloc];
 }
 
 - (void) connection:(NSURLConnection *)connection didReceiveData:(NSData *)data

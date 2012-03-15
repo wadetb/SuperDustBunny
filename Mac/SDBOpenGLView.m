@@ -61,6 +61,8 @@ void GetInput_EndSwipe(float X, float Y, double Time);
     Exit();
     
     //CVDisplayLinkRelease(displayLink);
+    
+    [super dealloc];
 }
 
 static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeStamp* now, const CVTimeStamp* outputTime, 
