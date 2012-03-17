@@ -101,6 +101,9 @@ void AddLitSpriteCenteredScaledRotatedAlpha(ELightList List, gxSprite* Sprite, f
 void AddLitSpriteCenteredScaledRotatedColor(ELightList List, gxSprite* Sprite, float X, float Y, float Scale, float Angle, unsigned int Color);
 void AddLitSpriteCenteredScaledRotatedAdditive(ELightList List, gxSprite* Sprite, float X, float Y, float Scale, float Angle, float Alpha);
 
+void AddLitSpriteXCenteredScaledRotated(ELightList List, gxSprite* Sprite, float X, float Y, float Scale, float Angle);
+void AddLitSpriteXCenteredScaledRotatedAlpha(ELightList List, gxSprite* Sprite, float X, float Y, float Scale, float Angle, float Alpha);
+
 void AddLitSpriteOriginScaledRotatedAlpha(ELightList List, gxSprite* Sprite, float X, float Y, float XOrigin, float YOrigin, float Scale, float Angle, float Alpha);
 
 void InitLighting();

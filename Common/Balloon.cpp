@@ -199,9 +199,6 @@ void UpdateBalloons()
                     else
                         Dusty.Direction = DIRECTION_LEFT;
 
-                    Dusty.FloatX = Balloon->X;
-                    Dusty.FloatY = Balloon->Y + 200;
-
                     Balloon->DustyOnBoard = true;
                 }
             }
@@ -237,8 +234,8 @@ void UpdateBalloons()
             
             if (Balloon->DustyOnBoard)
             {
-                Dusty.FloatX += Balloon->VX;
-                Dusty.FloatY += Balloon->VY;
+                Dusty.FloatX = Balloon->TailX[6];
+                Dusty.FloatY = Balloon->TailY[6];
                 
                 if (Dusty.State != DUSTYSTATE_BALLOONRIDE)
                 {

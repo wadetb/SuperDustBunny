@@ -255,7 +255,7 @@ static void UpdateHotDateTutorial(STutorial* Tutorial)
     {
         Tutorial->SequenceTimer += 1.0f/60.0f;
 
-        int Brightness = (int)Remap(Tutorial->SequenceTimer, 0, 3, 0, 128, true);        
+        int Brightness = (int)Remap(Tutorial->SequenceTimer, 0, 1.5f, 0, 128, true);        
         LightState.AmbientColor = gxRGBA32(Brightness, Brightness, Brightness, 255);        
     }
 }
@@ -368,7 +368,7 @@ static void UpdateBedtimeTutorial(STutorial* Tutorial)
     {
         Tutorial->SequenceTimer += 1.0f/60.0f;
         
-        int Brightness = (int)Remap(Tutorial->SequenceTimer, 0, 3, 0, 128, true);        
+        int Brightness = (int)Remap(Tutorial->SequenceTimer, 0, 1.5f, 0, 128, true);        
         LightState.AmbientColor = gxRGBA32(Brightness, Brightness, Brightness, 255);        
     }
 }
@@ -476,7 +476,7 @@ static void UpdateGraduationTutorial(STutorial* Tutorial)
     {
         Tutorial->SequenceTimer += 1.0f/60.0f;
         
-        int Brightness = (int)Remap(Tutorial->SequenceTimer, 0, 3, 0, 128, true);        
+        int Brightness = (int)Remap(Tutorial->SequenceTimer, 0, 1.5f, 0, 128, true);        
         LightState.AmbientColor = gxRGBA32(Brightness, Brightness, Brightness, 255);        
     }
 }
@@ -605,7 +605,7 @@ static void UpdateBirthdayTutorial(STutorial* Tutorial)
     {
         Tutorial->SequenceTimer += 1.0f/60.0f;
         
-        int Brightness = (int)Remap(Tutorial->SequenceTimer, 0, 3, 0, 128, true);        
+        int Brightness = (int)Remap(Tutorial->SequenceTimer, 0, 1.5f, 0, 128, true);        
         LightState.AmbientColor = gxRGBA32(Brightness, Brightness, Brightness, 255);
 
         if (Tutorial->SequenceTimer >= 3)
