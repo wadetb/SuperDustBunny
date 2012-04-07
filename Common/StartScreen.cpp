@@ -334,7 +334,7 @@ void UpdateStartScreen()
         if (msY < 200 && msX < 200 && msButton1 && !msOldButton1)
         {
 #ifdef PLATFORM_IPHONE
-            [TestFlight passCheckpoint:[NSString stringWithFormat:@"Closed Leaderboards", Chapters[CurrentChapter].Name]];
+            [TestFlight passCheckpoint:@"Closed Leaderboards"];
 #endif
             StartScreen.LeaderboardVisible = false;            
         }
