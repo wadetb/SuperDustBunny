@@ -951,7 +951,6 @@ bool Update()
 #ifdef PLATFORM_WINDOWS
 	kbUpdateKeys();
 #endif
-	
 	msUpdateMouse();
 
 #ifdef PLATFORM_WINDOWS

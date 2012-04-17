@@ -14,4 +14,7 @@ void InitStartScreen();
 void UpdateStartScreen();
 void DisplayStartScreen();
 
+void LoadToolTip();
+void SaveToolTip();
+
 #endif
