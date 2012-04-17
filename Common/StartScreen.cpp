@@ -45,7 +45,7 @@ struct SStartScreen
     
     bool LeaderboardsUnlocked;
     bool LeaderboardsToolTipVisible;//Tooltip for Leaderboards
-    bool LeaderboardsTriggered;
+    bool LeaderboardsToolTipTap;//If the Tooltip has been tapped.
     
 	bool Dragging;
 	bool Pressed;
@@ -182,8 +182,11 @@ void InitStartScreen()
     StartScreen.ReleasedAtLeastOnce = false;
     
     StartScreen.LeaderboardsUnlocked = Chapters[CurrentChapter].Completed;
+    
     StartScreen.LeaderboardsToolTipVisible = false;
-    StartScreen.LeaderboardsTriggered = false;
+    StartScreen.LeaderboardsToolTipTap = false;
+    
+    LoadToolTip();    
 }
 
 static void StartScreen_Advance()
@@ -192,6 +195,8 @@ static void StartScreen_Advance()
     StartScreen.Pressed = false;
     StartScreen.PressedTime = 0.0f;
     StartScreen.ReleasedAtLeastOnce = false;
+    
+
     
 	if (StartScreen.CurItem >= STARTSCREEN_ITEM_FIRST_CHAPTER)
 	{
@@ -243,7 +248,7 @@ void DisplayStartScreen()
     AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ButtonLeaderboardSprite, 768-90 + sinf(StartScreen.WiggleTime)*4.0f, 90, 1.0f, StartScreen.LeaderboardButtonAlpha);
     
     //Display ToolTip next to Leaderboard Button
-    if(StartScreen.LeaderboardsToolTipVisible && StartScreen.LeaderboardsTriggered == false)
+    if(StartScreen.LeaderboardsToolTipVisible)
     {
         AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &TextBubblesSprite, 658-90 + sinf(StartScreen.WiggleTime)*4.0f, 110, 0, 40, 40, 74, StartScreen.LeaderboardButtonAlpha);
         
@@ -334,7 +339,7 @@ void UpdateStartScreen()
         if (msY < 200 && msX < 200 && msButton1 && !msOldButton1)
         {
 #ifdef PLATFORM_IPHONE
-            [TestFlight passCheckpoint:@"Closed Leaderboards"];
+            [TestFlight passCheckpoint:[NSString stringWithFormat:@"Closed Leaderboards", Chapters[CurrentChapter].Name]];
 #endif
             StartScreen.LeaderboardVisible = false;            
         }
@@ -445,23 +450,32 @@ void UpdateStartScreen()
         StartScreen.LeaderboardsUnlocked = Chapters[StartScreen.CurItem - STARTSCREEN_ITEM_FIRST_CHAPTER].Completed;
                 
         if (StartScreen.LeaderboardsUnlocked)
-        {            
-            if(StartScreen.CurItem == STARTSCREEN_ITEM_FIRST_CHAPTER && StartScreen.LeaderboardsTriggered == false)
+        {                  
+            if(StartScreen.CurItem == STARTSCREEN_ITEM_FIRST_CHAPTER && StartScreen.LeaderboardsToolTipTap == false)
             {
-                //When the leaderboard button is unlocked, here, we activate the floating tooltip.
-                StartScreen.LeaderboardsTriggered = true;
                 StartScreen.LeaderboardsToolTipVisible = true;
             }
-
+            
             if (msY < 256 && msX > 384 && msButton1 && !msOldButton1)
             {
-                StartScreen.LeaderboardsToolTipVisible = false;
+                
                 CurrentChapter = StartScreen.CurItem - STARTSCREEN_ITEM_FIRST_CHAPTER;
                 
 #ifdef PLATFORM_IPHONE
                 [TestFlight passCheckpoint:[NSString stringWithFormat:@"Opened Leaderboards for %s", Chapters[CurrentChapter].Name]];
 #endif
-                StartScreen.LeaderboardVisible = true;        
+                StartScreen.LeaderboardVisible = true;
+                
+                
+                //Needs to equal saved component. Which we can do upon initialization.
+                if(StartScreen.LeaderboardsToolTipTap == false)
+                {
+                    StartScreen.LeaderboardsToolTipVisible = false;
+                    StartScreen.LeaderboardsToolTipTap = true;
+                    //Save that tooltiptap as true.
+                    SaveToolTip();
+                }
+                
                 InitLeaderboardScreen();
                 return;
             }
@@ -485,4 +499,80 @@ void UpdateStartScreen()
     }
     
     StartScreen.WiggleTime += 1.0f/60.0f;
+}
+
+void LoadToolTip()
+{
+        PushErrorContext("While loading ToolTip Visible:");
+        
+#ifdef PLATFORM_IPHONE_OR_MAC
+        @try
+        {
+            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+            NSString *documentsDirectory = [paths objectAtIndex:0];
+            NSString *filePath = [documentsDirectory stringByAppendingPathComponent:@"Leaderboard.ToolTip"];
+            
+            NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:filePath];
+            if ( !dict )
+            {
+                PopErrorContext();
+                return;
+            }
+            
+            NSNumber *version = [dict objectForKey:@"version"];
+            if ( [version intValue] != 1 )
+            {
+                PopErrorContext();
+                return;
+            }
+            
+            NSArray *Tests = [dict objectForKey:@"ThisTest"];
+            
+            for (int i = 0; i < [Tests count]; i++)
+            {
+                NSDictionary *SavedToolTip = [Tests objectAtIndex:i];
+                
+                StartScreen.LeaderboardsToolTipTap = [[SavedToolTip objectForKey:@"Visible"] boolValue];
+            }
+        }
+        @catch (NSException *e)
+        {
+            NSLog(@"Caught exception while loading chapter unlocks: %@\n", e);
+        }
+#endif
+        
+        PopErrorContext();
+        
+    }
+
+
+void SaveToolTip()
+{
+    PushErrorContext("While saving ToolTip Visible:\n");
+    
+#ifdef PLATFORM_IPHONE_OR_MAC
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:@"Leaderboard.ToolTip"];
+    
+    NSMutableArray *Tests = [[NSMutableArray alloc] init];
+    for(int i = 0; i < 1; i++)
+    {
+        NSDictionary *Test = [NSDictionary dictionaryWithObjectsAndKeys:
+                              [NSNumber numberWithBool:StartScreen.LeaderboardsToolTipTap], @"Visible", nil];
+                              
+        [Tests addObject:Test];
+    }
+    
+    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                          [NSNumber numberWithInt:1], @"version",
+                          Tests, @"ThisTest", nil];
+    
+    [dict writeToFile:filePath atomically:YES];
+    
+    [Tests release];
+#endif
+    
+    PopErrorContext();
+    
 }
