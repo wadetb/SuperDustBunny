@@ -28,6 +28,7 @@ void InitSettings()
     Settings.LiveAssets = false;
     strcpy(Settings.AssetServer, "http://pluszerogames.com/sdb/live/1/");
     Settings.ChapterSkip = true;
+    Settings.LeaderboardToolTipTap = false;
 #ifdef PLATFORM_IPHONE_OR_MAC
     Settings.LeaderboardName = @"";
 #endif
@@ -41,7 +42,8 @@ void InitSettings()
                                  [NSNumber numberWithBool: Settings.InfiniteLives], @"InfiniteLives", 
                                  [NSNumber numberWithBool: Settings.LiveAssets], @"LiveAssets", 
                                  [NSString stringWithUTF8String:Settings.AssetServer], @"AssetServer", 
-                                 [NSNumber numberWithBool: Settings.ChapterSkip], @"ChapterSkip", 
+                                 [NSNumber numberWithBool: Settings.ChapterSkip], @"ChapterSkip",
+                                 [NSNumber numberWithBool: Settings.LeaderboardToolTipTap], @"LeaderboardToolTipTap",
                                  Settings.LeaderboardName, @"LeaderboardName",
                                  nil];
     
@@ -61,6 +63,7 @@ void LoadSettings()
     Settings.LiveAssets = [defaults boolForKey:@"LiveAssets"];
     snprintf(Settings.AssetServer, sizeof(Settings.AssetServer), "%s", [[defaults stringForKey:@"AssetServer"] UTF8String]);
     Settings.ChapterSkip = [defaults boolForKey:@"ChapterSkip"];
+    Settings.LeaderboardToolTipTap = [defaults boolForKey:@"LeaderboardToolTipTap"];
     if (Settings.LeaderboardName) 
         [Settings.LeaderboardName release];
     Settings.LeaderboardName = [[defaults stringForKey:@"LeaderboardName"] retain];
@@ -89,6 +92,7 @@ void SaveSettings()
     [defaults setObject:[NSNumber numberWithBool:Settings.LiveAssets] forKey:@"LiveAssets"];
     [defaults setObject:[NSString stringWithUTF8String:Settings.AssetServer] forKey:@"AssetServer"];
     [defaults setObject:[NSNumber numberWithBool:Settings.ChapterSkip] forKey:@"ChapterSkip"];
+    [defaults setObject:[NSNumber numberWithBool:Settings.LeaderboardToolTipTap] forKey:@"LeaderboardToolTipTap"];
     [defaults setObject:Settings.LeaderboardName forKey:@"LeaderboardName"];
 #endif
     

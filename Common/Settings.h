@@ -30,6 +30,8 @@ typedef struct
     
     bool ChapterSkip;
     
+    bool LeaderboardToolTipTap;
+    
 #ifdef PLATFORM_IPHONE_OR_MAC
     NSString* LeaderboardName;
 #endif

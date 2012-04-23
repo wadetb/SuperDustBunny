@@ -45,7 +45,6 @@ struct SStartScreen
     
     bool LeaderboardsUnlocked;
     bool LeaderboardsToolTipVisible;//Tooltip for Leaderboards
-    bool LeaderboardsToolTipTap;//If the Tooltip has been tapped.
     
 	bool Dragging;
 	bool Pressed;
@@ -181,12 +180,9 @@ void InitStartScreen()
     StartScreen.PressedTime = 0.0f;
     StartScreen.ReleasedAtLeastOnce = false;
     
+    StartScreen.LeaderboardsToolTipVisible = false;  
+    
     StartScreen.LeaderboardsUnlocked = Chapters[CurrentChapter].Completed;
-    
-    StartScreen.LeaderboardsToolTipVisible = false;
-    StartScreen.LeaderboardsToolTipTap = false;
-    
-    LoadToolTip();    
 }
 
 static void StartScreen_Advance()
@@ -451,7 +447,7 @@ void UpdateStartScreen()
                 
         if (StartScreen.LeaderboardsUnlocked)
         {                  
-            if(StartScreen.CurItem == STARTSCREEN_ITEM_FIRST_CHAPTER && StartScreen.LeaderboardsToolTipTap == false)
+            if(StartScreen.CurItem == STARTSCREEN_ITEM_FIRST_CHAPTER && Settings.LeaderboardToolTipTap == false)
             {
                 StartScreen.LeaderboardsToolTipVisible = true;
             }
@@ -468,12 +464,12 @@ void UpdateStartScreen()
                 
                 
                 //Needs to equal saved component. Which we can do upon initialization.
-                if(StartScreen.LeaderboardsToolTipTap == false)
+                if(Settings.LeaderboardToolTipTap == false)
                 {
                     StartScreen.LeaderboardsToolTipVisible = false;
-                    StartScreen.LeaderboardsToolTipTap = true;
-                    //Save that tooltiptap as true.
-                    SaveToolTip();
+                    Settings.LeaderboardToolTipTap = !Settings.LeaderboardToolTipTap;
+                    
+                    SaveSettings();
                 }
                 
                 InitLeaderboardScreen();
@@ -499,80 +495,4 @@ void UpdateStartScreen()
     }
     
     StartScreen.WiggleTime += 1.0f/60.0f;
-}
-
-void LoadToolTip()
-{
-        PushErrorContext("While loading ToolTip Visible:");
-        
-#ifdef PLATFORM_IPHONE_OR_MAC
-        @try
-        {
-            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-            NSString *documentsDirectory = [paths objectAtIndex:0];
-            NSString *filePath = [documentsDirectory stringByAppendingPathComponent:@"Leaderboard.ToolTip"];
-            
-            NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:filePath];
-            if ( !dict )
-            {
-                PopErrorContext();
-                return;
-            }
-            
-            NSNumber *version = [dict objectForKey:@"version"];
-            if ( [version intValue] != 1 )
-            {
-                PopErrorContext();
-                return;
-            }
-            
-            NSArray *Tests = [dict objectForKey:@"ThisTest"];
-            
-            for (int i = 0; i < [Tests count]; i++)
-            {
-                NSDictionary *SavedToolTip = [Tests objectAtIndex:i];
-                
-                StartScreen.LeaderboardsToolTipTap = [[SavedToolTip objectForKey:@"Visible"] boolValue];
-            }
-        }
-        @catch (NSException *e)
-        {
-            NSLog(@"Caught exception while loading chapter unlocks: %@\n", e);
-        }
-#endif
-        
-        PopErrorContext();
-        
-    }
-
-
-void SaveToolTip()
-{
-    PushErrorContext("While saving ToolTip Visible:\n");
-    
-#ifdef PLATFORM_IPHONE_OR_MAC
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:@"Leaderboard.ToolTip"];
-    
-    NSMutableArray *Tests = [[NSMutableArray alloc] init];
-    for(int i = 0; i < 1; i++)
-    {
-        NSDictionary *Test = [NSDictionary dictionaryWithObjectsAndKeys:
-                              [NSNumber numberWithBool:StartScreen.LeaderboardsToolTipTap], @"Visible", nil];
-                              
-        [Tests addObject:Test];
-    }
-    
-    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                          [NSNumber numberWithInt:1], @"version",
-                          Tests, @"ThisTest", nil];
-    
-    [dict writeToFile:filePath atomically:YES];
-    
-    [Tests release];
-#endif
-    
-    PopErrorContext();
-    
 }
