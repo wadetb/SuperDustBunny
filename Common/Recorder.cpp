@@ -166,7 +166,7 @@ void UploadRecording()
     CurData += MinimapHeader.SolidSize;
     
     memcpy(CurData, MinimapAction, MinimapHeader.ActionSize);
-    CurData += MinimapHeader.ActionSize;
+    //CurData += MinimapHeader.ActionSize;
     
 #ifdef PLATFORM_WINDOWS
 	DWORD dwBytesWritten = 0;

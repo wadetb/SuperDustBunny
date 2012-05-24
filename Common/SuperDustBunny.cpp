@@ -208,6 +208,8 @@ void AdvanceToNextPage()
 
 	if (Chapter.PageNum < Chapter.NPages-1)
 	{
+        sxPlaySound(&NextPageSound);
+
         if (IsRecordingActive())
     		StopRecording(RESULT_NEXT_PAGE);
         
@@ -292,8 +294,6 @@ void SetGameState_StartScreen()
 {
 	GameState = GAMESTATE_START_SCREEN;
 
-    ResetLightState();
-    
     if (!AssetsLoaded)
     {
         LoadAssets();
@@ -303,7 +303,6 @@ void SetGameState_StartScreen()
     ClearChapterList();
     LoadChapterList();
     LoadChapterUnlocks();
-    
     
     if (CurrentChapter == -1)
     {
@@ -449,6 +448,7 @@ static void UpdatePauseScreen()
 #ifdef PLATFORM_IPHONE
             [TestFlight passCheckpoint:@"Escaped to the home screen"];
 #endif
+            TurnOffVacuum();
             SetGameState_StartScreen();
         }
 
@@ -456,10 +456,12 @@ static void UpdatePauseScreen()
         {
             if (msX < 384-64 && msY >= 700 && msY <= 1000)
             {
+                TurnOffVacuum();
                 SkipToPreviousPage();
             }
             if (msX > 384+64 && msY >= 700 && msY <= 1000)
             {
+                TurnOffVacuum();
                 SkipToNextPage();
             }
         }

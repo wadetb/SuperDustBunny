@@ -183,6 +183,7 @@ static void UpdateHotDateTutorial(STutorial* Tutorial)
         if (Tutorial->SequenceTimer == 0)
         {
             Dusty.FloatX -= 50;
+            sxPlaySound(&HotDateSound);
         }
         
         Tutorial->SequenceTimer += 1.0f/60.0f;
@@ -294,6 +295,7 @@ static void UpdateBedtimeTutorial(STutorial* Tutorial)
                 Hangers[NHangers-1].X += 0.0f;
                 Hangers[NHangers-1].Y += 80.0f;
             }
+            sxPlaySound(&BedtimeSound);
         }
 
         Tutorial->SequenceTimer += 1.0f/60.0f;
@@ -405,6 +407,7 @@ static void UpdateGraduationTutorial(STutorial* Tutorial)
             CreateBaby(7, Dusty.FloatY/64-1, 0, DUSTYHAT_GRADUATION, false);
             CreateBaby(8, Dusty.FloatY/64-1, 0, DUSTYHAT_GRADUATION, false);
             CreateBaby(9, Dusty.FloatY/64-1, 0, DUSTYHAT_GRADUATION, false);
+            sxPlaySound(&GraduationSound);
         }
         
         Tutorial->SequenceTimer += 1.0f/60.0f;
@@ -513,6 +516,8 @@ static void UpdateBirthdayTutorial(STutorial* Tutorial)
         if (Dusty.FloatY + Dusty.Bottom >= Tutorial->Y)
         {
             LightState.ForegroundShadows = false;
+
+            sxPlaySound(&BirthdaySound);
 
             // Turn on cake.
             SPage* Page = &Chapter.Pages[Chapter.PageNum];

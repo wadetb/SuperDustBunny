@@ -564,15 +564,6 @@ static void UpdateDusty_Stand()
 
 void SetDustyState_Jump( bool OffWall )
 {
-	if ( OffWall )
-	{
-		sxPlaySound( &DustyWallJumpSound );
-	}
-	else
-	{
-		//sxPlaySound( &DustyJumps );
-	}
-
     if (Dusty.PowerUpTimer > 0)
 	{
 		Dusty.FloatVelocityX = 12.0f;
@@ -600,6 +591,9 @@ void SetDustyState_JumpWithVelocity( float VX, float VY )
 {
 	Dusty.FloatY -= 5.0f;
     
+    if (Dusty.State == DUSTYSTATE_WALLJUMP)
+        sxPlaySound( &DustyWallJumpSound );
+
     if (Dusty.ComboCount >= 2)
     {
         VX *= Tweak.DustyJumpPowerScaleAfter3Combo;

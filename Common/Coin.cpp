@@ -82,13 +82,13 @@ void UpdateCoins()
 		
 			if (Dist < 100)
 			{
+				sxPlaySound(&CoinSound);  
+
 				Coin->State = COINSTATE_COLLECTED;
 				
                 Create1UpBubble(Coin->X, Coin->Y);
                 UpdateMinimap(MINIMAP_EXTRA_LIFE);
-
-				sxPlaySound(&CoinVacuumedUpSound);  
-			} 	                       	    
+			}
 		}
 		else if (Coin->State == COINSTATE_COLLECTED)
 		{

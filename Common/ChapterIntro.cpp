@@ -41,8 +41,6 @@ void InitChapterIntro()
 	RemoteControl.Enabled = true;
 	SetDustyState_IntroStand();
 	Dusty.SpriteTransition = 10;
-
-	TurnOffVacuum();
 }
 
 void HideChapterIntro()
@@ -70,9 +68,6 @@ void DisplayChapterIntro()
 
 static void ChapterIntro_Advance()
 {
-    if (!Chapter.PageProps.VacuumOff)
-        TurnOnVacuum(500, 2.0f, false);
-
 	Dusty.NoCollision = false;
 	RemoteControl.Enabled = false;
 

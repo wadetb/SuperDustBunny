@@ -98,6 +98,13 @@ gxSprite* ClothespinSprites[] =
     &Clothespin1Sprite,
 };
 
+sxSound* StaplerSoundForType[] =
+{
+    &StaplerSound,
+    &JelloSound,
+    &ClothespinSound,
+};
+
 void DisplayStaplers()
 {
     for (int i = 0; i < NStaplers; i++)
@@ -173,6 +180,8 @@ void UpdateStaplers()
             Stapler->Timer++;
             if (Stapler->Timer == 10)
             {
+                sxPlaySound(StaplerSoundForType[Stapler->Type]);
+                
                 Dusty.FloatY -= 10;
                 
                 if (Stapler->ChargeTime >= 0.25f)

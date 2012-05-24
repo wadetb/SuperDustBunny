@@ -203,6 +203,7 @@ void UploadChapterScore()
         Settings.LeaderboardName = [[textField text] retain];
         
         name = [textField text];
+        [textField release];
         
         [alert release];
     }

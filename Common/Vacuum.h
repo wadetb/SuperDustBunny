@@ -61,9 +61,11 @@ struct SVacuum
 	float Y;
 
 	float Volume;
+    float OnVolume;
+    float JamVolume;
     
+    int TurnOnTimer;
     int BlinkTimer;
-
     int ChargeTimer;
 
     float AverageDustySpeed;

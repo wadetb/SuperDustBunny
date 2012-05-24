@@ -91,6 +91,7 @@ void sxLoadSound(const char* filename, sxSound* sound)
 
     if (data == NULL)
     {
+        NSLog(@"Could not load sound '%s'.", filename);
         sound->buffer = 0;
         sound->source = 0;
         return;

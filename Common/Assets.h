@@ -235,11 +235,28 @@ extern sxSound VacuumTurnOffSound;
 extern sxSound VacuumJamSound;
 extern sxSound VacuumOnSound;
 
-extern sxSound BlockBreakSound;
+extern sxSound StaplerSound;
+extern sxSound ClothespinSound;
 extern sxSound JelloSound;
+
+extern sxSound BlockBreakSound;
 extern sxSound CoinVacuumedUpSound;
 extern sxSound GearGrindSound;
 extern sxSound TennisBallVacuumedUpSound;
+
+extern sxSound NextPageSound;
+
+extern sxSound BalloonPopSound;
+
+extern sxSound GearSound;
+extern sxSound CoinSound;
+
+extern sxSound MenuSwipeSound;
+
+extern sxSound BedtimeSound;
+extern sxSound GraduationSound;
+extern sxSound BirthdaySound;
+extern sxSound HotDateSound;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 //                                                    Asset Function Declarations                                                          //
@@ -250,6 +267,7 @@ void LoadBundleAssetList();
 void LoadAssets();
 
 void LoadSpriteAsset(const char* FileName, gxSprite* Sprite);
+void LoadSoundAsset( const char* FileName, sxSound* Sound );
 void* LoadAssetFile(const char* FileName, void** Data, fpos_t* DataSize);
 
 #endif

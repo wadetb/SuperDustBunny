@@ -243,11 +243,28 @@ sxSound VacuumTurnOffSound;
 sxSound VacuumJamSound;
 sxSound VacuumOnSound;
 
-sxSound BlockBreakSound;
+sxSound StaplerSound;
+sxSound ClothespinSound;
 sxSound JelloSound;
+
+sxSound BlockBreakSound;
 sxSound CoinVacuumedUpSound;
 sxSound GearGrindSound;
 sxSound TennisBallVacuumedUpSound;
+
+sxSound NextPageSound;
+
+sxSound BalloonPopSound;
+
+sxSound GearSound;
+sxSound CoinSound;
+
+sxSound MenuSwipeSound;
+
+sxSound BedtimeSound;
+sxSound GraduationSound;
+sxSound BirthdaySound;
+sxSound HotDateSound;
 
 #ifdef PLATFORM_MAC
 
@@ -873,6 +890,16 @@ void LoadSpriteAsset(const char* FileName, gxSprite* Sprite)
 #endif
 }
 
+void LoadSoundAsset( const char* FileName, sxSound* Sound )
+{
+#ifdef PLATFORM_WINDOWS_OR_MAC
+	char Work[1024];
+	GetBundleFileName(FileName, Work, sizeof(Work));
+    
+    sxLoadSound(Work, Sound);
+#endif
+}
+
 void LoadBundleAssetList()
 {
 #ifdef PLATFORM_IPHONE  
@@ -1097,29 +1124,46 @@ void LoadAssets()
 	//                                                    Sound Assets                                                                         //
 	//-----------------------------------------------------------------------------------------------------------------------------------------//
 
-	sxLoadSound("Assets/dusty-to-jump.wav", &DustyToJumpSound);
-	sxLoadSound("Assets/dusty-jump.wav", &DustyJumpSound);
-	sxLoadSound("Assets/dusty-walljump.wav", &DustyWallJumpSound);
-	sxLoadSound("Assets/dusty-launch.wav", &DustyLaunchSound);
-	sxLoadSound("Assets/dusty-win.wav", &DustyWinSound);
+	LoadSoundAsset("Audio/dusty-to-jump.wav", &DustyToJumpSound);
+	LoadSoundAsset("Audio/dusty-jump.wav", &DustyJumpSound);
+	LoadSoundAsset("Audio/dusty-walljump.wav", &DustyWallJumpSound);
+	LoadSoundAsset("Audio/dusty-launch.wav", &DustyLaunchSound);
+	LoadSoundAsset("Audio/dusty-win.wav", &DustyWinSound);
 
-	sxLoadSound("Assets/song-1.wav", &Song1Sound);
-	sxLoadSound("Assets/song-2.wav", &Song2Sound);
-	sxLoadSound("Assets/song-3.wav", &Song3Sound);
+	LoadSoundAsset("Audio/song-1.wav", &Song1Sound);
+	LoadSoundAsset("Audio/song-2.wav", &Song2Sound);
+	LoadSoundAsset("Audio/song-3.wav", &Song3Sound);
 
-	sxLoadSound("Assets/vacuum-clog.wav", &VacuumClogSound);
-	sxLoadSound("Assets/vacuum-clang.wav", &VacuumClangSound);
-	sxLoadSound("Assets/vacuum-turnon.wav", &VacuumTurnOnSound);
-	sxLoadSound("Assets/vacuum-turnoff.wav", &VacuumTurnOffSound);
-	sxLoadSound("Assets/vacuum-jam.wav", &VacuumJamSound);
-	sxLoadSound("Assets/vacuum-on.wav", &VacuumOnSound);
-	
-	sxLoadSound("Assets/BlockBreak.wav", &BlockBreakSound);
-	sxLoadSound("Assets/Jello.wav", &JelloSound);
-	sxLoadSound("Assets/CoinVacuumedUp.wav", &CoinVacuumedUpSound);
-	sxLoadSound("Assets/GearGrind.wav", &GearGrindSound);
-	sxLoadSound("Assets/TennisBallVacuumedUp.wav", &TennisBallVacuumedUpSound);
-    
+	LoadSoundAsset("Audio/vacuum-clog.wav", &VacuumClogSound);
+	LoadSoundAsset("Audio/vacuum-clang.wav", &VacuumClangSound);
+	LoadSoundAsset("Audio/vacuum-turnon.wav", &VacuumTurnOnSound);
+	LoadSoundAsset("Audio/vacuum-turnoff.wav", &VacuumTurnOffSound);
+	LoadSoundAsset("Audio/vacuum-jam.wav", &VacuumJamSound);
+	LoadSoundAsset("Audio/vacuum-on.wav", &VacuumOnSound);
+
+    LoadSoundAsset("Audio/stapler.wav", &StaplerSound);
+	LoadSoundAsset("Audio/clothespin.wav", &ClothespinSound);
+	LoadSoundAsset("Audio/jello.wav", &JelloSound);
+
+	LoadSoundAsset("Audio/BlockBreak.wav", &BlockBreakSound);
+	LoadSoundAsset("Audio/CoinVacuumedUp.wav", &CoinVacuumedUpSound);
+	LoadSoundAsset("Audio/GearGrind.wav", &GearGrindSound);
+	LoadSoundAsset("Audio/TennisBallVacuumedUp.wav", &TennisBallVacuumedUpSound);
+
+    LoadSoundAsset("Audio/next-page.wav", &NextPageSound);
+
+    LoadSoundAsset("Audio/balloon-pop.wav", &BalloonPopSound);
+
+    LoadSoundAsset("Audio/gear.wav", &GearSound);
+    LoadSoundAsset("Audio/coin.wav", &CoinSound);
+
+    LoadSoundAsset("Audio/menu-swipe.wav", &MenuSwipeSound);
+
+    LoadSoundAsset("Audio/bedtime.wav", &BedtimeSound);
+    LoadSoundAsset("Audio/graduation.wav", &GraduationSound);
+    LoadSoundAsset("Audio/birthday.wav", &BirthdaySound);
+    LoadSoundAsset("Audio/hotdate.wav", &HotDateSound);
+
     double EndTime = GetCurrentTime();
     LogMessage("Asset loading took %.1f seconds.\n", EndTime-StartTime);
 }

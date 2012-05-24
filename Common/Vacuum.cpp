@@ -126,10 +126,15 @@ void InitVacuum()
     VacuumQueue[MAX_VACUUM_QUEUE_NODES-1].Next = -1;
     VacuumFreeHead = 0;
 
+    Vacuum.TurnOnTimer = 0;
+    
     Vacuum.ChargeTimer = 0;
     Vacuum.AverageDustySpeed = 0;
     
     RestartVacuumForceMap();
+    
+    Vacuum.OnVolume = 0.0f;
+    Vacuum.JamVolume = 0.0f;
     
 	// These two sounds loop continuously.
 	sxSetSoundVolume(&VacuumOnSound, 0);
@@ -196,7 +201,7 @@ void DisplayVacuum()
             }
             if (BlinkSprite)
             {
-                AddLitSpriteXCenteredScaledRotated(LIGHTLIST_VACUUM, BlinkSprite, VacuumX, VacuumY, 1.0f, VacuumAngle[Vacuum.Dir]);
+                AddLitSpriteXCenteredScaledRotatedAlpha(LIGHTLIST_VACUUM, BlinkSprite, VacuumX, VacuumY, 1.0f, VacuumAngle[Vacuum.Dir], LightsAlpha);
             }
         }
         else if (Vacuum.Type == VACUUM_DUSTBUSTER)
@@ -231,14 +236,19 @@ void DisplayVacuum()
 
 void UpdateVacuumSound()
 {
+        
 	float TargetVolume;
-	if (Vacuum.State == VACUUMSTATE_RETREAT)
+    if (GamePause)
+    {
+        TargetVolume = 0;
+    }
+	else if (Vacuum.State == VACUUMSTATE_RETREAT)
 	{
-		TargetVolume = 0.8f;
+		TargetVolume = 0.3f;
 	}
 	else
 	{
-		TargetVolume = 1.0f;
+		TargetVolume = 0.5f;
 	}
 
 	if (Vacuum.Volume != TargetVolume)
@@ -249,27 +259,37 @@ void UpdateVacuumSound()
 			Vacuum.Volume -= 0.01f;
 	}
 
+    Vacuum.TurnOnTimer++;
+    
 	if (Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
-		if (VacuumOnSound.volume < 1.0f)
-			sxSetSoundVolume(&VacuumOnSound, VacuumOnSound.volume + 0.1f);
-		if (VacuumJamSound.volume > 0.0f)
-			sxSetSoundVolume(&VacuumJamSound, VacuumJamSound.volume - 0.1f);
+		if (Vacuum.OnVolume < 1.0f)
+        {
+            if (Vacuum.TurnOnTimer >= 20)
+                Vacuum.OnVolume += 0.02f;
+            else if (Vacuum.TurnOnTimer >= 120)
+                Vacuum.OnVolume += 0.1f;
+        }
+		if (Vacuum.JamVolume > 0.0f)
+            Vacuum.JamVolume -= 0.1f;
 	}
 	else if (Vacuum.State == VACUUMSTATE_RETREAT)
 	{
-		if (VacuumJamSound.volume < 1.0f)
-			sxSetSoundVolume(&VacuumJamSound, VacuumJamSound.volume + 0.1f);
-		if (VacuumOnSound.volume > 0.0f)
-			sxSetSoundVolume(&VacuumOnSound, VacuumOnSound.volume - 0.1f);
+		if (Vacuum.JamVolume < 1.0f)
+            Vacuum.JamVolume += 0.1f;
+		if (Vacuum.OnVolume > 0.0f)
+            Vacuum.OnVolume -= 0.1f;
 	}
 	else if (Vacuum.State == VACUUMSTATE_OFF)
 	{
-		if (VacuumTurnOffSound.volume < 1.0f)
-			sxSetSoundVolume(&VacuumTurnOffSound, VacuumTurnOffSound.volume + 0.1f);
-		if (VacuumOnSound.volume > 0.0f)
-			sxSetSoundVolume(&VacuumOnSound, VacuumOnSound.volume - 0.1f);
+		if (Vacuum.OnVolume > 0.0f)
+			Vacuum.OnVolume -= 0.1f;
+		if (Vacuum.JamVolume > 0.0f)
+			Vacuum.JamVolume -= 0.1f;
 	}
+    
+    sxSetSoundVolume(&VacuumOnSound, Vacuum.OnVolume * Vacuum.Volume);
+    sxSetSoundVolume(&VacuumJamSound, Vacuum.JamVolume * Vacuum.Volume * 0.75f);
 }
 
 static void CreateVacuumSmoke(int Count)
@@ -452,8 +472,12 @@ void TurnOffVacuum()
 	if (Vacuum.State != VACUUMSTATE_OFF)
 	{
 		Vacuum.State = VACUUMSTATE_OFF;
-		sxSetSoundVolume(&VacuumTurnOffSound, 0);
-		sxPlaySound(&VacuumTurnOffSound);
+        
+        if (Vacuum.OnVolume > 0)
+        {
+            sxSetSoundVolume(&VacuumTurnOffSound, Vacuum.OnVolume * Vacuum.Volume);
+            sxPlaySound(&VacuumTurnOffSound);
+        }
 	}
     
     LitSceneOffsetX = 0.0f;
@@ -463,6 +487,13 @@ void TurnOffVacuum()
 
 void TurnOnVacuum(float InitialDistance, float DelayBeforeMoving, bool Charging)
 {
+    Vacuum.OnVolume = 0.0f;
+    Vacuum.JamVolume = 0.0f;
+    sxSetSoundVolume(&VacuumOnSound, 0.0f);
+    sxSetSoundVolume(&VacuumJamSound, 0.0f);
+    sxPlaySound(&VacuumTurnOnSound);
+    Vacuum.TurnOnTimer = 0;
+        
     Vacuum.State = VACUUMSTATE_ONSCREEN;
 
     Vacuum.Timer = -(int)(DelayBeforeMoving*60);
@@ -477,9 +508,6 @@ void TurnOnVacuum(float InitialDistance, float DelayBeforeMoving, bool Charging)
     Vacuum.Y = Dusty.FloatY - FY*InitialDistance;
 
     Vacuum.Charging = Charging;
-    
-//    sxSetSoundVolume(&VacuumTurnOnSound, 0);
-//    sxPlaySound(&VacuumTurnOnSound);
 }
 
 bool IsInVacuum(float X, float Y)

@@ -50,6 +50,7 @@ struct SLitQuad
 
 struct SLightState
 {
+    bool LightsOff;
     bool ForegroundShadows;
 	unsigned int AmbientColor;
 };

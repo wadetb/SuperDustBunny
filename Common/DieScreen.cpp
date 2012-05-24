@@ -32,8 +32,8 @@ void InitDieScreen()
 	DieScreen.Pressed = false;
 	DieScreen.Timer = 0;
     DieScreen.TearTime = 0;
-
-	Chapter.PageProps.LightsOff = false;
+    
+    ResetLightState();
 }
 
 gxSprite* TearSprites[4] =

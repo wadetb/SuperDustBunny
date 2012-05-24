@@ -123,8 +123,9 @@ void UpdateGear()
 
 			if (Dist < 100)
 			{
+                sxPlaySound(&GearSound);
+
 				Gear->State = GEARSTATE_FALLING;
-				sxPlaySound( &GearGrindSound );
 				
                 AwardBonus(Gear->X, Gear->Y - 100);
                 UpdateMinimap(MINIMAP_JAM);

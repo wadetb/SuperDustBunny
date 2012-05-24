@@ -663,7 +663,7 @@ static void DrawShadows(ELightList List, gxSprite* FinalRT)
     }
 */
     
-    if (Chapter.PageProps.LightsOff && Flashlight.Active)
+    if (LightState.LightsOff && Flashlight.Active)
     {
         gxSetShaderConstant2(ShadowShadowOffset, 0, 0);
         gxSetShaderConstant2(ShadowShadowScale, 1.25f, 1.25f);
@@ -884,12 +884,11 @@ void ResetLightState()
     LitSceneOffsetX = 0;
     LitSceneOffsetY = 0;
 
+    LightState.LightsOff = false;
+    
     LightState.ForegroundShadows = true;
 
-	if (Chapter.PageProps.LightsOff)
-		LightState.AmbientColor = gxRGBA32(16, 16, 16, 255);
-	else
-		LightState.AmbientColor = gxRGBA32(128, 128, 128, 255);
+    LightState.AmbientColor = gxRGBA32(128, 128, 128, 255);
 }
 
 void ResetLighting()

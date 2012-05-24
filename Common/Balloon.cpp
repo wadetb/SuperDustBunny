@@ -218,6 +218,8 @@ void UpdateBalloons()
         {
             if (Balloon->Timer >= 3.0f)
             {
+                sxPlaySound(&BalloonPopSound);
+
                 Balloon->State = BALLOONSTATE_POP;
                 CreateBalloonPop(Balloon->X, Balloon->Y);
                 
@@ -239,6 +241,8 @@ void UpdateBalloons()
                 
                 if (Dusty.State != DUSTYSTATE_BALLOONRIDE)
                 {
+                    sxPlaySound(&BalloonPopSound);
+                    
                     Balloon->DustyOnBoard = false;
 
                     Balloon->State = BALLOONSTATE_POP;

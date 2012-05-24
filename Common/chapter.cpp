@@ -1054,6 +1054,13 @@ static void CreatePageObjects()
         CreateBaby(Chapter.StartX/64, (Chapter.StartY-32)/64, 0, Score.BabyHats[i], true);
     
     ResetLightState();
+    
+    LightState.LightsOff = Chapter.PageProps.LightsOff;
+    
+	if (Chapter.PageProps.LightsOff)
+		LightState.AmbientColor = gxRGBA32(16, 16, 16, 255);
+	else
+		LightState.AmbientColor = gxRGBA32(128, 128, 128, 255);
 }
 
 void SetCurrentPage(int PageNum)

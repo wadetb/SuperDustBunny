@@ -183,6 +183,8 @@ void InitStartScreen()
     StartScreen.LeaderboardsToolTipVisible = false;  
     
     StartScreen.LeaderboardsUnlocked = Chapters[CurrentChapter].Completed;
+    
+    ResetLightState();
 }
 
 static void StartScreen_Advance()
@@ -429,6 +431,8 @@ void UpdateStartScreen()
         
     if (NewItem != StartScreen.CurItem)
     {
+        sxPlaySound(&MenuSwipeSound);
+
         StartScreen.PrevItem = StartScreen.CurItem;
         StartScreen.CurItem = NewItem;
         StartScreen.BackgroundFadeAlpha = 1.0f;

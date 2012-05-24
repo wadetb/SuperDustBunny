@@ -123,6 +123,8 @@ void InitWinScreen()
 	WinScreen.Pressed = false;
     WinScreen.Timer = 0;
     WinScreen.SlideIn = 1.0f;
+    
+    ResetLightState();
 }
 
 void DisplayWinScreen()
