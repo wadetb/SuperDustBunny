@@ -892,6 +892,19 @@ void LoadSpriteAsset(const char* FileName, gxSprite* Sprite)
 
 void LoadSoundAsset( const char* FileName, sxSound* Sound )
 {
+#ifdef PLATFORM_IPHONE
+    SAssetList* AssetList;
+    SAsset* Asset;
+    GetAsset(FileName, &AssetList, &Asset);
+    
+    if (Asset)
+    {
+        char Work[1024];
+        snprintf(Work, sizeof(Work), "%s/%s", AssetList->RootDirectory, Asset->RawFileName);
+        sxLoadSound(Work, Sound);
+    }
+#endif
+    
 #ifdef PLATFORM_WINDOWS_OR_MAC
 	char Work[1024];
 	GetBundleFileName(FileName, Work, sizeof(Work));

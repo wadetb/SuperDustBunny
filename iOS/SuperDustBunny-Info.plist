@@ -19,7 +19,7 @@
 		<string>Icon-ipad.png</string>
 	</array>
 	<key>CFBundleIdentifier</key>
-	<string>pluszerogames.com.${PRODUCT_NAME:rfc1034identifier}</string>
+	<string>com.pluszerogames.${PRODUCT_NAME:rfc1034identifier}</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -33,7 +33,7 @@
 	<key>CFBundleURLTypes</key>
 	<array/>
 	<key>CFBundleVersion</key>
-	<string>1.0.20</string>
+	<string>1.0.22</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSMainNibFile</key>

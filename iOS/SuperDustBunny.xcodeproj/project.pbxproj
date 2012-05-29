@@ -651,7 +651,7 @@
 		085AA951132C572A00DF32CA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0440;
+				LastUpgradeCheck = 0430;
 				ORGANIZATIONNAME = Self;
 			};
 			buildConfigurationList = 085AA954132C572A00DF32CA /* Build configuration list for PBXProject "SuperDustBunny" */;
