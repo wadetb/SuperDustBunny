@@ -23,6 +23,7 @@
 #include "GameScore.h"
 #include "Tweak.h"
 #include "Baby.h"
+#include "Music.h"
 
 
 SDusty Dusty;
@@ -1424,6 +1425,9 @@ void SetDustyState_Die(EDeathType Death)
 	Dusty.State = DUSTYSTATE_DIE;
     
     UpdateMinimap(MINIMAP_DIE);
+    
+    StopMusicTrack(MUSIC_CHAPTER);
+    QueueMusicTrack(MUSIC_CHAPTER, &DieMusic);
 }
 
 static void DisplayDusty_Die()

@@ -266,6 +266,14 @@ sxSound GraduationSound;
 sxSound BirthdaySound;
 sxSound HotDateSound;
 
+//-----------------------------------------------------------------------------------------------------------------------------------------//
+//                                                    Music Assets                                                                         //
+//-----------------------------------------------------------------------------------------------------------------------------------------//
+
+SMusicAsset TitleScreenMusic;
+SMusicAsset WinMusic;
+SMusicAsset DieMusic;
+
 #ifdef PLATFORM_MAC
 
 char RootDirectory[1024];
@@ -913,6 +921,43 @@ void LoadSoundAsset( const char* FileName, sxSound* Sound )
 #endif
 }
 
+void LoadMusicAsset(const char* FileName, SMusicAsset* Asset, bool Looping)
+{
+#ifdef PLATFORM_IPHONE
+    SAssetList* AssetList;
+    SAsset* Asset;
+    GetAsset(FileName, &AssetList, &Asset);
+    
+    if (Asset)
+    {
+        char Work[1024];
+        snprintf(Work, sizeof(Work), "%s/%s", AssetList->RootDirectory, Asset->RawFileName);
+        Asset->FileName = strdup(Work);
+    }
+    else
+        Asset->FileName = NULL;
+#endif
+    
+#ifdef PLATFORM_WINDOWS_OR_MAC
+	char Work[1024];
+	GetBundleFileName(FileName, Work, sizeof(Work));
+    
+    Asset->FileName = strdup(Work);
+#endif
+    
+#ifdef PLATFORM_IPHONE_OR_MAC
+    NSURL *url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:Asset->FileName]];
+    
+    NSError *error;
+    AVAudioPlayer* player = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
+    if (Looping)
+        [player setNumberOfLoops:-1];
+    [player prepareToPlay];
+    
+    Asset->Player = player;
+#endif
+}
+
 void LoadBundleAssetList()
 {
 #ifdef PLATFORM_IPHONE  
@@ -1176,6 +1221,14 @@ void LoadAssets()
     LoadSoundAsset("Audio/graduation.wav", &GraduationSound);
     LoadSoundAsset("Audio/birthday.wav", &BirthdaySound);
     LoadSoundAsset("Audio/hotdate.wav", &HotDateSound);
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------//
+    //                                                    Sound Assets                                                                         //
+    //-----------------------------------------------------------------------------------------------------------------------------------------//
+    
+    LoadMusicAsset("Music/scratchbgm-title.wav", &TitleScreenMusic, true);
+    LoadMusicAsset("Music/scratchbgm-death.wav", &DieMusic, false);
+    LoadMusicAsset("Music/scratchbgm-medal.wav", &WinMusic, false);
 
     double EndTime = GetCurrentTime();
     LogMessage("Asset loading took %.1f seconds.\n", EndTime-StartTime);

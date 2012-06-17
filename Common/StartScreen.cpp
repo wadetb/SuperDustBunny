@@ -14,6 +14,7 @@
 #include "Text.h"
 #include "Settings.h"
 #include "LeaderboardScreen.h"
+#import "Music.h"
 
 #ifdef PLATFORM_IPHONE
 #import "SuperDustBunnyViewController.h"
@@ -185,6 +186,9 @@ void InitStartScreen()
     StartScreen.LeaderboardsUnlocked = Chapters[CurrentChapter].Completed;
     
     ResetLightState();
+    
+    StopMusicTrack(MUSIC_CHAPTER);
+    QueueMusicTrack(MUSIC_CHAPTER, &TitleScreenMusic);
 }
 
 static void StartScreen_Advance()
@@ -193,8 +197,6 @@ static void StartScreen_Advance()
     StartScreen.Pressed = false;
     StartScreen.PressedTime = 0.0f;
     StartScreen.ReleasedAtLeastOnce = false;
-    
-
     
 	if (StartScreen.CurItem >= STARTSCREEN_ITEM_FIRST_CHAPTER)
 	{
@@ -337,7 +339,7 @@ void UpdateStartScreen()
         if (msY < 200 && msX < 200 && msButton1 && !msOldButton1)
         {
 #ifdef PLATFORM_IPHONE
-            [TestFlight passCheckpoint:[NSString stringWithFormat:@"Closed Leaderboards", Chapters[CurrentChapter].Name]];
+            [TestFlight passCheckpoint:@"Closed Leaderboards"];
 #endif
             StartScreen.LeaderboardVisible = false;            
         }

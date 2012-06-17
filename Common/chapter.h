@@ -155,6 +155,12 @@ struct SChapter
     bool HasBackground;
     gxSprite BackgroundSprite;
     
+    bool HasMusic;
+    SMusicAsset Music;
+    
+    bool HasIntroMusic;
+    SMusicAsset IntroMusic;
+    
 	float StartX, StartY;
     int StartDirection;
 	float EndX, EndY;
@@ -212,6 +218,9 @@ extern float ScrollY;
 
 void LoadChapter(const char* filename);
 void ClearChapter();
+
+void StartChapterMusic();
+void RestartChapterMusic();
 
 void SetCurrentPage(int PageNum);
 

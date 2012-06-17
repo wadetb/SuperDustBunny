@@ -10,6 +10,10 @@
 #ifndef ASSETS_H
 #define ASSETS_H
 
+#ifdef PLATFORM_IPHONE_OR_MAC
+#import <AVFoundation/AVAudioPlayer.h>
+#endif
+
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 //                                                    Sprite Assets                                                                        //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
@@ -259,6 +263,22 @@ extern sxSound BirthdaySound;
 extern sxSound HotDateSound;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------//
+//                                                    Music Assets                                                                         //
+//-----------------------------------------------------------------------------------------------------------------------------------------//
+
+struct SMusicAsset
+{
+    const char* FileName;
+#ifdef PLATFORM_IPHONE_OR_MAC
+    AVAudioPlayer* Player;
+#endif
+};
+
+extern SMusicAsset TitleScreenMusic;
+extern SMusicAsset WinMusic;
+extern SMusicAsset DieMusic;
+
+//-----------------------------------------------------------------------------------------------------------------------------------------//
 //                                                    Asset Function Declarations                                                          //
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
@@ -267,7 +287,8 @@ void LoadBundleAssetList();
 void LoadAssets();
 
 void LoadSpriteAsset(const char* FileName, gxSprite* Sprite);
-void LoadSoundAsset( const char* FileName, sxSound* Sound );
+void LoadSoundAsset(const char* FileName, sxSound* Sound);
+void LoadMusicAsset(const char* FileName, SMusicAsset* Asset, bool Looping);
 void* LoadAssetFile(const char* FileName, void** Data, fpos_t* DataSize);
 
 #endif

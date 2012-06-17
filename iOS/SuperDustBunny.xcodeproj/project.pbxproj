@@ -84,6 +84,10 @@
 		08A9E0101447B6CD009A76B9 /* Baby.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08A9E00F1447B6CD009A76B9 /* Baby.cpp */; };
 		08A9E0111447B6CD009A76B9 /* Baby.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08A9E00F1447B6CD009A76B9 /* Baby.cpp */; };
 		08BF391713466F4E002C1A7B /* Converted in Resources */ = {isa = PBXBuildFile; fileRef = 08BF391613466F4E002C1A7B /* Converted */; };
+		08C607B1158D6974005F3353 /* Music.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C607B0158D6974005F3353 /* Music.cpp */; };
+		08C607B2158D6974005F3353 /* Music.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C607B0158D6974005F3353 /* Music.cpp */; };
+		08C607B4158D70AE005F3353 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08C607B3158D70AE005F3353 /* AVFoundation.framework */; };
+		08C607B6158D70BA005F3353 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08C607B5158D70BA005F3353 /* AVFoundation.framework */; };
 		08D1C6E8142108A500046259 /* LeaderboardScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D1C6E7142108A500046259 /* LeaderboardScreen.cpp */; };
 		08D1C6E9142108A500046259 /* LeaderboardScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D1C6E7142108A500046259 /* LeaderboardScreen.cpp */; };
 		08D2E1AB13660E0300AD31B8 /* PowerUp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08D2E1A913660E0300AD31B8 /* PowerUp.cpp */; };
@@ -278,6 +282,10 @@
 		08A9E00D1447B6BF009A76B9 /* Baby.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Baby.h; sourceTree = "<group>"; };
 		08A9E00F1447B6CD009A76B9 /* Baby.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Baby.cpp; sourceTree = "<group>"; };
 		08BF391613466F4E002C1A7B /* Converted */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Converted; path = ../../Converted; sourceTree = "<group>"; };
+		08C607AE158D6962005F3353 /* Music.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Music.h; sourceTree = "<group>"; };
+		08C607B0158D6974005F3353 /* Music.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Music.cpp; sourceTree = "<group>"; };
+		08C607B3158D70AE005F3353 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		08C607B5158D70BA005F3353 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		08D1C6E7142108A500046259 /* LeaderboardScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LeaderboardScreen.cpp; sourceTree = "<group>"; };
 		08D1C6EB142108F100046259 /* LeaderboardScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeaderboardScreen.h; sourceTree = "<group>"; };
 		08D2E1A913660E0300AD31B8 /* PowerUp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PowerUp.cpp; sourceTree = "<group>"; };
@@ -315,6 +323,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				08C607B6158D70BA005F3353 /* AVFoundation.framework in Frameworks */,
 				0837CAF9142BB7D20042DB5C /* MapKit.framework in Frameworks */,
 				0837CAF6142BB77C0042DB5C /* CoreLocation.framework in Frameworks */,
 				08899BAA1428E621008F7623 /* GameKit.framework in Frameworks */,
@@ -334,6 +343,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				08C607B4158D70AE005F3353 /* AVFoundation.framework in Frameworks */,
 				08899BAD1428E8EF008F7623 /* AddressBook.framework in Frameworks */,
 				08866BD1141AC34200D25BB8 /* Quartz.framework in Frameworks */,
 				08866BD2141AC34200D25BB8 /* QuartzCore.framework in Frameworks */,
@@ -361,6 +371,8 @@
 		085AA94F132C572A00DF32CA = {
 			isa = PBXGroup;
 			children = (
+				08C607B5158D70BA005F3353 /* AVFoundation.framework */,
+				08C607B3158D70AE005F3353 /* AVFoundation.framework */,
 				08BF391613466F4E002C1A7B /* Converted */,
 				08A8FC7313302BB300E45A98 /* Documentation */,
 				085AAA88132D0E7100DF32CA /* Converter */,
@@ -499,6 +511,8 @@
 				085AAA39132C5B9F00DF32CA /* Lighting.h */,
 				085AAA3A132C5B9F00DF32CA /* Lives.cpp */,
 				085AAA3B132C5B9F00DF32CA /* Lives.h */,
+				08C607B0158D6974005F3353 /* Music.cpp */,
+				08C607AE158D6962005F3353 /* Music.h */,
 				08D2E1A913660E0300AD31B8 /* PowerUp.cpp */,
 				08D2E1AA13660E0300AD31B8 /* PowerUp.h */,
 				085AAA3C132C5B9F00DF32CA /* rapidxml */,
@@ -759,6 +773,7 @@
 				0832E7F71445188400EDCAED /* Tweak.cpp in Sources */,
 				08A9E0101447B6CD009A76B9 /* Baby.cpp in Sources */,
 				08E69E6E146B8FC7004FEDEF /* Balloon.cpp in Sources */,
+				08C607B1158D6974005F3353 /* Music.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -815,6 +830,7 @@
 				08EBB211143BC834006D3EB6 /* Hanger.cpp in Sources */,
 				08A9E0111447B6CD009A76B9 /* Baby.cpp in Sources */,
 				08E69E6F146B8FC7004FEDEF /* Balloon.cpp in Sources */,
+				08C607B2158D6974005F3353 /* Music.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -858,6 +874,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -879,6 +896,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

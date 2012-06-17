@@ -12,6 +12,7 @@
 #include "Chapter.h"
 #include "GameScore.h"
 #include "Text.h"
+#include "Music.h"
 
 #ifdef PLATFORM_IPHONE
 #import "SuperDustBunnyViewController.h"
@@ -125,6 +126,9 @@ void InitWinScreen()
     WinScreen.SlideIn = 1.0f;
     
     ResetLightState();
+    
+    StopMusicTrack(MUSIC_CHAPTER);
+    QueueMusicTrack(MUSIC_CHAPTER, &WinMusic);
 }
 
 void DisplayWinScreen()

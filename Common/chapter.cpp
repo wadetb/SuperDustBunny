@@ -9,6 +9,7 @@
 
 #include "Common.h"
 #include "Chapter.h"
+#include "Music.h"
 #include "Dusty.h"
 #include "Barrel.h"
 #include "Coin.h"
@@ -823,6 +824,28 @@ void LoadChapter(const char* ChapterDir)
             Chapter.Theme = THEME_WORKSHOP;
     }
     
+    rapidxml::xml_attribute<char>* MusicAttr = ChapterNode->first_attribute("Music");
+    if (MusicAttr)
+    {
+        LoadMusicAsset(MusicAttr->value(), &Chapter.Music, true);
+        Chapter.HasMusic = true;
+    }
+    else
+    {
+        Chapter.HasMusic = false;
+    }
+    
+    rapidxml::xml_attribute<char>* IntroMusicAttr = ChapterNode->first_attribute("IntroMusic");
+    if (IntroMusicAttr)
+    {
+        LoadMusicAsset(IntroMusicAttr->value(), &Chapter.IntroMusic, false);
+        Chapter.HasIntroMusic = true;
+    }
+    else
+    {
+        Chapter.HasIntroMusic = false;
+    }
+    
    	rapidxml::xml_node<char>* PageNode = ChapterNode->first_node("Page");
 
     while (PageNode != NULL)
@@ -899,6 +922,24 @@ void ClearChapter()
 		free(Chapter.PageBlocks);
 		Chapter.PageBlocks = NULL;
 	}
+}
+
+void StartChapterMusic()
+{
+    StopMusicTrack(MUSIC_CHAPTER);
+    
+    if (Chapter.HasIntroMusic)
+        QueueMusicTrack(MUSIC_CHAPTER, &Chapter.IntroMusic);
+    if (Chapter.HasMusic)
+        QueueMusicTrack(MUSIC_CHAPTER, &Chapter.Music);
+}
+
+void RestartChapterMusic()
+{
+    StopMusicTrack(MUSIC_CHAPTER);
+    
+    if (Chapter.HasMusic)
+        QueueMusicTrack(MUSIC_CHAPTER, &Chapter.Music);
 }
 
 static void ClearPageObjects()

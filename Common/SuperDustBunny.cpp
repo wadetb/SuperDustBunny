@@ -681,6 +681,7 @@ static void UpdateGame_Transition()
 		{
 			LoadCurrentChapter();
 			InitChapterIntro();
+            StartChapterMusic();
             Dusty.Lives = 1;            
 			Wipe.Middle = false;
 		}
@@ -718,6 +719,7 @@ static void UpdateGame_Transition()
 		if (Wipe.Finished)
 		{
 			SetGameState_Playing();
+            RestartChapterMusic();
 		}
 	}
 	else if (GameTransition == GAMETRANSITION_DIE_SCREEN)
