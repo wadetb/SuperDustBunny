@@ -45,6 +45,7 @@ void QueueMusicTrack(EMusicTrack Track, SMusicAsset* Asset)
     }
     
     AVAudioPlayer* player = Asset->Player;
+    [player setCurrentTime:0];
     [player playAtTime:[player deviceCurrentTime] + totalDurationLeft];
 #endif
     

@@ -45,6 +45,7 @@
 #include "DieScreen.h"
 #include "WinScreen.h"
 #include "ChapterIntro.h"
+#import "Text.h"
 
 #ifdef PLATFORM_IPHONE
 #import "SuperDustBunnyViewController.h"
@@ -414,8 +415,14 @@ static void DisplayPauseScreen()
         
         if (Settings.ChapterSkip)
         {
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 192+16 - 600*PauseSlideIn, 850, -2.0f, 2.0f);
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 768-192-16 + 600*PauseSlideIn, 850, 2.0f, 1.0f);        
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 192+16 - 600*PauseSlideIn, 830, -1.75f, 1.75f);
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 768-192-16 + 600*PauseSlideIn, 830, 1.75f, 1.75f);
+
+            char Work[1024];
+            snprintf(Work, sizeof(Work), "%s", Chapter.Pages[Chapter.PageNum].Name);
+            for (int i = 0; i < strlen(Work); i++)
+                Work[i] = tolower(Work[i]);
+            DisplayString(LIGHTLIST_WIPE, Work, FORMAT_CENTER_X, 384, 1024-60, 0.75f);
         }
     }
     else
