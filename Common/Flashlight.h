@@ -13,6 +13,7 @@
 struct SFlashlightWaypointProperties
 {
 	float Delay;
+    float Toggle;
 };
 
 struct SFlashlight
@@ -21,6 +22,7 @@ struct SFlashlight
 	float X, Y;
 	int CurWaypoint;
 	float Timer;
+    float Lights;
 };
 
 

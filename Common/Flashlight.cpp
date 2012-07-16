@@ -20,6 +20,7 @@ struct SFlashlightWaypoint
 {
 	float X, Y;
 	float Delay;
+    float Toggle;
 };
 
 int NFlashlightWaypoints;
@@ -27,6 +28,8 @@ SFlashlightWaypoint FlashlightWaypoints[MAX_FLASHLIGHT_WAYPOINTS];
 
 
 SFlashlight Flashlight;
+
+
 
 
 void ParseFlashlightWaypointProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode)
@@ -47,6 +50,10 @@ void ParseFlashlightWaypointProperties(SBlock* Block, rapidxml::xml_node<char>* 
 		{
 			FlashlightWaypointProperties->Delay = (float)atof(Value);
 		}
+        else if (strcmp(Name, "toggle") == 0)
+        {
+            FlashlightWaypointProperties->Toggle = (float)atof(Value);
+        }
 		else if (strcmp(Name, "type") != 0 && strcmp(Name, "material") != 0)
 		{
 			ReportError("Unrecognized FlashlightWaypoint property '%s'='%s'.", Name, Value);
@@ -68,7 +75,8 @@ void CreateFlashlightWaypoint(int X, int Y, SFlashlightWaypointProperties* Prope
 	Waypoint->X = (float)X + 32;
 	Waypoint->Y = (float)Y + 32;
 
-	Waypoint->Delay = Properties->Delay;
+	Waypoint->Delay = Properties->Delay;    
+    Waypoint->Toggle = Properties->Toggle;
 }
 
 void ClearFlashlightWaypoints()
@@ -87,6 +95,7 @@ void InitFlashlight()
 		Flashlight.X = Waypoint->X;
 		Flashlight.Y = Waypoint->Y;
 		Flashlight.Timer = Waypoint->Delay;
+        Flashlight.Lights = Waypoint->Toggle;
 	}
 }
 
@@ -98,9 +107,21 @@ void UpdateFlashlight()
 
 		// If the flashlight reaches the waypoint, or if dusty passes the waypoint, advance to the next one.
 		bool PassedIt = Dusty.FloatY <= Waypoint->Y;
+        
 
 		if (PassedIt || Distance(Waypoint->X, Waypoint->Y, Flashlight.X, Flashlight.Y) < 32)
 		{
+            if(Flashlight.Lights == 1)
+            {
+                //Props.LightsOff = !Props.LightsOff;
+                printf("Toggle is true\n");
+            }
+            
+            if (!Flashlight.Lights == 0)
+            {
+                printf("Toggle is false \n");
+            }
+            
 			Flashlight.CurWaypoint--;
 
 			if (Flashlight.CurWaypoint >= 0)
@@ -108,9 +129,14 @@ void UpdateFlashlight()
 				Waypoint = &FlashlightWaypoints[Flashlight.CurWaypoint];
 				
 				if (PassedIt)
+                {
 					Flashlight.Timer = 0;
+                }
 				else
+                {
 					Flashlight.Timer = Waypoint->Delay;
+                    Flashlight.Lights = Waypoint->Toggle;
+                }
 			}
 		}
 

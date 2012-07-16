@@ -97,6 +97,8 @@ static void InitPageProperties(SPageProperties* Props)
     Props->LightOriginY = 512.0f;
 }
 
+
+
 static void ParsePageProperties(SPageProperties* Props, rapidxml::xml_node<char>* PropertiesNode)
 {
 	rapidxml::xml_node<char>* PropertyNode = PropertiesNode->first_node("property");

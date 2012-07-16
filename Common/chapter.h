@@ -213,6 +213,8 @@ extern int CurrentChapter;
 
 extern SChapter Chapter;
 
+extern SPageProperties Props;
+
 extern float ScrollX;
 extern float ScrollY;
 
