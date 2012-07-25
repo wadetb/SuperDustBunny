@@ -113,13 +113,18 @@ void UpdateFlashlight()
 		{
             if(Flashlight.Lights == 1)
             {
-                //Props.LightsOff = !Props.LightsOff;
-                printf("Toggle is true\n");
+                //Turn Lights ON
+                Chapter.PageProps.LightsOff = false;
+                LightState.LightsOff = Chapter.PageProps.LightsOff;
+                ResetLightState();
             }
             
-            if (!Flashlight.Lights == 0)
+            if (Flashlight.Lights == 0)
             {
-                printf("Toggle is false \n");
+                //Turn Lights OFF
+                Chapter.PageProps.LightsOff = true;
+                LightState.LightsOff = Chapter.PageProps.LightsOff;
+                LightState.AmbientColor = gxRGBA32(16, 16, 16, 255);
             }
             
 			Flashlight.CurWaypoint--;
