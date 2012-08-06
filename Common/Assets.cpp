@@ -297,10 +297,6 @@ struct SSpriteAsset
     int Bottom;
 };
 
-struct SRawAsset
-{
-};
-
 struct SAsset
 {
     char* SourceFileName;
@@ -310,7 +306,6 @@ struct SAsset
     union
     {
         SSpriteAsset Sprite;
-        SRawAsset Raw;
     };
 };
 
@@ -505,7 +500,7 @@ bool LoadAssetList(char* FileName, SAssetList* AssetList)
         if (!MD5)
             continue;
         RawAsset->MD5 = strdup(MD5->value());
-
+        
         rapidxml::xml_attribute<char>* Name = AssetNode->first_attribute("name");
         if (!Name)
         {
@@ -528,6 +523,41 @@ bool LoadAssetList(char* FileName, SAssetList* AssetList)
         AssetList->NAssets++;
 	}
     
+    // Iterate over all the <MusicAsset> nodes.
+	for (rapidxml::xml_node<char>* AssetNode = AssetsNode->first_node("MusicAsset"); AssetNode; AssetNode = AssetNode->next_sibling("MusicAsset"))
+	{
+        if (AssetList->NAssets >= MAX_ASSETS)
+            break;
+        
+        SAsset* MusicAsset = &AssetList->Assets[AssetList->NAssets];
+        
+        rapidxml::xml_attribute<char>* MD5 = AssetNode->first_attribute("md5");
+        if (!MD5)
+            continue;
+        MusicAsset->MD5 = strdup(MD5->value());
+        
+        rapidxml::xml_attribute<char>* Name = AssetNode->first_attribute("name");
+        if (!Name)
+        {
+            free(MusicAsset->MD5);
+            MusicAsset->MD5 = NULL;
+            continue;
+        }
+        MusicAsset->SourceFileName = strdup(Name->value());
+        
+        rapidxml::xml_attribute<char>* RawName = AssetNode->first_attribute("streamName");
+        if (!RawName)
+        {
+            free(MusicAsset->MD5);
+            MusicAsset->MD5 = NULL;
+            free(MusicAsset->SourceFileName);
+            continue;
+        }
+        MusicAsset->RawFileName = strdup(RawName->value());
+		
+        AssetList->NAssets++;
+	}
+
     return AssetList->NAssets > 0;
 }
 
@@ -921,7 +951,7 @@ void LoadSoundAsset( const char* FileName, sxSound* Sound )
 #endif
 }
 
-void LoadMusicAsset(const char* FileName, SMusicAsset* Asset, bool Looping)
+void LoadMusicAsset(const char* FileName, SMusicAsset* Music, bool Looping)
 {
 #ifdef PLATFORM_IPHONE
     SAssetList* AssetList;
@@ -932,21 +962,25 @@ void LoadMusicAsset(const char* FileName, SMusicAsset* Asset, bool Looping)
     {
         char Work[1024];
         snprintf(Work, sizeof(Work), "%s/%s", AssetList->RootDirectory, Asset->RawFileName);
-        Asset->FileName = strdup(Work);
+        Music->FileName = strdup(Work);
     }
     else
-        Asset->FileName = NULL;
+    {
+        Music->FileName = NULL;
+        Music->Player = NULL;
+        return;
+    }
 #endif
     
 #ifdef PLATFORM_WINDOWS_OR_MAC
 	char Work[1024];
 	GetBundleFileName(FileName, Work, sizeof(Work));
     
-    Asset->FileName = strdup(Work);
+    Music->FileName = strdup(Work);
 #endif
     
 #ifdef PLATFORM_IPHONE_OR_MAC
-    NSURL *url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:Asset->FileName]];
+    NSURL *url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:Music->FileName]];
     
     NSError *error;
     AVAudioPlayer* player = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
@@ -954,7 +988,7 @@ void LoadMusicAsset(const char* FileName, SMusicAsset* Asset, bool Looping)
         [player setNumberOfLoops:-1];
     [player prepareToPlay];
     
-    Asset->Player = player;
+    Music->Player = player;
 #endif
 }
 
@@ -1182,6 +1216,7 @@ void LoadAssets()
 	//                                                    Sound Assets                                                                         //
 	//-----------------------------------------------------------------------------------------------------------------------------------------//
 
+#if 0
 	LoadSoundAsset("Audio/dusty-to-jump.wav", &DustyToJumpSound);
 	LoadSoundAsset("Audio/dusty-jump.wav", &DustyJumpSound);
 	LoadSoundAsset("Audio/dusty-walljump.wav", &DustyWallJumpSound);
@@ -1229,7 +1264,8 @@ void LoadAssets()
     LoadMusicAsset("Music/scratchbgm-title.wav", &TitleScreenMusic, true);
     LoadMusicAsset("Music/scratchbgm-death.wav", &DieMusic, false);
     LoadMusicAsset("Music/scratchbgm-medal.wav", &WinMusic, false);
-
+#endif
+    
     double EndTime = GetCurrentTime();
     LogMessage("Asset loading took %.1f seconds.\n", EndTime-StartTime);
 }

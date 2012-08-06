@@ -78,7 +78,10 @@ void LoadTweaks()
     
     char* XML = (char*)LoadAssetFile("Tweaks.xml", NULL, NULL);
     if (!XML)
-		ReportError("Unable to open tweaks file Tweaks.xml.  Check that all required files are present.");
+    {
+        PopErrorContext();
+        return;
+    }
     
     // Parse the XML text buffer into a Document hierarchy.
 	rapidxml::xml_document<> Document;

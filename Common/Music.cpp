@@ -31,22 +31,22 @@ void QueueMusicTrack(EMusicTrack Track, SMusicAsset* Asset)
     
     for (int i = 0; i < PLAYLIST_MAX; i++)
     {
-        if (Music->Playlist[i])
-        {
-            AVAudioPlayer* existingPlayer = Music->Playlist[i]->Player;
-            if ([existingPlayer numberOfLoops] < 0)
-                ReportError("Cannot queue music track '%s' while a looping sound '%s' is still playing.  Stop all other music first.",
-                            Asset->FileName, Music->Playlist[i]->FileName);
-            NSTimeInterval durationLeft = ( [existingPlayer duration] * ([existingPlayer numberOfLoops]+1) ) - [existingPlayer currentTime];
-            if (durationLeft <= 0)
-                Music->Playlist[i] = NULL;
-            totalDurationLeft += durationLeft;
-        }
+//        if (Music->Playlist[i])
+//        {
+//            AVAudioPlayer* existingPlayer = Music->Playlist[i]->Player;
+//            if ([existingPlayer numberOfLoops] < 0)
+//                ReportError("Cannot queue music track '%s' while a looping sound '%s' is still playing.  Stop all other music first.",
+//                            Asset->FileName, Music->Playlist[i]->FileName);
+//            NSTimeInterval durationLeft = ( [existingPlayer duration] * ([existingPlayer numberOfLoops]+1) ) - [existingPlayer currentTime];
+//            if (durationLeft <= 0)
+//                Music->Playlist[i] = NULL;
+//            totalDurationLeft += durationLeft;
+//        }
     }
     
-    AVAudioPlayer* player = Asset->Player;
-    [player setCurrentTime:0];
-    [player playAtTime:[player deviceCurrentTime] + totalDurationLeft];
+    //AVAudioPlayer* player = Asset->Player;
+    //[player setCurrentTime:0];
+    //[player playAtTime:[player deviceCurrentTime] + totalDurationLeft];
 #endif
     
     int PlaylistIndex;
