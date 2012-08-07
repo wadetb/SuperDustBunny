@@ -1226,6 +1226,9 @@ void DisplayPortal()
             AddLitSpriteCenteredScaledRotatedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &PortalSprite, Chapter.EndX + ScrollX, Chapter.EndY - 50 + ScrollY, 1.0f, Angle, Alpha);
         }
     }
+    
+    if (Chapter.PageProps.LightsOff)
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightFlashlightSprite, Chapter.EndX + ScrollX, Chapter.EndY - 50 + ScrollY, 2.0f, 1.0f);
 }
 
 static void DisplayChapterLayer(ELightList LightList, int* Blocks, float Alpha)
