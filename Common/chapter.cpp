@@ -1339,8 +1339,19 @@ int GetBlockID(int x, int y)
 		return SPECIALBLOCKID_OUTOFBOUNDS;
 	if (y < 0 || y >= Chapter.PageHeight)
 		return SPECIALBLOCKID_OUTOFBOUNDS;
-
+    
 	return Chapter.PageBlocks[y * Chapter.PageWidth + x] & SPECIALBLOCKID_MASK;
+}
+
+int GetBlockFlags(int x, int y)
+{
+	// Requests for blocks outside the map return a special value.
+	if (x < 0 || x >= Chapter.PageWidth)
+		return SPECIALBLOCKID_OUTOFBOUNDS;
+	if (y < 0 || y >= Chapter.PageHeight)
+		return SPECIALBLOCKID_OUTOFBOUNDS;
+    
+	return Chapter.PageBlocks[y * Chapter.PageWidth + x] & ~SPECIALBLOCKID_MASK;
 }
 
 bool IsBlockEmpty(int x, int y)

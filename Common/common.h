@@ -82,9 +82,14 @@ inline float RadiansToDegrees(float a)
 	return a * 180.0f/PI;
 }
 
-inline float DirectionToAngle(float a)
+inline float DirectionToAngle(float d)
 {
-	return DegreesToRadians(90.0f-a);
+	return DegreesToRadians(90.0f-d);
+}
+
+inline float AngleToDirection(float a)
+{
+	return 90.0f-RadiansToDegrees(a);
 }
 
 inline float NormalizeAngle(float Angle)

@@ -196,12 +196,6 @@ void ClearFlamePropertiesList()
     FlamePropertiesHead = NULL;
 }
 
-static float BlockFlagsToAngle(unsigned int Flags)
-{
-    if (Flags == (SPECIALBLOCKID_FLIP_X | SPECIALBLOCKID_FLIP_DIAGONAL)) return PI/2;
-    return 0;
-}
-
 SFlame* CreateFlame(float X, float Y, unsigned int Flags, SFlameProperties* Props)
 {
 	if (NFlames >= MAX_FLAMES)

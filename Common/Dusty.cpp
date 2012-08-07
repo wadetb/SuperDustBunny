@@ -1895,6 +1895,8 @@ static void UpdateDusty_Collision()
 					}
 
 					int BlockID = GetBlockID(x, y);
+                    int BlockFlags = GetBlockFlags(x, y);
+                    
 					if (BlockID < SPECIALBLOCKID_FIRST)
 					{			
 						SBlock* Block = &Chapter.Blocks[BlockID];
@@ -1909,7 +1911,8 @@ static void UpdateDusty_Collision()
 						if (Block->Type == BLOCKTYPE_NAIL && Dusty.State != DUSTYSTATE_HURT)
 						{
 							int SharpDir = ((SNailProperties*)Block->Properties)->Dir;
-
+                            SharpDir = ApplyBlockFlagsToDir(SharpDir, BlockFlags);
+                            
 							bool Sharp = false;
 							if (BlockCollideWithBottomSide && SharpDir ==   0) Sharp = true;
 							if (BlockCollideWithLeftSide   && SharpDir ==  90) Sharp = true;
