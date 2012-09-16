@@ -167,6 +167,12 @@ gxSprite WhiteSmokeSprite;
 
 gxSprite DustBusterSprite;
 
+gxSprite ScreenStartSprite;
+gxSprite ScreenStartPressedSprite;
+gxSprite ScreenStartBackgroundSprite;
+gxSprite ScreenStartButtonsSprite;
+gxSprite ScreenStartButtonsDownSprite;
+
 gxSprite ScreenStart1Sprite;
 gxSprite ScreenHelp1Sprite;
 gxSprite ScreenHelp2Sprite;
@@ -1154,6 +1160,12 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/white-smoke.png", &WhiteSmokeSprite);
     
 	LoadSpriteAsset("Assets/dustbuster.png", &DustBusterSprite);
+
+    LoadSpriteAsset("Assets/screen-start.png", &ScreenStartSprite);
+	LoadSpriteAsset("Assets/screen-start-pressed.png", &ScreenStartPressedSprite);
+	LoadSpriteAsset("Assets/start-background-study.png", &ScreenStartBackgroundSprite);
+	LoadSpriteAsset("Assets/screen-start-buttons.png", &ScreenStartButtonsSprite);
+	LoadSpriteAsset("Assets/screen-start-buttons-down.png", &ScreenStartButtonsDownSprite);
 
 	LoadSpriteAsset("Assets/screen-start-1.png", &ScreenStart1Sprite);
     LoadSpriteAsset("Assets/screen-help-1.png", &ScreenHelp1Sprite);
