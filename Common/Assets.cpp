@@ -1216,7 +1216,6 @@ void LoadAssets()
 	//                                                    Sound Assets                                                                         //
 	//-----------------------------------------------------------------------------------------------------------------------------------------//
 
-#if 0
 	LoadSoundAsset("Audio/dusty-to-jump.wav", &DustyToJumpSound);
 	LoadSoundAsset("Audio/dusty-jump.wav", &DustyJumpSound);
 	LoadSoundAsset("Audio/dusty-walljump.wav", &DustyWallJumpSound);
@@ -1264,7 +1263,6 @@ void LoadAssets()
     LoadMusicAsset("Music/scratchbgm-title.wav", &TitleScreenMusic, true);
     LoadMusicAsset("Music/scratchbgm-death.wav", &DieMusic, false);
     LoadMusicAsset("Music/scratchbgm-medal.wav", &WinMusic, false);
-#endif
     
     double EndTime = GetCurrentTime();
     LogMessage("Asset loading took %.1f seconds.\n", EndTime-StartTime);
