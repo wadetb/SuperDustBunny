@@ -990,14 +990,31 @@ static void CreatePageObjects()
 				switch (Block->Type)
 				{
 				case BLOCKTYPE_CHAPTERSTART:
-					Chapter.StartX = (float)x * 64 + 32;
-					Chapter.StartY = (float)y * 64 + 64;
-                    Chapter.StartDirection = (Flags & SPECIALBLOCKID_FLIP_X) ? DIRECTION_LEFT : DIRECTION_RIGHT;
+                    if (Portfolio.UpsideDown)
+                    {
+                        Chapter.EndX = (float)x * 64 + 32;
+                        Chapter.EndY = (float)y * 64 + 32;
+                    }
+                    else
+                    {
+                        Chapter.StartX = (float)x * 64 + 32;
+                        Chapter.StartY = (float)y * 64 + 64;
+                        Chapter.StartDirection = (Flags & SPECIALBLOCKID_FLIP_X) ? DIRECTION_LEFT : DIRECTION_RIGHT;
+                    }
 					EraseBlock(x, y);
 					break;
 				case BLOCKTYPE_CHAPTEREND:
-					Chapter.EndX = (float)x * 64 + 32;
-					Chapter.EndY = (float)y * 64 + 32;
+                    if (Portfolio.UpsideDown)
+                    {
+                        Chapter.StartX = (float)x * 64 + 32;
+                        Chapter.StartY = (float)y * 64 + 64;
+                        Chapter.StartDirection = (Flags & SPECIALBLOCKID_FLIP_X) ? DIRECTION_LEFT : DIRECTION_RIGHT;
+                    }
+                    else
+                    {
+                        Chapter.EndX = (float)x * 64 + 32;
+                        Chapter.EndY = (float)y * 64 + 32;
+                    }
 					EraseBlock(x, y);
 					break;
 				case BLOCKTYPE_BARREL:
@@ -1600,6 +1617,7 @@ void SaveChapterUnlocks()
 }
 
 SPortfolio Portfolio;
+SPortfolio SavedPortfolio;
 
 void ResetPortfolio()
 {
@@ -1641,9 +1659,25 @@ void SetupInitialPortfolio()
 
 void AddToPortfolio()
 {
+    // Upside down can only persist for one round.
+    if (Portfolio.UpsideDown)
+    {
+        Portfolio = SavedPortfolio;
+        Portfolio.UpsideDown = false;
+    }
+    
     // Randomly add one pro or con.
     if (Random(0.0f, 1.0f) >= 0.5f)
         EnableRandomPortfolio(AllPros, ARRAY_COUNT(AllPros));
     else
         EnableRandomPortfolio(AllCons, ARRAY_COUNT(AllCons));
+
+    // Upside down disables some pros.
+    if (Portfolio.UpsideDown)
+    {
+        SavedPortfolio = Portfolio;
+        Portfolio.Staplers = false;
+        Portfolio.Fans = false;
+        Portfolio.Balloons = false;
+    }
 }
