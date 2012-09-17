@@ -96,8 +96,6 @@ void CreateBalloon(float X, float Y)
         Balloon->TailX[i] = Balloon->TailPrevX[i] = Balloon->X;
         Balloon->TailY[i] = Balloon->TailPrevY[i] = Balloon->Y + BALLOON_TAIL_OFFSET + i * (BALLOON_TAIL_LENGTH / BALLOON_TAIL_COUNT);
     }
-    
-    EraseBlock((int)X, (int)Y);
 }
 
 void ClearBalloons()

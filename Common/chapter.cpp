@@ -1077,9 +1077,11 @@ static void CreatePageObjects()
                     break;
                 case BLOCKTYPE_BABY:
                     if (Portfolio.Babies) CreateBaby(x, y, Flags, Random(0, 2) == 0 ? DUSTYHAT_NONE : DUSTYHAT_PINK_BOW, false);
+                    EraseBlock(x, y);
                     break;
                 case BLOCKTYPE_BALLOON:
                     if (Portfolio.Balloons) CreateBalloon(x, y);
+                    EraseBlock(x, y);
                     break;
                 default:
                     break;

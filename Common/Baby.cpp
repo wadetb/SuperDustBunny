@@ -145,8 +145,6 @@ void CreateBaby(float X, int Y, unsigned int Flags, int Hat, bool StartFollowing
     Baby->VelocityY = 0;
     
     Baby->Alpha = 1.0f;
-    
-    EraseBlock((int)X, Y);
 }
 
 void ClearBabies()

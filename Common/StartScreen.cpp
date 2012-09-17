@@ -76,7 +76,7 @@ static void StartScreen_Advance()
     if (StartScreen.TitleVisible)
     {
         StartScreen.TitleVisible = false;
-        StartScreen.PlayChapter = Random(1, NChapters - 1);
+        StartScreen.PlayChapter = Random(1, NChapters);
     }
     else
     {
