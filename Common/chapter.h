@@ -245,6 +245,21 @@ struct SChapterListEntry
     int BestTime;
 };
 
+struct SPortfolio
+{
+    bool Fireworks;
+    bool Babies;
+    bool LightsOff;
+    bool Barrels;
+    bool Fans;
+    bool Staplers;
+    bool Balloons;
+    bool Sharp;
+    bool Sticky;
+    bool DustBuster;
+    bool UpsideDown;
+};
+
 
 extern int NChapters;
 extern SChapterListEntry Chapters[MAX_CHAPTERS];
@@ -256,6 +271,8 @@ extern SPageProperties Props;
 
 extern float ScrollX;
 extern float ScrollY;
+
+extern SPortfolio Portfolio;
 
 void LoadChapter(const char* filename);
 void ClearChapter();
@@ -285,5 +302,9 @@ void LoadChapterList();
 
 void LoadChapterUnlocks();
 void SaveChapterUnlocks();
+
+void ResetPortfolio();
+void SetupInitialPortfolio();
+void AddToPortfolio();
 
 #endif

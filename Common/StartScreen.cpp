@@ -47,6 +47,8 @@ struct SStartScreen
     
     bool TitleVisible;
     bool LeaderboardVisible;
+    
+    int PlayChapter;
 };
 
 SStartScreen StartScreen;
@@ -74,17 +76,21 @@ static void StartScreen_Advance()
     if (StartScreen.TitleVisible)
     {
         StartScreen.TitleVisible = false;
+        StartScreen.PlayChapter = Random(1, NChapters - 1);
     }
     else
     {
-        if (StartScreen.Pressed == 1)
+        if (StartScreen.Pressed == 1 || StartScreen.Pressed == 2)
         {
 #ifdef PLATFORM_IPHONE
             if (Settings.LiveAssets)
                 UpdateLiveAssetCache();
 #endif
 
-            CurrentChapter = 0;
+            if (StartScreen.Pressed == 2)
+                CurrentChapter = 0;
+            else
+                CurrentChapter = StartScreen.PlayChapter;
 
 #ifdef PLATFORM_IPHONE
             [TestFlight passCheckpoint:[NSString stringWithFormat:@"Entered chapter %s", Chapters[CurrentChapter].Name]];
@@ -122,7 +128,8 @@ void DisplayStartScreen()
         return;
     }
 
-    AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ScreenStartBackgroundSprite, 0, 0, 768, LitScreenHeight, 1.0f);
+    if (Chapters[StartScreen.PlayChapter].HasBackground)
+        AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &Chapters[StartScreen.PlayChapter].BackgroundSprite, 0, 0, 768, LitScreenHeight, 1.0f);
 
     AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &ScreenStartButtonsSprite, 180, 190, 0, 10*64, 512, 14*64, StartScreen.Pressed == 1 ? 0.5f : 1.0f);
     AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &ScreenStartButtonsSprite, 100, 440, 0,  3*64, 512,  7*64, StartScreen.Pressed == 2 ? 0.5f : 1.0f);
@@ -212,8 +219,6 @@ void UpdateStartScreen()
     
     if (msY < 190 && msX > 384 && msButton1 && !msOldButton1)
     {
-        CurrentChapter = 0;
-        
 #ifdef PLATFORM_IPHONE
         [TestFlight passCheckpoint:[NSString stringWithFormat:@"Opened Leaderboards for %s", Chapters[CurrentChapter].Name]];
 #endif

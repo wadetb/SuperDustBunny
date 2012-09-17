@@ -1001,11 +1001,11 @@ static void CreatePageObjects()
 					EraseBlock(x, y);
 					break;
 				case BLOCKTYPE_BARREL:
-					CreateBarrel(x * 64, y * 64, (SBarrelProperties*)Block->Properties);
+					if (Portfolio.Barrels) CreateBarrel(x * 64, y * 64, (SBarrelProperties*)Block->Properties);
 					EraseBlock(x, y);
 					break;
 				case BLOCKTYPE_FIREWORK:
-					CreateFireWork(x * 64, y * 64, (SFireWorkProperties*)Block->Properties);
+					if (Portfolio.Fireworks) CreateFireWork(x * 64, y * 64, (SFireWorkProperties*)Block->Properties);
 					EraseBlock(x, y);
 					break;
 				case BLOCKTYPE_BALL:
@@ -1021,26 +1021,26 @@ static void CreatePageObjects()
 					EraseBlock(x, y);
 					break;
 				case BLOCKTYPE_FAN:
-					CreateFan(x * 64, y * 64, (SFanProperties*)Block->Properties);
+					if (Portfolio.Fans) CreateFan(x * 64, y * 64, (SFanProperties*)Block->Properties);
 					EraseBlock(x, y);
 					break;
                 case BLOCKTYPE_FLAME:
-                    CreateFlame(x * 64, y * 64, Flags, (SFlameProperties*)Block->Properties);
+                    if (Portfolio.Sharp) CreateFlame(x * 64, y * 64, Flags, (SFlameProperties*)Block->Properties);
                     break;
 				case BLOCKTYPE_FLASHLIGHT_WAYPOINT:
-					CreateFlashlightWaypoint(x * 64, y * 64, (SFlashlightWaypointProperties*)Block->Properties);
+					if (Portfolio.LightsOff) CreateFlashlightWaypoint(x * 64, y * 64, (SFlashlightWaypointProperties*)Block->Properties);
 					EraseBlock(x, y);
 					break;
                 case BLOCKTYPE_STAPLER:
-                    CreateStapler(x * 64, y * 64, STAPLER_STAPLER);
+                    if (Portfolio.Staplers) CreateStapler(x * 64, y * 64, STAPLER_STAPLER);
                     EraseBlock(x, y);
                     break;
                 case BLOCKTYPE_JELLO:
-                    CreateStapler(x * 64, y * 64, STAPLER_JELLO);
+                    if (Portfolio.Staplers) CreateStapler(x * 64, y * 64, STAPLER_JELLO);
                     EraseBlock(x, y);
                     break;
                 case BLOCKTYPE_CLOTHESPIN:
-                    CreateStapler(x * 64, y * 64, STAPLER_CLOTHESPIN);
+                    if (Portfolio.Staplers) CreateStapler(x * 64, y * 64, STAPLER_CLOTHESPIN);
                     EraseBlock(x, y);
                     break;
                 case BLOCKTYPE_POWERUP:
@@ -1059,10 +1059,10 @@ static void CreatePageObjects()
                     CreateHanger(x, y, (SHangerProperties*)Block->Properties);
                     break;
                 case BLOCKTYPE_BABY:
-                    CreateBaby(x, y, Flags, Random(0, 2) == 0 ? DUSTYHAT_NONE : DUSTYHAT_PINK_BOW, false);
+                    if (Portfolio.Babies) CreateBaby(x, y, Flags, Random(0, 2) == 0 ? DUSTYHAT_NONE : DUSTYHAT_PINK_BOW, false);
                     break;
                 case BLOCKTYPE_BALLOON:
-                    CreateBalloon(x, y);
+                    if (Portfolio.Balloons) CreateBalloon(x, y);
                     break;
                 default:
                     break;
@@ -1597,5 +1597,53 @@ void SaveChapterUnlocks()
 #endif
     
     PopErrorContext();
+}
 
+SPortfolio Portfolio;
+
+void ResetPortfolio()
+{
+    Portfolio.Fireworks = false;
+    Portfolio.Babies = false;
+    Portfolio.LightsOff = false;
+    Portfolio.Barrels = false;
+    Portfolio.Fans = false;
+    Portfolio.Staplers = false;
+    Portfolio.Balloons = false;
+    Portfolio.Sharp = false;
+    Portfolio.Sticky = false;
+    Portfolio.DustBuster = false;
+    Portfolio.UpsideDown = false;
+}
+
+static bool* AllPros[] = { &Portfolio.Fireworks, &Portfolio.Babies, &Portfolio.Barrels, &Portfolio.Fans, &Portfolio.Staplers, &Portfolio.Balloons };
+static bool* AllCons[] = { &Portfolio.LightsOff, &Portfolio.Sharp, &Portfolio.Sticky, &Portfolio.DustBuster, &Portfolio.UpsideDown };
+
+static bool* InitialPros[] = { &Portfolio.Fireworks, &Portfolio.Babies, &Portfolio.Barrels, &Portfolio.Fans, &Portfolio.Staplers, &Portfolio.Balloons };
+
+static void EnableRandomPortfolio(bool** Elements, int ElementCount)
+{
+    int ElementIndex;
+    do
+    {
+        ElementIndex = Random(0, ElementCount - 1);
+    } while (*Elements[ElementIndex]);
+    
+    *Elements[ElementIndex] = true;
+}
+
+void SetupInitialPortfolio()
+{
+    // Start with two initial pros.
+    EnableRandomPortfolio(InitialPros, ARRAY_COUNT(InitialPros));
+    EnableRandomPortfolio(InitialPros, ARRAY_COUNT(InitialPros));
+}
+
+void AddToPortfolio()
+{
+    // Randomly add one pro or con.
+    if (Random(0.0f, 1.0f) >= 0.5f)
+        EnableRandomPortfolio(AllPros, ARRAY_COUNT(AllPros));
+    else
+        EnableRandomPortfolio(AllCons, ARRAY_COUNT(AllCons));
 }

@@ -70,6 +70,9 @@
 #include "Debug.h"
 
 
+#define ARRAY_COUNT(x) (sizeof(x) / sizeof((x)[0]))
+
+
 static const float PI = acosf(-1.0f);
 
 inline float DegreesToRadians(float a)
