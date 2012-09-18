@@ -8,12 +8,15 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------//
 
 #include "Common.h"
-#include "Dusty.h"
 #include "Lives.h"
+#include "Settings.h"
+#include "Dusty.h"
 #include "Chapter.h"
+#include "Text.h"
 
 
 float LivesScaleFactor = 0.85f;
+float LivesTextScaleFactor = 1.0f;
 
 
 void DisplayLives()
@@ -21,10 +24,11 @@ void DisplayLives()
     if (Chapter.PageProps.VacuumOff)
         return;
 
-	for (int i = 0; i < Dusty.Lives; i++)
-	{
-		AddLitSpriteScaled(LIGHTLIST_WIPE, &CoinSpin1Sprite, (float)gxScreenWidth - 100 - 70*LivesScaleFactor*i, -20, LivesScaleFactor, LivesScaleFactor);
-	}
+    AddLitSpriteScaled(LIGHTLIST_WIPE, &CoinSpin1Sprite, (float)gxScreenWidth - 80 - 70*LivesScaleFactor*4, -20, LivesScaleFactor, LivesScaleFactor);
+    
+    char Work[20];
+    snprintf(Work, sizeof(Work), "x%d", Settings.Lives);
+    DisplayString(LIGHTLIST_WIPE, Work, 0, (float)gxScreenWidth - 60 - 70*LivesScaleFactor*3, 10, LivesTextScaleFactor);
 }
 
 void UpdateLives()
@@ -32,10 +36,7 @@ void UpdateLives()
 	if (Dusty.GainLife)
 	{
  		Dusty.GainLife = false;
-		Dusty.Lives += 1;
-		if (Dusty.Lives > 5)
-		{
-			Dusty.Lives = 5;
-		}
+		Settings.Lives += 1;
+        SaveSettings();
 	}
 }

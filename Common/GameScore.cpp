@@ -370,6 +370,7 @@ void LoadChapterScores(char* ChapterName)
         if ( !dict )
         {
             NSLog(@"Failed to load dictionary from chapter scores file for chapter '%s'.\n", ChapterName);
+            PopErrorContext();
             return;
         }
         
@@ -377,6 +378,7 @@ void LoadChapterScores(char* ChapterName)
         if ( [version intValue] != 1 )
         {
             NSLog(@"Chapter scores dictionary file is wrong version.  Got %d, expected %d.\n", [version intValue], 1);
+            PopErrorContext();
             return;
         }
         

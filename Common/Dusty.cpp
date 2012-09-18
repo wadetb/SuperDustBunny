@@ -1471,33 +1471,14 @@ static void UpdateDusty_Die()
 	{
         Score.DeathCount++;
         
-		if (Dusty.Lives > 0) //Check before the Die Screen Transition
-		{
-            if (!Settings.InfiniteLives)
-                Dusty.Lives -= 1;
-            
-            Score.CurrentBabies = 0;
-            
-            if (IsRecordingActive())
-    			StopRecording(RESULT_RESTART_PAGE);
-            
-			SetGameState_Transition(GAMETRANSITION_RESTART_PAGE);
+        if (IsRecordingActive())
+            StopRecording(RESULT_DIE);
+        
+        SetGameState_Transition(GAMETRANSITION_DIE_SCREEN);
 
 #ifdef PLATFORM_IPHONE
-            [TestFlight passCheckpoint:[NSString stringWithFormat:@"Died"]];
+        [TestFlight passCheckpoint:[NSString stringWithFormat:@"Game over"]];
 #endif
-		}
-		else
-		{
-            if (IsRecordingActive())
-			    StopRecording(RESULT_DIE);
-			
-            SetGameState_Transition(GAMETRANSITION_DIE_SCREEN);
-
-#ifdef PLATFORM_IPHONE
-            [TestFlight passCheckpoint:[NSString stringWithFormat:@"Game over"]];
-#endif
-		}
 		return;
 	} 
 }

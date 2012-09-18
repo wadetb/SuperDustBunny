@@ -45,7 +45,7 @@ inline unsigned int ApplyBlockFlagsToDir(unsigned int Dir, unsigned int Flags)
     float m11 = 1.0f, m12 = 0, m21 = 0, m22 = 1.0f;
     float a = DirectionToAngle(Dir);
     float dx = cosf(a);
-    float dy = -sinf(a);
+    float dy = sinf(a);
     
     if (Flags & SPECIALBLOCKID_FLIP_DIAGONAL)
     {
@@ -188,7 +188,8 @@ struct SPage
 struct SChapter
 {
 	const char* Name;
-
+    const char* Title;
+    
     EChapterTheme Theme;
     
     bool HasBackground;
@@ -247,6 +248,8 @@ struct SChapterListEntry
 
 struct SPortfolio
 {
+    bool Coins;
+    bool Gears;
     bool Fireworks;
     bool Babies;
     bool LightsOff;
@@ -304,6 +307,7 @@ void LoadChapterUnlocks();
 void SaveChapterUnlocks();
 
 void ResetPortfolio();
+void SetupTutorialPortfolio();
 void SetupInitialPortfolio();
 void AddToPortfolio();
 

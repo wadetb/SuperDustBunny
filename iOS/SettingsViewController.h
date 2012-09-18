@@ -15,14 +15,12 @@
 @private
     
     UISegmentedControl *controlScheme;
-    UISwitch *infiniteLives;
     UISwitch *disableVacuum;
     UISwitch *liveAssets;
     UITextField *assetServer;
 }
 
 @property (nonatomic, retain) IBOutlet UISegmentedControl *controlScheme;
-@property (nonatomic, retain) IBOutlet UISwitch *infiniteLives;
 @property (nonatomic, retain) IBOutlet UISwitch *disableVacuum;
 @property (nonatomic, retain) IBOutlet UISwitch *liveAssets;
 @property (nonatomic, retain) IBOutlet UITextField *assetServer;

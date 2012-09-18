@@ -289,7 +289,7 @@ void StartRecording()
 	snprintf(RecorderHeader.Chapter, sizeof(RecorderHeader.Chapter), "%s", Chapter.Name);
 	snprintf(RecorderHeader.Page, sizeof(RecorderHeader.Page), "%s", Chapter.Pages[Chapter.PageNum].Name);
 	
-	RecorderHeader.StartLives = Dusty.Lives;
+	RecorderHeader.StartLives = Settings.Lives;
 
 #ifdef PLATFORM_WINDOWS
 	OSVERSIONINFO osvi = { sizeof(OSVERSIONINFO) };
@@ -346,7 +346,7 @@ void StopRecording(ERecordingEndType Result)
 		ReportError("Cannot stop recording when recording is not active.");
 
 	RecorderHeader.Result = Result;
-	RecorderHeader.EndLives = Dusty.Lives;
+	RecorderHeader.EndLives = Settings.Lives;
 	RecorderHeader.EndX = (int)Dusty.FloatX;
 	RecorderHeader.EndY = (int)Dusty.FloatY;
 

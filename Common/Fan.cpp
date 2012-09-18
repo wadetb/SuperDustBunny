@@ -109,7 +109,7 @@ void UpdateFans()
 
 		if (Dusty.State == DUSTYSTATE_JUMP || Dusty.State == DUSTYSTATE_LAUNCH)
 		{
-			ApplyFanWind(Fan, Dusty.FloatX, Dusty.FloatY, 0.5f, &Dusty.FloatVelocityX, &Dusty.FloatVelocityY);
+			ApplyFanWind(Fan, Dusty.FloatX, Dusty.FloatY, 0.75f, &Dusty.FloatVelocityX, &Dusty.FloatVelocityY);
 		}
 	}
 }

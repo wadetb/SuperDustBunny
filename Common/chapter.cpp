@@ -97,8 +97,6 @@ static void InitPageProperties(SPageProperties* Props)
     Props->LightOriginY = 512.0f;
 }
 
-
-
 static void ParsePageProperties(SPageProperties* Props, rapidxml::xml_node<char>* PropertiesNode)
 {
 	rapidxml::xml_node<char>* PropertyNode = PropertiesNode->first_node("property");
@@ -188,6 +186,13 @@ static void ParsePageProperties(SPageProperties* Props, rapidxml::xml_node<char>
 
 		PropertyNode = PropertyNode->next_sibling("property");
 	}
+}
+
+static void OverridePagePropertiesFromPortfolio(SPageProperties* Props)
+{
+    Props->VacuumDir = Portfolio.UpsideDown ? VACUUMDIR_DOWN : VACUUMDIR_UP;
+    Props->VacuumType = Portfolio.DustBuster ? VACUUM_DUSTBUSTER : VACUUM_NORMAL;
+    Props->LightsOff = Portfolio.LightsOff;
 }
 
 // Loads a <tileset> node from either an internal or external tileset.
@@ -761,6 +766,8 @@ static void LoadPageFromTMX(const char* FileName)
 	{
 		ParsePageProperties(&Page->Props, PropertiesNode);
 	}
+    
+    OverridePagePropertiesFromPortfolio(&Page->Props);
 
 	PopErrorContext();
 }
@@ -802,7 +809,13 @@ void LoadChapter(const char* ChapterDir)
 	rapidxml::xml_node<char>* ChapterNode = Document.first_node("Chapter");
 	if (ChapterNode == NULL)
 		ReportError("Missing <Chapter> node.  Check for errors in the XML.");
-    
+
+    rapidxml::xml_attribute<char>* TitleAttr = ChapterNode->first_attribute("Title");
+    if (TitleAttr)
+        Chapter.Title = strdup(TitleAttr->value());
+    else
+        Chapter.Title = strdup("Untitled");
+
     rapidxml::xml_attribute<char>* BackgroundAttr = ChapterNode->first_attribute("Background");
     if (BackgroundAttr)
     {
@@ -882,6 +895,9 @@ void ClearChapter()
 {
 	free((void*)Chapter.Name);
 	Chapter.Name = NULL;
+
+    free((void*)Chapter.Title);
+	Chapter.Title = NULL;
 
     if (Chapter.HasBackground)
         gxDestroySprite(&Chapter.BackgroundSprite);
@@ -1026,15 +1042,15 @@ static void CreatePageObjects()
 					EraseBlock(x, y);
 					break;
 				case BLOCKTYPE_BALL:
-					CreateBall(x * 64, y * 64);
+					if (Portfolio.Gears) CreateBall(x * 64, y * 64);
 					EraseBlock(x, y);
 					break;
 				case BLOCKTYPE_GEAR:
-					CreateGear(x * 64, y * 64, (SGearProperties*)Block->Properties);
+					if (Portfolio.Gears) CreateGear(x * 64, y * 64, (SGearProperties*)Block->Properties);
 					EraseBlock(x, y);
 					break;
 				case BLOCKTYPE_COIN:
-					CreateCoin(x * 64, y * 64);
+					if (Portfolio.Coins) CreateCoin(x * 64, y * 64);
 					EraseBlock(x, y);
 					break;
 				case BLOCKTYPE_FAN:
@@ -1623,6 +1639,8 @@ SPortfolio SavedPortfolio;
 
 void ResetPortfolio()
 {
+    Portfolio.Coins = false;
+    Portfolio.Gears = false;
     Portfolio.Fireworks = false;
     Portfolio.Babies = false;
     Portfolio.LightsOff = false;
@@ -1636,20 +1654,41 @@ void ResetPortfolio()
     Portfolio.UpsideDown = false;
 }
 
-static bool* AllPros[] = { &Portfolio.Fireworks, &Portfolio.Babies, &Portfolio.Barrels, &Portfolio.Fans, &Portfolio.Staplers, &Portfolio.Balloons };
+static bool* AllPros[] = { &Portfolio.Gears, &Portfolio.Fireworks, &Portfolio.Babies, &Portfolio.Barrels, &Portfolio.Fans, &Portfolio.Staplers, &Portfolio.Balloons };
 static bool* AllCons[] = { &Portfolio.LightsOff, &Portfolio.Sharp, &Portfolio.Sticky, &Portfolio.DustBuster, &Portfolio.UpsideDown };
 
-static bool* InitialPros[] = { &Portfolio.Fireworks, &Portfolio.Babies, &Portfolio.Barrels, &Portfolio.Fans, &Portfolio.Staplers, &Portfolio.Balloons };
+static bool* InitialPros[] = { &Portfolio.Gears, &Portfolio.Fireworks, &Portfolio.Babies, &Portfolio.Barrels, &Portfolio.Fans, &Portfolio.Staplers, &Portfolio.Balloons };
 
 static void EnableRandomPortfolio(bool** Elements, int ElementCount)
 {
-    int ElementIndex;
-    do
-    {
-        ElementIndex = Random(0, ElementCount - 1);
-    } while (*Elements[ElementIndex]);
+    bool** EnabledElements = (bool**)malloc(ElementCount * sizeof(bool*));
+    int EnabledElementCount = 0;
     
-    *Elements[ElementIndex] = true;
+    for (int i = 0; i < ElementCount; i++)
+        if (!*Elements[i])
+            EnabledElements[EnabledElementCount++] = Elements[i];
+    
+    if (EnabledElementCount)
+    {
+        int ElementIndex = Random(0, EnabledElementCount);
+        *EnabledElements[ElementIndex] = true;
+    }
+}
+
+static void DisableRandomPortfolio(bool** Elements, int ElementCount)
+{
+    bool** EnabledElements = (bool**)malloc(ElementCount * sizeof(bool*));
+    int EnabledElementCount = 0;
+
+    for (int i = 0; i < ElementCount; i++)
+        if (*Elements[i])
+            EnabledElements[EnabledElementCount++] = Elements[i];
+
+    if (EnabledElementCount)
+    {
+        int ElementIndex = Random(0, EnabledElementCount);
+        *EnabledElements[ElementIndex] = false;
+    }
 }
 
 void SetupInitialPortfolio()
@@ -1659,13 +1698,28 @@ void SetupInitialPortfolio()
     EnableRandomPortfolio(InitialPros, ARRAY_COUNT(InitialPros));
 }
 
+void SetupTutorialPortfolio()
+{
+    Portfolio.Staplers = true;
+    Portfolio.Balloons = true;
+}
+
 void AddToPortfolio()
 {
-    // Upside down can only persist for one round.
+    // Coins always appear after one turn.
+    if (!Portfolio.Coins)
+        Portfolio.Coins = true;
+    
+    // Upside down and lights off can only persist for one round.
     if (Portfolio.UpsideDown)
     {
         Portfolio = SavedPortfolio;
         Portfolio.UpsideDown = false;
+    }
+    
+    if (Portfolio.LightsOff)
+    {
+        Portfolio.LightsOff = false;
     }
     
     // Randomly add one pro or con.
@@ -1674,6 +1728,18 @@ void AddToPortfolio()
     else
         EnableRandomPortfolio(AllCons, ARRAY_COUNT(AllCons));
 
+    // 50% change of removing one pro or con.
+    if (Random(0.0f, 1.0f) >= 0.5f)
+    {
+        if (Random(0.0f, 1.0f) >= 0.5f)
+            DisableRandomPortfolio(AllPros, ARRAY_COUNT(AllPros));
+        else
+            DisableRandomPortfolio(AllCons, ARRAY_COUNT(AllCons));
+    }
+    
+    if (Portfolio.LightsOff)
+        Portfolio.Fireworks = true;
+    
     // Upside down disables some pros.
     if (Portfolio.UpsideDown)
     {

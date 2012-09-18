@@ -17,7 +17,6 @@ void ClearLiveAssetCache();
 @implementation SettingsViewController
 
 @synthesize controlScheme;
-@synthesize infiniteLives;
 @synthesize disableVacuum;
 @synthesize liveAssets;
 @synthesize assetServer;
@@ -34,7 +33,6 @@ void ClearLiveAssetCache();
 - (void)dealloc
 {
     [controlScheme release];
-    [infiniteLives release];
     [disableVacuum release];
     [liveAssets release];
     [assetServer release];
@@ -85,7 +83,6 @@ void ClearLiveAssetCache();
 
 - (void)transferSettingsToView {
     controlScheme.selectedSegmentIndex = Settings.ControlStyle == CONTROL_TILT ? 0 : 1;
-    infiniteLives.on = Settings.InfiniteLives;
     disableVacuum.on = Settings.DisableVacuum;
     liveAssets.on = Settings.LiveAssets;
     assetServer.text = [NSString stringWithUTF8String:Settings.AssetServer];
@@ -103,12 +100,6 @@ void ClearLiveAssetCache();
     }
 #endif
     Settings.ControlStyle = newStyle;
-
-#ifdef PLATFORM_IPHONE
-    if (infiniteLives.on != Settings.InfiniteLives)
-        [TestFlight passCheckpoint:[NSString stringWithFormat:@"Turned Infinite Lives %s", infiniteLives.on ? "on" : "off"]];
-#endif
-    Settings.InfiniteLives = infiniteLives.on;
     
 #ifdef PLATFORM_IPHONE
     if (disableVacuum.on != Settings.DisableVacuum)

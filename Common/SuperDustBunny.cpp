@@ -200,12 +200,15 @@ void LoadCurrentChapter()
 
     LoadTweaks();
     
+    ResetPortfolio();
+    if (CurrentChapter == 0)
+        SetupTutorialPortfolio();
+    else
+        SetupInitialPortfolio();
+    
     LoadChapterScores(Chapters[CurrentChapter].Name);
     
 	LoadChapter(Chapters[CurrentChapter].Name);
-    
-    ResetPortfolio();
-    SetupInitialPortfolio();
     
     PageCount = 0;
 }
@@ -216,14 +219,26 @@ static void SetupNextPage()
     if (PageCount % 10 == 0)
         AddToPortfolio();
     
-    SetCurrentPage(Random(0, Chapter.NPages-1));
+    int NewPage;
+    do { NewPage = Random(0, Chapter.NPages-1); } while (NewPage == Chapter.PageNum);
+    
+    SetCurrentPage(NewPage);
 }
 
 void AdvanceToNextPage()
 {
     RecordPageScore(Chapter.PageNum);
 
-//	if (Chapter.PageNum < Chapter.NPages-1)
+    if (CurrentChapter == 0)
+    {
+        sxPlaySound(&NextPageSound);
+
+        if (IsRecordingActive())
+    		StopRecording(RESULT_NEXT_PAGE);
+
+        SetGameState_StartScreen();
+    }
+    else
 	{
         sxPlaySound(&NextPageSound);
 
@@ -232,16 +247,6 @@ void AdvanceToNextPage()
         
 		SetGameState_Transition(GAMETRANSITION_NEXT_PAGE);
 	}
-//	else
-//	{
-//        if (IsRecordingActive())
-//    		StopRecording(RESULT_CHAPTER_END);
-//        
-//        SaveChapterScores(Chapters[CurrentChapter].Name);x
-//        SaveChapterUnlocks();
- 
-//		SetGameState_WinScreen();
-//	}
 }
 
 static void SkipToNextPage()
@@ -705,7 +710,6 @@ static void UpdateGame_Transition()
 			LoadCurrentChapter();
 			InitChapterIntro();
             StartChapterMusic();
-            Dusty.Lives = 1;            
 			Wipe.Middle = false;
 		}
 

@@ -157,8 +157,6 @@ struct SDusty
     
     int ComboCount;
     
-	int Lives;
-    
     bool Hidden;
 
     int OnFireTimer;

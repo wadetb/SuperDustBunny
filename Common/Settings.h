@@ -18,11 +18,12 @@ typedef enum
 
 typedef struct
 {
+    int Lives;
+    
     EControlStyle ControlStyle;
     
     bool GhostActive;
     
-    bool InfiniteLives;
     bool DisableVacuum;
     
     bool LiveAssets;
