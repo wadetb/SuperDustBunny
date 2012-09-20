@@ -256,6 +256,7 @@ struct SPortfolio
     bool Barrels;
     bool Fans;
     bool Staplers;
+    bool Powerups;
     bool Balloons;
     bool Sharp;
     bool Sticky;

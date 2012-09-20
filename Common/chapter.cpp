@@ -1077,7 +1077,7 @@ static void CreatePageObjects()
                     EraseBlock(x, y);
                     break;
                 case BLOCKTYPE_POWERUP:
-                    CreatePowerUp(x * 64, y * 64);
+                    if (Portfolio.Powerups) CreatePowerUp(x * 64, y * 64);
                     EraseBlock(x, y);
                     break;
                 case BLOCKTYPE_TUTORIAL:
@@ -1085,7 +1085,8 @@ static void CreatePageObjects()
                     EraseBlock(x, y);
                     break;
                 case BLOCKTYPE_VACUUM_TRIGGER:
-                    CreateVacuumTrigger(x * 64, y * 64, (SVacuumTriggerProperties*)Block->Properties);
+                    // Vacuum triggers made obsolete by portfolio system.
+                    //CreateVacuumTrigger(x * 64, y * 64, (SVacuumTriggerProperties*)Block->Properties);
                     EraseBlock(x, y);
                     break;
                 case BLOCKTYPE_HANGER:
@@ -1647,6 +1648,7 @@ void ResetPortfolio()
     Portfolio.Barrels = false;
     Portfolio.Fans = false;
     Portfolio.Staplers = false;
+    Portfolio.Powerups = false;
     Portfolio.Balloons = false;
     Portfolio.Sharp = false;
     Portfolio.Sticky = false;
@@ -1654,7 +1656,7 @@ void ResetPortfolio()
     Portfolio.UpsideDown = false;
 }
 
-static bool* AllPros[] = { &Portfolio.Gears, &Portfolio.Fireworks, &Portfolio.Babies, &Portfolio.Barrels, &Portfolio.Fans, &Portfolio.Staplers, &Portfolio.Balloons };
+static bool* AllPros[] = { &Portfolio.Gears, &Portfolio.Fireworks, &Portfolio.Babies, &Portfolio.Barrels, &Portfolio.Fans, &Portfolio.Staplers, &Portfolio.Powerups, &Portfolio.Balloons };
 static bool* AllCons[] = { &Portfolio.LightsOff, &Portfolio.Sharp, &Portfolio.Sticky, &Portfolio.DustBuster, &Portfolio.UpsideDown };
 
 static bool* InitialPros[] = { &Portfolio.Gears, &Portfolio.Fireworks, &Portfolio.Babies, &Portfolio.Barrels, &Portfolio.Fans, &Portfolio.Staplers, &Portfolio.Balloons };
