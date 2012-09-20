@@ -39,6 +39,7 @@
 #include "Balloon.h"
 
 #include "StartScreen.h"
+#include "StoreScreen.h"
 #include "HelpScreen.h"
 #include "CreditsScreen.h"
 #include "LeaderboardScreen.h"
@@ -59,6 +60,7 @@ enum EGameState
 	GAMESTATE_PLAYING,
 	GAMESTATE_TRANSITION,
 	GAMESTATE_START_SCREEN,
+	GAMESTATE_STORE_SCREEN,
 	GAMESTATE_DIE_SCREEN,
 	GAMESTATE_WIN_SCREEN,
 	GAMESTATE_HELP_SCREEN,
@@ -120,6 +122,8 @@ void Init()
     
     InitSettings();
 	InitLighting();
+    
+    LoadInventory();
 	
     LoadBundleAssetList();
 
@@ -326,38 +330,16 @@ void SetGameState_StartScreen()
     LoadChapterList();
     LoadChapterUnlocks();
     
-    if (CurrentChapter == -1)
-    {
-        // Look for the first unplayed chapter that is also unlocked.
-        for (int i = 0; i < NChapters; i++)
-        {
-            if (!Chapters[i].Played && Chapters[i].Unlocked)
-            {
-                CurrentChapter = i;
-                break;
-            }
-        }
-        
-        // In case of no entries, find the last chapter that is unlocked before a locked chapter.
-        if (CurrentChapter == -1)
-        {
-            for (int i = 0; i < NChapters-1; i++)
-            {
-                if (Chapters[i].Unlocked && !Chapters[i+1].Unlocked)
-                {
-                    CurrentChapter = i;
-                    break;
-                }
-            }
-        }
-        
-        // If all else fails, pick chapter 0.
-        // (Possible future improvement - pick the chapter with the worst, or perhaps the most recently played)
-        if (CurrentChapter == -1)
-            CurrentChapter = 0;
-    }
+    CurrentChapter = 0;
 
 	InitStartScreen();
+}
+
+void SetGameState_StoreScreen()
+{
+	GameState = GAMESTATE_STORE_SCREEN;
+    
+	InitStoreScreen();
 }
 
 void SetGameState_Help()
@@ -860,6 +842,10 @@ void Display()
 	{
 		DisplayStartScreen();
 	}
+	if (GameState == GAMESTATE_STORE_SCREEN)
+	{
+		DisplayStoreScreen();
+	}
 	else if (GameState == GAMESTATE_HELP_SCREEN)
 	{
 	    DisplayHelpScreen();
@@ -1093,9 +1079,13 @@ bool Update()
 	// Vacuum sounds always need to be updated no matter what state the game is in.
 	UpdateVacuumSound();
 	
-	if (GameState == GAMESTATE_START_SCREEN)	
+	if (GameState == GAMESTATE_START_SCREEN)
 	{
 		UpdateStartScreen();
+	}
+	if (GameState == GAMESTATE_STORE_SCREEN)
+	{
+		UpdateStoreScreen();
 	}
 	else if (GameState == GAMESTATE_HELP_SCREEN)
 	{

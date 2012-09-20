@@ -15,6 +15,8 @@
 		0837CAF6142BB77C0042DB5C /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0837CAF5142BB77C0042DB5C /* CoreLocation.framework */; };
 		0837CAF9142BB7D20042DB5C /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0837CAF8142BB7D20042DB5C /* MapKit.framework */; };
 		0844B73913F9F0A500092ECE /* Text.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0844B73813F9F0A500092ECE /* Text.cpp */; };
+		084CAE771609054E00672D80 /* StoreScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 084CAE751609054D00672D80 /* StoreScreen.cpp */; };
+		084CAE7816095C0A00672D80 /* StoreScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 084CAE751609054D00672D80 /* StoreScreen.cpp */; };
 		0856200F1346A40000F9EFBA /* Default-ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856200A1346A40000F9EFBA /* Default-ipad.png */; };
 		085620101346A40000F9EFBA /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856200B1346A40000F9EFBA /* Default.png */; };
 		085620111346A40000F9EFBA /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856200C1346A40000F9EFBA /* Default@2x.png */; };
@@ -163,6 +165,8 @@
 		0837CAF8142BB7D20042DB5C /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		0844B73613F9F09B00092ECE /* Text.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Text.h; sourceTree = "<group>"; };
 		0844B73813F9F0A500092ECE /* Text.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Text.cpp; sourceTree = "<group>"; };
+		084CAE751609054D00672D80 /* StoreScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StoreScreen.cpp; sourceTree = "<group>"; };
+		084CAE761609054E00672D80 /* StoreScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoreScreen.h; sourceTree = "<group>"; };
 		0856200A1346A40000F9EFBA /* Default-ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-ipad.png"; sourceTree = "<group>"; };
 		0856200B1346A40000F9EFBA /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		0856200C1346A40000F9EFBA /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
@@ -525,6 +529,8 @@
 				085AAA48132C5B9F00DF32CA /* Stapler.h */,
 				085AAA49132C5B9F00DF32CA /* StartScreen.cpp */,
 				085AAA4A132C5B9F00DF32CA /* StartScreen.h */,
+				084CAE751609054D00672D80 /* StoreScreen.cpp */,
+				084CAE761609054E00672D80 /* StoreScreen.h */,
 				085AAA4B132C5B9F00DF32CA /* SuperDustBunny.cpp */,
 				085AAA4C132C5B9F00DF32CA /* TennisBall.cpp */,
 				085AAA4D132C5B9F00DF32CA /* TennisBall.h */,
@@ -774,6 +780,7 @@
 				08A9E0101447B6CD009A76B9 /* Baby.cpp in Sources */,
 				08E69E6E146B8FC7004FEDEF /* Balloon.cpp in Sources */,
 				08C607B1158D6974005F3353 /* Music.cpp in Sources */,
+				084CAE771609054E00672D80 /* StoreScreen.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -781,6 +788,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				084CAE7816095C0A00672D80 /* StoreScreen.cpp in Sources */,
 				08D497FD1417C0B00022E457 /* graphics.mm in Sources */,
 				08D497FE1417C0B00022E457 /* keyboard.mm in Sources */,
 				08D497FF1417C0B00022E457 /* mouse.mm in Sources */,

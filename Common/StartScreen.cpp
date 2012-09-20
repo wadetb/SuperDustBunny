@@ -56,10 +56,13 @@ SStartScreen StartScreen;
 const float StartScreenSpacing = 470.0f;
 const float StartScreenDragSpacing = 300.0f;
 
+bool InitialStartScreen = true;
 
 void InitStartScreen()
 {
-    StartScreen.TitleVisible = true;
+    StartScreen.TitleVisible = InitialStartScreen;
+    InitialStartScreen = false;
+    
     StartScreen.ReleasedAtLeastOnce = false;
     StartScreen.BackgroundFadeAlpha = 0.0f;
     StartScreen.Pressed = 0;
@@ -102,6 +105,10 @@ static void StartScreen_Advance()
             else
                 SetGameState_Transition(GAMETRANSITION_FIRST_PAGE);
         }
+        else if (StartScreen.Pressed == 3)
+        {
+            SetGameState_StoreScreen();
+        }
     }
 
     StartScreen.ReleasedAtLeastOnce = false;
@@ -135,6 +142,15 @@ void DisplayStartScreen()
     AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &ScreenStartButtonsSprite, 100, 440, 0,  3*64, 512,  7*64, StartScreen.Pressed == 2 ? 0.5f : 1.0f);
     AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &ScreenStartButtonsSprite, 190, 670, 0,  7*64, 512, 10*64, StartScreen.Pressed == 3 ? 0.5f : 1.0f);
     
+    // Lives
+    AddLitSprite(LIGHTLIST_VACUUM, &ScreenCoinBackgroundSprite, 0, LitScreenHeight - 120);
+
+    AddLitSpriteScaled(LIGHTLIST_VACUUM, &CoinSpin1Sprite, 250, 900, 1.0f, 1.0f);
+    
+    char Work[20];
+    snprintf(Work, sizeof(Work), "x%d", Settings.Lives);
+    DisplayString(LIGHTLIST_VACUUM, Work, 0, 350, 940, 1.1f);
+
     // Leaderboard button.
     AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ButtonLeaderboardSprite, 768-90 + sinf(StartScreen.WiggleTime)*4.0f, 90, 1.0f, 1.0f);
 

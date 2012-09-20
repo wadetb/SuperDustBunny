@@ -11,6 +11,7 @@
 #include "Dusty.h"
 #include "Assets.h"
 #include "Settings.h"
+#include "StoreScreen.h"
 
 #ifdef PLATFORM_IPHONE
 #include <zlib.h>
@@ -167,11 +168,18 @@ gxSprite WhiteSmokeSprite;
 
 gxSprite DustBusterSprite;
 
+gxSprite ScreenStoreSprite;
+gxSprite ScreenCoinBackgroundSprite;
+
 gxSprite ScreenStartSprite;
 gxSprite ScreenStartPressedSprite;
 gxSprite ScreenStartBackgroundSprite;
 gxSprite ScreenStartButtonsSprite;
 gxSprite ScreenStartButtonsDownSprite;
+
+gxSprite ScreenGoBackSprite;
+gxSprite ScreenBuyItSprite;
+gxSprite ScreenWearItSprite;
 
 gxSprite ScreenStart1Sprite;
 gxSprite ScreenHelp1Sprite;
@@ -1161,11 +1169,18 @@ void LoadAssets()
     
 	LoadSpriteAsset("Assets/dustbuster.png", &DustBusterSprite);
 
+    LoadSpriteAsset("Assets/screen-store.png", &ScreenStoreSprite);
+    LoadSpriteAsset("Assets/screen-coin-background.png", &ScreenCoinBackgroundSprite);
+
     LoadSpriteAsset("Assets/screen-start.png", &ScreenStartSprite);
 	LoadSpriteAsset("Assets/screen-start-pressed.png", &ScreenStartPressedSprite);
 	LoadSpriteAsset("Assets/start-background-study.png", &ScreenStartBackgroundSprite);
 	LoadSpriteAsset("Assets/screen-start-buttons.png", &ScreenStartButtonsSprite);
 	LoadSpriteAsset("Assets/screen-start-buttons-down.png", &ScreenStartButtonsDownSprite);
+
+    LoadSpriteAsset("Assets/screen-go-back.png", &ScreenGoBackSprite);
+    LoadSpriteAsset("Assets/screen-buy-it.png", &ScreenBuyItSprite);
+    LoadSpriteAsset("Assets/screen-wear-it.png", &ScreenWearItSprite);
 
 	LoadSpriteAsset("Assets/screen-start-1.png", &ScreenStart1Sprite);
     LoadSpriteAsset("Assets/screen-help-1.png", &ScreenHelp1Sprite);
@@ -1224,6 +1239,8 @@ void LoadAssets()
 
     LoadSpriteAsset("Assets/powerup.png", &PowerUpSprite);
 
+    LoadInventoryAssets();
+    
 	//-----------------------------------------------------------------------------------------------------------------------------------------//
 	//                                                    Sound Assets                                                                         //
 	//-----------------------------------------------------------------------------------------------------------------------------------------//

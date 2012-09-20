@@ -553,6 +553,9 @@ void InitMinimap()
 
 void UpdateMinimap(EMinimapAction Action)
 {
+    if (!MinimapAction)
+        return;
+    
     if (Action == MINIMAP_NORMAL)
     {
         if (MinimapActionCounter % 10 != 0)

@@ -163,6 +163,13 @@ extern gxSprite WhiteSmokeSprite;
 
 extern gxSprite DustBusterSprite;
 
+extern gxSprite ScreenStoreSprite;
+extern gxSprite ScreenCoinBackgroundSprite;
+
+extern gxSprite ScreenGoBackSprite;
+extern gxSprite ScreenBuyItSprite;
+extern gxSprite ScreenWearItSprite;
+
 extern gxSprite ScreenStartSprite;
 extern gxSprite ScreenStartPressedSprite;
 extern gxSprite ScreenStartBackgroundSprite;

@@ -24,6 +24,7 @@
 #include "Tweak.h"
 #include "Baby.h"
 #include "Music.h"
+#include "StoreScreen.h"
 
 
 SDusty Dusty;
@@ -103,13 +104,7 @@ SDustyHatOffset DustyHatOffsets[DUSTYSPRITE_COUNT] =
     { 0, 115, 114 }, // FIXME
 };
 
-gxSprite* DustyHatSprites[DUSTYHAT_COUNT] =
-{
-    NULL,
-    &PinkBowHatSprite,
-    &PartyHatSprite,
-    &GraduationHatSprite
-};
+gxSprite* DustyHatSprites[DUSTYHAT_COUNT];
 
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
@@ -137,7 +132,7 @@ void InitDusty()
     
 	Dusty.SpriteTransition = 45;
 
-    Dusty.Hat = DUSTYHAT_NONE;
+    Dusty.Hat = (EDustyHat)GetActiveInventoryHat();
     
 	Dusty.NoCollision = false;
 
@@ -167,6 +162,9 @@ void InitDusty()
 	Dusty.CollideWithBottomSide = false;
     
     memset(DustyTrail, 0, sizeof(DustyTrail));
+    
+    for (int i = 0; i < DUSTYHAT_COUNT; i++)
+        DustyHatSprites[i] = GetInventoryHatSprite(i);
 };
 
 void SetDustyPosition(float x, float y, EDustyDirection direction)
@@ -2020,7 +2018,7 @@ void UpdateDusty()
 	case DUSTYSTATE_HOP:				UpdateDusty_Hop(); break;
 	case DUSTYSTATE_WALLJUMP:			UpdateDusty_WallJump(); break;
     case DUSTYSTATE_CORNERJUMP:			UpdateDusty_CornerJump(); break;
-    case DUSTYSTATE_BALLOONRIDE:			UpdateDusty_BalloonRide(); break;
+    case DUSTYSTATE_BALLOONRIDE:		UpdateDusty_BalloonRide(); break;
 	case DUSTYSTATE_PREPARELAUNCH:      UpdateDusty_PrepareLaunch(); break;
 	case DUSTYSTATE_LAUNCH:             UpdateDusty_Launch(); break;
 	case DUSTYSTATE_DIE:				UpdateDusty_Die(); break;

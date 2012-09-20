@@ -273,6 +273,7 @@ inline float strtof(char* p, char** pp) { return (float)strtod(p, pp); }
 double GetCurrentTime();
 
 void SetGameState_StartScreen();
+void SetGameState_StoreScreen();
 void SetGameState_DieScreen();
 void SetGameState_WinScreen();
 void SetGameState_Playing();
