@@ -35,6 +35,7 @@
 #include "Hanger.h"
 #include "Baby.h"
 #include "Balloon.h"
+#include "Text.h"
 
 #ifdef PLATFORM_WINDOWS
 #include <direct.h>
@@ -1635,79 +1636,150 @@ void SaveChapterUnlocks()
     PopErrorContext();
 }
 
+
+enum EPortfolioFlags
+{
+    PORTFOLIO_PRO = 0,
+    PORTFOLIO_CON = 1,
+    PORTFOLIO_TYPE_MASK = 1,
+    
+    PORTFOLIO_INITIAL = 2,
+};
+
+struct SPortfolioEntry
+{
+    const char* Name;
+    int Flags;
+    bool* Value;
+};
+
+SPortfolioEntry PortfolioEntries[] =
+{
+    { "Coins", PORTFOLIO_PRO, &Portfolio.Coins },
+    { "Gears", PORTFOLIO_PRO, &Portfolio.Gears },
+    { "Fireworks", PORTFOLIO_PRO, &Portfolio.Fireworks },
+    { "Babies", PORTFOLIO_PRO, &Portfolio.Babies },
+    { "Barrels", PORTFOLIO_PRO, &Portfolio.Barrels },
+    { "Fans", PORTFOLIO_PRO, &Portfolio.Fans },
+    { "Staplers", PORTFOLIO_PRO, &Portfolio.Staplers },
+    { "Powerups", PORTFOLIO_PRO, &Portfolio.Powerups },
+    { "Balloons", PORTFOLIO_PRO, &Portfolio.Balloons },
+
+    { "LightsOff", PORTFOLIO_CON, &Portfolio.LightsOff },
+    { "Sharp", PORTFOLIO_CON, &Portfolio.Sharp },
+    { "Sticky", PORTFOLIO_CON, &Portfolio.Sticky },
+    { "DustBuster", PORTFOLIO_CON, &Portfolio.DustBuster },
+    { "UpsideDown", PORTFOLIO_CON, &Portfolio.UpsideDown },
+};
+
 SPortfolio Portfolio;
 SPortfolio SavedPortfolio;
 
+int PortfolioLine;
+
 void ResetPortfolio()
 {
-    Portfolio.Coins = false;
-    Portfolio.Gears = false;
-    Portfolio.Fireworks = false;
-    Portfolio.Babies = false;
-    Portfolio.LightsOff = false;
-    Portfolio.Barrels = false;
-    Portfolio.Fans = false;
-    Portfolio.Staplers = false;
-    Portfolio.Powerups = false;
-    Portfolio.Balloons = false;
-    Portfolio.Sharp = false;
-    Portfolio.Sticky = false;
-    Portfolio.DustBuster = false;
-    Portfolio.UpsideDown = false;
+    PortfolioLine = 0;
+    
+    for (int i = 0; i < ARRAY_COUNT(PortfolioEntries); i++)
+        *PortfolioEntries[i].Value = false;
 }
 
-static bool* AllPros[] = { &Portfolio.Gears, &Portfolio.Fireworks, &Portfolio.Babies, &Portfolio.Barrels, &Portfolio.Fans, &Portfolio.Staplers, &Portfolio.Powerups, &Portfolio.Balloons };
-static bool* AllCons[] = { &Portfolio.LightsOff, &Portfolio.Sharp, &Portfolio.Sticky, &Portfolio.DustBuster, &Portfolio.UpsideDown };
-
-static bool* InitialPros[] = { &Portfolio.Gears, &Portfolio.Fireworks, &Portfolio.Babies, &Portfolio.Barrels, &Portfolio.Fans, &Portfolio.Staplers, &Portfolio.Balloons };
-
-static void EnableRandomPortfolio(bool** Elements, int ElementCount)
+static void EnableRandomPortfolio(int Flags, int FlagsMask, bool Value)
 {
-    bool** EnabledElements = (bool**)malloc(ElementCount * sizeof(bool*));
+    SPortfolioEntry* EnabledElements[ARRAY_COUNT(PortfolioEntries)];
     int EnabledElementCount = 0;
     
-    for (int i = 0; i < ElementCount; i++)
-        if (!*Elements[i])
-            EnabledElements[EnabledElementCount++] = Elements[i];
+    for (int i = 0; i < ARRAY_COUNT(PortfolioEntries); i++)
+        if ((PortfolioEntries[i].Flags & FlagsMask) == Flags && *PortfolioEntries[i].Value != Value)
+            EnabledElements[EnabledElementCount++] = &PortfolioEntries[i];
     
     if (EnabledElementCount)
     {
         int ElementIndex = Random(0, EnabledElementCount);
-        *EnabledElements[ElementIndex] = true;
+
+        char Work[20];
+        snprintf(Work, sizeof(Work), "%s %s", EnabledElements[ElementIndex]->Name, Value ? "enabled" : "disabled");
+        AddDebugText(Work, FORMAT_CENTER_X, 384, 200 + 64*PortfolioLine, 0.7f, gxRGB32(255, 192, 128), 5.0f);
+        PortfolioLine = PortfolioLine >= 5 ? 0 : PortfolioLine + 1;
+        
+        *EnabledElements[ElementIndex]->Value = true;
     }
 }
 
-static void DisableRandomPortfolio(bool** Elements, int ElementCount)
+void LoadPortfolio()
 {
-    bool** EnabledElements = (bool**)malloc(ElementCount * sizeof(bool*));
-    int EnabledElementCount = 0;
-
-    for (int i = 0; i < ElementCount; i++)
-        if (*Elements[i])
-            EnabledElements[EnabledElementCount++] = Elements[i];
-
-    if (EnabledElementCount)
+    PushErrorContext("While loading portfolio:\n");
+    
+    char* XML = (char*)LoadAssetFile("Portfolio.xml", NULL, NULL);
+    if (!XML)
     {
-        int ElementIndex = Random(0, EnabledElementCount);
-        *EnabledElements[ElementIndex] = false;
+        PopErrorContext();
+        return;
     }
+    
+    // Parse the XML text buffer into a Document hierarchy.
+    rapidxml::xml_document<> Document;
+    try
+    {
+        Document.parse<0>(XML);
+    }
+    catch (rapidxml::parse_error e)
+    {
+        ReportError("Failed to parse portfolio file:\n%s", e.what());
+    }
+    
+    // Get the <Portfolio> node and validate.
+    rapidxml::xml_node<char>* PortfolioNode = Document.first_node("Portfolio");
+    if (PortfolioNode == NULL)
+        ReportError("Missing <Portfolio> node.  Check for errors in the XML.");
+
+    rapidxml::xml_node<char>* InitialNode = PortfolioNode->first_node("Initial");
+    if (InitialNode == NULL)
+        ReportError("Missing <Initial> node.  Check for errors in the XML.");
+    
+    for (int i = 0; i < ARRAY_COUNT(PortfolioEntries); i++)
+        if (InitialNode->first_attribute(PortfolioEntries[i].Name) && atoi(InitialNode->first_attribute(PortfolioEntries[i].Name)->value()) != 0)
+            PortfolioEntries[i].Flags |= PORTFOLIO_INITIAL;
+
+    rapidxml::xml_node<char>* DebugNode = PortfolioNode->first_node("Debug");
+    if (DebugNode)
+    {
+        Portfolio.Chapter = DebugNode->first_attribute("Chapter") ? atoi(DebugNode->first_attribute("Chapter")->value()) : 0;
+        Portfolio.Page = DebugNode->first_attribute("Page") ? atoi(DebugNode->first_attribute("Page")->value()) : 0;
+        
+        for (int i = 0; i < ARRAY_COUNT(PortfolioEntries); i++)
+            *PortfolioEntries[i].Value = DebugNode->first_attribute(PortfolioEntries[i].Name) && atoi(DebugNode->first_attribute(PortfolioEntries[i].Name)->value()) != 0;
+    }
+    else
+    {
+        SetupInitialPortfolio();
+    }
+
+    PopErrorContext();
 }
 
 void SetupInitialPortfolio()
 {
+    PortfolioLine = 0;
+    
     // Start with two initial pros.
-    EnableRandomPortfolio(InitialPros, ARRAY_COUNT(InitialPros));
-    EnableRandomPortfolio(InitialPros, ARRAY_COUNT(InitialPros));
+    EnableRandomPortfolio(PORTFOLIO_PRO | PORTFOLIO_INITIAL, PORTFOLIO_TYPE_MASK | PORTFOLIO_INITIAL, true);
+    EnableRandomPortfolio(PORTFOLIO_PRO | PORTFOLIO_INITIAL, PORTFOLIO_TYPE_MASK | PORTFOLIO_INITIAL, true);
 }
 
 void SetupTutorialPortfolio()
 {
+    PortfolioLine = 0;
+
     Portfolio.Staplers = true;
     Portfolio.Balloons = true;
 }
 
 void AddToPortfolio()
 {
+    PortfolioLine = 0;
+    
     // Coins always appear after one turn.
     if (!Portfolio.Coins)
         Portfolio.Coins = true;
@@ -1726,18 +1798,13 @@ void AddToPortfolio()
     
     // Randomly add one pro or con.
     if (Random(0.0f, 1.0f) >= 0.5f)
-        EnableRandomPortfolio(AllPros, ARRAY_COUNT(AllPros));
+        EnableRandomPortfolio(PORTFOLIO_PRO, PORTFOLIO_TYPE_MASK, true);
     else
-        EnableRandomPortfolio(AllCons, ARRAY_COUNT(AllCons));
+        EnableRandomPortfolio(PORTFOLIO_CON, PORTFOLIO_TYPE_MASK, true);
 
-    // 50% change of removing one pro or con.
+    // 50% change of removing one random element.
     if (Random(0.0f, 1.0f) >= 0.5f)
-    {
-        if (Random(0.0f, 1.0f) >= 0.5f)
-            DisableRandomPortfolio(AllPros, ARRAY_COUNT(AllPros));
-        else
-            DisableRandomPortfolio(AllCons, ARRAY_COUNT(AllCons));
-    }
+        EnableRandomPortfolio(0, 0, false);
     
     if (Portfolio.LightsOff)
         Portfolio.Fireworks = true;

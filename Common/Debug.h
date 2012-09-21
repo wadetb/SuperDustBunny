@@ -10,8 +10,10 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
+void AddDebugText(const char* Text, int Flags, float X, float Y, float Scale, unsigned int Color, float Time);
 void AddDebugLine(float X1, float Y1, float X2, float Y2, unsigned int Color, float Time);
 
+void DisplayDebugText(const char* Text, int Flags, float X, float Y, float Scale, unsigned int Color);
 void DisplayDebugLine(float X1, float Y1, float X2, float Y2, float Width, unsigned int Color);
 
 void DisplayDebug();

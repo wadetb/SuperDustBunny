@@ -11,56 +11,56 @@
 #include "Text.h"
 
 
-static void DisplayLetter(ELightList List, char Letter, float X, float Y, float Scale, float Alpha)
+static void DisplayLetter(ELightList List, char Letter, float X, float Y, float Scale, unsigned int Color)
 {
-    switch (Letter)
+    switch (tolower(Letter))
     {
-        case 'a': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  0*48,   0,  1*48, 60, Scale, Scale, Alpha); break;
-        case 'b': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  1*48,   0,  2*48, 60, Scale, Scale, Alpha); break;
-        case 'c': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  2*48,   0,  3*48, 60, Scale, Scale, Alpha); break;
-        case 'd': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  3*48,   0,  4*48, 60, Scale, Scale, Alpha); break;
-        case 'e': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  4*48,   0,  5*48, 60, Scale, Scale, Alpha); break;
-        case 'f': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  5*48,   0,  6*48, 60, Scale, Scale, Alpha); break;
-        case 'g': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  6*48,   0,  7*48, 60, Scale, Scale, Alpha); break;
-        case 'h': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  7*48,   0,  8*48, 60, Scale, Scale, Alpha); break;
-        case 'i': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  8*48,   0,  9*48, 60, Scale, Scale, Alpha); break;
-        case 'j': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  9*48,   0, 10*48, 60, Scale, Scale, Alpha); break;
-        case 'k': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y, 10*48,   0, 11*48, 60, Scale, Scale, Alpha); break;
-        case 'l': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y, 11*48,   0, 12*48, 60, Scale, Scale, Alpha); break;
-        case 'm': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y, 12*48,   0, 13*48, 60, Scale, Scale, Alpha); break;
-        case 'n': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  0*48,  64,  1*48, 124, Scale, Scale, Alpha); break;
-        case 'o': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  1*48,  64,  2*48, 124, Scale, Scale, Alpha); break;
-        case 'p': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  2*48,  64,  3*48, 124, Scale, Scale, Alpha); break;
-        case 'q': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  3*48,  64,  4*48, 124, Scale, Scale, Alpha); break;
-        case 'r': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  4*48,  64,  5*48, 124, Scale, Scale, Alpha); break;
-        case 's': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  5*48,  64,  6*48, 124, Scale, Scale, Alpha); break;
-        case 't': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  6*48,  64,  7*48, 124, Scale, Scale, Alpha); break;
-        case 'u': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  7*48,  64,  8*48, 124, Scale, Scale, Alpha); break;
-        case 'v': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  8*48,  64,  9*48, 124, Scale, Scale, Alpha); break;
-        case 'w': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  9*48,  64, 10*48, 124, Scale, Scale, Alpha); break;
-        case 'x': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y, 10*48,  64, 11*48, 124, Scale, Scale, Alpha); break;
-        case 'y': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y, 11*48,  64, 12*48, 124, Scale, Scale, Alpha); break;
-        case 'z': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y, 12*48,  64, 13*48, 124, Scale, Scale, Alpha); break;
-        case '1': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  0*48, 128,  1*48, 188, Scale, Scale, Alpha); break;
-        case '2': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  1*48, 128,  2*48, 188, Scale, Scale, Alpha); break;
-        case '3': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  2*48, 128,  3*48, 188, Scale, Scale, Alpha); break;
-        case '4': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  3*48, 128,  4*48, 188, Scale, Scale, Alpha); break;
-        case '5': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  4*48, 128,  5*48, 188, Scale, Scale, Alpha); break;
-        case '6': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  5*48, 128,  6*48, 188, Scale, Scale, Alpha); break;
-        case '7': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  6*48, 128,  7*48, 188, Scale, Scale, Alpha); break;
-        case '8': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  7*48, 128,  8*48, 188, Scale, Scale, Alpha); break;
-        case '9': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  8*48, 128,  9*48, 188, Scale, Scale, Alpha); break;
-        case '0': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y,  9*48, 128, 10*48, 188, Scale, Scale, Alpha); break;
-        case '!': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y, 10*48, 128, 11*48, 188, Scale, Scale, Alpha); break;
-        case '?': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y, 11*48, 128, 12*48, 188, Scale, Scale, Alpha); break;
-        case ',': AddLitSubSpriteScaledAlpha(List, &AlphabetSprite, X, Y, 12*48, 128, 13*48, 188, Scale, Scale, Alpha); break;
+        case 'a': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  0*48,   0,  1*48, 60, Scale, Scale, Color); break;
+        case 'b': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  1*48,   0,  2*48, 60, Scale, Scale, Color); break;
+        case 'c': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  2*48,   0,  3*48, 60, Scale, Scale, Color); break;
+        case 'd': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  3*48,   0,  4*48, 60, Scale, Scale, Color); break;
+        case 'e': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  4*48,   0,  5*48, 60, Scale, Scale, Color); break;
+        case 'f': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  5*48,   0,  6*48, 60, Scale, Scale, Color); break;
+        case 'g': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  6*48,   0,  7*48, 60, Scale, Scale, Color); break;
+        case 'h': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  7*48,   0,  8*48, 60, Scale, Scale, Color); break;
+        case 'i': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  8*48,   0,  9*48, 60, Scale, Scale, Color); break;
+        case 'j': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  9*48,   0, 10*48, 60, Scale, Scale, Color); break;
+        case 'k': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y, 10*48,   0, 11*48, 60, Scale, Scale, Color); break;
+        case 'l': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y, 11*48,   0, 12*48, 60, Scale, Scale, Color); break;
+        case 'm': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y, 12*48,   0, 13*48, 60, Scale, Scale, Color); break;
+        case 'n': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  0*48,  64,  1*48, 124, Scale, Scale, Color); break;
+        case 'o': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  1*48,  64,  2*48, 124, Scale, Scale, Color); break;
+        case 'p': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  2*48,  64,  3*48, 124, Scale, Scale, Color); break;
+        case 'q': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  3*48,  64,  4*48, 124, Scale, Scale, Color); break;
+        case 'r': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  4*48,  64,  5*48, 124, Scale, Scale, Color); break;
+        case 's': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  5*48,  64,  6*48, 124, Scale, Scale, Color); break;
+        case 't': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  6*48,  64,  7*48, 124, Scale, Scale, Color); break;
+        case 'u': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  7*48,  64,  8*48, 124, Scale, Scale, Color); break;
+        case 'v': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  8*48,  64,  9*48, 124, Scale, Scale, Color); break;
+        case 'w': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  9*48,  64, 10*48, 124, Scale, Scale, Color); break;
+        case 'x': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y, 10*48,  64, 11*48, 124, Scale, Scale, Color); break;
+        case 'y': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y, 11*48,  64, 12*48, 124, Scale, Scale, Color); break;
+        case 'z': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y, 12*48,  64, 13*48, 124, Scale, Scale, Color); break;
+        case '1': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  0*48, 128,  1*48, 188, Scale, Scale, Color); break;
+        case '2': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  1*48, 128,  2*48, 188, Scale, Scale, Color); break;
+        case '3': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  2*48, 128,  3*48, 188, Scale, Scale, Color); break;
+        case '4': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  3*48, 128,  4*48, 188, Scale, Scale, Color); break;
+        case '5': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  4*48, 128,  5*48, 188, Scale, Scale, Color); break;
+        case '6': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  5*48, 128,  6*48, 188, Scale, Scale, Color); break;
+        case '7': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  6*48, 128,  7*48, 188, Scale, Scale, Color); break;
+        case '8': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  7*48, 128,  8*48, 188, Scale, Scale, Color); break;
+        case '9': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  8*48, 128,  9*48, 188, Scale, Scale, Color); break;
+        case '0': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y,  9*48, 128, 10*48, 188, Scale, Scale, Color); break;
+        case '!': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y, 10*48, 128, 11*48, 188, Scale, Scale, Color); break;
+        case '?': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y, 11*48, 128, 12*48, 188, Scale, Scale, Color); break;
+        case ',': AddLitSubSpriteScaledColor(List, &AlphabetSprite, X, Y, 12*48, 128, 13*48, 188, Scale, Scale, Color); break;
         default: break;
     }
 }
 
 static int GetLetterWidth(char Letter)
 {
-    switch (Letter)
+    switch (tolower(Letter))
     {
         case 'a': return 44;
         case 'b': return 44;
@@ -119,7 +119,7 @@ float GetStringWidth(const char* String, float Scale)
     return CurWidth;
 }
 
-void DisplayStringAlpha(ELightList List, const char* String, unsigned int FormatFlags, float X, float Y, float Scale, float Alpha)
+void DisplayStringColor(ELightList List, const char* String, unsigned int FormatFlags, float X, float Y, float Scale, unsigned int Color)
 {
     float CurX = X;
     float CurY = Y;
@@ -131,10 +131,15 @@ void DisplayStringAlpha(ELightList List, const char* String, unsigned int Format
     while (*P)
     {
         char C = *P;
-        DisplayLetter(List, C, CurX, CurY, Scale, Alpha);
+        DisplayLetter(List, C, CurX, CurY, Scale, Color);
         CurX += GetLetterWidth(C) * Scale;
         P++;
     }
+}
+
+void DisplayStringAlpha(ELightList List, const char* String, unsigned int FormatFlags, float X, float Y, float Scale, float Alpha)
+{
+    DisplayStringColor(List, String, FormatFlags, X, Y, Scale, gxRGBA32(255, 255, 255, (int)(255*Alpha)));
 }
 
 void DisplayString(ELightList List, const char* String, unsigned int FormatFlags, float X, float Y, float Scale)
@@ -218,7 +223,7 @@ void DisplayMultilineStringAlpha(ELightList List, const char* String, unsigned i
         }
         else
         {
-            DisplayLetter(List, C, CurX, CurY, Scale, Alpha);
+            DisplayLetter(List, C, CurX, CurY, Scale, gxRGBA32(255, 255, 255, (int)(255*Alpha)));
             CurX += GetLetterWidth(C) * Scale;
         }
     }

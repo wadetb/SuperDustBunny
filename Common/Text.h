@@ -20,6 +20,7 @@ float GetStringWidth(const char* String, float Scale);
 
 void DisplayString(ELightList List, const char* String, unsigned int FormatFlags, float X, float Y, float Scale);
 void DisplayStringAlpha(ELightList List, const char* String, unsigned int FormatFlags, float X, float Y, float Scale, float Alpha);
+void DisplayStringColor(ELightList List, const char* String, unsigned int FormatFlags, float X, float Y, float Scale, unsigned int Color);
 
 void GetMultilineStringDimensions(const char* String, float Scale, float* Width, float* Height);
 

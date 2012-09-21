@@ -1339,9 +1339,18 @@ void AddLitSubSpriteScaled(ELightList List, gxSprite* Sprite, float X, float Y, 
 void AddLitSubSpriteScaledAlpha(ELightList List, gxSprite* Sprite, float X, float Y, float SubX1, float SubY1, float SubX2, float SubY2, float ScaleX, float ScaleY, float Alpha)
 {
 	AddLitQuad(List, Sprite, gxRGBA32(255,255,255,(int)(255*Alpha)),
-               X,                      Y,                      SubX1/Sprite->width, SubY1/Sprite->height, 
+               X,                      Y,                      SubX1/Sprite->width, SubY1/Sprite->height,
                X+(SubX2-SubX1)*ScaleX, Y,                      SubX2/Sprite->width, SubY1/Sprite->height,
-               X+(SubX2-SubX1)*ScaleX, Y+(SubY2-SubY1)*ScaleY, SubX2/Sprite->width, SubY2/Sprite->height, 
+               X+(SubX2-SubX1)*ScaleX, Y+(SubY2-SubY1)*ScaleY, SubX2/Sprite->width, SubY2/Sprite->height,
+               X,                      Y+(SubY2-SubY1)*ScaleY, SubX1/Sprite->width, SubY2/Sprite->height);
+}
+
+void AddLitSubSpriteScaledColor(ELightList List, gxSprite* Sprite, float X, float Y, float SubX1, float SubY1, float SubX2, float SubY2, float ScaleX, float ScaleY, unsigned int Color)
+{
+	AddLitQuad(List, Sprite, Color,
+               X,                      Y,                      SubX1/Sprite->width, SubY1/Sprite->height,
+               X+(SubX2-SubX1)*ScaleX, Y,                      SubX2/Sprite->width, SubY1/Sprite->height,
+               X+(SubX2-SubX1)*ScaleX, Y+(SubY2-SubY1)*ScaleY, SubX2/Sprite->width, SubY2/Sprite->height,
                X,                      Y+(SubY2-SubY1)*ScaleY, SubX1/Sprite->width, SubY2/Sprite->height);
 }
 

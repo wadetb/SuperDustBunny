@@ -9,14 +9,26 @@
 
 #include "Common.h"
 #include "Debug.h"
+#include "Text.h"
 
 #ifdef PLATFORM_IPHONE
 #import "SuperDustBunnyViewController.h"
 #endif
 
 
+#define MAX_DEBUG_TEXT  10
 #define MAX_DEBUG_LINES 1000
 
+
+struct SDebugText
+{
+    int EndFrame;
+    char Text[128];
+    int Flags;
+    float X, Y;
+    float Scale;
+    unsigned int Color;
+};
 
 struct SDebugLine
 {
@@ -27,8 +39,29 @@ struct SDebugLine
 };
 
 
+SDebugText DebugTexts[MAX_DEBUG_TEXT];
 SDebugLine DebugLines[MAX_DEBUG_LINES];
+
 int CurFrame;
+
+void AddDebugText(const char* Text, int Flags, float X, float Y, float Scale, unsigned int Color, float Time)
+{
+    for (int i = 0; i < MAX_DEBUG_TEXT; i++)
+    {
+        if (DebugTexts[i].EndFrame <= CurFrame)
+        {
+            SDebugText* DebugText = &DebugTexts[i];
+            snprintf(DebugText->Text, sizeof(DebugText->Text), "%s", Text);
+            DebugText->Flags = Flags;
+            DebugText->X = X;
+            DebugText->Y = Y;
+            DebugText->Scale = Scale;
+            DebugText->Color = Color;
+            DebugText->EndFrame = CurFrame + int(Time*60.0f);
+            return;
+        }
+    }
+}
 
 void AddDebugLine(float X1, float Y1, float X2, float Y2, unsigned int Color, float Time)
 {    
@@ -46,6 +79,11 @@ void AddDebugLine(float X1, float Y1, float X2, float Y2, unsigned int Color, fl
             return;
         }
     }
+}
+
+void DisplayDebugText(const char* Text, int Flags, float X, float Y, float Scale, unsigned int Color)
+{
+    DisplayStringColor(LIGHTLIST_WIPE, Text, Flags, X, Y, Scale, Color);
 }
 
 void DisplayDebugLine(float X1, float Y1, float X2, float Y2, float Width, unsigned int Color)
@@ -84,7 +122,17 @@ void DisplayDebug()
             DisplayDebugLine(DebugLine->X1, DebugLine->Y1, DebugLine->X2, DebugLine->Y2, Width, DebugLine->Color);
         }
     }
-    
+
+    for (int i = 0; i < MAX_DEBUG_TEXT; i++)
+    {
+        if (DebugTexts[i].EndFrame > CurFrame)
+        {
+            SDebugText* DebugText = &DebugTexts[i];
+            
+            DisplayDebugText(DebugText->Text, DebugText->Flags, DebugText->X, DebugText->Y, DebugText->Scale, DebugText->Color);
+        }
+    }
+
     CurFrame++;
 }
 

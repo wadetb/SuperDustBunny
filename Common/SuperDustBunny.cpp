@@ -206,9 +206,13 @@ void LoadCurrentChapter()
     
     ResetPortfolio();
     if (CurrentChapter == 0)
+    {
         SetupTutorialPortfolio();
+    }
     else
-        SetupInitialPortfolio();
+    {
+        LoadPortfolio();
+    }
     
     LoadChapterScores(Chapters[CurrentChapter].Name);
     

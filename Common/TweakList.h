@@ -9,7 +9,7 @@ TWEAK_FLOAT(DustyGravity, 0.3f, "Downward gravity force when the bunny is in the
 TWEAK_FLOAT(DustyGravityScaleWhenLaunched, 0.75f, "Gravity scale applied when the bunny is launched from a can or stapler.  Persists until the bunny lands.")
 TWEAK_FLOAT(DustyAirFriction, 0.98f, "Friction applied continuously to bunny velocity while the bunny is in the air.")
 TWEAK_FLOAT(DustyTerminalVelocityDown, 15.0f, "Maximum downward velocity for the bunny." )
-TWEAK_FLOAT(DustyAirBoostForSwipe, 1.0f, "Magnitude of force applied to the bunny for reach swipe in mid air.")
+TWEAK_FLOAT(DustyAirBoostForSwipe, 1.0f, "Magnitude of force applied to the bunny for each swipe in mid air.")
 TWEAK_FLOAT(DustyAirBoostXForDrag, 1.0f, "Magnitude of horizontal axis force applied to the bunny when dragging in mid air.")
 TWEAK_FLOAT(DustyAirBoostYForDrag, 0.5f, "Magnitude of vertical axis force applied to the bunny when dragging in mid air.")
 TWEAK_INT(DustyWallStickTime, 0, "Number of 60hz frames to stick to the wall before sliding down.")

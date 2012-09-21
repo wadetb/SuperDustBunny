@@ -262,6 +262,9 @@ struct SPortfolio
     bool Sticky;
     bool DustBuster;
     bool UpsideDown;
+    
+    int Chapter;
+    int Page;
 };
 
 
@@ -308,6 +311,7 @@ void LoadChapterUnlocks();
 void SaveChapterUnlocks();
 
 void ResetPortfolio();
+void LoadPortfolio();
 void SetupTutorialPortfolio();
 void SetupInitialPortfolio();
 void AddToPortfolio();
