@@ -1681,6 +1681,8 @@ void ResetPortfolio()
 {
     PortfolioLine = 0;
     
+    Portfolio.PageCount = 0;
+    
     for (int i = 0; i < ARRAY_COUNT(PortfolioEntries); i++)
         *PortfolioEntries[i].Value = false;
 }
@@ -1742,6 +1744,16 @@ void LoadPortfolio()
         if (InitialNode->first_attribute(PortfolioEntries[i].Name) && atoi(InitialNode->first_attribute(PortfolioEntries[i].Name)->value()) != 0)
             PortfolioEntries[i].Flags |= PORTFOLIO_INITIAL;
 
+    rapidxml::xml_node<char>* ChangeElementsNode = PortfolioNode->first_node("ChangeElements");
+    if (ChangeElementsNode == NULL)
+        ReportError("Missing <ChangeElements> node.  Check for errors in the XML.");
+    Portfolio.ElementChangeFrequency = ChangeElementsNode->first_attribute("frequency") ? atoi(ChangeElementsNode->first_attribute("frequency")->value()) : 1;
+
+    rapidxml::xml_node<char>* ChangeChapterNode = PortfolioNode->first_node("ChangeChapter");
+    if (ChangeChapterNode == NULL)
+        ReportError("Missing <ChangeChapter> node.  Check for errors in the XML.");
+    Portfolio.ChapterChangeFrequency = ChangeChapterNode->first_attribute("frequency") ? atoi(ChangeChapterNode->first_attribute("frequency")->value()) : 1;
+
     rapidxml::xml_node<char>* DebugNode = PortfolioNode->first_node("Debug");
     if (DebugNode)
     {
@@ -1778,43 +1790,54 @@ void SetupTutorialPortfolio()
 
 void AddToPortfolio()
 {
-    PortfolioLine = 0;
-    
-    // Coins always appear after one turn.
-    if (!Portfolio.Coins)
-        Portfolio.Coins = true;
-    
-    // Upside down and lights off can only persist for one round.
-    if (Portfolio.UpsideDown)
-    {
-        Portfolio = SavedPortfolio;
-        Portfolio.UpsideDown = false;
-    }
-    
-    if (Portfolio.LightsOff)
-    {
-        Portfolio.LightsOff = false;
-    }
-    
-    // Randomly add one pro or con.
-    if (Random(0.0f, 1.0f) >= 0.5f)
-        EnableRandomPortfolio(PORTFOLIO_PRO, PORTFOLIO_TYPE_MASK, true);
-    else
-        EnableRandomPortfolio(PORTFOLIO_CON, PORTFOLIO_TYPE_MASK, true);
+    Portfolio.PageCount++;
 
-    // 50% change of removing one random element.
-    if (Random(0.0f, 1.0f) >= 0.5f)
-        EnableRandomPortfolio(0, 0, false);
-    
-    if (Portfolio.LightsOff)
-        Portfolio.Fireworks = true;
-    
-    // Upside down disables some pros.
-    if (Portfolio.UpsideDown)
+    if (Portfolio.PageCount % Portfolio.ElementChangeFrequency == 0)
     {
-        SavedPortfolio = Portfolio;
-        Portfolio.Staplers = false;
-        Portfolio.Fans = false;
-        Portfolio.Balloons = false;
+        
     }
+    
+    if (Portfolio.PageCount % Portfolio.ElementChangeFrequency == 0)
+    {
+        PortfolioLine = 0;
+        
+        // Coins always appear after one turn.
+        if (!Portfolio.Coins)
+            Portfolio.Coins = true;
+        
+        // Upside down and lights off can only persist for one round.
+        if (Portfolio.UpsideDown)
+        {
+            Portfolio = SavedPortfolio;
+            Portfolio.UpsideDown = false;
+        }
+        
+        if (Portfolio.LightsOff)
+        {
+            Portfolio.LightsOff = false;
+        }
+        
+        // Randomly add one pro or con.
+        if (Random(0.0f, 1.0f) >= 0.5f)
+            EnableRandomPortfolio(PORTFOLIO_PRO, PORTFOLIO_TYPE_MASK, true);
+        else
+            EnableRandomPortfolio(PORTFOLIO_CON, PORTFOLIO_TYPE_MASK, true);
+        
+        // 50% chance of removing one random element.
+        if (Random(0.0f, 1.0f) >= 0.5f)
+            EnableRandomPortfolio(0, 0, false);
+        
+        if (Portfolio.LightsOff)
+            Portfolio.Fireworks = true;
+        
+        // Upside down disables some pros.
+        if (Portfolio.UpsideDown)
+        {
+            SavedPortfolio = Portfolio;
+            Portfolio.Staplers = false;
+            Portfolio.Fans = false;
+            Portfolio.Balloons = false;
+        }        
+    }
+
 }

@@ -265,6 +265,11 @@ struct SPortfolio
     
     int Chapter;
     int Page;
+    
+    int ElementChangeFrequency;
+    int ChapterChangeFrequency;
+    
+    int PageCount;
 };
 
 

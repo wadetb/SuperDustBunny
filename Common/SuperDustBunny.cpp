@@ -96,8 +96,6 @@ float FPS;
 //int PlaybackID = 4396;
 int PlaybackID = -1;
 
-int PageCount;
-
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                      Initialization functions                                                           //
@@ -217,15 +215,11 @@ void LoadCurrentChapter()
     LoadChapterScores(Chapters[CurrentChapter].Name);
     
 	LoadChapter(Chapters[CurrentChapter].Name);
-    
-    PageCount = 0;
 }
 
 static void SetupNextPage()
 {
-    PageCount++;
-    if (PageCount % 10 == 0)
-        AddToPortfolio();
+    AddToPortfolio();
     
     int NewPage;
     do { NewPage = Random(0, Chapter.NPages-1); } while (NewPage == Chapter.PageNum);
