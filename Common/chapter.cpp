@@ -767,8 +767,6 @@ static void LoadPageFromTMX(const char* FileName)
 	{
 		ParsePageProperties(&Page->Props, PropertiesNode);
 	}
-    
-    OverridePagePropertiesFromPortfolio(&Page->Props);
 
 	PopErrorContext();
 }
@@ -883,8 +881,6 @@ void LoadChapter(const char* ChapterDir)
 
 	if (!Chapter.NBlocks)
 		ReportError("Chapter contains no blocks.");
-
-	SetCurrentPage(0);
 
 	PopErrorContext();
     
@@ -1128,7 +1124,7 @@ static void CreatePageObjects()
         CreatePowerUp(Dusty.FloatX + 192, Dusty.FloatY - 320);
 
     if (!Chapter.PageProps.VacuumOff)
-        TurnOnVacuum(500, 2.0f, false);
+        TurnOnVacuum(Portfolio.VacuumDistance, 2.0f, false);
     
     for (int i = 0; i < Score.CurrentBabies; i++)
         CreateBaby(Chapter.StartX/64, (Chapter.StartY-32)/64, 0, Score.BabyHats[i], true);
@@ -1165,7 +1161,8 @@ void SetCurrentPage(int PageNum)
 	memcpy(Chapter.PageBlocks, Chapter.Pages[PageNum].Blocks, Chapter.PageWidth * Chapter.PageHeight * sizeof(unsigned int));
 
 	Chapter.PageProps = Chapter.Pages[PageNum].Props;
-
+    OverridePagePropertiesFromPortfolio(&Chapter.PageProps);
+    
 	Chapter.PortalAngle = 0;
 
 	CreatePageObjects();
@@ -1677,11 +1674,25 @@ SPortfolio SavedPortfolio;
 
 int PortfolioLine;
 
+static void ReportPortfolio(const char* Message, ...)
+{
+    char Work[256];
+    
+	va_list args;
+	va_start(args, Message);
+	vsnprintf(Work, sizeof(Work), Message, args);
+	va_end(args);
+
+    AddDebugText(Work, FORMAT_CENTER_X, 384, 200 + 64*PortfolioLine, 0.7f, gxRGB32(255, 192, 128), 5.0f);
+    PortfolioLine = PortfolioLine >= 5 ? 0 : PortfolioLine + 1;
+}
+
 void ResetPortfolio()
 {
     PortfolioLine = 0;
     
     Portfolio.PageCount = 0;
+    Portfolio.ChapterCount = 0;
     
     for (int i = 0; i < ARRAY_COUNT(PortfolioEntries); i++)
         *PortfolioEntries[i].Value = false;
@@ -1699,13 +1710,9 @@ static void EnableRandomPortfolio(int Flags, int FlagsMask, bool Value)
     if (EnabledElementCount)
     {
         int ElementIndex = Random(0, EnabledElementCount);
+        *EnabledElements[ElementIndex]->Value = Value;
 
-        char Work[20];
-        snprintf(Work, sizeof(Work), "%s %s", EnabledElements[ElementIndex]->Name, Value ? "enabled" : "disabled");
-        AddDebugText(Work, FORMAT_CENTER_X, 384, 200 + 64*PortfolioLine, 0.7f, gxRGB32(255, 192, 128), 5.0f);
-        PortfolioLine = PortfolioLine >= 5 ? 0 : PortfolioLine + 1;
-        
-        *EnabledElements[ElementIndex]->Value = true;
+        ReportPortfolio("%s %s", EnabledElements[ElementIndex]->Name, Value ? "enabled" : "disabled");
     }
 }
 
@@ -1754,11 +1761,22 @@ void LoadPortfolio()
         ReportError("Missing <ChangeChapter> node.  Check for errors in the XML.");
     Portfolio.ChapterChangeFrequency = ChangeChapterNode->first_attribute("frequency") ? atoi(ChangeChapterNode->first_attribute("frequency")->value()) : 1;
 
+    rapidxml::xml_node<char>* VacuumNode = PortfolioNode->first_node("Vacuum");
+    if (VacuumNode == NULL)
+        ReportError("Missing <Vacuum> node.  Check for errors in the XML.");
+    Portfolio.InitialVacuumSpeed = VacuumNode->first_attribute("initialSpeed") ? atof(VacuumNode->first_attribute("initialSpeed")->value()) : 1;
+    Portfolio.VacuumSpeedChange = VacuumNode->first_attribute("speedChange") ? atof(VacuumNode->first_attribute("speedChange")->value()) : 1;
+    Portfolio.VacuumSpeedChangeFrequency = VacuumNode->first_attribute("frequency") ? atoi(VacuumNode->first_attribute("frequency")->value()) : 1;
+
     rapidxml::xml_node<char>* DebugNode = PortfolioNode->first_node("Debug");
     if (DebugNode)
     {
         Portfolio.Chapter = DebugNode->first_attribute("Chapter") ? atoi(DebugNode->first_attribute("Chapter")->value()) : 0;
+        CurrentChapter = Portfolio.Chapter;
+        LoadCurrentChapter();
+
         Portfolio.Page = DebugNode->first_attribute("Page") ? atoi(DebugNode->first_attribute("Page")->value()) : 0;
+        SetCurrentPage(Portfolio.Page);
         
         for (int i = 0; i < ARRAY_COUNT(PortfolioEntries); i++)
             *PortfolioEntries[i].Value = DebugNode->first_attribute(PortfolioEntries[i].Name) && atoi(DebugNode->first_attribute(PortfolioEntries[i].Name)->value()) != 0;
@@ -1778,6 +1796,17 @@ void SetupInitialPortfolio()
     // Start with two initial pros.
     EnableRandomPortfolio(PORTFOLIO_PRO | PORTFOLIO_INITIAL, PORTFOLIO_TYPE_MASK | PORTFOLIO_INITIAL, true);
     EnableRandomPortfolio(PORTFOLIO_PRO | PORTFOLIO_INITIAL, PORTFOLIO_TYPE_MASK | PORTFOLIO_INITIAL, true);
+    
+    Portfolio.VacuumDistance = 500;
+    
+    Portfolio.VacuumSpeed = Portfolio.InitialVacuumSpeed;
+    ReportPortfolio("Vacuum speed %f", Portfolio.VacuumSpeed);
+
+    Portfolio.Chapter = CurrentChapter;
+    LoadCurrentChapter();
+    
+    Portfolio.Page = Random(0, Chapter.NPages - 1);
+    SetCurrentPage(Portfolio.Page);
 }
 
 void SetupTutorialPortfolio()
@@ -1786,21 +1815,27 @@ void SetupTutorialPortfolio()
 
     Portfolio.Staplers = true;
     Portfolio.Balloons = true;
+
+    Portfolio.Chapter = 0;
+    CurrentChapter = Portfolio.Chapter;
+    LoadCurrentChapter();
+    
+    Portfolio.Page = 0;
+    SetCurrentPage(Portfolio.Page);
 }
 
-void AddToPortfolio()
+void AdvancePortfolio()
 {
+    PortfolioLine = 0;
+
     Portfolio.PageCount++;
 
-    if (Portfolio.PageCount % Portfolio.ElementChangeFrequency == 0)
-    {
-        
-    }
+    if (Portfolio.PageCount % Portfolio.VacuumSpeedChangeFrequency == 0)
+        Portfolio.VacuumSpeed += Portfolio.VacuumSpeedChange;
+    ReportPortfolio("Vacuum speed %g", Portfolio.VacuumSpeed);
     
     if (Portfolio.PageCount % Portfolio.ElementChangeFrequency == 0)
     {
-        PortfolioLine = 0;
-        
         // Coins always appear after one turn.
         if (!Portfolio.Coins)
             Portfolio.Coins = true;
@@ -1840,4 +1875,22 @@ void AddToPortfolio()
         }        
     }
 
+    if (Portfolio.PageCount % Portfolio.ChapterChangeFrequency == 0)
+    {
+        Portfolio.ChapterCount++;
+        
+        Portfolio.VacuumDistance = 1500;
+        Portfolio.VacuumSpeed = Portfolio.InitialVacuumSpeed + Portfolio.ChapterCount * Portfolio.VacuumSpeedChange * 3;
+
+        Portfolio.Chapter++;
+        if (Portfolio.Chapter >= NChapters)
+            Portfolio.Chapter = 1;
+        CurrentChapter = Portfolio.Chapter;
+        LoadCurrentChapter();
+    }
+    
+    int NewPage;
+    do { NewPage = Random(0, Chapter.NPages-1); } while (NewPage == Portfolio.Page);
+    Portfolio.Page = NewPage;
+    SetCurrentPage(Portfolio.Page);
 }

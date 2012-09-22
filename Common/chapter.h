@@ -269,7 +269,14 @@ struct SPortfolio
     int ElementChangeFrequency;
     int ChapterChangeFrequency;
     
+    int ChapterCount;
     int PageCount;
+    
+    float InitialVacuumSpeed;
+    float VacuumSpeedChange;
+    int VacuumSpeedChangeFrequency;
+    float VacuumSpeed;
+    float VacuumDistance;
 };
 
 
@@ -319,6 +326,6 @@ void ResetPortfolio();
 void LoadPortfolio();
 void SetupTutorialPortfolio();
 void SetupInitialPortfolio();
-void AddToPortfolio();
+void AdvancePortfolio();
 
 #endif

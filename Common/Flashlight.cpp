@@ -20,7 +20,7 @@ struct SFlashlightWaypoint
 {
 	float X, Y;
 	float Delay;
-    float Toggle;
+//    float Toggle;
 };
 
 int NFlashlightWaypoints;
@@ -76,7 +76,7 @@ void CreateFlashlightWaypoint(int X, int Y, SFlashlightWaypointProperties* Prope
 	Waypoint->Y = (float)Y + 32;
 
 	Waypoint->Delay = Properties->Delay;    
-    Waypoint->Toggle = Properties->Toggle;
+//    Waypoint->Toggle = Properties->Toggle;
 }
 
 void ClearFlashlightWaypoints()
@@ -95,7 +95,7 @@ void InitFlashlight()
 		Flashlight.X = Waypoint->X;
 		Flashlight.Y = Waypoint->Y;
 		Flashlight.Timer = Waypoint->Delay;
-        Flashlight.Lights = Waypoint->Toggle;
+//        Flashlight.Lights = Waypoint->Toggle;
 	}
 }
 
@@ -108,24 +108,23 @@ void UpdateFlashlight()
 		// If the flashlight reaches the waypoint, or if dusty passes the waypoint, advance to the next one.
 		bool PassedIt = Dusty.FloatY <= Waypoint->Y;
         
-
 		if (PassedIt || Distance(Waypoint->X, Waypoint->Y, Flashlight.X, Flashlight.Y) < 32)
 		{
-            if(Flashlight.Lights == 1)
-            {
-                //Turn Lights ON
-                Chapter.PageProps.LightsOff = false;
-                LightState.LightsOff = Chapter.PageProps.LightsOff;
-                ResetLightState();
-            }
-            
-            if (Flashlight.Lights == 0)
-            {
-                //Turn Lights OFF
-                Chapter.PageProps.LightsOff = true;
-                LightState.LightsOff = Chapter.PageProps.LightsOff;
-                LightState.AmbientColor = gxRGBA32(16, 16, 16, 255);
-            }
+//            if(Flashlight.Lights == 1)
+//            {
+//                //Turn Lights ON
+//                Chapter.PageProps.LightsOff = false;
+//                LightState.LightsOff = Chapter.PageProps.LightsOff;
+//                ResetLightState();
+//            }
+//            
+//            if (Flashlight.Lights == 0)
+//            {
+//                //Turn Lights OFF
+//                Chapter.PageProps.LightsOff = true;
+//                LightState.LightsOff = Chapter.PageProps.LightsOff;
+//                LightState.AmbientColor = gxRGBA32(16, 16, 16, 255);
+//            }
             
 			Flashlight.CurWaypoint--;
 
@@ -140,7 +139,7 @@ void UpdateFlashlight()
 				else
                 {
 					Flashlight.Timer = Waypoint->Delay;
-                    Flashlight.Lights = Waypoint->Toggle;
+//                    Flashlight.Lights = Waypoint->Toggle;
                 }
 			}
 		}

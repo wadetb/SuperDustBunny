@@ -90,10 +90,14 @@ static void StartScreen_Advance()
                 UpdateLiveAssetCache();
 #endif
 
+            ResetPortfolio();            
             if (StartScreen.Pressed == 2)
-                CurrentChapter = 0;
+                SetupTutorialPortfolio();
             else
+            {
                 CurrentChapter = StartScreen.PlayChapter;
+                LoadPortfolio();
+            }
 
 #ifdef PLATFORM_IPHONE
             [TestFlight passCheckpoint:[NSString stringWithFormat:@"Entered chapter %s", Chapters[CurrentChapter].Name]];

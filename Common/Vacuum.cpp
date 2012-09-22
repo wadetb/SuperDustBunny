@@ -96,10 +96,7 @@ void InitVacuum()
     Vacuum.Side = VACUUMSIDE_LEFT;
     
     Vacuum.X = 384;
-    if (Vacuum.Dir == VACUUMDIR_UP || Vacuum.Dir == VACUUMDIR_UP_LEFT || Vacuum.Dir == VACUUMDIR_UP_RIGHT)
-        Vacuum.Y = Chapter.PageHeight*64 + LitScreenHeight*2;
-    else
-        Vacuum.Y = -LitScreenHeight*2;
+    Vacuum.Y = 100000;
     
 	Vacuum.State = VACUUMSTATE_OFF;
 	Vacuum.Volume = 0.5f;
@@ -225,13 +222,13 @@ void DisplayVacuum()
         }
 	}
     
-	if (DevMode)
-	{
-		gxDrawString(5, 64, 16, 0xffffffff, "Vacuum State=%d Timer=%d y=%d\n      [On%02d Jam%02d TOn%02d TOff%02d]", 
-			Vacuum.State, Vacuum.Timer, (int)Vacuum.Y, (int)(VacuumOnSound.volume*99), (int)(VacuumJamSound.volume*99), (int)(VacuumTurnOnSound.volume*99), (int)(VacuumTurnOffSound.volume*99));
-
-		//gxDrawRectangleFilled(0, (int)Vacuum.Y + ScrollY, gxScreenWidth, 2, gxRGBA32(255,0,0,255));
-	}
+//	if (DevMode)
+//	{
+//		gxDrawString(5, 64, 16, 0xffffffff, "Vacuum State=%d Timer=%d y=%d\n      [On%02d Jam%02d TOn%02d TOff%02d]", 
+//			Vacuum.State, Vacuum.Timer, (int)Vacuum.Y, (int)(VacuumOnSound.volume*99), (int)(VacuumJamSound.volume*99), (int)(VacuumTurnOnSound.volume*99), (int)(VacuumTurnOffSound.volume*99));
+//
+//		//gxDrawRectangleFilled(0, (int)Vacuum.Y + ScrollY, gxScreenWidth, 2, gxRGBA32(255,0,0,255));
+//	}
 }
 
 void UpdateVacuumSound()
@@ -336,29 +333,13 @@ void UpdateVacuum()
 	// If the vacuum is disabled for this page, don't update at all.
 	if (Chapter.PageProps.VacuumOff || Settings.DisableVacuum)
 		return;
-
-    if (!TutorialOverrides.FreezeDusty)
-    {
-        if (fabsf(Dusty.FloatVelocityY) > 1.0f)
-            Vacuum.AverageDustySpeed = Vacuum.AverageDustySpeed * 0.99f + -Dusty.FloatVelocityY * 0.008f;
-    }
-    else
-        Vacuum.AverageDustySpeed = Vacuum.AverageDustySpeed * 0.99f;
-    
-    AddDebugLine(40, LitScreenHeight - 50, 40, LitScreenHeight - 50 - -Dusty.FloatVelocityY * 10, gxRGBA32(64, 64, 64, 255), 1.0f/60.0f);
-    AddDebugLine(50, LitScreenHeight - 50, 50, LitScreenHeight - 50 - Vacuum.AverageDustySpeed * 10, gxRGBA32(255, 0, 0, 255), 1.0f/60.0f);
-    AddDebugLine(70, LitScreenHeight - 50, 70, LitScreenHeight - 50 - fabsf(Vacuum.Y - Dusty.FloatY)/10, gxRGBA32(0, 0, 255, 255), 1.0f/60.0f);
     
 	if (Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
 		if (Dusty.State != DUSTYSTATE_DIE)
-		{            
+		{
             float VacuumSpeed;
-            if (TutorialOverrides.FreezeDusty)
-                VacuumSpeed = 1.5f;
-            else
-                VacuumSpeed = Clamp(Vacuum.AverageDustySpeed, 1.0f, 10.0f);
-            AddDebugLine(60, LitScreenHeight - 50, 60, LitScreenHeight - 50 - VacuumSpeed * 10, gxRGBA32(0, 255, 0, 255), 1.0f/60.0f);
+            VacuumSpeed = Portfolio.VacuumSpeed;
             
             float FX, FY;
             GetVacuumForwardDir(&FX, &FY);
@@ -497,9 +478,6 @@ void TurnOnVacuum(float InitialDistance, float DelayBeforeMoving, bool Charging)
     Vacuum.State = VACUUMSTATE_ONSCREEN;
 
     Vacuum.Timer = -(int)(DelayBeforeMoving*60);
-
-    InitialDistance += LitScreenHeight*1.1f;
-   // InitialDistance += Chapter.PageProps.LightsOff ? 768 : 0;
 
     float FX, FY;
     GetVacuumForwardDir(&FX, &FY);

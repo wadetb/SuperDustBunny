@@ -82,7 +82,7 @@ void LoadSettings()
 #endif
     
 #ifdef PLATFORM_MAC
-    Settings.Lives = 1000;
+    Settings.Lives = 100;
 #endif
 }
 

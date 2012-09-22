@@ -202,16 +202,6 @@ void LoadCurrentChapter()
 
     LoadTweaks();
     
-    ResetPortfolio();
-    if (CurrentChapter == 0)
-    {
-        SetupTutorialPortfolio();
-    }
-    else
-    {
-        LoadPortfolio();
-    }
-    
     LoadChapterScores(Chapters[CurrentChapter].Name);
     
 	LoadChapter(Chapters[CurrentChapter].Name);
@@ -219,16 +209,13 @@ void LoadCurrentChapter()
 
 static void SetupNextPage()
 {
-    AddToPortfolio();
-    
-    int NewPage;
-    do { NewPage = Random(0, Chapter.NPages-1); } while (NewPage == Chapter.PageNum);
-    
-    SetCurrentPage(NewPage);
+    AdvancePortfolio();
 }
 
 void AdvanceToNextPage()
 {
+    Portfolio.VacuumDistance = fabsf(Dusty.FloatY - Vacuum.Y);
+    
     RecordPageScore(Chapter.PageNum);
 
     if (CurrentChapter == 0)
@@ -687,7 +674,6 @@ static void UpdateGame_Transition()
 
 		if (Wipe.Middle)
 		{
-			LoadCurrentChapter();
 			InitChapterIntro();
             StartChapterMusic();
 			Wipe.Middle = false;
