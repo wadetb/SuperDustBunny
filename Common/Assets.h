@@ -169,6 +169,7 @@ extern gxSprite ScreenCoinBackgroundSprite;
 extern gxSprite ScreenGoBackSprite;
 extern gxSprite ScreenBuyItSprite;
 extern gxSprite ScreenWearItSprite;
+extern gxSprite CheckMarkSprite;
 
 extern gxSprite ScreenStartSprite;
 extern gxSprite ScreenStartPressedSprite;

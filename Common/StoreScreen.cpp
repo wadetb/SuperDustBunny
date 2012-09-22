@@ -241,13 +241,15 @@ void DisplayStoreScreen()
     
     for (int i = 0; i < 16; i++)
     {
-        if (StoreScreen.FirstItem + i > ARRAY_COUNT(Inventory))
+        if (StoreScreen.FirstItem + i >= ARRAY_COUNT(Inventory))
             break;
         
         int Row = i / 4;
         int Col = i % 4;
         
-        AddLitSprite(LIGHTLIST_FOREGROUND, &Inventory[StoreScreen.FirstItem + i].Sprite, 170 + Col * 125, 300 + Row * 120);
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, &Inventory[StoreScreen.FirstItem + i].Sprite, 150 + Col * 125 + 60, 270 + Row * 120 + 60, 1.0f, 1.0f);
+        if (Inventory[StoreScreen.FirstItem + i].Owned)
+            AddLitSprite(LIGHTLIST_FOREGROUND, &CheckMarkSprite, 170 + Col * 125, 300 + Row * 120);
     }
 
     if (StoreScreen.ItemDisplayed)
@@ -263,20 +265,22 @@ void DisplayStoreScreen()
         DisplayString(LIGHTLIST_WIPE, Work, 0, 350, 590, 1.1f);
 
         if (Inventory[StoreScreen.ActiveItem].Owned)
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenWearItSprite, 384, 800, 1.0f, 1.0f);
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenWearItSprite, 384, 800, 0.8f, 1.0f);
         else
         {
             if (Inventory[StoreScreen.ActiveItem].Cost <= Settings.Lives)
-                AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenBuyItSprite, 384, 800, 1.0f, 1.0f);
+                AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenBuyItSprite, 384, 800, 0.8f, 1.0f);
             else
-                AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenBuyItSprite, 384, 800, 1.0f, 0.5f);
+                AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenBuyItSprite, 384, 800, 0.8f, 0.5f);
         }
     }
     else
     {
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenGoBackSprite, 100, 100, 1.0f, 1.0f);
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 192-16, 900, -1.1f, 1.0f);
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 768-192+16, 900, 1.1f, 1.0f);
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenGoBackSprite, 60, 60, 1.0f, 1.0f);
+        if (StoreScreen.FirstItem > 0)
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 192-64, 930, -1.1f, 1.0f);
+        if (StoreScreen.FirstItem + 16 < ARRAY_COUNT(Inventory))
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 768-192+64, 930, 1.1f, 1.0f);
     }
     
     DisplayDusty();
@@ -362,7 +366,7 @@ void UpdateStoreScreen()
                 }
                 else
                 {
-                    if (StoreScreen.FirstItem < ARRAY_COUNT(Inventory) - 16)
+                    if (StoreScreen.FirstItem + 16 < ARRAY_COUNT(Inventory))
                         StoreScreen.FirstItem += 16;
                 }
             }

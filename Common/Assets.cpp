@@ -180,6 +180,7 @@ gxSprite ScreenStartButtonsDownSprite;
 gxSprite ScreenGoBackSprite;
 gxSprite ScreenBuyItSprite;
 gxSprite ScreenWearItSprite;
+gxSprite CheckMarkSprite;
 
 gxSprite ScreenStart1Sprite;
 gxSprite ScreenHelp1Sprite;
@@ -1178,9 +1179,10 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/screen-start-buttons.png", &ScreenStartButtonsSprite);
 	LoadSpriteAsset("Assets/screen-start-buttons-down.png", &ScreenStartButtonsDownSprite);
 
-    LoadSpriteAsset("Assets/screen-go-back.png", &ScreenGoBackSprite);
-    LoadSpriteAsset("Assets/screen-buy-it.png", &ScreenBuyItSprite);
-    LoadSpriteAsset("Assets/screen-wear-it.png", &ScreenWearItSprite);
+    LoadSpriteAsset("Assets/button-house.png", &ScreenGoBackSprite);
+    LoadSpriteAsset("Assets/button-buy-it.png", &ScreenBuyItSprite);
+    LoadSpriteAsset("Assets/button-wear-it.png", &ScreenWearItSprite);
+    LoadSpriteAsset("Assets/check-mark.png", &CheckMarkSprite);
 
 	LoadSpriteAsset("Assets/screen-start-1.png", &ScreenStart1Sprite);
     LoadSpriteAsset("Assets/screen-help-1.png", &ScreenHelp1Sprite);
