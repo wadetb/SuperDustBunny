@@ -125,7 +125,7 @@ void InitVacuum()
 
     Vacuum.TurnOnTimer = 0;
     
-    Vacuum.ChargeTimer = 0;
+    Vacuum.ChargeTimer = VACUUM_CHARGE_DELAY;
     Vacuum.AverageDustySpeed = 0;
     
     RestartVacuumForceMap();
@@ -339,7 +339,10 @@ void UpdateVacuum()
 		if (Dusty.State != DUSTYSTATE_DIE)
 		{
             float VacuumSpeed;
-            VacuumSpeed = Portfolio.VacuumSpeed;
+            if (Vacuum.Type == VACUUM_DUSTBUSTER)
+                VacuumSpeed = Portfolio.VacuumSpeed * 2;
+            else
+                VacuumSpeed = Portfolio.VacuumSpeed;
             
             float FX, FY;
             GetVacuumForwardDir(&FX, &FY);
@@ -395,6 +398,22 @@ void UpdateVacuum()
             Vacuum.Y = TargetY;
 		}
 	}
+
+    if (Vacuum.Type == VACUUM_DUSTBUSTER && Dusty.State != DUSTYSTATE_DIE)
+    {
+        Vacuum.ChargeTimer--;
+        if (Vacuum.ChargeTimer <= 0)
+        {
+            if (fabsf(Vacuum.Y - Dusty.FloatY) > LitScreenHeight*2)
+            {
+                Vacuum.Dir = Random(0.0f, 1.0f) < 0.5f ? VACUUMDIR_UP : VACUUMDIR_DOWN;
+                Vacuum.Side = Random(0.0f, 1.0f) < 0.5f ? VACUUMSIDE_LEFT : VACUUMSIDE_RIGHT;
+                TurnOnVacuum(500, 0.0f, true);
+                
+                Vacuum.ChargeTimer = VACUUM_CHARGE_DELAY;
+            }
+        }
+    }
     
     if (Vacuum.State == VACUUMSTATE_ONSCREEN || Vacuum.State == VACUUMSTATE_RETREAT)
     {
@@ -481,6 +500,9 @@ void TurnOnVacuum(float InitialDistance, float DelayBeforeMoving, bool Charging)
 
     float FX, FY;
     GetVacuumForwardDir(&FX, &FY);
+
+    if (Vacuum.Dir == VACUUMDIR_DOWN)
+        InitialDistance += LitScreenHeight;
     
     Vacuum.X = Dusty.FloatX - FX*InitialDistance;
     Vacuum.Y = Dusty.FloatY - FY*InitialDistance;

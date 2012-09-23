@@ -34,7 +34,7 @@ extern SHanger Hangers[MAX_HANGERS];
 
 void ParseHangerProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode);
 
-void CreateHanger(int X, int Y, SHangerProperties* Props);
+void CreateHanger(int X, int Y, int Flags, SHangerProperties* Props);
 void ClearHangers();
 
 void AddHangerTorque(SHanger* Hanger, float X, float Y, float FX, float FY);

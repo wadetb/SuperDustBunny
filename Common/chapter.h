@@ -262,6 +262,7 @@ struct SPortfolio
     bool Sticky;
     bool DustBuster;
     bool UpsideDown;
+    bool MirrorPage;
     
     int Chapter;
     int Page;

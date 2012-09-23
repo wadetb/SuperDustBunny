@@ -120,7 +120,7 @@ void ParseHangerProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNo
 	Block->Properties = Props;
 }
 
-void CreateHanger(int X, int Y, SHangerProperties* Props)
+void CreateHanger(int X, int Y, int Flags, SHangerProperties* Props)
 {
 	if (NHangers >= MAX_HANGERS)
 		ReportError("Exceeded the maximum of %d total Hangers.", MAX_HANGERS);
@@ -138,9 +138,19 @@ void CreateHanger(int X, int Y, SHangerProperties* Props)
     Hanger->DustyOnBoard = false;
     Hanger->Attached = true;
     
-    for (int y = Y; y < Y+Props->Height; y++)
-        for (int x = X; x < X+Props->Width; x++)
-            EraseBlock(x, y);
+    if (Flags & SPECIALBLOCKID_FLIP_X)
+    {
+        for (int y = Y; y < Y+Props->Height; y++)
+            for (int x = X; x > X-Props->Width; x--)
+                EraseBlock(x, y);
+        Hanger->X -= Props->Width * 64;
+    }
+    else
+    {
+        for (int y = Y; y < Y+Props->Height; y++)
+            for (int x = X; x < X+Props->Width; x++)
+                EraseBlock(x, y);
+    }
 }
 
 void ClearHangers()

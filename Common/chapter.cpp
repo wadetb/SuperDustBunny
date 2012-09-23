@@ -1087,7 +1087,7 @@ static void CreatePageObjects()
                     EraseBlock(x, y);
                     break;
                 case BLOCKTYPE_HANGER:
-                    CreateHanger(x, y, (SHangerProperties*)Block->Properties);
+                    CreateHanger(x, y, Flags, (SHangerProperties*)Block->Properties);
                     break;
                 case BLOCKTYPE_BABY:
                     if (Portfolio.Babies) CreateBaby(x, y, Flags, Random(0, 2) == 0 ? DUSTYHAT_NONE : DUSTYHAT_PINK_BOW, false);
@@ -1158,8 +1158,18 @@ void SetCurrentPage(int PageNum)
 	Chapter.PageHeight = Chapter.Pages[PageNum].Height;
 
 	Chapter.PageBlocks = (int*)malloc(Chapter.PageWidth * Chapter.PageHeight * sizeof(unsigned int));
-	memcpy(Chapter.PageBlocks, Chapter.Pages[PageNum].Blocks, Chapter.PageWidth * Chapter.PageHeight * sizeof(unsigned int));
 
+    if (Portfolio.MirrorPage)
+    {
+        for (int y = 0; y < Chapter.PageHeight; y++)
+            for (int x = 0; x < Chapter.PageWidth; x++)
+                Chapter.PageBlocks[y*Chapter.PageWidth + x] = Chapter.Pages[PageNum].Blocks[y*Chapter.PageWidth + (Chapter.PageWidth - 1 - x)] ^ SPECIALBLOCKID_FLIP_X;
+    }
+    else
+    {
+        memcpy(Chapter.PageBlocks, Chapter.Pages[PageNum].Blocks, Chapter.PageWidth * Chapter.PageHeight * sizeof(unsigned int));        
+    }
+    
 	Chapter.PageProps = Chapter.Pages[PageNum].Props;
     OverridePagePropertiesFromPortfolio(&Chapter.PageProps);
     
@@ -1265,7 +1275,7 @@ void DisplayPortal()
         AddLitSpriteCenteredScaledAlpha(LIGHTLIST_LIGHTING, &LightFlashlightSprite, Chapter.EndX + ScrollX, Chapter.EndY - 50 + ScrollY, 2.0f, 1.0f);
 }
 
-static void DisplayChapterLayer(ELightList LightList, int* Blocks, float Alpha)
+static void DisplayChapterLayer(ELightList LightList, int* Blocks, float Alpha, bool BaseLayer)
 {
     unsigned int Color = gxRGBA32(255, 255, 255, (int)(255*Alpha));
     
@@ -1279,10 +1289,23 @@ static void DisplayChapterLayer(ELightList LightList, int* Blocks, float Alpha)
         float CurX = ScrollX;
 		for (int x = 0; x < Chapter.PageWidth; x++, CurX += 64)
 		{
+            int SrcX;
+            int ToggleFlag;
+            if (!BaseLayer && Portfolio.MirrorPage)
+            {
+                SrcX = Chapter.PageWidth - 1 - x;
+                ToggleFlag = SPECIALBLOCKID_FLIP_X;
+            }
+            else
+            {
+                SrcX = x;
+                ToggleFlag = 0;
+            }
+            
 		    //if (CurX > gxScreenWidth || CurX+64 < 0)
 			   // continue;
 
-            unsigned int ID = Blocks[y * Chapter.PageWidth + x];
+            unsigned int ID = Blocks[y * Chapter.PageWidth + SrcX] ^ ToggleFlag;
             int BlockID = ID & SPECIALBLOCKID_MASK;
 
 			if (BlockID >= SPECIALBLOCKID_FIRST)
@@ -1355,7 +1378,7 @@ static void DisplayChapterLayer(ELightList LightList, int* Blocks, float Alpha)
 
 void DisplayChapterBaseLayer()
 {
-    DisplayChapterLayer(LIGHTLIST_FOREGROUND, Chapter.PageBlocks, 1.0f);
+    DisplayChapterLayer(LIGHTLIST_FOREGROUND, Chapter.PageBlocks, 1.0f, true);
 }
 
 void DisplayChapterExtraLayers()
@@ -1365,7 +1388,7 @@ void DisplayChapterExtraLayers()
     for (int i = 0; i < Page->NLayers; i++)
     {
         SPageLayer* Layer = &Page->Layers[i];
-        DisplayChapterLayer(Layer->LightList, Layer->Blocks, Layer->Alpha);
+        DisplayChapterLayer(Layer->LightList, Layer->Blocks, Layer->Alpha, false);
     }
 }
 
@@ -1399,7 +1422,7 @@ bool IsBlockEmpty(int x, int y)
 	if (y < 0 || y >= Chapter.PageHeight)
 		return false;
 
-	if (Chapter.PageBlocks[y * Chapter.PageWidth + x] == SPECIALBLOCKID_BLANK)
+	if ((Chapter.PageBlocks[y * Chapter.PageWidth + x] & SPECIALBLOCKID_MASK) == SPECIALBLOCKID_BLANK)
 		return true;
 	else
 		return false;
@@ -1667,6 +1690,7 @@ SPortfolioEntry PortfolioEntries[] =
     { "Sticky", PORTFOLIO_CON, &Portfolio.Sticky },
     { "DustBuster", PORTFOLIO_CON, &Portfolio.DustBuster },
     { "UpsideDown", PORTFOLIO_CON, &Portfolio.UpsideDown },
+    { "MirrorPage", PORTFOLIO_CON, &Portfolio.MirrorPage },
 };
 
 SPortfolio Portfolio;
@@ -1771,15 +1795,22 @@ void LoadPortfolio()
     rapidxml::xml_node<char>* DebugNode = PortfolioNode->first_node("Debug");
     if (DebugNode)
     {
+        PortfolioLine = 0;
+        
+        Portfolio.VacuumDistance = 500;
+
+        Portfolio.VacuumSpeed = Portfolio.InitialVacuumSpeed;
+        ReportPortfolio("Vacuum speed %.1f", Portfolio.VacuumSpeed);
+        
+        for (int i = 0; i < ARRAY_COUNT(PortfolioEntries); i++)
+            *PortfolioEntries[i].Value = DebugNode->first_attribute(PortfolioEntries[i].Name) && atoi(DebugNode->first_attribute(PortfolioEntries[i].Name)->value()) != 0;
+
         Portfolio.Chapter = DebugNode->first_attribute("Chapter") ? atoi(DebugNode->first_attribute("Chapter")->value()) : 0;
         CurrentChapter = Portfolio.Chapter;
         LoadCurrentChapter();
 
         Portfolio.Page = DebugNode->first_attribute("Page") ? atoi(DebugNode->first_attribute("Page")->value()) : 0;
         SetCurrentPage(Portfolio.Page);
-        
-        for (int i = 0; i < ARRAY_COUNT(PortfolioEntries); i++)
-            *PortfolioEntries[i].Value = DebugNode->first_attribute(PortfolioEntries[i].Name) && atoi(DebugNode->first_attribute(PortfolioEntries[i].Name)->value()) != 0;
     }
     else
     {
@@ -1800,7 +1831,7 @@ void SetupInitialPortfolio()
     Portfolio.VacuumDistance = 500;
     
     Portfolio.VacuumSpeed = Portfolio.InitialVacuumSpeed;
-    ReportPortfolio("Vacuum speed %f", Portfolio.VacuumSpeed);
+    ReportPortfolio("Vacuum speed %.1f", Portfolio.VacuumSpeed);
 
     Portfolio.Chapter = CurrentChapter;
     LoadCurrentChapter();
@@ -1832,7 +1863,7 @@ void AdvancePortfolio()
 
     if (Portfolio.PageCount % Portfolio.VacuumSpeedChangeFrequency == 0)
         Portfolio.VacuumSpeed += Portfolio.VacuumSpeedChange;
-    ReportPortfolio("Vacuum speed %g", Portfolio.VacuumSpeed);
+    ReportPortfolio("Vacuum speed %.1f", Portfolio.VacuumSpeed);
     
     if (Portfolio.PageCount % Portfolio.ElementChangeFrequency == 0)
     {
