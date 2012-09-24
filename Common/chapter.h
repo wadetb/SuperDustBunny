@@ -27,6 +27,7 @@ enum ESpecialBlockID
 	SPECIALBLOCKID_SOLID,
 	SPECIALBLOCKID_BLANK,
 
+    SPECIALBLOCKID_STICKY           = 1 << 28,
     SPECIALBLOCKID_FLIP_DIAGONAL    = 1 << 29,
     SPECIALBLOCKID_FLIP_Y           = 1 << 30,
     SPECIALBLOCKID_FLIP_X           = 1 << 31,
@@ -165,6 +166,7 @@ struct SPageProperties
 
 struct SPageLayer
 {
+    char* Name;
     ELightList LightList;
     float Alpha;
     int* Blocks;
@@ -263,6 +265,7 @@ struct SPortfolio
     bool DustBuster;
     bool UpsideDown;
     bool MirrorPage;
+    bool VacuumCatchup;
     
     int Chapter;
     int Page;
@@ -276,8 +279,11 @@ struct SPortfolio
     float InitialVacuumSpeed;
     float VacuumSpeedChange;
     int VacuumSpeedChangeFrequency;
+    float VacuumDamageSpeedModifier;
     float VacuumSpeed;
+    float InitialVacuumDistance;
     float VacuumDistance;
+    int VacuumDamage;
 };
 
 

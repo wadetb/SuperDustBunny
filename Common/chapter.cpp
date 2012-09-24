@@ -54,6 +54,48 @@ float ScrollY;
 
 const char* CurrentChapterDir;
 
+enum EPortfolioFlags
+{
+    PORTFOLIO_PRO = 0,
+    PORTFOLIO_CON = 1,
+    PORTFOLIO_TYPE_MASK = 1,
+    
+    PORTFOLIO_INITIAL = 2,
+};
+
+struct SPortfolioEntry
+{
+    const char* Name;
+    int Flags;
+    bool* Value;
+};
+
+SPortfolioEntry PortfolioEntries[] =
+{
+    { "Coins", PORTFOLIO_PRO, &Portfolio.Coins },
+    { "Gears", PORTFOLIO_PRO, &Portfolio.Gears },
+    { "Fireworks", PORTFOLIO_PRO, &Portfolio.Fireworks },
+    { "Babies", PORTFOLIO_PRO, &Portfolio.Babies },
+    { "Barrels", PORTFOLIO_PRO, &Portfolio.Barrels },
+    { "Fans", PORTFOLIO_PRO, &Portfolio.Fans },
+    { "Staplers", PORTFOLIO_PRO, &Portfolio.Staplers },
+    { "Powerups", PORTFOLIO_PRO, &Portfolio.Powerups },
+    { "Balloons", PORTFOLIO_PRO, &Portfolio.Balloons },
+    
+    { "LightsOff", PORTFOLIO_CON, &Portfolio.LightsOff },
+    { "Sharp", PORTFOLIO_CON, &Portfolio.Sharp },
+    { "Sticky", PORTFOLIO_CON, &Portfolio.Sticky },
+    { "DustBuster", PORTFOLIO_CON, &Portfolio.DustBuster },
+    { "UpsideDown", PORTFOLIO_CON, &Portfolio.UpsideDown },
+    { "MirrorPage", PORTFOLIO_CON, &Portfolio.MirrorPage },
+    { "VacuumCatchup", PORTFOLIO_CON, &Portfolio.VacuumCatchup },
+};
+
+SPortfolio Portfolio;
+SPortfolio SavedPortfolio;
+
+int PortfolioLine;
+
 
 static void ParseNailProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode)
 {
@@ -724,6 +766,8 @@ static void LoadPageFromTMX(const char* FileName)
 
         SPageLayer* Layer = &Page->Layers[Page->NLayers++];
 
+        Layer->Name = strdup(LayerNode->first_attribute("name")->value());
+        
         Layer->LightList = LIGHTLIST_FOREGROUND_NO_SHADOW;
         Layer->Alpha = 1.0f;
 
@@ -905,7 +949,10 @@ void ClearChapter()
 		free(Chapter.Pages[i].Blocks);
 
         for (int j = 0; j < Chapter.Pages[i].NLayers; j++)
+        {
+            free(Chapter.Pages[i].Layers[j].Name);
             free(Chapter.Pages[i].Layers[j].Blocks);
+        }
 	}
 	Chapter.NPages = 0;
 
@@ -1055,7 +1102,7 @@ static void CreatePageObjects()
 					EraseBlock(x, y);
 					break;
                 case BLOCKTYPE_FLAME:
-                    if (Portfolio.Sharp) CreateFlame(x * 64, y * 64, Flags, (SFlameProperties*)Block->Properties);
+                    CreateFlame(x * 64, y * 64, Flags, (SFlameProperties*)Block->Properties);
                     break;
 				case BLOCKTYPE_FLASHLIGHT_WAYPOINT:
 					if (Portfolio.LightsOff) CreateFlashlightWaypoint(x * 64, y * 64, (SFlashlightWaypointProperties*)Block->Properties);
@@ -1168,6 +1215,56 @@ void SetCurrentPage(int PageNum)
     else
     {
         memcpy(Chapter.PageBlocks, Chapter.Pages[PageNum].Blocks, Chapter.PageWidth * Chapter.PageHeight * sizeof(unsigned int));        
+    }
+    
+    for (int i = 0; i < Chapter.Pages[PageNum].NLayers; i++)
+    {
+        SPageLayer* Layer = &Chapter.Pages[PageNum].Layers[i];
+        
+        if (strncasecmp(Layer->Name, "sticky", 6) == 0)
+        {
+            if (Portfolio.Sticky)
+            {
+                for (int y = 0; y < Chapter.PageHeight; y++)
+                {
+                    for (int x = 0; x < Chapter.PageWidth; x++)
+                    {
+                        if (Layer->Blocks[y*Chapter.PageWidth + x] != SPECIALBLOCKID_BLANK)
+                            Chapter.PageBlocks[y*Chapter.PageWidth + x] |= SPECIALBLOCKID_STICKY;
+                    }
+                }
+                Layer->Alpha = 1.0f;
+            }
+            else
+            {
+                Layer->Alpha = 0.0f;
+            }
+        }
+        else
+        {
+            for (int j = 0; j < ARRAY_COUNT(PortfolioEntries); j++)
+            {
+                bool IsPositiveMergeLayer = strncasecmp(Layer->Name, PortfolioEntries[i].Name, strlen(PortfolioEntries[j].Name)) == 0;
+                bool IsNegativeMergeLayer = Layer->Name[0] == '!' && strncasecmp(Layer->Name+1, PortfolioEntries[i].Name, strlen(PortfolioEntries[j].Name)) == 0;
+                
+                if ((IsPositiveMergeLayer && *PortfolioEntries[j].Value) || (IsNegativeMergeLayer && !*PortfolioEntries[j].Value))
+                {
+                    for (int y = 0; y < Chapter.PageHeight; y++)
+                    {
+                        for (int x = 0; x < Chapter.PageWidth; x++)
+                        {
+                            Chapter.PageBlocks[y*Chapter.PageWidth + x] = Layer->Blocks[y*Chapter.PageWidth + x];
+                        }
+                    }                    
+                    Layer->Alpha = 1.0f;
+                }
+                else
+                {
+                    if (IsPositiveMergeLayer || IsNegativeMergeLayer)
+                        Layer->Alpha = 0.0f;
+                }
+            }
+        }
     }
     
 	Chapter.PageProps = Chapter.Pages[PageNum].Props;
@@ -1388,6 +1485,8 @@ void DisplayChapterExtraLayers()
     for (int i = 0; i < Page->NLayers; i++)
     {
         SPageLayer* Layer = &Page->Layers[i];
+        if (Layer->Alpha == 0.0f)
+            continue;
         DisplayChapterLayer(Layer->LightList, Layer->Blocks, Layer->Alpha, false);
     }
 }
@@ -1656,48 +1755,6 @@ void SaveChapterUnlocks()
     PopErrorContext();
 }
 
-
-enum EPortfolioFlags
-{
-    PORTFOLIO_PRO = 0,
-    PORTFOLIO_CON = 1,
-    PORTFOLIO_TYPE_MASK = 1,
-    
-    PORTFOLIO_INITIAL = 2,
-};
-
-struct SPortfolioEntry
-{
-    const char* Name;
-    int Flags;
-    bool* Value;
-};
-
-SPortfolioEntry PortfolioEntries[] =
-{
-    { "Coins", PORTFOLIO_PRO, &Portfolio.Coins },
-    { "Gears", PORTFOLIO_PRO, &Portfolio.Gears },
-    { "Fireworks", PORTFOLIO_PRO, &Portfolio.Fireworks },
-    { "Babies", PORTFOLIO_PRO, &Portfolio.Babies },
-    { "Barrels", PORTFOLIO_PRO, &Portfolio.Barrels },
-    { "Fans", PORTFOLIO_PRO, &Portfolio.Fans },
-    { "Staplers", PORTFOLIO_PRO, &Portfolio.Staplers },
-    { "Powerups", PORTFOLIO_PRO, &Portfolio.Powerups },
-    { "Balloons", PORTFOLIO_PRO, &Portfolio.Balloons },
-
-    { "LightsOff", PORTFOLIO_CON, &Portfolio.LightsOff },
-    { "Sharp", PORTFOLIO_CON, &Portfolio.Sharp },
-    { "Sticky", PORTFOLIO_CON, &Portfolio.Sticky },
-    { "DustBuster", PORTFOLIO_CON, &Portfolio.DustBuster },
-    { "UpsideDown", PORTFOLIO_CON, &Portfolio.UpsideDown },
-    { "MirrorPage", PORTFOLIO_CON, &Portfolio.MirrorPage },
-};
-
-SPortfolio Portfolio;
-SPortfolio SavedPortfolio;
-
-int PortfolioLine;
-
 static void ReportPortfolio(const char* Message, ...)
 {
     char Work[256];
@@ -1713,13 +1770,7 @@ static void ReportPortfolio(const char* Message, ...)
 
 void ResetPortfolio()
 {
-    PortfolioLine = 0;
-    
-    Portfolio.PageCount = 0;
-    Portfolio.ChapterCount = 0;
-    
-    for (int i = 0; i < ARRAY_COUNT(PortfolioEntries); i++)
-        *PortfolioEntries[i].Value = false;
+    memset(&Portfolio, 0, sizeof(Portfolio));
 }
 
 static void EnableRandomPortfolio(int Flags, int FlagsMask, bool Value)
@@ -1791,13 +1842,15 @@ void LoadPortfolio()
     Portfolio.InitialVacuumSpeed = VacuumNode->first_attribute("initialSpeed") ? atof(VacuumNode->first_attribute("initialSpeed")->value()) : 1;
     Portfolio.VacuumSpeedChange = VacuumNode->first_attribute("speedChange") ? atof(VacuumNode->first_attribute("speedChange")->value()) : 1;
     Portfolio.VacuumSpeedChangeFrequency = VacuumNode->first_attribute("frequency") ? atoi(VacuumNode->first_attribute("frequency")->value()) : 1;
+    Portfolio.VacuumDamageSpeedModifier = VacuumNode->first_attribute("damageSpeedModifier") ? atoi(VacuumNode->first_attribute("damageSpeedModifier")->value()) : 1;
+    Portfolio.InitialVacuumDistance = VacuumNode->first_attribute("initialDistance") ? atoi(VacuumNode->first_attribute("initialDistance")->value()) : 1;
 
     rapidxml::xml_node<char>* DebugNode = PortfolioNode->first_node("Debug");
     if (DebugNode)
     {
         PortfolioLine = 0;
         
-        Portfolio.VacuumDistance = 500;
+        Portfolio.VacuumDistance = Portfolio.InitialVacuumDistance;
 
         Portfolio.VacuumSpeed = Portfolio.InitialVacuumSpeed;
         ReportPortfolio("Vacuum speed %.1f", Portfolio.VacuumSpeed);
@@ -1828,7 +1881,7 @@ void SetupInitialPortfolio()
     EnableRandomPortfolio(PORTFOLIO_PRO | PORTFOLIO_INITIAL, PORTFOLIO_TYPE_MASK | PORTFOLIO_INITIAL, true);
     EnableRandomPortfolio(PORTFOLIO_PRO | PORTFOLIO_INITIAL, PORTFOLIO_TYPE_MASK | PORTFOLIO_INITIAL, true);
     
-    Portfolio.VacuumDistance = 500;
+    Portfolio.VacuumDistance = Portfolio.InitialVacuumDistance;
     
     Portfolio.VacuumSpeed = Portfolio.InitialVacuumSpeed;
     ReportPortfolio("Vacuum speed %.1f", Portfolio.VacuumSpeed);
@@ -1862,7 +1915,11 @@ void AdvancePortfolio()
     Portfolio.PageCount++;
 
     if (Portfolio.PageCount % Portfolio.VacuumSpeedChangeFrequency == 0)
-        Portfolio.VacuumSpeed += Portfolio.VacuumSpeedChange;
+    {
+        Portfolio.VacuumSpeed += Portfolio.VacuumSpeedChange * (1.0f - Portfolio.VacuumDamage * Portfolio.VacuumDamageSpeedModifier);
+        if (Portfolio.VacuumSpeed < 0.1f)
+            Portfolio.VacuumSpeed = 0.1f;
+    }
     ReportPortfolio("Vacuum speed %.1f", Portfolio.VacuumSpeed);
     
     if (Portfolio.PageCount % Portfolio.ElementChangeFrequency == 0)
@@ -1871,17 +1928,12 @@ void AdvancePortfolio()
         if (!Portfolio.Coins)
             Portfolio.Coins = true;
         
-        // Upside down and lights off can only persist for one round.
+        // Upside down and lights off can only persist for one round.  (This currently prevents them from being combined)
         if (Portfolio.UpsideDown)
-        {
-            Portfolio = SavedPortfolio;
             Portfolio.UpsideDown = false;
-        }
         
         if (Portfolio.LightsOff)
-        {
             Portfolio.LightsOff = false;
-        }
         
         // Randomly add one pro or con.
         if (Random(0.0f, 1.0f) >= 0.5f)
@@ -1895,29 +1947,27 @@ void AdvancePortfolio()
         
         if (Portfolio.LightsOff)
             Portfolio.Fireworks = true;
-        
-        // Upside down disables some pros.
-        if (Portfolio.UpsideDown)
-        {
-            SavedPortfolio = Portfolio;
-            Portfolio.Staplers = false;
-            Portfolio.Fans = false;
-            Portfolio.Balloons = false;
-        }        
     }
 
     if (Portfolio.PageCount % Portfolio.ChapterChangeFrequency == 0)
     {
         Portfolio.ChapterCount++;
         
-        Portfolio.VacuumDistance = 1500;
+        Portfolio.VacuumDistance = Portfolio.InitialVacuumDistance;
         Portfolio.VacuumSpeed = Portfolio.InitialVacuumSpeed + Portfolio.ChapterCount * Portfolio.VacuumSpeedChange * 3;
 
+        Portfolio.VacuumDamage = 0;
+        
         Portfolio.Chapter++;
         if (Portfolio.Chapter >= NChapters)
             Portfolio.Chapter = 1;
         CurrentChapter = Portfolio.Chapter;
         LoadCurrentChapter();
+    }
+    
+    if (Portfolio.VacuumCatchup)
+    {
+        Portfolio.VacuumDistance = Portfolio.InitialVacuumDistance / 2;
     }
     
     int NewPage;

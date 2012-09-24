@@ -271,6 +271,9 @@ static bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
         Dusty.SwipeAngle = NormalizeAngle(RadiansToDegrees(atan2f(-dY, dX)));
         Dusty.SwipePower = Power;
         
+        if (Dusty.Stuck)
+            Dusty.SwipePower /= 5.0f;
+        
 #ifdef SWIPE_DEBUG
 		if (DevMode)
 		{
@@ -1690,7 +1693,8 @@ void ResetDustyCollision()
 	Dusty.CollideWithBottomSide = false;
 	Dusty.CollideWithTopSide = false;
 	Dusty.CollideWithBottomLeftCorner = false;
-	Dusty.CollideWithBottomRightCorner = false;    
+	Dusty.CollideWithBottomRightCorner = false;
+    Dusty.Stuck = false;
 }
 
 static void UpdateDusty_Collision()
@@ -1726,7 +1730,7 @@ static void UpdateDusty_Collision()
 	} 
     
     // Collision with the vacuum when it's off.
-    if (Vacuum.State == VACUUMSTATE_RETREAT)
+    if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.Paused)
     {
         if (Dusty.FloatY + Dusty.Bottom >= Vacuum.Y)
         {
@@ -1875,6 +1879,9 @@ static void UpdateDusty_Collision()
 
 					int BlockID = GetBlockID(x, y);
                     int BlockFlags = GetBlockFlags(x, y);
+                    
+                    if (BlockFlags & SPECIALBLOCKID_STICKY)
+                        Dusty.Stuck = true;
                     
 					if (BlockID < SPECIALBLOCKID_FIRST)
 					{			

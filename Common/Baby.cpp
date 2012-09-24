@@ -537,13 +537,16 @@ void UpdateBabies()
                 float Y = Baby->Y;
                 float Size = 3;
                 
+                bool GotSomething = false;
+                
                 for (int i = 0; i < NCoins; i++)//Need extern in header file to accomplish
                 {
                     SCoin* Coin = &Coins[i];
                     float Dist =(Distance(X, Y, Coin->X, Coin->Y));
                     if (Dist < Size*64)
                     {                    
-                        Coin->State = COINSTATE_COLLECTED;     
+                        Coin->State = COINSTATE_COLLECTED;
+                        GotSomething = true;
                     }        
                 }
                 
@@ -554,7 +557,8 @@ void UpdateBabies()
                     if (Dist < Size*64)
                     {
                         Gear->State = GEARSTATE_FALLING;
-                    }                                       
+                        GotSomething = true;
+                    }
                 }
                 
                 for (int i = 0; i < NBalls; i++)
@@ -564,7 +568,8 @@ void UpdateBabies()
                     if (Dist < Size*64)
                     {
                         Ball->State = BALLSTATE_FALLING;
-                    }              
+                        GotSomething = true;
+                    }
                 }
                 
                 for (int i = 0; i < NFireWorks; i++)
@@ -575,11 +580,21 @@ void UpdateBabies()
                     if (Dist < Size*64 && Dist != 0 && FireWork->State == FIREWORKSTATE_WAIT)
                     {
                         FireWork->State = FIREWORKSTATE_FUSE;
+                        GotSomething = true;
                     }
                 }
 
-                Baby->State = BABYSTATE_JUMP_TO_FOLLOW;
-                Baby->Timer = 0;
+                if (GotSomething)
+                {
+                    CreateWhiteSmoke(Baby->X, Baby->Y);
+                    Baby->State = BABYSTATE_INACTIVE;
+                    Baby->Timer = 0;
+                }
+                else
+                {
+                    Baby->State = BABYSTATE_JUMP_TO_FOLLOW;
+                    Baby->Timer = 0;
+                }
             }
         }
         else if (Baby->State == BABYSTATE_JUMP_TO_ATTACK)
@@ -641,7 +656,7 @@ void SendBabyToGather(float X, float Y)
         if (Baby->State != BABYSTATE_FOLLOW)
             continue;
         
-        if ((Y + ScrollY >= LitScreenHeight - 100 || Y >= Vacuum.Y) && Vacuum.State != VACUUMSTATE_RETREAT)
+        if ((Y + ScrollY >= LitScreenHeight - 200 || Y >= Vacuum.Y) && Vacuum.State != VACUUMSTATE_RETREAT)
         {
             Baby->State = BABYSTATE_JUMP_TO_ATTACK;
             Baby->GatherX = X;
@@ -656,4 +671,27 @@ void SendBabyToGather(float X, float Y)
         
         break;
     }
+}
+
+bool UseBabyProtection()
+{
+    if (NBabies == 0)
+        return false;
+    
+    for (int i = NBabies-1; i >= 0; i--)
+    {
+        SBaby* Baby = &Babies[i];
+        if (Baby->State != BABYSTATE_FOLLOW)
+            continue;
+        
+        Baby->State = BABYSTATE_JUMP_TO_ATTACK;
+        Baby->GatherX = 384 - ScrollX;
+        Baby->GatherY = Baby->Y - 500;
+        
+        Vacuum.Paused = true;
+        
+        return true;
+    }
+    
+    return false;
 }

@@ -14,6 +14,7 @@
 #include "Settings.h"
 #include "Smoke.h"
 #include "Tutorial.h"
+#include "Baby.h"
 
 
 #define MAX_VACUUM_QUEUE_NODES 1000
@@ -101,7 +102,7 @@ void InitVacuum()
 	Vacuum.State = VACUUMSTATE_OFF;
 	Vacuum.Volume = 0.5f;
     
-    Vacuum.Damage = 0;
+    Vacuum.Damage = Portfolio.VacuumDamage;
 
     Vacuum.Charging = false;
     
@@ -127,6 +128,8 @@ void InitVacuum()
     
     Vacuum.ChargeTimer = VACUUM_CHARGE_DELAY;
     Vacuum.AverageDustySpeed = 0;
+    
+    Vacuum.Paused = false;
     
     RestartVacuumForceMap();
     
@@ -336,7 +339,7 @@ void UpdateVacuum()
     
 	if (Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
-		if (Dusty.State != DUSTYSTATE_DIE)
+		if (!Vacuum.Paused && Dusty.State != DUSTYSTATE_DIE)
 		{
             float VacuumSpeed;
             if (Vacuum.Type == VACUUM_DUSTBUSTER)
@@ -372,7 +375,8 @@ void UpdateVacuum()
             
 			if (IsInVacuum(Dusty.FloatX, Dusty.FloatY))
 			{
-				SetDustyState_Die(DEATH_VACUUM);
+                if (!UseBabyProtection())
+                    SetDustyState_Die(DEATH_VACUUM);
 			}
 		}
 	}
@@ -462,6 +466,8 @@ void JamVacuum()
         
         Vacuum.Charging = false;
         Vacuum.ChargeTimer = VACUUM_CHARGE_DELAY;
+        
+        Vacuum.Paused = false;
 	}
 	//else
 	//	Vacuum.Timer += VACUUM_UNJAM_TIME;
@@ -506,6 +512,8 @@ void TurnOnVacuum(float InitialDistance, float DelayBeforeMoving, bool Charging)
     
     Vacuum.X = Dusty.FloatX - FX*InitialDistance;
     Vacuum.Y = Dusty.FloatY - FY*InitialDistance;
+
+    Vacuum.Paused = false;
 
     Vacuum.Charging = Charging;
 }

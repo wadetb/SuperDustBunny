@@ -175,6 +175,7 @@ struct SDusty
 	EDustyDirection LastWall;
 	int WallJumpTimer;
 
+    bool Stuck;
 	int StuckJumpCount;
 	int StuckTimer;
 

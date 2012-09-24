@@ -68,6 +68,8 @@ struct SVacuum
     int BlinkTimer;
     int ChargeTimer;
 
+    bool Paused;
+    
     float AverageDustySpeed;
 
     int* ForceMap;

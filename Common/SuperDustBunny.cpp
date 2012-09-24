@@ -214,6 +214,7 @@ static void SetupNextPage()
 
 void AdvanceToNextPage()
 {
+    Portfolio.VacuumDamage = Vacuum.Damage;
     Portfolio.VacuumDistance = fabsf(Dusty.FloatY - Vacuum.Y);
     
     RecordPageScore(Chapter.PageNum);

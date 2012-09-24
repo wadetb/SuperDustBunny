@@ -17,5 +17,6 @@ void UpdateBabies();
 void DisplayBabies();
 
 void SendBabyToGather(float X, float Y);
+bool UseBabyProtection();
 
 #endif
