@@ -352,6 +352,20 @@ void AwardBaby(int Hat)
     Score.CurrentBabies++;
 }
 
+void RemoveBaby(int Hat)
+{
+    for (int i = 0; i < Score.CurrentBabies; i++)
+    {
+        if (Score.BabyHats[i] == Hat)
+        {
+            for (int j = i + 1; j < Score.CurrentBabies; j++)
+                Score.BabyHats[j - 1] = Score.BabyHats[j];
+            Score.CurrentBabies--;
+            return;
+        }
+    }
+}
+
 void LoadChapterScores(char* ChapterName)
 {
     PushErrorContext("While loading scores for chapter '%s':\n", ChapterName);

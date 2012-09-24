@@ -316,6 +316,7 @@ static void VacuumUpBaby(SBaby* Baby)
 {
 #if 1
     Baby->State = BABYSTATE_INACTIVE;
+    RemoveBaby(Baby->Hat);
 #elif 1
     SendBabyToHeaven(Baby);
 #else
@@ -472,6 +473,7 @@ void UpdateBabies()
             if (Baby->Y < -1000)
             {
                 Baby->State = BABYSTATE_INACTIVE;
+                RemoveBaby(Baby->Hat);
                 continue;
             }
         }
@@ -589,6 +591,7 @@ void UpdateBabies()
                     CreateWhiteSmoke(Baby->X, Baby->Y);
                     Baby->State = BABYSTATE_INACTIVE;
                     Baby->Timer = 0;
+                    RemoveBaby(Baby->Hat);
                 }
                 else
                 {
@@ -640,6 +643,7 @@ void UpdateBabies()
                 JamVacuum();
                 Baby->State = BABYSTATE_INACTIVE; // BABYSTATE_JUMP_TO_FOLLOW?
                 Baby->Timer = 0;
+                RemoveBaby(Baby->Hat);
             }
         }
     }
@@ -656,7 +660,7 @@ void SendBabyToGather(float X, float Y)
         if (Baby->State != BABYSTATE_FOLLOW)
             continue;
         
-        if ((Y + ScrollY >= LitScreenHeight - 200 || Y >= Vacuum.Y) && Vacuum.State != VACUUMSTATE_RETREAT)
+        if ((Y + ScrollY >= LitScreenHeight - 200 || Y >= Vacuum.Y) && Vacuum.State != VACUUMSTATE_RETREAT && Vacuum.Type == VACUUM_NORMAL)
         {
             Baby->State = BABYSTATE_JUMP_TO_ATTACK;
             Baby->GatherX = X;
@@ -675,7 +679,7 @@ void SendBabyToGather(float X, float Y)
 
 bool UseBabyProtection()
 {
-    if (NBabies == 0)
+    if (NBabies == 0 || Vacuum.Type != VACUUM_NORMAL)
         return false;
     
     for (int i = NBabies-1; i >= 0; i--)
