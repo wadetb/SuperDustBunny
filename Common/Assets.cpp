@@ -966,7 +966,7 @@ void LoadSoundAsset( const char* FileName, sxSound* Sound )
 #endif
 }
 
-void LoadMusicAsset(const char* FileName, SMusicAsset* Music, bool Looping)
+void LoadMusicAsset(const char* FileName, SMusicAsset* MusicAsset, bool Looping)
 {
 #ifdef PLATFORM_IPHONE
     SAssetList* AssetList;
@@ -977,12 +977,12 @@ void LoadMusicAsset(const char* FileName, SMusicAsset* Music, bool Looping)
     {
         char Work[1024];
         snprintf(Work, sizeof(Work), "%s/%s", AssetList->RootDirectory, Asset->RawFileName);
-        Music->FileName = strdup(Work);
+        MusicAsset->FileName = strdup(Work);
     }
     else
     {
-        Music->FileName = NULL;
-        Music->Player = NULL;
+        MusicAsset->FileName = NULL;
+        MusicAsset->Player = NULL;
         return;
     }
 #endif
@@ -991,11 +991,11 @@ void LoadMusicAsset(const char* FileName, SMusicAsset* Music, bool Looping)
 	char Work[1024];
 	GetBundleFileName(FileName, Work, sizeof(Work));
     
-    Music->FileName = strdup(Work);
+    MusicAsset->FileName = strdup(Work);
 #endif
     
 #ifdef PLATFORM_IPHONE_OR_MAC
-    NSURL *url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:Music->FileName]];
+    NSURL *url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:MusicAsset->FileName]];
     
     NSError *error;
     AVAudioPlayer* player = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
@@ -1003,7 +1003,7 @@ void LoadMusicAsset(const char* FileName, SMusicAsset* Music, bool Looping)
         [player setNumberOfLoops:-1];
     [player prepareToPlay];
     
-    Music->Player = player;
+    MusicAsset->Player = player;
 #endif
 }
 
