@@ -13,6 +13,7 @@
 #include "Dusty.h"
 #include "Chapter.h"
 #include "Text.h"
+#include "GameScore.h"
 
 
 float LivesScaleFactor = 0.85f;
@@ -37,6 +38,7 @@ void UpdateLives()
 	{
  		Dusty.GainLife = false;
 		Settings.Lives += 1;
+        Score.TotalLives++;
         SaveSettings();
 	}
 }

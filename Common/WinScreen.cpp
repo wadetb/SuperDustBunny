@@ -43,9 +43,9 @@ struct SWinScreen
 SWinScreen WinScreen;
 
 
-gxSprite MedalFrames[MEDAL_FRAMES];
+static gxSprite MedalFrames[MEDAL_FRAMES];
 
-const char* BronzeMedalNames[MEDAL_FRAMES] =
+static const char* BronzeMedalNames[MEDAL_FRAMES] =
 {
     "Assets/METAL_BRONZE_1.png",
     "Assets/METAL_BRONZE_2.png",
@@ -57,7 +57,7 @@ const char* BronzeMedalNames[MEDAL_FRAMES] =
     "Assets/METAL_BRONZE_8.png",
 };
 
-const char* SilverMedalNames[MEDAL_FRAMES] =
+static const char* SilverMedalNames[MEDAL_FRAMES] =
 {
     "Assets/METAL_SILVER_1.png",
     "Assets/METAL_SILVER_2.png",
@@ -69,7 +69,7 @@ const char* SilverMedalNames[MEDAL_FRAMES] =
     "Assets/METAL_SILVER_8.png",
 };
 
-const char* GoldMedalNames[MEDAL_FRAMES] =
+static const char* GoldMedalNames[MEDAL_FRAMES] =
 {
     "Assets/METAL_GOLD_1.png",
     "Assets/METAL_GOLD_2.png",

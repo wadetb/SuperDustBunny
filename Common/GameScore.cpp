@@ -118,6 +118,8 @@ void ResetScore()
     Score.NewChapterRecord = false;
     Score.BestChapterTime = INT_MAX;
     
+    Score.TotalLives = 0;
+    
     Score.Medal = MEDAL_NONE;
     
     Score.Invalid = false;

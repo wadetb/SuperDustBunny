@@ -27,7 +27,7 @@ struct SScore
     int CurrentPageTime;
     int CurrentBonus;
     int CurrentBabies;
-    
+        
     int BabyHats[MAX_SCORE_BABIES];
     
     int PageTime[MAX_PAGE_TIMES];
@@ -38,6 +38,8 @@ struct SScore
     int BestPageTime[MAX_PAGE_TIMES];
 
     int ChapterTime;
+
+    int TotalLives;
 
     bool NewChapterRecord;
     int BestChapterTime;

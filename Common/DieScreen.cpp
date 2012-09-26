@@ -10,30 +10,113 @@
 #include "Common.h"
 #include "DieScreen.h"
 #include "Chapter.h"
+#include "Text.h"
+#include "GameScore.h"
 
 #ifdef PLATFORM_IPHONE
 #import "SuperDustBunnyViewController.h"
 #endif
 
+
+#define MEDAL_FRAMES 8
+
+
+static gxSprite MedalFrames[MEDAL_FRAMES];
+
+static const char* BronzeMedalNames[MEDAL_FRAMES] =
+{
+    "Assets/METAL_BRONZE_1.png",
+    "Assets/METAL_BRONZE_2.png",
+    "Assets/METAL_BRONZE_3.png",
+    "Assets/METAL_BRONZE_4.png",
+    "Assets/METAL_BRONZE_5.png",
+    "Assets/METAL_BRONZE_6.png",
+    "Assets/METAL_BRONZE_7.png",
+    "Assets/METAL_BRONZE_8.png",
+};
+
+static const char* SilverMedalNames[MEDAL_FRAMES] =
+{
+    "Assets/METAL_SILVER_1.png",
+    "Assets/METAL_SILVER_2.png",
+    "Assets/METAL_SILVER_3.png",
+    "Assets/METAL_SILVER_4.png",
+    "Assets/METAL_SILVER_5.png",
+    "Assets/METAL_SILVER_6.png",
+    "Assets/METAL_SILVER_7.png",
+    "Assets/METAL_SILVER_8.png",
+};
+
+static const char* GoldMedalNames[MEDAL_FRAMES] =
+{
+    "Assets/METAL_GOLD_1.png",
+    "Assets/METAL_GOLD_2.png",
+    "Assets/METAL_GOLD_3.png",
+    "Assets/METAL_GOLD_4.png",
+    "Assets/METAL_GOLD_5.png",
+    "Assets/METAL_GOLD_6.png",
+    "Assets/METAL_GOLD_7.png",
+    "Assets/METAL_GOLD_8.png",
+};
+
 struct SDieScreen
 {
-	bool Pressed;
+    bool ScoreVisible;
+    
 	int Timer;
+    
     int TearTime;
     float TearDropX;
     float TearDropY;
     float TearDropVY;
+    
+    float SlideIn;
+    int MedalFrame;
+    
+    bool ButtonEverReleased;
 };
 
 SDieScreen DieScreen;
 
+#define GOLD_PAGE_COUNT     20
+#define SILVER_PAGE_COUNT   10
+
 void InitDieScreen()
 {
-	DieScreen.Pressed = false;
+    DieScreen.ButtonEverReleased = false;
+    DieScreen.ScoreVisible = true;
 	DieScreen.Timer = 0;
     DieScreen.TearTime = 0;
-    
+    DieScreen.SlideIn = 1.0f;
+    DieScreen.MedalFrame = 0;
+
     ResetLightState();
+    
+    const char** MedalNames;
+    if (Portfolio.PageCount > GOLD_PAGE_COUNT)
+    {
+        MedalNames = GoldMedalNames;
+#ifdef PLATFORM_IPHONE
+        [TestFlight passCheckpoint:[NSString stringWithFormat:@"Got a Gold medal"]];
+#endif
+    }
+    else if (Portfolio.PageCount > SILVER_PAGE_COUNT)
+    {
+        MedalNames = SilverMedalNames;
+#ifdef PLATFORM_IPHONE
+        [TestFlight passCheckpoint:[NSString stringWithFormat:@"Got a Silver medal"]];
+#endif
+    }
+    else
+    {
+        MedalNames = BronzeMedalNames;
+#ifdef PLATFORM_IPHONE
+        [TestFlight passCheckpoint:[NSString stringWithFormat:@"Got a Bronze medal"]];
+#endif
+    }
+    
+    for (int i = 0; i < MEDAL_FRAMES; i++)
+        LoadSpriteAsset(MedalNames[i], &MedalFrames[i]);
 }
 
 gxSprite* TearSprites[4] =
@@ -49,7 +132,7 @@ void DisplayDieScreen()
     AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ScreenLoseGrave1Sprite, 0, 0, 768, LitScreenHeight, 1.0f);
     
     float PulseAlpha;
-    if (DieScreen.Pressed)
+    if (!DieScreen.ScoreVisible && msButton1)
         PulseAlpha = 1.0f;
     else
         PulseAlpha = SinWave(DieScreen.Timer/60.0f, 2.0f)*0.5f;
@@ -75,16 +158,41 @@ void DisplayDieScreen()
     {
         AddLitSpriteAlpha(LIGHTLIST_VACUUM, &TearDropSprite, DieScreen.TearDropX, DieScreen.TearDropY, Alpha);
     }
+    
+    AddLitSprite(LIGHTLIST_VACUUM, &LeaderboardBackgroundSprite, 0 - 600*DieScreen.SlideIn, 0);
+
+    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &MedalFrames[(DieScreen.MedalFrame/8)%MEDAL_FRAMES], 384, 300 + 300*DieScreen.SlideIn, 0.5f, 1.0f);
+
+    DisplayString(LIGHTLIST_WIPE, "you survived", FORMAT_CENTER_X, 384 - 600*DieScreen.SlideIn, 540, 1.0f);
+    char Work[40];
+    snprintf(Work, sizeof(Work), "%d", Portfolio.PageCount);
+    DisplayString(LIGHTLIST_WIPE, Work, FORMAT_CENTER_X, 384 - 600*DieScreen.SlideIn, 610, 1.75f);
+    DisplayString(LIGHTLIST_WIPE, "pages!", FORMAT_CENTER_X, 384 - 600*DieScreen.SlideIn, 740, 1.0f);
+
+    AddLitSpriteScaled(LIGHTLIST_WIPE, &CoinSpin1Sprite, 220 - 600*DieScreen.SlideIn, 800, 1.5f, 1.5f);
+    snprintf(Work, sizeof(Work), "x%d", Score.TotalLives);
+    DisplayString(LIGHTLIST_WIPE, Work, 0, 380 - 600*DieScreen.SlideIn, 860, 1.75f);
 }
 
 static void DieScreen_Advance()
 {
+    for (int i = 0; i < MEDAL_FRAMES; i++)
+        gxDestroySprite(&MedalFrames[i]);
+
 	SetGameState_StartScreen();
 }
 
 void UpdateDieScreen()
 {
-	bool Pressed = msButton1;
+    if (DieScreen.Timer == 60)
+        DieScreen.ScoreVisible = true;
+
+    if (DieScreen.ScoreVisible)
+        DieScreen.SlideIn *= 0.9f;
+    else
+        DieScreen.SlideIn *= 1.5f;
+    
+    DieScreen.MedalFrame++;
 
 	DieScreen.Timer++;
 
@@ -133,14 +241,26 @@ void UpdateDieScreen()
 #endif
     }
     
+    if (!msButton1)
+        DieScreen.ButtonEverReleased = true;
+    if (!DieScreen.ButtonEverReleased)
+        return;
+    
     if (DieScreen.Timer >= 130)
     {
-        if (!Pressed && DieScreen.Pressed)
+        if (msButton1 && !msOldButton1)
         {
-            DieScreen_Advance();
-            return;
+            if (DieScreen.ScoreVisible)
+            {
+                DieScreen.ScoreVisible = false;
+                DieScreen.ButtonEverReleased = false;
+                DieScreen.SlideIn = 0.01f;
+            }
+            else
+            {
+                DieScreen_Advance();
+                return;
+            }
         }
-        
-        DieScreen.Pressed = Pressed;
     }
 }
