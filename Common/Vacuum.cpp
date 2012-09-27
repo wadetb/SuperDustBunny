@@ -387,19 +387,10 @@ void UpdateVacuum()
         if ((Vacuum.Timer % 20 == 0))
             CreateVacuumSmoke(1);
 
-		// Move the vacuum back down the screen.
 		if (Vacuum.Timer <= 0)
 		{
 			Vacuum.State = VACUUMSTATE_ONSCREEN;
             Vacuum.Timer = 5*60;
-            
-            float TargetY;
-            int LightsOffset = Chapter.PageProps.LightsOff ? 768 : 0;
-            if (Vacuum.Dir == VACUUMDIR_UP || Vacuum.Dir == VACUUMDIR_UP_LEFT || Vacuum.Dir == VACUUMDIR_UP_RIGHT)
-                TargetY = (float)-ScrollY + LitScreenHeight*1.1f + LightsOffset;
-            else
-                TargetY = (float)-ScrollY - LightsOffset;
-            Vacuum.Y = TargetY;
 		}
 	}
 

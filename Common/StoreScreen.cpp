@@ -233,7 +233,7 @@ void DisplayStoreScreen()
     // Lives
     AddLitSprite(LIGHTLIST_FOREGROUND, &ScreenCoinBackgroundSprite, 0, LitScreenHeight - 120);
     
-    AddLitSpriteScaled(LIGHTLIST_FOREGROUND, &CoinSpin1Sprite, 250, 900, 1.0f, 1.0f);
+    AddLitSpriteScaled(LIGHTLIST_FOREGROUND, &CoinIconSprite, 240, 910, 0.65f*1.0f, 0.65f*1.0f);
     
     char Work[20];
     snprintf(Work, sizeof(Work), "x%d", Settings.Lives);
@@ -260,7 +260,7 @@ void DisplayStoreScreen()
 
         DisplayMultilineStringAlpha(LIGHTLIST_WIPE, Inventory[StoreScreen.ActiveItem].Description, FORMAT_CENTER_X, 384, 450, 0.8f, 1.0f);
 
-        AddLitSpriteScaled(LIGHTLIST_WIPE, &CoinSpin1Sprite, 250, 550, 1.0f, 1.0f);
+        AddLitSpriteScaled(LIGHTLIST_WIPE, &CoinIconSprite, 240, 560, 0.65f*1.0f, 0.65f*1.0f);
         snprintf(Work, sizeof(Work), "x%d", Inventory[StoreScreen.ActiveItem].Cost);
         DisplayString(LIGHTLIST_WIPE, Work, 0, 350, 590, 1.1f);
 

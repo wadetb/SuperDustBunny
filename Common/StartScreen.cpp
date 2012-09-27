@@ -62,7 +62,9 @@ void InitStartScreen()
 {
     StartScreen.TitleVisible = InitialStartScreen;
     InitialStartScreen = false;
-    
+ 
+    StartScreen.PlayChapter = Random(1, NChapters);
+
     StartScreen.ReleasedAtLeastOnce = false;
     StartScreen.BackgroundFadeAlpha = 0.0f;
     StartScreen.Pressed = 0;
@@ -79,7 +81,6 @@ static void StartScreen_Advance()
     if (StartScreen.TitleVisible)
     {
         StartScreen.TitleVisible = false;
-        StartScreen.PlayChapter = Random(1, NChapters);
     }
     else
     {
@@ -149,14 +150,14 @@ void DisplayStartScreen()
     // Lives
     AddLitSprite(LIGHTLIST_VACUUM, &ScreenCoinBackgroundSprite, 0, LitScreenHeight - 120);
 
-    AddLitSpriteScaled(LIGHTLIST_VACUUM, &CoinSpin1Sprite, 250, 900, 1.0f, 1.0f);
+    AddLitSpriteScaled(LIGHTLIST_VACUUM, &CoinIconSprite, 240, 910, 0.65f*1.0f, 0.65f*1.0f);
     
     char Work[20];
     snprintf(Work, sizeof(Work), "x%d", Settings.Lives);
     DisplayString(LIGHTLIST_VACUUM, Work, 0, 350, 940, 1.1f);
 
     // Leaderboard button.
-    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ButtonLeaderboardSprite, 768-90 + sinf(StartScreen.WiggleTime)*4.0f, 90, 1.0f, 1.0f);
+    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ButtonLeaderboardSprite, 768-90 + sinf(StartScreen.WiggleTime)*4.0f, 90, 0.65f*1.0f, 1.0f);
 
     if (StartScreen.LeaderboardVisible)
     {

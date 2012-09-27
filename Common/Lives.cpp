@@ -25,7 +25,7 @@ void DisplayLives()
     if (Chapter.PageProps.VacuumOff)
         return;
 
-    AddLitSpriteScaled(LIGHTLIST_WIPE, &CoinSpin1Sprite, (float)gxScreenWidth - 80 - 70*LivesScaleFactor*4, -20, LivesScaleFactor, LivesScaleFactor);
+    AddLitSpriteScaled(LIGHTLIST_WIPE, &CoinIconSprite, (float)gxScreenWidth - 90 - 70*LivesScaleFactor*4, -10, 0.65f*LivesScaleFactor, 0.65f*LivesScaleFactor);
     
     char Work[20];
     snprintf(Work, sizeof(Work), "x%d", Settings.Lives);

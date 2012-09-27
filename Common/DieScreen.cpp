@@ -169,7 +169,7 @@ void DisplayDieScreen()
     DisplayString(LIGHTLIST_WIPE, Work, FORMAT_CENTER_X, 384 - 600*DieScreen.SlideIn, 610, 1.75f);
     DisplayString(LIGHTLIST_WIPE, "pages!", FORMAT_CENTER_X, 384 - 600*DieScreen.SlideIn, 740, 1.0f);
 
-    AddLitSpriteScaled(LIGHTLIST_WIPE, &CoinSpin1Sprite, 220 - 600*DieScreen.SlideIn, 800, 1.5f, 1.5f);
+    AddLitSpriteScaled(LIGHTLIST_WIPE, &CoinIconSprite, 220 - 600*DieScreen.SlideIn, 820, 0.65f*1.5f, 0.65f*1.5f);
     snprintf(Work, sizeof(Work), "x%d", Score.TotalLives);
     DisplayString(LIGHTLIST_WIPE, Work, 0, 380 - 600*DieScreen.SlideIn, 860, 1.75f);
 }

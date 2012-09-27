@@ -105,6 +105,8 @@ gxSprite BarrelNailSprite;
 
 gxSprite FanSprite;
 
+gxSprite CoinIconSprite;
+
 gxSprite CoinSpin1Sprite;
 gxSprite CoinSpin2Sprite;
 gxSprite CoinSpin3Sprite;
@@ -1106,6 +1108,8 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/barrel-nail.png", &BarrelNailSprite);
 
 	LoadSpriteAsset("Assets/fan.png", &FanSprite);
+
+	LoadSpriteAsset("Assets/coin-icon.png", &CoinIconSprite);
 
 	LoadSpriteAsset("Assets/coin-spin-1.png", &CoinSpin1Sprite);
 	LoadSpriteAsset("Assets/coin-spin-2.png", &CoinSpin2Sprite);

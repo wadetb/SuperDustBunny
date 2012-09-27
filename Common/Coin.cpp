@@ -86,7 +86,7 @@ void UpdateCoins()
 
 				Coin->State = COINSTATE_COLLECTED;
 				
-                Create1UpBubble(Coin->X, Coin->Y);
+                //Create1UpBubble(Coin->X, Coin->Y);
                 UpdateMinimap(MINIMAP_EXTRA_LIFE);
 			}
 		}
