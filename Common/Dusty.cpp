@@ -106,6 +106,45 @@ SDustyHatOffset DustyHatOffsets[DUSTYSPRITE_COUNT] =
 
 gxSprite* DustyHatSprites[DUSTYHAT_COUNT];
 
+SDustyHatOffset DustyHatAdjustments[DUSTYHAT_COUNT] =
+{
+    { 0, 0, 0, 1 },                 //    DUSTYHAT_NONE,
+    { 0, 0, -20, 1 },               //    DUSTYHAT_APPLE,
+    { 0, 5, -5, 1 },                //    DUSTYHAT_BASEBALL_CAP,
+    { 0, 15, -15, 1 },              //    DUSTYHAT_BEE,
+    { 0, 0, 0, 1 },                 //    DUSTYHAT_BOWTIE,
+    { 0, 30, 20, 1 },                 //    DUSTYHAT_CLOWN_NOSE,
+    { 0, -5, -17, 1 },                 //    DUSTYHAT_CROWN,
+    { 0, 12, 10, 1 },                 //    DUSTYHAT_DISGUISE,
+    { 0, 0, 10, 1 },                 //    DUSTYHAT_EARMUFFS,
+    { 0, -5, 8, 1 },                 //    DUSTYHAT_EARPHONES,
+    { 0, 0, 12, 1 },                 //    DUSTYHAT_EYEGLASSES,
+    { 0, 0, 15, 1 },                 //    DUSTYHAT_EYEPATCH,
+    { 0, -10, 0, 1 },                 //    DUSTYHAT_FLOWER,
+    { 0, 0, -15, 1 },                 //    DUSTYHAT_FROG_CROWN,
+    { 0, -5, 5, 1 },                 //    DUSTYHAT_GRADUATION,
+    { 0, -17, 0, 1 },                 //    DUSTYHAT_GREEN_FEATHER,
+    { 0, -15, -10, 1 },                 //    DUSTYHAT_JESTER,
+    { 0, -10, 28, 1 },                 //    DUSTYHAT_KARATE,
+    { 0, 8, 23, 1 },                 //    DUSTYHAT_MONOCLE,
+    { 0, 0, 0, 1 },                 //    DUSTYHAT_NURSE,
+    { 0, 0, 0, 1 },                 //    DUSTYHAT_PARTY,
+    { 0, 0, 0, 1 },                 //    DUSTYHAT_PINK_BOW,
+    { 0, 0, 15, 1 },                 //    DUSTYHAT_PINK_SHADES,
+    { 0, 0, -5, 1 },                 //    DUSTYHAT_PINK_TIARA,
+    { 0, -5, -10, 1 },              //    DUSTYHAT_PIRATE,
+    { 0, -25, 2, 1 },                 //    DUSTYHAT_PURPLE_FEATHER,
+    { 0, 0, 0, 1 },                 //    DUSTYHAT_SNORKEL,
+    { 0, 0, 14, 1 },                 //    DUSTYHAT_SUNGLASSES,
+    { 0, -4, -18, 1 },                 //    DUSTYHAT_TOPHAT,
+    { 0, 10, 70, 1 },                 //    DUSTYHAT_TUTU,
+    { 0, -25, 0, 1 },                 //    DUSTYHAT_WITCH,
+    { 0, -5, -15, 1 },                 //    DUSTYHAT_YELLOW_TOPHAT,
+};
+
+int DustyHatAdjX = 0;
+int DustyHatAdjY = 0;
+
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                  Dusty initialization function                                                          //
@@ -368,10 +407,46 @@ static void DisplayDustySprite(EDustySprite Sprite, float XAdj = 0.0f, float XMi
     {
         gxSprite* HatSprite = DustyHatSprites[Dusty.Hat];
         SDustyHatOffset* HatOffset = &DustyHatOffsets[Sprite];
+        SDustyHatOffset* HatAdj = &DustyHatAdjustments[Dusty.Hat];
+
+        float HatAngle = DegreesToRadians(HatOffset->Angle);
+        float HatScale = HatAdj->Scale;
+
+        float AdjX = HatAdj->X;
+        float AdjY = HatAdj->Y;
         
-        AddLitSpriteCenteredScaled2Rotated(LIGHTLIST_FOREGROUND, HatSprite, 
-                                          X + ScrollX + HatOffset->X*ScaleX, Y + ScrollY + HatOffset->Y, 
-                                          ScaleX, 1.0f, DegreesToRadians(HatOffset->Angle)*ScaleX);
+        float ca = cosf(HatAngle);
+        float sa = sinf(HatAngle);
+
+        float RotAdjX = (AdjX * ca) - (AdjY * sa);
+        float RotAdjY = (AdjX * sa) + (AdjY * ca);
+
+        if (Dusty.Hat == DUSTYHAT_CLOWN_NOSE)
+        {
+            if (Sprite == DUSTYSPRITE_HOP_2 || Sprite == DUSTYSPRITE_HOP_2B || Sprite == DUSTYSPRITE_HOP_2C)
+            {
+                RotAdjX -= 10;
+                RotAdjY += 10;
+            }
+            else if (Sprite == DUSTYSPRITE_HOP_3 || Sprite == DUSTYSPRITE_HOP_3B)
+            {
+                RotAdjX += 10;
+                RotAdjY += 5;
+            }
+            else if (Sprite >= DUSTYSPRITE_WALLJUMP && Sprite <= DUSTYSPRITE_WALLJUMP_C)
+            {
+                RotAdjY += 20;
+            }
+            else if (Sprite == DUSTYSPRITE_DEATH)
+            {
+                RotAdjX -= 17;
+            }
+        }
+
+        float HatX = X + ScrollX + RotAdjX*ScaleX + HatOffset->X*ScaleX;
+        float HatY = Y + ScrollY + RotAdjY + HatOffset->Y;
+        
+        AddLitSpriteCenteredScaled2Rotated(LIGHTLIST_FOREGROUND, HatSprite, HatX, HatY, ScaleX*HatScale, HatScale, HatAngle*ScaleX);
     }
 }
 

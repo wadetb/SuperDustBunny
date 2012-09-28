@@ -16,6 +16,7 @@
 #include "LeaderboardScreen.h"
 #include "Input.h"
 #import "Music.h"
+#include "Keyboard.h"
 
 
 struct SInventory
@@ -277,6 +278,7 @@ void DisplayStoreScreen()
     else
     {
         AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenGoBackSprite, 60, 60, 1.0f, 1.0f);
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenBuyCoinsSprite, 620, 60, 0.5f, 1.0f);
         if (StoreScreen.FirstItem > 0)
             AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 192-64, 930, -1.1f, 1.0f);
         if (StoreScreen.FirstItem + 16 < ARRAY_COUNT(Inventory))

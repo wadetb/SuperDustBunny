@@ -81,6 +81,7 @@ struct SDustyHatOffset
     float Angle;
     float X;
     float Y;
+    float Scale;
 };
 
 enum EDustyHat

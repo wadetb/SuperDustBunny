@@ -191,12 +191,15 @@ void DisplayVacuum()
                 BlinkSprite = &VacuumBlink2Sprite;
             else
             {
-                switch (Vacuum.BlinkTimer/6)
+                if (Dusty.State != DUSTYSTATE_DIE)
                 {
-                    case 1: BlinkSprite = &VacuumBlink1Sprite; LightsAlpha = 0.75f; break;
-                    case 2: BlinkSprite = &VacuumBlink2Sprite; LightsAlpha = 0.5f; break;
-                    case 3: BlinkSprite = &VacuumBlink1Sprite; LightsAlpha = 0.75f; break;
-                    default: break;
+                    switch (Vacuum.BlinkTimer/6)
+                    {
+                        case 1: BlinkSprite = &VacuumBlink1Sprite; LightsAlpha = 0.75f; break;
+                        case 2: BlinkSprite = &VacuumBlink2Sprite; LightsAlpha = 0.5f; break;
+                        case 3: BlinkSprite = &VacuumBlink1Sprite; LightsAlpha = 0.75f; break;
+                        default: break;
+                    }
                 }
             }
             if (BlinkSprite)
