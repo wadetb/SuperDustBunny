@@ -49,7 +49,7 @@ SInventory Inventory[] =
     { "Assets/hat-baseball-cap.png", "baseball cap", 5, DUSTYHAT_BASEBALL_CAP },
     { "Assets/hat-bee.png", "bee hat", 5, DUSTYHAT_BEE },
     { "Assets/hat-bowtie.png", "bowtie", 5, DUSTYHAT_BOWTIE },
-    { "Assets/hat-clown-nose.png", "clown nose", 5, DUSTYHAT_CLOWN_NOSE },
+    { "Assets/hat-clown-nose.png", "clown nose", 30, DUSTYHAT_CLOWN_NOSE },
     { "Assets/hat-crown.png", "crown", 5, DUSTYHAT_CROWN },
     { "Assets/hat-disguise.png", "disguise", 5, DUSTYHAT_DISGUISE },
     { "Assets/hat-earmuffs.png", "ear muffs", 5, DUSTYHAT_EARMUFFS },

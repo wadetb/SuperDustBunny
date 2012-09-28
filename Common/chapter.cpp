@@ -1980,8 +1980,11 @@ void AdvancePortfolio()
         Portfolio.Chapter++;
         if (Portfolio.Chapter >= NChapters)
             Portfolio.Chapter = 1;
+        
         CurrentChapter = Portfolio.Chapter;
         LoadCurrentChapter();
+        
+        Portfolio.NewChapter = true;
     }
     
     if (Portfolio.VacuumCatchup)
@@ -1989,8 +1992,20 @@ void AdvancePortfolio()
         Portfolio.VacuumDistance = Portfolio.InitialVacuumDistance / 2;
     }
     
-    int NewPage;
-    do { NewPage = Random(0, Chapter.NPages-1); } while (NewPage == Portfolio.Page);
+TryAgain:
+    int NewPage = Random(0, Chapter.NPages-1);
+    
+    if (NewPage == Portfolio.Page)
+        goto TryAgain;
+    
+    for (int HistIndex = 0; HistIndex < ARRAY_COUNT(Portfolio.PageHistory); HistIndex++)
+        if (NewPage == Portfolio.PageHistory[HistIndex])
+            goto TryAgain;
+    
+    for (int HistIndex = 1; HistIndex < ARRAY_COUNT(Portfolio.PageHistory); HistIndex++)
+        Portfolio.PageHistory[HistIndex] = Portfolio.PageHistory[HistIndex-1];
+    Portfolio.PageHistory[0] = Portfolio.Page;
+    
     Portfolio.Page = NewPage;
     SetCurrentPage(Portfolio.Page);
 }

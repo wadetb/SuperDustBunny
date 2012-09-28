@@ -137,7 +137,7 @@ SDustyHatOffset DustyHatAdjustments[DUSTYHAT_COUNT] =
     { 0, 0, 0, 1 },                 //    DUSTYHAT_SNORKEL,
     { 0, 0, 14, 1 },                 //    DUSTYHAT_SUNGLASSES,
     { 0, -4, -18, 1 },                 //    DUSTYHAT_TOPHAT,
-    { 0, 10, 70, 1 },                 //    DUSTYHAT_TUTU,
+    { 0, -10, 70, 1 },                 //    DUSTYHAT_TUTU,
     { 0, -25, 0, 1 },                 //    DUSTYHAT_WITCH,
     { 0, -5, -15, 1 },                 //    DUSTYHAT_YELLOW_TOPHAT,
 };
@@ -447,6 +447,9 @@ static void DisplayDustySprite(EDustySprite Sprite, float XAdj = 0.0f, float XMi
         float HatY = Y + ScrollY + RotAdjY + HatOffset->Y;
         
         AddLitSpriteCenteredScaled2Rotated(LIGHTLIST_FOREGROUND, HatSprite, HatX, HatY, ScaleX*HatScale, HatScale, HatAngle*ScaleX);
+
+        if (Dusty.Hat == DUSTYHAT_CLOWN_NOSE && Chapter.PageProps.LightsOff)
+            AddLitSpriteCenteredScaledColor(LIGHTLIST_LIGHTING, &LightFlashlightSprite, HatX, HatY, 1.0f, gxRGBA32(255, 128, 128, 192));
     }
 }
 

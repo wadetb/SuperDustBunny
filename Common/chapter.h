@@ -270,6 +270,9 @@ struct SPortfolio
     int Chapter;
     int Page;
     
+    bool NewChapter;
+    int PageHistory[3];
+    
     int ElementChangeFrequency;
     int ChapterChangeFrequency;
     

@@ -693,13 +693,26 @@ static void UpdateGame_Transition()
 		if (Wipe.Middle)
 		{
             SetupNextPage();
+            if (Portfolio.NewChapter)
+            {
+                InitChapterIntro();
+                StartChapterMusic();
+            }
             ShowPageNumber();
 			Wipe.Middle = false;
 		}
 
 		if (Wipe.Finished)
 		{
-			SetGameState_Playing();
+            if (Portfolio.NewChapter)
+            {
+                Portfolio.NewChapter = false;
+                SetGameState_ChapterIntro();
+            }
+            else
+            {
+                SetGameState_Playing();
+            }
 		}
 	}
 	else if (GameTransition == GAMETRANSITION_RESTART_PAGE)
