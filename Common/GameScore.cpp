@@ -96,7 +96,7 @@ void DisplayScore()
     if (Chapter.PageProps.VacuumOff)
         return;
     
-    DisplayTime(TimeX, TimeY, TimeScaleFactor, Score.CurrentPageTime);
+    //DisplayTime(TimeX, TimeY, TimeScaleFactor, Score.CurrentPageTime);
 }
 
 void ResetScore()
