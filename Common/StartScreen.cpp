@@ -81,6 +81,7 @@ static void StartScreen_Advance()
     if (StartScreen.TitleVisible)
     {
         StartScreen.TitleVisible = false;
+        StartScreen.StartupTime = 10;
     }
     else
     {
@@ -123,14 +124,23 @@ static void StartScreen_Advance()
 
 void DisplayStartScreen()
 {
-    if (StartScreen.StartupTime < 1.0f)
+    if (StartScreen.StartupTime < 3.0f)
     {
-        float Alpha = Max(0, 1.0f - StartScreen.StartupTime);
-        AddLitSpriteAlpha(LIGHTLIST_WIPE, &ScreenStart1Sprite, 0, LitScreenHeight/2 - ScreenStart1Sprite.height/2, Alpha);
-        AddLitSpriteAlpha(LIGHTLIST_WIPE, &ScreenStart1Sprite, 0, LitScreenHeight/2 - ScreenStart1Sprite.height/2-ScreenStart1Sprite.height, Alpha);
-        AddLitSpriteAlpha(LIGHTLIST_WIPE, &ScreenStart1Sprite, 0, LitScreenHeight/2 - ScreenStart1Sprite.height/2+ScreenStart1Sprite.height, Alpha);
+        float IconAlpha = 1.0f;
+        IconAlpha *= Remap(StartScreen.StartupTime, 2.0f, 3.0f, 1, 0, true);
+        
+        AddLitSpriteAlpha(LIGHTLIST_WIPE, &ScreenStart1Sprite, 0, LitScreenHeight/2 - ScreenStart1Sprite.height/2, IconAlpha);
+        AddLitSpriteAlpha(LIGHTLIST_WIPE, &ScreenStart1Sprite, 0, LitScreenHeight/2 - ScreenStart1Sprite.height/2-ScreenStart1Sprite.height, IconAlpha);
+        AddLitSpriteAlpha(LIGHTLIST_WIPE, &ScreenStart1Sprite, 0, LitScreenHeight/2 - ScreenStart1Sprite.height/2+ScreenStart1Sprite.height, IconAlpha);
+        
+        float TitleAlpha = 1.0f;
+        TitleAlpha *= Remap(StartScreen.StartupTime, 0.5f, 1, 0, 1, true);
+        TitleAlpha *= Remap(StartScreen.StartupTime, 2.5f, 3, 1, 0, true);
+        
+        AddLitSpriteSizedColor(LIGHTLIST_WIPE, &WhiteSprite, 0, 0, 768, LitScreenHeight, gxRGBA32(0, 0, 0, (int)(255*TitleAlpha)));
+        AddLitSpriteAlpha(LIGHTLIST_WIPE, &LogoSprite, 768/2 - LogoSprite.width/2, LitScreenHeight/2 - LogoSprite.height/2, TitleAlpha);
     }
-
+    
     if (StartScreen.TitleVisible)
     {
         if (StartScreen.Pressed)

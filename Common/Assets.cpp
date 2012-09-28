@@ -1085,7 +1085,7 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/balloon-purple.png", &BalloonPurpleSprite);
 	LoadSpriteAsset("Assets/balloon-green.png", &BalloonGreenSprite);
 
-    LoadSpriteAsset("Assets/logo.png", &LogoSprite);
+    LoadSpriteAsset("Assets/FortHouse_studio_logo.png", &LogoSprite);
     
     LoadSpriteAsset("Assets/new-unlock.png", &NewUnlockSprite);
     
