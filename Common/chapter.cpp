@@ -1310,18 +1310,37 @@ void CalculateScroll()
     else
     {
         //float TopY = Vacuum.Charging ? 500 : 600;
-        float TopY = 600;
-        
-        // Screen tracks Dusty upwards.
-        if (Dusty.FloatY + ScrollY < TopY)
+        if (Portfolio.UpsideDown)
         {
-            ScrollY = TopY - Dusty.FloatY;
+            float TopY = 200;
+            
+            // Screen tracks Dusty upwards.
+            if (Dusty.FloatY + ScrollY < TopY)
+            {
+                ScrollY = TopY - Dusty.FloatY;
+            }
+            
+            // Screen also tracks Dusty downwards.
+            if (Dusty.FloatY + ScrollY > LitScreenHeight - 600)
+            {
+                ScrollY = (LitScreenHeight - 600) - (int)Dusty.FloatY;
+            }
         }
-
-        // Screen also tracks Dusty downwards.
-        if (Dusty.FloatY + ScrollY > LitScreenHeight - 200)
+        else
         {
-            ScrollY = (LitScreenHeight - 200) - (int)Dusty.FloatY;
+            float TopY = 600;
+            
+            // Screen tracks Dusty upwards.
+            if (Dusty.FloatY + ScrollY < TopY)
+            {
+                ScrollY = TopY - Dusty.FloatY;
+            }
+
+            // Screen also tracks Dusty downwards.
+            if (Dusty.FloatY + ScrollY > LitScreenHeight - 200)
+            {
+                ScrollY = (LitScreenHeight - 200) - (int)Dusty.FloatY;
+            }
         }
 
         // Prevent scrolling off bottom of map.

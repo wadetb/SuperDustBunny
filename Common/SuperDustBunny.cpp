@@ -677,6 +677,7 @@ static void UpdateGame_Transition()
 		{
 			InitChapterIntro();
             StartChapterMusic();
+            ShowPageNumber();
 			Wipe.Middle = false;
 		}
 
@@ -692,6 +693,7 @@ static void UpdateGame_Transition()
 		if (Wipe.Middle)
 		{
             SetupNextPage();
+            ShowPageNumber();
 			Wipe.Middle = false;
 		}
 

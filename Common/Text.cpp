@@ -126,7 +126,10 @@ void DisplayStringColor(ELightList List, const char* String, unsigned int Format
     
     if (FormatFlags & FORMAT_CENTER_X)
         CurX = X - GetStringWidth(String, Scale)/2;
-    
+
+    if (FormatFlags & FORMAT_ALIGN_RIGHT)
+        CurX = X - GetStringWidth(String, Scale);
+
     const char* P = String;
     while (*P)
     {

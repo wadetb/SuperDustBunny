@@ -80,10 +80,6 @@ void LoadSettings()
         [[UIAccelerometer sharedAccelerometer] setDelegate:nil]; 
     }
 #endif
-    
-#ifdef PLATFORM_MAC
-    Settings.Lives = 100;
-#endif
 }
 
 void SaveSettings()

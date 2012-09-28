@@ -14,6 +14,7 @@ enum EStringFormatFlag
 {
     FORMAT_CENTER_X = 1,
     FORMAT_CENTER_Y = 2,
+    FORMAT_ALIGN_RIGHT = 4,
 };
 
 float GetStringWidth(const char* String, float Scale);

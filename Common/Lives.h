@@ -10,6 +10,8 @@
 #ifndef LIVES_H
 #define LIVES_H
 
+void ShowPageNumber();
+
 void DisplayLives();
 void UpdateLives();
 

@@ -80,6 +80,7 @@ SDieScreen DieScreen;
 
 #define GOLD_PAGE_COUNT     20
 #define SILVER_PAGE_COUNT   10
+#define BRONZE_PAGE_COUNT   5
 
 void InitDieScreen()
 {
@@ -92,31 +93,34 @@ void InitDieScreen()
 
     ResetLightState();
     
-    const char** MedalNames;
-    if (Portfolio.PageCount > GOLD_PAGE_COUNT)
+    if (Portfolio.PageCount >= BRONZE_PAGE_COUNT)
     {
-        MedalNames = GoldMedalNames;
-#ifdef PLATFORM_IPHONE
-        [TestFlight passCheckpoint:[NSString stringWithFormat:@"Got a Gold medal"]];
-#endif
+        const char** MedalNames;
+        if (Portfolio.PageCount >= GOLD_PAGE_COUNT)
+        {
+            MedalNames = GoldMedalNames;
+    #ifdef PLATFORM_IPHONE
+            [TestFlight passCheckpoint:[NSString stringWithFormat:@"Got a Gold medal"]];
+    #endif
+        }
+        else if (Portfolio.PageCount >= SILVER_PAGE_COUNT)
+        {
+            MedalNames = SilverMedalNames;
+    #ifdef PLATFORM_IPHONE
+            [TestFlight passCheckpoint:[NSString stringWithFormat:@"Got a Silver medal"]];
+    #endif
+        }
+        else if (Portfolio.PageCount >= BRONZE_PAGE_COUNT)
+        {
+            MedalNames = BronzeMedalNames;
+    #ifdef PLATFORM_IPHONE
+            [TestFlight passCheckpoint:[NSString stringWithFormat:@"Got a Bronze medal"]];
+    #endif
+        }
+        
+        for (int i = 0; i < MEDAL_FRAMES; i++)
+            LoadSpriteAsset(MedalNames[i], &MedalFrames[i]);
     }
-    else if (Portfolio.PageCount > SILVER_PAGE_COUNT)
-    {
-        MedalNames = SilverMedalNames;
-#ifdef PLATFORM_IPHONE
-        [TestFlight passCheckpoint:[NSString stringWithFormat:@"Got a Silver medal"]];
-#endif
-    }
-    else
-    {
-        MedalNames = BronzeMedalNames;
-#ifdef PLATFORM_IPHONE
-        [TestFlight passCheckpoint:[NSString stringWithFormat:@"Got a Bronze medal"]];
-#endif
-    }
-    
-    for (int i = 0; i < MEDAL_FRAMES; i++)
-        LoadSpriteAsset(MedalNames[i], &MedalFrames[i]);
 }
 
 gxSprite* TearSprites[4] =
@@ -161,13 +165,23 @@ void DisplayDieScreen()
     
     AddLitSprite(LIGHTLIST_VACUUM, &LeaderboardBackgroundSprite, 0 - 600*DieScreen.SlideIn, 0);
 
-    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &MedalFrames[(DieScreen.MedalFrame/8)%MEDAL_FRAMES], 384, 300 + 300*DieScreen.SlideIn, 0.5f, 1.0f);
+    float TextY;
+    
+    if (Portfolio.PageCount >= BRONZE_PAGE_COUNT)
+    {
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &MedalFrames[(DieScreen.MedalFrame/8)%MEDAL_FRAMES], 384, 300 + 300*DieScreen.SlideIn, 0.5f, 1.0f);
+        TextY = 500;
+    }
+    else
+    {
+        TextY = 300;
+    }
 
-    DisplayString(LIGHTLIST_WIPE, "you survived", FORMAT_CENTER_X, 384 - 600*DieScreen.SlideIn, 540, 1.0f);
+    DisplayString(LIGHTLIST_WIPE, "you survived", FORMAT_CENTER_X, 384 - 600*DieScreen.SlideIn, TextY+40, 1.0f);
     char Work[40];
     snprintf(Work, sizeof(Work), "%d", Portfolio.PageCount);
-    DisplayString(LIGHTLIST_WIPE, Work, FORMAT_CENTER_X, 384 - 600*DieScreen.SlideIn, 610, 1.75f);
-    DisplayString(LIGHTLIST_WIPE, "pages!", FORMAT_CENTER_X, 384 - 600*DieScreen.SlideIn, 740, 1.0f);
+    DisplayString(LIGHTLIST_WIPE, Work, FORMAT_CENTER_X, 384 - 600*DieScreen.SlideIn, TextY+110, 1.75f);
+    DisplayString(LIGHTLIST_WIPE, "pages!", FORMAT_CENTER_X, 384 - 600*DieScreen.SlideIn, TextY+240, 1.0f);
 
     AddLitSpriteScaled(LIGHTLIST_WIPE, &CoinIconSprite, 220 - 600*DieScreen.SlideIn, 820, 0.65f*1.5f, 0.65f*1.5f);
     snprintf(Work, sizeof(Work), "x%d", Score.TotalLives);
@@ -215,31 +229,6 @@ void UpdateDieScreen()
     }
     if (DieScreen.TearTime > 100)
         DieScreen.TearTime = 0;
-    
-    if (DieScreen.Timer == 120)
-    {
-#ifdef PLATFORM_IPHONE
-        theViewController.paused = TRUE;
-        
-        NSString *title = @"Thanks for playing Super Dust Bunny!";
-        
-        NSString *message = 
-        @"Looks like you ran out of lives, sorry about that.  To get more lives, pick up any gold coins you see.\n\n"
-        "If part of the game seems too hard, please send us feedback about it!\n\n"
-        "Also, if you just want to see everything there is to see, check out the cheats available in the Settings page. "
-        "To get to the settings page, swipe to the right once at the main menu.\n\n"
-        "Thanks for testing our game!";
-        
-        
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title
-                                                        message:message
-                                                       delegate:theViewController
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles:@" Send Feedback ", nil];
-        [alert show];
-        [alert release];
-#endif
-    }
     
     if (!msButton1)
         DieScreen.ButtonEverReleased = true;
