@@ -127,7 +127,6 @@ void UpdateGear()
 
 				Gear->State = GEARSTATE_FALLING;
 				
-                AwardBonus(Gear->X, Gear->Y - 100);
                 UpdateMinimap(MINIMAP_JAM);
 				
 				if (Dusty.FloatVelocityX < 0)

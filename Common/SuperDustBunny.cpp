@@ -202,8 +202,6 @@ void LoadCurrentChapter()
 
     LoadTweaks();
     
-    LoadChapterScores(Chapters[CurrentChapter].Name);
-    
 	LoadChapter(Chapters[CurrentChapter].Name);
 }
 
@@ -224,8 +222,6 @@ void AdvanceToNextPage()
     Portfolio.VacuumDamage = Vacuum.Damage;
     Portfolio.VacuumDistance = fabsf(Dusty.FloatY - Vacuum.Y);
     
-    RecordPageScore(Chapter.PageNum);
-
     if (CurrentChapter == 0)
     {
         sxPlaySound(&NextPageSound);
@@ -259,8 +255,6 @@ void AdvanceToDieScreen()
     }
     else
     {        
-        Score.DeathCount++;
-        
         if (IsRecordingActive())
             StopRecording(RESULT_DIE);
         
@@ -277,7 +271,6 @@ static void SkipToNextPage()
 #ifdef PLATFORM_IPHONE
     [TestFlight passCheckpoint:@"Skipped to the next page"];
 #endif
-    Score.Invalid = true;
     if (IsRecordingActive())
         StopRecording(RESULT_NONE);
     SetCurrentPage((Chapter.PageNum+1) % Chapter.NPages);
@@ -288,7 +281,6 @@ static void SkipToPreviousPage()
 #ifdef PLATFORM_IPHONE
     [TestFlight passCheckpoint:@"Skipped to the previous page"];
 #endif
-    Score.Invalid = true;
     if (IsRecordingActive())
         StopRecording(RESULT_NONE);
     SetCurrentPage((Chapter.PageNum+Chapter.NPages-1) % Chapter.NPages);
@@ -347,7 +339,6 @@ void SetGameState_StartScreen()
 
     ClearChapterList();
     LoadChapterList();
-    LoadChapterUnlocks();
     
     CurrentChapter = 0;
 
@@ -397,7 +388,9 @@ void SetGameState_WinScreen()
 
 	TurnOffVacuum();
 
+#if 0
 	InitWinScreen();
+#endif
 }
 
 void SetGameState_ChapterIntro()
@@ -575,8 +568,6 @@ void DisplayGame_Playing()
 	DisplayHangers();
     
     // HUD Drawing - Score, etc.
-    DisplayScore();
-    
     DisplayDebug();
     
 	// Display buttons
@@ -649,7 +640,6 @@ static void UpdateGame_Playing()
         UpdateFireWorks();
         UpdateFlames();
         UpdateFlashlight();
-        UpdateScore();		 
         UpdateLives();
         UpdateStaplers();
         UpdatePowerUp();
@@ -897,7 +887,9 @@ void Display()
 	}
     else if (GameState == GAMESTATE_WIN_SCREEN)
     {
+#if 0
         DisplayWinScreen();
+#endif
     }
 	else if (GameState == GAMESTATE_PLAYING)
 	{
@@ -1138,7 +1130,9 @@ bool Update()
 	}
 	else if (GameState == GAMESTATE_WIN_SCREEN)
 	{
+#if 0
 	    UpdateWinScreen();
+#endif
 	}
 	else if (GameState == GAMESTATE_PLAYING)
 	{

@@ -121,6 +121,8 @@ void InitDieScreen()
         for (int i = 0; i < MEDAL_FRAMES; i++)
             LoadSpriteAsset(MedalNames[i], &MedalFrames[i]);
     }
+    
+    UploadScore();
 }
 
 gxSprite* TearSprites[4] =
@@ -184,7 +186,7 @@ void DisplayDieScreen()
     DisplayString(LIGHTLIST_WIPE, "pages!", FORMAT_CENTER_X, 384 - 600*DieScreen.SlideIn, TextY+240, 1.0f);
 
     AddLitSpriteScaled(LIGHTLIST_WIPE, &CoinIconSprite, 220 - 600*DieScreen.SlideIn, 820, 0.65f*1.5f, 0.65f*1.5f);
-    snprintf(Work, sizeof(Work), "x%d", Score.TotalLives);
+    snprintf(Work, sizeof(Work), "x%d", Portfolio.TotalLives);
     DisplayString(LIGHTLIST_WIPE, Work, 0, 380 - 600*DieScreen.SlideIn, 860, 1.75f);
 }
 

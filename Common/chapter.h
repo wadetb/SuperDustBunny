@@ -231,22 +231,9 @@ struct SChapterListEntry
     
     bool HasBackground;
     gxSprite BackgroundSprite;
-    
-    bool HasIcon;
-    gxSprite IconSprite;
-
-    int BronzeTime;
-    int SilverTime;
-    int GoldTime;
-    
-    char* UnlockedBy;
-    bool EndOfGame;
-    
-    bool Unlocked;
-    bool Played;
-    bool Completed;
-    int BestTime;
 };
+
+#define MAX_SCORE_BABIES 50
 
 struct SPortfolio
 {
@@ -287,6 +274,11 @@ struct SPortfolio
     float InitialVacuumDistance;
     float VacuumDistance;
     int VacuumDamage;
+    
+    int BabyCount;
+    int BabyHats[MAX_SCORE_BABIES];
+    
+    int TotalLives;
 };
 
 
@@ -329,13 +321,13 @@ void EraseBlock(int x, int y);
 void ClearChapterList();
 void LoadChapterList();
 
-void LoadChapterUnlocks();
-void SaveChapterUnlocks();
-
 void ResetPortfolio();
 void LoadPortfolio();
 void SetupTutorialPortfolio();
 void SetupInitialPortfolio();
 void AdvancePortfolio();
+
+void AwardBaby(int Hat);
+void RemoveBaby(int Hat);
 
 #endif

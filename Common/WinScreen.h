@@ -10,8 +10,12 @@
 #ifndef WINSCREEN_H
 #define WINSCREEN_H
 
+#if 0
+
 void InitWinScreen();
 void UpdateWinScreen();
 void DisplayWinScreen();
+
+#endif
 
 #endif

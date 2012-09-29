@@ -1167,14 +1167,11 @@ static void CreatePageObjects()
 	InitVacuum();
     InitSmoke();
     
-    if (Score.DeathCount >= 2)
-        CreatePowerUp(Dusty.FloatX + 192, Dusty.FloatY - 320);
-
     if (!Chapter.PageProps.VacuumOff)
         TurnOnVacuum(Portfolio.VacuumDistance, 2.0f, false);
     
-    for (int i = 0; i < Score.CurrentBabies; i++)
-        CreateBaby(Chapter.StartX/64, (Chapter.StartY-32)/64, 0, Score.BabyHats[i], true);
+    for (int i = 0; i < Portfolio.BabyCount; i++)
+        CreateBaby(Chapter.StartX/64, (Chapter.StartY-32)/64, 0, Portfolio.BabyHats[i], true);
     
     ResetLightState();
     
@@ -1278,19 +1275,20 @@ void SetCurrentPage(int PageNum)
     InitMinimap();
 
     StartGhostRecording();
-    if (Settings.GhostActive && Chapters[CurrentChapter].Completed)
-    {
-        LoadGhost(Chapters[CurrentChapter].Name, Chapter.Pages[Chapter.PageNum].Name, false);
-        StartGhostPlayback();
-    }
-    else
-    {
-        if (Chapter.PageProps.GhostRace)
-        {
-            LoadGhost(Chapters[CurrentChapter].Name, Chapter.Pages[Chapter.PageNum].Name, true);
-            StartGhostPlayback();        
-        }        
-    }
+    
+//    if (Settings.GhostActive)
+//    {
+//        LoadGhost(Chapters[CurrentChapter].Name, Chapter.Pages[Chapter.PageNum].Name, false);
+//        StartGhostPlayback();
+//    }
+//    else
+//    {
+//        if (Chapter.PageProps.GhostRace)
+//        {
+//            LoadGhost(Chapters[CurrentChapter].Name, Chapter.Pages[Chapter.PageNum].Name, true);
+//            StartGhostPlayback();        
+//        }        
+//    }
 
 	PopErrorContext();
 }
@@ -1569,12 +1567,6 @@ void ClearChapterList()
         
         if (Chapters[i].HasBackground)
             gxDestroySprite(&Chapters[i].BackgroundSprite);
-        
-        if (Chapters[i].HasIcon)
-            gxDestroySprite(&Chapters[i].IconSprite);
-        
-        if (Chapters[i].UnlockedBy)
-            free(Chapters[i].UnlockedBy);
     }
     
     NChapters = 0;
@@ -1621,157 +1613,12 @@ void LoadChapterList()
         else
             Chapter->HasBackground = false;
         
-        rapidxml::xml_attribute<char>* IconAttr = ChapterNode->first_attribute("Icon");
-        if (IconAttr)
-        {
-            LoadSpriteAsset(IconAttr->value(), &Chapter->IconSprite);
-            Chapter->HasIcon = true;
-        }
-        else
-            Chapter->HasIcon = false;
-        
-        rapidxml::xml_attribute<char>* BronzeTimeAttr = ChapterNode->first_attribute("BronzeTime");
-        if (BronzeTimeAttr)
-            Chapter->BronzeTime = (int)(atof(BronzeTimeAttr->value())*60.0f);
-        else
-            Chapter->BronzeTime = 0;
-        
-        rapidxml::xml_attribute<char>* SilverTimeAttr = ChapterNode->first_attribute("SilverTime");
-        if (SilverTimeAttr)
-            Chapter->SilverTime = (int)(atof(SilverTimeAttr->value())*60.0f);
-        else
-            Chapter->SilverTime = 0;
-        
-        rapidxml::xml_attribute<char>* GoldTimeAttr = ChapterNode->first_attribute("GoldTime");
-        if (GoldTimeAttr)
-            Chapter->GoldTime = (int)(atof(GoldTimeAttr->value())*60.0f);
-        else
-            Chapter->GoldTime = 0;
-
-        rapidxml::xml_attribute<char>* UnlockedByAttr = ChapterNode->first_attribute("UnlockedBy");
-        if (UnlockedByAttr)
-            Chapter->UnlockedBy = strdup(UnlockedByAttr->value());
-        else
-            Chapter->UnlockedBy = NULL;
-        
-        rapidxml::xml_attribute<char>* EndOfGameAttr = ChapterNode->first_attribute("EndOfGame");
-        if (EndOfGameAttr)
-            Chapter->EndOfGame = atoi(EndOfGameAttr->value()) != 0;
-        else
-            Chapter->EndOfGame = false;
-
-        // Chapters are locked by default if another chapter unlocks them.
-        if (Chapter->UnlockedBy == NULL)
-            Chapter->Unlocked = true;
-        else
-            Chapter->Unlocked = false;
-        
-        Chapter->Completed = false;
-        Chapter->BestTime = INT_MAX;
-        
         NChapters++;
         
 		ChapterNode = ChapterNode->next_sibling("Chapter");
 	}
     
 	PopErrorContext();
-}
-                           
-void LoadChapterUnlocks()
-{
-    PushErrorContext("While loading chapter unlocks:");
-    
-#ifdef PLATFORM_IPHONE_OR_MAC
-    @try
-    {
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        NSString *documentsDirectory = [paths objectAtIndex:0];
-        NSString *filePath = [documentsDirectory stringByAppendingPathComponent:@"chapter.unlocks"];
-        
-        NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:filePath];
-        if ( !dict )
-        {
-            PopErrorContext();
-            return;
-        }
-        
-        NSNumber *version = [dict objectForKey:@"version"];
-        if ( [version intValue] != 1 )
-        {
-            PopErrorContext();
-            return;
-        }
-        
-        NSArray *chapters = [dict objectForKey:@"chapters"];
-        
-        for (int i = 0; i < [chapters count]; i++)
-        {
-            NSDictionary *savedChapter = [chapters objectAtIndex:i];
-            
-            NSString *savedName = [savedChapter objectForKey:@"name"];
-            
-            SChapterListEntry* ChapterList = NULL;
-            for (int j = 0; j < NChapters; j++)
-            {
-                if ([savedName isEqualToString:[NSString stringWithUTF8String:Chapters[j].Name]])
-                {
-                    ChapterList = &Chapters[j];
-                    break;
-                }
-            }
-            
-            if (ChapterList)
-            {
-                ChapterList->Unlocked = [[savedChapter objectForKey:@"unlocked"] boolValue];
-                ChapterList->Played = [[savedChapter objectForKey:@"played"] boolValue];
-                ChapterList->Completed = [[savedChapter objectForKey:@"completed"] boolValue];
-                ChapterList->BestTime = [[savedChapter objectForKey:@"bestTime"] intValue];
-            }
-        }
-    }
-    @catch (NSException *e)
-    {
-        NSLog(@"Caught exception while loading chapter unlocks: %@\n", e);
-    }
-#endif
-    
-    PopErrorContext();
-
-}
-
-void SaveChapterUnlocks()
-{
-    PushErrorContext("While saving chapter unlocks:\n");
-    
-#ifdef PLATFORM_IPHONE_OR_MAC
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:@"chapter.unlocks"];
-    
-    NSMutableArray *chapters = [[NSMutableArray alloc] init];
-    for (int i = 0; i < NChapters; i++)
-    {
-        SChapterListEntry* ChapterList = &Chapters[i];
-        
-        NSDictionary *chapter = [NSDictionary dictionaryWithObjectsAndKeys:
-                                 [NSString stringWithUTF8String:ChapterList->Name], @"name",
-                                 [NSNumber numberWithBool:ChapterList->Unlocked], @"unlocked",
-                                 [NSNumber numberWithBool:ChapterList->Played], @"played",
-                                 [NSNumber numberWithBool:ChapterList->Completed], @"completed",
-                                 [NSNumber numberWithInt:ChapterList->BestTime], @"bestTime", nil];
-        [chapters addObject:chapter];
-    }
-    
-    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                          [NSNumber numberWithInt:1], @"version",
-                          chapters, @"chapters", nil];
-    
-    [dict writeToFile:filePath atomically:YES];
-    
-    [chapters release];
-#endif
-    
-    PopErrorContext();
 }
 
 static void ReportPortfolio(const char* Message, ...)
@@ -2013,3 +1860,28 @@ TryAgain:
     Portfolio.Page = NewPage;
     SetCurrentPage(Portfolio.Page);
 }
+
+
+void AwardBaby(int Hat)
+{
+    if (Portfolio.BabyCount >= MAX_SCORE_BABIES)
+        ReportError("Exceeded maximum of %d babies carried over between pages.", MAX_SCORE_BABIES);
+    
+    Portfolio.BabyHats[Portfolio.BabyCount] = Hat;
+    Portfolio.BabyCount++;
+}
+
+void RemoveBaby(int Hat)
+{
+    for (int i = 0; i < Portfolio.BabyCount; i++)
+    {
+        if (Portfolio.BabyHats[i] == Hat)
+        {
+            for (int j = i + 1; j < Portfolio.BabyCount; j++)
+                Portfolio.BabyHats[j - 1] = Portfolio.BabyHats[j];
+            Portfolio.BabyCount--;
+            return;
+        }
+    }
+}
+

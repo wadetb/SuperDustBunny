@@ -328,7 +328,6 @@ void StartRecording()
     [osVersion getCString:RecorderHeader.OSVersion maxLength:sizeof(RecorderHeader.OSVersion) encoding:NSUTF8StringEncoding];
 #endif
 
-
     Recorder.SumFPS = 0;
     Recorder.FPSCount = 0;
 

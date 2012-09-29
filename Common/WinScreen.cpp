@@ -18,6 +18,7 @@
 #import "SuperDustBunnyViewController.h"
 #endif
 
+#if 0
 
 #define MEDAL_FRAMES 8
 
@@ -290,4 +291,6 @@ void UpdateWinScreen()
         WinScreen.Pressed = Pressed;
     }
 }
+
+#endif
 

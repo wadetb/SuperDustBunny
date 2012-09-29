@@ -13,6 +13,7 @@
 #include "Chapter.h"
 #include "GameScore.h"
 #include "Settings.h"
+#include "StoreScreen.h"
 
 #ifdef PLATFORM_IPHONE
 #import "SuperDustBunnyViewController.h"
@@ -59,7 +60,8 @@ struct SLeaderboardScreen
     
 
     char* Name[LEADERBOARD_COUNT];
-    int Time[LEADERBOARD_COUNT];
+    int Pages[LEADERBOARD_COUNT];
+    int Hat[LEADERBOARD_COUNT];
 };
 
 
@@ -84,10 +86,8 @@ void DownloadLeaderboards()
     const char* RegionTag[LEADERBOARDREGION_COUNT] = { "world", "state" };
     const char* ModeTag[LEADERBOARDMODE_COUNT] = { "kingofthehill", "alltime" };
     
-    
     NSString* URLString;
 #ifdef PLATFORM_IPHONE
-    
     if (theViewController.haveLocation && (/*LeaderboardScreen.Region == LEADERBOARDREGION_CITY ||*/ LeaderboardScreen.Region == LEADERBOARDREGION_STATE))
     {
         NSString* region;
@@ -96,22 +96,19 @@ void DownloadLeaderboards()
 //        else
             region = theViewController.state;
         
-        URLString = [NSString stringWithFormat:@"http://pluszerogames.com/sdb/getleaderboard.php?mode=%s&region=%s&chapter=%s&region_value=%@", 
+        URLString = [NSString stringWithFormat:@"http://pluszerogames.com/sdb/getleaderboard.php?mode=%s&region=%s&region_value=%@", 
                      ModeTag[LeaderboardScreen.Mode], 
                      RegionTag[LeaderboardScreen.Region], 
-                     Chapters[CurrentChapter].Name, 
                      [region stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     }
     else
 #endif
     {
-        URLString = [NSString stringWithFormat:@"http://pluszerogames.com/sdb/getleaderboard.php?mode=%s&region=%s&chapter=%s", 
+        URLString = [NSString stringWithFormat:@"http://pluszerogames.com/sdb/getleaderboard.php?mode=%s&region=%s", 
                      ModeTag[LeaderboardScreen.Mode], 
-                     RegionTag[LeaderboardScreen.Region], 
-                     Chapters[CurrentChapter].Name];        
+                     RegionTag[LeaderboardScreen.Region]];        
     }
     NSURL *URL = [NSURL URLWithString:URLString];
-    
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:30];
     
@@ -131,20 +128,22 @@ void DownloadLeaderboards()
             if (i >= LEADERBOARD_COUNT)
                 break;
             
-            NSString *name = [entries objectAtIndex:i*2+0];
-            NSString *time = [entries objectAtIndex:i*2+1];
+            NSString *name = [entries objectAtIndex:i*3+0];
+            NSString *pages = [entries objectAtIndex:i*3+1];
+            NSString *hat = [entries objectAtIndex:i*3+2];
             
             if ([name isEqualToString:@"--"])
                 break;
             
-            if (atoi([time UTF8String]))
+            if (atoi([pages UTF8String]))
             {
                 LeaderboardScreen.Name[i] = strdup([[name lowercaseString] UTF8String]);
                 
                 if (strlen(LeaderboardScreen.Name[i]) > 10)
                     LeaderboardScreen.Name[i][10] = 0;
                 
-                LeaderboardScreen.Time[i] = atoi([time UTF8String]);
+                LeaderboardScreen.Pages[i] = atoi([pages UTF8String]);
+                LeaderboardScreen.Hat[i] = atoi([hat UTF8String]);
             }
         }
     }
@@ -174,6 +173,17 @@ static void DisplayLeaderboardScrollString(const char* String, unsigned int Flag
     DisplayStringAlpha(LIGHTLIST_VACUUM, String, Flags, X, Y - LeaderboardScreen.StartY + LeaderboardScreen.BaseY, Scale, Alpha);
 }
 
+static void DisplayLeaderboardScrollNumber(int N, unsigned int Flags, float X, float Y, float Scale, float Alpha)
+{
+    Alpha *= Remap(Y - LeaderboardScreen.StartY, 30.0f, 50.0f, 0.0f, 1.0f, true);
+    Alpha *= Remap(Y - LeaderboardScreen.StartY, 700.0f, 800.0f, 1.0f, 0.0f, true);
+    if (Alpha < 0)
+        return;
+    char Work[40];
+    snprintf(Work, sizeof(Work), "%d", N);
+    DisplayStringAlpha(LIGHTLIST_VACUUM, Work, Flags, X, Y - LeaderboardScreen.StartY + LeaderboardScreen.BaseY, Scale, Alpha);
+}
+
 static void DisplayLeaderboardScrollTime(int Time, float X, float Y, float Scale, float Alpha)
 {
     Alpha *= Remap(Y - LeaderboardScreen.StartY, 30.0f, 50.0f, 0.0f, 1.0f, true);
@@ -181,6 +191,15 @@ static void DisplayLeaderboardScrollTime(int Time, float X, float Y, float Scale
     if (Alpha < 0)
         return;
     DisplayTimeAlpha(X, Y - LeaderboardScreen.StartY + LeaderboardScreen.BaseY, Scale, Time, Alpha);
+}
+
+static void DisplayLeaderboardScrollSprite(gxSprite* Sprite, float X, float Y, float Scale, float Alpha)
+{
+    Alpha *= Remap(Y - LeaderboardScreen.StartY, 30.0f, 50.0f, 0.0f, 1.0f, true);
+    Alpha *= Remap(Y - LeaderboardScreen.StartY, 700.0f, 800.0f, 1.0f, 0.0f, true);
+    if (Alpha < 0)
+        return;
+    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, Sprite, X, Y - LeaderboardScreen.StartY + LeaderboardScreen.BaseY, Scale, Alpha);
 }
 
 void DisplayLeaderboardScreen()
@@ -221,7 +240,12 @@ void DisplayLeaderboardScreen()
     DisplayLeaderboardScrollString(ModeName[Mode], FORMAT_CENTER_X, 384, 130, 1.0f, 1.0f);
     
     int CurrentY = 250;
-    
+
+    DisplayLeaderboardScrollString("name", 0, 80, CurrentY, 0.6f, 1.0f);
+    DisplayLeaderboardScrollString("pages", 0, 450, CurrentY, 0.6f, 1.0f);
+    DisplayLeaderboardScrollString("hat", 0, 600, CurrentY, 0.6f, 1.0f);
+    CurrentY += 55;
+
     for (int i = 0; i < LEADERBOARD_COUNT; i++)
     {
         if (!LeaderboardScreen.Name[i])
@@ -230,7 +254,11 @@ void DisplayLeaderboardScreen()
         float Alpha = Remap((float)CurrentY - 300, 0.0f, LeaderboardScreen.FadeInTime * 5000.0f, 1.0f, 0.0f, true);
         
         DisplayLeaderboardScrollString(LeaderboardScreen.Name[i], 0, 80, CurrentY, 0.8f, Alpha);
-        DisplayLeaderboardScrollTime(LeaderboardScreen.Time[i], 450, CurrentY, 0.6f, Alpha);
+        DisplayLeaderboardScrollNumber(LeaderboardScreen.Pages[i], FORMAT_ALIGN_RIGHT, 580, CurrentY, 1.0f, Alpha);
+        
+        gxSprite* HatSprite = GetInventoryHatSprite(LeaderboardScreen.Hat[i]);
+        if (HatSprite)
+            DisplayLeaderboardScrollSprite(HatSprite, 640, CurrentY+30, 1.0f, Alpha);
         
         CurrentY += 75;
     }

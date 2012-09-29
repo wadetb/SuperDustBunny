@@ -62,7 +62,7 @@ void UpdateLives()
 	{
  		Dusty.GainLife = false;
 		Settings.Lives += 1;
-        Score.TotalLives++;
+        Portfolio.TotalLives++;
         PageTimer = 0;
         LivesTimer = 8*60;
         SaveSettings();
