@@ -209,7 +209,14 @@ void LoadCurrentChapter()
 
 static void SetupNextPage()
 {
-    AdvancePortfolio();
+    if (CurrentChapter == 0)
+    {
+        SetCurrentPage(0);
+    }
+    else
+    {
+        AdvancePortfolio();
+    }
 }
 
 void AdvanceToNextPage()
@@ -237,6 +244,32 @@ void AdvanceToNextPage()
         
 		SetGameState_Transition(GAMETRANSITION_NEXT_PAGE);
 	}
+}
+
+void AdvanceToDieScreen()
+{
+    if (CurrentChapter == 0)
+    {
+        sxPlaySound(&NextPageSound);
+        
+        if (IsRecordingActive())
+    		StopRecording(RESULT_NEXT_PAGE);
+        
+		SetGameState_Transition(GAMETRANSITION_NEXT_PAGE);
+    }
+    else
+    {        
+        Score.DeathCount++;
+        
+        if (IsRecordingActive())
+            StopRecording(RESULT_DIE);
+        
+        SetGameState_Transition(GAMETRANSITION_DIE_SCREEN);
+        
+#ifdef PLATFORM_IPHONE
+        [TestFlight passCheckpoint:[NSString stringWithFormat:@"Game over"]];
+#endif
+    }
 }
 
 static void SkipToNextPage()

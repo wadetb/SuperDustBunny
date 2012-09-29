@@ -58,6 +58,7 @@ struct STutorial
     bool Disabled;
     int Sequence;
     float SequenceTimer;
+    float Timer;
 };
 
 
@@ -747,6 +748,8 @@ void UpdateTutorial()
         
         Tutorial->Alpha = Clamp(Tutorial->Alpha + ( Tutorial->Active ? 0.1f : -0.1f ), 0.0f, 1.0f);
         
+        Tutorial->Timer += 1.0f/60.0f;
+        
         Tutorial->WiggleTimer += 1.0f/60.0f;
         
         if (Props->Actions && strstr(Props->Actions, "birthday"))
@@ -805,6 +808,7 @@ void UpdateTutorial()
                     if (Dusty.FloatY <= Tutorial->Y)
                     {
                         Tutorial->Active = true;
+                        Tutorial->Timer = 0;
                     }
                 }
                 
@@ -818,13 +822,21 @@ void UpdateTutorial()
                         Tutorial->PauseTimer = 5.0f;
 
                         Chapter.PageProps.VacuumOff = false;
-                        TurnOnVacuum(600, 2.0f, false);
+                        TurnOnVacuum(Portfolio.VacuumDistance, 2.0f, false);
                     }
                 }
             }
             else
             {
-                if (Props->Actions && strstr(Props->Actions, "showuntiljump"))
+                if (Props->Actions && strstr(Props->Actions, "showfor3secs"))
+                {
+                    if (Tutorial->Timer >= 3.0f)
+                    {
+                        Tutorial->Active = false;
+                        Tutorial->Disabled = true;
+                    }
+                }
+                else if (Props->Actions && strstr(Props->Actions, "showuntiljump"))
                 {
                     if (Dusty.State == DUSTYSTATE_JUMP)
                     {

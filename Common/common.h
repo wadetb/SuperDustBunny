@@ -295,6 +295,7 @@ void SetGameState_Transition(EGameTransition Type);
 
 void LoadCurrentChapter();
 void AdvanceToNextPage();
+void AdvanceToDieScreen();
 void DisplayGame_Playing();
 
 extern bool DevMode;

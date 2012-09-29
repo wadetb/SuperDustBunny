@@ -1916,8 +1916,12 @@ void SetupTutorialPortfolio()
 {
     PortfolioLine = 0;
 
+    Portfolio.Gears = true;
     Portfolio.Staplers = true;
     Portfolio.Balloons = true;
+
+    Portfolio.VacuumDistance = 1000;
+    Portfolio.VacuumSpeed = 0.5f;
 
     Portfolio.Chapter = 0;
     CurrentChapter = Portfolio.Chapter;

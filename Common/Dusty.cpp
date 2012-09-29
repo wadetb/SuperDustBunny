@@ -1535,7 +1535,7 @@ static void UpdateDusty_Die()
         Dusty.FloatVelocityX *= 0.99f;
         Dusty.FloatVelocityY *= 0.99f;
         
-        DeathOver = Dusty.SpriteTransition > 120 && Distance(Dusty.FloatX, Dusty.FloatY, Vacuum.X, Vacuum.Y) < 40.0f;
+        DeathOver = Dusty.SpriteTransition > 10*60 || (Dusty.SpriteTransition > 120 && Distance(Dusty.FloatX, Dusty.FloatY, Vacuum.X, Vacuum.Y) < 40.0f);
     }
 
     if (Dusty.Death == DEATH_GHOST)
@@ -1547,19 +1547,7 @@ static void UpdateDusty_Die()
     }
     
 	if (DeathOver)
-	{
-        Score.DeathCount++;
-        
-        if (IsRecordingActive())
-            StopRecording(RESULT_DIE);
-        
-        SetGameState_Transition(GAMETRANSITION_DIE_SCREEN);
-
-#ifdef PLATFORM_IPHONE
-        [TestFlight passCheckpoint:[NSString stringWithFormat:@"Game over"]];
-#endif
-		return;
-	} 
+        AdvanceToDieScreen();
 }
 
 
