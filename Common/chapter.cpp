@@ -1383,7 +1383,7 @@ void DisplayPortal()
         Chapter.EndY - 256 + ScrollY <= LitScreenHeight)
     {
         Chapter.PortalAngle += 2.0f*PI / 60.0f * 0.1f; 
-        for (int i = 5; i > 0; i--)
+        for (int i = 5; i > 4; i--)
         {
             float Alpha = (float)i / 5.0f;
             float Angle = Chapter.PortalAngle - (1.0f-Alpha);

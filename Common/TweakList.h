@@ -25,3 +25,4 @@ TWEAK_FLOAT(DustyWallGravityScaleOnIce, 1.0f, "Scale factor applied to gravity w
 TWEAK_FLOAT(DustyHurtTime, 60.0f, "Number of 60hz frames the bunny will remain hurt for after striking a sharp or flaming object.  (Note that landing also clears the hurt state)")
 TWEAK_FLOAT(WacomXSensitivity, 4.0f, "How sensitive the Wacom tablet is in the X axis.")
 TWEAK_FLOAT(WacomYSensitivity, 2.0f, "How sensitive the Wacom tablet is in the Y axis.")
+TWEAK_INT(RenderOverdraw, 0, "If 1, render overdraw as translucent red.")

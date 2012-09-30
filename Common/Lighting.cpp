@@ -12,6 +12,7 @@
 #include "Chapter.h"
 #include "Flashlight.h"
 #include "Vacuum.h"
+#include "Tweak.h"
 
 
 #define MAX_LIT_QUADS_PER_LIST	8192 // Holy crap
@@ -267,6 +268,23 @@ const char* CombineShaderSource =
 
 #ifdef PLATFORM_MAC
 
+const char* OverdrawVertexShaderSource =
+"#version 120\n"
+"attribute vec2 PositionAttr;\n"
+"\n"
+"void main()\n"
+"{\n"
+"	gl_Position = vec4(PositionAttr.x/768.0*2.0-1.0, (1.0-PositionAttr.y/1024.0)*2.0-1.0, 0, 1);\n"
+"}\n";
+
+const char* OverdrawShaderSource =
+"#version 120\n"
+"\n"
+"void main()\n"
+"{\n"
+"	gl_FragColor = vec4(0.2, 0, 0, 1);\n"
+"}\n";
+
 const char* LitVertexShaderSource =
 "#version 120\n"
 "attribute vec2 PositionAttr;\n"
@@ -478,6 +496,8 @@ const char* CombineShaderSource =
 #endif
 
 
+gxShader OverdrawShader;
+
 gxShader LitShader;
 
 gxShaderConstant ShadowShadowOffset;
@@ -504,6 +524,14 @@ gxShader CombineShader;
 
 static void DrawLightList(int List, gxShader* Shader, gxAlphaMode Alpha)
 {
+    if (List != LIGHTLIST_LIGHTING && Tweak.RenderOverdraw)
+    {
+        CurrentShader = NULL;
+        CurrentBlendMode = -1;
+        Shader = &OverdrawShader;
+        Alpha = GXALPHA_ADD;
+    }
+    
     if (Alpha != CurrentBlendMode)
     {
         CurrentBlendMode = Alpha;
@@ -584,6 +612,9 @@ static void DrawLightList(int List, gxShader* Shader, gxAlphaMode Alpha)
 
 static void DrawScreen(gxShader* Shader, gxAlphaMode Alpha)
 {
+    CurrentBlendMode = -1;
+    CurrentShader = NULL;
+    
     _gxSetAlpha(Alpha);
 
     if (Shader)
@@ -831,6 +862,8 @@ void InitLighting()
     // Create shaders.
     if (gxOpenGLESVersion == 2)
     {
+        gxCreateShader(OverdrawVertexShaderSource, OverdrawShaderSource, &OverdrawShader);
+
         gxCreateShader(LitVertexShaderSource, LitShaderSource, &LitShader);
         
         gxCreateShader(ShadowVertexShaderSource, ShadowShaderSource, &ShadowShader);
@@ -974,11 +1007,7 @@ void RenderLighting()
         //                                                   Draw layers to screen                                                                 //
         // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
         gxSetRenderTarget(NULL);
-        
-        // White background - useful for testing AO and stuff.
-        gxClearColor(gxRGBA32(255, 255, 255, 255));
-        // Black background - useful for testing fireworks.
-        //gxClearColor(gxRGBA32(0, 0, 0, 255));
+        gxClearColor(gxRGBA32(0, 0, 0, 255));
         
         DrawLightList(LIGHTLIST_BACKGROUND, NULL, GXALPHA_NONE);
         //DrawLightListShadow(LIGHTLIST_MIDGROUND, NULL, GXALPHA_BLEND);
@@ -1012,11 +1041,7 @@ void RenderLighting()
         // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
         // Main rendering.
         gxSetRenderTarget(&ColorRT);
-        
-        // White background - useful for testing AO and stuff.
-        gxClearColor(gxRGBA32(255, 255, 255, 255));
-        // Black background - useful for testing fireworks.
-        //gxClearColor(gxRGBA32(0, 0, 0, 255));
+        gxClearColor(gxRGBA32(0, 0, 0, 255));
         
         // Real background.
         DrawLightList(LIGHTLIST_BACKGROUND, &LitShader, GXALPHA_NONE);
