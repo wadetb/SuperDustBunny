@@ -24,6 +24,11 @@ SMusicTrack MusicTracks[MUSIC_COUNT];
 
 void QueueMusicTrack(EMusicTrack Track, SMusicAsset* Asset)
 {
+    for (int TrackIter = 0; TrackIter < MUSIC_COUNT; TrackIter++)
+        for (int i = 0; i < PLAYLIST_MAX; i++)
+            if (MusicTracks[TrackIter].Playlist[i] == Asset)
+                ReportError("Tried to queue track '%s' which was already playing on track %d.", Asset->FileName, TrackIter);
+
     SMusicTrack* Music = &MusicTracks[Track];
     
 #ifdef PLATFORM_IPHONE_OR_MAC
@@ -47,6 +52,7 @@ void QueueMusicTrack(EMusicTrack Track, SMusicAsset* Asset)
     AVAudioPlayer* player = Asset->Player;
     [player setCurrentTime:0];
     [player playAtTime:[player deviceCurrentTime] + totalDurationLeft];
+    NSLog(@"Starting %@", [player url]);
 #endif
     
     int PlaylistIndex;
@@ -73,6 +79,8 @@ void StopMusicTrack(EMusicTrack Track)
         {
 #ifdef PLATFORM_IPHONE_OR_MAC
             AVAudioPlayer* existingPlayer = Music->Playlist[PlaylistIndex]->Player;
+            NSLog(@"Stopping %@", [existingPlayer url]);
+            [existingPlayer pause];
             [existingPlayer stop];
 #endif
             Music->Playlist[PlaylistIndex] = NULL;

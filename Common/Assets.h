@@ -178,7 +178,6 @@ extern gxSprite ScreenStartSprite;
 extern gxSprite ScreenStartPressedSprite;
 extern gxSprite ScreenStartBackgroundSprite;
 extern gxSprite ScreenStartButtonsSprite;
-extern gxSprite ScreenStartButtonsDownSprite;
 
 extern gxSprite ScreenStart1Sprite;
 extern gxSprite ScreenHelp1Sprite;
@@ -285,7 +284,7 @@ extern sxSound HotDateSound;
 
 struct SMusicAsset
 {
-    const char* FileName;
+    char* FileName;
 #ifdef PLATFORM_IPHONE_OR_MAC
     AVAudioPlayer* Player;
 #endif
@@ -307,5 +306,7 @@ void LoadSpriteAsset(const char* FileName, gxSprite* Sprite);
 void LoadSoundAsset(const char* FileName, sxSound* Sound);
 void LoadMusicAsset(const char* FileName, SMusicAsset* Asset, bool Looping);
 void* LoadAssetFile(const char* FileName, void** Data, fpos_t* DataSize);
+
+void DestroyMusicAsset(SMusicAsset* MusicAsset);
 
 #endif

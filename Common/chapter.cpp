@@ -940,6 +940,12 @@ void ClearChapter()
     free((void*)Chapter.Title);
 	Chapter.Title = NULL;
 
+    if (Chapter.HasIntroMusic)
+        DestroyMusicAsset(&Chapter.IntroMusic);
+    
+    if (Chapter.HasMusic)
+        DestroyMusicAsset(&Chapter.Music);
+    
     if (Chapter.HasBackground)
         gxDestroySprite(&Chapter.BackgroundSprite);
     
@@ -1663,10 +1669,7 @@ void LoadPortfolio()
     
     char* XML = (char*)LoadAssetFile("Portfolio.xml", NULL, NULL);
     if (!XML)
-    {
-        PopErrorContext();
-        return;
-    }
+        ReportError("Failed to open portfolio file 'Portfolio.xml'.  Check that the file exists.");
     
     // Parse the XML text buffer into a Document hierarchy.
     rapidxml::xml_document<> Document;

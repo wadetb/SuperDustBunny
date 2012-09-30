@@ -52,7 +52,8 @@ void HideChapterIntro()
 void DisplayChapterIntro()
 {
 	AddLitSprite(LIGHTLIST_VACUUM, &ChapterTitleSprite, 0, ChapterIntro.Y);
-    DisplayMultilineStringAlpha(LIGHTLIST_VACUUM, Chapter.Title, FORMAT_CENTER_X, 400, ChapterIntro.Y+560, 1.25f, 0.75f);
+    if (Chapter.Title)
+        DisplayMultilineStringAlpha(LIGHTLIST_VACUUM, Chapter.Title, FORMAT_CENTER_X, 400, ChapterIntro.Y+560, 1.25f, 0.75f);
 //	AddLitSprite(LIGHTLIST_VACUUM, &ChapterTextSprite, 220, ChapterIntro.Y+600);
 //	switch (CurrentChapter+1)
 //	{

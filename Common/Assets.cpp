@@ -177,7 +177,6 @@ gxSprite ScreenStartSprite;
 gxSprite ScreenStartPressedSprite;
 gxSprite ScreenStartBackgroundSprite;
 gxSprite ScreenStartButtonsSprite;
-gxSprite ScreenStartButtonsDownSprite;
 
 gxSprite ScreenGoBackSprite;
 gxSprite ScreenBuyItSprite;
@@ -1010,6 +1009,25 @@ void LoadMusicAsset(const char* FileName, SMusicAsset* MusicAsset, bool Looping)
 #endif
 }
 
+void DestroyMusicAsset(SMusicAsset* MusicAsset)
+{
+    if (!MusicAsset->FileName)
+        return;
+    
+    free(MusicAsset->FileName);
+    MusicAsset->FileName = NULL;
+    
+#ifdef PLATFORM_IPHONE_OR_MAC
+    if (!MusicAsset->Player)
+        return;
+
+    [MusicAsset->Player stop];
+    [MusicAsset->Player release];
+
+    MusicAsset->Player = NULL;
+#endif
+}
+
 void LoadBundleAssetList()
 {
 #ifdef PLATFORM_IPHONE  
@@ -1182,7 +1200,6 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/screen-start-pressed.png", &ScreenStartPressedSprite);
 	LoadSpriteAsset("Assets/start-background-study.png", &ScreenStartBackgroundSprite);
 	LoadSpriteAsset("Assets/screen-start-buttons.png", &ScreenStartButtonsSprite);
-	LoadSpriteAsset("Assets/screen-start-buttons-down.png", &ScreenStartButtonsDownSprite);
 
     LoadSpriteAsset("Assets/button-house.png", &ScreenGoBackSprite);
     LoadSpriteAsset("Assets/button-buy-it.png", &ScreenBuyItSprite);

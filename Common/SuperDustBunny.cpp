@@ -703,7 +703,7 @@ static void UpdateGame_Transition()
             ShowPageNumber();
 			Wipe.Middle = false;
 		}
-
+ 
 		if (Wipe.Finished)
 		{
 			SetGameState_ChapterIntro();

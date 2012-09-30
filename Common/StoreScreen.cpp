@@ -229,10 +229,10 @@ void InitStoreScreen()
 
 void DisplayStoreScreen()
 {
-    AddLitSpriteSizedAlpha(LIGHTLIST_BACKGROUND, &ScreenStoreSprite, 0, 0, 768, LitScreenHeight, 1.0f);
+    AddLitSprite(LIGHTLIST_BACKGROUND, &ScreenStoreSprite, 0, 0);
 
     // Lives
-    AddLitSprite(LIGHTLIST_FOREGROUND, &ScreenCoinBackgroundSprite, 0, LitScreenHeight - 120);
+    AddLitSprite(LIGHTLIST_FOREGROUND, &ScreenCoinBackgroundSprite, 0, 1024 - 120);
     
     AddLitSpriteScaled(LIGHTLIST_FOREGROUND, &CoinIconSprite, 240, 910, 0.65f*1.0f, 0.65f*1.0f);
     

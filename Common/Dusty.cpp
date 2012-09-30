@@ -406,50 +406,53 @@ static void DisplayDustySprite(EDustySprite Sprite, float XAdj = 0.0f, float XMi
     if (Dusty.Hat != DUSTYHAT_NONE)
     {
         gxSprite* HatSprite = DustyHatSprites[Dusty.Hat];
-        SDustyHatOffset* HatOffset = &DustyHatOffsets[Sprite];
-        SDustyHatOffset* HatAdj = &DustyHatAdjustments[Dusty.Hat];
-
-        float HatAngle = DegreesToRadians(HatOffset->Angle);
-        float HatScale = HatAdj->Scale;
-
-        float AdjX = HatAdj->X;
-        float AdjY = HatAdj->Y;
-        
-        float ca = cosf(HatAngle);
-        float sa = sinf(HatAngle);
-
-        float RotAdjX = (AdjX * ca) - (AdjY * sa);
-        float RotAdjY = (AdjX * sa) + (AdjY * ca);
-
-        if (Dusty.Hat == DUSTYHAT_CLOWN_NOSE)
+        if (HatSprite)
         {
-            if (Sprite == DUSTYSPRITE_HOP_2 || Sprite == DUSTYSPRITE_HOP_2B || Sprite == DUSTYSPRITE_HOP_2C)
+            SDustyHatOffset* HatOffset = &DustyHatOffsets[Sprite];
+            SDustyHatOffset* HatAdj = &DustyHatAdjustments[Dusty.Hat];
+
+            float HatAngle = DegreesToRadians(HatOffset->Angle);
+            float HatScale = HatAdj->Scale;
+
+            float AdjX = HatAdj->X;
+            float AdjY = HatAdj->Y;
+            
+            float ca = cosf(HatAngle);
+            float sa = sinf(HatAngle);
+
+            float RotAdjX = (AdjX * ca) - (AdjY * sa);
+            float RotAdjY = (AdjX * sa) + (AdjY * ca);
+
+            if (Dusty.Hat == DUSTYHAT_CLOWN_NOSE)
             {
-                RotAdjX -= 10;
-                RotAdjY += 10;
+                if (Sprite == DUSTYSPRITE_HOP_2 || Sprite == DUSTYSPRITE_HOP_2B || Sprite == DUSTYSPRITE_HOP_2C)
+                {
+                    RotAdjX -= 10;
+                    RotAdjY += 10;
+                }
+                else if (Sprite == DUSTYSPRITE_HOP_3 || Sprite == DUSTYSPRITE_HOP_3B)
+                {
+                    RotAdjX += 10;
+                    RotAdjY += 5;
+                }
+                else if (Sprite >= DUSTYSPRITE_WALLJUMP && Sprite <= DUSTYSPRITE_WALLJUMP_C)
+                {
+                    RotAdjY += 20;
+                }
+                else if (Sprite == DUSTYSPRITE_DEATH)
+                {
+                    RotAdjX -= 17;
+                }
             }
-            else if (Sprite == DUSTYSPRITE_HOP_3 || Sprite == DUSTYSPRITE_HOP_3B)
-            {
-                RotAdjX += 10;
-                RotAdjY += 5;
-            }
-            else if (Sprite >= DUSTYSPRITE_WALLJUMP && Sprite <= DUSTYSPRITE_WALLJUMP_C)
-            {
-                RotAdjY += 20;
-            }
-            else if (Sprite == DUSTYSPRITE_DEATH)
-            {
-                RotAdjX -= 17;
-            }
+
+            float HatX = X + ScrollX + RotAdjX*ScaleX + HatOffset->X*ScaleX;
+            float HatY = Y + ScrollY + RotAdjY + HatOffset->Y;
+            
+            AddLitSpriteCenteredScaled2Rotated(LIGHTLIST_FOREGROUND, HatSprite, HatX, HatY, ScaleX*HatScale, HatScale, HatAngle*ScaleX);
+
+            if (Dusty.Hat == DUSTYHAT_CLOWN_NOSE && Chapter.PageProps.LightsOff)
+                AddLitSpriteCenteredScaledColor(LIGHTLIST_LIGHTING, &LightFlashlightSprite, HatX, HatY, 1.0f, gxRGBA32(255, 128, 128, 192));
         }
-
-        float HatX = X + ScrollX + RotAdjX*ScaleX + HatOffset->X*ScaleX;
-        float HatY = Y + ScrollY + RotAdjY + HatOffset->Y;
-        
-        AddLitSpriteCenteredScaled2Rotated(LIGHTLIST_FOREGROUND, HatSprite, HatX, HatY, ScaleX*HatScale, HatScale, HatAngle*ScaleX);
-
-        if (Dusty.Hat == DUSTYHAT_CLOWN_NOSE && Chapter.PageProps.LightsOff)
-            AddLitSpriteCenteredScaledColor(LIGHTLIST_LIGHTING, &LightFlashlightSprite, HatX, HatY, 1.0f, gxRGBA32(255, 128, 128, 192));
     }
 }
 
@@ -1547,7 +1550,10 @@ static void UpdateDusty_Die()
     }
     
 	if (DeathOver)
+    {
+        TurnOffVacuum();
         AdvanceToDieScreen();
+    }
 }
 
 

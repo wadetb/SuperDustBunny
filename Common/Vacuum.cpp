@@ -239,7 +239,6 @@ void DisplayVacuum()
 
 void UpdateVacuumSound()
 {
-        
 	float TargetVolume;
     if (GamePause)
     {
@@ -247,11 +246,11 @@ void UpdateVacuumSound()
     }
 	else if (Vacuum.State == VACUUMSTATE_RETREAT)
 	{
-		TargetVolume = 0.3f;
+		TargetVolume = 0.1f;
 	}
 	else
 	{
-		TargetVolume = 0.5f;
+		TargetVolume = 0.2f;
 	}
 
 	if (Vacuum.Volume != TargetVolume)
