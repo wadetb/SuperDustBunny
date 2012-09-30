@@ -17,7 +17,7 @@
 
 
 #define MAX_DEBUG_TEXT  10
-#define MAX_DEBUG_LINES 1000
+#define MAX_DEBUG_LINES 10
 
 
 struct SDebugText
