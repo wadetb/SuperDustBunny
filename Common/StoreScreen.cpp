@@ -38,6 +38,8 @@ struct SStoreScreen
     int ActiveItem;
     
     bool ReleasedAtLeastOnce;
+    
+    bool Pressed;
 };
 
 
@@ -201,6 +203,14 @@ void SaveInventory()
     PopErrorContext();
 }
 
+#define STORE_X 60
+#define STORE_Y 200
+#define STORE_ROWS 3
+#define STORE_COLS 3
+#define STORE_ROW_SZ 200
+#define STORE_COL_SZ ((768-STORE_X*2)/STORE_COLS)
+#define STORE_ITEM_SCALE 2.0
+
 void InitStoreScreen()
 {
     LoadInventory();
@@ -211,7 +221,7 @@ void InitStoreScreen()
     
     SetDustyState_IntroStand();
     Dusty.FloatX = 384;
-    Dusty.FloatY = 900;
+    Dusty.FloatY = LitScreenHeight - 160;
     Dusty.NoCollision = true;
     RemoteControl.Enabled = true;
     
@@ -229,28 +239,27 @@ void InitStoreScreen()
 
 void DisplayStoreScreen()
 {
-    AddLitSprite(LIGHTLIST_BACKGROUND, &ScreenStoreSprite, 0, 0);
+    AddLitSpriteSizedAlpha(LIGHTLIST_BACKGROUND, &ScreenStoreSprite, 0, 0, 768, LitScreenHeight, 1.0f);
 
-    // Lives
-    AddLitSprite(LIGHTLIST_FOREGROUND, &ScreenCoinBackgroundSprite, 0, 1024 - 120);
-    
-    AddLitSpriteScaled(LIGHTLIST_FOREGROUND, &CoinIconSprite, 240, 910, 0.65f*1.0f, 0.65f*1.0f);
-    
+    AddLitSprite(LIGHTLIST_VACUUM, &ScreenCoinBackgroundSprite, 0, LitScreenHeight - 120);
+    AddLitSpriteScaled(LIGHTLIST_VACUUM, &CoinIconSprite, 240, LitScreenHeight - 110, 0.65f*1.0f, 0.65f*1.0f);
     char Work[20];
     snprintf(Work, sizeof(Work), "x%d", Settings.Lives);
-    DisplayString(LIGHTLIST_VACUUM, Work, 0, 350, 940, 1.1f);
+    DisplayString(LIGHTLIST_VACUUM, Work, 0, 350, LitScreenHeight - 80, 1.1f);
     
-    for (int i = 0; i < 16; i++)
+    for (int i = 0; i < STORE_ROWS * STORE_COLS; i++)
     {
         if (StoreScreen.FirstItem + i >= ARRAY_COUNT(Inventory))
             break;
         
-        int Row = i / 4;
-        int Col = i % 4;
+        int Row = i / STORE_ROWS;
+        int Col = i % STORE_ROWS;
         
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, &Inventory[StoreScreen.FirstItem + i].Sprite, 150 + Col * 125 + 60, 270 + Row * 120 + 60, 1.0f, 1.0f);
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, &Inventory[StoreScreen.FirstItem + i].Sprite,
+                                        STORE_X+Col*STORE_COL_SZ + STORE_COL_SZ/2,
+                                        STORE_Y+Row*STORE_ROW_SZ + STORE_ROW_SZ/2, STORE_ITEM_SCALE, 1.0f);
         if (Inventory[StoreScreen.FirstItem + i].Owned)
-            AddLitSprite(LIGHTLIST_FOREGROUND, &CheckMarkSprite, 170 + Col * 125, 300 + Row * 120);
+            AddLitSpriteScaled(LIGHTLIST_FOREGROUND, &CheckMarkSprite, STORE_X+Col*STORE_COL_SZ, STORE_Y+Row*STORE_ROW_SZ, 2.0f, 2.0f);
     }
 
     if (StoreScreen.ItemDisplayed)
@@ -266,23 +275,23 @@ void DisplayStoreScreen()
         DisplayString(LIGHTLIST_WIPE, Work, 0, 350, 590, 1.1f);
 
         if (Inventory[StoreScreen.ActiveItem].Owned)
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenWearItSprite, 384, 800, 0.8f, 1.0f);
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenWearItSprite, 384, 800, 1.0f, StoreScreen.Pressed ? 0.5f : 1.0f);
         else
         {
             if (Inventory[StoreScreen.ActiveItem].Cost <= Settings.Lives)
-                AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenBuyItSprite, 384, 800, 0.8f, 1.0f);
+                AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenBuyItSprite, 384, 800, 1.0f, StoreScreen.Pressed ? 0.5f : 1.0f);
             else
-                AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenBuyItSprite, 384, 800, 0.8f, 0.5f);
+                AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenBuyItSprite, 384, 800, 1.0f, 0.5f);
         }
     }
     else
     {
         AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenGoBackSprite, 60, 60, 1.0f, 1.0f);
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenBuyCoinsSprite, 620, 60, 0.5f, 1.0f);
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenBuyCoinsSprite, 620, 60, 1.0f, 1.0f);
         if (StoreScreen.FirstItem > 0)
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 192-64, 930, -1.1f, 1.0f);
-        if (StoreScreen.FirstItem + 16 < ARRAY_COUNT(Inventory))
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 768-192+64, 930, 1.1f, 1.0f);
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 192-64, LitScreenHeight-110, -1.1f, 1.0f);
+        if (StoreScreen.FirstItem + STORE_ROWS * STORE_COLS < ARRAY_COUNT(Inventory))
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 768-192+64, LitScreenHeight-110, 1.1f, 1.0f);
     }
     
     DisplayDusty();
@@ -292,20 +301,35 @@ void UpdateStoreScreen()
 {    
     UpdateDusty();
 
-    if (!msButton1)
-        StoreScreen.ReleasedAtLeastOnce = true;
     if (!StoreScreen.ReleasedAtLeastOnce)
+    {
+        if (!msButton1)
+            StoreScreen.ReleasedAtLeastOnce = true;
         return;
+    }
     
     if (StoreScreen.ItemDisplayed)
     {
-        if (msButton1 && !msOldButton1)
+        if (!msButton1 && msOldButton1)
         {
             if (msX < 200 && msY < 200)
             {
                 StoreScreen.ItemDisplayed = false;
+                StoreScreen.ReleasedAtLeastOnce = false;
             }
-            
+        }
+
+        StoreScreen.Pressed = false;
+        if (msButton1)
+        {
+            if (msY >= 600 && msY <= 900)
+            {
+                StoreScreen.Pressed = true;
+            }
+        }
+        
+        if (!msButton1 && msOldButton1)
+        {
             if (msY >= 600 && msY <= 900)
             {
                 if (Inventory[StoreScreen.ActiveItem].Owned)
@@ -316,7 +340,8 @@ void UpdateStoreScreen()
                     Inventory[StoreScreen.ActiveItem].Active = true;
                     Dusty.Hat = Inventory[StoreScreen.ActiveItem].Hat;
                     SaveInventory();
-                    StoreScreen.ItemDisplayed = false;                    
+                    StoreScreen.ItemDisplayed = false;
+                    StoreScreen.ReleasedAtLeastOnce = false;
                 }
                 else
                 {
@@ -332,6 +357,7 @@ void UpdateStoreScreen()
                         SaveSettings();
                         SaveInventory();
                         StoreScreen.ItemDisplayed = false;
+                        StoreScreen.ReleasedAtLeastOnce = false;
                     }
                 }
             }
@@ -339,7 +365,7 @@ void UpdateStoreScreen()
     }
     else
     {
-        if (msButton1 && !msOldButton1)
+        if (!msButton1 && msOldButton1)
         {
             if (msX < 200 && msY <= 200)
             {
@@ -347,15 +373,17 @@ void UpdateStoreScreen()
                 return;
             }
             
-            if (msX >= 170 && msX <= 170 + 4 * 125 && msY > 300 && msY < 300 + 4 * 120)
+            if (msX >= STORE_X && msX <= STORE_X + STORE_COLS * STORE_COL_SZ &&
+                msY >= STORE_Y && msY <= STORE_Y + STORE_ROWS * STORE_ROW_SZ)
             {
-                int Col = (msX - 170) / 125;
-                int Row = (msY - 300) / 120;
+                int Col = (msX - STORE_X) / STORE_COL_SZ;
+                int Row = (msY - STORE_Y) / STORE_ROW_SZ;
                 
-                if (StoreScreen.FirstItem + Row * 4 + Col < ARRAY_COUNT(Inventory))
+                if (StoreScreen.FirstItem + Row*STORE_COLS + Col < ARRAY_COUNT(Inventory))
                 {
-                    StoreScreen.ActiveItem = StoreScreen.FirstItem + Row * 4 + Col;
+                    StoreScreen.ActiveItem = StoreScreen.FirstItem + Row*STORE_COLS + Col;
                     StoreScreen.ItemDisplayed = true;
+                    StoreScreen.ReleasedAtLeastOnce = false;
                 }
             }
             
@@ -364,12 +392,12 @@ void UpdateStoreScreen()
                 if (msX <= 384)
                 {
                     if (StoreScreen.FirstItem > 0)
-                        StoreScreen.FirstItem -= 16;
+                        StoreScreen.FirstItem -= STORE_ROWS * STORE_COLS;
                 }
                 else
                 {
-                    if (StoreScreen.FirstItem + 16 < ARRAY_COUNT(Inventory))
-                        StoreScreen.FirstItem += 16;
+                    if (StoreScreen.FirstItem + STORE_ROWS * STORE_COLS < ARRAY_COUNT(Inventory))
+                        StoreScreen.FirstItem += STORE_ROWS * STORE_COLS;
                 }
             }
         }

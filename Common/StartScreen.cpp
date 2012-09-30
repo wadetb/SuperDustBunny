@@ -155,16 +155,14 @@ void DisplayStartScreen()
 
     AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &ScreenStartButtonsSprite, 180, 190, 0, 10*64, 512, 14*64, StartScreen.Pressed == 1 ? 0.5f : 1.0f);
     AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &ScreenStartButtonsSprite, 100, 440, 0,  3*64, 512,  7*64, StartScreen.Pressed == 2 ? 0.5f : 1.0f);
-    AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &ScreenStartButtonsSprite, 190, 670, 0,  7*64, 512, 10*64, StartScreen.Pressed == 3 ? 0.5f : 1.0f);
+    AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &ScreenStartButtonsSprite, 190, 720, 0,  7*64, 512, 10*64, StartScreen.Pressed == 3 ? 0.5f : 1.0f);
     
     // Lives
     AddLitSprite(LIGHTLIST_VACUUM, &ScreenCoinBackgroundSprite, 0, LitScreenHeight - 120);
-
-    AddLitSpriteScaled(LIGHTLIST_VACUUM, &CoinIconSprite, 240, 910, 0.65f*1.0f, 0.65f*1.0f);
-    
+    AddLitSpriteScaled(LIGHTLIST_VACUUM, &CoinIconSprite, 240, LitScreenHeight - 110, 0.65f*1.0f, 0.65f*1.0f);
     char Work[20];
     snprintf(Work, sizeof(Work), "x%d", Settings.Lives);
-    DisplayString(LIGHTLIST_VACUUM, Work, 0, 350, 940, 1.1f);
+    DisplayString(LIGHTLIST_VACUUM, Work, 0, 350, LitScreenHeight - 80, 1.1f);
 
     // Leaderboard button.
     AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ButtonLeaderboardSprite, 768-90 + sinf(StartScreen.WiggleTime)*4.0f, 90, 0.65f*1.0f, 1.0f);
@@ -283,12 +281,12 @@ void UpdateStartScreen()
                 StartScreen.Pressed = 1;
                 StartScreen.PressedTime = 0.0f;
             }
-            else if (msY >= 440 && msY < 670 && msButton1)
+            else if (msY >= 440 && msY < 720 && msButton1)
             {
                 StartScreen.Pressed = 2;
                 StartScreen.PressedTime = 0.0f;
             }
-            else if (msY >= 670 && msY < 670 + 3*64 && msButton1)
+            else if (msY >= 720 && msY < 720 + 3*64 && msButton1)
             {
                 StartScreen.Pressed = 3;
                 StartScreen.PressedTime = 0.0f;
