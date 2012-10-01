@@ -548,7 +548,7 @@ void UpdateBabies()
                     if (Dist < Size*64)
                     {                    
                         Coin->State = COINSTATE_COLLECTED;
-                        GotSomething = true;
+                        //GotSomething = true;
                     }        
                 }
                 
@@ -559,7 +559,7 @@ void UpdateBabies()
                     if (Dist < Size*64)
                     {
                         Gear->State = GEARSTATE_FALLING;
-                        GotSomething = true;
+                        //GotSomething = true;
                     }
                 }
                 
@@ -570,7 +570,7 @@ void UpdateBabies()
                     if (Dist < Size*64)
                     {
                         Ball->State = BALLSTATE_FALLING;
-                        GotSomething = true;
+                        //GotSomething = true;
                     }
                 }
                 
@@ -582,7 +582,7 @@ void UpdateBabies()
                     if (Dist < Size*64 && Dist != 0 && FireWork->State == FIREWORKSTATE_WAIT)
                     {
                         FireWork->State = FIREWORKSTATE_FUSE;
-                        GotSomething = true;
+                        //GotSomething = true;
                     }
                 }
 

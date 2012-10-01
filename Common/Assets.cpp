@@ -1270,9 +1270,9 @@ void LoadAssets()
 	//                                                    Sound Assets                                                                         //
 	//-----------------------------------------------------------------------------------------------------------------------------------------//
 
-	LoadSoundAsset("Audio/dusty-to-jump.wav", &DustyToJumpSound);
-	LoadSoundAsset("Audio/dusty-jump.wav", &DustyJumpSound);
-	LoadSoundAsset("Audio/dusty-walljump.wav", &DustyWallJumpSound);
+	//LoadSoundAsset("Audio/dusty-to-jump.wav", &DustyToJumpSound);
+	//LoadSoundAsset("Audio/dusty-jump.wav", &DustyJumpSound);
+	//LoadSoundAsset("Audio/dusty-walljump.wav", &DustyWallJumpSound);
 	LoadSoundAsset("Audio/dusty-launch.wav", &DustyLaunchSound);
 	LoadSoundAsset("Audio/dusty-win.wav", &DustyWinSound);
 

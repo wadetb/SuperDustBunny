@@ -395,6 +395,20 @@ const char* CombineShaderSource =
 
 #ifdef PLATFORM_IPHONE
 
+const char* OverdrawVertexShaderSource =
+"attribute vec2 PositionAttr;\n"
+"\n"
+"void main()\n"
+"{\n"
+"	gl_Position = vec4(PositionAttr.x/768.0*2.0-1.0, (1.0-PositionAttr.y/1024.0)*2.0-1.0, 0, 1);\n"
+"}\n";
+
+const char* OverdrawShaderSource =
+"void main()\n"
+"{\n"
+"	gl_FragColor = vec4(0.2, 0, 0, 1);\n"
+"}\n";
+
 const char* LitVertexShaderSource =
 "attribute vec2 PositionAttr;\n"
 "attribute vec2 TexCoordAttr;\n"
@@ -605,7 +619,7 @@ static void DrawLightList(int List, gxShader* Shader, gxAlphaMode Alpha)
             QuadIndex++;
         }
         
-        glDrawElements(GL_TRIANGLE_STRIP, IndexCount, GL_UNSIGNED_SHORT, (void*)(BaseIndex * sizeof(GLushort)));
+        glDrawElements(GL_TRIANGLES, IndexCount, GL_UNSIGNED_SHORT, (void*)(BaseIndex * sizeof(GLushort)));
     }
 #endif
 }
@@ -1113,19 +1127,18 @@ static SLitVertex* AllocateLitVerts(int NVerts)
 }
 
 #ifdef PLATFORM_IPHONE_OR_MAC
-static void AddLitQuadStripIndices(SLitQuad* Quad, int NVerts)
+static void AddLitQuadFanIndices(SLitQuad* Quad, int NVerts)
 {
     Quad->BaseIndex = NLitVertIndices;
     
     int Index = NLitVertIndices;
     
-    if (NLitVerts > 0)
+    for (int i = 2; i < NVerts; i++)
+    {
         LitVertIndices[Index++] = NLitVerts;
-
-    for (int i = 0; i < NVerts; i++)
+        LitVertIndices[Index++] = NLitVerts+i-1;
         LitVertIndices[Index++] = NLitVerts+i;
-    
-    LitVertIndices[Index++] = NLitVerts+NVerts-1;
+    }
     
     Quad->IndexCount = Index - Quad->BaseIndex;
     NLitVertIndices = Index;
@@ -1150,13 +1163,6 @@ void AddLitQuad(
 	Quad->List = List;
 	Quad->Sprite = Sprite;
 
-#ifdef PLATFORM_IPHONE_OR_MAC
-    AddLitQuadStripIndices(Quad, 4);
-#endif    
-
-	Quad->NVerts = 4;
-	Quad->Verts = AllocateLitVerts(4);
-
     // TODO: Move math to GPU, as an optimization.
     if (List != LIGHTLIST_WIPE)
     {
@@ -1170,29 +1176,106 @@ void AddLitQuad(
         Y3 = LitSceneOffsetY + (Y3 - (LitScreenHeight/2)) * LitSceneZoom + (LitScreenHeight/2);
     }
     
-	Quad->Verts[0].X = X0;
-	Quad->Verts[0].Y = LitAspectOffset + Y0 * LitAspectScale;
-	Quad->Verts[0].U = U0 * tw;
-	Quad->Verts[0].V = V0 * th;
-	Quad->Verts[0].Color = Color;
+    int NVerts = 4;
+    SLitVertex Verts[12];
+    
+	Verts[0].X = X0;
+	Verts[0].Y = LitAspectOffset + Y0 * LitAspectScale;
+	Verts[0].U = U0 * tw;
+	Verts[0].V = V0 * th;
+	Verts[0].Color = Color;
 
-	Quad->Verts[1].X = X1;
-	Quad->Verts[1].Y = LitAspectOffset + Y1 * LitAspectScale;
-	Quad->Verts[1].U = U1 * tw;
-	Quad->Verts[1].V = V1 * th;
-	Quad->Verts[1].Color = Color;
+	Verts[1].X = X1;
+	Verts[1].Y = LitAspectOffset + Y1 * LitAspectScale;
+	Verts[1].U = U1 * tw;
+	Verts[1].V = V1 * th;
+	Verts[1].Color = Color;
 
-	Quad->Verts[3].X = X2;
-	Quad->Verts[3].Y = LitAspectOffset + Y2 * LitAspectScale;
-	Quad->Verts[3].U = U2 * tw;
-	Quad->Verts[3].V = V2 * th;
-	Quad->Verts[3].Color = Color;
+	Verts[2].X = X2;
+	Verts[2].Y = LitAspectOffset + Y2 * LitAspectScale;
+	Verts[2].U = U2 * tw;
+	Verts[2].V = V2 * th;
+	Verts[2].Color = Color;
 
-	Quad->Verts[2].X = X3;
-	Quad->Verts[2].Y = LitAspectOffset + Y3 * LitAspectScale;
-	Quad->Verts[2].U = U3 * tw;
-	Quad->Verts[2].V = V3 * th;
-	Quad->Verts[2].Color = Color;
+	Verts[3].X = X3;
+	Verts[3].Y = LitAspectOffset + Y3 * LitAspectScale;
+	Verts[3].U = U3 * tw;
+	Verts[3].V = V3 * th;
+	Verts[3].Color = Color;
+    
+#if 1
+    static float PlaneNX[4] = {  1.0f, -1.0f,  0.0f,  0.0f };
+    static float PlaneNY[4] = {  0.0f,  0.0f,  1.0f, -1.0f };
+    
+    float PlaneD[4];
+    PlaneD[0] = (float)Sprite->left/Sprite->texWidth;
+    PlaneD[1] = -(float)Sprite->right/Sprite->texWidth;
+    PlaneD[2] = (float)Sprite->top/Sprite->texHeight;
+    PlaneD[3] = -(float)Sprite->bottom/Sprite->texHeight;
+    
+    for (int Plane = 0; Plane < 4; Plane++)
+    {
+        float NX = PlaneNX[Plane];
+        float NY = PlaneNY[Plane];
+        float D = PlaneD[Plane];
+        
+        int NNewVerts = 0;
+        SLitVertex NewVerts[12];
+        
+        SLitVertex* V1 = &Verts[NVerts - 1];
+        for (int Edge = 0; Edge < NVerts; Edge++)
+        {
+            SLitVertex* V0 = &Verts[Edge];
+            
+            float D0 = V0->U*NX + V0->V*NY - D;
+            float D1 = V1->U*NX + V1->V*NY - D;
+            
+            if (D0 >= 0)
+            {
+                if (D1 < 0)
+                {
+                    float T = -D1 / (D0 - D1);
+                    float IT = 1.0f-T;
+                    NewVerts[NNewVerts].X = V0->X*T + V1->X*IT;
+                    NewVerts[NNewVerts].Y = V0->Y*T + V1->Y*IT;
+                    NewVerts[NNewVerts].U = V0->U*T + V1->U*IT;
+                    NewVerts[NNewVerts].V = V0->V*T + V1->V*IT;
+                    NewVerts[NNewVerts].Color = V0->Color; // Color not interpolated; not really needed
+                    NNewVerts++;
+                }
+                
+                NewVerts[NNewVerts++] = *V0;
+            }
+            else
+            {
+                if (D1 >= 0)
+                {
+                    float T = -D0 / (D1 - D0);
+                    float IT = 1.0f-T;
+                    NewVerts[NNewVerts].X = V1->X*T + V0->X*IT;
+                    NewVerts[NNewVerts].Y = V1->Y*T + V0->Y*IT;
+                    NewVerts[NNewVerts].U = V1->U*T + V0->U*IT;
+                    NewVerts[NNewVerts].V = V1->V*T + V0->V*IT;
+                    NewVerts[NNewVerts].Color = V0->Color; // Color not interpolated; not really needed
+                    NNewVerts++;
+                }
+            }
+            
+            V1 = V0;
+        }
+        
+        NVerts = NNewVerts;
+        memcpy(Verts, NewVerts, sizeof(SLitVertex)*NVerts);
+    }
+#endif
+        
+#ifdef PLATFORM_IPHONE_OR_MAC
+    AddLitQuadFanIndices(Quad, NVerts);
+#endif
+
+	Quad->NVerts = NVerts;
+	Quad->Verts = AllocateLitVerts(NVerts);
+    memcpy(Quad->Verts, Verts, sizeof(SLitVertex)*NVerts);
 }
 
 SLitVertex* AddLitQuad(ELightList List, gxSprite* Sprite, int NVerts)
@@ -1206,7 +1289,7 @@ SLitVertex* AddLitQuad(ELightList List, gxSprite* Sprite, int NVerts)
 	Quad->Sprite = Sprite;
 
 #ifdef PLATFORM_IPHONE_OR_MAC
-    AddLitQuadStripIndices(Quad, NVerts);
+    AddLitQuadFanIndices(Quad, NVerts);
 #endif    
 
 	Quad->NVerts = NVerts;
