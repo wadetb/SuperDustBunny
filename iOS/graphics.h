@@ -49,32 +49,14 @@ typedef struct
     int bottom;
 } gxSprite;
 
-typedef enum 
-{
-	GXDISPLAY_IPHONE_PORTRAIT,
-	GXDISPLAY_IPHONE_LANDSCAPE,
-    
-	GXDISPLAY_IPHONE_RETINA_PORTRAIT,
-	GXDISPLAY_IPHONE_RETINA_LANDSCAPE,
-    
-	GXDISPLAY_IPAD_PORTRAIT,
-	GXDISPLAY_IPAD_LANDSCAPE,
-} gxDisplayType;
-
 extern int gxScreenWidth;
 extern int gxScreenHeight;
 
 void gxInit();
 void gxDeinit();
 
-gxDisplayType gxGetDisplayType();
-
 void gxLoadSprite(const char* name, gxSprite* sprite);
 void gxDestroySprite(gxSprite* sprite);
-
-void gxDrawRectangleFilled(int x, int y, int width, int height, unsigned int color);
-
-void gxDrawString(int x, int y, int ptsize, int color, const char* text, ...);
 
 typedef enum 
 {

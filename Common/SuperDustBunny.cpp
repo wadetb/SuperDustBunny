@@ -73,23 +73,13 @@ EGameState GameState = GAMESTATE_START_SCREEN;
 
 EGameTransition GameTransition;
 
-bool NextPageButtonPressed = false;
-
 bool DisplayHelp = false;
 bool DevMode = false;
 bool SlowMotionMode = false;
-bool ChapterIntroDisplayed = false;
 float PauseTimer = 0.0f;
 float PauseSlideIn = 1.0f;
 bool GamePause = false;
 bool GameMuted = false;
-
-int BackgroundX = 0;
-int BackgroundY = 0;
-
-int SongCounter = 1;
-int SongDuration = 1500;
-int BackgroundMusic = 1;
 
 float FPS;
 
@@ -582,24 +572,24 @@ void DisplayGame_Playing()
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 	//                                                   Debugging aids                                                                        //
 	// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
-	if (DevMode)
-	{
-		// Status of common variables
-		gxDrawString(5, 5+16, 16, gxRGB32(255, 255, 255), "( %.1f %.1f ) ( %.1f %.1f ) %s\n State: %d Col: %d%d%d%d Direction: %d Material: %d", 
-			Dusty.FloatX, Dusty.FloatY, Dusty.FloatVelocityX, Dusty.FloatVelocityY, Chapter.Pages[Chapter.PageNum].Name,
-			Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide, Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide, Dusty.Direction, Dusty.CollideMaterial);
-		
-#ifdef PLATFORM_IPHONE_OR_MAC
-		// Draw the accelerometer data directly.
-		gxDrawRectangleFilled(768/2, 1024-32, msAccelX*300, 16, 0xff00ff00);
-#endif
-	}
+//	if (DevMode)
+//	{
+//		// Status of common variables
+//		gxDrawString(5, 5+16, 16, gxRGB32(255, 255, 255), "( %.1f %.1f ) ( %.1f %.1f ) %s\n State: %d Col: %d%d%d%d Direction: %d Material: %d", 
+//			Dusty.FloatX, Dusty.FloatY, Dusty.FloatVelocityX, Dusty.FloatVelocityY, Chapter.Pages[Chapter.PageNum].Name,
+//			Dusty.State, Dusty.CollideWithLeftSide, Dusty.CollideWithRightSide, Dusty.CollideWithTopSide, Dusty.CollideWithBottomSide, Dusty.Direction, Dusty.CollideMaterial);
+//		
+//#ifdef PLATFORM_IPHONE_OR_MAC
+//		// Draw the accelerometer data directly.
+//		gxDrawRectangleFilled(768/2, 1024-32, msAccelX*300, 16, 0xff00ff00);
+//#endif
+//	}
 
 	// Indicator for when slow motion is activated.
-	if (SlowMotionMode)
-	{
-		gxDrawString(gxScreenWidth-101, 5, 16, gxRGB32(255, 255, 0), "[SLOW]");
-	}
+//	if (SlowMotionMode)
+//	{
+//		gxDrawString(gxScreenWidth-101, 5, 16, gxRGB32(255, 255, 0), "[SLOW]");
+//	}
 }
 
 static void UpdateGame_Playing()
@@ -950,46 +940,13 @@ void Display()
 
     UpdateFPS();
     
-	gxDrawString(5, gxScreenHeight-16, 16, gxRGB32(255, 255, 255), "FPS: %.0f", FPS);
+//	gxDrawString(5, gxScreenHeight-16, 16, gxRGB32(255, 255, 255), "FPS: %.0f", FPS);
 
 	//gxDrawString(msX-8, msY-8, 16, gxRGB32(255, 255, 255), "X");
 }
 
 bool Update()
 {
-	/*
-	//Background Music
-    if (BackgroundMusic == 1)
-    {	        
-        if (SongDuration == 0 && SongCounter == 1)
-        {
-            SongDuration = 2000;
-            SongCounter = 2;   
-        }
-
-        if (SongDuration == 0 && SongCounter == 2)
-        {
-            SongDuration = 1500;
-            SongCounter = 1;
-        } 
-        
-        if (SongDuration == 1500 && SongCounter == 1)
-        {   
-            sxPlaySound(&Song1Sound);
-        }
-        
-        if (SongDuration == 2000 && SongCounter == 2)
-        {
-            sxPlaySound(&Song3Sound);
-        }
-        
-        if (SongDuration >= 1)
-        {
-            SongDuration -= 1;     
-        }
-    } 
-*/
-
 #ifdef PLATFORM_WINDOWS
 	kbUpdateKeys();
 #endif

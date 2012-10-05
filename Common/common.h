@@ -303,7 +303,6 @@ extern bool DevMode;
 extern float ScrollX;
 extern float ScrollY;
 
-extern bool ChapterIntroDisplayed;
 extern bool GamePause;
 
 #endif

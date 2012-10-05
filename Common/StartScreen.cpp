@@ -122,6 +122,13 @@ static void StartScreen_Advance()
     StartScreen.PressedTime = 0.0f;
 }
 
+
+#define PLAY_Y      ((LitScreenHeight/5.0)*0.75)
+#define TRAIN_Y     ((LitScreenHeight/5.0)*2.0)
+#define STORE_Y     ((LitScreenHeight/5.0)*3.25)
+
+#define BUTTON_HEIGHT (LitScreenHeight/5.0)
+
 void DisplayStartScreen()
 {
     if (StartScreen.StartupTime < 3.0f)
@@ -153,9 +160,9 @@ void DisplayStartScreen()
     if (Chapters[StartScreen.PlayChapter].HasBackground)
         AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &Chapters[StartScreen.PlayChapter].BackgroundSprite, 0, 0, 768, LitScreenHeight, 1.0f);
 
-    AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &ScreenStartButtonsSprite, 180, 190, 0, 10*64, 512, 14*64, StartScreen.Pressed == 1 ? 0.5f : 1.0f);
-    AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &ScreenStartButtonsSprite, 100, 440, 0,  3*64, 512,  7*64, StartScreen.Pressed == 2 ? 0.5f : 1.0f);
-    AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &ScreenStartButtonsSprite, 190, 720, 0,  7*64, 512, 10*64, StartScreen.Pressed == 3 ? 0.5f : 1.0f);
+    AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &ScreenStartButtonsSprite, 180 + sinf(StartScreen.WiggleTime)*4.0f, PLAY_Y, 0,  10*64, 512, 14*64, StartScreen.Pressed == 1 ? 0.5f : 1.0f);
+    AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &ScreenStartButtonsSprite, 100 + sinf(StartScreen.WiggleTime+3)*4.0f, TRAIN_Y, 0,  3*64, 512,  7*64, StartScreen.Pressed == 2 ? 0.5f : 1.0f);
+    AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &ScreenStartButtonsSprite, 190 + sinf(StartScreen.WiggleTime+5)*4.0f, STORE_Y, 0,  7*64, 512, 10*64, StartScreen.Pressed == 3 ? 0.5f : 1.0f);
     
     // Lives
     AddLitSprite(LIGHTLIST_VACUUM, &ScreenCoinBackgroundSprite, 0, LitScreenHeight - 120);
@@ -165,7 +172,7 @@ void DisplayStartScreen()
     DisplayString(LIGHTLIST_VACUUM, Work, 0, 350, LitScreenHeight - 80, 1.1f);
 
     // Leaderboard button.
-    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ButtonLeaderboardSprite, 768-90 + sinf(StartScreen.WiggleTime)*4.0f, 90, 0.65f*1.0f, 1.0f);
+    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ButtonLeaderboardSprite, 768-90 + sinf(StartScreen.WiggleTime)*4.0f, 90, 0.85f*1.0f, 1.0f);
 
     if (StartScreen.LeaderboardVisible)
     {
@@ -246,7 +253,7 @@ void UpdateStartScreen()
         return;
     }
     
-    if (msY < 190 && msX > 384 && msButton1 && !msOldButton1)
+    if (msY < 190 && msX > 384 && !msButton1 && msOldButton1)
     {
 #ifdef PLATFORM_IPHONE
         [TestFlight passCheckpoint:[NSString stringWithFormat:@"Opened Leaderboards for %s", Chapters[CurrentChapter].Name]];
@@ -264,33 +271,35 @@ void UpdateStartScreen()
         if (!msButton1)
             StartScreen_Advance();
     }
+
+    if (StartScreen.TitleVisible)
+    {
+        if (msY >= 256 && msButton1)
+        {
+            StartScreen.Pressed = true;
+            StartScreen.PressedTime = 0.0f;
+        }
+    }
     else
     {
-        if (StartScreen.TitleVisible)
+        if (msY >= PLAY_Y && msY < PLAY_Y+BUTTON_HEIGHT && msButton1)
         {
-            if (msY >= 256 && msButton1)
-            {
-                StartScreen.Pressed = true;
-                StartScreen.PressedTime = 0.0f;
-            }
+            StartScreen.Pressed = 1;
+            StartScreen.PressedTime = 0.0f;
+        }
+        else if (msY >= TRAIN_Y && msY < TRAIN_Y+BUTTON_HEIGHT && msButton1)
+        {
+            StartScreen.Pressed = 2;
+            StartScreen.PressedTime = 0.0f;
+        }
+        else if (msY >= STORE_Y && msY < STORE_Y+BUTTON_HEIGHT && msButton1)
+        {
+            StartScreen.Pressed = 3;
+            StartScreen.PressedTime = 0.0f;
         }
         else
         {
-            if (msY >= 190 && msY < 440 && msButton1)
-            {
-                StartScreen.Pressed = 1;
-                StartScreen.PressedTime = 0.0f;
-            }
-            else if (msY >= 440 && msY < 720 && msButton1)
-            {
-                StartScreen.Pressed = 2;
-                StartScreen.PressedTime = 0.0f;
-            }
-            else if (msY >= 720 && msY < 720 + 3*64 && msButton1)
-            {
-                StartScreen.Pressed = 3;
-                StartScreen.PressedTime = 0.0f;
-            }
+            StartScreen.Pressed = false;
         }
     }
     

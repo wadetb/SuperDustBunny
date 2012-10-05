@@ -227,14 +227,6 @@ void DisplayVacuum()
             }
         }
 	}
-    
-//	if (DevMode)
-//	{
-//		gxDrawString(5, 64, 16, 0xffffffff, "Vacuum State=%d Timer=%d y=%d\n      [On%02d Jam%02d TOn%02d TOff%02d]", 
-//			Vacuum.State, Vacuum.Timer, (int)Vacuum.Y, (int)(VacuumOnSound.volume*99), (int)(VacuumJamSound.volume*99), (int)(VacuumTurnOnSound.volume*99), (int)(VacuumTurnOffSound.volume*99));
-//
-//		//gxDrawRectangleFilled(0, (int)Vacuum.Y + ScrollY, gxScreenWidth, 2, gxRGBA32(255,0,0,255));
-//	}
 }
 
 void UpdateVacuumSound()

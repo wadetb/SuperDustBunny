@@ -770,31 +770,20 @@ void InitLighting()
 #endif
 
 #ifdef PLATFORM_IPHONE_OR_MAC
-    switch (gxGetDisplayType()) 
-    {
-    case GXDISPLAY_IPAD_PORTRAIT:
-        LitRenderTargetWidth = 768;
-        LitRenderTargetHeight = 1024;
-        LitAspectScale = 1.0f;
-        LitAspectOffset = 0.0f;
-        LitScreenHeight = 1024.0f;
-        break;
-    case GXDISPLAY_IPHONE_RETINA_PORTRAIT:
-        LitRenderTargetWidth = 640;
-        LitRenderTargetHeight = 960;
-        LitAspectScale = (640.0f/960.0f) / (768.0f/1024.0f);
-        LitAspectOffset = 0.0f; //-(1024 - (1024 * LitAspectScale)) * 0.5f;
-        LitScreenHeight = 1024 / LitAspectScale;
-        break;
-    default:
-    case GXDISPLAY_IPHONE_PORTRAIT:
-        LitRenderTargetWidth = 320;
-        LitRenderTargetHeight = 480;
-        LitAspectScale = (320.0f/480.0f) / (768.0f/1024.0f);
-        LitAspectOffset = 0.0f; //-(1024 - (1024 * LitAspectScale)) * 0.5f;
-        LitScreenHeight = 1024 / LitAspectScale;
-        break;
-    };
+
+#ifdef PLATFORM_MAC
+    LitRenderTargetWidth = 768;
+    LitRenderTargetHeight = 1024;
+#endif
+#ifdef PLATFORM_IPHONE
+    UIScreen* mainScreen = [UIScreen mainScreen];
+    LitRenderTargetWidth = mainScreen.currentMode.size.width;
+    LitRenderTargetHeight = mainScreen.currentMode.size.height;
+#endif
+
+    LitAspectScale = ((float)LitRenderTargetWidth/LitRenderTargetHeight) / (768.0f/1024.0f);
+    LitAspectOffset = 0.0f;
+    LitScreenHeight = 1024.0f / LitAspectScale;
     
     if (gxOpenGLESVersion == 1)
     {

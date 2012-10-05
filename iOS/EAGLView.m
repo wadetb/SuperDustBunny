@@ -22,10 +22,11 @@ extern GLuint _gxDefaultFrameBuffer;
 extern GLuint _gxDefaultFrameBufferWidth;
 extern GLuint _gxDefaultFrameBufferHeight;
 
+extern float LitScreenHeight;
+
 void GetInput_BeginSwipe(float X, float Y, double Time);
 void GetInput_AddToSwipe(float X, float Y, double Time);
 void GetInput_EndSwipe(float X, float Y, double Time);
-
 
 @interface EAGLView (PrivateMethods)
 - (void)createFramebuffer;
@@ -101,7 +102,7 @@ void GetInput_EndSwipe(float X, float Y, double Time);
         
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
             NSLog(@"Failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
-
+      
         _gxDefaultFrameBuffer = defaultFramebuffer;
         _gxDefaultFrameBufferWidth = framebufferWidth;
         _gxDefaultFrameBufferHeight = framebufferHeight;
@@ -180,8 +181,8 @@ void GetInput_EndSwipe(float X, float Y, double Time);
     
     if (currentTouch) {
         CGPoint touchPoint = [currentTouch locationInView:self];
-        _msNewX = touchPoint.x * 768 / framebufferWidth;
-        _msNewY = touchPoint.y * 1024 / framebufferHeight;
+        _msNewX = touchPoint.x * 768.0f / framebufferWidth;
+        _msNewY = touchPoint.y * LitScreenHeight / framebufferHeight;
         _msNewButton1 = 1;
         
         GetInput_BeginSwipe(_msNewX, _msNewY, event.timestamp);
@@ -198,8 +199,8 @@ void GetInput_EndSwipe(float X, float Y, double Time);
     
     if (currentTouch) {
         CGPoint touchPoint = [currentTouch locationInView:self];
-        _msNewX = touchPoint.x * 768 / framebufferWidth;
-        _msNewY = touchPoint.y * 1024 / framebufferHeight;
+        _msNewX = touchPoint.x * 768.0f / framebufferWidth;
+        _msNewY = touchPoint.y * LitScreenHeight / framebufferHeight;
         
         GetInput_AddToSwipe(_msNewX, _msNewY, event.timestamp);
     }
@@ -215,8 +216,8 @@ void GetInput_EndSwipe(float X, float Y, double Time);
     
     if (currentTouch) {
         CGPoint touchPoint = [currentTouch locationInView:self];
-        _msNewX = touchPoint.x * 768 / framebufferWidth;
-        _msNewY = touchPoint.y * 1024 / framebufferHeight;
+        _msNewX = touchPoint.x * 768.0f / framebufferWidth;
+        _msNewY = touchPoint.y * LitScreenHeight / framebufferHeight;
         _msNewButton1 = 0;
         
         GetInput_EndSwipe(_msNewX, _msNewY, event.timestamp);
@@ -235,8 +236,8 @@ void GetInput_EndSwipe(float X, float Y, double Time);
     
     if (currentTouch) {
         CGPoint touchPoint = [currentTouch locationInView:self];
-        _msNewX = touchPoint.x * 768 / framebufferWidth;
-        _msNewY = touchPoint.y * 1024 / framebufferHeight;
+        _msNewX = touchPoint.x * 768.0f / framebufferWidth;
+        _msNewY = touchPoint.y * LitScreenHeight / framebufferHeight;
         _msNewButton1 = 0;
         
         GetInput_EndSwipe(_msNewX, _msNewY, event.timestamp);

@@ -112,8 +112,6 @@ void gxInit()
 {
     gxScreenWidth = 768;
     gxScreenHeight = 1024;
-    
-	msSetMouseRange( 0, 0, gxScreenWidth, gxScreenHeight );	
 	
 #if TARGET_OS_MAC && !TARGET_OS_IPHONE
     gxOpenGLESVersion = 2;
@@ -136,33 +134,6 @@ void gxInit()
 
 void gxDeinit()
 {
-}
-
-gxDisplayType gxGetDisplayType()
-{
-#if TARGET_OS_MAC && !TARGET_OS_IPHONE
-    return GXDISPLAY_IPAD_PORTRAIT;
-#endif
-    
-#if TARGET_OS_IPHONE
-    float Version = [[[UIDevice currentDevice] systemVersion] floatValue];
-    if (Version < 3.2f)
-        return GXDISPLAY_IPHONE_PORTRAIT;
-
-    UIScreen* MainScreen = [UIScreen mainScreen];
-    int Width = MainScreen.currentMode.size.width;
-    int Height = MainScreen.currentMode.size.height;
-
-    if ((Width == 768 && Height == 1024) || (Width == 1024 && Height == 768))
-        return GXDISPLAY_IPAD_PORTRAIT;
-
-    if ((Width == 640 && Height == 960) || (Width == 960 && Height == 640))
-        return GXDISPLAY_IPHONE_RETINA_PORTRAIT;
-    
-    NSLog(@"Unknown display resolution; defaulting to iPhone.  Graphics may be blurry!");
-    
-    return GXDISPLAY_IPHONE_PORTRAIT;  
-#endif
 }
 
 void gxLoadSprite(const char* filename, gxSprite* sprite)
@@ -251,16 +222,6 @@ void gxDestroySprite(gxSprite* sprite)
 	sprite->height = 0;
 	sprite->texWidth = 0;
 	sprite->texHeight = 0;
-}
-
-void gxDrawRectangleFilled(int x, int y, int width, int height, unsigned int color)
-{
-    return;
-}
-
-void gxDrawString( int x, int y, int ptsize, int color, const char* text, ... )
-{
-    return;
 }
 
 void _gxSetAlpha( gxAlphaMode mode )
