@@ -67,7 +67,7 @@ inline unsigned int ApplyBlockFlagsToDir(unsigned int Dir, unsigned int Flags)
     float x = dx*m11 + dy*m21;
     float y = dx*m12 + dy*m22;
     
-    float a2 = atan2f(y, x);
+    float a2 = atan2f(-y, x);
     int d2 = (int)(AngleToDirection(a2) + 360) % 360;
     
     return d2;
