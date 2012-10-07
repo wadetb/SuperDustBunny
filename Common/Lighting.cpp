@@ -1166,7 +1166,10 @@ void AddLitQuad(
     }
     
     int NVerts = 4;
-    SLitVertex Verts[12];
+    SLitVertex Verts0[12];
+    SLitVertex Verts1[12];
+    
+    SLitVertex* Verts = Verts0;
     
 	Verts[0].X = X0;
 	Verts[0].Y = LitAspectOffset + Y0 * LitAspectScale;
@@ -1209,7 +1212,7 @@ void AddLitQuad(
         float D = PlaneD[Plane];
         
         int NNewVerts = 0;
-        SLitVertex NewVerts[12];
+        SLitVertex* NewVerts = Verts == Verts0 ? Verts1 : Verts0;
         
         SLitVertex* V1 = &Verts[NVerts - 1];
         for (int Edge = 0; Edge < NVerts; Edge++)
@@ -1253,8 +1256,8 @@ void AddLitQuad(
             V1 = V0;
         }
         
+        Verts = NewVerts;
         NVerts = NNewVerts;
-        memcpy(Verts, NewVerts, sizeof(SLitVertex)*NVerts);
     }
 #endif
         

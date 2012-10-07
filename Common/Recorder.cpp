@@ -37,7 +37,7 @@
 // + Record game settings.  As DB fields or Blob?
 // + Add extra data validation, like CRCs.
 
-#define RECORDER_VERSION 3
+#define RECORDER_VERSION 4
 
 #define RECORDER_BUFFER_SIZE (128*1024)
 #define MINIMAP_ACTION_BUFFER_SIZE (32*1024)
@@ -49,6 +49,9 @@ struct SRecorderHeader
 
 	int Build;
 
+    int Session;
+    int Number;
+    
 	char OSVersion[128];
 	char ComputerName[128];
 	char UserName[128];
@@ -107,6 +110,19 @@ unsigned char RecorderEventBuffer[RECORDER_BUFFER_SIZE];
 
 int RecordingTime;
 
+
+#define PORTFOLIO_VERSION 1
+
+
+struct SPortfolioHeader
+{
+    int Version;
+    int Size;
+};
+
+SPortfolioHeader PortfolioHeader;
+
+
 struct SMinimapHeader
 {
     int Version;
@@ -148,6 +164,7 @@ void UploadRecording()
 
     int DataSize = 0;
     DataSize += sizeof(SRecorderHeader) + RecorderEventOffset;
+    DataSize += sizeof(SPortfolioHeader) + sizeof(SPortfolio);
     DataSize += sizeof(SMinimapHeader) + MinimapHeader.SolidSize + MinimapHeader.ActionSize;
     
 	char* Data = (char*)malloc(DataSize);
@@ -158,6 +175,12 @@ void UploadRecording()
     
 	memcpy(CurData, RecorderEventBuffer, RecorderEventOffset);
     CurData += RecorderEventOffset;
+    
+    memcpy(CurData, &PortfolioHeader, sizeof(SPortfolioHeader));
+    CurData += sizeof(SPortfolioHeader);
+    
+    memcpy(CurData, &Portfolio, sizeof(SPortfolio));
+    CurData += sizeof(SPortfolio);
     
     memcpy(CurData, &MinimapHeader, sizeof(SMinimapHeader));
     CurData += sizeof(SMinimapHeader);
@@ -172,7 +195,7 @@ void UploadRecording()
 	DWORD dwBytesWritten = 0;
 	HINTERNET hSession = WinHttpOpen(L"Super Dust Bunny", WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
 	HINTERNET hConnect = WinHttpConnect(hSession, L"pluszerogames.com", INTERNET_DEFAULT_HTTP_PORT, 0);
-	HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"POST", L"/sdb/recording-v3.php", NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, 0);
+	HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"POST", L"/sdb/recording-v4.php", NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, 0);
     
 	WinHttpSendRequest(hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, Data, DataSize, DataSize, 0);
 	WinHttpReceiveResponse(hRequest, NULL);
@@ -187,7 +210,7 @@ void UploadRecording()
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:
                                     [NSURL URLWithString:
-                                     @"http://www.pluszerogames.com/sdb/recording-v3.php"]];
+                                     @"http://www.pluszerogames.com/sdb/recording-v4.php"]];
     
     [request setHTTPMethod:@"POST"];
     [request setHTTPBody:data];
@@ -265,11 +288,14 @@ void DownloadRecording(int id)
 
     if (DataSize > sizeof(SRecorderHeader) + RECORDER_BUFFER_SIZE)
         ReportError("Downloaded recorder data is larger than the maximum buffer size %d.", RECORDER_BUFFER_SIZE);
-        
+
+    if (((SRecorderHeader*)Data)->HeaderVersion != RECORDER_VERSION)
+		ReportError("Downloaded recorder data is version %d, but only version %d is supported.", ((SRecorderHeader*)Data)->HeaderVersion, RECORDER_VERSION);
+
     memcpy(&RecorderHeader, Data, sizeof(SRecorderHeader));
     memcpy(RecorderEventBuffer, (char*)Data + sizeof(SRecorderHeader), DataSize - sizeof(SRecorderHeader));
     
-    // TODO: Additional checking of downloaded data, CRC or size.
+// TODO: Additional checking of downloaded data, CRC or size.
 
 #ifdef PLATFORM_WINDOWS
     free(Data);
@@ -337,6 +363,9 @@ void StartRecording()
     RecorderEventOffset = 0;
 
 	Recorder.RecordingActive = true;
+    
+    PortfolioHeader.Version = PORTFOLIO_VERSION;
+    PortfolioHeader.Size = sizeof(SPortfolio);
 }
 
 void StopRecording(ERecordingEndType Result)
