@@ -1228,15 +1228,30 @@ void SetCurrentPage(int PageNum)
         {
             if (Portfolio.Sticky)
             {
-                for (int y = 0; y < Chapter.PageHeight; y++)
+                if (Portfolio.MirrorPage)
                 {
-                    for (int x = 0; x < Chapter.PageWidth; x++)
+                    for (int y = 0; y < Chapter.PageHeight; y++)
                     {
-                        if (Layer->Blocks[y*Chapter.PageWidth + x] != SPECIALBLOCKID_BLANK)
-                            Chapter.PageBlocks[y*Chapter.PageWidth + x] |= SPECIALBLOCKID_STICKY;
+                        for (int x = 0; x < Chapter.PageWidth; x++)
+                        {
+                            if (Layer->Blocks[y*Chapter.PageWidth + x] != SPECIALBLOCKID_BLANK)
+                                Chapter.PageBlocks[y*Chapter.PageWidth + x] |= SPECIALBLOCKID_STICKY;
+                        }
+                    }
+                }
+                else
+                {
+                    for (int y = 0; y < Chapter.PageHeight; y++)
+                    {
+                        for (int x = 0; x < Chapter.PageWidth; x++)
+                        {
+                            if (Layer->Blocks[y*Chapter.PageWidth + (Chapter.PageWidth-1-x)] != SPECIALBLOCKID_BLANK)
+                                Chapter.PageBlocks[y*Chapter.PageWidth + x] |= SPECIALBLOCKID_STICKY;
+                        }
                     }
                 }
                 Layer->Alpha = 1.0f;
+                    
             }
             else
             {

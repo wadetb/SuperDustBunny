@@ -13,6 +13,7 @@
 #include "Chapter.h"
 #include "Text.h"
 #include "Settings.h"
+#include "Recorder.h"
 #include "LeaderboardScreen.h"
 #import "Music.h"
 
@@ -105,11 +106,9 @@ static void StartScreen_Advance()
             [TestFlight passCheckpoint:[NSString stringWithFormat:@"Entered chapter %s", Chapters[CurrentChapter].Name]];
 #endif
 
-            extern int PlaybackID;
-            if (PlaybackID >= 0)
-                SetGameState_Transition(GAMETRANSITION_PLAY_RECORDING);
-            else
-                SetGameState_Transition(GAMETRANSITION_FIRST_PAGE);
+            StartRecordingSession();
+	
+            SetGameState_Transition(GAMETRANSITION_FIRST_PAGE);
         }
         else if (StartScreen.Pressed == 3)
         {

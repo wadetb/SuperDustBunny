@@ -302,6 +302,11 @@ void DownloadRecording(int id)
 #endif
 }
 
+void StartRecordingSession()
+{
+    RecorderHeader.Session = (int)time(NULL);
+}
+
 void StartRecording()
 {
     if (Recorder.RecordingActive || Recorder.PlaybackActive)
@@ -312,6 +317,8 @@ void StartRecording()
 	RecorderHeader.HeaderVersion = RECORDER_VERSION;
 	RecorderHeader.Build = BuildNumber;
 
+    RecorderHeader.Number = Portfolio.PageCount;
+    
 	snprintf(RecorderHeader.Chapter, sizeof(RecorderHeader.Chapter), "%s", Chapter.Name);
 	snprintf(RecorderHeader.Page, sizeof(RecorderHeader.Page), "%s", Chapter.Pages[Chapter.PageNum].Name);
 	

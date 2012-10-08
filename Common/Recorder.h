@@ -53,6 +53,8 @@ extern SRecorder Recorder;
 
 bool IsRecordingActive();
 
+void StartRecordingSession();
+
 void StartRecording();
 void StopRecording(ERecordingEndType Result);
 
