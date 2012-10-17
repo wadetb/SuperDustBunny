@@ -43,31 +43,24 @@ inline float BlockFlagsToAngle(unsigned int Flags)
 
 inline unsigned int ApplyBlockFlagsToDir(unsigned int Dir, unsigned int Flags)
 {
-    float m11 = 1.0f, m12 = 0, m21 = 0, m22 = 1.0f;
     float a = DirectionToAngle(Dir);
     float dx = cosf(a);
-    float dy = sinf(a);
+    float dy = -sinf(a);
     
     if (Flags & SPECIALBLOCKID_FLIP_DIAGONAL)
     {
-        Swap(&m11, &m12);
-        Swap(&m21, &m22);
+        Swap(&dx, &dy);
     }
     if (Flags & SPECIALBLOCKID_FLIP_X)
     {
-        m11 = -m11;
-        m21 = -m21;
+        dx = -dx;
     }
     if (Flags & SPECIALBLOCKID_FLIP_Y)
     {
-        m12 = -m12;
-        m22 = -m22;
+        dy = -dy;
     }
     
-    float x = dx*m11 + dy*m21;
-    float y = dx*m12 + dy*m22;
-    
-    float a2 = atan2f(-y, x);
+    float a2 = atan2f(-dy, dx);
     int d2 = (int)(AngleToDirection(a2) + 360) % 360;
     
     return d2;

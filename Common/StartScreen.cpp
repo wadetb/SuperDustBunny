@@ -252,7 +252,7 @@ void UpdateStartScreen()
         return;
     }
     
-    if (msY < 190 && msX > 384 && !msButton1 && msOldButton1)
+    if (msY < PLAY_Y && msX > 384 && !msButton1 && msOldButton1)
     {
 #ifdef PLATFORM_IPHONE
         [TestFlight passCheckpoint:[NSString stringWithFormat:@"Opened Leaderboards for %s", Chapters[CurrentChapter].Name]];
