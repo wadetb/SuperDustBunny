@@ -61,6 +61,7 @@ enum EPortfolioFlags
     PORTFOLIO_TYPE_MASK = 1,
     
     PORTFOLIO_INITIAL = 2,
+    PORTFOLIO_INITIAL_MASK = 2,
 };
 
 struct SPortfolioEntry
@@ -1673,8 +1674,28 @@ static void EnableRandomPortfolio(int Flags, int FlagsMask, bool Value)
     {
         int ElementIndex = Random(0, EnabledElementCount);
         *EnabledElements[ElementIndex]->Value = Value;
-
+        
         ReportPortfolio("%s %s", EnabledElements[ElementIndex]->Name, Value ? "enabled" : "disabled");
+    }
+}
+
+static void EnableAllPortfolio(int Flags, int FlagsMask, bool Value)
+{
+    SPortfolioEntry* EnabledElements[ARRAY_COUNT(PortfolioEntries)];
+    int EnabledElementCount = 0;
+    
+    for (int i = 0; i < ARRAY_COUNT(PortfolioEntries); i++)
+        if ((PortfolioEntries[i].Flags & FlagsMask) == Flags && *PortfolioEntries[i].Value != Value)
+            EnabledElements[EnabledElementCount++] = &PortfolioEntries[i];
+    
+    if (EnabledElementCount)
+    {
+        for (int ElementIndex = 0; ElementIndex < EnabledElementCount; ElementIndex++)
+        {
+            *EnabledElements[ElementIndex]->Value = Value;
+            
+            ReportPortfolio("%s %s", EnabledElements[ElementIndex]->Name, Value ? "enabled" : "disabled");
+        }
     }
 }
 
@@ -1761,9 +1782,9 @@ void SetupInitialPortfolio()
 {
     PortfolioLine = 0;
     
-    // Start with two initial pros.
-    EnableRandomPortfolio(PORTFOLIO_PRO | PORTFOLIO_INITIAL, PORTFOLIO_TYPE_MASK | PORTFOLIO_INITIAL, true);
-    EnableRandomPortfolio(PORTFOLIO_PRO | PORTFOLIO_INITIAL, PORTFOLIO_TYPE_MASK | PORTFOLIO_INITIAL, true);
+    // Start with initials + extra pro.
+    EnableAllPortfolio(PORTFOLIO_INITIAL, PORTFOLIO_INITIAL_MASK, true);
+    EnableRandomPortfolio(PORTFOLIO_PRO, PORTFOLIO_TYPE_MASK, true);
     
     Portfolio.VacuumDistance = Portfolio.InitialVacuumDistance;
     
@@ -1829,9 +1850,7 @@ void AdvancePortfolio()
         else
             EnableRandomPortfolio(PORTFOLIO_CON, PORTFOLIO_TYPE_MASK, true);
         
-        // 50% chance of removing one random element.
-        if (Random(0.0f, 1.0f) >= 0.5f)
-            EnableRandomPortfolio(0, 0, false);
+        EnableRandomPortfolio(0, PORTFOLIO_INITIAL_MASK, false);
         
         if (Portfolio.LightsOff)
             Portfolio.Fireworks = true;
