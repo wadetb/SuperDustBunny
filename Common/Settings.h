@@ -25,7 +25,9 @@ typedef struct
     bool GhostActive;
     
     bool DisableVacuum;
-    
+
+    bool DeveloperMode;
+
     bool LiveAssets;
     char AssetServer[256];
     

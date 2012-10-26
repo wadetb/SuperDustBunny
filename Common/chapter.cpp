@@ -69,6 +69,7 @@ struct SPortfolioEntry
     const char* Name;
     int Flags;
     bool* Value;
+    bool Dirty;
 };
 
 SPortfolioEntry PortfolioEntries[] =
@@ -84,7 +85,7 @@ SPortfolioEntry PortfolioEntries[] =
     { "Balloons", PORTFOLIO_PRO, &Portfolio.Balloons },
     
     { "LightsOff", PORTFOLIO_CON, &Portfolio.LightsOff },
-    { "Sharp", PORTFOLIO_CON, &Portfolio.Sharp },
+//    { "Sharp", PORTFOLIO_CON, &Portfolio.Sharp },
     { "Sticky", PORTFOLIO_CON, &Portfolio.Sticky },
     { "DustBuster", PORTFOLIO_CON, &Portfolio.DustBuster },
     { "UpsideDown", PORTFOLIO_CON, &Portfolio.UpsideDown },
@@ -94,6 +95,8 @@ SPortfolioEntry PortfolioEntries[] =
 
 SPortfolio Portfolio;
 SPortfolio SavedPortfolio;
+
+bool PortfolioDirty[ARRAY_COUNT(PortfolioEntries)];
 
 int PortfolioLine;
 
@@ -1661,6 +1664,12 @@ void ResetPortfolio()
     memset(&Portfolio, 0, sizeof(Portfolio));
 }
 
+static void PreparePortfolioForChanges()
+{
+    for (int i = 0; i < ARRAY_COUNT(PortfolioEntries); i++)
+        PortfolioEntries[i].Dirty = false;
+}
+
 static void EnableRandomPortfolio(int Flags, int FlagsMask, bool Value)
 {
     SPortfolioEntry* EnabledElements[ARRAY_COUNT(PortfolioEntries)];
@@ -1668,14 +1677,17 @@ static void EnableRandomPortfolio(int Flags, int FlagsMask, bool Value)
     
     for (int i = 0; i < ARRAY_COUNT(PortfolioEntries); i++)
         if ((PortfolioEntries[i].Flags & FlagsMask) == Flags && *PortfolioEntries[i].Value != Value)
-            EnabledElements[EnabledElementCount++] = &PortfolioEntries[i];
+            if (!PortfolioEntries[i].Dirty)
+                EnabledElements[EnabledElementCount++] = &PortfolioEntries[i];
     
     if (EnabledElementCount)
     {
         int ElementIndex = Random(0, EnabledElementCount);
-        *EnabledElements[ElementIndex]->Value = Value;
+        SPortfolioEntry* Element = EnabledElements[ElementIndex];
+        *Element->Value = Value;
+        Element->Dirty = true;
         
-        ReportPortfolio("%s %s", EnabledElements[ElementIndex]->Name, Value ? "enabled" : "disabled");
+        ReportPortfolio("%s %s", Element->Name, Value ? "enabled" : "disabled");
     }
 }
 
@@ -1783,6 +1795,7 @@ void SetupInitialPortfolio()
     PortfolioLine = 0;
     
     // Start with initials + extra pro.
+    PreparePortfolioForChanges();
     EnableAllPortfolio(PORTFOLIO_INITIAL, PORTFOLIO_INITIAL_MASK, true);
     EnableRandomPortfolio(PORTFOLIO_PRO, PORTFOLIO_TYPE_MASK, true);
     
@@ -1819,6 +1832,8 @@ void SetupTutorialPortfolio()
 
 void AdvancePortfolio()
 {
+    PreparePortfolioForChanges();
+
     PortfolioLine = 0;
 
     Portfolio.PageCount++;
@@ -1878,6 +1893,20 @@ void AdvancePortfolio()
     if (Portfolio.VacuumCatchup)
     {
         Portfolio.VacuumDistance = Portfolio.InitialVacuumDistance / 2;
+        Portfolio.VacuumCatchup = false;
+    }
+    
+    if (Portfolio.DustBuster)
+    {
+        Vacuum.Side = (EVacuumSide)Portfolio.VacuumSide;
+        Vacuum.Dir = (EVacuumDir)Vacuum.Dir;
+        AdvanceDustBusterSideAndDir();
+        Portfolio.VacuumSide = Vacuum.Side;
+        Portfolio.VacuumDir = Vacuum.Dir;
+    }
+    else
+    {
+        Portfolio.VacuumDir = Portfolio.UpsideDown ? VACUUMDIR_DOWN : VACUUMDIR_UP;
     }
     
 TryAgain:

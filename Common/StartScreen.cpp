@@ -92,6 +92,8 @@ static void StartScreen_Advance()
             if (Settings.LiveAssets)
                 UpdateLiveAssetCache();
 #endif
+            
+            StartRecordingSession();
 
             ResetPortfolio();            
             if (StartScreen.Pressed == 2)
@@ -105,14 +107,23 @@ static void StartScreen_Advance()
 #ifdef PLATFORM_IPHONE
             [TestFlight passCheckpoint:[NSString stringWithFormat:@"Entered chapter %s", Chapters[CurrentChapter].Name]];
 #endif
-
-            StartRecordingSession();
 	
             SetGameState_Transition(GAMETRANSITION_FIRST_PAGE);
         }
         else if (StartScreen.Pressed == 3)
         {
-            SetGameState_StoreScreen();
+#ifdef PLATFORM_IPHONE
+            if (StartScreen.PressedTime >= 2.0f)
+            {
+                [TestFlight passCheckpoint:[NSString stringWithFormat:@"Opened Settings"]];
+                
+                [theViewController showSettings];
+            }
+            else
+#endif
+            {
+                SetGameState_StoreScreen();
+            }
         }
     }
 
@@ -270,13 +281,17 @@ void UpdateStartScreen()
         if (!msButton1)
             StartScreen_Advance();
     }
+    else
+    {
+        if (!msButton1)
+            StartScreen.PressedTime = 0;
+    }
 
     if (StartScreen.TitleVisible)
     {
         if (msY >= 256 && msButton1)
         {
             StartScreen.Pressed = true;
-            StartScreen.PressedTime = 0.0f;
         }
     }
     else
@@ -284,17 +299,14 @@ void UpdateStartScreen()
         if (msY >= PLAY_Y && msY < PLAY_Y+BUTTON_HEIGHT && msButton1)
         {
             StartScreen.Pressed = 1;
-            StartScreen.PressedTime = 0.0f;
         }
         else if (msY >= TRAIN_Y && msY < TRAIN_Y+BUTTON_HEIGHT && msButton1)
         {
             StartScreen.Pressed = 2;
-            StartScreen.PressedTime = 0.0f;
         }
         else if (msY >= STORE_Y && msY < STORE_Y+BUTTON_HEIGHT && msButton1)
         {
             StartScreen.Pressed = 3;
-            StartScreen.PressedTime = 0.0f;
         }
         else
         {

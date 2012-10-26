@@ -26,3 +26,4 @@ TWEAK_FLOAT(DustyHurtTime, 60.0f, "Number of 60hz frames the bunny will remain h
 TWEAK_FLOAT(WacomXSensitivity, 4.0f, "How sensitive the Wacom tablet is in the X axis.")
 TWEAK_FLOAT(WacomYSensitivity, 2.0f, "How sensitive the Wacom tablet is in the Y axis.")
 TWEAK_INT(RenderOverdraw, 0, "If 1, render overdraw as translucent red.")
+TWEAK_INT(DevMode, 0, "If 1, display onscreen debug text and enable development-only features.")

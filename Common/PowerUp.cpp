@@ -13,8 +13,6 @@
 #include "Dusty.h"
 #include "GameScore.h"
 
-#define MAX_POWERUP 100
-
 int NPowerUps = 0;
 SPowerUp PowerUps[MAX_POWERUP];
 
@@ -65,6 +63,16 @@ void DisplayPowerUp()
     }
 }
 
+void ActivatePowerUp(SPowerUp* PowerUp)
+{
+    Dusty.PowerUpTimer = 60 * 10;
+    Dusty.FloatVelocityX *= 1.5f;
+    Dusty.FloatVelocityY *= 1.5f;
+    
+    PowerUp->State = POWERUPSTATE_INACTIVE;
+    PowerUp->PulseTimer = 0.0f;
+}
+
 void UpdatePowerUp()
 {
     for (int i = 0; i < NPowerUps; i++)
@@ -77,13 +85,8 @@ void UpdatePowerUp()
 
             if (Dist < 100)
             {
-                Dusty.PowerUpTimer = 60 * 10;
-                Dusty.FloatVelocityX *= 1.5f;
-                Dusty.FloatVelocityY *= 1.5f;
-
-                PowerUp->State = POWERUPSTATE_INACTIVE;   
-                PowerUp->PulseTimer = 0.0f;
-            } 	                       	    
+                ActivatePowerUp(PowerUp);
+            }
         }
 
         PowerUp->PulseTimer += 1.0f/60.0f;

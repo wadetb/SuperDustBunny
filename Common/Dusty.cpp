@@ -314,7 +314,7 @@ static bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
             Dusty.SwipePower /= 5.0f;
         
 #ifdef SWIPE_DEBUG
-		if (DevMode)
+		if (Settings.DeveloperMode)
 		{
 			AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle+Range))*100 + ScrollX, Dusty.FloatY + -sinf(DegreesToRadians(Angle+Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
 			AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle-Range))*100 + ScrollX, Dusty.FloatY + -sinf(DegreesToRadians(Angle-Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
@@ -343,7 +343,7 @@ static void UpdateDusty_DoSwipeJump(float Angle, float Power)
     SetDustyState_JumpWithVelocity(dX, dY);
     
 #ifdef SWIPE_DEBUG
-	if (DevMode)
+	if (Settings.DeveloperMode)
 	    AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + dX*10 + ScrollX, Dusty.FloatY + dY*10 + ScrollY, gxRGB32(192, 128, 128), 0.5f);
 #endif
     
@@ -1627,6 +1627,11 @@ void SetDustyState_Hurt()
 		Dusty.CollideWithBottomSide = false;
 	}
 
+    if (Dusty.FloatVelocityX < 0)
+        Dusty.FloatVelocityX = 10;
+    else
+        Dusty.FloatVelocityX = -10;
+        
     Dusty.ComboCount = 0;
 
 	Dusty.State = DUSTYSTATE_HURT;
@@ -2046,7 +2051,7 @@ void DisplayDusty()
     }
 
 #ifdef SWIPE_DEBUG
-	if (DevMode)
+	if (Settings.DeveloperMode)
 	{
 		DisplayDebugLine(Dusty.FloatX + Dusty.Left  + ScrollX, Dusty.FloatY + Dusty.Top    + ScrollY, Dusty.FloatX + Dusty.Right + ScrollX, Dusty.FloatY + Dusty.Top    + ScrollY, 2.0f, gxRGB32(255, 0, 0));
 		DisplayDebugLine(Dusty.FloatX + Dusty.Left  + ScrollX, Dusty.FloatY + Dusty.Bottom + ScrollY, Dusty.FloatX + Dusty.Right + ScrollX, Dusty.FloatY + Dusty.Bottom + ScrollY, 2.0f, gxRGB32(255, 0, 0));

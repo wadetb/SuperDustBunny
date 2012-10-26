@@ -298,8 +298,6 @@ void AdvanceToNextPage();
 void AdvanceToDieScreen();
 void DisplayGame_Playing();
 
-extern bool DevMode;
-
 extern float ScrollX;
 extern float ScrollY;
 

@@ -303,6 +303,11 @@ BOOL isGameCenterAPIAvailable()
     if (paused)
         return;
     
+    static bool recursing = false;
+    if (recursing)
+        return;
+    recursing = true;
+    
     if (wasPaused)
     {
         lastTimeStamp = displayLink.timestamp;
@@ -321,7 +326,8 @@ BOOL isGameCenterAPIAvailable()
     }
     lastTimeStamp = t;
     
-    [self drawFrame];    
+    [self drawFrame];
+    recursing = false;
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex

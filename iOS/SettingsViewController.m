@@ -16,7 +16,7 @@ void ClearLiveAssetCache();
 
 @implementation SettingsViewController
 
-@synthesize controlScheme;
+@synthesize developerMode;
 @synthesize disableVacuum;
 @synthesize liveAssets;
 @synthesize assetServer;
@@ -32,11 +32,9 @@ void ClearLiveAssetCache();
 
 - (void)dealloc
 {
-    [controlScheme release];
+    [developerMode release];
     [disableVacuum release];
     [liveAssets release];
-    [assetServer release];
-    [assetServer release];
     [assetServer release];
     [super dealloc];
 }
@@ -59,9 +57,12 @@ void ClearLiveAssetCache();
 
 - (void)viewDidUnload
 {
+    [developerMode release];
+    developerMode = nil;
+    [disableVacuum release];
+    disableVacuum = nil;
     [assetServer release];
     assetServer = nil;
-    [self setAssetServer:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -82,25 +83,19 @@ void ClearLiveAssetCache();
 }
 
 - (void)transferSettingsToView {
-    controlScheme.selectedSegmentIndex = Settings.ControlStyle == CONTROL_TILT ? 0 : 1;
+    developerMode.on = Settings.DeveloperMode;
     disableVacuum.on = Settings.DisableVacuum;
     liveAssets.on = Settings.LiveAssets;
     assetServer.text = [NSString stringWithUTF8String:Settings.AssetServer];
 }
 
 - (void)transferSettingsFromView {
-    EControlStyle newStyle = controlScheme.selectedSegmentIndex == 0 ? CONTROL_TILT : CONTROL_SWIPE;
 #ifdef PLATFORM_IPHONE
-    if (newStyle != Settings.ControlStyle)
-    {
-        if (Settings.ControlStyle == CONTROL_TILT)
-            [TestFlight passCheckpoint:[NSString stringWithFormat:@"Changed to Tilt controls"]];
-        else
-            [TestFlight passCheckpoint:[NSString stringWithFormat:@"Changed to Swipe controls"]];
-    }
+    if (developerMode.on != Settings.DeveloperMode)
+        [TestFlight passCheckpoint:[NSString stringWithFormat:@"Turned Developer Mode %s", developerMode.on ? "on" : "off"]];
 #endif
-    Settings.ControlStyle = newStyle;
-    
+    Settings.DeveloperMode = developerMode.on;
+
 #ifdef PLATFORM_IPHONE
     if (disableVacuum.on != Settings.DisableVacuum)
         [TestFlight passCheckpoint:[NSString stringWithFormat:@"Turned Disable Vacuum %s", disableVacuum.on ? "on" : "off"]];

@@ -21,6 +21,7 @@
 #include "FireWorks.h"
 #include "TennisBall.h"
 #include "Smoke.h"
+#include "PowerUp.h"
 
 
 #define MAX_BABIES 50
@@ -585,7 +586,19 @@ void UpdateBabies()
                         //GotSomething = true;
                     }
                 }
-
+                
+                for (int i = 0; i < NPowerUps; i++)
+                {
+                    SPowerUp* PowerUp = &PowerUps[i];
+                    
+                    float Dist = (Distance(X, Y, PowerUp->X, PowerUp->Y));
+                    if (Dist < Size*64 && Dist != 0 && PowerUp->State == POWERUPSTATE_ACTIVE)
+                    {
+                        ActivatePowerUp(PowerUp);
+                        //GotSomething = true;
+                    }
+                }
+                
                 if (GotSomething)
                 {
                     CreateWhiteSmoke(Baby->X, Baby->Y);

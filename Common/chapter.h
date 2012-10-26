@@ -267,6 +267,8 @@ struct SPortfolio
     float InitialVacuumDistance;
     float VacuumDistance;
     int VacuumDamage;
+    int VacuumDir;
+    int VacuumSide;
     
     int BabyCount;
     int BabyHats[MAX_SCORE_BABIES];

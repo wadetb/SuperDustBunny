@@ -74,7 +74,6 @@ EGameState GameState = GAMESTATE_START_SCREEN;
 EGameTransition GameTransition;
 
 bool DisplayHelp = false;
-bool DevMode = false;
 bool SlowMotionMode = false;
 float PauseTimer = 0.0f;
 float PauseSlideIn = 1.0f;
@@ -210,7 +209,16 @@ static void SetupNextPage()
 void AdvanceToNextPage()
 {
     Portfolio.VacuumDamage = Vacuum.Damage;
-    Portfolio.VacuumDistance = fabsf(Dusty.FloatY - Vacuum.Y);
+    if (Portfolio.DustBuster)
+    {
+        Portfolio.VacuumDistance = Portfolio.InitialVacuumDistance;
+        Portfolio.VacuumSide = Vacuum.Side;
+        Portfolio.VacuumDir = Vacuum.Dir;
+    }
+    else
+    {
+        Portfolio.VacuumDistance = fabsf(Dusty.FloatY - Vacuum.Y);
+    }
     
     if (CurrentChapter == 0)
     {
@@ -418,16 +426,26 @@ static void DisplayPauseScreen()
         else
             AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonMuteSprite, 768-192 + 600*PauseSlideIn, 500, 1.2f, 1.0f);        
         
-        if (Settings.ChapterSkip)
+        if (Settings.DeveloperMode)
         {
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 192+16 - 600*PauseSlideIn, 830, -1.75f, 1.75f);
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 768-192-16 + 600*PauseSlideIn, 830, 1.75f, 1.75f);
-
             char Work[1024];
             snprintf(Work, sizeof(Work), "%s", Chapter.Pages[Chapter.PageNum].Name);
             for (int i = 0; i < strlen(Work); i++)
                 Work[i] = tolower(Work[i]);
-            DisplayString(LIGHTLIST_WIPE, Work, FORMAT_CENTER_X, 384, 1024-60, 0.75f);
+            DisplayString(LIGHTLIST_WIPE, Work, FORMAT_CENTER_X, 384, LitScreenHeight-60, 0.75f);
+        }
+        
+        if (Settings.LiveAssets)
+        {
+            AddLitSpriteCenteredScaledRotated(LIGHTLIST_WIPE, &ButtonPlaySprite, 384 - 600*PauseSlideIn, 860, 2.25f, DegreesToRadians(90.0f));
+        }
+        
+        if (!Settings.DeveloperMode && !Settings.LiveAssets)
+        {
+            char Work[40];
+            AddLitSpriteScaled(LIGHTLIST_WIPE, &CoinIconSprite, 170 - 600*PauseSlideIn, 720, 0.65f*1.5f, 0.65f*1.5f);
+            snprintf(Work, sizeof(Work), "x%d", Settings.Lives);
+            DisplayString(LIGHTLIST_WIPE, Work, 0, 330 - 600*PauseSlideIn, 760, 1.75f);
         }
     }
     else
@@ -463,18 +481,24 @@ static void UpdatePauseScreen()
             TurnOffVacuum();
             SetGameState_StartScreen();
         }
-
-        if (Settings.ChapterSkip)
+        
+        if (Settings.LiveAssets)
         {
-            if (msX < 384-64 && msY >= 700 && msY <= 1000)
+            if (abs(msX - 384) < 300 && msY >= 700 && msY <= 1000)
             {
+#ifdef PLATFORM_IPHONE
+                [TestFlight passCheckpoint:@"Replayed the current page"];
+#endif
+                UpdateLiveAssetCache();
                 TurnOffVacuum();
-                SkipToPreviousPage();
-            }
-            if (msX > 384+64 && msY >= 700 && msY <= 1000)
-            {
-                TurnOffVacuum();
-                SkipToNextPage();
+                if (IsRecordingActive())
+                    StopRecording(RESULT_NONE);
+                float OldX = Dusty.FloatX;
+                float OldY = Dusty.FloatY;
+                LoadCurrentChapter();
+                SetCurrentPage(Chapter.PageNum);
+                Dusty.FloatX = OldX;
+                Dusty.FloatY = OldY;
             }
         }
     }

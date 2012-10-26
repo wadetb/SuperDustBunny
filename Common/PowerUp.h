@@ -10,6 +10,8 @@
 #ifndef POWERUP_H
 #define POWERUP_H
 
+#define MAX_POWERUP 100
+
 enum EPowerUpState
 {
     POWERUPSTATE_INACTIVE,
@@ -23,7 +25,8 @@ struct SPowerUp
     EPowerUpState State;
 };
 
-extern SPowerUp PowerUp;
+extern int NPowerUps;
+extern SPowerUp PowerUps[MAX_POWERUP];
 
 void CreatePowerUp(int X, int Y);
 
@@ -33,5 +36,7 @@ void InitPowerUp();
 
 void UpdatePowerUp();
 void DisplayPowerUp();
+
+void ActivatePowerUp(SPowerUp* PowerUp);
 
 #endif

@@ -88,6 +88,8 @@ void DisplayVacuum();
 void UpdateVacuum();
 void UpdateVacuumSound();
 
+void AdvanceDustBusterSideAndDir();
+
 void TurnOnVacuum(float InitialDistance, float DelayBeforeMoving, bool Charging);
 void TurnOffVacuum();
 void JamVacuum();

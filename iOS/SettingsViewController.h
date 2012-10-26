@@ -14,13 +14,13 @@
 @interface SettingsViewController : UIViewController {
 @private
     
-    UISegmentedControl *controlScheme;
+    UISwitch *developerMode;
     UISwitch *disableVacuum;
     UISwitch *liveAssets;
     UITextField *assetServer;
 }
 
-@property (nonatomic, retain) IBOutlet UISegmentedControl *controlScheme;
+@property (nonatomic, retain) IBOutlet UISwitch *developerMode;
 @property (nonatomic, retain) IBOutlet UISwitch *disableVacuum;
 @property (nonatomic, retain) IBOutlet UISwitch *liveAssets;
 @property (nonatomic, retain) IBOutlet UITextField *assetServer;

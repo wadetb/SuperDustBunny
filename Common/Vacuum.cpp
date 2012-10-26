@@ -92,9 +92,9 @@ static void GetVacuumRightDir(float* DX, float* DY)
 
 void InitVacuum()
 {
-    Vacuum.Type = (EVacuumType)Chapter.PageProps.VacuumType;
-	Vacuum.Dir = (EVacuumDir)Chapter.PageProps.VacuumDir;
-    Vacuum.Side = VACUUMSIDE_LEFT;
+    Vacuum.Type = Portfolio.DustBuster ? VACUUM_DUSTBUSTER : VACUUM_NORMAL;
+	Vacuum.Dir = (EVacuumDir)Portfolio.VacuumDir;
+    Vacuum.Side = (EVacuumSide)Portfolio.VacuumSide;
     
     Vacuum.X = 384;
     Vacuum.Y = 100000;
@@ -143,88 +143,108 @@ void InitVacuum()
 	sxPlaySoundLooping(&VacuumJamSound);
 }
 
+void AdvanceDustBusterSideAndDir()
+{
+    if (Vacuum.Dir == VACUUMDIR_UP && Vacuum.Side == VACUUMSIDE_LEFT)
+    {
+        Vacuum.Dir = VACUUMDIR_DOWN;
+        Vacuum.Side = VACUUMSIDE_RIGHT;
+    }
+    else if (Vacuum.Dir == VACUUMDIR_DOWN && Vacuum.Side == VACUUMSIDE_RIGHT)
+    {
+        Vacuum.Dir = VACUUMDIR_UP;
+        Vacuum.Side = VACUUMSIDE_RIGHT;
+    }
+    else if (Vacuum.Dir == VACUUMDIR_UP && Vacuum.Side == VACUUMSIDE_RIGHT)
+    {
+        Vacuum.Dir = VACUUMDIR_DOWN;
+        Vacuum.Side = VACUUMSIDE_LEFT;
+    }
+    else if (Vacuum.Dir == VACUUMDIR_DOWN && Vacuum.Side == VACUUMSIDE_LEFT)
+    {
+        Vacuum.Dir = VACUUMDIR_UP;
+        Vacuum.Side = VACUUMSIDE_LEFT;
+    }
+}
+
 void DisplayVacuum()
 {
-	// If the vacuum is disabled for this page, don't display at all.
-	if (Chapter.PageProps.VacuumOff || Settings.DisableVacuum)
+    if (Settings.DisableVacuum)
 		return;
 
- 	if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.State == VACUUMSTATE_ONSCREEN)
-	{
-        gxSprite* BlinkSprite = NULL;
-        float LightsAlpha = 1.0f;
-        
-        float DX, DY;
-        GetVacuumForwardDir(&DX, &DY);
-        
-        float VacuumX = Vacuum.X + DX*VacuumYOffset + ScrollX;
-        float VacuumY = Vacuum.Y + DY*VacuumYOffset + ScrollY;
+    gxSprite* BlinkSprite = NULL;
+    float LightsAlpha = 1.0f;
+    
+    float DX, DY;
+    GetVacuumForwardDir(&DX, &DY);
+    
+    float VacuumX = Vacuum.X + DX*VacuumYOffset + ScrollX;
+    float VacuumY = Vacuum.Y + DY*VacuumYOffset + ScrollY;
 
-        if (Vacuum.Type == VACUUM_NORMAL)
+    if (Vacuum.Type == VACUUM_NORMAL)
+    {
+        AddLitSpriteXCenteredScaledRotated(LIGHTLIST_VACUUM, &Vacuum1Sprite, VacuumX, VacuumY, 1.0f, VacuumAngle[Vacuum.Dir]);                
+
+        if (Chapter.PageProps.LightsOff)
         {
-            AddLitSpriteXCenteredScaledRotated(LIGHTLIST_VACUUM, &Vacuum1Sprite, VacuumX, VacuumY, 1.0f, VacuumAngle[Vacuum.Dir]);                
-
-            if (Chapter.PageProps.LightsOff)
+            if (Vacuum.Dir == VACUUMDIR_UP)
             {
-                if (Vacuum.Dir == VACUUMDIR_UP)
-                {
-                    AddLitSpriteXCenteredScaledRotatedAlpha(LIGHTLIST_LIGHTING, &LightVacuumSprite, VacuumX + DX*1160, VacuumY + DY*1160, 1.0f, VacuumAngle[Vacuum.Dir], LightsAlpha);                
-                }
-            }
-            
-            // Damage overlay
-            gxSprite* DamageSprite = NULL;
-            switch (Vacuum.Damage)
-            {
-                case 1: DamageSprite = &VacuumHurt1Sprite; break;
-                case 2: DamageSprite = &VacuumHurt2Sprite; break;
-                case 3: DamageSprite = &VacuumHurt3Sprite; break;
-                case 4: DamageSprite = &VacuumHurt4Sprite; break;
-                case 5: DamageSprite = &VacuumHurt5Sprite; break;
-                default: break;
-            }
-            if (DamageSprite)
-                AddLitSpriteXCenteredScaledRotated(LIGHTLIST_VACUUM, DamageSprite, VacuumX, VacuumY, 1.0f, VacuumAngle[Vacuum.Dir]);
-
-            // Blinking eyes overlay
-            if (Vacuum.State == VACUUMSTATE_RETREAT)
-                BlinkSprite = &VacuumBlink2Sprite;
-            else
-            {
-                if (Dusty.State != DUSTYSTATE_DIE)
-                {
-                    switch (Vacuum.BlinkTimer/6)
-                    {
-                        case 1: BlinkSprite = &VacuumBlink1Sprite; LightsAlpha = 0.75f; break;
-                        case 2: BlinkSprite = &VacuumBlink2Sprite; LightsAlpha = 0.5f; break;
-                        case 3: BlinkSprite = &VacuumBlink1Sprite; LightsAlpha = 0.75f; break;
-                        default: break;
-                    }
-                }
-            }
-            if (BlinkSprite)
-            {
-                AddLitSpriteXCenteredScaledRotatedAlpha(LIGHTLIST_VACUUM, BlinkSprite, VacuumX, VacuumY, 1.0f, VacuumAngle[Vacuum.Dir], LightsAlpha);
+                AddLitSpriteXCenteredScaledRotatedAlpha(LIGHTLIST_LIGHTING, &LightVacuumSprite, VacuumX + DX*1160, VacuumY + DY*1160, 1.0f, VacuumAngle[Vacuum.Dir], LightsAlpha);                
             }
         }
-        else if (Vacuum.Type == VACUUM_DUSTBUSTER)
+        
+        // Damage overlay
+        gxSprite* DamageSprite = NULL;
+        switch (Vacuum.Damage)
         {
-            gxSprite* Sprite = &DustBusterSprite;
-            
-            if (Vacuum.Side == VACUUMSIDE_LEFT)
+            case 1: DamageSprite = &VacuumHurt1Sprite; break;
+            case 2: DamageSprite = &VacuumHurt2Sprite; break;
+            case 3: DamageSprite = &VacuumHurt3Sprite; break;
+            case 4: DamageSprite = &VacuumHurt4Sprite; break;
+            case 5: DamageSprite = &VacuumHurt5Sprite; break;
+            default: break;
+        }
+        if (DamageSprite)
+            AddLitSpriteXCenteredScaledRotated(LIGHTLIST_VACUUM, DamageSprite, VacuumX, VacuumY, 1.0f, VacuumAngle[Vacuum.Dir]);
+
+        // Blinking eyes overlay
+        if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.State == VACUUMSTATE_OFF)
+            BlinkSprite = &VacuumBlink2Sprite;
+        else
+        {
+            if (Dusty.State != DUSTYSTATE_DIE)
             {
-                if (Vacuum.Dir == VACUUMDIR_UP)
-                    AddLitSpriteScaled(LIGHTLIST_VACUUM, Sprite, Vacuum.X+140 + ScrollX, Vacuum.Y+560 + ScrollY, -1.0f, -1.0f);
-                else
-                    AddLitSpriteScaled(LIGHTLIST_VACUUM, Sprite, Vacuum.X+140 + ScrollX, Vacuum.Y-560 + ScrollY, -1.0f, 1.0f);
+                switch (Vacuum.BlinkTimer/6)
+                {
+                    case 1: BlinkSprite = &VacuumBlink1Sprite; LightsAlpha = 0.75f; break;
+                    case 2: BlinkSprite = &VacuumBlink2Sprite; LightsAlpha = 0.5f; break;
+                    case 3: BlinkSprite = &VacuumBlink1Sprite; LightsAlpha = 0.75f; break;
+                    default: break;
+                }
             }
+        }
+        if (BlinkSprite)
+        {
+            AddLitSpriteXCenteredScaledRotatedAlpha(LIGHTLIST_VACUUM, BlinkSprite, VacuumX, VacuumY, 1.0f, VacuumAngle[Vacuum.Dir], LightsAlpha);
+        }
+    }
+    else if (Vacuum.Type == VACUUM_DUSTBUSTER)
+    {
+        gxSprite* Sprite = &DustBusterSprite;
+        
+        if (Vacuum.Side == VACUUMSIDE_LEFT)
+        {
+            if (Vacuum.Dir == VACUUMDIR_UP)
+                AddLitSpriteScaled(LIGHTLIST_VACUUM, Sprite, Vacuum.X+140 + ScrollX, Vacuum.Y+460 + ScrollY, -1.0f, -1.0f);
             else
-            {
-                if (Vacuum.Dir == VACUUMDIR_UP)
-                    AddLitSpriteScaled(LIGHTLIST_VACUUM, Sprite, Vacuum.X-140 + ScrollX, Vacuum.Y+560 + ScrollY, 1.0f, -1.0f);
-                else
-                    AddLitSpriteScaled(LIGHTLIST_VACUUM, Sprite, Vacuum.X-140 + ScrollX, Vacuum.Y-560 + ScrollY, 1.0f, 1.0f);
-            }
+                AddLitSpriteScaled(LIGHTLIST_VACUUM, Sprite, Vacuum.X+140 + ScrollX, Vacuum.Y-460 + ScrollY, -1.0f, 1.0f);
+        }
+        else
+        {
+            if (Vacuum.Dir == VACUUMDIR_UP)
+                AddLitSpriteScaled(LIGHTLIST_VACUUM, Sprite, Vacuum.X-140 + ScrollX, Vacuum.Y+460 + ScrollY, 1.0f, -1.0f);
+            else
+                AddLitSpriteScaled(LIGHTLIST_VACUUM, Sprite, Vacuum.X-140 + ScrollX, Vacuum.Y-460 + ScrollY, 1.0f, 1.0f);
         }
 	}
 }
@@ -395,10 +415,8 @@ void UpdateVacuum()
         {
             if (fabsf(Vacuum.Y - Dusty.FloatY) > LitScreenHeight*2)
             {
-                Vacuum.Dir = Random(0.0f, 1.0f) < 0.5f ? VACUUMDIR_UP : VACUUMDIR_DOWN;
-                Vacuum.Side = Random(0.0f, 1.0f) < 0.5f ? VACUUMSIDE_LEFT : VACUUMSIDE_RIGHT;
-                TurnOnVacuum(500, 0.0f, true);
-                
+                AdvanceDustBusterSideAndDir();
+                TurnOnVacuum(LitScreenHeight, 0.0f, true);
                 Vacuum.ChargeTimer = VACUUM_CHARGE_DELAY;
             }
         }
@@ -439,6 +457,9 @@ void UpdateVacuum()
 
 void JamVacuum()
 {
+    if (Settings.DisableVacuum)
+		return;
+
 	if (Vacuum.State == VACUUMSTATE_ONSCREEN)
 	{
         if (Vacuum.Damage < 5)
@@ -460,6 +481,9 @@ void JamVacuum()
 
 void TurnOffVacuum()
 {
+    if (Settings.DisableVacuum)
+		return;
+    
 	if (Vacuum.State != VACUUMSTATE_OFF)
 	{
 		Vacuum.State = VACUUMSTATE_OFF;
@@ -478,6 +502,9 @@ void TurnOffVacuum()
 
 void TurnOnVacuum(float InitialDistance, float DelayBeforeMoving, bool Charging)
 {
+    if (Settings.DisableVacuum)
+		return;
+    
     Vacuum.OnVolume = 0.0f;
     Vacuum.JamVolume = 0.0f;
     sxSetSoundVolume(&VacuumOnSound, 0.0f);
@@ -505,6 +532,9 @@ void TurnOnVacuum(float InitialDistance, float DelayBeforeMoving, bool Charging)
 
 bool IsInVacuum(float X, float Y)
 {
+    if (Settings.DisableVacuum)
+		return false;
+    
     if (Vacuum.State != VACUUMSTATE_ONSCREEN)
         return false;
     
@@ -513,6 +543,9 @@ bool IsInVacuum(float X, float Y)
 
 bool IsNearVacuum(float X, float Y)
 {
+    if (Settings.DisableVacuum)
+		return false;
+    
     if (Vacuum.Type == VACUUM_NORMAL)
     {
         float AX, AY;
@@ -541,6 +574,9 @@ bool IsNearVacuum(float X, float Y)
 
 float GetDistanceToVacuum(float X, float Y)
 {
+    if (Settings.DisableVacuum)
+		return 1000000.0f;
+    
     if (Vacuum.State != VACUUMSTATE_ONSCREEN)
         return 1000000.0f;
     

@@ -11,6 +11,7 @@
 #include "Input.h"
 #include "Settings.h"
 #include "Recorder.h"
+#include "Tweak.h"
 
 
 #define MAX_SWIPE_POINTS 256
@@ -296,7 +297,7 @@ bool GetInput_IsSwipedUsed()
 void DisplaySwipe()
 {
 #ifdef SWIPE_DEBUG
-	if (DevMode)
+	if (Settings.DeveloperMode)
 	{
 		for (int i = 0; i < Swipe.Count-1; i++)
 		{        

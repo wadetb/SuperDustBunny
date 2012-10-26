@@ -10,6 +10,8 @@
 #include "Common.h"
 #include "Debug.h"
 #include "Text.h"
+#include "Tweak.h"
+#include "Settings.h"
 
 #ifdef PLATFORM_IPHONE
 #import "SuperDustBunnyViewController.h"
@@ -111,6 +113,9 @@ void DisplayDebugLine(float X1, float Y1, float X2, float Y2, float Width, unsig
 
 void DisplayDebug()
 {
+    if (!Settings.DeveloperMode)
+        return;
+    
     for (int i = 0; i < MAX_DEBUG_LINES; i++)
     {
         if (DebugLines[i].EndFrame > CurFrame)
