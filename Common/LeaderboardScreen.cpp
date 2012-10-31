@@ -110,7 +110,7 @@ void DownloadLeaderboards()
     }
     NSURL *URL = [NSURL URLWithString:URLString];
     
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:30];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:5];
     
     NSURLResponse *response;
     NSError *error = [[NSError alloc] init];

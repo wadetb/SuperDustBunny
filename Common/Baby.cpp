@@ -673,13 +673,13 @@ void SendBabyToGather(float X, float Y)
         if (Baby->State != BABYSTATE_FOLLOW)
             continue;
         
-        if ((Y + ScrollY >= LitScreenHeight - 200 || Y >= Vacuum.Y) && Vacuum.State != VACUUMSTATE_RETREAT && Vacuum.Type == VACUUM_NORMAL)
-        {
-            Baby->State = BABYSTATE_JUMP_TO_ATTACK;
-            Baby->GatherX = X;
-            Baby->GatherY = Baby->Y - 200;
-        }
-        else
+//        if ((Y + ScrollY >= LitScreenHeight - 200 || Y >= Vacuum.Y) && Vacuum.State != VACUUMSTATE_RETREAT && Vacuum.Type == VACUUM_NORMAL)
+//        {
+//            Baby->State = BABYSTATE_JUMP_TO_ATTACK;
+//            Baby->GatherX = X;
+//            Baby->GatherY = Baby->Y - 200;
+//        }
+//        else
         {
             Baby->State = BABYSTATE_GATHER;
             Baby->GatherX = X;

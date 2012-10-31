@@ -185,6 +185,8 @@ struct SDusty
     
     int LandTimer;
     
+    int HurtTimer;
+    
     int ComboCount;
     
     bool Hidden;

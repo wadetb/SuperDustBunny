@@ -69,6 +69,7 @@ inline unsigned int ApplyBlockFlagsToDir(unsigned int Dir, unsigned int Flags)
 enum EBlockType
 {
 	BLOCKTYPE_NORMAL,
+	BLOCKTYPE_NOCOLLIDE,
 	BLOCKTYPE_CHAPTERSTART,
 	BLOCKTYPE_CHAPTEREND,
 	BLOCKTYPE_BARREL,
@@ -305,6 +306,7 @@ void DisplayChapterExtraLayers();
 
 void CalculateScroll();
 
+int GetBlockType(int x, int y);
 int GetBlockID(int x, int y);
 int GetBlockFlags(int x, int y);
 

@@ -358,7 +358,11 @@ static void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* F
 				{
 					// This code converts "type=blah" values in the tileset into actual block types.
 					// To add a new special kind of block to the game, you need to add a check here.
-					if (strcmp(Value, "start") == 0)
+					if (strcmp(Value, "nocollision") == 0)
+					{
+						Block->Type = BLOCKTYPE_NOCOLLIDE;
+					}
+					else if (strcmp(Value, "start") == 0)
 					{
 						Block->Type = BLOCKTYPE_CHAPTERSTART;
 					}
@@ -437,6 +441,12 @@ static void LoadTileSetNode(rapidxml::xml_node<char>* TileSetNode, const char* F
                     else if (strcmp(Value, "balloon") == 0)
                     {
                         Block->Type = BLOCKTYPE_BALLOON;
+                    }
+                    else
+                    {
+#ifdef PLATFORM_IPHONE_OR_MAC
+                        printf("WARNING: Unknown block type '%s'.\n", Value);
+#endif
                     }
 				}
 				else if (strcmp(Name, "material") == 0)
@@ -1266,8 +1276,8 @@ void SetCurrentPage(int PageNum)
         {
             for (int j = 0; j < ARRAY_COUNT(PortfolioEntries); j++)
             {
-                bool IsPositiveMergeLayer = strncasecmp(Layer->Name, PortfolioEntries[i].Name, strlen(PortfolioEntries[j].Name)) == 0;
-                bool IsNegativeMergeLayer = Layer->Name[0] == '!' && strncasecmp(Layer->Name+1, PortfolioEntries[i].Name, strlen(PortfolioEntries[j].Name)) == 0;
+                bool IsPositiveMergeLayer = strncasecmp(Layer->Name, PortfolioEntries[j].Name, strlen(PortfolioEntries[j].Name)) == 0;
+                bool IsNegativeMergeLayer = Layer->Name[0] == '!' && strncasecmp(Layer->Name+1, PortfolioEntries[j].Name, strlen(PortfolioEntries[j].Name)) == 0;
                 
                 if ((IsPositiveMergeLayer && *PortfolioEntries[j].Value) || (IsNegativeMergeLayer && !*PortfolioEntries[j].Value))
                 {
@@ -1275,7 +1285,8 @@ void SetCurrentPage(int PageNum)
                     {
                         for (int x = 0; x < Chapter.PageWidth; x++)
                         {
-                            Chapter.PageBlocks[y*Chapter.PageWidth + x] = Layer->Blocks[y*Chapter.PageWidth + x];
+                            if (Layer->Blocks[y*Chapter.PageWidth + x] != SPECIALBLOCKID_BLANK)
+                                Chapter.PageBlocks[y*Chapter.PageWidth + x] = Layer->Blocks[y*Chapter.PageWidth + x];
                         }
                     }                    
                     Layer->Alpha = 1.0f;
@@ -1544,6 +1555,15 @@ int GetBlockID(int x, int y)
 	return Chapter.PageBlocks[y * Chapter.PageWidth + x] & SPECIALBLOCKID_MASK;
 }
 
+int GetBlockType(int x, int y)
+{
+    int ID = GetBlockID(x, y);
+    if (ID < SPECIALBLOCKID_FIRST)
+        return Chapter.Blocks[ID].Type;
+    else
+        return BLOCKTYPE_NORMAL;
+}
+
 int GetBlockFlags(int x, int y)
 {
 	// Requests for blocks outside the map return a special value.
@@ -1562,6 +1582,9 @@ bool IsBlockEmpty(int x, int y)
 		return false;
 	if (y < 0 || y >= Chapter.PageHeight)
 		return false;
+    
+    if (GetBlockType(x, y) == BLOCKTYPE_NOCOLLIDE)
+        return true;
 
 	if ((Chapter.PageBlocks[y * Chapter.PageWidth + x] & SPECIALBLOCKID_MASK) == SPECIALBLOCKID_BLANK)
 		return true;

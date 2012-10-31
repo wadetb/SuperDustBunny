@@ -1617,7 +1617,11 @@ static void UpdateDusty_Stuck()
 }
 
 void SetDustyState_Hurt()
-{   
+{
+    if (Dusty.HurtTimer < 30)
+        return;
+    Dusty.HurtTimer = 0;
+    
     Dusty.SpriteTransition = 0;
 
 	if (Dusty.CollideWithBottomSide)
@@ -1627,11 +1631,11 @@ void SetDustyState_Hurt()
 		Dusty.CollideWithBottomSide = false;
 	}
 
-    if (Dusty.FloatVelocityX < 0)
-        Dusty.FloatVelocityX = 10;
-    else
-        Dusty.FloatVelocityX = -10;
-        
+//    if (Dusty.FloatVelocityX < 0)
+//        Dusty.FloatVelocityX = 10;
+//    else
+//        Dusty.FloatVelocityX = -10;
+    
     Dusty.ComboCount = 0;
 
 	Dusty.State = DUSTYSTATE_HURT;
@@ -2138,4 +2142,6 @@ void UpdateDusty()
             SendBabyToGather(msX - ScrollX, msY - ScrollY);
         }
     }
+    
+    Dusty.HurtTimer++;
 }

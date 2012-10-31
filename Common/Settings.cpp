@@ -63,7 +63,7 @@ void LoadSettings()
     Settings.Lives = (int)[defaults integerForKey:@"Lives"];
     Settings.ControlStyle = (EControlStyle)[defaults integerForKey:@"ControlStyle"];
     Settings.GhostActive = [defaults boolForKey:@"GhostActive"];
-    Settings.DeveloperMode = [defaults boolForKey:@"DeveloperMode"];
+    Settings.DeveloperMode = true; //[defaults boolForKey:@"DeveloperMode"];
     Settings.DisableVacuum = [defaults boolForKey:@"DisableVacuum"];
     Settings.LiveAssets = [defaults boolForKey:@"LiveAssets"];
     snprintf(Settings.AssetServer, sizeof(Settings.AssetServer), "%s", [[defaults stringForKey:@"AssetServer"] UTF8String]);

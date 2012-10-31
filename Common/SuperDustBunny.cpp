@@ -432,10 +432,12 @@ static void DisplayPauseScreen()
             snprintf(Work, sizeof(Work), "%s", Chapter.Pages[Chapter.PageNum].Name);
             for (int i = 0; i < strlen(Work); i++)
                 Work[i] = tolower(Work[i]);
-            DisplayString(LIGHTLIST_WIPE, Work, FORMAT_CENTER_X, 384, LitScreenHeight-60, 0.75f);
+            DisplayString(LIGHTLIST_WIPE, Work, FORMAT_CENTER_X, 384, LitScreenHeight-100, 1.25f);
         }
         
+#ifdef PLATFORM_IPHONE
         if (Settings.LiveAssets)
+#endif
         {
             AddLitSpriteCenteredScaledRotated(LIGHTLIST_WIPE, &ButtonPlaySprite, 384 - 600*PauseSlideIn, 860, 2.25f, DegreesToRadians(90.0f));
         }
@@ -482,14 +484,17 @@ static void UpdatePauseScreen()
             SetGameState_StartScreen();
         }
         
+        
+#ifdef PLATFORM_IPHONE
         if (Settings.LiveAssets)
+#endif
         {
             if (abs(msX - 384) < 300 && msY >= 700 && msY <= 1000)
             {
 #ifdef PLATFORM_IPHONE
                 [TestFlight passCheckpoint:@"Replayed the current page"];
-#endif
                 UpdateLiveAssetCache();
+#endif
                 TurnOffVacuum();
                 if (IsRecordingActive())
                     StopRecording(RESULT_NONE);
