@@ -421,12 +421,12 @@
 		085AAA14132C5B5F00DF32CA /* iOS */ = {
 			isa = PBXGroup;
 			children = (
-				086B1E45161E7F7200C41D0E /* Default-568h@2x.png */,
 				08058FA4141EB76F004780BA /* libTestFlight.a */,
 				08058FA5141EB76F004780BA /* TestFlight.h */,
 				0856200A1346A40000F9EFBA /* Default-ipad.png */,
 				0856200B1346A40000F9EFBA /* Default.png */,
 				0856200C1346A40000F9EFBA /* Default@2x.png */,
+				086B1E45161E7F7200C41D0E /* Default-568h@2x.png */,
 				0856200D1346A40000F9EFBA /* Icon.png */,
 				0856200E1346A40000F9EFBA /* Icon@2x.png */,
 				082C9B7F13E8D97400586EDB /* Icon-ipad.png */,

@@ -110,6 +110,8 @@ unsigned char RecorderEventBuffer[RECORDER_BUFFER_SIZE];
 
 int RecordingTime;
 
+int CurrentSessionID;
+
 
 #define PORTFOLIO_VERSION 1
 
@@ -304,7 +306,7 @@ void DownloadRecording(int id)
 
 void StartRecordingSession()
 {
-    RecorderHeader.Session = (int)time(NULL);
+    CurrentSessionID = (int)time(NULL);
 }
 
 void StartRecording()
@@ -318,6 +320,8 @@ void StartRecording()
 	RecorderHeader.Build = BuildNumber;
 
     RecorderHeader.Number = Portfolio.PageCount;
+    
+    RecorderHeader.Session = CurrentSessionID;
     
 	snprintf(RecorderHeader.Chapter, sizeof(RecorderHeader.Chapter), "%s", Chapter.Name);
 	snprintf(RecorderHeader.Page, sizeof(RecorderHeader.Page), "%s", Chapter.Pages[Chapter.PageNum].Name);
