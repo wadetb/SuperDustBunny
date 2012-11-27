@@ -716,7 +716,7 @@ void SetDustyState_JumpWithVelocity( float VX, float VY )
 
 // This is a specialized way to get into the Jump state, without the initial velocity boost.
 void SetDustyState_Fall()
-{
+{    
     Dusty.HasJumped = true;
     Dusty.ComboCount = 0;
 
@@ -932,9 +932,9 @@ static void UpdateDusty_Hop()
 
 void UpdateDusty_JumpCommon()
 {  
-	Dusty.FloatX += Dusty.FloatVelocityX;                                                   
+    Dusty.FloatX += Dusty.FloatVelocityX;                                                   
     Dusty.FloatY += Dusty.FloatVelocityY;
-    
+        
     if ( Dusty.State == DUSTYSTATE_LAUNCH )
     {
         // Reduced gravity when launching, and no friction.
@@ -942,6 +942,11 @@ void UpdateDusty_JumpCommon()
     }
     else
     {
+        if (Dusty.Hat == DUSTYHAT_GREEN_FEATHER || Dusty.Hat == DUSTYHAT_PURPLE_FEATHER)
+        {
+            Tweak.DustyTerminalVelocityDown = 5.5f;
+        }
+
         Dusty.FloatVelocityY += Tweak.DustyGravity;        
 
         if ( Settings.ControlStyle == CONTROL_SWIPE )
