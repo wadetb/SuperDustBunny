@@ -109,11 +109,11 @@ gxSprite* DustyHatSprites[DUSTYHAT_COUNT];
 SDustyHatOffset DustyHatAdjustments[DUSTYHAT_COUNT] =
 {
     { 0, 0, 0, 1 },                 //    DUSTYHAT_NONE,
-    { 0, 0, -20, 1 },               //    DUSTYHAT_APPLE,
+    { 0, 0, -20, 1 },               //    DUSTYHAT_APPLE, Increases Vacuum Retreat time by x amount.
     { 0, 5, -5, 1 },                //    DUSTYHAT_BASEBALL_CAP,
     { 0, 15, -15, 1 },              //    DUSTYHAT_BEE,
     { 0, 0, 0, 1 },                 //    DUSTYHAT_BOWTIE,
-    { 0, 30, 20, 1 },                 //    DUSTYHAT_CLOWN_NOSE,
+    { 0, 30, 20, 1 },                 //    DUSTYHAT_CLOWN_NOSE, Provides extra light on dark levels.
     { 0, -5, -17, 1 },                 //    DUSTYHAT_CROWN,
     { 0, 12, 10, 1 },                 //    DUSTYHAT_DISGUISE,
     { 0, 0, 10, 1 },                 //    DUSTYHAT_EARMUFFS,
@@ -121,19 +121,19 @@ SDustyHatOffset DustyHatAdjustments[DUSTYHAT_COUNT] =
     { 0, 0, 12, 1 },                 //    DUSTYHAT_EYEGLASSES,
     { 0, 0, 15, 1 },                 //    DUSTYHAT_EYEPATCH,
     { 0, -10, 0, 1 },                 //    DUSTYHAT_FLOWER,
-    { 0, 0, -15, 1 },                 //    DUSTYHAT_FROG_CROWN,
+    { 0, 0, -15, 1 },                 //    DUSTYHAT_FROG_CROWN, 
     { 0, -5, 5, 1 },                 //    DUSTYHAT_GRADUATION,
-    { 0, -17, 0, 1 },                 //    DUSTYHAT_GREEN_FEATHER,
+    { 0, -17, 0, 1 },                 //    DUSTYHAT_GREEN_FEATHER, Slows Dusty's Fall
     { 0, -15, -10, 1 },                 //    DUSTYHAT_JESTER,
-    { 0, -10, 28, 1 },                 //    DUSTYHAT_KARATE,
-    { 0, 8, 23, 1 },                 //    DUSTYHAT_MONOCLE,
+    { 0, -10, 28, 1 },                 //    DUSTYHAT_KARATE, Increases Vacuum Retreat time by x amount.
+    { 0, 8, 23, 1 },                 //    DUSTYHAT_MONOCLE, 
     { 0, 0, 0, 1 },                 //    DUSTYHAT_NURSE,
     { 0, 0, 0, 1 },                 //    DUSTYHAT_PARTY,
     { 0, 0, 0, 1 },                 //    DUSTYHAT_PINK_BOW,
     { 0, 0, 15, 1 },                 //    DUSTYHAT_PINK_SHADES,
     { 0, 0, -5, 1 },                 //    DUSTYHAT_PINK_TIARA,
     { 0, -5, -10, 1 },              //    DUSTYHAT_PIRATE,
-    { 0, -25, 2, 1 },                 //    DUSTYHAT_PURPLE_FEATHER,
+    { 0, -25, 2, 1 },                 //    DUSTYHAT_PURPLE_FEATHER, Slows Dusty's Fall
     { 0, 0, 0, 1 },                 //    DUSTYHAT_SNORKEL,
     { 0, 0, 14, 1 },                 //    DUSTYHAT_SUNGLASSES,
     { 0, -4, -18, 1 },                 //    DUSTYHAT_TOPHAT,
