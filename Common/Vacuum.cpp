@@ -468,7 +468,15 @@ void JamVacuum()
         CreateVacuumSmoke(2);
         
 		Vacuum.State = VACUUMSTATE_RETREAT;
-		Vacuum.Timer = VACUUM_RETREAT_TIME;
+        
+        if (Dusty.Hat == DUSTYHAT_APPLE)
+        {
+            Vacuum.Timer = VACUUM_RETREAT_TIME + 100;//Normally 5*60
+        }
+        else
+        {
+            Vacuum.Timer = VACUUM_RETREAT_TIME;
+        }
         
         Vacuum.Charging = false;
         Vacuum.ChargeTimer = VACUUM_CHARGE_DELAY;

@@ -946,6 +946,10 @@ void UpdateDusty_JumpCommon()
         {
             Tweak.DustyTerminalVelocityDown = 5.5f;
         }
+        else
+        {
+            Tweak.DustyTerminalVelocityDown = 15.0f;
+        }
 
         Dusty.FloatVelocityY += Tweak.DustyGravity;        
 
