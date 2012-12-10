@@ -114,7 +114,7 @@ SDustyHatOffset DustyHatAdjustments[DUSTYHAT_COUNT] =
     { 0, 15, -15, 1 },              //    DUSTYHAT_BEE,
     { 0, 0, 0, 1 },                 //    DUSTYHAT_BOWTIE,
     { 0, 30, 20, 1 },                 //    DUSTYHAT_CLOWN_NOSE, Provides extra light on dark levels.
-    { 0, -5, -17, 1 },                 //    DUSTYHAT_CROWN,
+    { 0, -5, -17, 1 },                 //    DUSTYHAT_CROWN, Adds one extra coin
     { 0, 12, 10, 1 },                 //    DUSTYHAT_DISGUISE,
     { 0, 0, 10, 1 },                 //    DUSTYHAT_EARMUFFS,
     { 0, -5, 8, 1 },                 //    DUSTYHAT_EARPHONES,
@@ -131,7 +131,7 @@ SDustyHatOffset DustyHatAdjustments[DUSTYHAT_COUNT] =
     { 0, 0, 0, 1 },                 //    DUSTYHAT_PARTY,
     { 0, 0, 0, 1 },                 //    DUSTYHAT_PINK_BOW,
     { 0, 0, 15, 1 },                 //    DUSTYHAT_PINK_SHADES,
-    { 0, 0, -5, 1 },                 //    DUSTYHAT_PINK_TIARA,
+    { 0, 0, -5, 1 },                 //    DUSTYHAT_PINK_TIARA, Adds one extra coin
     { 0, -5, -10, 1 },              //    DUSTYHAT_PIRATE,
     { 0, -25, 2, 1 },                 //    DUSTYHAT_PURPLE_FEATHER, Slows Dusty's Fall
     { 0, 0, 0, 1 },                 //    DUSTYHAT_SNORKEL,

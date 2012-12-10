@@ -61,7 +61,15 @@ void UpdateLives()
 	if (Dusty.GainLife)
 	{
  		Dusty.GainLife = false;
-		Settings.Lives += 1;
+        
+        Settings.Lives += 1;
+        
+        //If we are wearing either the Crown or the Pink Tiara add an extra coin.
+        if (Dusty.Hat == DUSTYHAT_CROWN || Dusty.Hat == DUSTYHAT_PINK_TIARA)
+        {
+            Settings.Lives += 1;
+        }
+        
         Portfolio.TotalLives++;
         PageTimer = 0;
         LivesTimer = 8*60;
