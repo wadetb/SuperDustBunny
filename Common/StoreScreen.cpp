@@ -47,12 +47,12 @@ SStoreScreen StoreScreen;
 
 SInventory Inventory[] =
 {
-    { "Assets/hat-apple.png", "apple hat", 5, DUSTYHAT_APPLE },
-    { "Assets/hat-baseball-cap.png", "baseball cap", 5, DUSTYHAT_BASEBALL_CAP },
+    { "Assets/hat-apple.png", "apple\ngives vacuum\npause", 5, DUSTYHAT_APPLE },
+    { "Assets/hat-baseball-cap.png", "baseball cap\ndusty is faster!", 5, DUSTYHAT_BASEBALL_CAP },
     { "Assets/hat-bee.png", "bee hat", 5, DUSTYHAT_BEE },
-    { "Assets/hat-bowtie.png", "bowtie", 5, DUSTYHAT_BOWTIE },
-    { "Assets/hat-clown-nose.png", "clown nose", 30, DUSTYHAT_CLOWN_NOSE },
-    { "Assets/hat-crown.png", "crown", 5, DUSTYHAT_CROWN },
+    { "Assets/hat-bowtie.png", "bowtie\nimmune to\nfire and spikes", 5, DUSTYHAT_BOWTIE },
+    { "Assets/hat-clown-nose.png", "clown nose\nprovides light", 30, DUSTYHAT_CLOWN_NOSE },
+    { "Assets/hat-crown.png", "crown\nadds extra\ncoin", 5, DUSTYHAT_CROWN },
     { "Assets/hat-disguise.png", "disguise", 5, DUSTYHAT_DISGUISE },
     { "Assets/hat-earmuffs.png", "ear muffs", 5, DUSTYHAT_EARMUFFS },
     { "Assets/hat-earphones.png", "ear phones", 5, DUSTYHAT_EARPHONES },
@@ -61,17 +61,17 @@ SInventory Inventory[] =
     { "Assets/hat-flower.png", "flower", 5, DUSTYHAT_FLOWER },
     { "Assets/hat-frog-crown.png", "frog crown", 5, DUSTYHAT_FROG_CROWN },
     { "Assets/hat-graduation.png", "graduation cap", 5, DUSTYHAT_GRADUATION },
-    { "Assets/hat-green-feather.png", "green feather", 5, DUSTYHAT_GREEN_FEATHER },
+    { "Assets/hat-green-feather.png", "green feather\nfall slower", 5, DUSTYHAT_GREEN_FEATHER },
     { "Assets/hat-jester.png", "jester hat", 5, DUSTYHAT_JESTER },
-    { "Assets/hat-karate.png", "karate hat", 5, DUSTYHAT_KARATE },
+    { "Assets/hat-karate.png", "karate hat\ngives vacuum\npause", 5, DUSTYHAT_KARATE },
     { "Assets/hat-monocle.png", "monocle", 5, DUSTYHAT_MONOCLE },
-    { "Assets/hat-nurse.png", "nurse cap", 5, DUSTYHAT_NURSE },
+    { "Assets/hat-nurse.png", "nurse cap\ndusty is faster!", 5, DUSTYHAT_NURSE },
     { "Assets/hat-party.png", "party hat", 5, DUSTYHAT_PARTY },
-    { "Assets/hat-pink-bow.png", "pink bow", 5, DUSTYHAT_PINK_BOW },
+    { "Assets/hat-pink-bow.png", "pink bow\nimmune to\nfire and spikes", 5, DUSTYHAT_PINK_BOW },
     { "Assets/hat-pink-shades.png", "pink shades", 5, DUSTYHAT_PINK_SHADES },
-    { "Assets/hat-pink-tiara.png", "pink tiara", 5, DUSTYHAT_PINK_TIARA },
+    { "Assets/hat-pink-tiara.png", "pink tiara\nadds extra\ncoin", 5, DUSTYHAT_PINK_TIARA },
     { "Assets/hat-pirate.png", "pirate hat", 5, DUSTYHAT_PIRATE },
-    { "Assets/hat-purple-feather.png", "purple feather", 5, DUSTYHAT_PURPLE_FEATHER },
+    { "Assets/hat-purple-feather.png", "yellow feather\nfall slower", 5, DUSTYHAT_PURPLE_FEATHER },
     { "Assets/hat-snorkel.png", "snorkel", 5, DUSTYHAT_SNORKEL },
     { "Assets/hat-sunglasses.png", "sunglasses", 5, DUSTYHAT_SUNGLASSES },
     { "Assets/hat-tophat.png", "top hat", 5, DUSTYHAT_TOPHAT },
@@ -268,7 +268,7 @@ void DisplayStoreScreen()
         
         AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &Inventory[StoreScreen.ActiveItem].Sprite, 384, 250, 4.0f, 1.0f);
 
-        DisplayMultilineStringAlpha(LIGHTLIST_WIPE, Inventory[StoreScreen.ActiveItem].Description, FORMAT_CENTER_X, 384, 450, 0.8f, 1.0f);
+        DisplayMultilineStringAlpha(LIGHTLIST_WIPE, Inventory[StoreScreen.ActiveItem].Description, FORMAT_CENTER_X, 384, 400, 0.8f, 1.0f);
 
         AddLitSpriteScaled(LIGHTLIST_WIPE, &CoinIconSprite, 240, 560, 0.65f*1.0f, 0.65f*1.0f);
         snprintf(Work, sizeof(Work), "x%d", Inventory[StoreScreen.ActiveItem].Cost);

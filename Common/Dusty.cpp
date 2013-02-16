@@ -108,11 +108,11 @@ gxSprite* DustyHatSprites[DUSTYHAT_COUNT];
 
 SDustyHatOffset DustyHatAdjustments[DUSTYHAT_COUNT] =
 {
-    { 0, 0, 0, 1 },                 //    DUSTYHAT_NONE,
+    { 0, 0, 0, 1 },                 //    DUSTYHAT_NONE, No Special Effect
     { 0, 0, -20, 1 },               //    DUSTYHAT_APPLE, Increases Vacuum Retreat time by x amount.
-    { 0, 5, -5, 1 },                //    DUSTYHAT_BASEBALL_CAP,
-    { 0, 15, -15, 1 },              //    DUSTYHAT_BEE,
-    { 0, 0, 0, 1 },                 //    DUSTYHAT_BOWTIE,
+    { 0, 5, -5, 1 },                //    DUSTYHAT_BASEBALL_CAP, Speed up Dusty
+    { 0, 15, -15, 1 },              //    DUSTYHAT_BEE, Need power for this
+    { 0, 0, 0, 1 },                 //    DUSTYHAT_BOWTIE, Dusty is immune to getting hurt by spikes,flames
     { 0, 30, 20, 1 },                 //    DUSTYHAT_CLOWN_NOSE, Provides extra light on dark levels.
     { 0, -5, -17, 1 },                 //    DUSTYHAT_CROWN, Adds one extra coin
     { 0, 12, 10, 1 },                 //    DUSTYHAT_DISGUISE,
@@ -127,9 +127,9 @@ SDustyHatOffset DustyHatAdjustments[DUSTYHAT_COUNT] =
     { 0, -15, -10, 1 },                 //    DUSTYHAT_JESTER,
     { 0, -10, 28, 1 },                 //    DUSTYHAT_KARATE, Increases Vacuum Retreat time by x amount.
     { 0, 8, 23, 1 },                 //    DUSTYHAT_MONOCLE, 
-    { 0, 0, 0, 1 },                 //    DUSTYHAT_NURSE,
-    { 0, 0, 0, 1 },                 //    DUSTYHAT_PARTY,
-    { 0, 0, 0, 1 },                 //    DUSTYHAT_PINK_BOW,
+    { 0, 0, 0, 1 },                 //    DUSTYHAT_NURSE, Speed up Dusty
+    { 0, 0, 0, 1 },                 //    DUSTYHAT_PARTY, Need power for this
+    { 0, 0, 0, 1 },                 //    DUSTYHAT_PINK_BOW, Dusty is immune to getting hurt by spikes,flames
     { 0, 0, 15, 1 },                 //    DUSTYHAT_PINK_SHADES,
     { 0, 0, -5, 1 },                 //    DUSTYHAT_PINK_TIARA, Adds one extra coin
     { 0, -5, -10, 1 },              //    DUSTYHAT_PIRATE,
@@ -649,13 +649,13 @@ void SetDustyState_Jump( bool OffWall )
 {
     if (Dusty.PowerUpTimer > 0)
 	{
-		Dusty.FloatVelocityX = 12.0f;
-		Dusty.FloatVelocityY = -24.0f;
+        Dusty.FloatVelocityX = 12.0f;
+        Dusty.FloatVelocityY = -24.0f;
 	}
     else
     {
-	    Dusty.FloatVelocityX = 6.0f;
-	    Dusty.FloatVelocityY = -16.0f;
+        Dusty.FloatVelocityX = 6.0f;
+        Dusty.FloatVelocityY = -16.0f;
     }
 
     if (Dusty.Direction == DIRECTION_LEFT)
@@ -691,9 +691,26 @@ void SetDustyState_JumpWithVelocity( float VX, float VY )
     
     if (Dusty.PowerUpTimer > 0)
     {
-	    VX *= 1.25f;
-	    VY *= 1.25f;
+        if(Dusty.Hat == DUSTYHAT_BASEBALL_CAP || Dusty.Hat == DUSTYHAT_NURSE)
+        {
+            VX *= 1.50f;
+            VY *= 1.50f;
+        }
+        else
+        {
+            VX *= 1.25f;
+            VY *= 1.25f;
+        }
     }
+    else
+    {
+        if(Dusty.Hat == DUSTYHAT_BASEBALL_CAP || Dusty.Hat == DUSTYHAT_NURSE)
+        {
+            VX *= 1.15f;
+            VY *= 1.15f;
+        }
+    }
+    
     
     Dusty.FloatVelocityX = VX;
     Dusty.FloatVelocityY = VY;
@@ -1647,7 +1664,8 @@ void SetDustyState_Hurt()
     
     Dusty.ComboCount = 0;
 
-	Dusty.State = DUSTYSTATE_HURT;
+    if(Dusty.Hat != DUSTYHAT_BOWTIE || Dusty.Hat != DUSTYHAT_PINK_BOW)
+        Dusty.State = DUSTYSTATE_HURT;
     
     UpdateMinimap(MINIMAP_HURT);
 }
@@ -1660,6 +1678,19 @@ static void DisplayDusty_Hurt()
 
 static void UpdateDusty_Hurt()
 {
+    if(Dusty.Hat == DUSTYHAT_BOWTIE || Dusty.Hat == DUSTYHAT_PINK_BOW)
+    {
+        if(Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide)
+        {
+            SetDustyState_WallJump();
+        }
+        else
+        {
+            SetDustyState_Fall();
+        }
+        return;
+    }
+        
 	Dusty.FloatX += Dusty.FloatVelocityX;                                                   
 	Dusty.FloatY += Dusty.FloatVelocityY;
 
