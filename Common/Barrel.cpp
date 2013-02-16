@@ -176,7 +176,15 @@ void UpdateBarrels()
 			{
 				Barrel->Dir = Barrel->ToDir;
 				float Angle = DirectionToAngle(Barrel->Dir);
-				SetDustyState_Launch(Barrel->Power*cosf(Angle), -Barrel->Power*sinf(Angle));
+                if(Dusty.Hat == DUSTYHAT_BEE || Dusty.Hat == DUSTYHAT_PARTY)
+                {
+                    SetDustyState_Launch((Barrel->Power + 10)*cosf(Angle), -Barrel->Power*sinf(Angle));
+                }
+                else
+                {
+                    SetDustyState_Launch(Barrel->Power*cosf(Angle), -Barrel->Power*sinf(Angle));
+                }
+				
                 Dusty.Hidden = false;
 				Barrel->Timer = 30;
 				Barrel->State = BARRELSTATE_LAUNCH;

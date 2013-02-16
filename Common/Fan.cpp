@@ -109,7 +109,14 @@ void UpdateFans()
 
 		if (Dusty.State == DUSTYSTATE_JUMP || Dusty.State == DUSTYSTATE_LAUNCH)
 		{
-			ApplyFanWind(Fan, Dusty.FloatX, Dusty.FloatY, 0.75f, &Dusty.FloatVelocityX, &Dusty.FloatVelocityY);
+            if(Dusty.Hat == DUSTYHAT_BEE || Dusty.Hat == DUSTYHAT_PARTY)
+            {
+                ApplyFanWind(Fan, Dusty.FloatX, Dusty.FloatY, 0.90f, &Dusty.FloatVelocityX, &Dusty.FloatVelocityY);    
+            }
+            else
+            {
+                ApplyFanWind(Fan, Dusty.FloatX, Dusty.FloatY, 0.75f, &Dusty.FloatVelocityX, &Dusty.FloatVelocityY);
+            }
 		}
 	}
 }

@@ -111,7 +111,7 @@ SDustyHatOffset DustyHatAdjustments[DUSTYHAT_COUNT] =
     { 0, 0, 0, 1 },                 //    DUSTYHAT_NONE, No Special Effect
     { 0, 0, -20, 1 },               //    DUSTYHAT_APPLE, Increases Vacuum Retreat time by x amount.
     { 0, 5, -5, 1 },                //    DUSTYHAT_BASEBALL_CAP, Speed up Dusty
-    { 0, 15, -15, 1 },              //    DUSTYHAT_BEE, Need power for this
+    { 0, 15, -15, 1 },              //    DUSTYHAT_BEE, Launch from barrels faster
     { 0, 0, 0, 1 },                 //    DUSTYHAT_BOWTIE, Dusty is immune to getting hurt by spikes,flames
     { 0, 30, 20, 1 },                 //    DUSTYHAT_CLOWN_NOSE, Provides extra light on dark levels.
     { 0, -5, -17, 1 },                 //    DUSTYHAT_CROWN, Adds one extra coin
@@ -128,7 +128,7 @@ SDustyHatOffset DustyHatAdjustments[DUSTYHAT_COUNT] =
     { 0, -10, 28, 1 },                 //    DUSTYHAT_KARATE, Increases Vacuum Retreat time by x amount.
     { 0, 8, 23, 1 },                 //    DUSTYHAT_MONOCLE, 
     { 0, 0, 0, 1 },                 //    DUSTYHAT_NURSE, Speed up Dusty
-    { 0, 0, 0, 1 },                 //    DUSTYHAT_PARTY, Need power for this
+    { 0, 0, 0, 1 },                 //    DUSTYHAT_PARTY, Launch from barrels faster
     { 0, 0, 0, 1 },                 //    DUSTYHAT_PINK_BOW, Dusty is immune to getting hurt by spikes,flames
     { 0, 0, 15, 1 },                 //    DUSTYHAT_PINK_SHADES,
     { 0, 0, -5, 1 },                 //    DUSTYHAT_PINK_TIARA, Adds one extra coin
@@ -1476,8 +1476,8 @@ static void UpdateDusty_PrepareLaunch()
 
 void SetDustyState_Launch(float VelocityX, float VelocityY)
 {
-	Dusty.FloatVelocityX = VelocityX;
-	Dusty.FloatVelocityY = VelocityY;
+    Dusty.FloatVelocityX = VelocityX;
+    Dusty.FloatVelocityY = VelocityY;
 
 	if (Dusty.FloatVelocityX >= 0)
 		Dusty.Direction = DIRECTION_RIGHT;

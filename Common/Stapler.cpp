@@ -190,7 +190,16 @@ void UpdateStaplers()
                     SetDustyState_Launch(0, -24); 
                 }
                 else
-                    SetDustyState_Launch(0, -21); 
+                {
+                    if(Dusty.Hat == DUSTYHAT_BEE || Dusty.Hat == DUSTYHAT_PARTY)
+                    {
+                        SetDustyState_Launch(0, -28);
+                    }
+                    else
+                    {
+                        SetDustyState_Launch(0, -21); 
+                    }
+                }
             }
             if (Stapler->Timer >= 20)
             {
