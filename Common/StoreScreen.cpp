@@ -287,7 +287,7 @@ void DisplayStoreScreen()
     else
     {
         AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenGoBackSprite, 60, 60, 1.0f, 1.0f);
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenBuyCoinsSprite, 620, 60, 1.0f, 1.0f);
+        //AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenBuyCoinsSprite, 620, 60, 1.0f, 1.0f);
         if (StoreScreen.FirstItem > 0)
             AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 192-64, LitScreenHeight-110, -1.1f, 1.0f);
         if (StoreScreen.FirstItem + STORE_ROWS * STORE_COLS < ARRAY_COUNT(Inventory))
