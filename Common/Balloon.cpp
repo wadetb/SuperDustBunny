@@ -188,7 +188,7 @@ void UpdateBalloons()
                 {
                     Balloon->VX += Dusty.FloatVelocityX*0.25f;
                     Balloon->VY += Dusty.FloatVelocityY*0.25f;
-                    Balloon->VY += 3;
+                    Balloon->VY -= 6;
 
                     SetDustyState_BalloonRide();
                     
