@@ -21,7 +21,7 @@ SSettings Settings;
 
 void InitSettings()
 {
-    Settings.Lives = 10;
+    Settings.Lives = 3;
     Settings.ControlStyle = CONTROL_SWIPE;
     Settings.GhostActive = false;
     Settings.DisableVacuum = false;

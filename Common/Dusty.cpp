@@ -164,6 +164,9 @@ void InitDusty()
 	Dusty.FloatVelocityX = 0.0f;
 	Dusty.FloatVelocityY = 0.0f;
 	
+	Dusty.PrevVelocityX = 0.0f;
+	Dusty.PrevVelocityY = 0.0f;
+	
     Dusty.LastX = 0;
     Dusty.LastY = 0;
     Dusty.LastScaleX = 1.0f;
@@ -1070,20 +1073,21 @@ void UpdateDusty_JumpCommon()
 	}
 #endif
     
-	// Collision with either side translates to a possible wall jump.
-	// Dusty is not allowed to collide with the same side twice in a row, unless he stands once in between.
-	// Wade: Currently this stuff is tweaked around as an experiment- he can only walljump again after a delay.
 	Dusty.WallJumpTimer++;
 
     if (Dusty.LandTimer >= 1)
     {
-        if (Dusty.CollideWithLeftSide && Dusty.FloatVelocityX <= 0 /*&& (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_LEFT)*/)
+        float LeftVX = Min(Dusty.FloatVelocityX, Dusty.PrevVelocityX);
+        if (Dusty.CollideWithLeftSide && LeftVX <= -fabsf(Dusty.FloatVelocityY*Tweak.DustyWallStickFactor)
+            /*&& (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_LEFT)*/)
         {
             SetDustyState_WallJump();
             return;
         }
 
-        if (Dusty.CollideWithRightSide && Dusty.FloatVelocityX >= 0 /*&& (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_RIGHT)*/)
+        float RightVX = Max(Dusty.FloatVelocityX, Dusty.PrevVelocityX);
+        if (Dusty.CollideWithRightSide && RightVX >= fabsf(Dusty.FloatVelocityY*Tweak.DustyWallStickFactor)
+            /*&& (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_RIGHT)*/)
         {
             SetDustyState_WallJump();
             return;
@@ -2124,6 +2128,9 @@ void UpdateDusty()
 {
     if (TutorialOverrides.FreezeDusty)
         return;
+    
+    Dusty.PrevVelocityX = Dusty.FloatVelocityX;
+    Dusty.PrevVelocityY = Dusty.FloatVelocityY;
     
 	if (!Dusty.NoCollision)
 	{

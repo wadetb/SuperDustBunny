@@ -313,6 +313,20 @@ const char* LitShaderSource =
 "	gl_FragColor = texture2D(ColorSampler, TexCoordInterp) * ColorInterp;\n"
 "}\n";
 
+const char* LitGrayscaleShaderSource =
+"#version 120\n"
+"uniform sampler2D ColorSampler;\n"
+"\n"
+"varying vec2 TexCoordInterp;\n"
+"varying vec4 ColorInterp;\n"
+"\n"
+"void main()\n"
+"{\n"
+"	vec4 color = texture2D(ColorSampler, TexCoordInterp) * ColorInterp;\n"
+"	float v = dot(color.xyz, vec3(0.2989, 0.5870, 0.1140));\n"
+"	gl_FragColor = vec4(v, v, v, color.a);\n"
+"}\n";
+
 const char* ShadowVertexShaderSource =
 "#version 120\n"
 "uniform vec2 ShadowOffset;\n"
@@ -435,6 +449,19 @@ const char* LitShaderSource =
 "	gl_FragColor = texture2D(Sampler, TexCoordInterp) * ColorInterp;\n"
 "}\n";
 
+const char* LitGrayscaleShaderSource =
+"uniform lowp sampler2D Sampler;\n"
+"\n"
+"varying lowp vec2 TexCoordInterp;\n"
+"varying lowp vec4 ColorInterp;\n"
+"\n"
+"void main()\n"
+"{\n"
+"	lowp vec4 color = texture2D(Sampler, TexCoordInterp) * ColorInterp;\n"
+"	lowp float v = dot(color.xyz, vec3(0.2989, 0.5870, 0.1140));\n"
+"	gl_FragColor = vec4(v, v, v, color.a);\n"
+"}\n";
+
 const char* ShadowVertexShaderSource =
 "uniform vec2 ShadowOffset;\n"
 "uniform vec2 ShadowScale;\n"
@@ -513,6 +540,7 @@ const char* CombineShaderSource =
 gxShader OverdrawShader;
 
 gxShader LitShader;
+gxShader LitGrayscaleShader;
 
 gxShaderConstant ShadowShadowOffset;
 gxShaderConstant ShadowShadowScale;
@@ -753,7 +781,8 @@ void InitLighting()
 	gxDev->CreateVertexDeclaration(LitVertexElements, &LitVertexDecl);
     
     gxCreateShader(LitVertexShaderSource, LitShaderSource, &LitShader);
-        
+    gxCreateShader(LitVertexShaderSource, LitGrayscaleShaderSource, &LitGrayscaleShader);
+    
     gxCreateShader(ShadowVertexShaderSource, ShadowShaderSource, &ShadowShader);
     ShadowShadowOffset = gxGetShaderConstantByName(&ShadowShader, "ShadowOffset");
     ShadowShadowScale = gxGetShaderConstantByName(&ShadowShader, "ShadowScale");
@@ -868,6 +897,7 @@ void InitLighting()
         gxCreateShader(OverdrawVertexShaderSource, OverdrawShaderSource, &OverdrawShader);
 
         gxCreateShader(LitVertexShaderSource, LitShaderSource, &LitShader);
+        gxCreateShader(LitVertexShaderSource, LitGrayscaleShaderSource, &LitGrayscaleShader);
         
         gxCreateShader(ShadowVertexShaderSource, ShadowShaderSource, &ShadowShader);
         ShadowShadowOffset = gxGetShaderConstantByName(&ShadowShader, "ShadowOffset");
@@ -1055,11 +1085,15 @@ void RenderLighting()
 
         // Foreground shadows.
         if (LightState.ForegroundShadows)
+        {
+            DrawShadows(LIGHTLIST_FOREGROUND_GRAYSCALE, &ColorRT);
             DrawShadows(LIGHTLIST_FOREGROUND, &ColorRT);
+        }
         
         // Dust layer.        
         DrawLightList(LIGHTLIST_DUST, &LitShader, GXALPHA_BLEND);
 
+        DrawLightList(LIGHTLIST_FOREGROUND_GRAYSCALE, &LitGrayscaleShader, GXALPHA_BLEND);
         DrawLightList(LIGHTLIST_FOREGROUND, &LitShader, GXALPHA_BLEND);
         DrawLightList(LIGHTLIST_FOREGROUND_NO_SHADOW, &LitShader, GXALPHA_BLEND);
         

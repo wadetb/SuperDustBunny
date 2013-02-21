@@ -206,6 +206,27 @@ static void SetupNextPage()
     }
 }
 
+static void DisplayTutorialAlert()
+{
+#ifdef PLATFORM_IPHONE
+    theViewController.paused = TRUE;
+    
+    NSString *title = @"Welcome to Super Dust Bunny";
+    
+    NSString *message =
+    @"As a reward for completing your training, we've given you a special hat in the store.\n\n"
+    "Press the Store button to check it out!";
+    
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title
+                                                    message:message
+                                                   delegate:theViewController
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+    [alert release];
+#endif
+}
+
 void AdvanceToNextPage()
 {
     Portfolio.VacuumDamage = Vacuum.Damage;
@@ -226,6 +247,12 @@ void AdvanceToNextPage()
 
         if (IsRecordingActive())
     		StopRecording(RESULT_NEXT_PAGE);
+
+        if (!HasHat(DUSTYHAT_GRADUATION))
+        {
+            GiveHat(DUSTYHAT_GRADUATION);
+            DisplayTutorialAlert();
+        }
 
         SetGameState_StartScreen();
     }

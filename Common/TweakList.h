@@ -22,6 +22,7 @@ TWEAK_FLOAT(DustyWallTerminalVelocityDown, 7.0f, "Maximum downard velocity when 
 TWEAK_FLOAT(DustyWallTerminalVelocityDownOnIce, 15.0f, "Maximum downard velocity when sliding on a wall, on ice.")
 TWEAK_FLOAT(DustyWallGravityScale, 0.5f, "Scale factor applied to gravity when sliding on a wall.")
 TWEAK_FLOAT(DustyWallGravityScaleOnIce, 1.0f, "Scale factor applied to gravity when sliding on a wall, on ice." )
+TWEAK_FLOAT(DustyWallStickFactor, 0.75f, "Sideways force required to stick to a wall, as a factor of vertical velocity." )
 TWEAK_FLOAT(DustyHurtTime, 60.0f, "Number of 60hz frames the bunny will remain hurt for after striking a sharp or flaming object.  (Note that landing also clears the hurt state)")
 TWEAK_FLOAT(WacomXSensitivity, 4.0f, "How sensitive the Wacom tablet is in the X axis.")
 TWEAK_FLOAT(WacomYSensitivity, 2.0f, "How sensitive the Wacom tablet is in the Y axis.")

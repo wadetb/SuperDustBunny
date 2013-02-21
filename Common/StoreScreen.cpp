@@ -23,6 +23,7 @@ struct SInventory
 {
     const char* Name;
     const char* Description;
+    const char* Power;
     int Cost;
     EDustyHat Hat;
     bool Owned;
@@ -32,6 +33,9 @@ struct SInventory
 
 struct SStoreScreen
 {
+    float HopTimer;
+    float HopDelay;
+    
     int FirstItem;
     
     bool ItemDisplayed;
@@ -47,37 +51,37 @@ SStoreScreen StoreScreen;
 
 SInventory Inventory[] =
 {
-    { "Assets/hat-apple.png", "apple\ngives vacuum\npause", 5, DUSTYHAT_APPLE },
-    { "Assets/hat-baseball-cap.png", "baseball cap\ndusty is faster!", 5, DUSTYHAT_BASEBALL_CAP },
-    { "Assets/hat-bee.png", "bee hat\nlaunch and\nfly faster", 5, DUSTYHAT_BEE },
-    { "Assets/hat-bowtie.png", "bowtie\nimmune to\nfire and spikes", 5, DUSTYHAT_BOWTIE },
-    { "Assets/hat-clown-nose.png", "clown nose\nprovides light\nin dark places", 30, DUSTYHAT_CLOWN_NOSE },
-    { "Assets/hat-crown.png", "crown\nadds extra\ncoin", 5, DUSTYHAT_CROWN },
-    { "Assets/hat-disguise.png", "disguise", 5, DUSTYHAT_DISGUISE },
-    { "Assets/hat-earmuffs.png", "ear muffs", 5, DUSTYHAT_EARMUFFS },
-    { "Assets/hat-earphones.png", "ear phones", 5, DUSTYHAT_EARPHONES },
-    { "Assets/hat-eyeglasses.png", "eye glasses", 5, DUSTYHAT_EYEGLASSES },
-    { "Assets/hat-eyepatch.png", "eye patch", 5, DUSTYHAT_EYEPATCH },
-    { "Assets/hat-flower.png", "flower", 5, DUSTYHAT_FLOWER },
-    { "Assets/hat-frog-crown.png", "frog crown", 5, DUSTYHAT_FROG_CROWN },
-    { "Assets/hat-graduation.png", "graduation cap", 5, DUSTYHAT_GRADUATION },
-    { "Assets/hat-green-feather.png", "green feather\nfall slower", 5, DUSTYHAT_GREEN_FEATHER },
-    { "Assets/hat-jester.png", "jester hat", 5, DUSTYHAT_JESTER },
-    { "Assets/hat-karate.png", "karate hat\ngives vacuum\npause", 5, DUSTYHAT_KARATE },
-    { "Assets/hat-monocle.png", "monocle", 5, DUSTYHAT_MONOCLE },
-    { "Assets/hat-nurse.png", "nurse cap\ndusty is faster!", 5, DUSTYHAT_NURSE },
-    { "Assets/hat-party.png", "party hat\nlaunch and\nfly faster", 5, DUSTYHAT_PARTY },
-    { "Assets/hat-pink-bow.png", "pink bow\nimmune to\nfire and spikes", 5, DUSTYHAT_PINK_BOW },
-    { "Assets/hat-pink-shades.png", "pink shades", 5, DUSTYHAT_PINK_SHADES },
-    { "Assets/hat-pink-tiara.png", "pink tiara\nadds extra\ncoin", 5, DUSTYHAT_PINK_TIARA },
-    { "Assets/hat-pirate.png", "pirate hat", 5, DUSTYHAT_PIRATE },
-    { "Assets/hat-purple-feather.png", "yellow feather\nfall slower", 5, DUSTYHAT_PURPLE_FEATHER },
-    { "Assets/hat-snorkel.png", "snorkel", 5, DUSTYHAT_SNORKEL },
-    { "Assets/hat-sunglasses.png", "sunglasses", 5, DUSTYHAT_SUNGLASSES },
-    { "Assets/hat-tophat.png", "top hat", 5, DUSTYHAT_TOPHAT },
-    { "Assets/hat-tutu.png", "tutu", 5, DUSTYHAT_TUTU },
-    { "Assets/hat-witch.png", "witch hat", 5, DUSTYHAT_WITCH },
-    { "Assets/hat-yellow-tophat.png", "yellow top hat", 5, DUSTYHAT_YELLOW_TOPHAT },
+    { "Assets/hat-graduation.png", "graduation cap", "higher learning", 1, DUSTYHAT_GRADUATION },
+    { "Assets/hat-apple.png", "apple", "gives vacuum a pause", 5, DUSTYHAT_APPLE },
+    { "Assets/hat-purple-feather.png", "yellow feather", "fall slower", 5, DUSTYHAT_PURPLE_FEATHER },
+    { "Assets/hat-bowtie.png", "bowtie", "immune to fire\nand spikes", 5, DUSTYHAT_BOWTIE },
+    { "Assets/hat-pink-bow.png", "pink bow", "immune to\nfire and spikes", 5, DUSTYHAT_PINK_BOW },
+    { "Assets/hat-clown-nose.png", "reindeer nose", "provides light\nin dark places", 5, DUSTYHAT_CLOWN_NOSE },
+    { "Assets/hat-bee.png", "bee hat", "launch and\nfly faster", 10, DUSTYHAT_BEE },
+    { "Assets/hat-party.png", "party hat", "launch and\nfly faster", 10, DUSTYHAT_PARTY },
+    { "Assets/hat-baseball-cap.png", "baseball cap", "dusty is faster!", 10, DUSTYHAT_BASEBALL_CAP },
+//    { "Assets/hat-crown.png", "crown", "adds extra\ncoin", 5, DUSTYHAT_CROWN },
+//    { "Assets/hat-disguise.png", "disguise", 5, DUSTYHAT_DISGUISE },
+//    { "Assets/hat-earmuffs.png", "ear muffs", 5, DUSTYHAT_EARMUFFS },
+//    { "Assets/hat-earphones.png", "ear phones", 5, DUSTYHAT_EARPHONES },
+//    { "Assets/hat-eyeglasses.png", "eye glasses", 5, DUSTYHAT_EYEGLASSES },
+//    { "Assets/hat-eyepatch.png", "eye patch", 5, DUSTYHAT_EYEPATCH },
+//    { "Assets/hat-flower.png", "flower", 5, DUSTYHAT_FLOWER },
+//    { "Assets/hat-frog-crown.png", "frog crown", 5, DUSTYHAT_FROG_CROWN },
+//    { "Assets/hat-green-feather.png", "green feather", "fall slower", 5, DUSTYHAT_GREEN_FEATHER },
+//    { "Assets/hat-jester.png", "jester hat", 5, DUSTYHAT_JESTER },
+//    { "Assets/hat-karate.png", "karate hat", "gives vacuum\npause", 5, DUSTYHAT_KARATE },
+//    { "Assets/hat-monocle.png", "monocle", 5, DUSTYHAT_MONOCLE },
+//    { "Assets/hat-nurse.png", "nurse cap", "dusty is faster!", 5, DUSTYHAT_NURSE },
+//    { "Assets/hat-pink-shades.png", "pink shades", 5, DUSTYHAT_PINK_SHADES },
+//    { "Assets/hat-pink-tiara.png", "pink tiara", "adds extra\ncoin", 5, DUSTYHAT_PINK_TIARA },
+//    { "Assets/hat-pirate.png", "pirate hat", 5, DUSTYHAT_PIRATE },
+//    { "Assets/hat-snorkel.png", "snorkel", 5, DUSTYHAT_SNORKEL },
+//    { "Assets/hat-sunglasses.png", "sunglasses", 5, DUSTYHAT_SUNGLASSES },
+//    { "Assets/hat-tophat.png", "top hat", 5, DUSTYHAT_TOPHAT },
+//    { "Assets/hat-tutu.png", "tutu", 5, DUSTYHAT_TUTU },
+//    { "Assets/hat-witch.png", "witch hat", 5, DUSTYHAT_WITCH },
+//    { "Assets/hat-yellow-tophat.png", "yellow top hat", 5, DUSTYHAT_YELLOW_TOPHAT },
 };
 
 
@@ -204,12 +208,13 @@ void SaveInventory()
 }
 
 #define STORE_X 60
-#define STORE_Y 200
-#define STORE_ROWS 3
+#define STORE_Y 80
+#define STORE_ROWS 2
 #define STORE_COLS 3
-#define STORE_ROW_SZ 200
+#define STORE_ROW_SZ 260
 #define STORE_COL_SZ ((768-STORE_X*2)/STORE_COLS)
 #define STORE_ITEM_SCALE 2.0
+#define STORE_ITEMS_PER_PAGE (STORE_ROWS*STORE_COLS)
 
 void InitStoreScreen()
 {
@@ -220,8 +225,8 @@ void InitStoreScreen()
     InitDusty();
     
     SetDustyState_IntroStand();
-    Dusty.FloatX = 384;
-    Dusty.FloatY = LitScreenHeight - 160;
+    Dusty.FloatX = STORE_X+(STORE_COLS-1)*STORE_COL_SZ + STORE_COL_SZ/2-30;
+    Dusty.FloatY = STORE_Y+(3-1)*STORE_ROW_SZ + STORE_ROW_SZ-50;
     Dusty.NoCollision = true;
     RemoteControl.Enabled = true;
     
@@ -247,19 +252,27 @@ void DisplayStoreScreen()
     snprintf(Work, sizeof(Work), "x%d", Settings.Lives);
     DisplayString(LIGHTLIST_VACUUM, Work, 0, 350, LitScreenHeight - 80, 1.1f);
     
-    for (int i = 0; i < STORE_ROWS * STORE_COLS; i++)
+    for (int i = 0; i < STORE_ITEMS_PER_PAGE; i++)
     {
         if (StoreScreen.FirstItem + i >= ARRAY_COUNT(Inventory))
             break;
         
-        int Row = i / STORE_ROWS;
-        int Col = i % STORE_ROWS;
+        int Row = i / STORE_COLS;
+        int Col = i % STORE_COLS;
         
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, &Inventory[StoreScreen.FirstItem + i].Sprite,
-                                        STORE_X+Col*STORE_COL_SZ + STORE_COL_SZ/2,
-                                        STORE_Y+Row*STORE_ROW_SZ + STORE_ROW_SZ/2, STORE_ITEM_SCALE, 1.0f);
         if (Inventory[StoreScreen.FirstItem + i].Owned)
+        {
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, &Inventory[StoreScreen.FirstItem + i].Sprite,
+                                            STORE_X+Col*STORE_COL_SZ + STORE_COL_SZ/2,
+                                            STORE_Y+Row*STORE_ROW_SZ + STORE_ROW_SZ/2, STORE_ITEM_SCALE, 1.0f);
             AddLitSpriteScaled(LIGHTLIST_FOREGROUND, &CheckMarkSprite, STORE_X+Col*STORE_COL_SZ, STORE_Y+Row*STORE_ROW_SZ, 2.0f, 2.0f);
+        }
+        else
+        {
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND_GRAYSCALE, &Inventory[StoreScreen.FirstItem + i].Sprite,
+                                            STORE_X+Col*STORE_COL_SZ + STORE_COL_SZ/2,
+                                            STORE_Y+Row*STORE_ROW_SZ + STORE_ROW_SZ/2, STORE_ITEM_SCALE*0.75f, 0.75f);
+        }
     }
 
     if (StoreScreen.ItemDisplayed)
@@ -268,7 +281,9 @@ void DisplayStoreScreen()
         
         AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &Inventory[StoreScreen.ActiveItem].Sprite, 384, 250, 4.0f, 1.0f);
 
-        DisplayMultilineStringAlpha(LIGHTLIST_WIPE, Inventory[StoreScreen.ActiveItem].Description, FORMAT_CENTER_X, 384, 400, 0.8f, 1.0f);
+        DisplayMultilineStringAlpha(LIGHTLIST_WIPE, Inventory[StoreScreen.ActiveItem].Description, FORMAT_CENTER_X, 384, 400, 1.0f, 1.0f);
+
+        DisplayMultilineStringAlpha(LIGHTLIST_WIPE, Inventory[StoreScreen.ActiveItem].Power, FORMAT_CENTER_X, 384, 470, 0.6f, 1.0f);
 
         AddLitSpriteScaled(LIGHTLIST_WIPE, &CoinIconSprite, 240, 560, 0.65f*1.0f, 0.65f*1.0f);
         snprintf(Work, sizeof(Work), "x%d", Inventory[StoreScreen.ActiveItem].Cost);
@@ -289,16 +304,73 @@ void DisplayStoreScreen()
         AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenGoBackSprite, 60, 60, 1.0f, 1.0f);
         //AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenBuyCoinsSprite, 620, 60, 1.0f, 1.0f);
         if (StoreScreen.FirstItem > 0)
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 192-64, LitScreenHeight-110, -1.1f, 1.0f);
-        if (StoreScreen.FirstItem + STORE_ROWS * STORE_COLS < ARRAY_COUNT(Inventory))
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 768-192+64, LitScreenHeight-110, 1.1f, 1.0f);
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 768-200, 60, -0.8f, 1.0f);
+        if (StoreScreen.FirstItem + STORE_ITEMS_PER_PAGE < ARRAY_COUNT(Inventory))
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 768-100, 60, 0.8, 1.0f);
     }
     
     DisplayDusty();
 }
 
+static void GiveStoreItem(int Item)
+{
+    Inventory[Item].Owned = true;
+    for (int i = 0; i < ARRAY_COUNT(Inventory); i++)
+        if (Inventory[i].Hat != DUSTYHAT_NONE && Inventory[i].Active)
+            Inventory[i].Active = false;
+    Inventory[Item].Active = true;
+    Dusty.Hat = Inventory[Item].Hat;
+    SaveSettings();
+    SaveInventory();    
+}
+
+bool HasHat(int Hat)
+{
+    for (int i = 0; i < ARRAY_COUNT(Inventory); i++)
+    {
+        if (Inventory[i].Hat == Hat)
+        {
+            return Inventory[i].Owned;
+        }
+    }
+    return false;
+}
+
+void GiveHat(int Hat)
+{
+    for (int i = 0; i < ARRAY_COUNT(Inventory); i++)
+        if (Inventory[i].Hat == Hat)
+        {
+            GiveStoreItem(i);
+            return;
+        }
+}
+
 void UpdateStoreScreen()
-{    
+{
+    StoreScreen.HopTimer += 1.0f/60.0f;
+    if (StoreScreen.HopTimer > 0.25f)
+    {
+        RemoteControl.MoveRight = false;
+        RemoteControl.MoveLeft = false;
+    }
+    if (StoreScreen.HopTimer > StoreScreen.HopDelay)
+    {
+        float Choice = Random(0.0f, 1.0f);
+        RemoteControl.MoveLeft = false;
+        RemoteControl.MoveRight = false;
+        if (Choice < 0.3 && Dusty.FloatX < STORE_X+STORE_COL_SZ*(STORE_COLS-1))
+            RemoteControl.MoveRight = true;
+        else if (Choice < 0.6 && Dusty.FloatX > STORE_X+STORE_COL_SZ*1)
+            RemoteControl.MoveLeft = true;
+        StoreScreen.HopDelay = Random(0.5f, 5.0f);
+        StoreScreen.HopTimer = 0;
+    }
+    if (Dusty.FloatX < STORE_X + STORE_COL_SZ/2)
+        Dusty.FloatX = STORE_X + STORE_COL_SZ/2;
+    if (Dusty.FloatX > STORE_X + STORE_COLS*STORE_COL_SZ - STORE_COL_SZ/2)
+        Dusty.FloatX = STORE_X + STORE_COLS*STORE_COL_SZ - STORE_COL_SZ/2;
+    
     UpdateDusty();
 
     if (!StoreScreen.ReleasedAtLeastOnce)
@@ -348,14 +420,7 @@ void UpdateStoreScreen()
                     if (Settings.Lives >= Inventory[StoreScreen.ActiveItem].Cost)
                     {
                         Settings.Lives -= Inventory[StoreScreen.ActiveItem].Cost;
-                        Inventory[StoreScreen.ActiveItem].Owned = true;
-                        for (int i = 0; i < ARRAY_COUNT(Inventory); i++)
-                            if (Inventory[i].Hat != DUSTYHAT_NONE && Inventory[i].Active)
-                                Inventory[i].Active = false;
-                        Inventory[StoreScreen.ActiveItem].Active = true;
-                        Dusty.Hat = Inventory[StoreScreen.ActiveItem].Hat;
-                        SaveSettings();
-                        SaveInventory();
+                        GiveStoreItem(StoreScreen.ActiveItem);
                         StoreScreen.ItemDisplayed = false;
                         StoreScreen.ReleasedAtLeastOnce = false;
                     }
@@ -379,7 +444,9 @@ void UpdateStoreScreen()
                 int Col = (msX - STORE_X) / STORE_COL_SZ;
                 int Row = (msY - STORE_Y) / STORE_ROW_SZ;
                 
-                if (StoreScreen.FirstItem + Row*STORE_COLS + Col < ARRAY_COUNT(Inventory))
+                int Item = Row*STORE_COLS + Col;
+
+                if (Item < STORE_ITEMS_PER_PAGE && StoreScreen.FirstItem + Item < ARRAY_COUNT(Inventory))
                 {
                     StoreScreen.ActiveItem = StoreScreen.FirstItem + Row*STORE_COLS + Col;
                     StoreScreen.ItemDisplayed = true;
@@ -387,9 +454,9 @@ void UpdateStoreScreen()
                 }
             }
             
-            if (msY >= 800)
+            if (msY < 100)
             {
-                if (msX <= 384)
+                if (msX <= 768-150)
                 {
                     if (StoreScreen.FirstItem > 0)
                         StoreScreen.FirstItem -= STORE_ROWS * STORE_COLS;

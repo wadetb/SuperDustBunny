@@ -14,6 +14,9 @@ void LoadInventoryAssets();
 gxSprite* GetInventoryHatSprite(int Hat);
 int GetActiveInventoryHat();
 
+bool HasHat(int Hat);
+void GiveHat(int Hat);
+
 void LoadInventory();
 void SaveInventory();
 

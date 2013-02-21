@@ -157,7 +157,10 @@ struct SDusty
 	float FloatY;
 	float FloatVelocityX;
 	float FloatVelocityY;
-    
+
+    float PrevVelocityX;
+    float PrevVelocityY;
+
     float LastX;
     float LastY;
     float LastScaleX;

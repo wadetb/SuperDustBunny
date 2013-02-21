@@ -184,22 +184,18 @@ void UpdateStaplers()
                 
                 Dusty.FloatY -= 10;
                 
+                float PowerBoost = 0;
                 if (Stapler->ChargeTime >= 0.25f)
                 {
                     Dusty.PowerUpTimer = 30;
-                    SetDustyState_Launch(0, -24); 
+                    PowerBoost = 12;
                 }
-                else
+                if (Dusty.Hat == DUSTYHAT_BEE || Dusty.Hat == DUSTYHAT_PARTY)
                 {
-                    if(Dusty.Hat == DUSTYHAT_BEE || Dusty.Hat == DUSTYHAT_PARTY)
-                    {
-                        SetDustyState_Launch(0, -28);
-                    }
-                    else
-                    {
-                        SetDustyState_Launch(0, -21); 
-                    }
+                    PowerBoost = 7;
                 }
+                
+                SetDustyState_Launch(0, -21 - PowerBoost);
             }
             if (Stapler->Timer >= 20)
             {

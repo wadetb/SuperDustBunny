@@ -1798,6 +1798,8 @@ void LoadPortfolio()
         for (int i = 0; i < ARRAY_COUNT(PortfolioEntries); i++)
             *PortfolioEntries[i].Value = DebugNode->first_attribute(PortfolioEntries[i].Name) && atoi(DebugNode->first_attribute(PortfolioEntries[i].Name)->value()) != 0;
 
+        Portfolio.VacuumDir = Portfolio.UpsideDown ? VACUUMDIR_DOWN : VACUUMDIR_UP;
+        
         Portfolio.Chapter = DebugNode->first_attribute("Chapter") ? atoi(DebugNode->first_attribute("Chapter")->value()) : 0;
         CurrentChapter = Portfolio.Chapter;
         LoadCurrentChapter();
