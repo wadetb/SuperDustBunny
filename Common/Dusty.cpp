@@ -244,7 +244,12 @@ static void UpdateDusty_MakeDust(float XOffset, float YOffset, int Count)
 {
     // Spawn some dust motes.
     for (int i = 0; i < 5; i++)
-        MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);    
+    {
+        if (Dusty.Stuck)
+            MakeStickyMote(Dusty.FloatX, Dusty.FloatY - 50);
+        else
+            MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);
+    }
 }
 
 static void UpdateDusty_GetNearbyBlocks()
@@ -888,7 +893,12 @@ static void UpdateDusty_Hop()
 	{
 		// Spawn some dust motes.
 		for (int i = 0; i < 6; i++)
-			MakeDustMote(Dusty.FloatX, Dusty.FloatY);
+        {
+            if (Dusty.Stuck)
+                MakeStickyMote(Dusty.FloatX, Dusty.FloatY);
+            else
+                MakeDustMote(Dusty.FloatX, Dusty.FloatY);
+        }
 
         if (Settings.ControlStyle == CONTROL_TILT)
         {
@@ -1077,8 +1087,12 @@ void UpdateDusty_JumpCommon()
 
     if (Dusty.LandTimer >= 1)
     {
+        float StickFactor = fabsf(Dusty.FloatVelocityY*Tweak.DustyWallStickFactor);
+        if (Dusty.CollideMaterial == MATERIAL_STICKY)
+            StickFactor = 0;
+        
         float LeftVX = Min(Dusty.FloatVelocityX, Dusty.PrevVelocityX);
-        if (Dusty.CollideWithLeftSide && LeftVX <= -fabsf(Dusty.FloatVelocityY*Tweak.DustyWallStickFactor)
+        if (Dusty.CollideWithLeftSide && LeftVX <= -StickFactor
             /*&& (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_LEFT)*/)
         {
             SetDustyState_WallJump();
@@ -1086,7 +1100,7 @@ void UpdateDusty_JumpCommon()
         }
 
         float RightVX = Max(Dusty.FloatVelocityX, Dusty.PrevVelocityX);
-        if (Dusty.CollideWithRightSide && RightVX >= fabsf(Dusty.FloatVelocityY*Tweak.DustyWallStickFactor)
+        if (Dusty.CollideWithRightSide && RightVX >= StickFactor
             /*&& (Dusty.WallJumpTimer >= 30 || Dusty.LastWall != DIRECTION_RIGHT)*/)
         {
             SetDustyState_WallJump();
@@ -1098,7 +1112,12 @@ void UpdateDusty_JumpCommon()
         {	
             // Spawn some dust motes.
             for (int i = 0; i < 3; i++)
-                MakeDustMote(Dusty.FloatX, Dusty.FloatY);
+            {
+                if (Dusty.Stuck)
+                    MakeStickyMote(Dusty.FloatX, Dusty.FloatY);
+                else
+                    MakeDustMote(Dusty.FloatX, Dusty.FloatY);
+            }
 
             SetDustyState_Stand();
             return;
@@ -1742,7 +1761,12 @@ static void UpdateDusty_IntroHop()
 	{
 		// Spawn some dust motes.
 		for (int i = 0; i < 6; i++)
-			MakeDustMote(Dusty.FloatX, Dusty.FloatY);
+        {
+            if (Dusty.Stuck)
+                MakeStickyMote(Dusty.FloatX, Dusty.FloatY);
+            else
+                MakeDustMote(Dusty.FloatX, Dusty.FloatY);
+        }
 
 		// If still holding right, reset animation and continue hopping.
 		if ( ( Dusty.Direction == DIRECTION_RIGHT && RemoteControl.MoveRight ) || 
@@ -2012,12 +2036,8 @@ static void UpdateDusty_Collision()
 					{			
 						SBlock* Block = &Chapter.Blocks[BlockID];
 
-#ifndef PLATFORM_IPHONE
 						if (Dusty.CollideMaterial == MATERIAL_NORMAL)
-						{
 							Dusty.CollideMaterial = Block->Material;
-						}
-#endif
 
 						if (Block->Type == BLOCKTYPE_NAIL && Dusty.State != DUSTYSTATE_HURT)
 						{

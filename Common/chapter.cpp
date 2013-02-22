@@ -1249,7 +1249,7 @@ void SetCurrentPage(int PageNum)
                         for (int x = 0; x < Chapter.PageWidth; x++)
                         {
                             if (Layer->Blocks[y*Chapter.PageWidth + x] != SPECIALBLOCKID_BLANK)
-                                Chapter.PageBlocks[y*Chapter.PageWidth + x] |= SPECIALBLOCKID_STICKY;
+                                Chapter.PageBlocks[y*Chapter.PageWidth + (Chapter.PageWidth-1-x)] |= SPECIALBLOCKID_STICKY;
                         }
                     }
                 }
@@ -1259,7 +1259,7 @@ void SetCurrentPage(int PageNum)
                     {
                         for (int x = 0; x < Chapter.PageWidth; x++)
                         {
-                            if (Layer->Blocks[y*Chapter.PageWidth + (Chapter.PageWidth-1-x)] != SPECIALBLOCKID_BLANK)
+                            if (Layer->Blocks[y*Chapter.PageWidth + x] != SPECIALBLOCKID_BLANK)
                                 Chapter.PageBlocks[y*Chapter.PageWidth + x] |= SPECIALBLOCKID_STICKY;
                         }
                     }

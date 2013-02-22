@@ -25,7 +25,7 @@ void InitDust()
 
 		Mote->X = -1000;
 		Mote->Y = -1000;
-	}
+    }
 }
 
 void DisplayDust()
@@ -40,7 +40,9 @@ void DisplayDust()
 		if (Mote->Time > Mote->Life - 1.0f)
 			Alpha *= Remap(Mote->Time, Mote->Life-0.25f, Mote->Life, 1.0f, 0.0f, true);
 
-		AddLitSpriteCenteredScaledColor(LIGHTLIST_DUST, &DustMoteSprite, Mote->X + ScrollX, Mote->Y + ScrollY*Mote->Depth, Mote->Size, gxRGBA32(192,192,192,(int)(255*Alpha)));
+        unsigned int Color = Mote->Color;
+        Color |= gxRGBA32(0, 0, 0, (int)(Mote->Alpha*255));
+		AddLitSpriteCenteredScaledColor(LIGHTLIST_DUST, &DustMoteSprite, Mote->X + ScrollX, Mote->Y + ScrollY*Mote->Depth, Mote->Size, Color);
 	}
 }
 
@@ -157,6 +159,12 @@ void UpdateDust()
 
 			Mote->Alpha = 1.0f;
 			Mote->Time = 0;
+
+            float R = Random(0.0f, 1.0f);
+            if (R < 0.3f)
+                Mote->Color = gxRGBA32(128, 128, 128, 0);
+            else
+                Mote->Color = gxRGBA32(192, 192, 192, 0);
 		}
 	}
 }
@@ -177,5 +185,27 @@ void MakeDustMote(float X, float Y)
 
 	Mote->Alpha = 1.0f;
 	Mote->Time = 1.0f;
+    
+    Mote->Color = gxRGBA32(192, 192, 192, 0);
+}
+
+void MakeStickyMote(float X, float Y)
+{
+	SDustMote* Mote = &DustMotes[(int)Random(0, MAX_DUST_MOTES-1)];
+    
+	Mote->X = X;
+	Mote->Y = Y;
+    
+	Mote->VX = Random(-3.0f, 3.0f);
+	Mote->VY = Random(-3.0f, 3.0f);
+    
+	Mote->Size = Random(1.0f, 2.0f);
+	Mote->Depth = 1.0f;
+	Mote->Life = Random(2.0f, 10.0f);
+    
+	Mote->Alpha = 1.0f;
+	Mote->Time = 1.0f;
+    
+    Mote->Color = gxRGBA32(240, 190, 90, 0);
 }
 

@@ -21,6 +21,7 @@ struct SDustMote
 	float Life;
 	float Time;
 	float Alpha;
+    unsigned int Color;
 };
 
 extern SDustMote DustMotes[MAX_DUST_MOTES];
@@ -30,5 +31,6 @@ void DisplayDust();
 void UpdateDust();
 
 void MakeDustMote(float X, float Y);
+void MakeStickyMote(float X, float Y);
 
 #endif
