@@ -469,7 +469,14 @@ void JamVacuum()
         
 		Vacuum.State = VACUUMSTATE_RETREAT;
         
-        if (Dusty.Hat == DUSTYHAT_APPLE || Dusty.Hat == DUSTYHAT_KARATE)
+        if (Dusty.Hat == DUSTYHAT_APPLE ||
+            Dusty.Hat == DUSTYHAT_KARATE ||
+            Dusty.Hat == DUSTYHAT_DISGUISE ||
+            Dusty.Hat == DUSTYHAT_WITCH ||
+            Dusty.Hat == DUSTYHAT_SNORKEL ||
+            Dusty.Hat == DUSTYHAT_MONOCLE ||
+            Dusty.Hat == DUSTYHAT_EARPHONES ||
+            Dusty.Hat == DUSTYHAT_EYEPATCH)
         {
             Vacuum.Timer = VACUUM_RETREAT_TIME + 100;//Normally 5*60
         }

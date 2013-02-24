@@ -190,7 +190,16 @@ void UpdateStaplers()
                     Dusty.PowerUpTimer = 30;
                     PowerBoost = 12;
                 }
-                if (Dusty.Hat == DUSTYHAT_BEE || Dusty.Hat == DUSTYHAT_PARTY)
+                if (Dusty.Hat == DUSTYHAT_BEE ||
+                    Dusty.Hat == DUSTYHAT_PARTY ||
+                    Dusty.Hat == DUSTYHAT_EARMUFFS ||
+                    Dusty.Hat == DUSTYHAT_WITCH ||
+                    Dusty.Hat == DUSTYHAT_JESTER ||
+                    Dusty.Hat == DUSTYHAT_TOPHAT ||
+                    Dusty.Hat == DUSTYHAT_TUTU ||
+                    Dusty.Hat == DUSTYHAT_MONOCLE ||
+                    Dusty.Hat == DUSTYHAT_EARPHONES ||
+                    Dusty.Hat == DUSTYHAT_EYEPATCH)
                 {
                     PowerBoost = 7;
                 }

@@ -108,38 +108,38 @@ gxSprite* DustyHatSprites[DUSTYHAT_COUNT];
 
 SDustyHatOffset DustyHatAdjustments[DUSTYHAT_COUNT] =
 {
-    { 0, 0, 0, 1 },                 //    DUSTYHAT_NONE, No Special Effect
-    { 0, 0, -20, 1 },               //    DUSTYHAT_APPLE, Increases Vacuum Retreat time by x amount.
-    { 0, 5, -5, 1 },                //    DUSTYHAT_BASEBALL_CAP, Speed up Dusty
-    { 0, 15, -15, 1 },              //    DUSTYHAT_BEE, Launch from barrels faster
-    { 0, 0, 0, 1 },                 //    DUSTYHAT_BOWTIE, Dusty is immune to getting hurt by spikes,flames
-    { 0, 30, 20, 1 },                 //    DUSTYHAT_CLOWN_NOSE, Provides extra light on dark levels.
-    { 0, -5, -17, 1 },                 //    DUSTYHAT_CROWN, Adds one extra coin
-    { 0, 12, 10, 1 },                 //    DUSTYHAT_DISGUISE,
-    { 0, 0, 10, 1 },                 //    DUSTYHAT_EARMUFFS,
-    { 0, -5, 8, 1 },                 //    DUSTYHAT_EARPHONES,
-    { 0, 0, 12, 1 },                 //    DUSTYHAT_EYEGLASSES,
-    { 0, 0, 15, 1 },                 //    DUSTYHAT_EYEPATCH,
-    { 0, -10, 0, 1 },                 //    DUSTYHAT_FLOWER,
-    { 0, 0, -15, 1 },                 //    DUSTYHAT_FROG_CROWN, 
-    { 0, -5, 5, 1 },                 //    DUSTYHAT_GRADUATION,
-    { 0, -17, 0, 1 },                 //    DUSTYHAT_GREEN_FEATHER, Slows Dusty's Fall
+    { 0, 0, 0, 1 },                     //    DUSTYHAT_NONE, No Special Effect
+    { 0, 0, -20, 1 },                   //    DUSTYHAT_APPLE, Increases Vacuum Retreat time by x amount.
+    { 0, 5, -5, 1 },                    //    DUSTYHAT_BASEBALL_CAP, Speed up Dusty
+    { 0, 15, -15, 1 },                  //    DUSTYHAT_BEE, Launch from barrels faster
+    { 0, 0, 0, 1 },                     //    DUSTYHAT_BOWTIE, Dusty is immune to getting hurt by spikes,flames
+    { 0, 30, 20, 1 },                   //    DUSTYHAT_CLOWN_NOSE, Provides extra light on dark levels.
+    { 0, -5, -17, 1 },                  //    DUSTYHAT_CROWN, Adds one extra coin
+    { 0, 12, 10, 1 },                   //    DUSTYHAT_DISGUISE
+    { 0, 0, 10, 1 },                    //    DUSTYHAT_EARMUFFS
+    { 0, -5, 8, 1 },                    //    DUSTYHAT_EARPHONES
+    { 0, 0, 12, 1 },                    //    DUSTYHAT_EYEGLASSES,
+    { 0, 0, 15, 1 },                    //    DUSTYHAT_EYEPATCH,
+    { 0, -10, 0, 1 },                   //    DUSTYHAT_FLOWER,
+    { 0, 0, -15, 1 },                   //    DUSTYHAT_FROG_CROWN, 
+    { 0, -5, 5, 1 },                    //    DUSTYHAT_GRADUATION,
+    { 0, -17, 0, 1 },                   //    DUSTYHAT_GREEN_FEATHER, Slows Dusty's Fall
     { 0, -15, -10, 1 },                 //    DUSTYHAT_JESTER,
-    { 0, -10, 28, 1 },                 //    DUSTYHAT_KARATE, Increases Vacuum Retreat time by x amount.
-    { 0, 8, 23, 1 },                 //    DUSTYHAT_MONOCLE, 
-    { 0, 0, 0, 1 },                 //    DUSTYHAT_NURSE, Speed up Dusty
-    { 0, 0, 0, 1 },                 //    DUSTYHAT_PARTY, Launch from barrels faster
-    { 0, 0, 0, 1 },                 //    DUSTYHAT_PINK_BOW, Dusty is immune to getting hurt by spikes,flames
-    { 0, 0, 15, 1 },                 //    DUSTYHAT_PINK_SHADES,
-    { 0, 0, -5, 1 },                 //    DUSTYHAT_PINK_TIARA, Adds one extra coin
-    { 0, -5, -10, 1 },              //    DUSTYHAT_PIRATE,
-    { 0, -25, 2, 1 },                 //    DUSTYHAT_PURPLE_FEATHER, Slows Dusty's Fall
-    { 0, 0, 0, 1 },                 //    DUSTYHAT_SNORKEL,
-    { 0, 0, 14, 1 },                 //    DUSTYHAT_SUNGLASSES,
-    { 0, -4, -18, 1 },                 //    DUSTYHAT_TOPHAT,
-    { 0, -10, 70, 1 },                 //    DUSTYHAT_TUTU,
-    { 0, -25, 0, 1 },                 //    DUSTYHAT_WITCH,
-    { 0, -5, -15, 1 },                 //    DUSTYHAT_YELLOW_TOPHAT,
+    { 0, -10, 28, 1 },                  //    DUSTYHAT_KARATE, Increases Vacuum Retreat time by x amount.
+    { 0, 8, 23, 1 },                    //    DUSTYHAT_MONOCLE, 
+    { 0, 0, 0, 1 },                     //    DUSTYHAT_NURSE, Speed up Dusty
+    { 0, 0, 0, 1 },                     //    DUSTYHAT_PARTY, Launch from barrels faster
+    { 0, 0, 0, 1 },                     //    DUSTYHAT_PINK_BOW, Dusty is immune to getting hurt by spikes,flames
+    { 0, 0, 15, 1 },                    //    DUSTYHAT_PINK_SHADES,
+    { 0, 0, -5, 1 },                    //    DUSTYHAT_PINK_TIARA, Adds one extra coin
+    { 0, -5, -10, 1 },                  //    DUSTYHAT_PIRATE,
+    { 0, -25, 2, 1 },                   //    DUSTYHAT_PURPLE_FEATHER, Slows Dusty's Fall
+    { 0, 0, 0, 1 },                     //    DUSTYHAT_SNORKEL,
+    { 0, 0, 14, 1 },                    //    DUSTYHAT_SUNGLASSES,
+    { 0, -4, -18, 1 },                  //    DUSTYHAT_TOPHAT,
+    { 0, -10, 70, 1 },                  //    DUSTYHAT_TUTU,
+    { 0, -25, 0, 1 },                   //    DUSTYHAT_WITCH,
+    { 0, -5, -15, 1 },                  //    DUSTYHAT_YELLOW_TOPHAT,
 };
 
 int DustyHatAdjX = 0;
@@ -431,7 +431,13 @@ static void DisplayDustySprite(EDustySprite Sprite, float XAdj = 0.0f, float XMi
             float RotAdjX = (AdjX * ca) - (AdjY * sa);
             float RotAdjY = (AdjX * sa) + (AdjY * ca);
 
-            if (Dusty.Hat == DUSTYHAT_CLOWN_NOSE)
+            if (Dusty.Hat == DUSTYHAT_CLOWN_NOSE ||
+                Dusty.Hat == DUSTYHAT_FLOWER ||
+                Dusty.Hat == DUSTYHAT_GRADUATION ||
+                Dusty.Hat == DUSTYHAT_YELLOW_TOPHAT ||
+                Dusty.Hat == DUSTYHAT_MONOCLE ||
+                Dusty.Hat == DUSTYHAT_EYEPATCH ||
+                Dusty.Hat == DUSTYHAT_FROG_CROWN)
             {
                 if (Sprite == DUSTYSPRITE_HOP_2 || Sprite == DUSTYSPRITE_HOP_2B || Sprite == DUSTYSPRITE_HOP_2C)
                 {
@@ -458,7 +464,13 @@ static void DisplayDustySprite(EDustySprite Sprite, float XAdj = 0.0f, float XMi
             
             AddLitSpriteCenteredScaled2Rotated(LIGHTLIST_FOREGROUND, HatSprite, HatX, HatY, ScaleX*HatScale, HatScale, HatAngle*ScaleX);
 
-            if (Dusty.Hat == DUSTYHAT_CLOWN_NOSE && Chapter.PageProps.LightsOff)
+            if ((Dusty.Hat == DUSTYHAT_CLOWN_NOSE ||
+                Dusty.Hat == DUSTYHAT_FLOWER ||
+                Dusty.Hat == DUSTYHAT_GRADUATION ||
+                Dusty.Hat == DUSTYHAT_YELLOW_TOPHAT ||
+                Dusty.Hat == DUSTYHAT_MONOCLE ||
+                Dusty.Hat == DUSTYHAT_EYEPATCH ||
+                Dusty.Hat == DUSTYHAT_FROG_CROWN) && Chapter.PageProps.LightsOff)
                 AddLitSpriteCenteredScaledColor(LIGHTLIST_LIGHTING, &LightFlashlightSprite, HatX, HatY, 1.0f, gxRGBA32(255, 128, 128, 192));
         }
     }
@@ -699,7 +711,15 @@ void SetDustyState_JumpWithVelocity( float VX, float VY )
     
     if (Dusty.PowerUpTimer > 0)
     {
-        if(Dusty.Hat == DUSTYHAT_BASEBALL_CAP || Dusty.Hat == DUSTYHAT_NURSE)
+        if(Dusty.Hat == DUSTYHAT_BASEBALL_CAP ||
+           Dusty.Hat == DUSTYHAT_NURSE ||
+           Dusty.Hat == DUSTYHAT_DISGUISE ||
+           Dusty.Hat == DUSTYHAT_PIRATE ||
+           Dusty.Hat == DUSTYHAT_SNORKEL ||
+           Dusty.Hat == DUSTYHAT_TUTU ||
+           Dusty.Hat == DUSTYHAT_SUNGLASSES ||
+           Dusty.Hat == DUSTYHAT_PINK_SHADES ||
+           Dusty.Hat == DUSTYHAT_EARPHONES)
         {
             VX *= 1.50f;
             VY *= 1.50f;
@@ -712,7 +732,15 @@ void SetDustyState_JumpWithVelocity( float VX, float VY )
     }
     else
     {
-        if(Dusty.Hat == DUSTYHAT_BASEBALL_CAP || Dusty.Hat == DUSTYHAT_NURSE)
+        if(Dusty.Hat == DUSTYHAT_BASEBALL_CAP ||
+           Dusty.Hat == DUSTYHAT_NURSE ||
+           Dusty.Hat == DUSTYHAT_DISGUISE ||
+           Dusty.Hat == DUSTYHAT_PIRATE ||
+           Dusty.Hat == DUSTYHAT_SNORKEL ||
+           Dusty.Hat == DUSTYHAT_TUTU ||
+           Dusty.Hat == DUSTYHAT_SUNGLASSES ||
+           Dusty.Hat == DUSTYHAT_PINK_SHADES ||
+           Dusty.Hat == DUSTYHAT_EARPHONES)
         {
             VX *= 1.15f;
             VY *= 1.15f;
@@ -972,7 +1000,14 @@ void UpdateDusty_JumpCommon()
     }
     else
     {
-        if (Dusty.Hat == DUSTYHAT_GREEN_FEATHER || Dusty.Hat == DUSTYHAT_PURPLE_FEATHER)
+        if (Dusty.Hat == DUSTYHAT_GREEN_FEATHER || 
+            Dusty.Hat == DUSTYHAT_PURPLE_FEATHER ||
+            Dusty.Hat == DUSTYHAT_FLOWER ||
+            Dusty.Hat == DUSTYHAT_GRADUATION ||
+            Dusty.Hat == DUSTYHAT_TOPHAT ||
+            Dusty.Hat == DUSTYHAT_SUNGLASSES ||
+            Dusty.Hat == DUSTYHAT_PINK_SHADES ||
+            Dusty.Hat == DUSTYHAT_EYEGLASSES)
         {
             Tweak.DustyTerminalVelocityDown = 5.5f;
         }
@@ -1687,7 +1722,15 @@ void SetDustyState_Hurt()
     
     Dusty.ComboCount = 0;
 
-    if(Dusty.Hat != DUSTYHAT_BOWTIE || Dusty.Hat != DUSTYHAT_PINK_BOW)
+    if(Dusty.Hat != DUSTYHAT_BOWTIE ||
+       Dusty.Hat != DUSTYHAT_PINK_BOW ||
+       Dusty.Hat != DUSTYHAT_EARMUFFS ||
+       Dusty.Hat != DUSTYHAT_JESTER ||
+       Dusty.Hat != DUSTYHAT_PIRATE ||
+       Dusty.Hat != DUSTYHAT_SUNGLASSES ||
+       Dusty.Hat != DUSTYHAT_PINK_SHADES ||
+       Dusty.Hat != DUSTYHAT_FROG_CROWN ||
+       Dusty.Hat != DUSTYHAT_EYEGLASSES)
         Dusty.State = DUSTYSTATE_HURT;
     
     UpdateMinimap(MINIMAP_HURT);
@@ -1701,7 +1744,15 @@ static void DisplayDusty_Hurt()
 
 static void UpdateDusty_Hurt()
 {
-    if(Dusty.Hat == DUSTYHAT_BOWTIE || Dusty.Hat == DUSTYHAT_PINK_BOW)
+    if(Dusty.Hat == DUSTYHAT_BOWTIE ||
+       Dusty.Hat == DUSTYHAT_PINK_BOW ||
+       Dusty.Hat == DUSTYHAT_EARMUFFS ||
+       Dusty.Hat == DUSTYHAT_JESTER ||
+       Dusty.Hat == DUSTYHAT_PIRATE ||
+       Dusty.Hat == DUSTYHAT_SUNGLASSES ||
+       Dusty.Hat == DUSTYHAT_PINK_SHADES ||
+       Dusty.Hat == DUSTYHAT_FROG_CROWN ||
+       Dusty.Hat == DUSTYHAT_EYEGLASSES)
     {
         if(Dusty.CollideWithLeftSide || Dusty.CollideWithRightSide)
         {

@@ -65,7 +65,11 @@ void UpdateLives()
         Settings.Lives += 1;
         
         //If we are wearing either the Crown or the Pink Tiara add an extra coin.
-        if (Dusty.Hat == DUSTYHAT_CROWN || Dusty.Hat == DUSTYHAT_PINK_TIARA)
+        if (Dusty.Hat == DUSTYHAT_CROWN ||
+            Dusty.Hat == DUSTYHAT_PINK_TIARA ||
+            Dusty.Hat == DUSTYHAT_YELLOW_TOPHAT ||
+            Dusty.Hat == DUSTYHAT_FROG_CROWN ||
+            Dusty.Hat == DUSTYHAT_EYEGLASSES)
         {
             Settings.Lives += 1;
         }
