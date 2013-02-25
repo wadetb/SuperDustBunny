@@ -243,12 +243,12 @@ void UpdateDusty_JumpCommon();
 static void UpdateDusty_MakeDust(float XOffset, float YOffset, int Count)
 {
     // Spawn some dust motes.
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < Count; i++)
     {
         if (Dusty.Stuck)
-            MakeStickyMote(Dusty.FloatX, Dusty.FloatY - 50);
+            MakeStickyMote(Dusty.FloatX, Dusty.FloatY - 50, -Dusty.FloatVelocityX*0.1f, -Dusty.FloatVelocityY*0.1f);
         else
-            MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50);
+            MakeDustMote(Dusty.FloatX, Dusty.FloatY - 50, -Dusty.FloatVelocityX*0.1f, -Dusty.FloatVelocityY*0.1f);
     }
 }
 
@@ -277,8 +277,8 @@ static bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
     if (GetInput_IsSwipedUsed())
         return false;
     
-    if (GetInput_GetSwipeTimeLeft() < 1.0f/20.0f)
-        return false;
+//    if (GetInput_GetSwipeTimeLeft() < 1.0f/20.0f)
+//        return false;
     
     float Current = GetInput_GetSwipeCurrent();
         
@@ -328,6 +328,8 @@ static bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
 			AddDebugLine(Dusty.FloatX + ScrollX, Dusty.FloatY + ScrollY, Dusty.FloatX + cosf(DegreesToRadians(Angle-Range))*100 + ScrollX, Dusty.FloatY + -sinf(DegreesToRadians(Angle-Range))*100 + ScrollY, gxRGB32(192, 192, 128), 0.5f);
 		}
 #endif
+
+        UpdateDusty_MakeDust(0, 0, 6);
 
         return true;
     }
@@ -919,14 +921,7 @@ static void UpdateDusty_Hop()
 	// Check for end of hop animation.
 	if (Dusty.SpriteTransition == 24)
 	{
-		// Spawn some dust motes.
-		for (int i = 0; i < 6; i++)
-        {
-            if (Dusty.Stuck)
-                MakeStickyMote(Dusty.FloatX, Dusty.FloatY);
-            else
-                MakeDustMote(Dusty.FloatX, Dusty.FloatY);
-        }
+        UpdateDusty_MakeDust(0, 0, 6);
 
         if (Settings.ControlStyle == CONTROL_TILT)
         {
@@ -1069,6 +1064,8 @@ void UpdateDusty_JumpCommon()
             Dusty.FloatVelocityX += dX * Tweak.DustyAirBoostForSwipe;
             Dusty.FloatVelocityY += dY * Tweak.DustyAirBoostForSwipe;
             
+            UpdateDusty_MakeDust(0, 0, 6);
+
             GetInput_SetSwipeUsed();
         }
         // Allow for dragging him around mid-air.
@@ -1145,15 +1142,7 @@ void UpdateDusty_JumpCommon()
         // When landing on something, revert to standing.
         if (Dusty.CollideWithBottomSide == true )
         {	
-            // Spawn some dust motes.
-            for (int i = 0; i < 3; i++)
-            {
-                if (Dusty.Stuck)
-                    MakeStickyMote(Dusty.FloatX, Dusty.FloatY);
-                else
-                    MakeDustMote(Dusty.FloatX, Dusty.FloatY);
-            }
-
+            UpdateDusty_MakeDust(0, 0, 3);
             SetDustyState_Stand();
             return;
         } 
@@ -1811,13 +1800,7 @@ static void UpdateDusty_IntroHop()
 	if (Dusty.SpriteTransition == 24)
 	{
 		// Spawn some dust motes.
-		for (int i = 0; i < 6; i++)
-        {
-            if (Dusty.Stuck)
-                MakeStickyMote(Dusty.FloatX, Dusty.FloatY);
-            else
-                MakeDustMote(Dusty.FloatX, Dusty.FloatY);
-        }
+        UpdateDusty_MakeDust(0, 0, 6);
 
 		// If still holding right, reset animation and continue hopping.
 		if ( ( Dusty.Direction == DIRECTION_RIGHT && RemoteControl.MoveRight ) || 

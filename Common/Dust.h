@@ -30,7 +30,7 @@ void InitDust();
 void DisplayDust();
 void UpdateDust();
 
-void MakeDustMote(float X, float Y);
-void MakeStickyMote(float X, float Y);
+void MakeDustMote(float X, float Y, float VX, float VY);
+void MakeStickyMote(float X, float Y, float VX, float VY);
 
 #endif

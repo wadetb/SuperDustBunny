@@ -190,7 +190,7 @@ void GetInput_GetSwipePosAtTime(float* X, float* Y, double Time)
     if (Swipe.Count < 2)
     {
         *X = SwipePoints[0].X;
-        *Y = SwipePoints[0].X;
+        *Y = SwipePoints[0].Y;
         return;
     }
 

@@ -310,7 +310,7 @@ static void SendBabyToHeaven(SBaby* Baby)
     Baby->Alpha = 0.3f;
     
     for (int i = 0; i < 25; i++)
-        MakeDustMote(Baby->X + Random(-25, 25), Baby->Y - 30 + Random(-25, 25)); 
+        MakeDustMote(Baby->X + Random(-25, 25), Baby->Y - 30 + Random(-25, 25), 0, 0);
 }
 
 static void VacuumUpBaby(SBaby* Baby)

@@ -169,15 +169,15 @@ void UpdateDust()
 	}
 }
 
-void MakeDustMote(float X, float Y)
+void MakeDustMote(float X, float Y, float VX, float VY)
 {
 	SDustMote* Mote = &DustMotes[(int)Random(0, MAX_DUST_MOTES-1)];
 
 	Mote->X = X;
 	Mote->Y = Y;
 
-	Mote->VX = Random(-3.0f, 3.0f);
-	Mote->VY = Random(-3.0f, 3.0f);
+	Mote->VX = Random(-3.0f, 3.0f) + VX;
+	Mote->VY = Random(-3.0f, 3.0f) + VY;
 
 	Mote->Size = Random(1.0f, 2.0f);
 	Mote->Depth = 1.0f;
@@ -189,15 +189,15 @@ void MakeDustMote(float X, float Y)
     Mote->Color = gxRGBA32(192, 192, 192, 0);
 }
 
-void MakeStickyMote(float X, float Y)
+void MakeStickyMote(float X, float Y, float VX, float VY)
 {
 	SDustMote* Mote = &DustMotes[(int)Random(0, MAX_DUST_MOTES-1)];
     
 	Mote->X = X;
 	Mote->Y = Y;
     
-	Mote->VX = Random(-3.0f, 3.0f);
-	Mote->VY = Random(-3.0f, 3.0f);
+	Mote->VX = Random(-3.0f, 3.0f) + VX;
+	Mote->VY = Random(-3.0f, 3.0f) + VY;
     
 	Mote->Size = Random(1.0f, 2.0f);
 	Mote->Depth = 1.0f;
