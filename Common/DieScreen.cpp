@@ -12,6 +12,7 @@
 #include "Chapter.h"
 #include "Text.h"
 #include "GameScore.h"
+#include "Settings.h"
 
 #ifdef PLATFORM_IPHONE
 #import "SuperDustBunnyViewController.h"
@@ -78,10 +79,6 @@ struct SDieScreen
 
 SDieScreen DieScreen;
 
-#define GOLD_PAGE_COUNT     20
-#define SILVER_PAGE_COUNT   10
-#define BRONZE_PAGE_COUNT   5
-
 void InitDieScreen()
 {
     DieScreen.ButtonEverReleased = false;
@@ -122,6 +119,12 @@ void InitDieScreen()
             LoadSpriteAsset(MedalNames[i], &MedalFrames[i]);
     }
     
+    if (Portfolio.PageCount > Settings.PageCount)
+    {
+        Settings.PageCount = Portfolio.PageCount;
+        SaveSettings();
+    }
+
     UploadScore();
 }
 

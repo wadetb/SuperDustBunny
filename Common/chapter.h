@@ -20,6 +20,10 @@
 #define MIN_PAGE_WIDTH      12
 #define MIN_PAGE_HEIGHT     10
 
+#define GOLD_PAGE_COUNT     20
+#define SILVER_PAGE_COUNT   10
+#define BRONZE_PAGE_COUNT   5
+
 enum ESpecialBlockID
 {
 	SPECIALBLOCKID_FIRST			= 10000,

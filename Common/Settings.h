@@ -19,6 +19,7 @@ typedef enum
 typedef struct
 {
     int Lives;
+    int PageCount;
     
     EControlStyle ControlStyle;
     

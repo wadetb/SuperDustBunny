@@ -71,6 +71,8 @@ void InitStartScreen()
     StartScreen.Pressed = 0;
     StartScreen.PressedTime = 0.0f;
     
+    StartScreen.WiggleTime = 0;
+    
     ResetLightState();
     
     StopMusicTrack(MUSIC_CHAPTER);
@@ -133,11 +135,12 @@ static void StartScreen_Advance()
 }
 
 
-#define PLAY_Y      ((LitScreenHeight/5.0)*0.75)
-#define TRAIN_Y     ((LitScreenHeight/5.0)*2.0)
-#define STORE_Y     ((LitScreenHeight/5.0)*3.25)
+#define PLAY_Y      ((LitScreenHeight/5.0)*0.85)
+#define TRAIN_Y     ((LitScreenHeight/5.0)*2.1)
+#define STORE_Y     ((LitScreenHeight/5.0)*3.35)
 
 #define BUTTON_HEIGHT (LitScreenHeight/5.0)
+
 
 void DisplayStartScreen()
 {
@@ -170,6 +173,36 @@ void DisplayStartScreen()
     if (Chapters[StartScreen.PlayChapter].HasBackground)
         AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &Chapters[StartScreen.PlayChapter].BackgroundSprite, 0, 0, 768, LitScreenHeight, 1.0f);
 
+    // Medals
+    float MedalYOffset = 0;//Remap(StartScreen.StartupTime, 10, 10.5f, -50, 0, true);
+    if (Settings.PageCount >= BRONZE_PAGE_COUNT)
+    {
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &BronzeMedalSprite, 384+150, MedalYOffset+100, 2.5f, 1.0f);
+        if (Settings.PageCount < SILVER_PAGE_COUNT)
+        {
+            char Work[20];
+            snprintf(Work, sizeof(Work), "%d", Settings.PageCount);
+            DisplayMultilineStringAlpha(LIGHTLIST_VACUUM, Work, FORMAT_CENTER_X|FORMAT_CENTER_Y, 384+150, MedalYOffset+100+60, 1.4f, 0.25f);
+        }
+    }
+    if (Settings.PageCount >= SILVER_PAGE_COUNT)
+    {
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &SilverMedalSprite, 384-150, MedalYOffset+80, 2.5f, 1.0f);
+        if (Settings.PageCount < GOLD_PAGE_COUNT)
+        {
+            char Work[20];
+            snprintf(Work, sizeof(Work), "%d", Settings.PageCount);
+            DisplayMultilineStringAlpha(LIGHTLIST_VACUUM, Work, FORMAT_CENTER_X|FORMAT_CENTER_Y, 384-150, MedalYOffset+80+75, 1.4f, 0.25f);
+        }
+    }
+    if (Settings.PageCount >= GOLD_PAGE_COUNT)
+    {
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &GoldMedalSprite, 384, MedalYOffset+60, 2.75f, 1.0f);
+        char Work[20];
+        snprintf(Work, sizeof(Work), "%d", Settings.PageCount);
+        DisplayMultilineStringAlpha(LIGHTLIST_VACUUM, Work, FORMAT_CENTER_X|FORMAT_CENTER_Y, 384, MedalYOffset+60+75, 1.4f, 0.25f);
+    }
+    
     AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &ScreenStartButtonsSprite, 180 + sinf(StartScreen.WiggleTime)*4.0f, PLAY_Y, 0,  10*64, 512, 14*64, StartScreen.Pressed == 1 ? 0.5f : 1.0f);
     AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &ScreenStartButtonsSprite, 100 + sinf(StartScreen.WiggleTime+3)*4.0f, TRAIN_Y, 0,  3*64, 512,  7*64, StartScreen.Pressed == 2 ? 0.5f : 1.0f);
     AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &ScreenStartButtonsSprite, 190 + sinf(StartScreen.WiggleTime+5)*4.0f, STORE_Y, 0,  7*64, 512, 10*64, StartScreen.Pressed == 3 ? 0.5f : 1.0f);

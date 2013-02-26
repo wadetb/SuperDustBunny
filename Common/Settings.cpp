@@ -22,6 +22,7 @@ SSettings Settings;
 void InitSettings()
 {
     Settings.Lives = 3;
+    Settings.PageCount = 0;
     Settings.ControlStyle = CONTROL_SWIPE;
     Settings.GhostActive = false;
     Settings.DisableVacuum = false;
@@ -39,6 +40,7 @@ void InitSettings()
     NSDictionary *appDefaults = [NSDictionary
                                  dictionaryWithObjectsAndKeys:
                                  [NSNumber numberWithInt: Settings.Lives], @"Lives",
+                                 [NSNumber numberWithInt: Settings.PageCount], @"PageCount",
                                  [NSNumber numberWithInt: Settings.ControlStyle], @"ControlStyle",
                                  [NSNumber numberWithBool: Settings.GhostActive], @"GhostActive",
                                  [NSNumber numberWithBool: Settings.DeveloperMode], @"DeveloperMode",
@@ -61,6 +63,7 @@ void LoadSettings()
 #ifdef PLATFORM_IPHONE_OR_MAC
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     Settings.Lives = (int)[defaults integerForKey:@"Lives"];
+    Settings.PageCount = (int)[defaults integerForKey:@"PageCount"];
     Settings.ControlStyle = (EControlStyle)[defaults integerForKey:@"ControlStyle"];
     Settings.GhostActive = [defaults boolForKey:@"GhostActive"];
     Settings.DeveloperMode = [defaults boolForKey:@"DeveloperMode"];
@@ -92,6 +95,7 @@ void SaveSettings()
 #ifdef PLATFORM_IPHONE_OR_MAC
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:[NSNumber numberWithInt:Settings.Lives] forKey:@"Lives"];
+    [defaults setObject:[NSNumber numberWithInt:Settings.PageCount] forKey:@"PageCount"];
     [defaults setObject:[NSNumber numberWithInt:Settings.ControlStyle] forKey:@"ControlStyle"];
     [defaults setObject:[NSNumber numberWithBool:Settings.GhostActive] forKey:@"GhostActive"];
     [defaults setObject:[NSNumber numberWithBool:Settings.DeveloperMode] forKey:@"DeveloperMode"];
