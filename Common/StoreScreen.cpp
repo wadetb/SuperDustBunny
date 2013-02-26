@@ -52,39 +52,39 @@ SStoreScreen StoreScreen;
 SInventory Inventory[] =
 {
 //Tier 1
-    { "Assets/hat-apple.png", "apple", "vacuum retreats longer", 5, DUSTYHAT_APPLE },
-    { "Assets/hat-karate.png", "karate hat", "vacuum retreats longer", 5, DUSTYHAT_KARATE },
-    { "Assets/hat-baseball-cap.png", "baseball cap", "jump faster!", 10, DUSTYHAT_BASEBALL_CAP },
-    { "Assets/hat-nurse.png", "nurse cap", "jump faster!", 10, DUSTYHAT_NURSE },
-    { "Assets/hat-bee.png", "bee hat", "launch faster", 10, DUSTYHAT_BEE },
-    { "Assets/hat-party.png", "party hat", "launch faster", 10, DUSTYHAT_PARTY },
-    { "Assets/hat-bowtie.png", "bowtie", "immune to injury", 5, DUSTYHAT_BOWTIE },
-    { "Assets/hat-pink-bow.png", "pink bow", "immune to injury", 5, DUSTYHAT_PINK_BOW },
-    { "Assets/hat-clown-nose.png", "clown nose", "provides light", 10, DUSTYHAT_CLOWN_NOSE },
-    { "Assets/hat-green-feather.png", "green feather", "fall slower", 10, DUSTYHAT_GREEN_FEATHER },
-    { "Assets/hat-purple-feather.png", "yellow feather", "fall slower", 10, DUSTYHAT_PURPLE_FEATHER },
+    { "Assets/hat-graduation.png", "graduation cap", "higher learning", 0, DUSTYHAT_GRADUATION },
+    { "Assets/hat-apple.png", "apple", "gives vacuum a pause", 5, DUSTYHAT_APPLE },
+    { "Assets/hat-bowtie.png", "bowtie", "immune to fire\nand spikes", 5, DUSTYHAT_BOWTIE },
+    { "Assets/hat-pink-bow.png", "pink bow", "immune to\nfire and spikes", 5, DUSTYHAT_PINK_BOW },
+    { "Assets/hat-clown-nose.png", "reindeer nose", "provides light\nin dark places", 5, DUSTYHAT_CLOWN_NOSE },
+    { "Assets/hat-purple-feather.png", "yellow feather", "fall slower", 5, DUSTYHAT_PURPLE_FEATHER },
+    { "Assets/hat-baseball-cap.png", "baseball cap", "dusty is faster!", 10, DUSTYHAT_BASEBALL_CAP },
+    { "Assets/hat-bee.png", "bee hat", "launch and\nfly faster", 10, DUSTYHAT_BEE },
+    { "Assets/hat-party.png", "party hat", "launch and\nfly faster", 10, DUSTYHAT_PARTY },
+    //    { "Assets/hat-green-feather.png", "green feather", "fall slower", 10, DUSTYHAT_GREEN_FEATHER },
+    //    { "Assets/hat-nurse.png", "nurse cap", "dusty is faster!", 10, DUSTYHAT_NURSE },
+    //    { "Assets/hat-karate.png", "karate hat", "gives vacuum\npause", 5, DUSTYHAT_KARATE },
 //Tier 2
-    { "Assets/hat-crown.png", "crown", "adds extra\ncoin", 25, DUSTYHAT_CROWN },
-    { "Assets/hat-pink-tiara.png", "pink tiara", "adds extra\ncoin", 25, DUSTYHAT_PINK_TIARA },
-    { "Assets/hat-disguise.png", "disguise", "vacuum retreats longer\njump faster!", 25, DUSTYHAT_DISGUISE },
-    { "Assets/hat-earmuffs.png", "ear muffs", "vacuum pauses longer\nimmune to injury", 25, DUSTYHAT_EARMUFFS },
-    { "Assets/hat-flower.png", "flower", "provides light\nfall slower", 25, DUSTYHAT_FLOWER },
-    { "Assets/hat-witch.png", "witch hat","vacuum retreats longer\njump faster!", 25, DUSTYHAT_WITCH },
-    { "Assets/hat-graduation.png", "graduation cap", "provides light\nfall slower", 25, DUSTYHAT_GRADUATION },
-    { "Assets/hat-jester.png", "jester hat","launch faster\nimmune to injury", 25, DUSTYHAT_JESTER },
-    { "Assets/hat-pirate.png", "pirate hat", "jump faster!\nimmune to injury", 25, DUSTYHAT_PIRATE },
-    { "Assets/hat-snorkel.png", "snorkel", "vacuum retreats longer\njump faster!", 25, DUSTYHAT_SNORKEL },
-    { "Assets/hat-tophat.png", "top hat", "launch faster\nfall slower", 25, DUSTYHAT_TOPHAT },
-    { "Assets/hat-tutu.png", "tutu","jump faster!\nlaunch faster", 25, DUSTYHAT_TUTU },
-    { "Assets/hat-yellow-tophat.png", "yellow top hat", "adds extra coin\nprovides light", 35, DUSTYHAT_YELLOW_TOPHAT },
+    //{ "Assets/hat-crown.png", "crown", "adds extra\ncoin", 25, DUSTYHAT_CROWN },
+    //    { "Assets/hat-pink-tiara.png", "pink tiara", "adds extra\ncoin", 25, DUSTYHAT_PINK_TIARA },
+    //{ "Assets/hat-disguise.png", "disguise\nvacuum retreats longer\ndusty is faster!", 25, DUSTYHAT_DISGUISE },
+    //    { "Assets/hat-earmuffs.png", "ear muffs\nvacuum pauses longer\nimmuen to fire\nand spikes", 25, DUSTYHAT_EARMUFFS },
+    //    { "Assets/hat-flower.png", "flower", 25, DUSTYHAT_FLOWER },
+    //    { "Assets/hat-witch.png", "witch hat", 25, DUSTYHAT_WITCH },
+    //    { "Assets/hat-jester.png", "jester hat", 25, DUSTYHAT_JESTER },
+    //    { "Assets/hat-pirate.png", "pirate hat", 25, DUSTYHAT_PIRATE },
+    //    { "Assets/hat-snorkel.png", "snorkel", 25, DUSTYHAT_SNORKEL },
+    //    { "Assets/hat-tophat.png", "top hat", 25, DUSTYHAT_TOPHAT },
+    //    { "Assets/hat-tutu.png", "tutu", 25, DUSTYHAT_TUTU },
+    //    { "Assets/hat-yellow-tophat.png", "yellow top hat", 35, DUSTYHAT_YELLOW_TOPHAT },
 //Tier 3
-    { "Assets/hat-sunglasses.png", "sunglasses", "jump faster!\nfall slower\nimmune to injury", 50, DUSTYHAT_SUNGLASSES },
-    { "Assets/hat-pink-shades.png", "pink shades", "jump faster!\nfall slower\nimmune to injury", 50, DUSTYHAT_PINK_SHADES },
-    { "Assets/hat-monocle.png", "monocle", "proides light\nvacuum retreats longer\nlaunch faster", 50, DUSTYHAT_MONOCLE },
-    { "Assets/hat-earphones.png", "ear phones", "launch faster\njump faster\nvacuum retreats longer", 50, DUSTYHAT_EARPHONES },
-    { "Assets/hat-eyepatch.png", "eye patch", "proides light\nvacuum retreats longer\nlaunch faster", 50, DUSTYHAT_EYEPATCH },
-    { "Assets/hat-frog-crown.png", "frog crown", "adds extra coin\nprovides light\nimmune to injury", 60, DUSTYHAT_FROG_CROWN },
-    { "Assets/hat-eyeglasses.png", "eye glasses", "immune to injury\nfall slower\nadds extra coin", 60, DUSTYHAT_EYEGLASSES },    
+//    { "Assets/hat-sunglasses.png", "sunglasses", "jump faster!\nfall slower\nimmune to injury", 50, DUSTYHAT_SUNGLASSES },
+//    { "Assets/hat-pink-shades.png", "pink shades", "jump faster!\nfall slower\nimmune to injury", 50, DUSTYHAT_PINK_SHADES },
+//    { "Assets/hat-monocle.png", "monocle", "proides light\nvacuum retreats longer\nlaunch faster", 50, DUSTYHAT_MONOCLE },
+//    { "Assets/hat-earphones.png", "ear phones", "launch faster\njump faster\nvacuum retreats longer", 50, DUSTYHAT_EARPHONES },
+//    { "Assets/hat-eyepatch.png", "eye patch", "proides light\nvacuum retreats longer\nlaunch faster", 50, DUSTYHAT_EYEPATCH },
+//    { "Assets/hat-frog-crown.png", "frog crown", "adds extra coin\nprovides light\nimmune to injury", 60, DUSTYHAT_FROG_CROWN },
+//    { "Assets/hat-eyeglasses.png", "eye glasses", "immune to injury\nfall slower\nadds extra coin", 60, DUSTYHAT_EYEGLASSES },    
 };
 
 
@@ -212,7 +212,7 @@ void SaveInventory()
 
 #define STORE_X 60
 #define STORE_Y 80
-#define STORE_ROWS 2
+#define STORE_ROWS 3
 #define STORE_COLS 3
 #define STORE_ROW_SZ 260
 #define STORE_COL_SZ ((768-STORE_X*2)/STORE_COLS)
@@ -229,7 +229,7 @@ void InitStoreScreen()
     
     SetDustyState_IntroStand();
     Dusty.FloatX = STORE_X+(STORE_COLS-1)*STORE_COL_SZ + STORE_COL_SZ/2-30;
-    Dusty.FloatY = STORE_Y+(3-1)*STORE_ROW_SZ + STORE_ROW_SZ-50;
+    Dusty.FloatY = STORE_Y+(STORE_ROWS)*STORE_ROW_SZ + STORE_ROW_SZ-50;
     Dusty.NoCollision = true;
     RemoteControl.Enabled = true;
     
@@ -247,7 +247,10 @@ void InitStoreScreen()
 
 void DisplayStoreScreen()
 {
-    AddLitSpriteSizedAlpha(LIGHTLIST_BACKGROUND, &ScreenStoreSprite, 0, 0, 768, LitScreenHeight, 1.0f);
+    AddLitSpriteAlpha(LIGHTLIST_BACKGROUND, &ScreenStoreSprite, 768/2 - ScreenStoreSprite.width/2, 0, 1);
+    AddLitSpriteAlpha(LIGHTLIST_BACKGROUND, &ScreenStoreSprite, 768/2 - ScreenStoreSprite.width/2, ScreenStoreSprite.height, 1);
+    //AddLitSpriteAlpha(LIGHTLIST_BACKGROUND, &ScreenStoreSprite, 768/2 - ScreenStoreSprite.width/2, LitScreenHeight/2 - ScreenStoreSprite.height/2, 1);
+    //AddLitSpriteSizedAlpha(LIGHTLIST_BACKGROUND, &ScreenStoreSprite, 0, 0, 768, LitScreenHeight, 1.0f);
 
     AddLitSprite(LIGHTLIST_VACUUM, &ScreenCoinBackgroundSprite, 0, LitScreenHeight - 120);
     AddLitSpriteScaled(LIGHTLIST_VACUUM, &CoinIconSprite, 240, LitScreenHeight - 110, 0.65f*1.0f, 0.65f*1.0f);
@@ -435,10 +438,15 @@ void UpdateStoreScreen()
     {
         if (!msButton1 && msOldButton1)
         {
-            if (msX < 200 && msY <= 200)
+            if (msX < 100 && msY <= 100)
             {
                 SetGameState_StartScreen();
                 return;
+            }
+            
+            if (msY > STORE_Y + STORE_ROWS * STORE_ROW_SZ)
+            {
+                StoreScreen.HopDelay = 0;
             }
             
             if (msX >= STORE_X && msX <= STORE_X + STORE_COLS * STORE_COL_SZ &&

@@ -18,6 +18,13 @@ enum EBarrelState
 	BARRELSTATE_RESET,
 };
 
+enum EBarrelButtonState
+{
+    BARRELBUTTONSTATE_WAIT_FOR_UP,
+    BARRELBUTTONSTATE_WAIT_FOR_DOWN,
+    BARRELBUTTONSTATE_WAIT_FOR_RELEASE
+};
+
 struct SBarrelProperties
 {
 	int From;
@@ -38,6 +45,7 @@ struct SBarrel
     float Power;
     
 	int Timer;
+    EBarrelButtonState ButtonState;
 };
 
 extern SBarrel Barrel;

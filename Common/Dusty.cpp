@@ -435,7 +435,6 @@ static void DisplayDustySprite(EDustySprite Sprite, float XAdj = 0.0f, float XMi
 
             if (Dusty.Hat == DUSTYHAT_CLOWN_NOSE ||
                 Dusty.Hat == DUSTYHAT_FLOWER ||
-                Dusty.Hat == DUSTYHAT_GRADUATION ||
                 Dusty.Hat == DUSTYHAT_YELLOW_TOPHAT ||
                 Dusty.Hat == DUSTYHAT_MONOCLE ||
                 Dusty.Hat == DUSTYHAT_EYEPATCH ||
@@ -468,7 +467,6 @@ static void DisplayDustySprite(EDustySprite Sprite, float XAdj = 0.0f, float XMi
 
             if ((Dusty.Hat == DUSTYHAT_CLOWN_NOSE ||
                 Dusty.Hat == DUSTYHAT_FLOWER ||
-                Dusty.Hat == DUSTYHAT_GRADUATION ||
                 Dusty.Hat == DUSTYHAT_YELLOW_TOPHAT ||
                 Dusty.Hat == DUSTYHAT_MONOCLE ||
                 Dusty.Hat == DUSTYHAT_EYEPATCH ||
@@ -998,7 +996,6 @@ void UpdateDusty_JumpCommon()
         if (Dusty.Hat == DUSTYHAT_GREEN_FEATHER || 
             Dusty.Hat == DUSTYHAT_PURPLE_FEATHER ||
             Dusty.Hat == DUSTYHAT_FLOWER ||
-            Dusty.Hat == DUSTYHAT_GRADUATION ||
             Dusty.Hat == DUSTYHAT_TOPHAT ||
             Dusty.Hat == DUSTYHAT_SUNGLASSES ||
             Dusty.Hat == DUSTYHAT_PINK_SHADES ||

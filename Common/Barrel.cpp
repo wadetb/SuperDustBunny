@@ -73,7 +73,7 @@ SBarrel* CreateBarrel(int X, int Y, SBarrelProperties* Properties)
     Barrel->Power = Properties->Power;
 
 	Barrel->State = BARRELSTATE_WAIT;
-    
+
     return Barrel;
 }
 
@@ -157,6 +157,7 @@ void UpdateBarrels()
 				SetDustyState_PrepareLaunch();
 				
 				Barrel->State = BARRELSTATE_TURN;
+                Barrel->ButtonState = BARRELBUTTONSTATE_WAIT_FOR_DOWN;
 			}
 		}
 		else if (Barrel->State == BARRELSTATE_TURN)
@@ -164,38 +165,81 @@ void UpdateBarrels()
 			Dusty.FloatX = (float)Barrel->X;
 			Dusty.FloatY = (float)Barrel->Y + 60;
 
-			float Diff = AngleDifference(Barrel->Dir, Barrel->ToDir);
-			if (Diff > 5 || Diff < -5)
-			{
-				if (Diff < 0)
-					Barrel->Dir = fmodf(Barrel->Dir+10, 360);
-				else
-					Barrel->Dir = fmodf(Barrel->Dir+350, 360);
-			}
-			else
-			{
-				Barrel->Dir = Barrel->ToDir;
-				float Angle = DirectionToAngle(Barrel->Dir);
-                
-                float Power = Barrel->Power;
-                if (Dusty.Hat == DUSTYHAT_BEE ||
-                    Dusty.Hat == DUSTYHAT_PARTY ||
-                    Dusty.Hat == DUSTYHAT_EARMUFFS ||
-                    Dusty.Hat == DUSTYHAT_WITCH ||
-                    Dusty.Hat == DUSTYHAT_JESTER ||
-                    Dusty.Hat == DUSTYHAT_TOPHAT ||
-                    Dusty.Hat == DUSTYHAT_TUTU ||
-                    Dusty.Hat == DUSTYHAT_MONOCLE ||
-                    Dusty.Hat == DUSTYHAT_EARPHONES ||
-                    Dusty.Hat == DUSTYHAT_EYEPATCH)
-                    Power += 10;
-                
-                SetDustyState_Launch(Power*cosf(Angle), -Power*sinf(Angle));
+            if (Barrel->ButtonState == BARRELBUTTONSTATE_WAIT_FOR_DOWN)
+            {
+                if (msButton1)
+                    Barrel->ButtonState = BARRELBUTTONSTATE_WAIT_FOR_RELEASE;
+            }
+            
+            if (Barrel->ButtonState == BARRELBUTTONSTATE_WAIT_FOR_RELEASE)
+            {
+                if (msButton1)
+                {
+                    float Diff = AngleDifference(Barrel->FromDir, Barrel->ToDir);
+                    if (Diff < 0)
+                        Barrel->Dir = fmodf(Barrel->Dir+10, 360);
+                    else
+                        Barrel->Dir = fmodf(Barrel->Dir+350, 360);
+                }
+                else
+                {
+                    float Angle = DirectionToAngle(Barrel->Dir);
+                    
+                    float Power = Barrel->Power;
+                    if (Dusty.Hat == DUSTYHAT_BEE ||
+                        Dusty.Hat == DUSTYHAT_PARTY ||
+                        Dusty.Hat == DUSTYHAT_EARMUFFS ||
+                        Dusty.Hat == DUSTYHAT_WITCH ||
+                        Dusty.Hat == DUSTYHAT_JESTER ||
+                        Dusty.Hat == DUSTYHAT_TOPHAT ||
+                        Dusty.Hat == DUSTYHAT_TUTU ||
+                        Dusty.Hat == DUSTYHAT_MONOCLE ||
+                        Dusty.Hat == DUSTYHAT_EARPHONES ||
+                        Dusty.Hat == DUSTYHAT_EYEPATCH)
+                        Power += 10;
+                    
+                    SetDustyState_Launch(Power*cosf(Angle), -Power*sinf(Angle));
+                    
+                    Dusty.Hidden = false;
+                    Barrel->Timer = 30;
+                    Barrel->State = BARRELSTATE_LAUNCH;
+                }
+            }
+            else
+            {
+                float Diff = AngleDifference(Barrel->Dir, Barrel->ToDir);
+                if (Diff > 5 || Diff < -5)
+                {
+                    if (Diff < 0)
+                        Barrel->Dir = fmodf(Barrel->Dir+10, 360);
+                    else
+                        Barrel->Dir = fmodf(Barrel->Dir+350, 360);
+                }
+                else
+                {
+                    Barrel->Dir = Barrel->ToDir;
+                    float Angle = DirectionToAngle(Barrel->Dir);
+                    
+                    float Power = Barrel->Power;
+                    if (Dusty.Hat == DUSTYHAT_BEE ||
+                        Dusty.Hat == DUSTYHAT_PARTY ||
+                        Dusty.Hat == DUSTYHAT_EARMUFFS ||
+                        Dusty.Hat == DUSTYHAT_WITCH ||
+                        Dusty.Hat == DUSTYHAT_JESTER ||
+                        Dusty.Hat == DUSTYHAT_TOPHAT ||
+                        Dusty.Hat == DUSTYHAT_TUTU ||
+                        Dusty.Hat == DUSTYHAT_MONOCLE ||
+                        Dusty.Hat == DUSTYHAT_EARPHONES ||
+                        Dusty.Hat == DUSTYHAT_EYEPATCH)
+                        Power += 10;
+                    
+                    SetDustyState_Launch(Power*cosf(Angle), -Power*sinf(Angle));
 
-                Dusty.Hidden = false;
-				Barrel->Timer = 30;
-				Barrel->State = BARRELSTATE_LAUNCH;
-			}
+                    Dusty.Hidden = false;
+                    Barrel->Timer = 30;
+                    Barrel->State = BARRELSTATE_LAUNCH;
+                }
+            }
 		}
 		else if (Barrel->State == BARRELSTATE_LAUNCH)
 		{

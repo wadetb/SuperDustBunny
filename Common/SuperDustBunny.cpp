@@ -215,7 +215,7 @@ static void DisplayTutorialAlert()
     
     NSString *message =
     @"As a reward for completing your training, we've given you a special hat in the store.\n\n"
-    "Press the Store button to check it out!";
+    "Press the Store button to see what you got!";
     
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title
                                                     message:message
