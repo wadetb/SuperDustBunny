@@ -260,9 +260,14 @@ struct SPortfolio
     
     int ElementChangeFrequency;
     int ChapterChangeFrequency;
+    int FirstStoryPageFrequency;
+    int StoryPageFrequency;
     
     int ChapterCount;
     int PageCount;
+    
+    int ChaptersUntilNextStory;
+    bool StorySeen[MAX_CHAPTERS];
     
     float InitialVacuumSpeed;
     float VacuumSpeedChange;

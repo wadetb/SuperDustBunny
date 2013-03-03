@@ -43,6 +43,7 @@ struct STutorialProperties
     float TextScale;
     bool ScreenAligned;
     bool Dots;
+    bool Centered;
     STutorialBubble* Bubble;
 };
 
@@ -91,6 +92,7 @@ void ParseTutorialProperties(SBlock* Block, rapidxml::xml_node<char>* Properties
     Props->TextScale = 0.9f;
     Props->ScreenAligned = false;
     Props->Dots = true;
+    Props->Centered = false;
     Props->Bubble = NULL;
     
 	rapidxml::xml_node<char>* PropertyNode = PropertiesNode->first_node("property");
@@ -130,6 +132,10 @@ void ParseTutorialProperties(SBlock* Block, rapidxml::xml_node<char>* Properties
         else if (strcmp(Name, "dots") == 0)
         {
             Props->Dots = (bool)atoi(Value);
+        }
+        else if (strcmp(Name, "centered") == 0)
+        {
+            Props->Centered = (bool)atoi(Value);
         }
         
         free(WritableValue);
@@ -705,8 +711,16 @@ void DisplayTutorial()
             }
             else
             {
-                X = Tutorial->X + Props->XOffset + ScrollX;
-                Y = Tutorial->Y + Props->YOffset + ScrollY;
+                if (Props->Centered)
+                {
+                    X = Tutorial->X + Props->XOffset - (Bubble->SubX2-Bubble->SubX1)/2 + ScrollX;
+                    Y = Tutorial->Y + Props->YOffset - (Bubble->SubY2-Bubble->SubY1)/2 + ScrollY;
+                }
+                else
+                {
+                    X = Tutorial->X + Props->XOffset + ScrollX;
+                    Y = Tutorial->Y + Props->YOffset + ScrollY;
+                }
                 
                 X += cosf(Tutorial->WiggleTimer*4.0f) * 2.5f + cosf(Tutorial->WiggleTimer*1.0f/3.0f) * 2.5f;
                 Y += sinf(Tutorial->WiggleTimer*4.0f) * 2.5f + sinf(Tutorial->WiggleTimer*1.0f/3.0f) * 2.5f;

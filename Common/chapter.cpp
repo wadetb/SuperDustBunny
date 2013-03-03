@@ -41,6 +41,10 @@
 #include <direct.h>
 #endif
 
+#define FIRST_NORMAL_CHAPTER 1
+#define LAST_NORMAL_CHAPTER 4
+#define FIRST_STORY_CHAPTER 5
+#define LAST_STORY_CHAPTER 5
 
 int NChapters;
 SChapterListEntry Chapters[MAX_CHAPTERS];
@@ -1203,6 +1207,17 @@ static void CreatePageObjects()
 		LightState.AmbientColor = gxRGBA32(128, 128, 128, 255);
 }
 
+static bool IsPortfolioChapter()
+{
+    if (strcmp(Chapters[CurrentChapter].Name, "Training") == 0)
+        return false;
+    
+    if (strcmp(Chapters[CurrentChapter].Name, "Credits") == 0)
+        return false;
+    
+    return true;
+}
+
 void SetCurrentPage(int PageNum)
 {
 	if (PageNum < 0 || PageNum >= Chapter.NPages)
@@ -1301,7 +1316,9 @@ void SetCurrentPage(int PageNum)
     }
     
 	Chapter.PageProps = Chapter.Pages[PageNum].Props;
-    OverridePagePropertiesFromPortfolio(&Chapter.PageProps);
+    
+    if (IsPortfolioChapter())
+        OverridePagePropertiesFromPortfolio(&Chapter.PageProps);
     
 	Chapter.PortalAngle = 0;
 
@@ -1775,6 +1792,8 @@ void LoadPortfolio()
     if (ChangeChapterNode == NULL)
         ReportError("Missing <ChangeChapter> node.  Check for errors in the XML.");
     Portfolio.ChapterChangeFrequency = ChangeChapterNode->first_attribute("frequency") ? atoi(ChangeChapterNode->first_attribute("frequency")->value()) : 1;
+    Portfolio.FirstStoryPageFrequency = ChangeChapterNode->first_attribute("firstStoryFrequency") ? atoi(ChangeChapterNode->first_attribute("firstStoryFrequency")->value()) : 1;
+    Portfolio.StoryPageFrequency = ChangeChapterNode->first_attribute("storyFrequency") ? atoi(ChangeChapterNode->first_attribute("storyFrequency")->value()) : 1;
 
     rapidxml::xml_node<char>* VacuumNode = PortfolioNode->first_node("Vacuum");
     if (VacuumNode == NULL)
@@ -1834,20 +1853,53 @@ void SetupInitialPortfolio()
     
     Portfolio.Page = Random(0, Chapter.NPages - 1);
     SetCurrentPage(Portfolio.Page);
+    
+    Portfolio.ChaptersUntilNextStory = Portfolio.FirstStoryPageFrequency;
 }
 
 void SetupTutorialPortfolio()
 {
     PortfolioLine = 0;
-
+    
     Portfolio.Gears = true;
     Portfolio.Staplers = true;
     Portfolio.Balloons = true;
-
+    Portfolio.Fireworks = true;
+    Portfolio.Coins = true;
+    
     Portfolio.VacuumDistance = 1000;
     Portfolio.VacuumSpeed = 0.5f;
-
+    
+    Portfolio.VacuumSpeedChangeFrequency = 1;
+    Portfolio.ElementChangeFrequency = 1;
+    Portfolio.ChapterChangeFrequency = 1;
+    
     Portfolio.Chapter = 0;
+    CurrentChapter = Portfolio.Chapter;
+    LoadCurrentChapter();
+    
+    Portfolio.Page = 0;
+    SetCurrentPage(Portfolio.Page);
+}
+
+static void SetupStoryPortfolio(int NewChapter)
+{
+    PortfolioLine = 0;
+    
+    Portfolio.Gears = true;
+    Portfolio.Staplers = true;
+    Portfolio.Balloons = true;
+    Portfolio.Fireworks = true;
+    Portfolio.Coins = true;
+    
+    Portfolio.VacuumDistance = 1000;
+    Portfolio.VacuumSpeed = 0.5f;
+    
+    Portfolio.VacuumSpeedChangeFrequency = 1;
+    Portfolio.ElementChangeFrequency = 1;
+    Portfolio.ChapterChangeFrequency = 1;
+    
+    Portfolio.Chapter = NewChapter;
     CurrentChapter = Portfolio.Chapter;
     LoadCurrentChapter();
     
@@ -1858,6 +1910,12 @@ void SetupTutorialPortfolio()
 void AdvancePortfolio()
 {
     PreparePortfolioForChanges();
+
+    if (Portfolio.Chapter >= FIRST_STORY_CHAPTER && Portfolio.Chapter <= LAST_STORY_CHAPTER)
+    {
+        Portfolio = SavedPortfolio;
+        Portfolio.ChaptersUntilNextStory = Portfolio.StoryPageFrequency;
+    }
 
     PortfolioLine = 0;
 
@@ -1905,9 +1963,45 @@ void AdvancePortfolio()
 
         Portfolio.VacuumDamage = 0;
         
-        Portfolio.Chapter++;
-        if (Portfolio.Chapter >= NChapters)
-            Portfolio.Chapter = 1;
+        Portfolio.ChaptersUntilNextStory--;
+        if (Portfolio.ChaptersUntilNextStory == 0)
+        {
+            Portfolio.ChaptersUntilNextStory = Portfolio.StoryPageFrequency;
+
+            SavedPortfolio = Portfolio;
+
+            int NewChapter = Random(FIRST_STORY_CHAPTER, LAST_STORY_CHAPTER);
+            
+            int ChapterTestCount = 0;
+            for (;;)
+            {
+                if (!Portfolio.StorySeen[NewChapter])
+                {
+                    Portfolio.Chapter = NewChapter;
+                    Portfolio.StorySeen[NewChapter] = true;
+                    SavedPortfolio = Portfolio;
+                    SetupStoryPortfolio(NewChapter);
+                    return;
+                }
+                ChapterTestCount++;
+                if (ChapterTestCount > (LAST_STORY_CHAPTER - FIRST_STORY_CHAPTER + 1))
+                {
+                    Portfolio.Chapter++;
+                    if (Portfolio.Chapter > LAST_NORMAL_CHAPTER)
+                        Portfolio.Chapter = FIRST_NORMAL_CHAPTER;
+                    break;
+                }
+                NewChapter++;
+                if (NewChapter > LAST_STORY_CHAPTER)
+                    NewChapter = FIRST_STORY_CHAPTER;
+            }
+        }
+        else
+        {
+            Portfolio.Chapter++;
+            if (Portfolio.Chapter > LAST_NORMAL_CHAPTER)
+                Portfolio.Chapter = FIRST_NORMAL_CHAPTER;
+        }
         
         CurrentChapter = Portfolio.Chapter;
         LoadCurrentChapter();
@@ -1937,7 +2031,7 @@ void AdvancePortfolio()
 TryAgain:
     int NewPage = Random(0, Chapter.NPages-1);
     
-    if (NewPage == Portfolio.Page)
+    if (Chapter.NPages > 1 && NewPage == Portfolio.Page)
         goto TryAgain;
     
     for (int HistIndex = 0; HistIndex < ARRAY_COUNT(Portfolio.PageHistory); HistIndex++)

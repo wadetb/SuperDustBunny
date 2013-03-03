@@ -235,6 +235,8 @@ inline float Random(float Min, float Max)
 
 inline int Random(int Min, int Max)
 {
+    if (Max == Min)
+        return Max;
 #ifdef PLATFORM_WINDOWS
 	unsigned int i;
 	rand_s( &i );
