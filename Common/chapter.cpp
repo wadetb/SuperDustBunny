@@ -41,11 +41,6 @@
 #include <direct.h>
 #endif
 
-#define FIRST_NORMAL_CHAPTER 1
-#define LAST_NORMAL_CHAPTER 4
-#define FIRST_STORY_CHAPTER 5
-#define LAST_STORY_CHAPTER 5
-
 int NChapters;
 SChapterListEntry Chapters[MAX_CHAPTERS];
 

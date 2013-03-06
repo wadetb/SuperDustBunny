@@ -277,8 +277,8 @@ static bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
     if (GetInput_IsSwipedUsed())
         return false;
     
-//    if (GetInput_GetSwipeTimeLeft() < 1.0f/20.0f)
-//        return false;
+    if (GetInput_GetSwipeTimeLeft() < 1.0f/20.0f)
+        return false;
     
     float Current = GetInput_GetSwipeCurrent();
         
@@ -312,15 +312,11 @@ static bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
         float Power = Tweak.DustyJumpPower;
         //float Power = Remap(L, 50.0f, 100.0f, Tweak.DustyJumpPower/3, Tweak.DustyJumpPower, true);
         //float Power = Remap(MaxSpeed, 2000.0f, 5000.0f, Tweak.DustyJumpPower/3, Tweak.DustyJumpPower, true);
-        dX = dX * Power * Tweak.DustyJumpPowerXScale;
-        dY = dY * ( dY > 0 ? Power * Tweak.DustyJumpPowerYScaleWhenDown : Power );
 
         Dusty.SwipeAngle = NormalizeAngle(RadiansToDegrees(atan2f(-dY, dX)));
         Dusty.SwipePower = Power;
         
-        if (Dusty.Stuck)
-            Dusty.SwipePower /= 5.0f;
-        
+        printf( "CheckSwipeJump: SwipeAngle=%f SwipePower=%f dX=%f dY=%f Angle=%f Range=%f\n", Dusty.SwipeAngle, Dusty.SwipePower, dX, dY, Angle, Range );
 #ifdef SWIPE_DEBUG
 		if (Settings.DeveloperMode)
 		{
@@ -345,10 +341,19 @@ static bool UpdateDusty_CheckSwipeJumpRange(float MinAngle, float MaxAngle)
 
 static void UpdateDusty_DoSwipeJump(float Angle, float Power)
 {
-    float dX = cosf(DegreesToRadians(Angle)) * Power;
-    float dY = -sinf(DegreesToRadians(Angle)) * Power;
+    float ca = cosf(DegreesToRadians(Angle));
+    float sa = -sinf(DegreesToRadians(Angle));
     
-    //printf("Jump: Count=%d MaxSpeed=%f L=%f Power=%f\n", Swipe.ValidCount, MaxSpeed, L, Power);
+    Power = Remap(fabsf(ca), 0.2, 1, Power, Power*Tweak.DustyJumpPowerXScale, true);
+    Power = Remap(sa, 0.2, 1, Power, Power*Tweak.DustyJumpPowerYScaleWhenDown, true );
+
+    if (Dusty.Stuck)
+        Power *= 0.3f;
+
+    float dX = ca * Power;
+    float dY = sa * Power;
+    
+    printf("Jump: Angle=%f Power=%f dX=%f dY=%f\n", Angle, Power, dX, dY);
 
     SetDustyState_JumpWithVelocity(dX, dY);
     

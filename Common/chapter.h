@@ -24,6 +24,12 @@
 #define SILVER_PAGE_COUNT   10
 #define BRONZE_PAGE_COUNT   5
 
+#define FIRST_NORMAL_CHAPTER    1
+#define LAST_NORMAL_CHAPTER     4
+#define FIRST_STORY_CHAPTER     5
+#define LAST_STORY_CHAPTER      5
+
+
 enum ESpecialBlockID
 {
 	SPECIALBLOCKID_FIRST			= 10000,

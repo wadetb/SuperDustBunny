@@ -808,6 +808,12 @@ void InitLighting()
     UIScreen* mainScreen = [UIScreen mainScreen];
     LitRenderTargetWidth = mainScreen.currentMode.size.width;
     LitRenderTargetHeight = mainScreen.currentMode.size.height;
+    if (LitRenderTargetWidth > LitRenderTargetHeight)
+    {
+        int Temp = LitRenderTargetWidth;
+        LitRenderTargetWidth = LitRenderTargetHeight;
+        LitRenderTargetHeight = Temp;
+    }
 #endif
 
     LitAspectScale = ((float)LitRenderTargetWidth/LitRenderTargetHeight) / (768.0f/1024.0f);

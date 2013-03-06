@@ -212,7 +212,7 @@ void SaveInventory()
 
 #define STORE_X 60
 #define STORE_Y 80
-#define STORE_ROWS 3
+#define STORE_ROWS 2
 #define STORE_COLS 3
 #define STORE_ROW_SZ 260
 #define STORE_COL_SZ ((768-STORE_X*2)/STORE_COLS)
