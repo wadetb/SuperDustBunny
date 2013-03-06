@@ -316,7 +316,8 @@ static bool UpdateDusty_CheckSwipeJump(float Angle, float Range)
         Dusty.SwipeAngle = NormalizeAngle(RadiansToDegrees(atan2f(-dY, dX)));
         Dusty.SwipePower = Power;
         
-        printf( "CheckSwipeJump: SwipeAngle=%f SwipePower=%f dX=%f dY=%f Angle=%f Range=%f\n", Dusty.SwipeAngle, Dusty.SwipePower, dX, dY, Angle, Range );
+        //printf( "CheckSwipeJump: SwipeAngle=%f SwipePower=%f dX=%f dY=%f Angle=%f Range=%f\n", Dusty.SwipeAngle, Dusty.SwipePower, dX, dY, Angle, Range );
+
 #ifdef SWIPE_DEBUG
 		if (Settings.DeveloperMode)
 		{
@@ -344,8 +345,8 @@ static void UpdateDusty_DoSwipeJump(float Angle, float Power)
     float ca = cosf(DegreesToRadians(Angle));
     float sa = -sinf(DegreesToRadians(Angle));
     
-    Power = Remap(fabsf(ca), 0.2, 1, Power, Power*Tweak.DustyJumpPowerXScale, true);
-    Power = Remap(sa, 0.2, 1, Power, Power*Tweak.DustyJumpPowerYScaleWhenDown, true );
+    Power = Remap(fabsf(ca), 0.4, 1, Power, Power*Tweak.DustyJumpPowerXScale, true);
+    Power = Remap(sa, 0.4, 1, Power, Power*Tweak.DustyJumpPowerYScaleWhenDown, true );
 
     if (Dusty.Stuck)
         Power *= 0.3f;
@@ -353,7 +354,7 @@ static void UpdateDusty_DoSwipeJump(float Angle, float Power)
     float dX = ca * Power;
     float dY = sa * Power;
     
-    printf("Jump: Angle=%f Power=%f dX=%f dY=%f\n", Angle, Power, dX, dY);
+    //printf("Jump: Angle=%f Power=%f dX=%f dY=%f\n", Angle, Power, dX, dY);
 
     SetDustyState_JumpWithVelocity(dX, dY);
     
