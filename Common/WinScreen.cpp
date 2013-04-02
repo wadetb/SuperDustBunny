@@ -133,7 +133,7 @@ void InitWinScreen()
 }
 
 void DisplayWinScreen()
-{    
+{
     AddLitSprite(LIGHTLIST_BACKGROUND, &BackgroundFridgeSprite, 0, 0);
     AddLitSprite(LIGHTLIST_BACKGROUND, &BackgroundFridgeSprite, 0, 1024);
     

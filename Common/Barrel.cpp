@@ -64,11 +64,28 @@ SBarrel* CreateBarrel(int X, int Y, SBarrelProperties* Properties)
 
 	SBarrel* Barrel = &Barrels[NBarrels++];
 
+    if (X < 64)
+        X = 64;
+    if (X > Chapter.PageWidth*64-128)
+        X = Chapter.PageWidth*64-128;
+    
 	Barrel->X = (float)X + 32;
 	Barrel->Y = (float)Y + 32;
 
-	Barrel->FromDir = (float)Properties->From;
-	Barrel->ToDir = (float)Properties->To;
+    int BlockFlags = 0;
+    if (Portfolio.MirrorPage)
+        BlockFlags |= SPECIALBLOCKID_FLIP_X;
+
+    Barrel->FromDir = ApplyBlockFlagsToDir(Properties->From, BlockFlags);
+    Barrel->ToDir = ApplyBlockFlagsToDir(Properties->To, BlockFlags);
+
+    if (Portfolio.UpsideDown)
+    {
+        int Temp = Barrel->FromDir;
+        Barrel->FromDir = Barrel->ToDir;
+        Barrel->ToDir = Temp;
+    }
+
 	Barrel->Dir = Barrel->FromDir;
     Barrel->Power = Properties->Power;
 
@@ -157,7 +174,7 @@ void UpdateBarrels()
 				SetDustyState_PrepareLaunch();
 				
 				Barrel->State = BARRELSTATE_TURN;
-                Barrel->ButtonState = BARRELBUTTONSTATE_WAIT_FOR_DOWN;
+                Barrel->ButtonState = BARRELBUTTONSTATE_WAIT_FOR_RELEASE;
 			}
 		}
 		else if (Barrel->State == BARRELSTATE_TURN)
@@ -165,44 +182,51 @@ void UpdateBarrels()
 			Dusty.FloatX = (float)Barrel->X;
 			Dusty.FloatY = (float)Barrel->Y + 60;
 
-            if (Barrel->ButtonState == BARRELBUTTONSTATE_WAIT_FOR_DOWN)
+            if ( 0 )
             {
-                if (msButton1)
-                    Barrel->ButtonState = BARRELBUTTONSTATE_WAIT_FOR_RELEASE;
-            }
-            
-            if (Barrel->ButtonState == BARRELBUTTONSTATE_WAIT_FOR_RELEASE)
-            {
-                if (msButton1)
-                {
-                    float Diff = AngleDifference(Barrel->FromDir, Barrel->ToDir);
-                    if (Diff < 0)
-                        Barrel->Dir = fmodf(Barrel->Dir+10, 360);
-                    else
-                        Barrel->Dir = fmodf(Barrel->Dir+350, 360);
-                }
+                float Diff = AngleDifference(Barrel->FromDir, Barrel->ToDir);
+                if (Diff < 0)
+                    Barrel->Dir = fmodf(Barrel->Dir+10, 360);
                 else
+                    Barrel->Dir = fmodf(Barrel->Dir+350, 360);
+
+                if (Barrel->ButtonState == BARRELBUTTONSTATE_WAIT_FOR_RELEASE)
                 {
-                    float Angle = DirectionToAngle(Barrel->Dir);
-                    
-                    float Power = Barrel->Power;
-                    if (Dusty.Hat == DUSTYHAT_BEE ||
-                        Dusty.Hat == DUSTYHAT_PARTY ||
-                        Dusty.Hat == DUSTYHAT_EARMUFFS ||
-                        Dusty.Hat == DUSTYHAT_WITCH ||
-                        Dusty.Hat == DUSTYHAT_JESTER ||
-                        Dusty.Hat == DUSTYHAT_TOPHAT ||
-                        Dusty.Hat == DUSTYHAT_TUTU ||
-                        Dusty.Hat == DUSTYHAT_MONOCLE ||
-                        Dusty.Hat == DUSTYHAT_EARPHONES ||
-                        Dusty.Hat == DUSTYHAT_EYEPATCH)
-                        Power += 10;
-                    
-                    SetDustyState_Launch(Power*cosf(Angle), -Power*sinf(Angle));
-                    
-                    Dusty.Hidden = false;
-                    Barrel->Timer = 30;
-                    Barrel->State = BARRELSTATE_LAUNCH;
+                    if (!msButton1)
+                        Barrel->ButtonState = BARRELBUTTONSTATE_WAIT_FOR_DOWN;
+                }
+                
+                if (Barrel->ButtonState == BARRELBUTTONSTATE_WAIT_FOR_DOWN)
+                {
+                    if (msButton1)
+                        Barrel->ButtonState = BARRELBUTTONSTATE_WAIT_FOR_SECOND_RELEASE;
+                }
+
+                if (Barrel->ButtonState == BARRELBUTTONSTATE_WAIT_FOR_SECOND_RELEASE)
+                {
+                    if (!msButton1)
+                    {
+                        float Angle = DirectionToAngle(Barrel->Dir);
+                        
+                        float Power = Barrel->Power;
+                        if (Dusty.Hat == DUSTYHAT_BEE ||
+                            Dusty.Hat == DUSTYHAT_PARTY ||
+                            Dusty.Hat == DUSTYHAT_EARMUFFS ||
+                            Dusty.Hat == DUSTYHAT_WITCH ||
+                            Dusty.Hat == DUSTYHAT_JESTER ||
+                            Dusty.Hat == DUSTYHAT_TOPHAT ||
+                            Dusty.Hat == DUSTYHAT_TUTU ||
+                            Dusty.Hat == DUSTYHAT_MONOCLE ||
+                            Dusty.Hat == DUSTYHAT_EARPHONES ||
+                            Dusty.Hat == DUSTYHAT_EYEPATCH)
+                            Power += 10;
+                        
+                        SetDustyState_Launch(Power*cosf(Angle), -Power*sinf(Angle));
+                        
+                        Dusty.Hidden = false;
+                        Barrel->Timer = 30;
+                        Barrel->State = BARRELSTATE_LAUNCH;
+                    }
                 }
             }
             else
@@ -234,7 +258,7 @@ void UpdateBarrels()
                         Power += 10;
                     
                     SetDustyState_Launch(Power*cosf(Angle), -Power*sinf(Angle));
-
+                    
                     Dusty.Hidden = false;
                     Barrel->Timer = 30;
                     Barrel->State = BARRELSTATE_LAUNCH;

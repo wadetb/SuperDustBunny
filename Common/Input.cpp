@@ -176,6 +176,14 @@ float GetInput_GetSwipeCurrent()
     return (float)Swipe.Current;
 }
 
+float GetInput_GetSwipeLength()
+{
+    if (Swipe.Count < 1)
+        return 0;
+    
+    return Distance(SwipePoints[0].X, SwipePoints[0].Y, SwipePoints[Swipe.Count-1].X, SwipePoints[Swipe.Count-1].Y);
+}
+
 void GetInput_GetSwipePosAtTime(float* X, float* Y, double Time)
 {
     if (Settings.ControlStyle != CONTROL_SWIPE)

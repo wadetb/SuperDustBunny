@@ -56,8 +56,15 @@ struct SLightState
 	unsigned int AmbientColor;
 };
 
-
 extern SLightState LightState;
+
+enum EScreenAspect
+{
+    ASPECT_IPHONE,
+    ASPECT_IPHONE_5,
+};
+
+extern EScreenAspect ScreenAspect;
 
 extern float LitScreenHeight;
 extern float LitSceneZoom;

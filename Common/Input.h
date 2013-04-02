@@ -34,6 +34,7 @@ void GetInput_EndSwipe(float X, float Y, double Time);
 
 float GetInput_GetSwipeTimeLeft();
 float GetInput_GetSwipeCurrent();
+float GetInput_GetSwipeLength();
 void GetInput_GetSwipePosAtTime(float* X, float* Y, double Time);
 
 bool GetInput_CheckSwipeStraightness(float StartTime, float EndTime, float MaxAngle);

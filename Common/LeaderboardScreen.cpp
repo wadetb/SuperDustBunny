@@ -214,8 +214,8 @@ void DisplayLeaderboardScreen()
     AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ButtonFastForwardSprite, 192+16, LeaderboardScreen.BaseY + 920, -1.0f, PrevAlpha);
     AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ButtonFastForwardSprite, 768-192-16, LeaderboardScreen.BaseY + 920, 1.0f, NextAlpha);        
 
-    float GhostAlpha = Settings.GhostActive ? 1.0f : 0.5f;
-    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ButtonGhostSprite, 384, LeaderboardScreen.BaseY + 920, 1.0f, GhostAlpha);
+//    float GhostAlpha = Settings.GhostActive ? 1.0f : 0.5f;
+//    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ButtonGhostSprite, 384, LeaderboardScreen.BaseY + 920, 1.0f, GhostAlpha);
 
     const char* RegionName[LEADERBOARDREGION_COUNT] = { "worldwide", "state" };
     const char* ModeName[LEADERBOARDMODE_COUNT] = { "king of the day", "top score" };

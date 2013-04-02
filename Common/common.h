@@ -233,7 +233,7 @@ inline float Random(float Min, float Max)
 #endif
 }
 
-inline int Random(int Min, int Max)
+inline int Random(int Min, int Max) // Takes Max+1
 {
     if (Max == Min)
         return Max;

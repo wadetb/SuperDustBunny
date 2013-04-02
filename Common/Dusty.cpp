@@ -74,77 +74,6 @@ gxSprite* DustySprite[DUSTYSPRITE_COUNT] =
     &DustyKickSprite
 };
 
-SDustyHatOffset DustyHatOffsets[DUSTYSPRITE_COUNT] = 
-{
-    { -17, 137, 124 },
-    { -30, 152, 58 },
-    { -60, 100, 32 },
-    { -5, 121, 53 },
-    { 36, 204, 133 },
-    { -32, 152, 58 },
-    { -28, 152, 58 },
-    { -62, 100, 32 },
-    { -3, 121, 53 },
-    { -7, 121, 53 },
-    { 36, 204, 133 },
-    { -10, 140, 126 },
-    { -20, 132, 114 },
-    { -9, 140, 121 },
-    { -43, 121, 133 },
-    { -43, 121, 133 },
-    { -43, 121, 133 },
-    { -35, 140, 90 },
-    { -35, 140, 90 },
-    { -35, 140, 90 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 115, 114 },
-    { 0, 115, 114 }, // FIXME
-};
-
-gxSprite* DustyHatSprites[DUSTYHAT_COUNT];
-
-SDustyHatOffset DustyHatAdjustments[DUSTYHAT_COUNT] =
-{
-    { 0, 0, 0, 1 },                     //    DUSTYHAT_NONE, No Special Effect
-    { 0, 0, -20, 1 },                   //    DUSTYHAT_APPLE, Increases Vacuum Retreat time by x amount.
-    { 0, 5, -5, 1 },                    //    DUSTYHAT_BASEBALL_CAP, Speed up Dusty
-    { 0, 15, -15, 1 },                  //    DUSTYHAT_BEE, Launch from barrels faster
-    { 0, 0, 0, 1 },                     //    DUSTYHAT_BOWTIE, Dusty is immune to getting hurt by spikes,flames
-    { 0, 30, 20, 1 },                   //    DUSTYHAT_CLOWN_NOSE, Provides extra light on dark levels.
-    { 0, -5, -17, 1 },                  //    DUSTYHAT_CROWN, Adds one extra coin
-    { 0, 12, 10, 1 },                   //    DUSTYHAT_DISGUISE
-    { 0, 0, 10, 1 },                    //    DUSTYHAT_EARMUFFS
-    { 0, -5, 8, 1 },                    //    DUSTYHAT_EARPHONES
-    { 0, 0, 12, 1 },                    //    DUSTYHAT_EYEGLASSES,
-    { 0, 0, 15, 1 },                    //    DUSTYHAT_EYEPATCH,
-    { 0, -10, 0, 1 },                   //    DUSTYHAT_FLOWER,
-    { 0, 0, -15, 1 },                   //    DUSTYHAT_FROG_CROWN, 
-    { 0, -5, 5, 1 },                    //    DUSTYHAT_GRADUATION,
-    { 0, -17, 0, 1 },                   //    DUSTYHAT_GREEN_FEATHER, Slows Dusty's Fall
-    { 0, -15, -10, 1 },                 //    DUSTYHAT_JESTER,
-    { 0, -10, 28, 1 },                  //    DUSTYHAT_KARATE, Increases Vacuum Retreat time by x amount.
-    { 0, 8, 23, 1 },                    //    DUSTYHAT_MONOCLE, 
-    { 0, 0, 0, 1 },                     //    DUSTYHAT_NURSE, Speed up Dusty
-    { 0, 0, 0, 1 },                     //    DUSTYHAT_PARTY, Launch from barrels faster
-    { 0, 0, 0, 1 },                     //    DUSTYHAT_PINK_BOW, Dusty is immune to getting hurt by spikes,flames
-    { 0, 0, 15, 1 },                    //    DUSTYHAT_PINK_SHADES,
-    { 0, 0, -5, 1 },                    //    DUSTYHAT_PINK_TIARA, Adds one extra coin
-    { 0, -5, -10, 1 },                  //    DUSTYHAT_PIRATE,
-    { 0, -25, 2, 1 },                   //    DUSTYHAT_PURPLE_FEATHER, Slows Dusty's Fall
-    { 0, 0, 0, 1 },                     //    DUSTYHAT_SNORKEL,
-    { 0, 0, 14, 1 },                    //    DUSTYHAT_SUNGLASSES,
-    { 0, -4, -18, 1 },                  //    DUSTYHAT_TOPHAT,
-    { 0, -10, 70, 1 },                  //    DUSTYHAT_TUTU,
-    { 0, -25, 0, 1 },                   //    DUSTYHAT_WITCH,
-    { 0, -5, -15, 1 },                  //    DUSTYHAT_YELLOW_TOPHAT,
-};
-
-int DustyHatAdjX = 0;
-int DustyHatAdjY = 0;
-
 
 // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
 //                                                  Dusty initialization function                                                          //
@@ -439,7 +368,7 @@ static void DisplayDustySprite(EDustySprite Sprite, float XAdj = 0.0f, float XMi
             float RotAdjX = (AdjX * ca) - (AdjY * sa);
             float RotAdjY = (AdjX * sa) + (AdjY * ca);
 
-            if (Dusty.Hat == DUSTYHAT_CLOWN_NOSE ||
+            if (Dusty.Hat == DUSTYHAT_CLOWN_NOSE || Dusty.Hat == DUSTYHAT_BOWTIE ||
                 Dusty.Hat == DUSTYHAT_FLOWER ||
                 Dusty.Hat == DUSTYHAT_YELLOW_TOPHAT ||
                 Dusty.Hat == DUSTYHAT_MONOCLE ||
@@ -464,6 +393,11 @@ static void DisplayDustySprite(EDustySprite Sprite, float XAdj = 0.0f, float XMi
                 {
                     RotAdjX -= 17;
                 }
+            }
+            if (Dusty.Hat == DUSTYHAT_BOWTIE)
+            {
+                if (Sprite == DUSTYSPRITE_WALLJUMP || DUSTYSPRITE_WALLJUMP_C)
+                    RotAdjX -= 20;
             }
 
             float HatX = X + ScrollX + RotAdjX*ScaleX + HatOffset->X*ScaleX;

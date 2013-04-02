@@ -293,7 +293,7 @@ BOOL isGameCenterAPIAvailable()
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     
-	Display();
+    Display();
 
     [(EAGLView *)self.view presentFramebuffer];
 }
@@ -320,12 +320,14 @@ BOOL isGameCenterAPIAvailable()
     while (t < displayLink.timestamp + displayLink.duration*slowFactor)
     {
         if (count < 3)
+        {
             Update();
+        }
         count++;
         t += displayLink.duration*slowFactor;
     }
     lastTimeStamp = t;
-    
+
     [self drawFrame];
     recursing = false;
 }

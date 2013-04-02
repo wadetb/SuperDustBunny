@@ -32,6 +32,17 @@ enum
 };
 
 
+#define PLAY_Y      (StartScreen.ButtonYOffset + (LitScreenHeight/5.0)*0.85)
+#define TRAIN_Y     (StartScreen.ButtonYOffset + (LitScreenHeight/5.0)*2.1)
+#define STORE_Y     (StartScreen.ButtonYOffset + (LitScreenHeight/5.0)*3.35)
+
+#define BUTTON_HEIGHT (LitScreenHeight/5.0)
+
+
+float MEDAL_SCALE = 0.7f;
+
+
+
 struct SStartScreen
 {
     float BackgroundFadeAlpha;
@@ -41,6 +52,8 @@ struct SStartScreen
     
     float PressedTime;
     float StartupTime;
+    
+    float ButtonYOffset;
     
     bool WelcomeDisplayed;
     
@@ -64,7 +77,7 @@ void InitStartScreen()
     StartScreen.TitleVisible = InitialStartScreen;
     InitialStartScreen = false;
  
-    StartScreen.PlayChapter = Random(FIRST_NORMAL_CHAPTER, LAST_NORMAL_CHAPTER);
+    StartScreen.PlayChapter = Random(FIRST_NORMAL_CHAPTER, LAST_NORMAL_CHAPTER+1);
 
     StartScreen.ReleasedAtLeastOnce = false;
     StartScreen.BackgroundFadeAlpha = 0.0f;
@@ -72,6 +85,11 @@ void InitStartScreen()
     StartScreen.PressedTime = 0.0f;
     
     StartScreen.WiggleTime = 0;
+    
+//    if (ScreenAspect == ASPECT_IPHONE_5)
+//        StartScreen.ButtonYOffset = 100;
+//    else
+        StartScreen.ButtonYOffset = 0;
     
     ResetLightState();
     
@@ -83,8 +101,10 @@ static void StartScreen_Advance()
 {
     if (StartScreen.TitleVisible)
     {
-        StartScreen.TitleVisible = false;
-        StartScreen.StartupTime = 10;
+        if (StartScreen.StartupTime < 3)
+            StartScreen.StartupTime = 3;
+        else
+            StartScreen.TitleVisible = false;
     }
     else
     {
@@ -134,14 +154,6 @@ static void StartScreen_Advance()
     StartScreen.PressedTime = 0.0f;
 }
 
-
-#define PLAY_Y      ((LitScreenHeight/5.0)*0.85)
-#define TRAIN_Y     ((LitScreenHeight/5.0)*2.1)
-#define STORE_Y     ((LitScreenHeight/5.0)*3.35)
-
-#define BUTTON_HEIGHT (LitScreenHeight/5.0)
-
-
 void DisplayStartScreen()
 {
     if (StartScreen.StartupTime < 3.0f)
@@ -163,10 +175,20 @@ void DisplayStartScreen()
     
     if (StartScreen.TitleVisible)
     {
-        if (StartScreen.Pressed)
-            AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ScreenStartPressedSprite, 0, 0, 768, LitScreenHeight, 1.0f);
+        if (ScreenAspect == ASPECT_IPHONE_5)
+        {
+            if (StartScreen.Pressed)
+                AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ScreenStartPressediPhone5Sprite, 0, 0, 768, LitScreenHeight, 1.0f);
+            else
+                AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ScreenStartiPhone5Sprite, 0, 0, 768, LitScreenHeight, 1.0f);
+        }
         else
-            AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ScreenStartSprite, 0, 0, 768, LitScreenHeight, 1.0f);
+        {
+            if (StartScreen.Pressed)
+                AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ScreenStartPressedSprite, 0, 0, 768, LitScreenHeight, 1.0f);
+            else
+                AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ScreenStartSprite, 0, 0, 768, LitScreenHeight, 1.0f);            
+        }
         return;
     }
 
@@ -174,33 +196,33 @@ void DisplayStartScreen()
         AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &Chapters[StartScreen.PlayChapter].BackgroundSprite, 0, 0, 768, LitScreenHeight, 1.0f);
 
     // Medals
-    float MedalYOffset = 0;//Remap(StartScreen.StartupTime, 10, 10.5f, -50, 0, true);
+    float MedalYOffset = -20;//Remap(StartScreen.StartupTime, 10, 10.5f, -50, 0, true);
     if (Settings.PageCount >= BRONZE_PAGE_COUNT)
     {
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &BronzeMedalSprite, 384+150, MedalYOffset+100, 2.5f, 1.0f);
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &BronzeMedalSprite, 384+120, MedalYOffset+75, MEDAL_SCALE*2.5f, 1.0f);
         if (Settings.PageCount < SILVER_PAGE_COUNT)
         {
             char Work[20];
             snprintf(Work, sizeof(Work), "%d", Settings.PageCount);
-            DisplayMultilineStringAlpha(LIGHTLIST_VACUUM, Work, FORMAT_CENTER_X|FORMAT_CENTER_Y, 384+150, MedalYOffset+100+60, 1.4f, 0.25f);
+            DisplayMultilineStringAlpha(LIGHTLIST_VACUUM, Work, FORMAT_CENTER_X|FORMAT_CENTER_Y, 384+120, MedalYOffset+75+50, MEDAL_SCALE*1.4f, 0.25f);
         }
     }
     if (Settings.PageCount >= SILVER_PAGE_COUNT)
     {
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &SilverMedalSprite, 384-150, MedalYOffset+80, 2.5f, 1.0f);
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &SilverMedalSprite, 384-120, MedalYOffset+60, MEDAL_SCALE*2.5f, 1.0f);
         if (Settings.PageCount < GOLD_PAGE_COUNT)
         {
             char Work[20];
             snprintf(Work, sizeof(Work), "%d", Settings.PageCount);
-            DisplayMultilineStringAlpha(LIGHTLIST_VACUUM, Work, FORMAT_CENTER_X|FORMAT_CENTER_Y, 384-150, MedalYOffset+80+75, 1.4f, 0.25f);
+            DisplayMultilineStringAlpha(LIGHTLIST_VACUUM, Work, FORMAT_CENTER_X|FORMAT_CENTER_Y, 384-120, MedalYOffset+60+50, MEDAL_SCALE*1.4f, 0.25f);
         }
     }
     if (Settings.PageCount >= GOLD_PAGE_COUNT)
     {
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &GoldMedalSprite, 384, MedalYOffset+60, 2.75f, 1.0f);
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &GoldMedalSprite, 384, MedalYOffset+80, MEDAL_SCALE*2.75f, 1.0f);
         char Work[20];
         snprintf(Work, sizeof(Work), "%d", Settings.PageCount);
-        DisplayMultilineStringAlpha(LIGHTLIST_VACUUM, Work, FORMAT_CENTER_X|FORMAT_CENTER_Y, 384, MedalYOffset+60+75, 1.4f, 0.25f);
+        DisplayMultilineStringAlpha(LIGHTLIST_VACUUM, Work, FORMAT_CENTER_X|FORMAT_CENTER_Y, 384, MedalYOffset+80+50, MEDAL_SCALE*1.4f, 0.25f);
     }
     
     AddLitSubSpriteAlpha(LIGHTLIST_VACUUM, &ScreenStartButtonsSprite, 180 + sinf(StartScreen.WiggleTime)*4.0f, PLAY_Y, 0,  10*64, 512, 14*64, StartScreen.Pressed == 1 ? 0.5f : 1.0f);
@@ -215,11 +237,15 @@ void DisplayStartScreen()
     DisplayString(LIGHTLIST_VACUUM, Work, 0, 350, LitScreenHeight - 80, 1.1f);
 
     // Leaderboard button.
-    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ButtonLeaderboardSprite, 768-90 + sinf(StartScreen.WiggleTime)*4.0f, 90, 0.85f*1.0f, 1.0f);
+    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonLeaderboardSprite, 768-60, 60, 1.0f, 1.0f);
 
     if (StartScreen.LeaderboardVisible)
     {
         DisplayLeaderboardScreen();
+    }
+    else
+    {
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenGoBackSprite, 60, 60, 1.0f, 1.0f);
     }
 }
 
@@ -271,6 +297,7 @@ void UpdateStartScreen()
             StartScreen.LeaderboardVisible = false;            
         }
         
+/*
         if (msY > 700 && msX > 300 && msX < 500 && msButton1 && !msOldButton1)
         {
             Settings.GhostActive = !Settings.GhostActive;
@@ -279,14 +306,15 @@ void UpdateStartScreen()
 #endif
             SaveSettings();
         }
+*/
         
-        if (msY > 700 && msX > 500 && msButton1 && !msOldButton1)
+        if (msY > 800 && msX > 500 && msButton1 && !msOldButton1)
         {
             SwitchToNextLeaderboard();
             return;
         }
         
-        if (msY > 700 && msX < 300 && msButton1 && !msOldButton1)
+        if (msY > 800 && msX < 300 && msButton1 && !msOldButton1)
         {
             SwitchToPreviousLeaderboard();
             return;
@@ -296,6 +324,13 @@ void UpdateStartScreen()
         return;
     }
     
+    if (msX < 100 && msY <= 100 && msButton1 && !msOldButton1)
+    {
+        StartScreen.TitleVisible = true;
+        StartScreen.PlayChapter = Random(FIRST_NORMAL_CHAPTER, LAST_NORMAL_CHAPTER+1);
+        return;
+    }
+
     if (msY < PLAY_Y && msX > 384 && !msButton1 && msOldButton1)
     {
 #ifdef PLATFORM_IPHONE

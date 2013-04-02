@@ -543,7 +543,14 @@ static void LoadTileSet(const char* FileName)
 
 	// Parse the XML text buffer into a Document hierarchy.
 	rapidxml::xml_document<> Document;
-	Document.parse<0>(XML);
+    try
+    {
+        Document.parse<0>(XML);
+    }
+    catch (rapidxml::parse_error e)
+    {
+        ReportError("Failed to parse tileset file:\n%s", e.what());
+    }
 
 	// Get the <map> node and validate everything extensively :)
 	rapidxml::xml_node<char>* TileSetNode = Document.first_node("tileset");
@@ -627,7 +634,14 @@ static void LoadPageFromTMX(const char* FileName)
     
 	// Parse the XML text buffer into a Document hierarchy.
 	rapidxml::xml_document<> Document;
-	Document.parse<0>(XML);
+    try
+    {
+        Document.parse<0>(XML);
+    }
+    catch (rapidxml::parse_error e)
+    {
+        ReportError("Failed to parse page file:\n%s", e.what());
+    }
 
 	// Get the <map> node and validate everything extensively :)
 	rapidxml::xml_node<char>* MapNode = Document.first_node("map");
@@ -859,7 +873,14 @@ void LoadChapter(const char* ChapterDir)
     
     // Parse the XML text buffer into a Document hierarchy.
 	rapidxml::xml_document<> Document;
-	Document.parse<0>(XML);
+    try
+    {
+        Document.parse<0>(XML);
+    }
+    catch (rapidxml::parse_error e)
+    {
+        ReportError("Failed to parse chapter file:\n%s", e.what());
+    }
     
   	// Get the <Chapter> node and valiate.
 	rapidxml::xml_node<char>* ChapterNode = Document.first_node("Chapter");
@@ -1642,7 +1663,14 @@ void LoadChapterList()
     
 	// Parse the XML text buffer into a Document hierarchy.
 	rapidxml::xml_document<> Document;
-	Document.parse<0>(XML);
+    try
+    {
+        Document.parse<0>(XML);
+    }
+    catch (rapidxml::parse_error e)
+    {
+        ReportError("Failed to parse chapter list file:\n%s", e.what());
+    }
     
 	// Get the <ChapterList> node.
 	rapidxml::xml_node<char>* ChapterListNode = Document.first_node("ChapterList");
@@ -1958,6 +1986,7 @@ void AdvancePortfolio()
 
         Portfolio.VacuumDamage = 0;
         
+#if 0
         Portfolio.ChaptersUntilNextStory--;
         if (Portfolio.ChaptersUntilNextStory == 0)
         {
@@ -1992,6 +2021,7 @@ void AdvancePortfolio()
             }
         }
         else
+#endif
         {
             Portfolio.Chapter++;
             if (Portfolio.Chapter > LAST_NORMAL_CHAPTER)

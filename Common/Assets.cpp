@@ -33,9 +33,6 @@ gxSprite LightVacuumSprite;
 gxSprite LightLampSprite;
 gxSprite LightingSprite;
 
-gxSprite SparkSprite;
-gxSprite FlareSprite;
-
 gxSprite FireWorkWhiteSprite;
 
 gxSprite DustyHop1Sprite;
@@ -175,6 +172,8 @@ gxSprite ScreenCoinBackgroundSprite;
 
 gxSprite ScreenStartSprite;
 gxSprite ScreenStartPressedSprite;
+gxSprite ScreenStartiPhone5Sprite;
+gxSprite ScreenStartPressediPhone5Sprite;
 gxSprite ScreenStartBackgroundSprite;
 gxSprite ScreenStartButtonsSprite;
 
@@ -1053,10 +1052,7 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/light-flashlight.png", &LightFlashlightSprite);
 	LoadSpriteAsset("Assets/light-vacuum.png", &LightVacuumSprite);
 	LoadSpriteAsset("Assets/light-lamp.png", &LightLampSprite);
-	LoadSpriteAsset("Assets/lighting.png", &LightingSprite);
-
-	LoadSpriteAsset("Assets/spark.png", &SparkSprite);
-	LoadSpriteAsset("Assets/flare.png", &FlareSprite);
+//	LoadSpriteAsset("Assets/lighting.png", &LightingSprite);
 
 	LoadSpriteAsset("Assets/firework-white.png", &FireWorkWhiteSprite);
 
@@ -1111,9 +1107,9 @@ void LoadAssets()
     LoadSpriteAsset("Assets/METAL_Small_SILVER.png", &SilverMedalSprite);
     LoadSpriteAsset("Assets/METAL_Small_GOLD.png", &GoldMedalSprite);
     
-	LoadSpriteAsset("Assets/background-cardboard.png", &BackgroundCardboardSprite);
-	LoadSpriteAsset("Assets/background-paper.png", &BackgroundPaperSprite);
-	LoadSpriteAsset("Assets/background-fridge.png", &BackgroundFridgeSprite);
+//	LoadSpriteAsset("Assets/background-cardboard.png", &BackgroundCardboardSprite);
+//	LoadSpriteAsset("Assets/background-paper.png", &BackgroundPaperSprite);
+//	LoadSpriteAsset("Assets/background-fridge.png", &BackgroundFridgeSprite);
 
 	LoadSpriteAsset("Assets/tile-wtf.png", &TileUnknownSprite);
 	
@@ -1150,11 +1146,13 @@ void LoadAssets()
 
     LoadSpriteAsset("Assets/portal.png", &PortalSprite);
 
+/*
 	LoadSpriteAsset("Assets/tennisball-spin-1.png", &TennisBallSpin1Sprite);
 	LoadSpriteAsset("Assets/tennisball-spin-2.png", &TennisBallSpin2Sprite);
 	LoadSpriteAsset("Assets/tennisball-spin-3.png", &TennisBallSpin3Sprite);
 	LoadSpriteAsset("Assets/tennisball-spin-4.png", &TennisBallSpin4Sprite);
-
+*/
+    
 	LoadSpriteAsset("Assets/gear.png", &GearSprite);
 	
     LoadSpriteAsset("Assets/stapler-1.png", &Stapler1Sprite);
@@ -1196,6 +1194,8 @@ void LoadAssets()
     LoadSpriteAsset("Assets/screen-store.png", &ScreenStoreSprite);
     LoadSpriteAsset("Assets/screen-coin-background.png", &ScreenCoinBackgroundSprite);
 
+    LoadSpriteAsset("Assets/screen-start-iPhone5.png", &ScreenStartiPhone5Sprite);
+	LoadSpriteAsset("Assets/screen-start-pressed-iPhone5.png", &ScreenStartPressediPhone5Sprite);
     LoadSpriteAsset("Assets/screen-start.png", &ScreenStartSprite);
 	LoadSpriteAsset("Assets/screen-start-pressed.png", &ScreenStartPressedSprite);
 	LoadSpriteAsset("Assets/start-background-study.png", &ScreenStartBackgroundSprite);
@@ -1208,18 +1208,18 @@ void LoadAssets()
     LoadSpriteAsset("Assets/check-mark.png", &CheckMarkSprite);
 
 	LoadSpriteAsset("Assets/screen-start-1.png", &ScreenStart1Sprite);
-    LoadSpriteAsset("Assets/screen-help-1.png", &ScreenHelp1Sprite);
-    LoadSpriteAsset("Assets/screen-help-2.png", &ScreenHelp2Sprite);
-    LoadSpriteAsset("Assets/screen-credits-1.png", &ScreenCredits1Sprite);
-    LoadSpriteAsset("Assets/screen-credits-2.png", &ScreenCredits2Sprite);
+//    LoadSpriteAsset("Assets/screen-help-1.png", &ScreenHelp1Sprite);
+//    LoadSpriteAsset("Assets/screen-help-2.png", &ScreenHelp2Sprite);
+//    LoadSpriteAsset("Assets/screen-credits-1.png", &ScreenCredits1Sprite);
+//    LoadSpriteAsset("Assets/screen-credits-2.png", &ScreenCredits2Sprite);
     
-	LoadSpriteAsset("Assets/icon-start-1.png", &IconStart1Sprite);
-	LoadSpriteAsset("Assets/icon-start-2.png", &IconStart2Sprite);
-	LoadSpriteAsset("Assets/icon-help-1.png", &IconHelp1Sprite);
-	LoadSpriteAsset("Assets/icon-help-2.png", &IconHelp2Sprite);
-	LoadSpriteAsset("Assets/icon-credits-1.png", &IconCredits1Sprite);
-	LoadSpriteAsset("Assets/icon-credits-2.png", &IconCredits2Sprite);
-	LoadSpriteAsset("Assets/icon-locked.png", &IconLockedSprite);
+//	LoadSpriteAsset("Assets/icon-start-1.png", &IconStart1Sprite);
+//	LoadSpriteAsset("Assets/icon-start-2.png", &IconStart2Sprite);
+//	LoadSpriteAsset("Assets/icon-help-1.png", &IconHelp1Sprite);
+//	LoadSpriteAsset("Assets/icon-help-2.png", &IconHelp2Sprite);
+//	LoadSpriteAsset("Assets/icon-credits-1.png", &IconCredits1Sprite);
+//	LoadSpriteAsset("Assets/icon-credits-2.png", &IconCredits2Sprite);
+//	LoadSpriteAsset("Assets/icon-locked.png", &IconLockedSprite);
 
 	LoadSpriteAsset("Assets/screen-lose-ghost.png", &ScreenLoseGhostSprite);
 	LoadSpriteAsset("Assets/screen-lose-grave-1.png", &ScreenLoseGrave1Sprite);
@@ -1236,31 +1236,31 @@ void LoadAssets()
 
     LoadSpriteAsset("Assets/tear-drop.png", &TearDropSprite);
 
-	LoadSpriteAsset("Assets/screen-win-1.png", &ScreenWin1Sprite);
-	LoadSpriteAsset("Assets/screen-win-2.png", &ScreenWin2Sprite);
+//	LoadSpriteAsset("Assets/screen-win-1.png", &ScreenWin1Sprite);
+//	LoadSpriteAsset("Assets/screen-win-2.png", &ScreenWin2Sprite);
 
     LoadSpriteAsset("Assets/leaderboard-background.png", &LeaderboardBackgroundSprite);
     
-	LoadSpriteAsset("Assets/text-flick-to-jump.png", &TextFlickToJumpSprite);
-	LoadSpriteAsset("Assets/text-extra-life.png", &TextExtraLifeSprite);
-    LoadSpriteAsset("Assets/text-bonus.png", &TextBonusSprite);
+//	LoadSpriteAsset("Assets/text-flick-to-jump.png", &TextFlickToJumpSprite);
+//	LoadSpriteAsset("Assets/text-extra-life.png", &TextExtraLifeSprite);
+//    LoadSpriteAsset("Assets/text-bonus.png", &TextBonusSprite);
     LoadSpriteAsset("Assets/text-bubbles.png", &TextBubblesSprite);
 
-    LoadSpriteAsset("Assets/bubble-minus-1-sec.png", &BubbleMinus1SecSprite);
-    LoadSpriteAsset("Assets/bubble-1up.png", &Bubble1UpSprite);
+//    LoadSpriteAsset("Assets/bubble-minus-1-sec.png", &BubbleMinus1SecSprite);
+//    LoadSpriteAsset("Assets/bubble-1up.png", &Bubble1UpSprite);
 
 	LoadSpriteAsset("Assets/chapter-title.png", &ChapterTitleSprite);
 	LoadSpriteAsset("Assets/chapter.png", &ChapterTextSprite);
 	LoadSpriteAsset("Assets/chapter-numbers.png", &ChapterNumbersSprite);
-	LoadSpriteAsset("Assets/chapter-complete.png", &ChapterCompleteSprite);
-	LoadSpriteAsset("Assets/chapter-time.png", &ChapterTimeSprite);
-	LoadSpriteAsset("Assets/chapter-bonus.png", &ChapterBonusSprite);
-	LoadSpriteAsset("Assets/chapter-new.png", &ChapterNewSprite);
-	LoadSpriteAsset("Assets/chapter-new-record.png", &ChapterNewRecordSprite);
-	LoadSpriteAsset("Assets/chapter-record.png", &ChapterRecordSprite);
-	LoadSpriteAsset("Assets/chapter-total-time.png", &ChapterTotalTimeSprite);
+//	LoadSpriteAsset("Assets/chapter-complete.png", &ChapterCompleteSprite);
+//	LoadSpriteAsset("Assets/chapter-time.png", &ChapterTimeSprite);
+//	LoadSpriteAsset("Assets/chapter-bonus.png", &ChapterBonusSprite);
+//	LoadSpriteAsset("Assets/chapter-new.png", &ChapterNewSprite);
+//	LoadSpriteAsset("Assets/chapter-new-record.png", &ChapterNewRecordSprite);
+//	LoadSpriteAsset("Assets/chapter-record.png", &ChapterRecordSprite);
+//	LoadSpriteAsset("Assets/chapter-total-time.png", &ChapterTotalTimeSprite);
 
-    LoadSpriteAsset("Assets/text-tap-to-continue.png", &TapToContinueSprite);
+//    LoadSpriteAsset("Assets/text-tap-to-continue.png", &TapToContinueSprite);
 
     LoadSpriteAsset("Assets/powerup.png", &PowerUpSprite);
 

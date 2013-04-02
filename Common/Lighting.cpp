@@ -79,6 +79,7 @@ float LitSceneZoom = 1.0f;
 float LitSceneOffsetX = 0.0f;
 float LitSceneOffsetY = 0.0f;
 
+EScreenAspect ScreenAspect;
 
 int LitRenderTargetWidth;
 int LitRenderTargetHeight;
@@ -820,6 +821,11 @@ void InitLighting()
     LitAspectOffset = 0.0f;
     LitScreenHeight = 1024.0f / LitAspectScale;
     
+    if ((int)LitScreenHeight == 1363)
+        ScreenAspect = ASPECT_IPHONE_5;
+    else
+        ScreenAspect = ASPECT_IPHONE;
+
     if (gxOpenGLESVersion == 1)
     {
         glEnableClientState(GL_VERTEX_ARRAY);

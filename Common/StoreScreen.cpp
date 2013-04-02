@@ -47,6 +47,17 @@ struct SStoreScreen
 };
 
 
+#define STORE_X 60
+#define STORE_Y 80
+#define STORE_COLS 3
+#define STORE_ROW_SZ 260
+#define STORE_COL_SZ ((768-STORE_X*2)/STORE_COLS)
+#define STORE_ITEM_SCALE 2.0
+#define STORE_ITEMS_PER_PAGE (STORE_ROWS*STORE_COLS)
+
+int STORE_ROWS;
+
+
 SStoreScreen StoreScreen;
 
 SInventory Inventory[] =
@@ -210,21 +221,17 @@ void SaveInventory()
     PopErrorContext();
 }
 
-#define STORE_X 60
-#define STORE_Y 80
-#define STORE_ROWS 2
-#define STORE_COLS 3
-#define STORE_ROW_SZ 260
-#define STORE_COL_SZ ((768-STORE_X*2)/STORE_COLS)
-#define STORE_ITEM_SCALE 2.0
-#define STORE_ITEMS_PER_PAGE (STORE_ROWS*STORE_COLS)
-
 void InitStoreScreen()
 {
     LoadInventory();
 
     ResetLightState();
-    
+
+    if (ScreenAspect == ASPECT_IPHONE_5)
+        STORE_ROWS = 3;
+    else
+        STORE_ROWS = 2;
+
     InitDusty();
     
     SetDustyState_IntroStand();
@@ -271,7 +278,7 @@ void DisplayStoreScreen()
             AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, &Inventory[StoreScreen.FirstItem + i].Sprite,
                                             STORE_X+Col*STORE_COL_SZ + STORE_COL_SZ/2,
                                             STORE_Y+Row*STORE_ROW_SZ + STORE_ROW_SZ/2, STORE_ITEM_SCALE, 1.0f);
-            AddLitSpriteScaled(LIGHTLIST_FOREGROUND, &CheckMarkSprite, STORE_X+Col*STORE_COL_SZ, STORE_Y+Row*STORE_ROW_SZ, 2.0f, 2.0f);
+//            AddLitSpriteScaled(LIGHTLIST_FOREGROUND, &CheckMarkSprite, STORE_X+Col*STORE_COL_SZ, STORE_Y+Row*STORE_ROW_SZ, 2.0f, 2.0f);
         }
         else
         {

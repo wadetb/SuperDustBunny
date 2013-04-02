@@ -559,7 +559,7 @@ static void DisplayBackground()
     if (Chapter.HasBackground)
         BackgroundSprite = &Chapter.BackgroundSprite;
     else
-        BackgroundSprite = &BackgroundPaperSprite;
+        BackgroundSprite = &WhiteSprite;
     
     if (!BackgroundSprite || !BackgroundSprite->width || !BackgroundSprite->height)
         return;
@@ -650,7 +650,7 @@ void DisplayGame_Playing()
 
 static void UpdateGame_Playing()
 { 
-    if (msButton1 && !msOldButton1)
+    if (!msButton1 && msOldButton1 && GetInput_GetSwipeLength() < 20.0f)
     {
         if (msX >= 384-150 && msX <= 384+150 && msY < 200)
         {

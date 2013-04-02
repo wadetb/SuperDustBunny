@@ -21,6 +21,7 @@ SBall Balls[MAX_BALLS];
 
 void CreateBall(int X, int Y)
 {
+/*
 	if (NBalls >= MAX_BALLS)
 		ReportError("Exceeded the maximum of %d total balls.", MAX_BALLS);
 
@@ -37,15 +38,19 @@ void CreateBall(int X, int Y)
     Ball->Collided = false;
 
 	Ball->State = BALLSTATE_ACTIVE;
+*/
 }
 
 void ClearBalls()
 {
+/*
 	NBalls = 0;
+*/
 }
 
 void DisplayBall()
 {
+/*
     for (int i = 0; i < NBalls; i++)
     {
         SBall* Ball = &Balls[i];
@@ -73,10 +78,12 @@ void DisplayBall()
 			AddLitSpriteCenteredScaledRotated(LIGHTLIST_FOREGROUND, &TennisBallSpin4Sprite, Ball->X + ScrollX, Ball->Y + ScrollY, 1.0f, 0.0f);
         }   
     }    
+*/
 }
 
 void UpdateBall()
 {
+/*
     for (int i = 0; i < NBalls; i++)
     {
         SBall* Ball = &Balls[i];
@@ -119,5 +126,6 @@ void UpdateBall()
                 Ball->Sprite = 1;
             }  
         }              
-    }    
+    }
+ */
 }

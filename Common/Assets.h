@@ -29,9 +29,6 @@ extern gxSprite LightVacuumSprite;
 extern gxSprite LightingSprite;
 extern gxSprite LightLampSprite;
 
-extern gxSprite SparkSprite;
-extern gxSprite FlareSprite;
-
 extern gxSprite FireWorkWhiteSprite;
 
 extern gxSprite DustyHop1Sprite;
@@ -176,6 +173,8 @@ extern gxSprite CheckMarkSprite;
 
 extern gxSprite ScreenStartSprite;
 extern gxSprite ScreenStartPressedSprite;
+extern gxSprite ScreenStartiPhone5Sprite;
+extern gxSprite ScreenStartPressediPhone5Sprite;
 extern gxSprite ScreenStartBackgroundSprite;
 extern gxSprite ScreenStartButtonsSprite;
 

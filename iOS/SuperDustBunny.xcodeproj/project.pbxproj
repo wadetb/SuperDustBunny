@@ -86,6 +86,8 @@
 		089FEC131418999F00086B85 /* SDB.icns in Resources */ = {isa = PBXBuildFile; fileRef = 089FEC121418999F00086B85 /* SDB.icns */; };
 		08A9E0101447B6CD009A76B9 /* Baby.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08A9E00F1447B6CD009A76B9 /* Baby.cpp */; };
 		08A9E0111447B6CD009A76B9 /* Baby.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08A9E00F1447B6CD009A76B9 /* Baby.cpp */; };
+		08AF54451705F54500E92E43 /* Hat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08AF54441705F54500E92E43 /* Hat.cpp */; };
+		08AF54461705F54500E92E43 /* Hat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08AF54441705F54500E92E43 /* Hat.cpp */; };
 		08BF391713466F4E002C1A7B /* Converted in Resources */ = {isa = PBXBuildFile; fileRef = 08BF391613466F4E002C1A7B /* Converted */; };
 		08C607B1158D6974005F3353 /* Music.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C607B0158D6974005F3353 /* Music.cpp */; };
 		08C607B2158D6974005F3353 /* Music.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C607B0158D6974005F3353 /* Music.cpp */; };
@@ -287,6 +289,8 @@
 		08A8FC7513302F6300E45A98 /* TODO.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = TODO.txt; path = ../../Docs/TODO.txt; sourceTree = "<group>"; };
 		08A9E00D1447B6BF009A76B9 /* Baby.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Baby.h; sourceTree = "<group>"; };
 		08A9E00F1447B6CD009A76B9 /* Baby.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Baby.cpp; sourceTree = "<group>"; };
+		08AF54431705F52E00E92E43 /* Hat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hat.h; sourceTree = "<group>"; };
+		08AF54441705F54500E92E43 /* Hat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hat.cpp; sourceTree = "<group>"; };
 		08BF391613466F4E002C1A7B /* Converted */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Converted; path = ../../Converted; sourceTree = "<group>"; };
 		08C607AE158D6962005F3353 /* Music.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Music.h; sourceTree = "<group>"; };
 		08C607B0158D6974005F3353 /* Music.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Music.cpp; sourceTree = "<group>"; };
@@ -507,6 +511,8 @@
 				08899BB114295AD6008F7623 /* Ghost.h */,
 				08EBB20F143BC833006D3EB6 /* Hanger.cpp */,
 				08EBB212143BC885006D3EB6 /* Hanger.h */,
+				08AF54441705F54500E92E43 /* Hat.cpp */,
+				08AF54431705F52E00E92E43 /* Hat.h */,
 				085AAA36132C5B9F00DF32CA /* HelpScreen.cpp */,
 				085AAA37132C5B9F00DF32CA /* HelpScreen.h */,
 				0816B6D1137F8C1B00CE5DE4 /* Input.cpp */,
@@ -785,6 +791,7 @@
 				08E69E6E146B8FC7004FEDEF /* Balloon.cpp in Sources */,
 				08C607B1158D6974005F3353 /* Music.cpp in Sources */,
 				084CAE771609054E00672D80 /* StoreScreen.cpp in Sources */,
+				08AF54451705F54500E92E43 /* Hat.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -843,6 +850,7 @@
 				08A9E0111447B6CD009A76B9 /* Baby.cpp in Sources */,
 				08E69E6F146B8FC7004FEDEF /* Balloon.cpp in Sources */,
 				08C607B2158D6974005F3353 /* Music.cpp in Sources */,
+				08AF54461705F54500E92E43 /* Hat.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
