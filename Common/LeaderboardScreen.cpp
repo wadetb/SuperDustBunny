@@ -14,6 +14,7 @@
 #include "GameScore.h"
 #include "Settings.h"
 #include "StoreScreen.h"
+#include "Hat.h"
 
 #ifdef PLATFORM_IPHONE
 #import "SuperDustBunnyViewController.h"
@@ -150,7 +151,7 @@ void DownloadLeaderboards()
                LeaderboardScreen.Name[i] = strdup([[player.alias lowercaseString] UTF8String]);
                
                if (strlen(LeaderboardScreen.Name[i]) > 10)
-               LeaderboardScreen.Name[i][10] = 0;
+                LeaderboardScreen.Name[i][10] = 0;
                
                LeaderboardScreen.Pages[i] = score.value;
                LeaderboardScreen.Hat[i] = score.context;
@@ -381,9 +382,12 @@ void DisplayLeaderboardScreen()
         DisplayLeaderboardScrollString(LeaderboardScreen.Name[i], 0, 80, CurrentY, 0.8f, Alpha);
         DisplayLeaderboardScrollNumber(LeaderboardScreen.Pages[i], FORMAT_ALIGN_RIGHT, 580, CurrentY, 1.0f, Alpha);
         
-        gxSprite* HatSprite = GetInventoryHatSprite(LeaderboardScreen.Hat[i]);
-        if (HatSprite)
-            DisplayLeaderboardScrollSprite(HatSprite, 640, CurrentY+30, 1.0f, Alpha);
+        if (LeaderboardScreen.Hat[i] != DUSTYHAT_NONE)
+        {
+            gxSprite* HatSprite = GetInventoryHatSprite(LeaderboardScreen.Hat[i]);
+            if (HatSprite)
+                DisplayLeaderboardScrollSprite(HatSprite, 640, CurrentY+30, 1.0f, Alpha);
+        }
         
         CurrentY += 75;
     }
