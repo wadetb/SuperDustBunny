@@ -116,18 +116,16 @@ void UploadScore()
 
         theViewController.paused = FALSE;
 
-#if 0
-        GKScore *scoreReporter = [[[GKScore alloc] initWithCategory:@"sdb"] autorelease];
-        scoreReporter.value = score;
+        GKScore *scoreReporter = [[[GKScore alloc] initWithCategory:@"pages_survived"] autorelease];
+        scoreReporter.value = Portfolio.PageCount;
+        scoreReporter.context = Dusty.Hat;
         
         [scoreReporter reportScoreWithCompletionHandler:^(NSError *error) {
-         if (error != nil)
-         {
-         // TODO: Write that score to a file.
-         // handle the reporting error
-         }
+            if (error != nil)
+                NSLog(@"game center score reporting error: %@\n", error);
+            else
+                NSLog(@"game center score reported\n");
          }];
-#endif
         
         if ([localPlayer isAuthenticated])
             name = [localPlayer alias];    

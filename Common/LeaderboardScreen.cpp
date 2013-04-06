@@ -17,6 +17,8 @@
 
 #ifdef PLATFORM_IPHONE
 #import "SuperDustBunnyViewController.h"
+#import <GameKit/GameKit.h>
+#import "URLRequestStore.h"
 #endif
 
 
@@ -25,6 +27,8 @@
 
 enum ELeaderboardRegion
 {
+    LEADERBOARDREGION_GAMECENTER,
+    LEADERBOARDREGION_GAMECENTER_FRIENDS,
     LEADERBOARDREGION_WORLD,
     LEADERBOARDREGION_STATE,
     LEADERBOARDREGION_COUNT
@@ -58,7 +62,6 @@ struct SLeaderboardScreen
     int AvailableRegionCount;
     ELeaderboardRegion AvailableRegions[LEADERBOARDREGION_COUNT];
     
-
     char* Name[LEADERBOARD_COUNT];
     int Pages[LEADERBOARD_COUNT];
     int Hat[LEADERBOARD_COUNT];
@@ -66,6 +69,11 @@ struct SLeaderboardScreen
 
 
 SLeaderboardScreen LeaderboardScreen;
+
+
+#ifdef PLATFORM_IPHONE
+static bool authenticationComplete = false;
+#endif
 
 
 void DownloadLeaderboards()
@@ -81,73 +89,154 @@ void DownloadLeaderboards()
         }
     }
     
-
-#ifdef PLATFORM_IPHONE_OR_MAC
-    const char* RegionTag[LEADERBOARDREGION_COUNT] = { "world", "state" };
-    const char* ModeTag[LEADERBOARDMODE_COUNT] = { "kingofthehill", "alltime" };
-    
-    NSString* URLString;
-#ifdef PLATFORM_IPHONE
-    if (theViewController.haveLocation && (/*LeaderboardScreen.Region == LEADERBOARDREGION_CITY ||*/ LeaderboardScreen.Region == LEADERBOARDREGION_STATE))
+    if ((LeaderboardScreen.Region == LEADERBOARDREGION_GAMECENTER) || (LeaderboardScreen.Region == LEADERBOARDREGION_GAMECENTER_FRIENDS))
     {
-        NSString* region;
-//        if (LeaderboardScreen.Region == LEADERBOARDREGION_CITY)
-//            region = theViewController.city;
-//        else
-            region = theViewController.state;
+#ifdef PLATFORM_IPHONE
+        theViewController.paused = TRUE;
         
-        URLString = [NSString stringWithFormat:@"http://pluszerogames.com/sdb/getleaderboard.php?mode=%s&region=%s&region_value=%@", 
-                     ModeTag[LeaderboardScreen.Mode], 
-                     RegionTag[LeaderboardScreen.Region], 
-                     [region stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+        authenticationComplete = false;
+        
+        GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
+        [localPlayer authenticateWithCompletionHandler:^(NSError *error) {
+         if (error != nil)
+            NSLog(@"Leaderboard authenticate error: %@\n", error);
+         
+         NSLog(@"Player authenticated: %s", ([localPlayer isAuthenticated] ? "YES" : "NO"));
+         
+         GKLeaderboard *leaderboardRequest = [[GKLeaderboard alloc] init];
+         
+         if (LeaderboardScreen.Region == LEADERBOARDREGION_GAMECENTER_FRIENDS)
+            leaderboardRequest.playerScope = GKLeaderboardPlayerScopeFriendsOnly;
+         else
+            leaderboardRequest.playerScope = GKLeaderboardPlayerScopeGlobal;
+         
+         if (LeaderboardScreen.Mode == LEADERBOARDMODE_KINGOFTHEHILL)
+            leaderboardRequest.timeScope = GKLeaderboardTimeScopeToday;
+         else
+            leaderboardRequest.timeScope = GKLeaderboardTimeScopeAllTime;
+         
+         leaderboardRequest.category = @"pages_survived";
+         leaderboardRequest.range = NSMakeRange(1,LEADERBOARD_COUNT);
+         
+         [leaderboardRequest loadScoresWithCompletionHandler: ^(NSArray *scores, NSError *error) {
+          if (error != nil)
+            NSLog(@"Leaderboard request error: %@\n", error);
+          if (scores == nil)
+            return;
+
+          NSLog(@"Leaderboard returned %d scores\n", scores.count);
+          
+          NSMutableArray *playerIDs = [[NSMutableArray alloc] init];
+          for (int i = 0; i < scores.count; i++)
+          {
+            GKScore *score = [scores objectAtIndex:i];
+            [playerIDs addObject:score.playerID];
+          }
+          
+          [GKPlayer loadPlayersForIdentifiers:playerIDs withCompletionHandler:^(NSArray *players, NSError *error) {
+           if (error != nil)
+            NSLog(@"Players request error: %@\n", error);
+           if (players.count != scores.count)
+            return;
+
+           for (int i = 0; i < scores.count; i++)
+           {
+               if (i >= LEADERBOARD_COUNT)
+                break;
+           
+               GKScore *score = [scores objectAtIndex:i];
+               GKPlayer *player = [players objectAtIndex:i];
+               
+               LeaderboardScreen.Name[i] = strdup([[player.alias lowercaseString] UTF8String]);
+               
+               if (strlen(LeaderboardScreen.Name[i]) > 10)
+               LeaderboardScreen.Name[i][10] = 0;
+               
+               LeaderboardScreen.Pages[i] = score.value;
+               LeaderboardScreen.Hat[i] = score.context;
+           }
+           authenticationComplete = true;
+           }];
+          }];
+         }];
+        
+        while (!authenticationComplete)
+        {
+            [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
+        }
+        
+        theViewController.paused = FALSE;
+#endif
     }
     else
-#endif
     {
-        URLString = [NSString stringWithFormat:@"http://pluszerogames.com/sdb/getleaderboard.php?mode=%s&region=%s", 
-                     ModeTag[LeaderboardScreen.Mode], 
-                     RegionTag[LeaderboardScreen.Region]];        
-    }
-    NSURL *URL = [NSURL URLWithString:URLString];
-    
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:5];
-    
-    NSURLResponse *response;
-    NSError *error = [[NSError alloc] init];
-    NSData* result = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-    
-    if (result)
-    {
-        NSString *text = [[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding];
-        NSLog(@"Leaderboard results:\n%@\n", text);
+#ifdef PLATFORM_IPHONE_OR_MAC
+        const char* RegionTag[LEADERBOARDREGION_COUNT] = { "gamecenter", "gamecenter_friends", "world", "state" };
+        const char* ModeTag[LEADERBOARDMODE_COUNT] = { "kingofthehill", "alltime" };
         
-        NSArray *entries = [text componentsSeparatedByString:@"\n"];
-        
-        for (int i = 0; i < entries.count/2; i++)
+        NSString* URLString;
+#ifdef PLATFORM_IPHONE
+        if (theViewController.haveLocation && (/*LeaderboardScreen.Region == LEADERBOARDREGION_CITY ||*/ LeaderboardScreen.Region == LEADERBOARDREGION_STATE))
         {
-            if (i >= LEADERBOARD_COUNT)
-                break;
+            NSString* region;
+            //        if (LeaderboardScreen.Region == LEADERBOARDREGION_CITY)
+            //            region = theViewController.city;
+            //        else
+            region = theViewController.state;
             
-            NSString *name = [entries objectAtIndex:i*3+0];
-            NSString *pages = [entries objectAtIndex:i*3+1];
-            NSString *hat = [entries objectAtIndex:i*3+2];
+            URLString = [NSString stringWithFormat:@"http://pluszerogames.com/sdb/getleaderboard.php?mode=%s&region=%s&region_value=%@",
+                         ModeTag[LeaderboardScreen.Mode],
+                         RegionTag[LeaderboardScreen.Region],
+                         [region stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+        }
+#endif
+        else
+        {
+            URLString = [NSString stringWithFormat:@"http://pluszerogames.com/sdb/getleaderboard.php?mode=%s&region=%s",
+                         ModeTag[LeaderboardScreen.Mode],
+                         RegionTag[LeaderboardScreen.Region]];
+        }
+        NSURL *URL = [NSURL URLWithString:URLString];
+        
+        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:5];
+        
+        NSURLResponse *response;
+        NSError *error = [[NSError alloc] init];
+        NSData* result = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+        
+        if (result)
+        {
+            NSString *text = [[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding];
+            NSLog(@"Leaderboard results:\n%@\n", text);
             
-            if ([name isEqualToString:@"--"])
-                break;
+            NSArray *entries = [text componentsSeparatedByString:@"\n"];
             
-            if (atoi([pages UTF8String]))
+            for (int i = 0; i < entries.count/2; i++)
             {
-                LeaderboardScreen.Name[i] = strdup([[name lowercaseString] UTF8String]);
+                if (i >= LEADERBOARD_COUNT)
+                    break;
                 
-                if (strlen(LeaderboardScreen.Name[i]) > 10)
-                    LeaderboardScreen.Name[i][10] = 0;
+                NSString *name = [entries objectAtIndex:i*3+0];
+                NSString *pages = [entries objectAtIndex:i*3+1];
+                NSString *hat = [entries objectAtIndex:i*3+2];
                 
-                LeaderboardScreen.Pages[i] = atoi([pages UTF8String]);
-                LeaderboardScreen.Hat[i] = atoi([hat UTF8String]);
+                if ([name isEqualToString:@"--"])
+                    break;
+                
+                if (atoi([pages UTF8String]))
+                {
+                    LeaderboardScreen.Name[i] = strdup([[name lowercaseString] UTF8String]);
+                    
+                    if (strlen(LeaderboardScreen.Name[i]) > 10)
+                        LeaderboardScreen.Name[i][10] = 0;
+                    
+                    LeaderboardScreen.Pages[i] = atoi([pages UTF8String]);
+                    LeaderboardScreen.Hat[i] = atoi([hat UTF8String]);
+                }
             }
         }
+#endif        
     }
-#endif
 }
 
 void InitLeaderboardScreen()
@@ -157,6 +246,42 @@ void InitLeaderboardScreen()
     LeaderboardScreen.StartY = 0;
     LeaderboardScreen.Dragging = false;
     
+    LeaderboardScreen.AvailableRegionCount = 0;
+    
+#ifdef PLATFORM_IPHONE
+    if (theViewController.haveLocation)
+    {
+        LeaderboardScreen.AvailableRegions[LeaderboardScreen.AvailableRegionCount++] = LEADERBOARDREGION_STATE;
+        //        LeaderboardScreen.AvailableRegions[LeaderboardScreen.AvailableRegionCount++] = LEADERBOARDREGION_CITY;
+    }
+    
+    if (isGameCenterAPIAvailable())
+    {
+        theViewController.paused = TRUE;
+        
+        GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
+        [localPlayer authenticateWithCompletionHandler:^(NSError *error) {
+         NSLog(@"Player authenticated: %s", ([localPlayer isAuthenticated] ? "YES" : "NO"));
+         authenticationComplete = true;
+         }];
+        
+        while (!authenticationComplete)
+        {
+            [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
+        }
+        
+        theViewController.paused = FALSE;
+        
+        if ([localPlayer isAuthenticated])
+        {
+            LeaderboardScreen.AvailableRegions[LeaderboardScreen.AvailableRegionCount++] = LEADERBOARDREGION_GAMECENTER;
+            LeaderboardScreen.AvailableRegions[LeaderboardScreen.AvailableRegionCount++] = LEADERBOARDREGION_GAMECENTER_FRIENDS;
+        }
+    }
+#endif
+    
+    LeaderboardScreen.AvailableRegions[LeaderboardScreen.AvailableRegionCount++] = LEADERBOARDREGION_WORLD;
+
 #ifdef PLATFORM_IPHONE
     [theViewController retrieveLocationAndDownloadLeaderboards];
 #else
@@ -217,7 +342,7 @@ void DisplayLeaderboardScreen()
 //    float GhostAlpha = Settings.GhostActive ? 1.0f : 0.5f;
 //    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ButtonGhostSprite, 384, LeaderboardScreen.BaseY + 920, 1.0f, GhostAlpha);
 
-    const char* RegionName[LEADERBOARDREGION_COUNT] = { "worldwide", "state" };
+    const char* RegionName[LEADERBOARDREGION_COUNT] = { "game center", "friends", "worldwide", "state" };
     const char* ModeName[LEADERBOARDMODE_COUNT] = { "king of the day", "top score" };
     
     ELeaderboardRegion Region = LeaderboardScreen.Region;
@@ -308,19 +433,6 @@ void UpdateLeaderboardScreen()
 {
     LeaderboardScreen.BaseY *= 0.85f;
     
-    LeaderboardScreen.AvailableRegionCount = 0;
-    
-#ifdef PLATFORM_IPHONE
-    if (theViewController.haveLocation)
-    {
-        LeaderboardScreen.AvailableRegions[LeaderboardScreen.AvailableRegionCount++] = LEADERBOARDREGION_STATE;
-//        LeaderboardScreen.AvailableRegions[LeaderboardScreen.AvailableRegionCount++] = LEADERBOARDREGION_CITY;
-    }
-#endif
-    // TODO if (HaveFacebook), if (HaveGameCenter)
-
-    LeaderboardScreen.AvailableRegions[LeaderboardScreen.AvailableRegionCount++] = LEADERBOARDREGION_WORLD;
-
     if (LeaderboardScreen.Dragging)
     {
         if (!msButton1)
