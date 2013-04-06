@@ -16,6 +16,7 @@ enum EVacuumState
 	VACUUMSTATE_ONSCREEN,
 	VACUUMSTATE_RETREAT,
     VACUUMSTATE_CHARGE,
+    VACUUMSTATE_INTRO,
 };
 
 enum EVacuumType
@@ -41,7 +42,8 @@ enum EVacuumSide
 {
 	VACUUMSIDE_LEFT,
 	VACUUMSIDE_RIGHT,
-    VACUUMSIDE_CENTER
+    VACUUMSIDE_CENTER,
+    VACUUMSIDE_TOP
 };
 
 struct SVacuum
@@ -69,6 +71,7 @@ struct SVacuum
     int ChargeTimer;
 
     bool Paused;
+    bool Blocked;
     
     float AverageDustySpeed;
 

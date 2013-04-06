@@ -61,6 +61,7 @@ struct SBaby
     EDustySprite FollowSprite;
     float GatherX;
     float GatherY;
+    float GatherTime;
 };
 
 struct SDustyHistory
@@ -287,6 +288,14 @@ void DisplayBabies()
                 DisplayBabySprite(Baby, Hop2Sprites[(Dusty.SpriteTransition/5) % 3], -124, -18, -150);
             else
                 DisplayBabySprite(Baby, Hop3Sprites[(Dusty.SpriteTransition/10) % 2], -124, -18, -150);
+            
+            if (Baby->State == BABYSTATE_GATHER)
+            {
+                float Alpha = Remap(Baby->GatherTime, 0.0f, 0.25f, 0.0f, 1.0f, true);
+                float Scale = Remap(Baby->GatherTime, 0.0f, 0.25f, 5.0f, 1.0f, true);
+                Scale += sin(Baby->GatherTime*4)*0.1f;
+                AddLitSpriteCenteredScaledAlpha(LIGHTLIST_EFFECTS, &BabyTargetSprite, Baby->GatherX + ScrollX, Baby->GatherY + ScrollY, Scale, Alpha);
+            }
         }
         else if (Baby->State == BABYSTATE_FOLLOW)
         {
@@ -313,6 +322,14 @@ static void SendBabyToHeaven(SBaby* Baby)
         MakeDustMote(Baby->X + Random(-25, 25), Baby->Y - 30 + Random(-25, 25), 0, 0);
 }
 
+static void PuffBaby(SBaby* Baby)
+{
+    CreateWhiteSmoke(Baby->X, Baby->Y);
+    Baby->State = BABYSTATE_INACTIVE;
+    Baby->Timer = 0;
+    RemoveBaby(Baby->Hat);
+}
+
 static void VacuumUpBaby(SBaby* Baby)
 {
 #if 1
@@ -327,6 +344,14 @@ static void VacuumUpBaby(SBaby* Baby)
     Baby->VelocityX = Baby->X > Vacuum.X ? -10.0f : 10.0f;
     Baby->VelocityY = -20;
 #endif
+}
+
+static void ActivateBaby(SBaby* Baby)
+{
+    AwardBaby(Baby->Hat);
+    Baby->State = BABYSTATE_JUMP_TO_FOLLOW;
+    Baby->FollowOffset = Random(-10.0f, 10.0f);
+    Baby->FollowOrder = Random(10, MAX_DUSTY_HISTORY);    
 }
 
 void UpdateBabies()
@@ -351,10 +376,7 @@ void UpdateBabies()
             
             if (!TutorialOverrides.NoBabyPickup && Dusty.FloatY <= Baby->Y && Distance(Baby->X, Baby->Y, Dusty.FloatX, Dusty.FloatY) < 200)
             {
-                AwardBaby(Baby->Hat);
-                Baby->State = BABYSTATE_JUMP_TO_FOLLOW;
-                Baby->FollowOffset = Random(-10.0f, 10.0f);
-                Baby->FollowOrder = Random(10, MAX_DUSTY_HISTORY);
+                ActivateBaby(Baby);
                 continue;
             }
             
@@ -532,6 +554,8 @@ void UpdateBabies()
             else
                 Baby->Direction = DIRECTION_RIGHT;
             
+            Baby->GatherTime += 1.0f/60.0f;
+            
             Baby->Timer++;
             
             if (Distance(Baby->X, Baby->Y, Baby->GatherX, Baby->GatherY) < 30)
@@ -599,6 +623,18 @@ void UpdateBabies()
                     }
                 }
                 
+                for (int i = 0; i < NBabies; i++)
+                {
+                    SBaby* OtherBaby = &Babies[i];
+                    
+                    float Dist = (Distance(X, Y, OtherBaby->X, OtherBaby->Y));
+                    if (Dist < Size*64 && Dist != 0 && (OtherBaby->State == BABYSTATE_WAIT_HOP || OtherBaby->State == BABYSTATE_WAIT_STAND))
+                    {
+                        ActivateBaby(OtherBaby);
+                        //GotSomething = true;
+                    }
+                }
+                
                 if (GotSomething)
                 {
                     CreateWhiteSmoke(Baby->X, Baby->Y);
@@ -652,11 +688,8 @@ void UpdateBabies()
             
             if (Distance(Baby->X, Baby->Y, Baby->GatherX, Baby->GatherY) < 30)
             {
-                CreateWhiteSmoke(Baby->X, Baby->Y);
                 JamVacuum();
-                Baby->State = BABYSTATE_INACTIVE; // BABYSTATE_JUMP_TO_FOLLOW?
-                Baby->Timer = 0;
-                RemoveBaby(Baby->Hat);
+                PuffBaby(Baby);
             }
         }
     }
@@ -684,6 +717,7 @@ void SendBabyToGather(float X, float Y)
             Baby->State = BABYSTATE_GATHER;
             Baby->GatherX = X;
             Baby->GatherY = Y;
+            Baby->GatherTime = 0;
         }
         
         break;
@@ -692,8 +726,10 @@ void SendBabyToGather(float X, float Y)
 
 bool UseBabyProtection()
 {
-    if (NBabies == 0 || Vacuum.Type != VACUUM_NORMAL)
+    if (NBabies == 0)
         return false;
+    
+    int TakenCount = 0;
     
     for (int i = NBabies-1; i >= 0; i--)
     {
@@ -701,13 +737,29 @@ bool UseBabyProtection()
         if (Baby->State != BABYSTATE_FOLLOW)
             continue;
         
-        Baby->State = BABYSTATE_JUMP_TO_ATTACK;
-        Baby->GatherX = 384 - ScrollX;
-        Baby->GatherY = Baby->Y - 500;
-        
-        Vacuum.Paused = true;
-        
-        return true;
+        if (Vacuum.Type == VACUUM_NORMAL)
+        {
+            Baby->State = BABYSTATE_JUMP_TO_ATTACK;
+            Baby->GatherX = 384 - ScrollX;
+            Baby->GatherY = Baby->Y - 500;
+            
+            Vacuum.Paused = true;
+            
+            return true;
+        }
+        else
+        {
+            PuffBaby(Baby);
+            TakenCount++;
+            if (TakenCount == 2)
+                return true;
+        }
+    }
+    
+    if (Vacuum.Type == VACUUM_DUSTBUSTER)
+    {
+        if (TakenCount > 0)
+            return true;
     }
     
     return false;

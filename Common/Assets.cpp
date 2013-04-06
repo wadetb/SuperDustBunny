@@ -68,6 +68,8 @@ gxSprite DustyDeathSprite;
 
 gxSprite DustyKickSprite;
 
+gxSprite BabyTargetSprite;
+
 gxSprite GraduationHatSprite;
 gxSprite PartyHatSprite;
 gxSprite PinkBowHatSprite;
@@ -128,8 +130,6 @@ gxSprite TennisBallSpin1Sprite;
 gxSprite TennisBallSpin2Sprite;
 gxSprite TennisBallSpin3Sprite;
 gxSprite TennisBallSpin4Sprite;
-
-gxSprite GearSprite;
 
 gxSprite Stapler1Sprite;
 gxSprite Stapler2Sprite;
@@ -272,7 +272,6 @@ sxSound NextPageSound;
 
 sxSound BalloonPopSound;
 
-sxSound GearSound;
 sxSound CoinSound;
 
 sxSound MenuSwipeSound;
@@ -1089,6 +1088,8 @@ void LoadAssets()
 
     LoadSpriteAsset("Assets/dusty-kick.png", &DustyKickSprite);
 
+    LoadSpriteAsset("Assets/crosshairs.png", &BabyTargetSprite);
+
 	LoadSpriteAsset("Assets/hat-graduation.png", &GraduationHatSprite);
 	LoadSpriteAsset("Assets/hat-party.png", &PartyHatSprite);
 	LoadSpriteAsset("Assets/hat-pink-bow.png", &PinkBowHatSprite);
@@ -1153,8 +1154,6 @@ void LoadAssets()
 	LoadSpriteAsset("Assets/tennisball-spin-4.png", &TennisBallSpin4Sprite);
 */
     
-	LoadSpriteAsset("Assets/gear.png", &GearSprite);
-	
     LoadSpriteAsset("Assets/stapler-1.png", &Stapler1Sprite);
     LoadSpriteAsset("Assets/stapler-2.png", &Stapler2Sprite);
     LoadSpriteAsset("Assets/stapler-3.png", &Stapler3Sprite);
@@ -1300,7 +1299,6 @@ void LoadAssets()
 
     LoadSoundAsset("Audio/balloon-pop.wav", &BalloonPopSound);
 
-    LoadSoundAsset("Audio/gear.wav", &GearSound);
     LoadSoundAsset("Audio/coin.wav", &CoinSound);
 
     LoadSoundAsset("Audio/menu-swipe.wav", &MenuSwipeSound);

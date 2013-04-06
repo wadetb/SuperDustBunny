@@ -64,6 +64,8 @@ extern gxSprite DustyDeathSprite;
 
 extern gxSprite DustyKickSprite;
 
+extern gxSprite BabyTargetSprite;
+
 extern gxSprite GraduationHatSprite;
 extern gxSprite PartyHatSprite;
 extern gxSprite PinkBowHatSprite;
@@ -124,8 +126,6 @@ extern gxSprite TennisBallSpin1Sprite;
 extern gxSprite TennisBallSpin2Sprite;
 extern gxSprite TennisBallSpin3Sprite;
 extern gxSprite TennisBallSpin4Sprite;
-
-extern gxSprite GearSprite;
 
 extern gxSprite Stapler1Sprite;
 extern gxSprite Stapler2Sprite;
@@ -267,7 +267,6 @@ extern sxSound NextPageSound;
 
 extern sxSound BalloonPopSound;
 
-extern sxSound GearSound;
 extern sxSound CoinSound;
 
 extern sxSound MenuSwipeSound;

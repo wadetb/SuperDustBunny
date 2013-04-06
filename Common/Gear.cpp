@@ -39,6 +39,10 @@ void ParseGearProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode
 		{
             LoadSpriteAsset(Value, &Props->Sprite);
         }
+		else if (strcmp(Name, "sound") == 0)
+		{
+            LoadSoundAsset(Value, &Props->Sound);
+        }
 		else if (strcmp(Name, "type") != 0 && strcmp(Name, "material") != 0)
 		{
 			ReportError("Unrecognized flame property '%s'='%s'.", Name, Value);
@@ -55,6 +59,7 @@ void ParseGearProperties(SBlock* Block, rapidxml::xml_node<char>* PropertiesNode
 void FreeGearProperties(SBlock* Block)
 {
     gxDestroySprite(&((SGearProperties*)Block->Properties)->Sprite);
+    sxDestroySound(&((SGearProperties*)Block->Properties)->Sound);
     free(Block->Properties);
     Block->Properties = NULL;
 }
@@ -123,7 +128,7 @@ void UpdateGear()
 
 			if (Dist < 100)
 			{
-                sxPlaySound(&GearSound);
+                sxPlaySound(&Gear->Props->Sound);
 
 				Gear->State = GEARSTATE_FALLING;
 				

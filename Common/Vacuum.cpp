@@ -130,6 +130,7 @@ void InitVacuum()
     Vacuum.AverageDustySpeed = 0;
     
     Vacuum.Paused = false;
+    Vacuum.Blocked = false;
     
     RestartVacuumForceMap();
     
@@ -145,7 +146,12 @@ void InitVacuum()
 
 void AdvanceDustBusterSideAndDir()
 {
-    if (Vacuum.Dir == VACUUMDIR_UP && Vacuum.Side == VACUUMSIDE_LEFT)
+    if (Vacuum.Dir == VACUUMDIR_DOWN && Vacuum.Side == VACUUMSIDE_TOP)
+    {
+        Vacuum.Dir = VACUUMDIR_UP;
+        Vacuum.Side = VACUUMSIDE_LEFT;        
+    }
+    else if (Vacuum.Dir == VACUUMDIR_UP && Vacuum.Side == VACUUMSIDE_LEFT)
     {
         Vacuum.Dir = VACUUMDIR_DOWN;
         Vacuum.Side = VACUUMSIDE_RIGHT;
@@ -275,7 +281,7 @@ void UpdateVacuumSound()
 
     Vacuum.TurnOnTimer++;
     
-	if (Vacuum.State == VACUUMSTATE_ONSCREEN)
+	if ((Vacuum.State == VACUUMSTATE_ONSCREEN || Vacuum.State == VACUUMSTATE_INTRO))
 	{
 		if (Vacuum.OnVolume < 1.0f)
         {
@@ -324,7 +330,9 @@ static float GetVacuumTargetX()
     }
     else if (Vacuum.Type == VACUUM_DUSTBUSTER)
     {
-        if (Vacuum.Side == VACUUMSIDE_LEFT)                    
+        if (Vacuum.Side == VACUUMSIDE_TOP)
+            return 384 - ScrollX;
+        else if (Vacuum.Side == VACUUMSIDE_LEFT)
             return 192 - ScrollX;
         else
             return 576 - ScrollX;
@@ -387,10 +395,17 @@ void UpdateVacuum()
                 Vacuum.Y -= Dot*RY*0.1f;
             }
             
-			if (IsInVacuum(Dusty.FloatX, Dusty.FloatY))
+			if (IsInVacuum(Dusty.FloatX, Dusty.FloatY) && !Vacuum.Blocked)
 			{
-                if (!UseBabyProtection())
+                if (UseBabyProtection())
+                {
+                    if (Vacuum.Type == VACUUM_DUSTBUSTER)
+                        Vacuum.Blocked = true;
+                }
+                else
+                {
                     SetDustyState_Die(DEATH_VACUUM);
+                }
 			}
 		}
 	}
@@ -407,6 +422,61 @@ void UpdateVacuum()
             Vacuum.Timer = 5*60;
 		}
 	}
+    else if (Vacuum.State == VACUUMSTATE_INTRO)
+    {
+        if (!Vacuum.Paused)
+		{
+            float VacuumSpeed;
+            if (Vacuum.Type == VACUUM_DUSTBUSTER)
+                VacuumSpeed = Portfolio.VacuumSpeed * 2;
+            else
+                VacuumSpeed = Portfolio.VacuumSpeed;
+            
+            float FX, FY;
+            GetVacuumForwardDir(&FX, &FY);
+            
+			Vacuum.Timer++;
+            if (Vacuum.Timer < 60*0.25f)
+            {
+                Vacuum.X += FX*VacuumSpeed*1.25f;
+                Vacuum.Y += FY*VacuumSpeed*1.25f;
+            }
+            else if (Vacuum.Timer > 60*1)
+            {
+                Vacuum.X -= FX*VacuumSpeed*2.5f;
+                Vacuum.Y -= FY*VacuumSpeed*2.5f;
+            }
+            if (Vacuum.Y > LitScreenHeight*0.25f - ScrollY)
+                Vacuum.Y = Vacuum.Y*0.9f + (LitScreenHeight*0.25f - ScrollY)*0.1f;
+            
+            if (Vacuum.Timer > 60*3)
+            {
+                Vacuum.State = VACUUMSTATE_ONSCREEN;
+                AdvanceDustBusterSideAndDir();
+                TurnOnVacuum(Portfolio.VacuumDistance, 2.0f, true);
+            }
+            
+            // Slide toward plane of bunny.
+            if (Vacuum.Type == VACUUM_DUSTBUSTER || Vacuum.Dir == VACUUMDIR_UP || Vacuum.Dir == VACUUMDIR_DOWN)
+            {
+                Vacuum.X = Vacuum.X*0.9f + GetVacuumTargetX()*0.1f;
+            }
+            else
+            {
+                float RX, RY;
+                GetVacuumRightDir(&RX, &RY);
+                
+                float DX = Vacuum.X - Dusty.FloatX;
+                float DY = Vacuum.Y - Dusty.FloatY;
+                
+                float Dot = DX*RX + DY*RY;
+                
+                Vacuum.X -= Dot*RX*0.1f;
+                Vacuum.Y -= Dot*RY*0.1f;
+            }
+		}
+
+    }
 
     if (Vacuum.Type == VACUUM_DUSTBUSTER && Dusty.State != DUSTYSTATE_DIE)
     {
@@ -431,7 +501,7 @@ void UpdateVacuum()
     
     // Zoom the screen when the vacuum is on screen.
     float TargetZoom;
-    if (Vacuum.State == VACUUMSTATE_ONSCREEN && Dusty.State != DUSTYSTATE_DIE && Vacuum.Timer >= 0 && fabsf(Vacuum.Y - Dusty.FloatY) < 700)
+    if ((Vacuum.State == VACUUMSTATE_ONSCREEN || Vacuum.State == VACUUMSTATE_INTRO) && Dusty.State != DUSTYSTATE_DIE && Vacuum.Timer >= 0 && fabsf(Vacuum.Y - Dusty.FloatY) < 700)
     {
         LitSceneOffsetX = Clamp(LitSceneOffsetX + (rand() % 13) - 6, -10, 10);
         LitSceneOffsetY = Clamp(LitSceneOffsetY + (rand() % 13) - 6, -10, 10);
@@ -526,8 +596,14 @@ void TurnOnVacuum(float InitialDistance, float DelayBeforeMoving, bool Charging)
     sxSetSoundVolume(&VacuumJamSound, 0.0f);
     sxPlaySound(&VacuumTurnOnSound);
     Vacuum.TurnOnTimer = 0;
-        
-    Vacuum.State = VACUUMSTATE_ONSCREEN;
+    
+    if (Vacuum.Type == VACUUM_DUSTBUSTER && Vacuum.Side == VACUUMSIDE_TOP)
+    {
+        Vacuum.State = VACUUMSTATE_INTRO;
+        Vacuum.Dir = VACUUMDIR_DOWN;
+    }
+    else
+        Vacuum.State = VACUUMSTATE_ONSCREEN;
 
     Vacuum.Timer = -(int)(DelayBeforeMoving*60);
 
@@ -541,6 +617,7 @@ void TurnOnVacuum(float InitialDistance, float DelayBeforeMoving, bool Charging)
     Vacuum.Y = Dusty.FloatY - FY*InitialDistance;
 
     Vacuum.Paused = false;
+    Vacuum.Blocked = false;
 
     Vacuum.Charging = Charging;
 }
@@ -550,7 +627,7 @@ bool IsInVacuum(float X, float Y)
     if (Settings.DisableVacuum)
 		return false;
     
-    if (Vacuum.State != VACUUMSTATE_ONSCREEN)
+    if (!(Vacuum.State == VACUUMSTATE_ONSCREEN || Vacuum.State == VACUUMSTATE_INTRO))
         return false;
     
     return IsNearVacuum(X, Y);
@@ -592,7 +669,7 @@ float GetDistanceToVacuum(float X, float Y)
     if (Settings.DisableVacuum)
 		return 1000000.0f;
     
-    if (Vacuum.State != VACUUMSTATE_ONSCREEN)
+    if (!(Vacuum.State == VACUUMSTATE_ONSCREEN || Vacuum.State == VACUUMSTATE_INTRO))
         return 1000000.0f;
     
     if (Vacuum.Type == VACUUM_NORMAL)
@@ -746,7 +823,7 @@ static void UpdateVacuumForceMap()
 void GetVacuumForce(float X, float Y, float* VX, float* VY, float Strength, bool FollowLevel)
 {
 	// If the vacuum is disabled for this page, no vacuum forces.
-	if (Chapter.PageProps.VacuumOff || Settings.DisableVacuum || Vacuum.State != VACUUMSTATE_ONSCREEN)
+	if (Chapter.PageProps.VacuumOff || Settings.DisableVacuum || !(Vacuum.State == VACUUMSTATE_ONSCREEN || Vacuum.State == VACUUMSTATE_INTRO))
 	{
 		*VX = 0;
 		*VY = 0;

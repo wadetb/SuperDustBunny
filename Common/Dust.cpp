@@ -102,7 +102,7 @@ void UpdateDust()
 		// -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -//
         int BlockX = (int)(Mote->X / 64.0f);
         int BlockY = (int)(Mote->Y / 64.0f);
-        if (Vacuum.State != VACUUMSTATE_ONSCREEN && BlockX >= 0 && BlockX < Chapter.PageWidth && BlockY >= 0 && BlockY < Chapter.PageHeight)
+        if (!(Vacuum.State == VACUUMSTATE_ONSCREEN || Vacuum.State == VACUUMSTATE_INTRO) && BlockX >= 0 && BlockX < Chapter.PageWidth && BlockY >= 0 && BlockY < Chapter.PageHeight)
         {
             if (Chapter.PageBlocks[BlockY*Chapter.PageWidth+BlockX] != SPECIALBLOCKID_BLANK)
             {
@@ -139,7 +139,7 @@ void UpdateDust()
 			Mote->Y = Random(LitScreenHeight-100.0f, LitScreenHeight+100.0f) - (float)ScrollY;
 		}
 
-        if (Vacuum.State == VACUUMSTATE_ONSCREEN && Distance(Mote->X, Mote->Y, Vacuum.X, Vacuum.Y) < 100)
+        if ((Vacuum.State == VACUUMSTATE_ONSCREEN || Vacuum.State == VACUUMSTATE_INTRO) && Distance(Mote->X, Mote->Y, Vacuum.X, Vacuum.Y) < 100)
         {
 			Recycle = true;            
 			Mote->Y = Random(0.0f, (float)LitScreenHeight) - (float)ScrollY;

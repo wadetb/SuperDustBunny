@@ -1840,8 +1840,18 @@ void LoadPortfolio()
         for (int i = 0; i < ARRAY_COUNT(PortfolioEntries); i++)
             *PortfolioEntries[i].Value = DebugNode->first_attribute(PortfolioEntries[i].Name) && atoi(DebugNode->first_attribute(PortfolioEntries[i].Name)->value()) != 0;
 
-        Portfolio.VacuumDir = Portfolio.UpsideDown ? VACUUMDIR_DOWN : VACUUMDIR_UP;
-        
+        if (Portfolio.DustBuster)
+        {
+            Vacuum.Side = VACUUMSIDE_TOP; // Force intro
+            Vacuum.Dir = VACUUMDIR_DOWN;
+            Portfolio.VacuumSide = Vacuum.Side;
+            Portfolio.VacuumDir = Vacuum.Dir;
+        }
+        else
+        {
+            Portfolio.VacuumDir = Portfolio.UpsideDown ? VACUUMDIR_DOWN : VACUUMDIR_UP;
+        }
+
         Portfolio.Chapter = DebugNode->first_attribute("Chapter") ? atoi(DebugNode->first_attribute("Chapter")->value()) : 0;
         CurrentChapter = Portfolio.Chapter;
         LoadCurrentChapter();
@@ -1866,6 +1876,18 @@ void SetupInitialPortfolio()
     EnableAllPortfolio(PORTFOLIO_INITIAL, PORTFOLIO_INITIAL_MASK, true);
     EnableRandomPortfolio(PORTFOLIO_PRO, PORTFOLIO_TYPE_MASK, true);
     
+    if (Portfolio.DustBuster)
+    {
+        Vacuum.Side = VACUUMSIDE_TOP; // Force intro
+        Vacuum.Dir = VACUUMDIR_DOWN;
+        Portfolio.VacuumSide = Vacuum.Side;
+        Portfolio.VacuumDir = Vacuum.Dir;
+    }
+    else
+    {
+        Portfolio.VacuumDir = Portfolio.UpsideDown ? VACUUMDIR_DOWN : VACUUMDIR_UP;
+    }
+
     Portfolio.VacuumDistance = Portfolio.InitialVacuumDistance;
     
     Portfolio.VacuumSpeed = Portfolio.InitialVacuumSpeed;
@@ -1932,6 +1954,8 @@ static void SetupStoryPortfolio(int NewChapter)
 
 void AdvancePortfolio()
 {
+    bool WasDustbuster = Portfolio.DustBuster;
+    
     PreparePortfolioForChanges();
 
     if (Portfolio.Chapter >= FIRST_STORY_CHAPTER && Portfolio.Chapter <= LAST_STORY_CHAPTER)
@@ -2042,11 +2066,21 @@ void AdvancePortfolio()
     
     if (Portfolio.DustBuster)
     {
-        Vacuum.Side = (EVacuumSide)Portfolio.VacuumSide;
-        Vacuum.Dir = (EVacuumDir)Vacuum.Dir;
-        AdvanceDustBusterSideAndDir();
-        Portfolio.VacuumSide = Vacuum.Side;
-        Portfolio.VacuumDir = Vacuum.Dir;
+        if (!WasDustbuster)
+        {
+            Vacuum.Side = VACUUMSIDE_TOP; // Force intro
+            Vacuum.Dir = VACUUMDIR_DOWN;
+            Portfolio.VacuumSide = Vacuum.Side;
+            Portfolio.VacuumDir = Vacuum.Dir;            
+        }
+        else
+        {
+            Vacuum.Side = (EVacuumSide)Portfolio.VacuumSide;
+            Vacuum.Dir = (EVacuumDir)Vacuum.Dir;
+            AdvanceDustBusterSideAndDir();
+            Portfolio.VacuumSide = Vacuum.Side;
+            Portfolio.VacuumDir = Vacuum.Dir;
+        }
     }
     else
     {

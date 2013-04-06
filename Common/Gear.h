@@ -15,6 +15,7 @@ struct SBlock;
 struct SGearProperties
 {
     gxSprite Sprite;
+    sxSound Sound;
 };
 
 enum EGearState

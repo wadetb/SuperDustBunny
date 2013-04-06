@@ -235,6 +235,7 @@ void InitStoreScreen()
     InitDusty();
     
     SetDustyState_IntroStand();
+    Dusty.CollideMaterial = MATERIAL_NORMAL;
     Dusty.FloatX = STORE_X+(STORE_COLS-1)*STORE_COL_SZ + STORE_COL_SZ/2-30;
     Dusty.FloatY = STORE_Y+(STORE_ROWS)*STORE_ROW_SZ + STORE_ROW_SZ-50;
     Dusty.NoCollision = true;
