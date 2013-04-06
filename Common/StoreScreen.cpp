@@ -63,6 +63,7 @@ SStoreScreen StoreScreen;
 SInventory Inventory[] =
 {
 //Tier 1
+    { "Assets/hat-no-hat.png", "no hat", "", 0, DUSTYHAT_NONE },
     { "Assets/hat-graduation.png", "graduation cap", "higher learning", 0, DUSTYHAT_GRADUATION },
     { "Assets/hat-apple.png", "apple", "gives vacuum a pause", 5, DUSTYHAT_APPLE },
     { "Assets/hat-bowtie.png", "bowtie", "immune to fire\nand spikes", 5, DUSTYHAT_BOWTIE },
@@ -249,6 +250,8 @@ void InitStoreScreen()
     StoreScreen.FirstItem = 0;
     StoreScreen.ItemDisplayed = false;
     
+    GiveHat(DUSTYHAT_NONE);
+    
     StopMusicTrack(MUSIC_CHAPTER);
     QueueMusicTrack(MUSIC_CHAPTER, &TitleScreenMusic);
 }
@@ -293,7 +296,7 @@ void DisplayStoreScreen()
     {
         AddLitSprite(LIGHTLIST_VACUUM, &LeaderboardBackgroundSprite, 0, 0);
         
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &Inventory[StoreScreen.ActiveItem].Sprite, 384, 250, 4.0f, 1.0f);
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &Inventory[StoreScreen.ActiveItem].Sprite, 384, 250, 3.0f, 1.0f);
 
         DisplayMultilineStringAlpha(LIGHTLIST_WIPE, Inventory[StoreScreen.ActiveItem].Description, FORMAT_CENTER_X, 384, 390, 1.0f, 1.0f);
 

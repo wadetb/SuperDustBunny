@@ -237,8 +237,6 @@ void DisplayStartScreen()
     DisplayString(LIGHTLIST_VACUUM, Work, 0, 350, LitScreenHeight - 80, 1.1f);
 
     // Leaderboard button.
-    AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonLeaderboardSprite, 768-60, 60, 1.0f, 1.0f);
-
     if (StartScreen.LeaderboardVisible)
     {
         DisplayLeaderboardScreen();
@@ -246,6 +244,7 @@ void DisplayStartScreen()
     else
     {
         AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenGoBackSprite, 60, 60, 1.0f, 1.0f);
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonLeaderboardSprite, 768-60, 60, 1.0f, 1.0f);
     }
 }
 
@@ -289,12 +288,14 @@ void UpdateStartScreen()
     
     if (StartScreen.LeaderboardVisible)
     {
-        if (msY < 200 && msX < 200 && msButton1 && !msOldButton1)
+        if (msY < 200 && msX > 768-200 && msButton1 && !msOldButton1)
         {
 #ifdef PLATFORM_IPHONE
             [TestFlight passCheckpoint:@"Closed Leaderboards"];
 #endif
-            StartScreen.LeaderboardVisible = false;            
+            StartScreen.LeaderboardVisible = false;
+            StartScreen.ReleasedAtLeastOnce = false;
+            return;
         }
         
 /*
@@ -331,7 +332,7 @@ void UpdateStartScreen()
         return;
     }
 
-    if (msY < PLAY_Y && msX > 384 && !msButton1 && msOldButton1)
+    if (msY < PLAY_Y && msX > 384 && msButton1 && !msOldButton1)
     {
 #ifdef PLATFORM_IPHONE
         [TestFlight passCheckpoint:[NSString stringWithFormat:@"Opened Leaderboards for %s", Chapters[CurrentChapter].Name]];

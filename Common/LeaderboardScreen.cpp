@@ -204,7 +204,7 @@ static void DisplayLeaderboardScrollSprite(gxSprite* Sprite, float X, float Y, f
 
 void DisplayLeaderboardScreen()
 {
-    AddLitSprite(LIGHTLIST_VACUUM, &LeaderboardBackgroundSprite, 0, LeaderboardScreen.BaseY);
+    AddLitSpriteScaled(LIGHTLIST_VACUUM, &LeaderboardBackgroundSprite, LeaderboardBackgroundSprite.width, LeaderboardScreen.BaseY, -1.0f, 1.0f);
     
     // Leaderboard buttons.
     //AddLitSpriteCenteredScaledAlpha(LIGHTLIST_VACUUM, &ButtonLeaderboardSprite, 768-100, LeaderboardScreen.BaseY + 60, 1.0f, 1.0f);
