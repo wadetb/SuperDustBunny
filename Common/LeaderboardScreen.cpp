@@ -45,6 +45,8 @@ enum ELeaderboardMode
 
 struct SLeaderboardScreen
 {
+    bool FirstInit;
+    
     float WiggleTime;
     float FadeInTime;
     
@@ -250,12 +252,6 @@ void InitLeaderboardScreen()
     LeaderboardScreen.AvailableRegionCount = 0;
     
 #ifdef PLATFORM_IPHONE
-    if (theViewController.haveLocation)
-    {
-        LeaderboardScreen.AvailableRegions[LeaderboardScreen.AvailableRegionCount++] = LEADERBOARDREGION_STATE;
-        //        LeaderboardScreen.AvailableRegions[LeaderboardScreen.AvailableRegionCount++] = LEADERBOARDREGION_CITY;
-    }
-    
     if (isGameCenterAPIAvailable())
     {
         theViewController.paused = TRUE;
@@ -275,14 +271,26 @@ void InitLeaderboardScreen()
         
         if ([localPlayer isAuthenticated])
         {
-            LeaderboardScreen.AvailableRegions[LeaderboardScreen.AvailableRegionCount++] = LEADERBOARDREGION_GAMECENTER;
+            //LeaderboardScreen.AvailableRegions[LeaderboardScreen.AvailableRegionCount++] = LEADERBOARDREGION_GAMECENTER;
             LeaderboardScreen.AvailableRegions[LeaderboardScreen.AvailableRegionCount++] = LEADERBOARDREGION_GAMECENTER_FRIENDS;
         }
+    }
+
+    if (theViewController.haveLocation)
+    {
+        LeaderboardScreen.AvailableRegions[LeaderboardScreen.AvailableRegionCount++] = LEADERBOARDREGION_STATE;
+        //        LeaderboardScreen.AvailableRegions[LeaderboardScreen.AvailableRegionCount++] = LEADERBOARDREGION_CITY;
     }
 #endif
     
     LeaderboardScreen.AvailableRegions[LeaderboardScreen.AvailableRegionCount++] = LEADERBOARDREGION_WORLD;
 
+    if (!LeaderboardScreen.FirstInit)
+    {
+        LeaderboardScreen.Region = LeaderboardScreen.AvailableRegions[0];
+        LeaderboardScreen.Mode = LEADERBOARDMODE_KINGOFTHEHILL;
+    }
+    
 #ifdef PLATFORM_IPHONE
     [theViewController retrieveLocationAndDownloadLeaderboards];
 #else
@@ -402,7 +410,7 @@ void SwitchToNextLeaderboard()
     if (LeaderboardScreen.CurTab >= LEADERBOARDMODE_COUNT * LeaderboardScreen.AvailableRegionCount)
         LeaderboardScreen.CurTab = (LEADERBOARDMODE_COUNT * LeaderboardScreen.AvailableRegionCount) - 1;
     
-    int CurRegion = LeaderboardScreen.CurTab / LEADERBOARDMODE_COUNT;
+    int CurRegion = LeaderboardScreen.AvailableRegions[LeaderboardScreen.CurTab / LEADERBOARDMODE_COUNT];
     int CurMode = LeaderboardScreen.CurTab % LEADERBOARDMODE_COUNT;
     
     if (CurRegion != LeaderboardScreen.Region || CurMode != LeaderboardScreen.Mode)
@@ -422,7 +430,7 @@ void SwitchToPreviousLeaderboard()
     if (LeaderboardScreen.CurTab >= LEADERBOARDMODE_COUNT * LeaderboardScreen.AvailableRegionCount)
         LeaderboardScreen.CurTab = (LEADERBOARDMODE_COUNT * LeaderboardScreen.AvailableRegionCount) - 1;
     
-    int CurRegion = LeaderboardScreen.CurTab / LEADERBOARDMODE_COUNT;
+    int CurRegion = LeaderboardScreen.AvailableRegions[LeaderboardScreen.CurTab / LEADERBOARDMODE_COUNT];
     int CurMode = LeaderboardScreen.CurTab % LEADERBOARDMODE_COUNT;
     
     if (CurRegion != LeaderboardScreen.Region || CurMode != LeaderboardScreen.Mode)

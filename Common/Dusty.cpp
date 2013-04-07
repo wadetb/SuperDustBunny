@@ -1852,10 +1852,21 @@ static void UpdateDusty_Collision()
     // Collision with the vacuum when it's off.
     if (Vacuum.State == VACUUMSTATE_RETREAT || Vacuum.Paused)
     {
-        if (Dusty.FloatY + Dusty.Bottom >= Vacuum.Y)
+        if (Vacuum.Dir == VACUUMDIR_DOWN)
         {
-            Dusty.CollideWithBottomSide = true;
-            Dusty.FloatY = Vacuum.Y - Dusty.Bottom;
+            if (Dusty.FloatY + Dusty.Top <= Vacuum.Y)
+            {
+                Dusty.CollideWithTopSide = true;
+                Dusty.FloatY = Vacuum.Y - Dusty.Top;
+            }            
+        }
+        else
+        {
+            if (Dusty.FloatY + Dusty.Bottom >= Vacuum.Y)
+            {
+                Dusty.CollideWithBottomSide = true;
+                Dusty.FloatY = Vacuum.Y - Dusty.Bottom;
+            }
         }
     }
     
