@@ -77,7 +77,7 @@ void InitStartScreen()
     StartScreen.TitleVisible = InitialStartScreen;
     InitialStartScreen = false;
  
-    StartScreen.PlayChapter = Random(FIRST_NORMAL_CHAPTER, LAST_NORMAL_CHAPTER+1);
+    StartScreen.PlayChapter = Random(FIRST_STARTING_CHAPTER, LAST_STARTING_CHAPTER+1);
 
     StartScreen.ReleasedAtLeastOnce = false;
     StartScreen.BackgroundFadeAlpha = 0.0f;

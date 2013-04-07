@@ -792,7 +792,7 @@ void UpdateTutorial()
             if (Tutorial->PauseActive)
             {
                 Tutorial->PauseTimer -= 1.0f/60.0f;
-                if (Tutorial->PauseTimer < 3.5f && Tutorial->PauseTimer + 1.0f/60.0f >= 3.5f)
+                if (Tutorial->PauseTimer < 2.5f && Tutorial->PauseTimer + 1.0f/60.0f >= 2.5f)
                 {
                     if (Props->Actions && strstr(Props->Actions, "turnonvacuum"))
                     {
@@ -833,7 +833,7 @@ void UpdateTutorial()
                         TutorialOverrides.FreezeDusty = true;
                         
                         Tutorial->PauseActive = true;
-                        Tutorial->PauseTimer = 5.0f;
+                        Tutorial->PauseTimer = 3.0f;
 
                         Chapter.PageProps.VacuumOff = false;
                         TurnOnVacuum(Portfolio.VacuumDistance, 2.0f, false);

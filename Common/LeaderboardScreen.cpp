@@ -192,8 +192,8 @@ void DownloadLeaderboards()
                          RegionTag[LeaderboardScreen.Region],
                          [region stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
         }
-#endif
         else
+#endif
         {
             URLString = [NSString stringWithFormat:@"http://pluszerogames.com/sdb/getleaderboard.php?mode=%s&region=%s",
                          ModeTag[LeaderboardScreen.Mode],
