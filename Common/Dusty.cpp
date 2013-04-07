@@ -1472,6 +1472,8 @@ void SetDustyState_Launch(float VelocityX, float VelocityY)
 
     Dusty.ComboCount = 0;
 
+    Dusty.NoCollision = false;
+
     Dusty.State = DUSTYSTATE_LAUNCH;
     
     UpdateMinimap(MINIMAP_LAUNCH);
