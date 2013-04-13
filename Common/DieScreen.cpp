@@ -13,6 +13,7 @@
 #include "Text.h"
 #include "GameScore.h"
 #include "Settings.h"
+#include "LeaderboardScreen.h"
 
 #ifdef PLATFORM_IPHONE
 #import "SuperDustBunnyViewController.h"
@@ -63,6 +64,7 @@ static const char* GoldMedalNames[MEDAL_FRAMES] =
 struct SDieScreen
 {
     bool ScoreVisible;
+    bool LeaderboardVisible;
     
 	int Timer;
     
@@ -83,6 +85,7 @@ void InitDieScreen()
 {
     DieScreen.ButtonEverReleased = false;
     DieScreen.ScoreVisible = true;
+    DieScreen.LeaderboardVisible = false;
 	DieScreen.Timer = 0;
     DieScreen.TearTime = 0;
     DieScreen.SlideIn = 1.0f;
@@ -126,6 +129,8 @@ void InitDieScreen()
     }
 
     UploadScore();
+    
+    InitLeaderboardScreen();
 }
 
 gxSprite* TearSprites[4] =
@@ -141,7 +146,7 @@ void DisplayDieScreen()
     AddLitSpriteSizedAlpha(LIGHTLIST_FOREGROUND_NO_SHADOW, &ScreenLoseGrave1Sprite, 0, 0, 768, LitScreenHeight, 1.0f);
     
     float PulseAlpha;
-    if (!DieScreen.ScoreVisible && msButton1)
+    if (!DieScreen.ScoreVisible && !DieScreen.LeaderboardVisible && msButton1)
         PulseAlpha = 1.0f;
     else
         PulseAlpha = SinWave(DieScreen.Timer/60.0f, 2.0f)*0.5f;
@@ -168,6 +173,7 @@ void DisplayDieScreen()
         AddLitSpriteAlpha(LIGHTLIST_VACUUM, &TearDropSprite, DieScreen.TearDropX, DieScreen.TearDropY, Alpha);
     }
     
+    // Score
     AddLitSprite(LIGHTLIST_VACUUM, &LeaderboardBackgroundSprite, 0 - 600*DieScreen.SlideIn, 0);
 
     float TextY;
@@ -191,6 +197,9 @@ void DisplayDieScreen()
     AddLitSpriteScaled(LIGHTLIST_WIPE, &CoinIconSprite, 220 - 600*DieScreen.SlideIn, 820, 0.65f*1.5f, 0.65f*1.5f);
     snprintf(Work, sizeof(Work), "x%d", Portfolio.TotalLives);
     DisplayString(LIGHTLIST_WIPE, Work, 0, 380 - 600*DieScreen.SlideIn, 860, 1.75f);
+
+    if (DieScreen.LeaderboardVisible)
+        DisplayLeaderboardScreen();
 }
 
 static void DieScreen_Advance()
@@ -210,6 +219,9 @@ void UpdateDieScreen()
         DieScreen.SlideIn *= 0.9f;
     else
         DieScreen.SlideIn *= 1.5f;
+    
+    if (DieScreen.LeaderboardVisible)
+        UpdateLeaderboardScreen();
     
     DieScreen.MedalFrame++;
 
@@ -249,6 +261,26 @@ void UpdateDieScreen()
                 DieScreen.ScoreVisible = false;
                 DieScreen.ButtonEverReleased = false;
                 DieScreen.SlideIn = 0.01f;
+                DieScreen.LeaderboardVisible = true;
+            }
+            else if (DieScreen.LeaderboardVisible)
+            {
+                if (msX > 768-200 && msY < 200)
+                {
+                    DieScreen.LeaderboardVisible = false;
+                }
+                
+                if (msY > 800 && msX > 500 && msButton1 && !msOldButton1)
+                {
+                    SwitchToNextLeaderboard();
+                    return;
+                }
+                
+                if (msY > 800 && msX < 300 && msButton1 && !msOldButton1)
+                {
+                    SwitchToPreviousLeaderboard();
+                    return;
+                }
             }
             else
             {
