@@ -2023,7 +2023,7 @@ static void UpdateDusty_Collision()
 						if (Dusty.CollideMaterial == MATERIAL_NORMAL)
 							Dusty.CollideMaterial = Block->Material;
 
-						if (Block->Type == BLOCKTYPE_NAIL && Dusty.State != DUSTYSTATE_HURT)
+						if (Block->Type == BLOCKTYPE_NAIL && Dusty.State != DUSTYSTATE_HURT && Dusty.State != DUSTYSTATE_DIE)
 						{
 							int SharpDir = ((SNailProperties*)Block->Properties)->Dir;
                             SharpDir = ApplyBlockFlagsToDir(SharpDir, BlockFlags);
