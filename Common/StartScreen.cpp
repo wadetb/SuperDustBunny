@@ -243,8 +243,8 @@ void DisplayStartScreen()
     }
     else
     {
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenGoBackSprite, 60, 60, 1.0f, 1.0f);
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonLeaderboardSprite, 768-60, 60, 1.0f, 1.0f);
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenGoBackSprite, 70, 70, 0.5f, 1.0f);
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonLeaderboardSprite, 768-70, 70, 0.5f, 1.0f);
     }
 }
 

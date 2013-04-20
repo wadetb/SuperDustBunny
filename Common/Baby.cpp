@@ -292,7 +292,7 @@ void DisplayBabies()
             if (Baby->State == BABYSTATE_GATHER)
             {
                 float Alpha = Remap(Baby->GatherTime, 0.0f, 0.25f, 0.0f, 1.0f, true);
-                float Scale = Remap(Baby->GatherTime, 0.0f, 0.25f, 5.0f, 1.0f, true);
+                float Scale = Remap(Baby->GatherTime, 0.0f, 0.25f, 5.0f, 0.6f, true);
                 Scale += sin(Baby->GatherTime*4)*0.1f;
                 AddLitSpriteCenteredScaledAlpha(LIGHTLIST_EFFECTS, &BabyTargetSprite, Baby->GatherX + ScrollX, Baby->GatherY + ScrollY, Scale, Alpha);
             }
@@ -734,7 +734,7 @@ bool UseBabyProtection()
     for (int i = NBabies-1; i >= 0; i--)
     {
         SBaby* Baby = &Babies[i];
-        if (Baby->State != BABYSTATE_FOLLOW)
+        if (Baby->State != BABYSTATE_FOLLOW && Baby->State != BABYSTATE_GATHER)
             continue;
         
         if (Vacuum.Type == VACUUM_NORMAL)

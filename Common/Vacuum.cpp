@@ -148,20 +148,15 @@ void AdvanceDustBusterSideAndDir()
 {
     if (Vacuum.Dir == VACUUMDIR_DOWN && Vacuum.Side == VACUUMSIDE_TOP)
     {
-        Vacuum.Dir = VACUUMDIR_UP;
-        Vacuum.Side = VACUUMSIDE_LEFT;        
-    }
-    else if (Vacuum.Dir == VACUUMDIR_UP && Vacuum.Side == VACUUMSIDE_LEFT)
-    {
         Vacuum.Dir = VACUUMDIR_DOWN;
         Vacuum.Side = VACUUMSIDE_RIGHT;
     }
     else if (Vacuum.Dir == VACUUMDIR_DOWN && Vacuum.Side == VACUUMSIDE_RIGHT)
     {
         Vacuum.Dir = VACUUMDIR_UP;
-        Vacuum.Side = VACUUMSIDE_RIGHT;
+        Vacuum.Side = VACUUMSIDE_LEFT;
     }
-    else if (Vacuum.Dir == VACUUMDIR_UP && Vacuum.Side == VACUUMSIDE_RIGHT)
+    else if (Vacuum.Dir == VACUUMDIR_UP && Vacuum.Side == VACUUMSIDE_LEFT)
     {
         Vacuum.Dir = VACUUMDIR_DOWN;
         Vacuum.Side = VACUUMSIDE_LEFT;
@@ -169,7 +164,12 @@ void AdvanceDustBusterSideAndDir()
     else if (Vacuum.Dir == VACUUMDIR_DOWN && Vacuum.Side == VACUUMSIDE_LEFT)
     {
         Vacuum.Dir = VACUUMDIR_UP;
-        Vacuum.Side = VACUUMSIDE_LEFT;
+        Vacuum.Side = VACUUMSIDE_RIGHT;
+    }
+    else if (Vacuum.Dir == VACUUMDIR_UP && Vacuum.Side == VACUUMSIDE_RIGHT)
+    {
+        Vacuum.Dir = VACUUMDIR_DOWN;
+        Vacuum.Side = VACUUMSIDE_RIGHT;
     }
 }
 

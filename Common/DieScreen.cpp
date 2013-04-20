@@ -174,7 +174,7 @@ void DisplayDieScreen()
     }
     
     // Score
-    AddLitSprite(LIGHTLIST_VACUUM, &LeaderboardBackgroundSprite, 0 - 600*DieScreen.SlideIn, 0);
+    AddLitSpriteScaled(LIGHTLIST_VACUUM, &LeaderboardBackgroundSprite, LeaderboardBackgroundSprite.width - 600*DieScreen.SlideIn, 0, -1, 1);
 
     float TextY;
     

@@ -821,7 +821,9 @@ void InitLighting()
     LitAspectOffset = 0.0f;
     LitScreenHeight = 1024.0f / LitAspectScale;
     
-    if ((int)LitScreenHeight == 1363)
+    if (fabsf(LitAspectScale - 1.0f) < 0.01f)
+        ScreenAspect = ASPECT_IPAD;
+    else if ((int)LitScreenHeight == 1363)
         ScreenAspect = ASPECT_IPHONE_5;
     else
         ScreenAspect = ASPECT_IPHONE;

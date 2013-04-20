@@ -228,17 +228,23 @@ void InitStoreScreen()
 
     ResetLightState();
 
-    if (ScreenAspect == ASPECT_IPHONE_5)
-        STORE_ROWS = 3;
-    else
+#ifdef PLATFORM_MAC
+    STORE_ROWS = 2;
+#else
+    if (ScreenAspect == ASPECT_IPAD)
         STORE_ROWS = 2;
+    else
+        STORE_ROWS = 3;
+#endif
 
     InitDusty();
     
     SetDustyState_IntroStand();
+    Chapter.EndX = -100000;
+    Chapter.EndY = -100000;
     Dusty.CollideMaterial = MATERIAL_NORMAL;
     Dusty.FloatX = STORE_X+(STORE_COLS-1)*STORE_COL_SZ + STORE_COL_SZ/2-30;
-    Dusty.FloatY = STORE_Y+(STORE_ROWS)*STORE_ROW_SZ + STORE_ROW_SZ-50;
+    Dusty.FloatY = STORE_Y+(STORE_ROWS)*STORE_ROW_SZ + STORE_ROW_SZ-50-20;
     Dusty.NoCollision = true;
     RemoteControl.Enabled = true;
     
@@ -258,8 +264,8 @@ void InitStoreScreen()
 
 void DisplayStoreScreen()
 {
-    AddLitSpriteAlpha(LIGHTLIST_BACKGROUND, &ScreenStoreSprite, 768/2 - ScreenStoreSprite.width/2, 0, 1);
-    AddLitSpriteAlpha(LIGHTLIST_BACKGROUND, &ScreenStoreSprite, 768/2 - ScreenStoreSprite.width/2, ScreenStoreSprite.height, 1);
+    AddLitSpriteAlpha(LIGHTLIST_BACKGROUND, &ScreenStoreSprite, 768/2 - ScreenStoreSprite.width/2, -20, 1);
+    AddLitSpriteAlpha(LIGHTLIST_BACKGROUND, &ScreenStoreSprite, 768/2 - ScreenStoreSprite.width/2, ScreenStoreSprite.height-20, 1);
     //AddLitSpriteAlpha(LIGHTLIST_BACKGROUND, &ScreenStoreSprite, 768/2 - ScreenStoreSprite.width/2, LitScreenHeight/2 - ScreenStoreSprite.height/2, 1);
     //AddLitSpriteSizedAlpha(LIGHTLIST_BACKGROUND, &ScreenStoreSprite, 0, 0, 768, LitScreenHeight, 1.0f);
 
@@ -279,9 +285,14 @@ void DisplayStoreScreen()
         
         if (Inventory[StoreScreen.FirstItem + i].Owned)
         {
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, &Inventory[StoreScreen.FirstItem + i].Sprite,
-                                            STORE_X+Col*STORE_COL_SZ + STORE_COL_SZ/2,
-                                            STORE_Y+Row*STORE_ROW_SZ + STORE_ROW_SZ/2, STORE_ITEM_SCALE, 1.0f);
+            if (Inventory[StoreScreen.FirstItem].Hat == DUSTYHAT_NONE)                
+                AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, &Inventory[StoreScreen.FirstItem + i].Sprite,
+                                                STORE_X+Col*STORE_COL_SZ + STORE_COL_SZ/2,
+                                                STORE_Y+Row*STORE_ROW_SZ + STORE_ROW_SZ/2, STORE_ITEM_SCALE*0.5f, 1.0f);
+            else
+                AddLitSpriteCenteredScaledAlpha(LIGHTLIST_FOREGROUND, &Inventory[StoreScreen.FirstItem + i].Sprite,
+                                                STORE_X+Col*STORE_COL_SZ + STORE_COL_SZ/2,
+                                                STORE_Y+Row*STORE_ROW_SZ + STORE_ROW_SZ/2, STORE_ITEM_SCALE, 1.0f);
 //            AddLitSpriteScaled(LIGHTLIST_FOREGROUND, &CheckMarkSprite, STORE_X+Col*STORE_COL_SZ, STORE_Y+Row*STORE_ROW_SZ, 2.0f, 2.0f);
         }
         else
@@ -296,7 +307,10 @@ void DisplayStoreScreen()
     {
         AddLitSprite(LIGHTLIST_VACUUM, &LeaderboardBackgroundSprite, 0, 0);
         
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &Inventory[StoreScreen.ActiveItem].Sprite, 384, 250, 3.0f, 1.0f);
+        if (Inventory[StoreScreen.ActiveItem].Hat == DUSTYHAT_NONE)
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &Inventory[StoreScreen.ActiveItem].Sprite, 384, 250, 1.5f, 1.0f);
+        else
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &Inventory[StoreScreen.ActiveItem].Sprite, 384, 250, 3.0f, 1.0f);
 
         DisplayMultilineStringAlpha(LIGHTLIST_WIPE, Inventory[StoreScreen.ActiveItem].Description, FORMAT_CENTER_X, 384, 390, 1.0f, 1.0f);
 
@@ -318,12 +332,12 @@ void DisplayStoreScreen()
     }
     else
     {
-        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenGoBackSprite, 60, 60, 1.0f, 1.0f);
+        AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenGoBackSprite, 70, 70, 0.5f, 1.0f);
         //AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ScreenBuyCoinsSprite, 620, 60, 1.0f, 1.0f);
         if (StoreScreen.FirstItem > 0)
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 768-200, 60, -0.8f, 1.0f);
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 75, LitScreenHeight-80, -1.0f, 1.0f);
         if (StoreScreen.FirstItem + STORE_ITEMS_PER_PAGE < ARRAY_COUNT(Inventory))
-            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 768-100, 60, 0.8, 1.0f);
+            AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonFastForwardSprite, 768-75, LitScreenHeight-80, 1.0, 1.0f);
     }
     
     DisplayDusty();
@@ -476,14 +490,14 @@ void UpdateStoreScreen()
                 }
             }
             
-            if (msY < 100)
+            if (msY > LitScreenHeight - 200)
             {
-                if (msX <= 768-150)
+                if (msX <= 300)
                 {
                     if (StoreScreen.FirstItem > 0)
                         StoreScreen.FirstItem -= STORE_ROWS * STORE_COLS;
                 }
-                else
+                else if (msX >= 768-300)
                 {
                     if (StoreScreen.FirstItem + STORE_ROWS * STORE_COLS < ARRAY_COUNT(Inventory))
                         StoreScreen.FirstItem += STORE_ROWS * STORE_COLS;

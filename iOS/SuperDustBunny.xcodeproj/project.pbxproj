@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		08058FA6141EB76F004780BA /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 08058FA4141EB76F004780BA /* libTestFlight.a */; };
 		0816B6D3137F8C1C00CE5DE4 /* Input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0816B6D1137F8C1B00CE5DE4 /* Input.cpp */; };
+		08242A2C171CED7900FAF487 /* Default-Portrait~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 08242A2B171CED7900FAF487 /* Default-Portrait~ipad.png */; };
+		08242A2F171CEDAF00FAF487 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856200B1346A40000F9EFBA /* Default.png */; };
 		082C9B8013E8D97400586EDB /* Icon-ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 082C9B7F13E8D97400586EDB /* Icon-ipad.png */; };
 		0832E7F71445188400EDCAED /* Tweak.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0832E7F61445188400EDCAED /* Tweak.cpp */; };
 		0832E7F81445869700EDCAED /* Tweak.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0832E7F61445188400EDCAED /* Tweak.cpp */; };
@@ -18,8 +20,6 @@
 		084CAE771609054E00672D80 /* StoreScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 084CAE751609054D00672D80 /* StoreScreen.cpp */; };
 		084CAE7816095C0A00672D80 /* StoreScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 084CAE751609054D00672D80 /* StoreScreen.cpp */; };
 		0856200F1346A40000F9EFBA /* Default-ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856200A1346A40000F9EFBA /* Default-ipad.png */; };
-		085620101346A40000F9EFBA /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856200B1346A40000F9EFBA /* Default.png */; };
-		085620111346A40000F9EFBA /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856200C1346A40000F9EFBA /* Default@2x.png */; };
 		085620121346A40000F9EFBA /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856200D1346A40000F9EFBA /* Icon.png */; };
 		085620131346A40000F9EFBA /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0856200E1346A40000F9EFBA /* Icon@2x.png */; };
 		085AA95F132C572A00DF32CA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 085AA95E132C572A00DF32CA /* UIKit.framework */; };
@@ -160,6 +160,7 @@
 		080BEB8C14490E700057B6B4 /* CopySVNToApp.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = CopySVNToApp.sh; path = ../../Tools/Scripts/CopySVNToApp.sh; sourceTree = "<group>"; };
 		0816B6D1137F8C1B00CE5DE4 /* Input.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Input.cpp; sourceTree = "<group>"; };
 		0816B6D2137F8C1C00CE5DE4 /* Input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Input.h; sourceTree = "<group>"; };
+		08242A2B171CED7900FAF487 /* Default-Portrait~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Portrait~ipad.png"; sourceTree = "<group>"; };
 		082C9B7F13E8D97400586EDB /* Icon-ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-ipad.png"; sourceTree = "<group>"; };
 		0832E7F51445186E00EDCAED /* Tweak.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tweak.h; sourceTree = "<group>"; };
 		0832E7F61445188400EDCAED /* Tweak.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tweak.cpp; sourceTree = "<group>"; };
@@ -381,6 +382,7 @@
 		085AA94F132C572A00DF32CA = {
 			isa = PBXGroup;
 			children = (
+				08242A2B171CED7900FAF487 /* Default-Portrait~ipad.png */,
 				08BF391613466F4E002C1A7B /* Converted */,
 				08A8FC7313302BB300E45A98 /* Documentation */,
 				085AAA88132D0E7100DF32CA /* Converter */,
@@ -713,12 +715,12 @@
 				085AAA0C132C582C00DF32CA /* SuperDustBunnyViewController.xib in Resources */,
 				08BF391713466F4E002C1A7B /* Converted in Resources */,
 				0856200F1346A40000F9EFBA /* Default-ipad.png in Resources */,
-				085620101346A40000F9EFBA /* Default.png in Resources */,
-				085620111346A40000F9EFBA /* Default@2x.png in Resources */,
 				085620121346A40000F9EFBA /* Icon.png in Resources */,
 				085620131346A40000F9EFBA /* Icon@2x.png in Resources */,
 				082C9B8013E8D97400586EDB /* Icon-ipad.png in Resources */,
 				086B1E46161E7F7200C41D0E /* Default-568h@2x.png in Resources */,
+				08242A2C171CED7900FAF487 /* Default-Portrait~ipad.png in Resources */,
+				08242A2F171CEDAF00FAF487 /* Default.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

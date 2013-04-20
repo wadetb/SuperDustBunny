@@ -2188,7 +2188,7 @@ void UpdateDusty()
     }
     if (!msButton1 && msOldButton1)
     {
-        if (Distance(msX, msY, TapDownX, TapDownY) < 32)
+        if (Distance(msX, msY, TapDownX, TapDownY) < 64)
         {
             SendBabyToGather(msX - ScrollX, msY - ScrollY);
         }

@@ -60,6 +60,7 @@ extern SLightState LightState;
 
 enum EScreenAspect
 {
+    ASPECT_IPAD,
     ASPECT_IPHONE,
     ASPECT_IPHONE_5,
 };

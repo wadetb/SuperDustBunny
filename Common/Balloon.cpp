@@ -116,7 +116,7 @@ void DisplayBalloons()
             
             AddLitSprite(LIGHTLIST_FOREGROUND, BalloonSprites[Balloon->Color], 
                                     Balloon->X - 64 + ScrollX + dx, 
-                                    Balloon->Y - 64 + ScrollY + dy);            
+                                    Balloon->Y - 64 + ScrollY + dy + 12);
 
             
             SLitVertex* Verts = AddLitQuad(LIGHTLIST_FOREGROUND, &WhiteSprite, (BALLOON_TAIL_COUNT-1)*2);

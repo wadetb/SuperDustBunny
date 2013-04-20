@@ -448,10 +448,12 @@ static void DisplayPauseScreen()
         
         AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonHomeSprite, 192 - 600*PauseSlideIn, 500, 1.2f, 1.0f);
         
+/*
         if (GameMuted)
             AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonUnmuteSprite, 768-192 + 600*PauseSlideIn, 500, 1.2f, 1.0f);
         else
             AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonMuteSprite, 768-192 + 600*PauseSlideIn, 500, 1.2f, 1.0f);        
+*/
         
         if (Settings.DeveloperMode)
         {
@@ -479,7 +481,6 @@ static void DisplayPauseScreen()
     }
     else
     {
-        // TODO ADD FLYOUT
         AddLitSpriteCenteredScaledAlpha(LIGHTLIST_WIPE, &ButtonPauseSprite, 384, 64, 1.0f, 1.0f);
     }
 }
@@ -491,6 +492,7 @@ static void UpdatePauseScreen()
     
     if (msButton1 && !msOldButton1)
     {
+/*
         if (msX > 384+64 && msY >= 300 && msY <= 600)
         {
             GameMuted = !GameMuted;
@@ -498,7 +500,8 @@ static void UpdatePauseScreen()
             [TestFlight passCheckpoint:[NSString stringWithFormat:@"%s the game", GameMuted ? "Muted" : "Unmuted"]];
 #endif
         }
-
+*/
+        
         if (msX < 384-64 && msY >= 300 && msY <= 600)
         {
             GamePause = false;
