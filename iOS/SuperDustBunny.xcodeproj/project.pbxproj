@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		035D1A5F173C510600809B90 /* PurchaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 035D1A5E173C510600809B90 /* PurchaseManager.m */; };
 		08058FA6141EB76F004780BA /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 08058FA4141EB76F004780BA /* libTestFlight.a */; };
 		0816B6D3137F8C1C00CE5DE4 /* Input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0816B6D1137F8C1B00CE5DE4 /* Input.cpp */; };
 		08242A2C171CED7900FAF487 /* Default-Portrait~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 08242A2B171CED7900FAF487 /* Default-Portrait~ipad.png */; };
@@ -154,6 +155,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		035D1A5C173C50C200809B90 /* PurchaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PurchaseManager.h; path = ../PurchaseManager.h; sourceTree = "<group>"; };
+		035D1A5E173C510600809B90 /* PurchaseManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PurchaseManager.m; path = ../PurchaseManager.m; sourceTree = "<group>"; };
+		035D1A60173C5EE400809B90 /* ProductLocalizedPrice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProductLocalizedPrice.h; path = ../ProductLocalizedPrice.h; sourceTree = "<group>"; };
+		035D1A61173C5F2500809B90 /* ProductLocalizedPrice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProductLocalizedPrice.m; path = ../ProductLocalizedPrice.m; sourceTree = "<group>"; };
 		08058FA4141EB76F004780BA /* libTestFlight.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTestFlight.a; sourceTree = "<group>"; };
 		08058FA5141EB76F004780BA /* TestFlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlight.h; sourceTree = "<group>"; };
 		080BEB8914490DF70057B6B4 /* CopyAppToSVN.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = CopyAppToSVN.sh; path = ../../Tools/Scripts/CopyAppToSVN.sh; sourceTree = "<group>"; };
@@ -370,6 +375,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		035D1A62173C618800809B90 /* IAP */ = {
+			isa = PBXGroup;
+			children = (
+				035D1A5C173C50C200809B90 /* PurchaseManager.h */,
+				035D1A5E173C510600809B90 /* PurchaseManager.m */,
+				035D1A60173C5EE400809B90 /* ProductLocalizedPrice.h */,
+				035D1A61173C5F2500809B90 /* ProductLocalizedPrice.m */,
+			);
+			path = IAP;
+			sourceTree = "<group>";
+		};
 		080BEB8B14490DFE0057B6B4 /* Scripts */ = {
 			isa = PBXGroup;
 			children = (
@@ -427,6 +443,7 @@
 		085AAA14132C5B5F00DF32CA /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				035D1A62173C618800809B90 /* IAP */,
 				08058FA4141EB76F004780BA /* libTestFlight.a */,
 				08058FA5141EB76F004780BA /* TestFlight.h */,
 				0856200A1346A40000F9EFBA /* Default-ipad.png */,
@@ -794,6 +811,7 @@
 				08C607B1158D6974005F3353 /* Music.cpp in Sources */,
 				084CAE771609054E00672D80 /* StoreScreen.cpp in Sources */,
 				08AF54451705F54500E92E43 /* Hat.cpp in Sources */,
+				035D1A5F173C510600809B90 /* PurchaseManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
