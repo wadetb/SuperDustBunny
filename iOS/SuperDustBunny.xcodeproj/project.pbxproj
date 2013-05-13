@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		035D1A5F173C510600809B90 /* PurchaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 035D1A5E173C510600809B90 /* PurchaseManager.m */; };
+		035D1A67174104BC00809B90 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 035D1A66174104BC00809B90 /* StoreKit.framework */; };
+		035D1A69174104EF00809B90 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 035D1A68174104EF00809B90 /* StoreKit.framework */; };
 		08058FA6141EB76F004780BA /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 08058FA4141EB76F004780BA /* libTestFlight.a */; };
 		0816B6D3137F8C1C00CE5DE4 /* Input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0816B6D1137F8C1B00CE5DE4 /* Input.cpp */; };
 		08242A2C171CED7900FAF487 /* Default-Portrait~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 08242A2B171CED7900FAF487 /* Default-Portrait~ipad.png */; };
@@ -159,6 +161,8 @@
 		035D1A5E173C510600809B90 /* PurchaseManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PurchaseManager.m; path = ../PurchaseManager.m; sourceTree = "<group>"; };
 		035D1A60173C5EE400809B90 /* ProductLocalizedPrice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProductLocalizedPrice.h; path = ../ProductLocalizedPrice.h; sourceTree = "<group>"; };
 		035D1A61173C5F2500809B90 /* ProductLocalizedPrice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProductLocalizedPrice.m; path = ../ProductLocalizedPrice.m; sourceTree = "<group>"; };
+		035D1A66174104BC00809B90 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		035D1A68174104EF00809B90 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		08058FA4141EB76F004780BA /* libTestFlight.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTestFlight.a; sourceTree = "<group>"; };
 		08058FA5141EB76F004780BA /* TestFlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlight.h; sourceTree = "<group>"; };
 		080BEB8914490DF70057B6B4 /* CopyAppToSVN.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = CopyAppToSVN.sh; path = ../../Tools/Scripts/CopyAppToSVN.sh; sourceTree = "<group>"; };
@@ -339,6 +343,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				035D1A67174104BC00809B90 /* StoreKit.framework in Frameworks */,
 				08C607B6158D70BA005F3353 /* AVFoundation.framework in Frameworks */,
 				0837CAF9142BB7D20042DB5C /* MapKit.framework in Frameworks */,
 				0837CAF6142BB77C0042DB5C /* CoreLocation.framework in Frameworks */,
@@ -352,6 +357,7 @@
 				085AA961132C572A00DF32CA /* Foundation.framework in Frameworks */,
 				085AA963132C572A00DF32CA /* CoreGraphics.framework in Frameworks */,
 				08058FA6141EB76F004780BA /* libTestFlight.a in Frameworks */,
+				035D1A69174104EF00809B90 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -398,6 +404,7 @@
 		085AA94F132C572A00DF32CA = {
 			isa = PBXGroup;
 			children = (
+				035D1A66174104BC00809B90 /* StoreKit.framework */,
 				08242A2B171CED7900FAF487 /* Default-Portrait~ipad.png */,
 				08BF391613466F4E002C1A7B /* Converted */,
 				08A8FC7313302BB300E45A98 /* Documentation */,
@@ -422,6 +429,7 @@
 		085AA95D132C572A00DF32CA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				035D1A68174104EF00809B90 /* StoreKit.framework */,
 				08C607B5158D70BA005F3353 /* AVFoundation.framework */,
 				0837CAF8142BB7D20042DB5C /* MapKit.framework */,
 				0837CAF5142BB77C0042DB5C /* CoreLocation.framework */,
