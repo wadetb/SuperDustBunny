@@ -4,6 +4,9 @@
 //To test this need to write the code that calls the loadStore, canMakePurchases, and purchaseFullUpgrade methods as well.
 //NOTES
 
+#import <StoreKit/StoreKit.h>
+#import "PurchasManager.h"
+
 - (void)requestFullUpgradeProductData
 {
     NSSet *productIdentifiers = [NSSet setWithObject:@"com.appname.appnamefree.upgradetofull" ];
@@ -99,6 +102,8 @@ else
 //
 - (void)purchaseFullUpgrade
 {
+    NSLog(@"Buying %@...", product.productIdentifier);
+    
     SKPayment *payment = [SKPayment paymentWithProductIdentifier:kInAppPurchaseFullUpgradeProductId];
     [[SKPaymentQueue defaultQueue] addPayment:payment];
 }
