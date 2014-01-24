@@ -41,6 +41,7 @@
 #include "../win/sound.h"
 #include <shlwapi.h>
 #include <windowsx.h>
+#define strncasecmp strnicmp
 #elif defined(PLATFORM_IPHONE)
 #include "../iOS/graphics.h"
 #include "../iOS/mouse.h"

@@ -101,9 +101,12 @@
     <ClCompile Include="..\Common\Flame.cpp" />
     <ClCompile Include="..\Common\Ghost.cpp" />
     <ClCompile Include="..\Common\Hanger.cpp" />
+    <ClCompile Include="..\Common\Hat.cpp" />
     <ClCompile Include="..\Common\Input.cpp" />
     <ClCompile Include="..\Common\LeaderboardScreen.cpp" />
+    <ClCompile Include="..\Common\Music.cpp" />
     <ClCompile Include="..\Common\Smoke.cpp" />
+    <ClCompile Include="..\Common\StoreScreen.cpp" />
     <ClCompile Include="..\Common\Text.cpp" />
     <ClCompile Include="..\Common\Tweak.cpp" />
     <ClCompile Include="graphics.cpp" />
@@ -147,9 +150,12 @@
     <ClInclude Include="..\Common\Flame.h" />
     <ClInclude Include="..\Common\Ghost.h" />
     <ClInclude Include="..\Common\Hanger.h" />
+    <ClInclude Include="..\Common\Hat.h" />
     <ClInclude Include="..\Common\Input.h" />
     <ClInclude Include="..\Common\LeaderboardScreen.h" />
+    <ClInclude Include="..\Common\Music.h" />
     <ClInclude Include="..\Common\Smoke.h" />
+    <ClInclude Include="..\Common\StoreScreen.h" />
     <ClInclude Include="..\Common\Text.h" />
     <ClInclude Include="..\Common\Tweak.h" />
     <ClInclude Include="..\Common\TweakList.h" />

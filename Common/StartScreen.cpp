@@ -15,7 +15,7 @@
 #include "Settings.h"
 #include "Recorder.h"
 #include "LeaderboardScreen.h"
-#import "Music.h"
+#include "Music.h"
 
 #ifdef PLATFORM_IPHONE
 #import "SuperDustBunnyViewController.h"

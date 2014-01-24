@@ -168,6 +168,22 @@ const char* LitShaderSource =
 "	return tex2D(Sampler0, VertexOutput.TexCoord0) * VertexOutput.Color0;\n"
 "}\n";
 
+const char* LitGrayscaleShaderSource =
+"sampler Sampler0 : register(s0);\n"
+"\n"
+"struct SVertexOutput\n"
+"{\n"
+"	float2 TexCoord0 : TEXCOORD0;\n"
+"	float4 Color0 : COLOR0;\n"
+"};\n"
+"\n"
+"float4 main(SVertexOutput VertexOutput) : COLOR\n"
+"{\n"
+"	float4 color = tex2D(Sampler0, VertexOutput.TexCoord0) * VertexOutput.Color0;\n"
+"	float v = dot(color.xyz, float3(0.2989, 0.5870, 0.1140));\n"
+"	return float4(v, v, v, color.a);\n"
+"}\n";
+
 const char* ShadowVertexShaderSource =
 "float2 ShadowOffset : register(c0);\n"
 "float2 ShadowScale : register(c1);\n"

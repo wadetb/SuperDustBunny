@@ -46,7 +46,7 @@
 #include "DieScreen.h"
 #include "WinScreen.h"
 #include "ChapterIntro.h"
-#import "Text.h"
+#include "Text.h"
 
 #ifdef PLATFORM_IPHONE
 #import "SuperDustBunnyViewController.h"
@@ -1044,7 +1044,7 @@ bool Update()
 	// Home key causes devmode.
 	if (kbIsKeyDown(KB_HOME) && !kbWasKeyDown(KB_HOME))
 	{
-		DevMode = !DevMode;
+		Tweak.DevMode = !Tweak.DevMode;
 	}
 
 	// Pressing escape quits the program.
